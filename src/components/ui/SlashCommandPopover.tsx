@@ -96,10 +96,13 @@ function badgeStyle(source: SlashSuggestionSource): BadgeStyle {
     case "bot":
       return source.scope === "server"
         ? {
+            // Sky instead of brand purple: the selected-row highlight
+            // is bg-discord-primary, and the old purple badge tint
+            // disappeared against it.  Sky still reads as "network-
+            // wide service" and stays legible on both backgrounds.
             label: "server-bot",
             title: "Server-wide bot — reachable from any channel",
-            className:
-              "bg-discord-primary/30 text-discord-primary border border-discord-primary/40",
+            className: "bg-sky-700/40 text-sky-300 border border-sky-600/60",
           }
         : {
             label: "channel-bot",
