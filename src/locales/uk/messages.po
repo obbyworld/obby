@@ -45,10 +45,25 @@ msgstr "{0, plural, one {Показати ще 1 елемент} few {Показ
 msgid "{0} and {1} are typing..."
 msgstr "{0} та {1} пишуть..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} обов'язковий."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} пише..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} має бути числом."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} має бути цілим числом."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Переглянути всі канали на сервері"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Повторити надсилання"
 msgid "Rules"
 msgstr "Правила"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Виконати"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Безпечно"
@@ -2451,6 +2471,10 @@ msgstr "Тема, яка відображатиметься для цього к
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Користувач отримає запрошення приєднатися до {channelName}."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Ця команда не приймає параметрів."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

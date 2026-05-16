@@ -45,10 +45,25 @@ msgstr "{0, plural, one {Visa 1 till} other {Visa {1} till}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} och {1} skriver..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} krävs."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} skriver..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} måste vara ett tal."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} måste vara ett heltal."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Bläddra bland alla kanaler på servern"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Försök skicka igen"
 msgid "Rules"
 msgstr "Regler"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Kör"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Säkert"
@@ -2451,6 +2471,10 @@ msgstr "Ämnet som visas för den här kanalen. Alla användare kan se ämnet."
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Användaren får en inbjudan att gå med i {channelName}."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Detta kommando tar inga parametrar."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

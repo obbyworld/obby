@@ -45,10 +45,25 @@ msgstr "{0, plural, other {显示另外 {1} 个项目}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} 和 {1} 正在输入..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} 为必填项。"
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} 正在输入..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} 必须是数字。"
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} 必须是整数。"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "浏览服务器上的所有频道"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "重新发送"
 msgid "Rules"
 msgstr "规则"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "运行"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "安全"
@@ -2451,6 +2471,10 @@ msgstr "此频道显示的主题，所有用户均可查看。"
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "用户将收到加入 {channelName} 的邀请。"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "此命令不需要参数。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

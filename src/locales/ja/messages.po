@@ -45,10 +45,25 @@ msgstr "{0, plural, other {さらに {1} 件表示}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} と {1} が入力中..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} は必須です。"
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} が入力中..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} は数値である必要があります。"
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} は整数である必要があります。"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "サーバー上のすべてのチャンネルを一覧表示"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "再送信"
 msgid "Rules"
 msgstr "ルール"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "実行"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "安全"
@@ -2451,6 +2471,10 @@ msgstr "このチャンネルに表示されるトピックです。すべての
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "ユーザーは {channelName} への参加招待を受け取ります。"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "このコマンドはパラメータを受け取りません。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

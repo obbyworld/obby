@@ -45,10 +45,25 @@ msgstr "{0, plural, one {1 weiteres Element anzeigen} other {{1} weitere Element
 msgid "{0} and {1} are typing..."
 msgstr "{0} und {1} tippen..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} ist erforderlich."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} tippt..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} muss eine Zahl sein."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} muss eine ganze Zahl sein."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Alle Kanäle auf dem Server durchsuchen"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Erneut senden"
 msgid "Rules"
 msgstr "Regeln"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Ausführen"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Sicher"
@@ -2451,6 +2471,10 @@ msgstr "Das Thema für diesen Kanal. Alle Benutzer können es sehen."
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Der Benutzer erhält eine Einladung, {channelName} beizutreten."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Dieser Befehl nimmt keine Parameter."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

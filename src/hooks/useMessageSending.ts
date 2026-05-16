@@ -99,6 +99,23 @@ function tryDispatchBotCommand(
     else options[o.name] = raw;
   }
 
+  sendBotCommand(serverId, channel, bot, cmd, options);
+  return true;
+}
+
+/**
+ * Wire-level send for a pre-resolved bot command with structured
+ * options (no freeform-arg parsing).  Used both by the freeform-text
+ * path above and by the param modal, which collects values directly
+ * via form controls.
+ */
+export function sendBotCommand(
+  serverId: string,
+  channel: Channel | null,
+  bot: string,
+  cmd: BotCommand,
+  options: Record<string, string | number | boolean>,
+): void {
   const payload = { name: cmd.name, options };
   const b64 = btoa(JSON.stringify(payload)).replace(/=+$/, ""); // strip trailing padding for IRCv3 tag-value friendliness
   const isPublic = cmd.visibility !== "private";
@@ -116,7 +133,6 @@ function tryDispatchBotCommand(
   } else {
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
   }
-  return true;
 }
 
 /**

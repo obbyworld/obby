@@ -45,10 +45,25 @@ msgstr "{0, plural, one {Näytä 1 kohde lisää} other {Näytä {1} kohdetta li
 msgid "{0} and {1} are typing..."
 msgstr "{0} ja {1} kirjoittavat..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} on pakollinen."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} kirjoittaa..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} on oltava numero."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} on oltava kokonaisluku."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Selaa kaikkia palvelimen kanavia"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Yritä lähettää uudelleen"
 msgid "Rules"
 msgstr "Säännöt"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Suorita"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Turvallinen"
@@ -2451,6 +2471,10 @@ msgstr "Aihe, joka näytetään tälle kanavalle. Kaikki käyttäjät voivat nä
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Tämä komento ei ota parametreja."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

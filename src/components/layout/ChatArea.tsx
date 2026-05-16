@@ -38,7 +38,7 @@ import {
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { Message as MessageType, User } from "../../types";
+import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
@@ -58,6 +58,7 @@ import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
+import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
   SlashCommandPopover,
@@ -145,6 +146,10 @@ export const ChatArea: React.FC<{
   // with "/" and we're still completing the command name -- otherwise
   // typing wouldn't trigger a re-render for this popover at all.
   const [slashInputValue, setSlashInputValue] = useState("");
+  const [paramModal, setParamModal] = useState<{
+    botNick: string;
+    command: BotCommand;
+  } | null>(null);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -2454,10 +2459,28 @@ export const ChatArea: React.FC<{
                     commands={suggestions}
                     inputElement={inputRef.current}
                     onSelect={(sug) => {
-                      // For bot commands, fill `/<cmd>@<botNick> ` so
-                      // dispatch routes unambiguously even when two
-                      // bots share the same command name.  Client /
-                      // server commands stay bare.
+                      // Bot commands with declared options open the
+                      // param modal so values are entered via typed
+                      // form controls (user/channel pickers, date,
+                      // etc).  Bots without options and non-bot
+                      // sources stay on the freeform inline path.
+                      if (
+                        sug.source.kind === "bot" &&
+                        (sug.options?.length ?? 0) > 0
+                      ) {
+                        const botNick = sug.source.botNick;
+                        setParamModal({
+                          botNick,
+                          command: {
+                            name: sug.name,
+                            description: sug.description,
+                            options: sug.options,
+                          },
+                        });
+                        setSlashInputValue("");
+                        applyText("");
+                        return;
+                      }
                       const target =
                         sug.source.kind === "bot"
                           ? `@${sug.source.botNick}`
@@ -2790,6 +2813,25 @@ export const ChatArea: React.FC<{
                 )}
             </div>
           </div>,
+          document.body,
+        )}
+      {paramModal &&
+        selectedServerId &&
+        createPortal(
+          <SlashCommandParamModal
+            serverId={selectedServerId}
+            botNick={paramModal.botNick}
+            command={paramModal.command}
+            channel={selectedChannel ?? null}
+            privateChat={selectedPrivateChat ?? null}
+            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
+            joinedChannels={
+              servers
+                .find((s) => s.id === selectedServerId)
+                ?.channels.map((c) => c.name) ?? []
+            }
+            onClose={() => setParamModal(null)}
+          />,
           document.body,
         )}
     </div>

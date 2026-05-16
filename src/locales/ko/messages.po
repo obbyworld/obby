@@ -45,10 +45,25 @@ msgstr "{0, plural, other {{1}개 더 보기}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0}님과 {1}님이 입력 중..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0}은(는) 필수입니다."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0}님이 입력 중..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0}은(는) 숫자여야 합니다."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0}은(는) 정수여야 합니다."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "서버의 모든 채널 검색"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "다시 보내기"
 msgid "Rules"
 msgstr "규칙"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "실행"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "안전"
@@ -2451,6 +2471,10 @@ msgstr "이 채널에 표시될 주제입니다. 모든 사용자가 주제를 �
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "사용자가 {channelName} 참여 초대를 받게 됩니다."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "이 명령어는 매개변수를 받지 않습니다."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

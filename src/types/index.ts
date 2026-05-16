@@ -111,7 +111,22 @@ export interface PushBotInfo {
 
 export interface BotCommandOption {
   name: string;
-  type?: "string" | "int" | "bool" | "user" | "channel";
+  /** Drives the form-element used when the slash-command param modal
+   * renders this option.  Bot authors send the schema; the client
+   * picks the right control.  All types resolve to a string|number|
+   * boolean value on the wire. */
+  type?:
+    | "string"
+    | "int"
+    | "number"
+    | "bool"
+    | "user"
+    | "channel"
+    | "date"
+    | "time"
+    | "datetime"
+    | "country"
+    | "password";
   required?: boolean;
   description?: string;
   choices?: string[];

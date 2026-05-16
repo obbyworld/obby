@@ -45,10 +45,25 @@ msgstr "{0, plural, one {Arată 1 element în plus} few {Arată {1} elemente în
 msgid "{0} and {1} are typing..."
 msgstr "{0} și {1} scriu..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} este obligatoriu."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} scrie..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} trebuie să fie un număr."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} trebuie să fie un număr întreg."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Răsfoiește toate canalele de pe server"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Reîncearcă trimiterea"
 msgid "Rules"
 msgstr "Reguli"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Execută"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Sigur"
@@ -2451,6 +2471,10 @@ msgstr "Subiectul afișat pentru acest canal. Toți utilizatorii îl pot vedea."
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Această comandă nu acceptă parametri."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"

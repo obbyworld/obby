@@ -45,10 +45,25 @@ msgstr "{0, plural, one {1 öğe daha göster} other {{1} öğe daha göster}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} ve {1} yazıyor..."
 
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} is required."
+msgstr "{0} gereklidir."
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
 msgstr "{0} yazıyor..."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a number."
+msgstr "{0} bir sayı olmalıdır."
+
+#. placeholder {0}: o.name
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "{0} must be a whole number."
+msgstr "{0} bir tam sayı olmalıdır."
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -441,6 +456,7 @@ msgstr "Sunucudaki tüm kanalları görüntüle"
 #: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2068,6 +2084,10 @@ msgstr "Yeniden gönder"
 msgid "Rules"
 msgstr "Kurallar"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "Run"
+msgstr "Çalıştır"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Safe"
 msgstr "Güvenli"
@@ -2451,6 +2471,10 @@ msgstr "Bu kanal için görüntülenecek konu. Tüm kullanıcılar konuyu göreb
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "This command takes no parameters."
+msgstr "Bu komut parametre almıyor."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
