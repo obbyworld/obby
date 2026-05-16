@@ -2388,23 +2388,12 @@ export const ChatArea: React.FC<{
                   seen.add(c.name.toLowerCase());
                 }
 
-                // 2. Server-provided permission list (obsidianirc/cmdslist).
-                // No schema -- just names; skip anything the client
-                // already handles to avoid duplicate entries.
-                for (const name of srv?.cmdsAvailable ?? []) {
-                  if (seen.has(name.toLowerCase())) continue;
-                  suggestions.push({
-                    name,
-                    source: { kind: "server" },
-                  });
-                  seen.add(name.toLowerCase());
-                }
-
-                // 3. PushBot schemas.  Channel bots only appear when
-                // the bot is a member of the active channel; the
-                // spec defers server-wide bots until the channel
-                // scope can't satisfy.  Users can always target a
-                // specific bot via /cmd@bot.
+                // 2. PushBot schemas — done before the server's
+                // cmdsAvailable so that bot-defined names win the
+                // dedup set.  Channel-scope bots only appear when
+                // they're a member of the active channel; server-
+                // scope bots (helpbot, dicebot) are reachable from
+                // any context and always show.
                 if (srv?.botCommands) {
                   const chanUsers = new Set<string>(
                     selectedChannel?.users.map((u) =>
@@ -2414,20 +2403,36 @@ export const ChatArea: React.FC<{
                   for (const [botNick, list] of Object.entries(
                     srv.botCommands,
                   )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
                     const inChannel = chanUsers.has(botNick);
-                    if (!inChannel && selectedChannel) continue;
-                    const scope: "channel" | "server" = inChannel
-                      ? "channel"
-                      : "server";
+                    if (botScope === "channel" && selectedChannel && !inChannel)
+                      continue;
+                    const scope: "channel" | "server" = botScope;
                     for (const c of list) {
+                      if (seen.has(c.name.toLowerCase())) continue;
                       suggestions.push({
                         name: c.name,
                         description: c.description,
                         options: c.options,
                         source: { kind: "bot", botNick, scope },
                       });
+                      seen.add(c.name.toLowerCase());
                     }
                   }
+                }
+
+                // 3. Server-provided permission list (obsidianirc/cmdslist).
+                // No schema -- just names; skip anything the client
+                // or a bot already owns so /help, /report etc. don't
+                // get shadowed by the built-in /HELP.
+                for (const name of srv?.cmdsAvailable ?? []) {
+                  if (seen.has(name.toLowerCase())) continue;
+                  suggestions.push({
+                    name,
+                    source: { kind: "server" },
+                  });
+                  seen.add(name.toLowerCase());
                 }
                 if (suggestions.length === 0) return null;
                 const slashActive =
@@ -2500,16 +2505,17 @@ export const ChatArea: React.FC<{
                   for (const [botNick, list] of Object.entries(
                     srv.botCommands,
                   )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
                     const inChannel = chanUsers.has(botNick);
-                    const scope: "channel" | "server" = inChannel
-                      ? "channel"
-                      : "server";
+                    if (botScope === "channel" && selectedChannel && !inChannel)
+                      continue;
                     for (const c of list) {
                       schemas[c.name.toLowerCase()] = {
                         command: c,
                         source: "bot",
                         botNick,
-                        scope,
+                        scope: botScope,
                       };
                     }
                   }

@@ -49,7 +49,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   // for any +B users we now share a channel with so the autocomplete
   // cache is warm by the time the user types '/'.
   ircClient.on("WHO_END", ({ serverId, mask }) => {
-    if (!mask || !mask.startsWith("#")) return;
+    if (!mask?.startsWith("#")) return;
     const server = store.getState().servers.find((s) => s.id === serverId);
     if (!server) return;
     const channel = server.channels.find(

@@ -127,15 +127,14 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
         </div>
       )}
       {/* show choices if present */}
-      {opts[ctx.argIndex]?.choices &&
-        opts[ctx.argIndex].choices!.length > 0 && (
-          <div className="mt-1 text-xs text-discord-text-muted">
-            one of:{" "}
-            <span className="font-mono text-discord-text-normal">
-              {opts[ctx.argIndex].choices!.join(", ")}
-            </span>
-          </div>
-        )}
+      {(opts[ctx.argIndex]?.choices?.length ?? 0) > 0 && (
+        <div className="mt-1 text-xs text-discord-text-muted">
+          one of:{" "}
+          <span className="font-mono text-discord-text-normal">
+            {opts[ctx.argIndex].choices?.join(", ")}
+          </span>
+        </div>
+      )}
     </div>
   );
 };
