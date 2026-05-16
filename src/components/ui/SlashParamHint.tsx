@@ -31,7 +31,12 @@ interface SlashParamHintProps {
 }
 
 /** Returns { cmdName, argIndex } when the cursor is inside an arg
- *  position of `/<cmd> <arg0> <arg1> …`, otherwise null. */
+ *  position of `/<cmd> <arg0> <arg1> …`, otherwise null.
+ *
+ *  cmdName is the raw form (may include `@botnick`); the caller can
+ *  look this up directly against a schemas map keyed by the same
+ *  composite form, then fall back to the bare cmd if no specific
+ *  entry exists. */
 export function getActiveParamContext(
   input: string,
   cursor: number,
@@ -42,7 +47,6 @@ export function getActiveParamContext(
   const firstSpace = head.indexOf(" ");
   if (firstSpace === -1) return null; // still typing the command name
   const cmdName = head.slice(0, firstSpace).toLowerCase();
-  // Strip optional @botnick targeting suffix
   const bare = cmdName.includes("@") ? cmdName.split("@")[0] : cmdName;
   if (!bare) return null;
 
@@ -56,7 +60,7 @@ export function getActiveParamContext(
     if (head[i] === " ") argIndex++;
   }
   if (argIndex < 0) return null;
-  return { cmdName: bare, argIndex };
+  return { cmdName, argIndex };
 }
 
 export const SlashParamHint: React.FC<SlashParamHintProps> = ({
@@ -71,7 +75,11 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
   );
 
   if (!ctx) return null;
-  const entry = schemas[ctx.cmdName];
+  // Try `/cmd@bot` first, then fall back to the bare command name.
+  const bare = ctx.cmdName.includes("@")
+    ? ctx.cmdName.split("@")[0]
+    : ctx.cmdName;
+  const entry = schemas[ctx.cmdName] ?? schemas[bare];
   if (!entry) return null;
 
   const opts = entry.command.options ?? [];

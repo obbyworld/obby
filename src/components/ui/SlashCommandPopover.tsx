@@ -43,7 +43,7 @@ interface SlashCommandPopoverProps {
   inputValue: string;
   commands: SlashSuggestion[];
   inputElement?: HTMLInputElement | HTMLTextAreaElement | null;
-  onSelect: (command: string) => void;
+  onSelect: (suggestion: SlashSuggestion) => void;
   onClose: () => void;
 }
 
@@ -167,7 +167,7 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
         case "Enter":
           e.preventDefault();
           e.stopPropagation();
-          if (matches[selectedIndex]) onSelect(matches[selectedIndex].name);
+          if (matches[selectedIndex]) onSelect(matches[selectedIndex]);
           break;
         case "Escape":
           e.preventDefault();
@@ -182,22 +182,21 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
 
   if (!isVisible || query === null || matches.length === 0) return null;
 
-  // Position above the input box, left-aligned.  Row height is taller
-  // for entries that carry a description, so estimate based on whether
-  // any match has one.
+  // Pin the popover's bottom edge to the input's top edge (small 6px
+  // gap) and its left edge to the input's left edge.  Using `bottom`
+  // instead of `top + computed height` means the popover stays
+  // correctly anchored regardless of how many rows it currently has
+  // or whether any rows carry a description -- no row-height estimate
+  // needed.
   const inputRect = inputElement?.getBoundingClientRect();
-  const hasDetails = matches.some((m) => m.description || m.options?.length);
-  const rowHeight = hasDetails ? 52 : 32;
-  const top = inputRect
-    ? inputRect.top + window.scrollY - matches.length * rowHeight - 36
-    : 100;
+  const bottom = inputRect ? window.innerHeight - inputRect.top + 6 : 100;
   const left = inputRect ? inputRect.left + window.scrollX : 100;
 
   return (
     <div
       ref={ref}
       className="fixed z-[9999] bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl min-w-72 max-w-lg"
-      style={{ top, left }}
+      style={{ bottom, left }}
     >
       <div className="py-1 max-h-72 overflow-y-auto">
         <div className="px-3 py-1 text-xs text-discord-text-muted font-semibold uppercase tracking-wide border-b border-discord-dark-500">
@@ -212,10 +211,10 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
               data-cmd-index={index}
               className={`px-3 py-1.5 cursor-pointer flex flex-col gap-0.5 transition-colors duration-150 ${
                 isSelected
-                  ? "bg-discord-text-link text-white"
+                  ? "bg-discord-primary text-white"
                   : "text-discord-text-normal hover:bg-discord-dark-200 hover:text-white"
               }`}
-              onClick={() => onSelect(cmd.name)}
+              onClick={() => onSelect(cmd)}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <div className="flex items-center gap-2 flex-wrap">

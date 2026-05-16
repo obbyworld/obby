@@ -2410,13 +2410,20 @@ export const ChatArea: React.FC<{
                       continue;
                     const scope: "channel" | "server" = botScope;
                     for (const c of list) {
-                      if (seen.has(c.name.toLowerCase())) continue;
+                      // Cross-bot collisions intentionally NOT dedup'd:
+                      // both /help entries (helpbot + another) should
+                      // show so the user picks which bot to invoke.
+                      // The picker fills `/cmd@botnick` so dispatch
+                      // routes unambiguously.
                       suggestions.push({
                         name: c.name,
                         description: c.description,
                         options: c.options,
                         source: { kind: "bot", botNick, scope },
                       });
+                      // Reserve the bare name so the server's
+                      // cmdsAvailable can't list a duplicate /HELP
+                      // after a bot's /help.
                       seen.add(c.name.toLowerCase());
                     }
                   }
@@ -2446,10 +2453,16 @@ export const ChatArea: React.FC<{
                     inputValue={slashInputValue}
                     commands={suggestions}
                     inputElement={inputRef.current}
-                    onSelect={(cmd) => {
-                      // Replace the partial command with /<cmd> + space
-                      // and put the cursor right after the space.
-                      const next = `/${cmd} `;
+                    onSelect={(sug) => {
+                      // For bot commands, fill `/<cmd>@<botNick> ` so
+                      // dispatch routes unambiguously even when two
+                      // bots share the same command name.  Client /
+                      // server commands stay bare.
+                      const target =
+                        sug.source.kind === "bot"
+                          ? `@${sug.source.botNick}`
+                          : "";
+                      const next = `/${sug.name}${target} `;
                       applyText(next);
                       cursorPositionRef.current = next.length;
                       setSlashInputValue("");
@@ -2511,12 +2524,20 @@ export const ChatArea: React.FC<{
                     if (botScope === "channel" && selectedChannel && !inChannel)
                       continue;
                     for (const c of list) {
-                      schemas[c.name.toLowerCase()] = {
+                      const entry = {
                         command: c,
-                        source: "bot",
+                        source: "bot" as const,
                         botNick,
                         scope: botScope,
                       };
+                      // Specific key handles `/cmd@bot foo` lookups;
+                      // bare key is a fallback for `/cmd foo` (last
+                      // bot wins, which matches dispatch's fallback
+                      // ordering).
+                      schemas[
+                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
+                      ] = entry;
+                      schemas[c.name.toLowerCase()] = entry;
                     }
                   }
                 }

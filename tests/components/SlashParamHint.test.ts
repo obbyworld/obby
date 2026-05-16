@@ -28,9 +28,12 @@ describe("getActiveParamContext", () => {
     });
   });
 
-  it("strips @botnick targeting from cmdName", () => {
+  it("keeps @botnick targeting in cmdName for composite lookup", () => {
+    // Caller (SlashParamHint) looks up `forecast@weather` first against
+    // the schemas map and falls back to the bare `forecast` on miss --
+    // letting two bots disambiguate their hint without a shared map key.
     expect(getActiveParamContext("/forecast@weather london", 24)).toEqual({
-      cmdName: "forecast",
+      cmdName: "forecast@weather",
       argIndex: 0,
     });
   });
