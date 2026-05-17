@@ -11,7 +11,7 @@
 // publish a schema so there's nothing to hint about.
 
 import type React from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { BotCommand } from "../../types";
 
 export interface SlashParamSchema {
@@ -69,9 +69,41 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
   schemas,
   inputElement,
 }) => {
+  // The parent only re-renders this hint when its own state changes
+  // (and it intentionally avoids re-rendering on every keystroke for
+  // perf reasons -- input value is held in a ref).  Subscribe to the
+  // input element directly so the hint re-evaluates context on every
+  // edit; only then will it correctly disappear when the user edits
+  // the command name to something the schemas don't know about.
+  const [liveValue, setLiveValue] = useState(inputValue);
+  const [liveCursor, setLiveCursor] = useState(cursorPosition);
+
+  useEffect(() => {
+    if (!inputElement) return;
+    const refresh = () => {
+      setLiveValue(inputElement.value);
+      setLiveCursor(inputElement.selectionStart ?? inputElement.value.length);
+    };
+    refresh();
+    inputElement.addEventListener("input", refresh);
+    inputElement.addEventListener("keyup", refresh);
+    inputElement.addEventListener("click", refresh);
+    return () => {
+      inputElement.removeEventListener("input", refresh);
+      inputElement.removeEventListener("keyup", refresh);
+      inputElement.removeEventListener("click", refresh);
+    };
+  }, [inputElement]);
+
+  // Keep parent-provided props as a fallback for the first render
+  // before the listener has fired (and so unit tests that don't wire
+  // an element still get the static read).
+  const effValue = inputElement ? liveValue : inputValue;
+  const effCursor = inputElement ? liveCursor : cursorPosition;
+
   const ctx = useMemo(
-    () => getActiveParamContext(inputValue, cursorPosition),
-    [inputValue, cursorPosition],
+    () => getActiveParamContext(effValue, effCursor),
+    [effValue, effCursor],
   );
 
   if (!ctx) return null;

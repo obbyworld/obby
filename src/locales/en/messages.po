@@ -1991,6 +1991,10 @@ msgstr "Quit Message"
 msgid "Quit the server"
 msgstr "Quit the server"
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "ran"
+msgstr "ran"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "React"
 msgstr "React"

@@ -1992,6 +1992,10 @@ msgstr "Ayrılma Mesajı"
 msgid "Quit the server"
 msgstr "Sunucudan ayrıldı"
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "ran"
+msgstr "çalıştırdı"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "React"
 msgstr "Tepki Ver"

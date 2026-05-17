@@ -22,6 +22,7 @@ import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
+import { BotInvocationChip } from "./BotInvocationChip";
 import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -720,6 +721,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
           )}
 
           <div className="relative min-w-0">
+            <BotInvocationChip
+              tagValue={message.tags?.["+obby.world/invoked-by"]}
+            />
             {message.replyMessage && (
               <MessageReply
                 replyMessage={message.replyMessage}

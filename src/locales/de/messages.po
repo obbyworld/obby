@@ -1992,6 +1992,10 @@ msgstr "Abgangsnachricht"
 msgid "Quit the server"
 msgstr "Den Server verlassen"
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "ran"
+msgstr "führte aus"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "React"
 msgstr "Reagieren"

@@ -1992,6 +1992,10 @@ msgstr "退出消息"
 msgid "Quit the server"
 msgstr "已退出服务器"
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "ran"
+msgstr "執行了"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "React"
 msgstr "添加表情"
