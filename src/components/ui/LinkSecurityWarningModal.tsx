@@ -121,9 +121,14 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
     // Remove this warning from the array
     removeWarning();
 
-    // Resume connection by sending CAP END
-    ircClient.sendRaw(serverId, "CAP END");
-    ircClient.userOnConnect(serverId);
+    // Resume connection by sending CAP END (guarded one-shot so it
+    // doesn't race with the parallel CAP ACK / SASL completion
+    // handlers).
+    if (!ircClient.capNegotiationComplete.get(serverId)) {
+      ircClient.sendRaw(serverId, "CAP END");
+      ircClient.capNegotiationComplete.set(serverId, true);
+      ircClient.userOnConnect(serverId);
+    }
   };
 
   const handleCancel = () => {

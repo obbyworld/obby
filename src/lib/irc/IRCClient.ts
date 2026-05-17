@@ -1870,8 +1870,9 @@ export class IRCClient implements IRCClientContext {
                 `[CAP TIMEOUT] SASL in progress for ${serverId}, not timing out CAP negotiation`,
               );
               // Don't send CAP END - let SASL complete naturally
-            } else {
-              // No SASL in progress - safe to timeout
+            } else if (!this.capNegotiationComplete.get(serverId)) {
+              // No SASL in progress and CAP negotiation hasn't been
+              // finalised by another path -- safe to timeout.
               console.log(
                 `[CAP TIMEOUT] Timeout reached for ${serverId}, ending CAP negotiation`,
               );
@@ -1888,7 +1889,7 @@ export class IRCClient implements IRCClientContext {
         ) {
           this.sendRaw(serverId, "ISUPPORT");
         }
-      } else {
+      } else if (!this.capNegotiationComplete.get(serverId)) {
         // No capabilities to request, end CAP negotiation immediately
         console.log(
           `[CAP LS] No capabilities to request for ${serverId}, ending CAP negotiation`,
@@ -1963,8 +1964,10 @@ export class IRCClient implements IRCClientContext {
           console.log(
             `[CAP ACK] SASL enabled for ${serverId}, waiting for SASL authentication`,
           );
-        } else {
-          // No SASL or SASL not acknowledged - complete CAP negotiation now
+        } else if (!this.capNegotiationComplete.get(serverId)) {
+          // No SASL or SASL not acknowledged, and no other path
+          // (auth.ts, SASL completion, link-security modal) has
+          // already finalised CAP negotiation -- complete it now.
           this.sendRaw(serverId, "CAP END");
           this.capNegotiationComplete.set(serverId, true);
           this.userOnConnect(serverId);

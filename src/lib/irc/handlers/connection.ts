@@ -231,6 +231,7 @@ export function handleSaslSuccess(
   _source: string,
   _parv: string[],
 ): void {
+  if (ctx.capNegotiationComplete.get(serverId)) return;
   ctx.sendRaw(serverId, "CAP END");
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
@@ -242,6 +243,7 @@ export function handleSaslFailure(
   _source: string,
   _parv: string[],
 ): void {
+  if (ctx.capNegotiationComplete.get(serverId)) return;
   ctx.sendRaw(serverId, "CAP END");
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
