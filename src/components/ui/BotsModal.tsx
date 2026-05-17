@@ -18,12 +18,15 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useModalBehavior } from "../../hooks/useModalBehavior";
 import ircClient from "../../lib/ircClient";
 import useStore from "../../store";
-import type { PushBotInfo } from "../../types";
+import type { BotCommand, PushBotInfo } from "../../types";
 
 interface BotsModalProps {
   isOpen: boolean;
   onClose: () => void;
   serverId: string;
+  /** Invoked when the user clicks one of the bot's slash commands.
+   *  ChatArea opens the slash-command param modal in response. */
+  onPickCommand?: (botNick: string, command: BotCommand) => void;
 }
 
 type FilterMode = "all" | "server" | "channel";
@@ -128,9 +131,15 @@ interface BotDetailProps {
   bot: PushBotInfo;
   isOper: boolean;
   onAction: (subcmd: string) => void;
+  onPickCommand?: (command: BotCommand) => void;
 }
 
-const BotDetail: React.FC<BotDetailProps> = ({ bot, isOper, onAction }) => (
+const BotDetail: React.FC<BotDetailProps> = ({
+  bot,
+  isOper,
+  onAction,
+  onPickCommand,
+}) => (
   <div className="flex flex-col gap-4">
     <div className="flex items-baseline gap-2 flex-wrap">
       <h3 className="text-white text-xl font-bold">{bot.nick}</h3>
@@ -205,29 +214,46 @@ const BotDetail: React.FC<BotDetailProps> = ({ bot, isOper, onAction }) => (
         </div>
       ) : (
         <ul className="flex flex-col gap-2">
-          {bot.commands.map((cmd) => (
-            <li
-              key={cmd.name}
-              className="bg-discord-dark-400 rounded px-3 py-2"
-            >
-              <div className="font-mono text-sm text-discord-text-normal">
-                /{cmd.name}
-                {(cmd.options ?? []).map((o) => (
-                  <span
-                    key={o.name}
-                    className="ml-1 text-discord-text-muted text-xs"
-                  >
-                    {o.required ? `<${o.name}>` : `[${o.name}]`}
-                  </span>
-                ))}
-              </div>
-              {cmd.description && (
-                <div className="text-xs text-discord-text-muted mt-1">
-                  {cmd.description}
+          {bot.commands.map((cmd) => {
+            const body = (
+              <>
+                <div className="font-mono text-sm text-discord-text-normal">
+                  /{cmd.name}
+                  {(cmd.options ?? []).map((o) => (
+                    <span
+                      key={o.name}
+                      className="ml-1 text-discord-text-muted text-xs"
+                    >
+                      {o.required ? `<${o.name}>` : `[${o.name}]`}
+                    </span>
+                  ))}
                 </div>
-              )}
-            </li>
-          ))}
+                {cmd.description && (
+                  <div className="text-xs text-discord-text-muted mt-1">
+                    {cmd.description}
+                  </div>
+                )}
+              </>
+            );
+            return onPickCommand ? (
+              <li key={cmd.name}>
+                <button
+                  type="button"
+                  onClick={() => onPickCommand(cmd)}
+                  className="w-full text-left bg-discord-dark-400 hover:bg-discord-dark-500 rounded px-3 py-2 transition-colors"
+                >
+                  {body}
+                </button>
+              </li>
+            ) : (
+              <li
+                key={cmd.name}
+                className="bg-discord-dark-400 rounded px-3 py-2"
+              >
+                {body}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
@@ -295,7 +321,12 @@ const BotDetail: React.FC<BotDetailProps> = ({ bot, isOper, onAction }) => (
 
 // ── main modal ────────────────────────────────────────────────────────
 
-const BotsModal: React.FC<BotsModalProps> = ({ isOpen, onClose, serverId }) => {
+const BotsModal: React.FC<BotsModalProps> = ({
+  isOpen,
+  onClose,
+  serverId,
+  onPickCommand,
+}) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const server = useStore((s) => s.servers.find((srv) => srv.id === serverId));
   const currentUser = useStore((s) => s.currentUser);
@@ -318,8 +349,26 @@ const BotsModal: React.FC<BotsModalProps> = ({ isOpen, onClose, serverId }) => {
 
   const bots: PushBotInfo[] = useMemo(() => {
     if (!server?.bots) return [];
+    // Reachability filter: server-scope bots are always shown
+    // (reachable from any context).  Channel-scope bots only appear
+    // when the local user still shares a channel with them -- this
+    // matches the server-side discovery contract (server-scope on
+    // burst, channel-scope on LOCAL_JOIN of a shared channel) and
+    // hides stale entries left over after the user parts a channel.
+    const joinedChannels = new Set(
+      (server.channels ?? []).map((c) => c.name.toLowerCase()),
+    );
+    const reachable = (b: PushBotInfo) => {
+      // Opers manage bots they may not share a channel with; don't
+      // hide channel-scope entries from them.
+      if (isOper) return true;
+      if (b.scope === "server") return true;
+      if (!b.channels?.length) return false;
+      return b.channels.some((ch) => joinedChannels.has(ch.toLowerCase()));
+    };
     const all = Object.values(server.bots);
     return all
+      .filter(reachable)
       .filter((b) => filter === "all" || b.scope === filter)
       .filter((b) =>
         query
@@ -333,7 +382,7 @@ const BotsModal: React.FC<BotsModalProps> = ({ isOpen, onClose, serverId }) => {
         if (sa !== sb) return sa - sb;
         return a.nick.localeCompare(b.nick);
       });
-  }, [server?.bots, filter, query]);
+  }, [server?.bots, server?.channels, filter, query, isOper]);
 
   const selected = selectedNick
     ? server?.bots?.[selectedNick.toLowerCase()]
@@ -409,7 +458,19 @@ const BotsModal: React.FC<BotsModalProps> = ({ isOpen, onClose, serverId }) => {
   );
 
   const detailPane = selected ? (
-    <BotDetail bot={selected} isOper={isOper} onAction={send} />
+    <BotDetail
+      bot={selected}
+      isOper={isOper}
+      onAction={send}
+      onPickCommand={
+        onPickCommand
+          ? (cmd) => {
+              onPickCommand(selected.nick, cmd);
+              onClose();
+            }
+          : undefined
+      }
+    />
   ) : (
     <div className="m-auto text-sm text-discord-text-muted text-center max-w-sm">
       <FaRobot className="text-4xl text-discord-text-muted/60 mx-auto mb-3" />

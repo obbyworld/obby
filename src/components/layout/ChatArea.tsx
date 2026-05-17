@@ -2678,6 +2678,9 @@ export const ChatArea: React.FC<{
           isOpen={botsModalOpen}
           onClose={() => setBotsModalOpen(false)}
           serverId={selectedServerId}
+          onPickCommand={(botNick, command) => {
+            setParamModal({ botNick, command });
+          }}
         />
       )}
       {selectedServerId && (
