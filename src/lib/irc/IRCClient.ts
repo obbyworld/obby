@@ -552,6 +552,10 @@ export class IRCClient implements IRCClientContext {
     >
   > = new Map(); // Track active batches per server
 
+  /** ISUPPORT accumulator for draft/extended-isupport-0.2's `+=`
+   *  append form.  See IRCClientContext for the contract. */
+  isupportValues: Map<string, Map<string, string>> = new Map();
+
   private ourCaps: string[] = [
     "multi-prefix",
     "message-tags",
@@ -569,6 +573,7 @@ export class IRCClient implements IRCClientContext {
     "draft/chathistory",
     "draft/event-playback",
     "draft/extended-isupport",
+    "draft/extended-isupport-0.2",
     "sasl",
     "cap-notify",
     "draft/channel-rename",
@@ -1877,7 +1882,10 @@ export class IRCClient implements IRCClientContext {
           }
         }, 5000); // 5 second timeout
 
-        if (capsToRequest.includes("draft/extended-isupport")) {
+        if (
+          capsToRequest.includes("draft/extended-isupport") ||
+          capsToRequest.includes("draft/extended-isupport-0.2")
+        ) {
           this.sendRaw(serverId, "ISUPPORT");
         }
       } else {

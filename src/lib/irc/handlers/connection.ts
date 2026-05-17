@@ -1,4 +1,4 @@
-import { parseIsupport } from "../../ircUtils";
+import { parseIsupportTokens } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 
 export function handlePing(
@@ -121,16 +121,49 @@ export function handleIsupport(
   _source: string,
   parv: string[],
 ): void {
-  const capabilities = parseIsupport(parv.join(" "));
-  for (const [key, value] of Object.entries(capabilities)) {
-    if (key === "NETWORK") {
+  // Strip the leading target nick (parv[0]) and any trailing
+  // ":are supported by this server" sentinel; what remains is the
+  // raw space-separated token list.
+  const tokenList = parv
+    .slice(1)
+    .filter((p) => !p.startsWith(":"))
+    .join(" ");
+
+  // Resolve per-server accumulator for the v0.2 `+=` form.  Even
+  // when the server doesn't use append, maintaining the map is
+  // cheap and gives a single place to look up "current ISUPPORT
+  // state" later if other code wants it.
+  let perServer = ctx.isupportValues.get(serverId);
+  if (!perServer) {
+    perServer = new Map();
+    ctx.isupportValues.set(serverId, perServer);
+  }
+
+  for (const tok of parseIsupportTokens(tokenList)) {
+    let value: string;
+    if (tok.op === "delete") {
+      perServer.delete(tok.key);
+      value = "";
+    } else if (tok.op === "append") {
+      value = (perServer.get(tok.key) ?? "") + tok.value;
+      perServer.set(tok.key, value);
+    } else {
+      value = tok.value;
+      perServer.set(tok.key, value);
+    }
+
+    if (tok.key === "NETWORK") {
       const server = ctx.servers.get(serverId);
       if (server) {
         server.networkName = value;
         ctx.servers.set(serverId, server);
       }
     }
-    ctx.triggerEvent("ISUPPORT", { serverId, key, value });
+    // Downstream consumers see the cumulative total each time it
+    // changes -- they don't need to know about append vs set
+    // themselves.  For "delete" they receive value "" alongside the
+    // ISUPPORT key being out of the accumulator.
+    ctx.triggerEvent("ISUPPORT", { serverId, key: tok.key, value });
   }
 }
 
