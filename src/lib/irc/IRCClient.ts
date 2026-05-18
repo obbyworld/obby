@@ -626,6 +626,11 @@ export class IRCClient implements IRCClientContext {
     "labeled-response",
     "draft/read-marker",
     "obsidianirc/cmdslist",
+    // obbyircd vendor caps. Without these the server won't switch on the
+    // batched multi-session WHOIS or the INVITELINK protocol, even if it
+    // advertises support in CAP LS.
+    "obby.world/whois",
+    "obby.world/invitation",
     // Note: unrealircd.org/link-security is informational only, don't request it
   ];
 
