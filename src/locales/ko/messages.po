@@ -1664,6 +1664,10 @@ msgstr "미디어 미리보기가 로드되지 않습니다."
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr ""
+
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "서버를 찾을 수 없습니다."
@@ -2446,7 +2450,7 @@ msgid "This server does not support extended profile metadata (IRCv3 METADATA ex
 msgstr "이 서버는 확장 프로필 메타데이터(IRCv3 METADATA 확장)를 지원하지 않습니다. 아바타, 표시 이름, 상태 등의 추가 필드를 사용할 수 없습니다."
 
 #: src/components/ui/InvitationsPanel.tsx
-msgid "This server doesn't support invite links. Switch to an obbyircd-powered server to manage invitations."
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr ""
 
 #: src/components/ui/AddServerModal.tsx

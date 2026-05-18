@@ -28,7 +28,10 @@ import {
 import useStore from "../../store";
 
 interface Props {
-  serverId: string;
+  /** Active server's ID. `undefined` when no server is selected
+   * (e.g. the user opened settings from the home / discover page);
+   * the panel renders a "select a server" placeholder in that case. */
+  serverId: string | undefined;
 }
 
 const formatRelative = (iso: string): string => {
@@ -42,9 +45,13 @@ const formatRelative = (iso: string): string => {
 };
 
 const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
-  const server = useStore((s) => s.servers.find((srv) => srv.id === serverId));
+  const server = useStore((s) =>
+    serverId ? s.servers.find((srv) => srv.id === serverId) : undefined,
+  );
   const cap = server?.capabilities?.includes("obby.world/invitation");
-  const data = useStore((s) => s.inviteLinks[serverId]);
+  const data = useStore((s) =>
+    serverId ? s.inviteLinks[serverId] : undefined,
+  );
   const loadInvitations = useStore((s) => s.loadInvitations);
   const createInvitation = useStore((s) => s.createInvitation);
   const deleteInvitation = useStore((s) => s.deleteInvitation);
@@ -58,7 +65,7 @@ const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
   // reconnect that re-acks the cap pulls fresh data.
   // biome-ignore lint/correctness/useExhaustiveDependencies: cap toggles trigger reload by design
   useEffect(() => {
-    if (cap) loadInvitations(serverId);
+    if (serverId && cap) loadInvitations(serverId);
   }, [serverId, cap]);
 
   const sortedEntries = useMemo(() => {
@@ -70,12 +77,25 @@ const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
     });
   }, [data?.entries]);
 
+  if (!serverId || !server) {
+    return (
+      <div className="rounded-lg bg-discord-dark-400 p-4 text-sm text-discord-text-muted">
+        <Trans>
+          No server is selected. Pick a server from the sidebar first; invite
+          links are managed per-server.
+        </Trans>
+      </div>
+    );
+  }
+
   if (!cap) {
     return (
       <div className="rounded-lg bg-discord-dark-400 p-4 text-sm text-discord-text-muted">
         <Trans>
-          This server doesn't support invite links. Switch to an
-          obbyircd-powered server to manage invitations.
+          This server doesn't support invite links (the
+          <code className="font-mono text-xs mx-1">obby.world/invitation</code>
+          capability isn't advertised). You can still chat normally; this panel
+          is for obbyircd-powered networks.
         </Trans>
       </div>
     );

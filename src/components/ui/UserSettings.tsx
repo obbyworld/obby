@@ -1588,8 +1588,8 @@ export const UserSettings: React.FC = React.memo(() => {
               {activeCategory === "account" && renderAccountFields()}
               {activeCategory === "media" && renderMediaFields()}
               {activeCategory === "privacy" && renderPrivacyFields()}
-              {activeCategory === "invitations" && currentServer && (
-                <InvitationsPanel serverId={currentServer.id} />
+              {activeCategory === "invitations" && (
+                <InvitationsPanel serverId={currentServer?.id} />
               )}
               {activeCategory !== "profile" &&
                 activeCategory !== "account" &&
