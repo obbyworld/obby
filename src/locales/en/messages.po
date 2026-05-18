@@ -699,6 +699,7 @@ msgid "Connecting..."
 msgstr "Connecting..."
 
 #: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "Connection"
 
@@ -1686,10 +1687,6 @@ msgstr "No media previews are loaded."
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "no message"
 msgstr "no message"
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "No per-session data available for this WHOIS reply."
-msgstr "No per-session data available for this WHOIS reply."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"

@@ -1,3 +1,4 @@
+import type { WhoisSession } from "../../../types";
 import { isChannelTarget } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 import { getNickFromNuh, getTimestampFromTags } from "../utils";
@@ -278,14 +279,48 @@ export function handleBatch(
 
     // Finalize obby.world/whois parent batch: emit a single completion
     // event with the assembled sessions array + summary count.
+    //
+    // The builder may contain real per-session sub-batch records AND
+    // a synthesized "implicit" record populated from per-session
+    // numerics that landed in the parent batch (single-session /
+    // bot / non-privileged-querier path). Prefer the real sub-batch
+    // records when present; fall back to the implicit one only when
+    // it has substantive data (so we don't show an empty Session 1
+    // card for truly minimal WHOIS replies).
     if (batch?.type === "obby.world/whois") {
       const builder = ctx.whoisBuilders.get(serverId)?.get(batchId);
       if (builder) {
-        const sessions = Array.from(builder.sessionsByRef.values()).sort(
+        const realSessions: WhoisSession[] = [];
+        let implicit: WhoisSession | undefined;
+        for (const [key, session] of builder.sessionsByRef.entries()) {
+          if (key === "__implicit__") {
+            implicit = session;
+          } else {
+            realSessions.push(session);
+          }
+        }
+        let sessions: WhoisSession[] = realSessions.sort(
           (a, b) => a.ordinal - b.ordinal,
         );
+        if (sessions.length === 0 && implicit) {
+          // Only emit the implicit if it has at least one populated
+          // field beyond `ordinal`. The bot / single-session case
+          // typically populates host / TLS / idle etc.; if even that
+          // is missing, hide the Sessions section entirely.
+          const hasData = Object.keys(implicit).some(
+            (k) =>
+              k !== "ordinal" &&
+              k !== "total" &&
+              (implicit as unknown as Record<string, unknown>)[k] !== undefined,
+          );
+          if (hasData) sessions = [implicit];
+        }
         const sessionCount =
-          sessions.length > 0 ? sessions.length : builder.summaryCount;
+          builder.summaryCount !== undefined
+            ? builder.summaryCount
+            : sessions.length > 0
+              ? sessions.length
+              : undefined;
         ctx.triggerEvent("OBBY_WHOIS_COMPLETE", {
           serverId,
           nick: builder.target,

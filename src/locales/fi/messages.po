@@ -700,6 +700,7 @@ msgid "Connecting..."
 msgstr "Yhdistetään..."
 
 #: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr ""
 
@@ -1686,10 +1687,6 @@ msgstr "Median esikatseluja ei ladata."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "no message"
-msgstr ""
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "No per-session data available for this WHOIS reply."
 msgstr ""
 
 #: src/components/ui/QuickActions.tsx

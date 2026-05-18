@@ -1,26 +1,55 @@
 import type { WhoisSession } from "../../../types";
 import type { IRCClientContext } from "../IRCClientContext";
 
+/** Reserved key under which we stash the synthesized "single-session"
+ * record on a parent obby.world/whois batch.  A real per-session
+ * sub-batch is keyed by its own batch ref, which is a server-assigned
+ * BATCHLEN-long alphanumeric token — this sentinel can't collide. */
+const IMPLICIT_SESSION_KEY = "__implicit__";
+
 /**
- * If this WHOIS numeric arrived inside an obby.world/whois-session
- * sub-batch (i.e. mtags.batch refers to such a batch and we have a
- * matching builder + session record), return the session record so
- * the caller can populate per-session fields. Otherwise return null,
- * meaning "use the legacy account-level event".
+ * Find the WhoisSession record that this WHOIS numeric should populate.
+ *
+ * - Inside an obby.world/whois-session sub-batch: route to that
+ *   session's record (privileged multi-session view).
+ * - Inside the parent obby.world/whois batch but NOT in a sub-batch:
+ *   route to a lazily-created "implicit" Session 1.  This covers the
+ *   single-session case (regular users, bots), the no-persistence
+ *   case, and the non-privileged-querier case where the server emits
+ *   a single consolidated set of per-session numerics for the
+ *   canonical session inside the parent batch.
+ * - Otherwise (no batch context): return null, meaning "fire the
+ *   legacy account-level event so the old modal still works".
  */
 function sessionFromMtags(
   ctx: IRCClientContext,
   serverId: string,
   mtags: Record<string, string> | undefined,
 ): WhoisSession | null {
-  const subRef = mtags?.batch;
-  if (!subRef) return null;
-  const subBatch = ctx.activeBatches.get(serverId)?.get(subRef);
-  if (subBatch?.type !== "obby.world/whois-session") return null;
-  const parentRef = subBatch.batchTags?.batch;
-  if (!parentRef) return null;
-  const builder = ctx.whoisBuilders.get(serverId)?.get(parentRef);
-  return builder?.sessionsByRef.get(subRef) ?? null;
+  const ref = mtags?.batch;
+  if (!ref) return null;
+  const batch = ctx.activeBatches.get(serverId)?.get(ref);
+  if (!batch) return null;
+
+  if (batch.type === "obby.world/whois-session") {
+    const parentRef = batch.batchTags?.batch;
+    if (!parentRef) return null;
+    const builder = ctx.whoisBuilders.get(serverId)?.get(parentRef);
+    return builder?.sessionsByRef.get(ref) ?? null;
+  }
+
+  if (batch.type === "obby.world/whois") {
+    const builder = ctx.whoisBuilders.get(serverId)?.get(ref);
+    if (!builder) return null;
+    let implicit = builder.sessionsByRef.get(IMPLICIT_SESSION_KEY);
+    if (!implicit) {
+      implicit = { ordinal: 1 };
+      builder.sessionsByRef.set(IMPLICIT_SESSION_KEY, implicit);
+    }
+    return implicit;
+  }
+
+  return null;
 }
 
 /**

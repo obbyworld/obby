@@ -198,7 +198,10 @@ const SessionDetail: React.FC<{
   session: WhoisSession;
   accent: string;
   isYou: boolean;
-}> = ({ session, accent, isYou }) => {
+  /** Suppress the "Session N" header row when redundant (single
+   * session with no `total`, or rendered below a tab strip). */
+  hideHeader?: boolean;
+}> = ({ session, accent, isYou, hideHeader }) => {
   const since = formatAbsoluteTime(session.since);
   const sinceRelative = formatRelativeSince(session.since);
   const signon = formatAbsoluteTime(session.signon);
@@ -208,24 +211,30 @@ const SessionDetail: React.FC<{
       className="rounded-lg border border-discord-dark-400/60 bg-discord-dark-300/60 px-5 py-4"
       style={{ borderTopColor: accent, borderTopWidth: 2 }}
     >
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="text-white font-semibold text-sm flex items-center gap-2">
-          <Trans>Session {session.ordinal}</Trans>
-          {session.total && (
-            <span className="text-discord-text-muted font-normal">
-              <Trans>of {session.total}</Trans>
+      {(!hideHeader || isYou) && (
+        <div className="flex items-center justify-between mb-3">
+          {hideHeader ? (
+            <div />
+          ) : (
+            <h4 className="text-white font-semibold text-sm flex items-center gap-2">
+              <Trans>Session {session.ordinal}</Trans>
+              {session.total && (
+                <span className="text-discord-text-muted font-normal">
+                  <Trans>of {session.total}</Trans>
+                </span>
+              )}
+            </h4>
+          )}
+          {isYou && (
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: accent, color: "#fff" }}
+            >
+              <Trans>This is you</Trans>
             </span>
           )}
-        </h4>
-        {isYou && (
-          <span
-            className="text-xs font-semibold px-2 py-0.5 rounded-full"
-            style={{ background: accent, color: "#fff" }}
-          >
-            <Trans>This is you</Trans>
-          </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {since && (
         <div className="text-xs text-discord-text-muted mb-3">
@@ -768,115 +777,125 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
               </div>
             )}
 
-            {/* SESSIONS */}
-            <div className="px-6 py-4 border-t border-discord-dark-400/40">
-              <div
-                className="text-[0.7rem] uppercase tracking-widest font-semibold mb-3 flex items-center gap-2"
-                style={{ color: accent }}
-              >
-                <Trans>Sessions</Trans>
-                {sessionCount !== undefined && (
-                  <span className="text-discord-text-muted/70 font-normal normal-case">
-                    ({sessionCount})
-                  </span>
+            {/* SESSIONS
+             *
+             * Shown whenever we have at least one session record OR
+             * the privacy-preserving summary count.  For single-session
+             * users / bots / no-persistence accounts the parser
+             * synthesizes an implicit Session 1 from the parent-batch
+             * per-session numerics, so this path is hit there too.
+             * If we have neither (truly minimal WHOIS — only 311/318),
+             * skip the section entirely; account-level info above and
+             * the Status section below are already showing what we
+             * know. */}
+            {(sessions.length > 0 ||
+              (sessionCount !== undefined && sessionCount > 1)) && (
+              <div className="px-6 py-4 border-t border-discord-dark-400/40">
+                <div
+                  className="text-[0.7rem] uppercase tracking-widest font-semibold mb-3 flex items-center gap-2"
+                  style={{ color: accent }}
+                >
+                  {sessions.length > 1 || (sessionCount ?? 1) > 1 ? (
+                    <Trans>Sessions</Trans>
+                  ) : (
+                    <Trans>Connection</Trans>
+                  )}
+                  {sessionCount !== undefined && sessionCount > 1 && (
+                    <span className="text-discord-text-muted/70 font-normal normal-case">
+                      ({sessionCount})
+                    </span>
+                  )}
+                </div>
+
+                {sessions.length === 0 &&
+                  sessionCount !== undefined &&
+                  sessionCount > 1 && (
+                    /* Privacy summary — non-priv querier, we know N but no detail */
+                    <div className="bg-discord-dark-300 rounded-lg p-4 text-sm text-discord-text-muted">
+                      <Trans>
+                        This account is connected from {sessionCount} sessions.
+                        Per-session details are only disclosed to the account
+                        holder or IRC operators.
+                      </Trans>
+                    </div>
+                  )}
+
+                {sessions.length === 1 && activeSession && (
+                  <SessionDetail
+                    session={activeSession}
+                    accent={accent}
+                    isYou={
+                      youSessionOrdinal !== undefined &&
+                      youSessionOrdinal === activeSession.ordinal
+                    }
+                    hideHeader
+                  />
+                )}
+
+                {sessions.length > 1 && (
+                  <>
+                    {/* Tab strip */}
+                    <div className="flex gap-1 overflow-x-auto pb-2 mb-3 -mx-1 px-1">
+                      {sessions.map((s, idx) => {
+                        const isActive = idx === activeSessionIdx;
+                        const isYou =
+                          youSessionOrdinal !== undefined &&
+                          youSessionOrdinal === s.ordinal;
+                        return (
+                          <button
+                            type="button"
+                            key={s.ordinal}
+                            onClick={() => setActiveSessionIdx(idx)}
+                            className={`flex-shrink-0 px-3 py-2 rounded-t-lg text-left transition-colors min-w-[7rem] ${
+                              isActive
+                                ? "bg-discord-dark-300"
+                                : "bg-discord-dark-100/40 hover:bg-discord-dark-300/60"
+                            }`}
+                            style={
+                              isActive
+                                ? { borderBottom: `2px solid ${accent}` }
+                                : { borderBottom: "2px solid transparent" }
+                            }
+                          >
+                            <div className="text-xs font-semibold text-white flex items-center gap-1.5">
+                              {flagFromCC(s.countryCode) || "🌐"}
+                              <span>
+                                <Trans>Session</Trans> {s.ordinal}
+                              </span>
+                              {isYou && (
+                                <span
+                                  className="w-1.5 h-1.5 rounded-full"
+                                  style={{ background: accent }}
+                                  title={t`This is you`}
+                                />
+                              )}
+                            </div>
+                            <div className="text-[10px] text-discord-text-muted mt-0.5">
+                              {s.idle !== undefined
+                                ? t`${formatIdle(s.idle)} idle`
+                                : s.since
+                                  ? formatRelativeSince(s.since)
+                                  : ""}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {activeSession && (
+                      <SessionDetail
+                        session={activeSession}
+                        accent={accent}
+                        isYou={
+                          youSessionOrdinal !== undefined &&
+                          youSessionOrdinal === activeSession.ordinal
+                        }
+                        hideHeader
+                      />
+                    )}
+                  </>
                 )}
               </div>
-
-              {sessions.length === 0 &&
-                sessionCount !== undefined &&
-                sessionCount > 1 && (
-                  /* Privacy summary — non-priv querier, we know N but no detail */
-                  <div className="bg-discord-dark-300 rounded-lg p-4 text-sm text-discord-text-muted">
-                    <Trans>
-                      This account is connected from {sessionCount} sessions.
-                      Per-session details are only disclosed to the account
-                      holder or IRC operators.
-                    </Trans>
-                  </div>
-                )}
-
-              {sessions.length === 0 && sessionCount === undefined && (
-                /* Legacy single-connection fallback */
-                <div className="bg-discord-dark-300 rounded-lg p-4 text-sm text-discord-text-muted italic">
-                  <Trans>
-                    No per-session data available for this WHOIS reply.
-                  </Trans>
-                </div>
-              )}
-
-              {sessions.length === 1 && activeSession && (
-                <SessionDetail
-                  session={activeSession}
-                  accent={accent}
-                  isYou={
-                    youSessionOrdinal !== undefined &&
-                    youSessionOrdinal === activeSession.ordinal
-                  }
-                />
-              )}
-
-              {sessions.length > 1 && (
-                <>
-                  {/* Tab strip */}
-                  <div className="flex gap-1 overflow-x-auto pb-2 mb-3 -mx-1 px-1">
-                    {sessions.map((s, idx) => {
-                      const isActive = idx === activeSessionIdx;
-                      const isYou =
-                        youSessionOrdinal !== undefined &&
-                        youSessionOrdinal === s.ordinal;
-                      return (
-                        <button
-                          type="button"
-                          key={s.ordinal}
-                          onClick={() => setActiveSessionIdx(idx)}
-                          className={`flex-shrink-0 px-3 py-2 rounded-t-lg text-left transition-colors min-w-[7rem] ${
-                            isActive
-                              ? "bg-discord-dark-300"
-                              : "bg-discord-dark-100/40 hover:bg-discord-dark-300/60"
-                          }`}
-                          style={
-                            isActive
-                              ? { borderBottom: `2px solid ${accent}` }
-                              : { borderBottom: "2px solid transparent" }
-                          }
-                        >
-                          <div className="text-xs font-semibold text-white flex items-center gap-1.5">
-                            {flagFromCC(s.countryCode) || "🌐"}
-                            <span>
-                              <Trans>Session</Trans> {s.ordinal}
-                            </span>
-                            {isYou && (
-                              <span
-                                className="w-1.5 h-1.5 rounded-full"
-                                style={{ background: accent }}
-                                title={t`This is you`}
-                              />
-                            )}
-                          </div>
-                          <div className="text-[10px] text-discord-text-muted mt-0.5">
-                            {s.idle !== undefined
-                              ? t`${formatIdle(s.idle)} idle`
-                              : s.since
-                                ? formatRelativeSince(s.since)
-                                : ""}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {activeSession && (
-                    <SessionDetail
-                      session={activeSession}
-                      accent={accent}
-                      isYou={
-                        youSessionOrdinal !== undefined &&
-                        youSessionOrdinal === activeSession.ordinal
-                      }
-                    />
-                  )}
-                </>
-              )}
-            </div>
+            )}
 
             {/* Away / status / swhois / specials */}
             {(user?.isAway ||
