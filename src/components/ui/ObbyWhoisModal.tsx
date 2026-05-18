@@ -44,6 +44,13 @@ interface ObbyWhoisModalProps {
   onClose: () => void;
   serverId: string;
   username: string;
+  /**
+   * Optional back-navigation handler. When provided, the close button
+   * is augmented with a back affordance — used by UserSettings's
+   * "View profile" sub-modal so the user returns to settings rather
+   * than dismissing the whole stack.
+   */
+  onBack?: () => void;
 }
 
 /* ------------------------------------------------------------------ *
@@ -371,6 +378,7 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
   onClose,
   serverId,
   username,
+  onBack,
 }) => {
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
   const [activeSessionIdx, setActiveSessionIdx] = useState(0);
@@ -550,6 +558,17 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
             className="h-1.5 w-full flex-shrink-0"
             style={{ background: accent }}
           />
+
+          {/* Back button (when nested in another modal) */}
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="absolute top-4 left-4 px-2.5 py-1 text-xs font-semibold rounded bg-discord-dark-100/80 hover:bg-discord-dark-100 text-white flex items-center gap-1 transition-colors z-10"
+            >
+              <Trans>← Back</Trans>
+            </button>
+          )}
 
           {/* Close button */}
           <button

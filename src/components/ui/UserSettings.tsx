@@ -34,9 +34,9 @@ import useStore, {
 import AvatarUpload from "./AvatarUpload";
 import EmojiPackAdminModal from "./EmojiPackAdminModal";
 import PersistenceSettingsPanel from "./PersistenceSettingsPanel";
+import ProfileModalRouter from "./ProfileModalRouter";
 import { SettingField } from "./settings/SettingRenderer";
 import { TextInput } from "./TextInput";
-import UserProfileModal from "./UserProfileModal";
 
 // Deep clone utility for settings values
 const deepClone = <T,>(value: T): T => {
@@ -1678,7 +1678,7 @@ export const UserSettings: React.FC = React.memo(() => {
 
         {/* User Profile Modal (preserve existing) */}
         {viewProfileModalOpen && currentServer && currentUser && (
-          <UserProfileModal
+          <ProfileModalRouter
             isOpen={viewProfileModalOpen}
             onClose={() => setViewProfileModalOpen(false)}
             onBack={() => setViewProfileModalOpen(false)}
@@ -1866,7 +1866,7 @@ export const UserSettings: React.FC = React.memo(() => {
       </div>
       {/* User Profile Modal */}
       {viewProfileModalOpen && currentServer && currentUser && (
-        <UserProfileModal
+        <ProfileModalRouter
           isOpen={viewProfileModalOpen}
           onClose={() => setViewProfileModalOpen(false)}
           onBack={() => setViewProfileModalOpen(false)}

@@ -13,8 +13,8 @@ import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import ProfileModalRouter from "../ui/ProfileModalRouter";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   let bgColor = "bg-discord-dark-500"; // Default/offline
@@ -635,7 +635,7 @@ export const MemberList: React.FC = () => {
       />
 
       {selectedServerId && (
-        <UserProfileModal
+        <ProfileModalRouter
           isOpen={userProfileModalOpen}
           onClose={() => setUserProfileModalOpen(false)}
           serverId={selectedServerId}
