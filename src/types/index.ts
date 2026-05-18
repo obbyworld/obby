@@ -427,6 +427,18 @@ export interface WhoisData {
   specialMessages: string[]; // For 320, 378, 379 responses
   secureConnection?: string;
   /**
+   * Account-level user modes (RPL_WHOISMODES 379) and snomask.
+   * Single value for the account: obbyircd mirrors umodes from the
+   * canonical client onto every attached session via the persistence
+   * module's HOOKTYPE_UMODE_CHANGE handler, so per-session umodes are
+   * identical by construction. Server emits 379 in the parent batch
+   * (not in per-session sub-batches). Snomask is only included for
+   * privileged queriers (self / oper) per the underlying
+   * set::whois-details policy.
+   */
+  umodes?: string;
+  snomask?: string;
+  /**
    * Per-session details when the server emits the obby.world/whois
    * batch shape. Set when at least one obby.world/whois-session
    * sub-batch arrived during this WHOIS. Empty / absent for legacy

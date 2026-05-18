@@ -305,8 +305,11 @@ const SessionDetail: React.FC<{
         </div>
       )}
 
-      {/* Security group */}
-      {(session.secureConnection || session.certFp || session.umodes) && (
+      {/* Security group.  Modes / snomask are account-level (synced
+       * canonical->sessions by the server's persistence module), so
+       * they're rendered once in the identity stripe rather than
+       * duplicated in every session card. */}
+      {(session.secureConnection || session.certFp) && (
         <div className="mb-3">
           <div
             className="text-[0.7rem] uppercase tracking-widest font-semibold mb-1 pb-1 border-b"
@@ -338,22 +341,6 @@ const SessionDetail: React.FC<{
               }
               mono
               copy={session.certFp}
-            />
-          )}
-          {session.umodes && (
-            <Row
-              label={<Trans>Modes</Trans>}
-              value={
-                <span>
-                  <code>{session.umodes}</code>
-                  {session.snomask && (
-                    <code className="text-discord-text-muted ml-2">
-                      {session.snomask}
-                    </code>
-                  )}
-                </span>
-              }
-              mono
             />
           )}
         </div>
@@ -640,6 +627,23 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
                 {user?.isIrcOp && (
                   <span className="text-xs font-semibold bg-yellow-900/40 text-yellow-300 px-1.5 py-0.5 rounded">
                     <Trans>IRC OP</Trans>
+                  </span>
+                )}
+                {whoisData?.umodes && (
+                  <span
+                    className="text-xs font-mono bg-discord-dark-300 text-discord-text-muted px-1.5 py-0.5 rounded"
+                    title={
+                      whoisData.snomask
+                        ? `Umodes ${whoisData.umodes}  ·  snomask ${whoisData.snomask}`
+                        : t`User modes`
+                    }
+                  >
+                    {whoisData.umodes}
+                    {whoisData.snomask && (
+                      <span className="text-discord-text-muted/60 ml-1">
+                        {whoisData.snomask}
+                      </span>
+                    )}
                   </span>
                 )}
               </h2>

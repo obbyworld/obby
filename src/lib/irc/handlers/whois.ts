@@ -208,7 +208,22 @@ export function handleWhoisHost(
   ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
 }
 
-/** RPL_WHOISMODES (379): "<umodes> <snomask>" */
+/** RPL_WHOISMODES (379).
+ *
+ * Two wire shapes in the wild:
+ *
+ *   - Standard (parent batch, what obbyircd emits today): trailing
+ *       `:is using modes <umodes> <snomask>`
+ *     so parv[2] is the whole human-readable string.
+ *   - Legacy per-session-sub-batch (older obbyircd builds): positional
+ *       `... 379 querier target <umodes> <snomask>`
+ *     so parv[2]=umodes, parv[3]=snomask.
+ *
+ * Handle both: try to extract "+umodes [snomask]" from parv[2] first,
+ * fall back to positional. Modes are account-level (synced across
+ * sessions by the server's persistence module) so route to the
+ * structured WHOIS_MODES event regardless of which container they
+ * arrived in. */
 export function handleWhoisModes(
   ctx: IRCClientContext,
   serverId: string,
@@ -217,16 +232,30 @@ export function handleWhoisModes(
   mtags: Record<string, string> | undefined,
 ): void {
   const nick = parv[1];
-  const session = sessionFromMtags(ctx, serverId, mtags);
-  if (session) {
-    // Server emits: `<target> <umodes> <snomask>` with snomask possibly empty.
-    // Defensive: try parv[2] then trailing.
-    const umodes = parv[2];
-    const snomask = parv[3];
-    if (umodes) session.umodes = umodes;
-    if (snomask) session.snomask = snomask;
-    return;
+
+  let umodes: string | undefined;
+  let snomask: string | undefined;
+  // Try trailing form: ":is using modes <umodes> [<snomask>]"
+  const trailingMatch = parv[2]?.match(/is using modes\s+(\S+)(?:\s+(\S+))?/i);
+  if (trailingMatch) {
+    umodes = trailingMatch[1];
+    snomask = trailingMatch[2];
+  } else if (parv[2]?.startsWith("+") || parv[2]?.startsWith("-")) {
+    // Positional: parv[2]=umodes parv[3]=snomask
+    umodes = parv[2];
+    snomask = parv[3] || undefined;
   }
+
+  if (umodes) {
+    ctx.triggerEvent("WHOIS_MODES", {
+      serverId,
+      nick,
+      umodes,
+      snomask: snomask || undefined,
+    });
+  }
+  // Also fire WHOIS_SPECIAL so the legacy UserProfileModal's
+  // specialMessages list keeps showing this line on non-obby servers.
   const message = parv.slice(2).join(" ");
   ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
 }

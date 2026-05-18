@@ -132,6 +132,30 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
     });
   });
 
+  ircClient.on("WHOIS_MODES", ({ serverId, nick, umodes, snomask }) => {
+    store.setState((state) => {
+      const serverWhois = state.whoisData[serverId] || {};
+      const existing = serverWhois[nick] || {
+        nick,
+        specialMessages: [],
+        timestamp: Date.now(),
+      };
+      return {
+        whoisData: {
+          ...state.whoisData,
+          [serverId]: {
+            ...serverWhois,
+            [nick]: {
+              ...existing,
+              umodes,
+              snomask: snomask || undefined,
+            },
+          },
+        },
+      };
+    });
+  });
+
   ircClient.on("WHOIS_SECURE", ({ serverId, nick, message }) => {
     store.setState((state) => {
       const serverWhois = state.whoisData[serverId] || {};

@@ -1539,10 +1539,6 @@ msgstr "Moderar usuario"
 msgid "Moderated (+m)"
 msgstr "Moderado (+m)"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "Modes"
-msgstr ""
-
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Modes:"
@@ -2673,6 +2669,10 @@ msgstr "El usuario está autenticado"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "El usuario está ausente"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr ""
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

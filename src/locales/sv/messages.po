@@ -1539,10 +1539,6 @@ msgstr "Moderera användare"
 msgid "Moderated (+m)"
 msgstr "Modererad (+m)"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "Modes"
-msgstr ""
-
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Modes:"
@@ -2673,6 +2669,10 @@ msgstr "Användaren är autentiserad"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Användaren är borta"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr ""
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

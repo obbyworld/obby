@@ -487,6 +487,18 @@ export interface EventMap {
     nick: string;
     message: string;
   };
+  /**
+   * Account-level umodes + snomask (RPL_WHOISMODES 379) carried in
+   * the parent obby.world/whois batch. Sub-batched 379 (legacy
+   * obbyircd) still populates WhoisSession.umodes via the per-numeric
+   * handler.
+   */
+  WHOIS_MODES: {
+    serverId: string;
+    nick: string;
+    umodes: string;
+    snomask?: string;
+  };
   WHOIS_END: {
     serverId: string;
     nick: string;
