@@ -41,6 +41,11 @@ msgstr "{0, plural, one {Показать ещё 1 элемент} few {Пока
 msgid "{0} and {1} are typing..."
 msgstr "{0} и {1} печатают..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr ""
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
@@ -65,6 +70,21 @@ msgstr "{0}, {1} и {2} печатают..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} и ещё {3} печатают..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}d ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}h ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}m ago"
+msgstr ""
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -160,6 +180,10 @@ msgstr "Аккаунт:"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Действие"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr ""
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -287,6 +311,10 @@ msgstr "теперь известен как **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Вы уверены, что хотите удалить это сообщение? Это действие нельзя отменить."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Параметры вложения"
@@ -302,6 +330,10 @@ msgstr "Позиция в аудио"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Аутентифицироваться как IRC-оператор для административного доступа"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr ""
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -346,6 +378,7 @@ msgid "Away Message"
 msgstr "Сообщение об отсутствии"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Отсутствие:"
 
@@ -423,6 +456,10 @@ msgstr "Отменить подключение"
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
 msgstr "Отменить ответ"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr ""
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -512,6 +549,7 @@ msgstr "Канал не будет отображаться в командах 
 msgid "channel-name"
 msgstr "имя-канала"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Каналы"
@@ -559,6 +597,7 @@ msgstr "Нажмите, чтобы скопировать"
 msgid "Click to copy as JSON"
 msgstr "Нажмите для копирования как JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Нажмите, чтобы войти в {channel}"
@@ -643,6 +682,10 @@ msgstr "Настройка звуков уведомлений и выделен
 msgid "Connect"
 msgstr "Подключиться"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr ""
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Подключён к"
@@ -654,6 +697,10 @@ msgstr "Подключение"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Подключение..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -679,6 +726,10 @@ msgstr "Управление отображением медиа и внешне
 msgid "Copied"
 msgstr "Скопировано"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Copy"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "Копировать весь JSON"
@@ -694,6 +745,10 @@ msgstr "Копировать JSON"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Копировать URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr ""
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1061,6 +1116,10 @@ msgstr "Сайт"
 msgid "Host"
 msgstr "Хост"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Хост:"
@@ -1089,6 +1148,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Я вернулся"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Не активен"
@@ -1161,6 +1225,14 @@ msgstr "Пригласить пользователя в {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Только по приглашению (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1202,6 +1274,10 @@ msgstr "Присоединиться к {0}"
 msgid "Join {value}"
 msgstr "Войти в {value}"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr ""
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1214,6 +1290,10 @@ msgstr "подключился и отключился"
 #: src/components/message/EventMessage.tsx
 msgid "Joined the channel"
 msgstr "Присоединился к каналу"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "just now"
+msgstr ""
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -1307,6 +1387,11 @@ msgstr "Загрузка данных WHOIS..."
 msgid "Local Storage:"
 msgstr "Локальное хранилище:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Войти в аккаунт"
@@ -1373,6 +1458,10 @@ msgstr "Предпросмотр медиа"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Участники — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr ""
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -1447,6 +1536,10 @@ msgstr "Модерировать пользователя"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Moderated (+m)"
 msgstr "Модерируемый (+m)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Modes"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -1590,6 +1683,14 @@ msgstr "В этом канале нет медиафайлов"
 msgid "No media previews are loaded."
 msgstr "Предпросмотр медиа не загружается."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "No per-session data available for this WHOIS reply."
+msgstr ""
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Результаты не найдены"
@@ -1651,6 +1752,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC — IRC будущего"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -1940,6 +2046,10 @@ msgstr "Причина (необязательно)"
 msgid "Reconnect to server"
 msgstr "Переподключиться к серверу"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Зарегистрировать аккаунт"
@@ -2069,6 +2179,10 @@ msgstr "Поиск пользователей..."
 msgid "Searching..."
 msgstr "Поиск..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr ""
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Секретный (+s)"
@@ -2080,6 +2194,10 @@ msgstr "Секретный канал"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Защищённое соединение"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr ""
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2187,6 +2305,19 @@ msgstr "Пароль сервера"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Межсерверное взаимодействие может использовать незашифрованные соединения"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr ""
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr ""
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Задать тему…"
@@ -2279,6 +2410,10 @@ msgstr "Показывает весь внешний медиаконтент. �
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Показывает медиафайлы с доверенного файлового хоста вашего сервера. Запросы к внешним сервисам не выполняются."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr ""
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "В сети с"
@@ -2303,6 +2438,7 @@ msgstr "Плеер SoundCloud"
 msgid "Start Private Message"
 msgstr "Начать личный чат"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2354,6 +2490,10 @@ msgstr "Тема, которая будет отображаться для эт
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Пользователь получит приглашение вступить в {channelName}."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr ""
+
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "Это поле обязательно для заполнения"
@@ -2361,6 +2501,11 @@ msgstr "Это поле обязательно для заполнения"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Срок действия этого изображения истёк"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
@@ -2377,6 +2522,10 @@ msgstr "Время (мин)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time Window (seconds)"
 msgstr "Временное окно (секунды)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr ""
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx

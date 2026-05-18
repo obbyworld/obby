@@ -11,6 +11,7 @@ import type {
   MetadataValueEvent,
   Server,
   User,
+  WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
 import { isChannelTarget, parseMessageTags } from "../ircUtils";
@@ -490,6 +491,21 @@ export interface EventMap {
     serverId: string;
     nick: string;
   };
+  /**
+   * Fired when an obby.world/whois parent batch closes for `nick`.
+   * Carries the assembled per-session detail (one entry per
+   * obby.world/whois-session sub-batch) plus any session-count
+   * summary the server emitted for non-privileged queriers.
+   * The legacy per-numeric WHOIS_* events still fire for the
+   * parent-batch numerics, so account-level fields stay populated
+   * via the existing handlers.
+   */
+  OBBY_WHOIS_COMPLETE: {
+    serverId: string;
+    nick: string;
+    sessions: WhoisSession[];
+    sessionCount?: number;
+  };
   rateLimited: {
     serverId: string;
     message: string;
@@ -551,6 +567,17 @@ export class IRCClient implements IRCClientContext {
       }
     >
   > = new Map(); // Track active batches per server
+  whoisBuilders: Map<
+    string,
+    Map<
+      string,
+      {
+        target: string;
+        sessionsByRef: Map<string, WhoisSession>;
+        summaryCount?: number;
+      }
+    >
+  > = new Map();
 
   private ourCaps: string[] = [
     "multi-prefix",
@@ -598,6 +625,11 @@ export class IRCClient implements IRCClientContext {
     "labeled-response",
     "draft/read-marker",
     "obsidianirc/cmdslist",
+    // Vendor: opt in to obby.world/whois batch-wrapped WHOIS replies
+    // (parent obby.world/whois batch + nested obby.world/whois-session
+    // sub-batches). Without this cap a server implementing the spec
+    // falls back to legacy unwrapped numerics, which we still parse.
+    "obby.world/whois",
     // Note: unrealircd.org/link-security is informational only, don't request it
   ];
 

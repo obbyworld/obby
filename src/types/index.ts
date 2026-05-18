@@ -370,6 +370,49 @@ export type JsonValue =
   | { [key: string]: JsonValue }
   | JsonValue[];
 
+/**
+ * Per-session detail captured from the obby.world/whois-session
+ * sub-batches when the server emits the obby.world/whois batch shape
+ * and the querier is privileged enough to receive per-session info
+ * (i.e. they are the target or an IRC operator).
+ *
+ * See doc/specs/whois-batch.md in the obbyircd repo.
+ */
+export interface WhoisSession {
+  /** 1-based session ordinal as emitted by the server */
+  ordinal: number;
+  /** Total session count for this WHOIS, if the server included it */
+  total?: number;
+  /** ISO-8601 timestamp of when this session's connection registered */
+  since?: string;
+  /** Real hostname (from 378) */
+  realhost?: string;
+  /** IP address (from 378) */
+  ip?: string;
+  /** Ident / username for this session (from 378) */
+  ident?: string;
+  /** Umodes (from 379) */
+  umodes?: string;
+  /** Snomask (from 379), opers only */
+  snomask?: string;
+  /** TLS state description (from 671) */
+  secureConnection?: string;
+  /** TLS client cert fingerprint (from 276), if any */
+  certFp?: string;
+  /** Idle seconds (from 317) */
+  idle?: number;
+  /** Signon UNIX timestamp (from 317) */
+  signon?: number;
+  /** GeoIP country code (from 344) */
+  countryCode?: string;
+  /** GeoIP country name (from 344) */
+  countryName?: string;
+  /** GeoIP ASN (from 569) */
+  asn?: number;
+  /** GeoIP AS name (from 569) */
+  asname?: string;
+}
+
 export interface WhoisData {
   nick: string;
   username?: string;
@@ -383,6 +426,20 @@ export interface WhoisData {
   account?: string;
   specialMessages: string[]; // For 320, 378, 379 responses
   secureConnection?: string;
+  /**
+   * Per-session details when the server emits the obby.world/whois
+   * batch shape. Set when at least one obby.world/whois-session
+   * sub-batch arrived during this WHOIS. Empty / absent for legacy
+   * single-connection servers.
+   */
+  sessions?: WhoisSession[];
+  /**
+   * Total live-session count for the queried account, derived from
+   * either `sessions.length` OR the server's privacy-preserving
+   * summary line "is connected from N sessions" for non-privileged
+   * queriers (only the count is known, not per-session detail).
+   */
+  sessionCount?: number;
   timestamp: number; // When this data was fetched
   isComplete?: boolean; // Whether we've received WHOIS_END (318)
 }

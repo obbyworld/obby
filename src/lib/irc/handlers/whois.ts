@@ -1,4 +1,53 @@
+import type { WhoisSession } from "../../../types";
 import type { IRCClientContext } from "../IRCClientContext";
+
+/**
+ * If this WHOIS numeric arrived inside an obby.world/whois-session
+ * sub-batch (i.e. mtags.batch refers to such a batch and we have a
+ * matching builder + session record), return the session record so
+ * the caller can populate per-session fields. Otherwise return null,
+ * meaning "use the legacy account-level event".
+ */
+function sessionFromMtags(
+  ctx: IRCClientContext,
+  serverId: string,
+  mtags: Record<string, string> | undefined,
+): WhoisSession | null {
+  const subRef = mtags?.batch;
+  if (!subRef) return null;
+  const subBatch = ctx.activeBatches.get(serverId)?.get(subRef);
+  if (subBatch?.type !== "obby.world/whois-session") return null;
+  const parentRef = subBatch.batchTags?.batch;
+  if (!parentRef) return null;
+  const builder = ctx.whoisBuilders.get(serverId)?.get(parentRef);
+  return builder?.sessionsByRef.get(subRef) ?? null;
+}
+
+/**
+ * Inspect a parent-batch 320 numeric for the server's privacy-
+ * preserving "is connected from N sessions" summary line and stash
+ * the count on the parent builder so OBBY_WHOIS_COMPLETE can carry
+ * it.  Returns true if we matched, so the caller can decide whether
+ * to also fire the legacy WHOIS_SPECIAL event.  The line is in the
+ * parent batch (not a sub-batch).
+ */
+function tryCaptureSessionCountSummary(
+  ctx: IRCClientContext,
+  serverId: string,
+  mtags: Record<string, string> | undefined,
+  message: string,
+): boolean {
+  const parentRef = mtags?.batch;
+  if (!parentRef) return false;
+  const parentBatch = ctx.activeBatches.get(serverId)?.get(parentRef);
+  if (parentBatch?.type !== "obby.world/whois") return false;
+  // "is connected from 3 sessions"
+  const m = message.match(/is connected from\s+(\d+)\s+session(?:s)?/i);
+  if (!m) return false;
+  const builder = ctx.whoisBuilders.get(serverId)?.get(parentRef);
+  if (builder) builder.summaryCount = Number.parseInt(m[1], 10);
+  return true;
+}
 
 export function handleWhoisUser(
   ctx: IRCClientContext,
@@ -43,11 +92,17 @@ export function handleWhoisIdle(
   serverId: string,
   _source: string,
   parv: string[],
-  _mtags: Record<string, string> | undefined,
+  mtags: Record<string, string> | undefined,
 ): void {
   const nick = parv[1];
   const idle = Number.parseInt(parv[2], 10);
   const signon = Number.parseInt(parv[3], 10);
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  if (session) {
+    session.idle = idle;
+    session.signon = signon;
+    return;
+  }
   ctx.triggerEvent("WHOIS_IDLE", {
     serverId,
     nick,
@@ -84,9 +139,136 @@ export function handleWhoisSpecial(
   serverId: string,
   _source: string,
   parv: string[],
-  _mtags: Record<string, string> | undefined,
+  mtags: Record<string, string> | undefined,
 ): void {
   const nick = parv[1];
+  const message = parv.slice(2).join(" ");
+  // Privacy summary "is connected from N sessions" -- emitted in the
+  // parent obby.world/whois batch when the querier is not privileged
+  // to see per-session sub-batches but the account has 2+ sessions.
+  // Capture the count for OBBY_WHOIS_COMPLETE; still also fire
+  // WHOIS_SPECIAL so the legacy specialMessages list contains the
+  // line for back-compat with the old modal.
+  tryCaptureSessionCountSummary(ctx, serverId, mtags, message);
+  ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
+}
+
+/** RPL_WHOISHOST (378): "is connecting from <ident>@<host> <ip>" */
+export function handleWhoisHost(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  mtags: Record<string, string> | undefined,
+): void {
+  const nick = parv[1];
+  const message = parv.slice(2).join(" ");
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  if (session) {
+    // "is connecting from <ident>@<realhost> <ip>"
+    const m = message.match(/is connecting from\s+(\S+)@(\S+)(?:\s+(\S+))?/i);
+    if (m) {
+      session.ident = m[1] === "*" ? undefined : m[1];
+      session.realhost = m[2];
+      if (m[3]) session.ip = m[3];
+    }
+    return;
+  }
+  // Legacy / unbatched: fall through to WHOIS_SPECIAL so the old
+  // modal's specialMessages list still gets it.
+  ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
+}
+
+/** RPL_WHOISMODES (379): "<umodes> <snomask>" */
+export function handleWhoisModes(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  mtags: Record<string, string> | undefined,
+): void {
+  const nick = parv[1];
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  if (session) {
+    // Server emits: `<target> <umodes> <snomask>` with snomask possibly empty.
+    // Defensive: try parv[2] then trailing.
+    const umodes = parv[2];
+    const snomask = parv[3];
+    if (umodes) session.umodes = umodes;
+    if (snomask) session.snomask = snomask;
+    return;
+  }
+  const message = parv.slice(2).join(" ");
+  ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
+}
+
+/** RPL_WHOISCERTFP (276): "has client certificate fingerprint <fp>" */
+export function handleWhoisCertfp(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  mtags: Record<string, string> | undefined,
+): void {
+  const nick = parv[1];
+  const message = parv.slice(2).join(" ");
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  if (session) {
+    const m = message.match(/has client certificate fingerprint\s+(\S+)/i);
+    if (m) session.certFp = m[1];
+    return;
+  }
+  ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
+}
+
+/** RPL_WHOISCOUNTRY (344): "<cc> :is connecting from <country-name>" */
+export function handleWhoisCountry(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  mtags: Record<string, string> | undefined,
+): void {
+  const nick = parv[1];
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  // parv[2] is country code, trailing is "is connecting from <country name>"
+  const countryCode = parv[2];
+  const trailing = parv.slice(3).join(" ");
+  const nameMatch = trailing.match(/is connecting from\s+(.+)/i);
+  const countryName = nameMatch?.[1];
+  if (session) {
+    if (countryCode) session.countryCode = countryCode;
+    if (countryName) session.countryName = countryName;
+    return;
+  }
+  const message = parv.slice(2).join(" ");
+  ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
+}
+
+/**
+ * RPL_WHOISASN (569): "<asn> :is connecting from AS<asn> [<asname>]"
+ * The obbyircd format we ship pads parv[2] with the numeric ASN and
+ * encodes the AS name in brackets at the tail.
+ */
+export function handleWhoisAsn(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  mtags: Record<string, string> | undefined,
+): void {
+  const nick = parv[1];
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  const asnRaw = Number.parseInt(parv[2] ?? "", 10);
+  const asn = Number.isFinite(asnRaw) && asnRaw > 0 ? asnRaw : undefined;
+  const trailing = parv.slice(3).join(" ");
+  const nameMatch = trailing.match(/\[([^\]]+)\]/);
+  const asname = nameMatch?.[1];
+  if (session) {
+    if (asn !== undefined) session.asn = asn;
+    if (asname) session.asname = asname;
+    return;
+  }
   const message = parv.slice(2).join(" ");
   ctx.triggerEvent("WHOIS_SPECIAL", { serverId, nick, message });
 }
@@ -108,10 +290,15 @@ export function handleWhoisSecure(
   serverId: string,
   _source: string,
   parv: string[],
-  _mtags: Record<string, string> | undefined,
+  mtags: Record<string, string> | undefined,
 ): void {
   const nick = parv[1];
   const message = parv.slice(2).join(" ");
+  const session = sessionFromMtags(ctx, serverId, mtags);
+  if (session) {
+    session.secureConnection = message;
+    return;
+  }
   ctx.triggerEvent("WHOIS_SECURE", { serverId, nick, message });
 }
 

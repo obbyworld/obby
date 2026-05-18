@@ -41,6 +41,11 @@ msgstr "{0, plural, one {1 weiteres Element anzeigen} other {{1} weitere Element
 msgid "{0} and {1} are typing..."
 msgstr "{0} und {1} tippen..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr ""
+
 #. placeholder {0}: typingUsers[0].username
 #: src/components/layout/ChatArea.tsx
 msgid "{0} is typing..."
@@ -65,6 +70,21 @@ msgstr "{0}, {1} und {2} tippen..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} und {3} weitere tippen..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}d ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}h ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0}m ago"
+msgstr ""
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -160,6 +180,10 @@ msgstr "Konto:"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Aktion"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr ""
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -287,6 +311,10 @@ msgstr "ist jetzt bekannt als **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Bist du sicher, dass du diese Nachricht löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Anhangsoptionen"
@@ -302,6 +330,10 @@ msgstr "Audioposition"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Als IRC-Operator für Verwaltungszugriff authentifizieren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr ""
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -346,6 +378,7 @@ msgid "Away Message"
 msgstr "Abwesenheitsnachricht"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Abwesend:"
 
@@ -423,6 +456,10 @@ msgstr "Verbindung abbrechen"
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
 msgstr "Antwort abbrechen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr ""
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -512,6 +549,7 @@ msgstr "Kanal erscheint nicht in LIST- oder NAMES-Befehlen"
 msgid "channel-name"
 msgstr "Kanalname"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanäle"
@@ -559,6 +597,7 @@ msgstr "Zum Kopieren klicken"
 msgid "Click to copy as JSON"
 msgstr "Klicken zum Kopieren als JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Klicke, um {channel} beizutreten"
@@ -643,6 +682,10 @@ msgstr "Benachrichtigungstöne und Hervorhebungen konfigurieren"
 msgid "Connect"
 msgstr "Verbinden"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr ""
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Verbunden mit"
@@ -654,6 +697,10 @@ msgstr "Verbinden..."
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Verbinde..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -679,6 +726,10 @@ msgstr "Medienanzeige und externe Inhalte steuern"
 msgid "Copied"
 msgstr "Kopiert"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Copy"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "Gesamtes JSON kopieren"
@@ -694,6 +745,10 @@ msgstr "JSON kopieren"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URL kopieren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr ""
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1061,6 +1116,10 @@ msgstr "Homepage"
 msgid "Host"
 msgstr "Host"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
@@ -1089,6 +1148,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Ich bin zurück"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Inaktiv"
@@ -1161,6 +1225,14 @@ msgstr "Benutzer zu {channelName} einladen"
 msgid "Invite-Only (+i)"
 msgstr "Nur auf Einladung (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1202,6 +1274,10 @@ msgstr "{0} beitreten"
 msgid "Join {value}"
 msgstr "{value} beitreten"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr ""
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1214,6 +1290,10 @@ msgstr "ist beigetreten und gegangen"
 #: src/components/message/EventMessage.tsx
 msgid "Joined the channel"
 msgstr "Dem Kanal beigetreten"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "just now"
+msgstr ""
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -1307,6 +1387,11 @@ msgstr "WHOIS-Daten werden geladen..."
 msgid "Local Storage:"
 msgstr "Lokaler Speicher:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Bei einem Konto anmelden"
@@ -1373,6 +1458,10 @@ msgstr "Medienvorschauen"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Mitglieder — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr ""
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -1447,6 +1536,10 @@ msgstr "Benutzer moderieren"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Moderated (+m)"
 msgstr "Moderiert (+m)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Modes"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -1590,6 +1683,14 @@ msgstr "Keine Medien in diesem Kanal"
 msgid "No media previews are loaded."
 msgstr "Es werden keine Medienvorschauen geladen."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "No per-session data available for this WHOIS reply."
+msgstr ""
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
@@ -1651,6 +1752,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - IRC in die Zukunft bringen"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -1940,6 +2046,10 @@ msgstr "Grund (optional)"
 msgid "Reconnect to server"
 msgstr "Erneut mit Server verbinden"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Konto registrieren"
@@ -2069,6 +2179,10 @@ msgstr "Benutzer suchen..."
 msgid "Searching..."
 msgstr "Suche..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr ""
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Geheim (+s)"
@@ -2080,6 +2194,10 @@ msgstr "Geheimer Kanal"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Sichere Verbindung"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr ""
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2187,6 +2305,19 @@ msgstr "Server-Passwort"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Die Server-zu-Server-Kommunikation verwendet möglicherweise unverschlüsselte Verbindungen"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr ""
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr ""
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr ""
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Thema setzen…"
@@ -2279,6 +2410,10 @@ msgstr "Zeigt alle externen Medien. Jede URL kann eine Anfrage an einen unbekann
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Zeigt Medien vom vertrauenswürdigen Datei-Host deines Servers. Es werden keine Anfragen an externe Dienste gestellt."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr ""
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Angemeldet seit"
@@ -2303,6 +2438,7 @@ msgstr "SoundCloud-Player"
 msgid "Start Private Message"
 msgstr "Privatnachricht starten"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2354,6 +2490,10 @@ msgstr "Das Thema für diesen Kanal. Alle Benutzer können es sehen."
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Der Benutzer erhält eine Einladung, {channelName} beizutreten."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr ""
+
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
@@ -2361,6 +2501,11 @@ msgstr "Dieses Feld ist erforderlich"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Dieses Bild ist abgelaufen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
@@ -2377,6 +2522,10 @@ msgstr "Zeit (Min)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time Window (seconds)"
 msgstr "Zeitfenster (Sekunden)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr ""
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx

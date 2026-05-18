@@ -192,6 +192,36 @@ export function handleBatch(
       batchTags: mtags,
     });
 
+    // Begin tracking obby.world/whois parent batch.  Sessions accumulate
+    // into builder.sessionsByRef as obby.world/whois-session sub-batches
+    // open and per-session numerics arrive.
+    if (batchType === "obby.world/whois") {
+      const target = parameters[0] ?? "";
+      if (!ctx.whoisBuilders.has(serverId)) {
+        ctx.whoisBuilders.set(serverId, new Map());
+      }
+      ctx.whoisBuilders.get(serverId)?.set(batchId, {
+        target,
+        sessionsByRef: new Map(),
+      });
+    } else if (batchType === "obby.world/whois-session") {
+      // Sub-batch: identify parent via @batch mtag, create the session
+      // record up front so per-numeric handlers can find it by sub-ref.
+      const parentRef = mtags?.batch;
+      const parent = parentRef
+        ? ctx.whoisBuilders.get(serverId)?.get(parentRef)
+        : undefined;
+      if (parent) {
+        const ordinal = Number.parseInt(parameters[0] ?? "0", 10) || 0;
+        const totalRaw = Number.parseInt(parameters[1] ?? "", 10);
+        parent.sessionsByRef.set(batchId, {
+          ordinal,
+          total: Number.isFinite(totalRaw) ? totalRaw : undefined,
+          since: mtags?.["obby.world/since"],
+        });
+      }
+    }
+
     ctx.triggerEvent("BATCH_START", {
       serverId,
       batchId,
@@ -244,6 +274,26 @@ export function handleBatch(
             ? new Date(Math.min(...batch.timestamps.map((t) => t.getTime())))
             : getTimestampFromTags(mtags)),
       });
+    }
+
+    // Finalize obby.world/whois parent batch: emit a single completion
+    // event with the assembled sessions array + summary count.
+    if (batch?.type === "obby.world/whois") {
+      const builder = ctx.whoisBuilders.get(serverId)?.get(batchId);
+      if (builder) {
+        const sessions = Array.from(builder.sessionsByRef.values()).sort(
+          (a, b) => a.ordinal - b.ordinal,
+        );
+        const sessionCount =
+          sessions.length > 0 ? sessions.length : builder.summaryCount;
+        ctx.triggerEvent("OBBY_WHOIS_COMPLETE", {
+          serverId,
+          nick: builder.target,
+          sessions,
+          sessionCount,
+        });
+        ctx.whoisBuilders.get(serverId)?.delete(batchId);
+      }
     }
 
     serverBatches?.delete(batchId);

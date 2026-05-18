@@ -53,6 +53,7 @@ import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import ObbyWhoisModal from "../ui/ObbyWhoisModal";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import {
@@ -2486,14 +2487,29 @@ export const ChatArea: React.FC<{
           channelName={selectedChannel.name}
         />
       )}
-      {selectedServerId && (
-        <UserProfileModal
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
-        />
-      )}
+      {selectedServerId &&
+        (() => {
+          // Route to the new obby.world/whois-aware modal only when the
+          // server has negotiated that cap; otherwise keep the legacy
+          // UserProfileModal so non-obbyircd servers still work.
+          const srv = servers.find((s) => s.id === selectedServerId);
+          const useObbyModal = srv?.capabilities?.includes("obby.world/whois");
+          return useObbyModal ? (
+            <ObbyWhoisModal
+              isOpen={userProfileModalOpen}
+              onClose={() => setUserProfileModalOpen(false)}
+              serverId={selectedServerId}
+              username={selectedProfileUsername}
+            />
+          ) : (
+            <UserProfileModal
+              isOpen={userProfileModalOpen}
+              onClose={() => setUserProfileModalOpen(false)}
+              serverId={selectedServerId}
+              username={selectedProfileUsername}
+            />
+          );
+        })()}
       {/* Image Preview Dialog */}
       <ImagePreviewModal
         isOpen={imagePreview.isOpen}

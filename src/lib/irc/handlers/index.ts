@@ -100,10 +100,15 @@ import {
 import {
   handleWhoEnd,
   handleWhoisAccount,
+  handleWhoisAsn,
   handleWhoisBot,
+  handleWhoisCertfp,
   handleWhoisChannels,
+  handleWhoisCountry,
   handleWhoisEnd,
+  handleWhoisHost,
   handleWhoisIdle,
+  handleWhoisModes,
   handleWhoisSecure,
   handleWhoisServer,
   handleWhoisSpecial,
@@ -249,10 +254,16 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleWhoisChannels(ctx, serverId, source, parv, mtags),
   "320": (ctx, serverId, source, parv, mtags) =>
     handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+  "276": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisCertfp(ctx, serverId, source, parv, mtags),
   "378": (ctx, serverId, source, parv, mtags) =>
-    handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+    handleWhoisHost(ctx, serverId, source, parv, mtags),
   "379": (ctx, serverId, source, parv, mtags) =>
-    handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+    handleWhoisModes(ctx, serverId, source, parv, mtags),
+  "344": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisCountry(ctx, serverId, source, parv, mtags),
+  "569": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisAsn(ctx, serverId, source, parv, mtags),
   "330": (ctx, serverId, source, parv, mtags) =>
     handleWhoisAccount(ctx, serverId, source, parv, mtags),
   "671": (ctx, serverId, source, parv, mtags) =>

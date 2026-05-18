@@ -185,6 +185,43 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
     });
   });
 
+  // Fires when an obby.world/whois parent batch closes. Merges the
+  // assembled per-session detail + session-count summary into the
+  // existing WhoisData entry. The legacy per-numeric handlers above
+  // have already filled the account-level fields; this only adds the
+  // multi-session-specific bits.
+  ircClient.on(
+    "OBBY_WHOIS_COMPLETE",
+    ({ serverId, nick, sessions, sessionCount }) => {
+      store.setState((state) => {
+        const serverWhois = state.whoisData[serverId] || {};
+        const existingData = serverWhois[nick] || {
+          nick,
+          specialMessages: [],
+          timestamp: Date.now(),
+        };
+        return {
+          whoisData: {
+            ...state.whoisData,
+            [serverId]: {
+              ...serverWhois,
+              [nick]: {
+                ...existingData,
+                sessions: sessions.length > 0 ? sessions : undefined,
+                sessionCount:
+                  sessionCount !== undefined
+                    ? sessionCount
+                    : sessions.length > 0
+                      ? sessions.length
+                      : undefined,
+              },
+            },
+          },
+        };
+      });
+    },
+  );
+
   ircClient.on("WHOIS_END", ({ serverId, nick }) => {
     // Mark the whois data as complete
     console.log(`WHOIS completed for ${nick} on server ${serverId}`);
