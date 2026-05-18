@@ -66,6 +66,21 @@ msgstr "{0}, {1} și {2} scriu..."
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} și alți {3} scriu..."
 
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 dată} few {{c} ori} other {{c} ori}}"
@@ -97,6 +112,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -542,6 +561,10 @@ msgstr "Șterge"
 msgid "Clear search"
 msgstr "Șterge căutarea"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -639,6 +662,10 @@ msgstr "Configurați reguli detaliate de protecție flood. Fiecare regulă speci
 msgid "Configure notification sounds and highlights"
 msgstr "Configurează sunetele de notificare și evidențierile"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
 msgstr "Conectare"
@@ -676,8 +703,13 @@ msgid "Control media display and external content"
 msgstr "Controlează afișarea media și conținutul extern"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Copiat"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -691,9 +723,25 @@ msgstr "Copiați ieșirea formatată"
 msgid "Copy JSON"
 msgstr "Copiați JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr ""
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Copiază URL"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr ""
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr ""
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr ""
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -748,6 +796,7 @@ msgid "Default Nickname"
 msgstr "Pseudonim implicit"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Șterge"
 
@@ -763,9 +812,17 @@ msgstr "Șterge mesaj"
 msgid "Delete Private Chat"
 msgstr "Șterge conversația privată"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Ștergeți acest mesaj? Această acțiune nu poate fi anulată."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -1140,6 +1197,7 @@ msgid "Invalid value"
 msgstr "Valoare invalidă"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Invitații"
 
@@ -1215,6 +1273,10 @@ msgstr "s-a alăturat și a ieșit"
 msgid "Joined the channel"
 msgstr "S-a alăturat canalului"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr ""
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1248,6 +1310,10 @@ msgstr "Aflați mai multe despre profiluri →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Părăsește canalul"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr ""
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1484,6 +1550,10 @@ msgstr "Activează sau dezactivează sunetele de notificare"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
 msgstr "Nume:"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
@@ -1940,6 +2010,11 @@ msgstr "Motiv (opțional)"
 msgid "Reconnect to server"
 msgstr "Reconectează-te la server"
 
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Înregistrează un cont"
@@ -2362,9 +2437,17 @@ msgstr "Acest câmp este obligatoriu"
 msgid "This image has expired"
 msgstr "Această imagine a expirat"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Acest server nu acceptă metadate extinse de profil (extensia IRCv3 METADATA). Câmpurile precum avatar, nume afișat și stare nu sunt disponibile."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links. Switch to an obbyircd-powered server to manage invitations."
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2511,6 +2594,10 @@ msgstr "Utilizați WebSocket în loc de TCP brut"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Wildcard: * se potrivește oricărei secvențe, ? unui singur caracter. Exemple: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2701,6 +2788,10 @@ msgstr "Ești un Operator IRC"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "Ai modificări nesalvate. Ești sigur că vrei să închizi fără să salvezi?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr ""
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "L-ai invitat pe {target} să se alăture la {channel}"
@@ -2716,6 +2807,10 @@ msgstr "Numele de utilizator al contului dvs. pentru autentificare"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Pseudonimul dvs. implicit pentru toate serverele"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

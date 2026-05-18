@@ -7,6 +7,7 @@ import {
   registerAllProtocolHandlers,
 } from "../protocol";
 import type {
+  InviteLink,
   Message,
   PrivateChat,
   Server,
@@ -551,6 +552,21 @@ export interface AppState {
   metadataChangeCounter: number; // Counter incremented on metadata changes for reactivity
   // WHOIS data cache
   whoisData: Record<string, Record<string, WhoisData>>; // serverId -> nickname -> whois data
+  /**
+   * Cached state of `INVITELINK LIST` per server.  Populated as the
+   * server streams `INVITELINK ENTRY` rows and terminated by the
+   * `NOTE INVITELINK LIST_END` standard-reply.  `loading` flips
+   * false at LIST_END (success) or when a FAIL is received.
+   */
+  inviteLinks: Record<
+    string,
+    {
+      entries: InviteLink[];
+      loading: boolean;
+      error?: string;
+      lastFetched?: number;
+    }
+  >;
   // Account registration state
   pendingRegistration: {
     serverId: string;
@@ -889,6 +905,14 @@ export interface AppState {
   addInputAttachment: (attachment: Attachment) => void;
   removeInputAttachment: (attachmentId: string) => void;
   clearInputAttachments: () => void;
+  // obbyircd INVITELINK management
+  loadInvitations: (serverId: string) => void;
+  createInvitation: (
+    serverId: string,
+    channel?: string,
+    description?: string,
+  ) => void;
+  deleteInvitation: (serverId: string, shareId: string) => void;
   // Metadata actions
   metadataGet: (serverId: string, target: string, keys: string[]) => void;
   metadataList: (serverId: string, target: string) => void;
@@ -968,6 +992,7 @@ const useStore = create<AppState>((set, get) => ({
   userMetadataRequested: {},
   metadataChangeCounter: 0,
   whoisData: {},
+  inviteLinks: {},
   pendingRegistration: null,
   pendingTotpStepUp: null,
   twofaStatus: {},
@@ -1355,6 +1380,40 @@ const useStore = create<AppState>((set, get) => ({
         ui: newUi,
       };
     });
+  },
+
+  // obbyircd INVITELINK actions: thin wrappers over sendRaw that
+  // also flip the loading flag so UI components can render
+  // spinners.  Replies stream back asynchronously and are merged in
+  // the dedicated invitelink store-handler (store/handlers/invitelink.ts).
+  loadInvitations: (serverId) => {
+    set((state) => ({
+      inviteLinks: {
+        ...state.inviteLinks,
+        [serverId]: {
+          ...(state.inviteLinks[serverId] ?? { entries: [], loading: false }),
+          entries: [],
+          loading: true,
+          error: undefined,
+        },
+      },
+    }));
+    ircClient.sendRaw(serverId, "INVITELINK LIST");
+  },
+  createInvitation: (serverId, channel, description) => {
+    let line = "INVITELINK CREATE";
+    const ch = channel?.trim();
+    const desc = description?.trim();
+    if (ch && ch !== "*") {
+      line += ` ${ch}`;
+      if (desc) line += ` :${desc}`;
+    } else if (desc) {
+      line += ` * :${desc}`;
+    }
+    ircClient.sendRaw(serverId, line);
+  },
+  deleteInvitation: (serverId, shareId) => {
+    ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
   },
 
   joinChannel: (serverId, channelName) => {

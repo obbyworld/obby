@@ -66,6 +66,21 @@ msgstr "{0}, {1} ja {2} kirjoittavat..."
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} ja {3} muuta kirjoittavat..."
 
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 kerta} other {{c} kertaa}}"
@@ -97,6 +112,10 @@ msgstr "*kanava*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -542,6 +561,10 @@ msgstr "Tyhjennä"
 msgid "Clear search"
 msgstr "Tyhjennä haku"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -639,6 +662,10 @@ msgstr "Määritä yksityiskohtaiset tulvasuojaussäännöt. Kukin sääntö mä
 msgid "Configure notification sounds and highlights"
 msgstr "Määritä ilmoitusäänet ja korostukset"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
 msgstr "Yhdistä"
@@ -676,8 +703,13 @@ msgid "Control media display and external content"
 msgstr "Hallinnoi median näyttöä ja ulkoista sisältöä"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Kopioitu"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -691,9 +723,25 @@ msgstr "Kopioi muotoiltu tuloste"
 msgid "Copy JSON"
 msgstr "Kopioi JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr ""
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Kopioi URL"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr ""
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr ""
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr ""
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -748,6 +796,7 @@ msgid "Default Nickname"
 msgstr "Oletusnimimerkki"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Poista"
 
@@ -763,9 +812,17 @@ msgstr "Poista viesti"
 msgid "Delete Private Chat"
 msgstr "Poista yksityiskeskustelu"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Poistetaanko tämä viesti? Toimintoa ei voi kumota."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -1140,6 +1197,7 @@ msgid "Invalid value"
 msgstr "Virheellinen arvo"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Kutsut"
 
@@ -1215,6 +1273,10 @@ msgstr "liittyi ja poistui"
 msgid "Joined the channel"
 msgstr "Liittyi kanavalle"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr ""
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1248,6 +1310,10 @@ msgstr "Lue lisää profiileista →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Poistu kanavalta"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr ""
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1484,6 +1550,10 @@ msgstr "Mykistä tai poista mykistys ilmoitusäänistä"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
 msgstr "Nimi:"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
@@ -1940,6 +2010,11 @@ msgstr "Syy (valinnainen)"
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
 
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Rekisteröidy tilille"
@@ -2362,9 +2437,17 @@ msgstr "Tämä kenttä on pakollinen"
 msgid "This image has expired"
 msgstr "Tämä kuva on vanhentunut"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Tämä palvelin ei tue laajennettua profiilimetadataa (IRCv3 METADATA -laajennus). Lisäkentät kuten avatar, näyttönimi ja tila eivät ole käytettävissä."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links. Switch to an obbyircd-powered server to manage invitations."
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2511,6 +2594,10 @@ msgstr "Käytä WebSocket-yhteyttä TCP:n sijaan"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Käytä jokerimerkkejä: * vastaa mitä tahansa merkkijonoa, ? vastaa yhtä merkkiä. Esimerkkejä: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2701,6 +2788,10 @@ msgstr "Olet IRC-operaattori"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "Sinulla on tallentamattomia muutoksia. Haluatko varmasti sulkea tallentamatta?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr ""
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Kutsuit {target} liittymään kanavalle {channel}"
@@ -2716,6 +2807,10 @@ msgstr "Tilin käyttäjänimi tunnistautumista varten"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Oletusnimimerkkisi kaikille palvelimille"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

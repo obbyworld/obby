@@ -490,6 +490,34 @@ export interface EventMap {
     serverId: string;
     nick: string;
   };
+  /**
+   * obbyircd INVITELINK reply: a freshly-minted invite share-id +
+   * its computed URL.  Emitted in response to `INVITELINK CREATE`.
+   *
+   * Wire: `:server INVITELINK <share-id> <channel|*> :<url>`
+   */
+  INVITELINK_CREATED: {
+    serverId: string;
+    shareId: string;
+    channel?: string;
+    url: string;
+  };
+  /**
+   * obbyircd INVITELINK LIST reply: one entry per invitation owned
+   * by the caller.  Terminated by `NOTE INVITELINK LIST_END` (which
+   * surfaces via the generic NOTE event with command="INVITELINK").
+   *
+   * Wire: `:server INVITELINK ENTRY <id> <chan|*> <iso8601> <count> <url> [:<descr>]`
+   */
+  INVITELINK_ENTRY: {
+    serverId: string;
+    shareId: string;
+    channel?: string;
+    createdAt: string;
+    redeemCount: number;
+    url: string;
+    description?: string;
+  };
   rateLimited: {
     serverId: string;
     message: string;

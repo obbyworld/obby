@@ -66,6 +66,21 @@ msgstr "{0}、{1}、{2} が入力中..."
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}、{1}、{2} と他 {3} 人が入力中..."
 
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr ""
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, other {{c}回}}"
@@ -97,6 +112,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -542,6 +561,10 @@ msgstr "クリア"
 msgid "Clear search"
 msgstr "検索をクリア"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -639,6 +662,10 @@ msgstr "詳細なフラッド保護ルールを設定します。各ルールは
 msgid "Configure notification sounds and highlights"
 msgstr "通知音とハイライトを設定する"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
 msgstr "接続"
@@ -676,8 +703,13 @@ msgid "Control media display and external content"
 msgstr "メディア表示と外部コンテンツを制御する"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "コピーしました"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -691,9 +723,25 @@ msgstr "フォーマット済み出力をコピー"
 msgid "Copy JSON"
 msgstr "JSONをコピー"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr ""
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URLをコピー"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr ""
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr ""
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr ""
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -748,6 +796,7 @@ msgid "Default Nickname"
 msgstr "デフォルトニックネーム"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "削除"
 
@@ -763,9 +812,17 @@ msgstr "メッセージを削除"
 msgid "Delete Private Chat"
 msgstr "プライベートチャットを削除"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "このメッセージを削除しますか？この操作は元に戻せません。"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -1140,6 +1197,7 @@ msgid "Invalid value"
 msgstr "無効な値"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "招待"
 
@@ -1215,6 +1273,10 @@ msgstr "参加して退出しました"
 msgid "Joined the channel"
 msgstr "チャンネルに参加しました"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr ""
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1248,6 +1310,10 @@ msgstr "プロファイルについて詳しく →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "チャンネルを退出"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr ""
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1484,6 +1550,10 @@ msgstr "通知音をミュートまたはミュート解除する"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
 msgstr "名前："
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
@@ -1940,6 +2010,11 @@ msgstr "理由（任意）"
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
 
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr ""
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "アカウントを登録する"
@@ -2362,9 +2437,17 @@ msgstr "この項目は必須です"
 msgid "This image has expired"
 msgstr "この画像の有効期限が切れています"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "このサーバーは拡張プロフィールメタデータ（IRCv3 METADATA拡張）をサポートしていません。アバター、表示名、ステータスなどの追加フィールドは利用できません。"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links. Switch to an obbyircd-powered server to manage invitations."
+msgstr ""
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2511,6 +2594,10 @@ msgstr "生のTCPの代わりにWebSocketを使用する"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "ワイルドカードを使用してください：* は任意の文字列、? は任意の1文字に一致します。例：nick!*@*、*!*@host.com、*!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2701,6 +2788,10 @@ msgstr "あなたはIRC Operatorです"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "保存されていない変更があります。保存せずに閉じてもよいですか？"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr ""
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "{target} を {channel} に招待しました"
@@ -2716,6 +2807,10 @@ msgstr "認証用のアカウントユーザー名"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "すべてのサーバーで使用するデフォルトのニックネーム"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr ""
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"
