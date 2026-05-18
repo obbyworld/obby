@@ -1783,11 +1783,17 @@ export const UserSettings: React.FC = React.memo(() => {
             {/* Privacy category - custom rendering */}
             {activeCategory === "privacy" && renderPrivacyFields()}
 
+            {/* Invitations category - custom rendering */}
+            {activeCategory === "invitations" && (
+              <InvitationsPanel serverId={currentServer?.id} />
+            )}
+
             {/* Other categories - use SettingRenderer */}
             {activeCategory !== "profile" &&
               activeCategory !== "account" &&
               activeCategory !== "media" &&
-              activeCategory !== "privacy" && (
+              activeCategory !== "privacy" &&
+              activeCategory !== "invitations" && (
                 <div className="space-y-4">
                   {activeCategory === "preferences" && (
                     <div className="flex flex-col gap-1">
