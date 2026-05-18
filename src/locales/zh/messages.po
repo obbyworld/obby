@@ -2193,6 +2193,10 @@ msgstr "安全连接"
 msgid "Security"
 msgstr ""
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr ""
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
 msgstr "安全警告"

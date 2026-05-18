@@ -23,6 +23,11 @@ export interface WhoisBuilder {
    * sub-batches are present.
    */
   summaryCount?: number;
+  /**
+   * Security-groups the target is in, in arrival order, populated
+   * from the obby.world/whois-security-groups sub-batch.
+   */
+  securityGroups: string[];
 }
 
 export interface IRCClientContext {

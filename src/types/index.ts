@@ -439,6 +439,13 @@ export interface WhoisData {
   umodes?: string;
   snomask?: string;
   /**
+   * Account-level security-groups the target belongs to (from the
+   * obby.world/whois-security-groups sub-batch). Structured list so
+   * clients can render badges / chips instead of splitting the
+   * legacy comma-separated 320 string.
+   */
+  securityGroups?: string[];
+  /**
    * Per-session details when the server emits the obby.world/whois
    * batch shape. Set when at least one obby.world/whois-session
    * sub-batch arrived during this WHOIS. Empty / absent for legacy

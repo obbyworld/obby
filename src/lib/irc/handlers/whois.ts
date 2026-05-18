@@ -172,6 +172,27 @@ export function handleWhoisSpecial(
 ): void {
   const nick = parv[1];
   const message = parv.slice(2).join(" ");
+
+  // obby.world/whois-security-groups sub-batch: trailing is a bare
+  // group name (no human prefix). Route into the parent builder's
+  // securityGroups array and skip the WHOIS_SPECIAL event so the
+  // group names don't pollute specialMessages.
+  const ref = mtags?.batch;
+  if (ref) {
+    const sub = ctx.activeBatches.get(serverId)?.get(ref);
+    if (sub?.type === "obby.world/whois-security-groups") {
+      const parentRef = sub.batchTags?.batch;
+      const builder = parentRef
+        ? ctx.whoisBuilders.get(serverId)?.get(parentRef)
+        : undefined;
+      if (builder) {
+        const group = message.trim();
+        if (group) builder.securityGroups.push(group);
+      }
+      return;
+    }
+  }
+
   // Privacy summary "is connected from N sessions" -- emitted in the
   // parent obby.world/whois batch when the querier is not privileged
   // to see per-session sub-batches but the account has 2+ sessions.

@@ -204,6 +204,7 @@ export function handleBatch(
       ctx.whoisBuilders.get(serverId)?.set(batchId, {
         target,
         sessionsByRef: new Map(),
+        securityGroups: [],
       });
     } else if (batchType === "obby.world/whois-session") {
       // Sub-batch: identify parent via @batch mtag, create the session
@@ -326,6 +327,10 @@ export function handleBatch(
           nick: builder.target,
           sessions,
           sessionCount,
+          securityGroups:
+            builder.securityGroups.length > 0
+              ? builder.securityGroups
+              : undefined,
         });
         ctx.whoisBuilders.get(serverId)?.delete(batchId);
       }

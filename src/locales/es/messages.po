@@ -2193,6 +2193,10 @@ msgstr "Conexión segura"
 msgid "Security"
 msgstr ""
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr ""
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
 msgstr "Advertencia de seguridad"

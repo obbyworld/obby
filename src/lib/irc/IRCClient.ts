@@ -517,6 +517,7 @@ export interface EventMap {
     nick: string;
     sessions: WhoisSession[];
     sessionCount?: number;
+    securityGroups?: string[];
   };
   rateLimited: {
     serverId: string;
@@ -587,6 +588,7 @@ export class IRCClient implements IRCClientContext {
         target: string;
         sessionsByRef: Map<string, WhoisSession>;
         summaryCount?: number;
+        securityGroups: string[];
       }
     >
   > = new Map();

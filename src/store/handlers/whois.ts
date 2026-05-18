@@ -216,7 +216,7 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
   // multi-session-specific bits.
   ircClient.on(
     "OBBY_WHOIS_COMPLETE",
-    ({ serverId, nick, sessions, sessionCount }) => {
+    ({ serverId, nick, sessions, sessionCount, securityGroups }) => {
       store.setState((state) => {
         const serverWhois = state.whoisData[serverId] || {};
         const existingData = serverWhois[nick] || {
@@ -238,6 +238,7 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
                     : sessions.length > 0
                       ? sessions.length
                       : undefined,
+                securityGroups,
               },
             },
           },

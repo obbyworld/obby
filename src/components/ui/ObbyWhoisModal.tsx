@@ -781,6 +781,47 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
               </div>
             )}
 
+            {/* Security groups (account-level). Rendered as a chip
+             * row. Special-cased: "known-users" gets a green tint to
+             * communicate "recognised account"; "unknown-users" gets
+             * a yellow tint to flag the opposite. Everything else
+             * (tls-users, websocket-users, etc.) renders as a neutral
+             * chip. The list comes from the
+             * obby.world/whois-security-groups sub-batch which is
+             * only emitted to opers + self per the server's
+             * set::whois-details policy. */}
+            {whoisData?.securityGroups &&
+              whoisData.securityGroups.length > 0 && (
+                <div className="px-6 py-4 border-t border-discord-dark-400/40">
+                  <div
+                    className="text-[0.7rem] uppercase tracking-widest font-semibold mb-2"
+                    style={{ color: accent }}
+                  >
+                    <Trans>Security groups</Trans> (
+                    {whoisData.securityGroups.length})
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {whoisData.securityGroups.map((g) => {
+                      let tint = "bg-discord-dark-300 text-discord-text-muted";
+                      if (g === "known-users")
+                        tint = "bg-green-900/30 text-green-300";
+                      else if (g === "unknown-users")
+                        tint = "bg-yellow-900/30 text-yellow-300";
+                      else if (g === "tls-users")
+                        tint = "bg-blue-900/30 text-blue-300";
+                      return (
+                        <span
+                          key={g}
+                          className={`${tint} font-mono text-xs rounded px-2 py-0.5`}
+                        >
+                          {g}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
             {/* SESSIONS
              *
              * Shown whenever we have at least one session record OR
