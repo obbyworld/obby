@@ -102,8 +102,8 @@ oauth-provider "github" {
 
 ### Docker
 ```sh
-docker build -t obsidianirc .
-docker run -p 80:80 obsidianirc
+docker build -t obby .
+docker run -p 80:80 obby
 ```
 
 #### Building Docker with custom configuration
@@ -118,7 +118,7 @@ docker build \
   --build-arg VITE_DEFAULT_OAUTH_PROVIDER_LABEL="Logto" \
   --build-arg VITE_DEFAULT_OAUTH_ISSUER="https://my-tenant.logto.app/oidc" \
   --build-arg VITE_DEFAULT_OAUTH_CLIENT_ID="m0obbyircd1234" \
-  -t obsidianirc .
+  -t obby .
 ```
 
 ### MACOS

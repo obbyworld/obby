@@ -8,7 +8,7 @@ on:
     - 'v*.*.*'
 
 env:
-  IMAGE_NAME: mattfly/obsidian
+  IMAGE_NAME: mattfly/obby
 
 jobs:
   build:

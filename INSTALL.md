@@ -120,7 +120,7 @@ yay -S obsidianirc
 
 ## Docker
 ```sh
-docker run -p 8080:80 mattfly/obdisianirc:latest
+docker run -p 8080:80 mattfly/obby:latest
 ```
 
 ## Manual Build
