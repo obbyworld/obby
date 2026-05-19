@@ -3,31 +3,82 @@ name: Lint and Tests
 on:
   push:
 
+# Every lint/format job is a thin wrapper around `lefthook run pre-commit`
+# so lefthook.yml stays the single source of truth for what runs locally and in CI.
+
 jobs:
   biome:
-    name: Lint and Formating
+    name: Biome (lint & format)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          version: latest
-      - name: Run Biome
-        run: biome ci .
+          node-version: 20
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook check
+        run: npx lefthook run pre-commit --commands check --all-files
+      - name: Verify no formatting drift
+        run: git diff --exit-code
 
-  build:
-    name: Build and Test
-    timeout-minutes: 10
+  docs:
+    name: Docs (prettier & markdownlint)
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Dependencies install
-      run: npm ci
-    - name: Test
-      run: npm run test
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook docs hooks
+        run: npx lefthook run pre-commit --commands docs-format,docs-lint --all-files
+      - name: Verify no formatting drift
+        run: git diff --exit-code
+
+  i18n:
+    name: i18n Catalog Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook i18n hook
+        # Fails if extract/compile produces a diff against committed catalogs.
+        # Fix: npm run i18n:extract && npm run i18n:compile, commit src/locales/.
+        run: npx lefthook run pre-commit --commands i18n --all-files
+      - name: Verify catalogs are committed
+        run: git diff --exit-code src/locales/
+      - name: Report untranslated strings per locale
+        # Informational only — does not fail the build.
+        run: |
+          echo "### Translation coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          TOTAL=$(grep -c '^msgid ' src/locales/en/messages.po || true)
+          for po in src/locales/*/messages.po; do
+            locale=$(basename "$(dirname "$po")")
+            [ "$locale" = "en" ] && continue
+            MISSING=$(grep -c '^msgstr ""$' "$po" 2>/dev/null || echo "file missing")
+            if [ "$MISSING" = "file missing" ]; then
+              echo "- **${locale}**: catalog missing" >> $GITHUB_STEP_SUMMARY
+            else
+              TRANSLATED=$((TOTAL - MISSING))
+              echo "- **${locale}**: ${TRANSLATED}/${TOTAL} strings translated" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
 
   rust:
     name: Rust fmt & clippy
@@ -36,6 +87,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -57,54 +113,24 @@ jobs:
             librsvg2-dev \
             libsoup-3.0-dev \
             libjavascriptcoregtk-4.1-dev
-      - name: cargo fmt
-        run: |
-          cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
-          cargo fmt --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all -- --check
-          cargo fmt --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all -- --check
-      - name: cargo clippy
-        run: |
-          cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --no-deps -- -D warnings
-          cargo clippy --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all-targets --no-deps -- -D warnings
-          cargo clippy --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all-targets --no-deps -- -D warnings
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook rust hooks
+        run: npx lefthook run pre-commit --commands rust-fmt,rust-clippy --all-files
 
-  i18n:
-    name: i18n Catalog Check
+  build:
+    name: Build and Test
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Dependencies install
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install deps
         run: npm ci
-      - name: Verify catalog is up to date
-        # Fails if there are t`...` strings in source that haven't been extracted
-        # into en/messages.po yet.  Fix: npm run i18n:extract && npm run i18n:compile
-        # and commit the updated src/locales/ files.
-        run: |
-          npm run i18n:extract
-          git diff --exit-code src/locales/en/messages.po || \
-            (echo "::error::Untranslated strings detected in source. Run 'npm run i18n:extract && npm run i18n:compile' and commit the updated src/locales/ files." && exit 1)
-      - name: Verify catalogs are compiled
-        # Fails if .mjs files are missing or stale relative to .po files.
-        run: |
-          npm run i18n:compile
-          git diff --exit-code src/locales/ || \
-            (echo "::error::Compiled catalogs are out of date. Run 'npm run i18n:compile' and commit the updated src/locales/ files." && exit 1)
-      - name: Report untranslated strings per locale
-        # Informational only — does not fail the build.
-        # Shows how many strings still need translation in each non-English locale.
-        run: |
-          echo "### Translation coverage" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          TOTAL=$(grep -c '^msgid ' src/locales/en/messages.po || true)
-          for po in src/locales/*/messages.po; do
-            locale=$(basename "$(dirname "$po")")
-            [ "$locale" = "en" ] && continue
-            MISSING=$(grep -c '^msgstr ""$' "$po" 2>/dev/null || echo "file missing")
-            if [ "$MISSING" = "file missing" ]; then
-              echo "- **${locale}**: catalog missing" >> $GITHUB_STEP_SUMMARY
-            else
-              TRANSLATED=$((TOTAL - MISSING))
-              echo "- **${locale}**: ${TRANSLATED}/${TOTAL} strings translated" >> $GITHUB_STEP_SUMMARY
-            fi
-          done
+      - name: Test
+        run: npm run test

@@ -30,22 +30,32 @@ pre-commit:
           echo "Catalog changes have been staged. Re-run git commit to proceed."
           exit 1
         fi
+    docs-format:
+      glob: "*.{yml,yaml,md}"
+      run: |
+        npx prettier --write {staged_files}
+        if ! git diff --exit-code --quiet -- {staged_files} 2>/dev/null; then
+          git add -- {staged_files}
+          echo ""
+          echo "Prettier auto-formatted the staged files. Changes have been staged."
+          echo "Re-run git commit to proceed."
+          exit 1
+        fi
+    docs-lint:
+      glob: "*.md"
+      # Lints all markdown via the npm script so .markdownlintignore is honored.
+      run: npm run docs:lint
     rust-fmt:
       glob: "src-tauri/**/*.rs"
-      run: |
-        set -e
-        cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
-        cargo fmt --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all -- --check
-        cargo fmt --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all -- --check
+      run: npm run rust:fmt
     rust-clippy:
       glob: "src-tauri/**/*.rs"
-      run: |
-        set -e
-        cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --no-deps -- -D warnings
-        cargo clippy --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all-targets --no-deps -- -D warnings
-        cargo clippy --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all-targets --no-deps -- -D warnings
+      run: npm run rust:clippy
     swift-format:
       glob: "src-tauri/plugins/*/ios/Sources/**/*.swift"
+      # macOS only — swift-format ships with the Xcode Swift toolchain.
+      # On non-macOS or machines without Xcode the hook is a no-op so Linux
+      # contributors aren't blocked. CI does not run this check.
       run: |
         if ! xcrun --find swift-format >/dev/null 2>&1; then
           echo "swift-format unavailable (non-macOS or no Xcode) — skipping."

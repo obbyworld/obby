@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       google-playstore-version:
-        description: 'Optional: Override Google Play version code'
+        description: "Optional: Override Google Play version code"
         required: false
         type: string
 
@@ -357,8 +357,8 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GOOGLE_WIF_PROVIDER }}
           service_account: ${{ secrets.GOOGLE_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'
-          access_token_scopes: 'https://www.googleapis.com/auth/androidpublisher'
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -480,8 +480,8 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GOOGLE_WIF_PROVIDER }}
           service_account: ${{ secrets.GOOGLE_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'
-          access_token_scopes: 'https://www.googleapis.com/auth/androidpublisher'
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       - name: Download signed AAB artifact
         uses: actions/download-artifact@v8

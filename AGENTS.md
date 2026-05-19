@@ -65,7 +65,10 @@ src-tauri/                  # Tauri config, Rust backend, plugins (Swift share-s
 which dispatches via `IRC_DISPATCH`:
 
 ```ts
-const IRC_DISPATCH: Record<string, (ctx: IRCClientContext, serverId: string, msg: ParsedMessage) => void> = {
+const IRC_DISPATCH: Record<
+  string,
+  (ctx: IRCClientContext, serverId: string, msg: ParsedMessage) => void
+> = {
   PRIVMSG: handlePrivmsg,
   JOIN: handleJoin,
   "332": handleRplTopic,
@@ -90,7 +93,9 @@ Each handler file subscribes to `ircClient` events and updates the Zustand store
 // Pattern in every src/store/handlers/*.ts
 export function registerXxxHandlers(store: StoreApi<AppState>) {
   ircClient.on("EVENT", (payload) => {
-    store.setState((state) => ({ /* return Partial<AppState> — no mutation */ }));
+    store.setState((state) => ({
+      /* return Partial<AppState> — no mutation */
+    }));
   });
 }
 ```
@@ -223,25 +228,27 @@ All user-visible text **must** be wrapped with LinguiJS macros so it can be tran
 
 ### Which tool to use
 
-| String location | Macro | Import |
-|-----------------|-------|--------|
-| JSX text children (`<button>`, `<span>`, `<p>`, headings) | `<Trans>…</Trans>` | `import { Trans } from "@lingui/macro"` |
-| JSX props: `placeholder=`, `aria-label=`, `title=` | `` t`…` `` via `useLingui` | `import { useLingui } from "@lingui/macro"` then `const { t } = useLingui()` inside the component |
-| Simple `t` outside JSX (inside a render function) | `` t`…` `` | `import { t } from "@lingui/macro"` |
-| Variables/interpolation | `` t`Hello ${name}` `` | same — placeholders become `{0}` in the PO file |
-| Non-React `.ts` files (store handlers, event callbacks) | `` t`…` `` | `import { t } from "@lingui/macro"` — safe inside callbacks that fire after `i18n.activate()` |
-| Module-level constants | **Do not use** `t` at module scope | `t` evaluates before `i18n.activate()` runs. Move the string inside the function body. |
+| String location                                           | Macro                              | Import                                                                                            |
+| --------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------- |
+| JSX text children (`<button>`, `<span>`, `<p>`, headings) | `<Trans>…</Trans>`                 | `import { Trans } from "@lingui/macro"`                                                           |
+| JSX props: `placeholder=`, `aria-label=`, `title=`        | `` t`…` `` via `useLingui`         | `import { useLingui } from "@lingui/macro"` then `const { t } = useLingui()` inside the component |
+| Simple `t` outside JSX (inside a render function)         | `` t`…` ``                         | `import { t } from "@lingui/macro"`                                                               |
+| Variables/interpolation                                   | `` t`Hello ${name}` ``             | same — placeholders become `{0}` in the PO file                                                   |
+| Non-React `.ts` files (store handlers, event callbacks)   | `` t`…` ``                         | `import { t } from "@lingui/macro"` — safe inside callbacks that fire after `i18n.activate()`     |
+| Module-level constants                                    | **Do not use** `t` at module scope | `t` evaluates before `i18n.activate()` runs. Move the string inside the function body.            |
 
 ### Correct patterns
 
 ```tsx
 // JSX children
-<button><Trans>Save</Trans></button>
+<button>
+  <Trans>Save</Trans>
+</button>;
 
 // Props with interpolation (requires useLingui inside the component)
 import { useLingui } from "@lingui/macro";
 const { t } = useLingui();
-<input placeholder={t`Message #${channelName}`} />
+<input placeholder={t`Message #${channelName}`} />;
 
 // Simple t tag inside render
 import { t } from "@lingui/macro";
@@ -288,8 +295,8 @@ Rules:
 Write the complete translated file back.
 ```
 
-3. Run `npm run i18n:compile` to regenerate `.mjs` files.
-4. Commit `src/locales/`.
+1. Run `npm run i18n:compile` to regenerate `.mjs` files.
+2. Commit `src/locales/`.
 
 ### Adding a new locale
 
@@ -303,6 +310,7 @@ Write the complete translated file back.
 ### CI checks
 
 The `i18n` job in `.github/workflows/workflow.yaml`:
+
 - **Fails** if source has `t`/`Trans` strings not yet extracted into `en/messages.po`.
 - **Fails** if compiled `.mjs` catalogs are stale relative to their `.po` files.
 - **Reports** (informational, non-blocking) how many strings are translated per locale in the job summary.
