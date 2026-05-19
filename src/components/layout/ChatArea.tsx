@@ -1930,10 +1930,19 @@ export const ChatArea: React.FC<{
             );
             target = channel?.name;
           } else {
-            // Private message, find by userId
-            const privateChat = server.privateChats?.find(
-              (pc) => pc.username === message.userId,
-            );
+            // PM target.  For incoming messages `message.userId` is the
+            // sender (the partner), which matches a privateChat row.
+            // For outgoing messages `userId` is *us*, so that lookup
+            // fails and the redact silently no-ops -- using the
+            // currently-active privateChat as a fallback lets the user
+            // redact their own DMs from inside the same conversation.
+            const privateChat =
+              server.privateChats?.find(
+                (pc) => pc.username === message.userId,
+              ) ??
+              server.privateChats?.find(
+                (pc) => pc.id === selectedPrivateChatId,
+              );
             target = privateChat?.username;
           }
 
@@ -1943,7 +1952,7 @@ export const ChatArea: React.FC<{
         }
       }
     },
-    [selectedServerId, redactMessage, t],
+    [selectedServerId, selectedPrivateChatId, redactMessage, t],
   );
 
   const handleEmojiSelect = (emojiData: EmojiClickData) => {
