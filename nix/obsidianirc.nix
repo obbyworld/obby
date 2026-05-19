@@ -56,7 +56,7 @@ rustPlatform.buildRustPackage (
     npmDeps = fetchNpmDeps {
       name = "obsidianirc-npm-deps-${version}";
       inherit src;
-      hash = "sha256-PxkIPxw54tH/2GUN4lwPoDHGkzezQ2A+pMbJIAZ5TwA=";
+      hash = "sha256-JBagIH3/F891OQkYTpQGcImtUbSV24CMW1nh5MZF0QU=";
     };
 
     nativeBuildInputs = [
