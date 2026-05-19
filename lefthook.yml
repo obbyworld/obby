@@ -30,3 +30,33 @@ pre-commit:
           echo "Catalog changes have been staged. Re-run git commit to proceed."
           exit 1
         fi
+    rust-fmt:
+      glob: "src-tauri/**/*.rs"
+      run: |
+        set -e
+        cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
+        cargo fmt --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all -- --check
+        cargo fmt --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all -- --check
+    rust-clippy:
+      glob: "src-tauri/**/*.rs"
+      run: |
+        set -e
+        cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --no-deps -- -D warnings
+        cargo clippy --manifest-path src-tauri/plugins/share-sheet/Cargo.toml --all-targets --no-deps -- -D warnings
+        cargo clippy --manifest-path src-tauri/plugins/ios-keyboard/Cargo.toml --all-targets --no-deps -- -D warnings
+    swift-format:
+      glob: "src-tauri/plugins/*/ios/Sources/**/*.swift"
+      run: |
+        if ! xcrun --find swift-format >/dev/null 2>&1; then
+          echo "swift-format unavailable (non-macOS or no Xcode) — skipping."
+          exit 0
+        fi
+        xcrun swift-format format --in-place {staged_files}
+        if ! git diff --exit-code --quiet -- {staged_files} 2>/dev/null; then
+          git add -- {staged_files}
+          echo ""
+          echo "swift-format auto-formatted the staged files. Changes have been staged."
+          echo "Re-run git commit to proceed."
+          exit 1
+        fi
+        xcrun swift-format lint --strict {staged_files}
