@@ -219,16 +219,34 @@ npm run commit-hook-install  # Install git hooks
 **File:** `Dockerfile`
 
 Multi-stage build:
-1. **Builder stage** - Node.js 23 Alpine, npm ci, build
-2. **Runtime stage** - Nginx Alpine serving static files
+1. **Builder stage** — `node:22-alpine`, `npm ci`, Vite production build (`VITE_*` `ARG`s → `ENV`, see **`Dockerfile`**)
+2. **Runtime stage** — Nginx Alpine serving static files
 
-**Environment Variables:**
+**Environment Variables (builder):**
+
+All names below are optional `Dockerfile` **`ARG`**s (forwarded into `npm run build`). The Nix derivation accepts the same prefixes via **`viteBuildEnv`** (see **`nix/obsidianirc.nix`**).
+
 ```bash
-VITE_DEFAULT_IRC_SERVER      # Default server URL
-VITE_DEFAULT_IRC_SERVER_NAME # Server display name
-VITE_DEFAULT_IRC_CHANNELS    # Auto-join channels
-VITE_HIDE_SERVER_LIST        # Hide server selection
-VITE_TRUSTED_MEDIA_URLS      # Comma-separated list of trusted media URLs
+# vite.config.ts `define`
+VITE_DEFAULT_IRC_SERVER
+VITE_DEFAULT_IRC_SERVER_NAME
+VITE_DEFAULT_IRC_CHANNELS
+VITE_HIDE_SERVER_LIST
+VITE_TRUSTED_MEDIA_URLS
+VITE_DEFAULT_OAUTH_PROVIDER_LABEL
+VITE_DEFAULT_OAUTH_ISSUER
+VITE_DEFAULT_OAUTH_CLIENT_ID
+VITE_DEFAULT_OAUTH_SCOPES
+VITE_DEFAULT_OAUTH_REDIRECT_URI
+VITE_DEFAULT_OAUTH_TOKEN_KIND
+VITE_DEFAULT_OAUTH_SERVER_PROVIDER
+VITE_DEFAULT_OAUTH_AUTHORIZE_URL
+VITE_DEFAULT_OAUTH_TOKEN_URL
+VITE_BACKEND_URL
+
+# Client embeds (`import.meta.env`; GIF widgets)
+VITE_GIPHY_API_KEY
+VITE_TENOR_API_KEY
 ```
 
 ### GitHub Actions CI/CD

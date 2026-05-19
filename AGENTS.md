@@ -19,6 +19,20 @@ npm run format; npm run fix:unsafe; npm run test; npm run build
 
 ---
 
+## Tool versions
+
+- **JavaScript:** **Node ≥22** ([`package.json` `engines`](package.json)); **`npm install`** from the repo root.
+- **Rust (Tauri):** [`rust-toolchain.toml`](rust-toolchain.toml) — **stable** + **rustfmt**/**clippy**; MSRV in [src-tauri/Cargo.toml](src-tauri/Cargo.toml).
+
+---
+
+## Nix
+
+- **`nix develop`** — full dev environment (Node 22 + Tauri Linux deps + rustup). Linux only (`x86_64`/`aarch64`).
+- **`nix build .#obsidianirc`** — produces `result/bin/ObsidianIRC`. Bump `npmDeps` in [nix/obsidianirc.nix](nix/obsidianirc.nix) when `package-lock.json` changes.
+- Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
+---
+
 ## Project Layout
 
 ```
@@ -223,14 +237,16 @@ All user-visible text **must** be wrapped with LinguiJS macros so it can be tran
 
 ### Which tool to use
 
-| String location | Macro | Import |
-|-----------------|-------|--------|
-| JSX text children (`<button>`, `<span>`, `<p>`, headings) | `<Trans>…</Trans>` | `import { Trans } from "@lingui/macro"` |
-| JSX props: `placeholder=`, `aria-label=`, `title=` | `` t`…` `` via `useLingui` | `import { useLingui } from "@lingui/macro"` then `const { t } = useLingui()` inside the component |
-| Simple `t` outside JSX (inside a render function) | `` t`…` `` | `import { t } from "@lingui/macro"` |
-| Variables/interpolation | `` t`Hello ${name}` `` | same — placeholders become `{0}` in the PO file |
-| Non-React `.ts` files (store handlers, event callbacks) | `` t`…` `` | `import { t } from "@lingui/macro"` — safe inside callbacks that fire after `i18n.activate()` |
-| Module-level constants | **Do not use** `t` at module scope | `t` evaluates before `i18n.activate()` runs. Move the string inside the function body. |
+
+| String location                                           | Macro                              | Import                                                                                            |
+| --------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------- |
+| JSX text children (`<button>`, `<span>`, `<p>`, headings) | `<Trans>…</Trans>`                 | `import { Trans } from "@lingui/macro"`                                                           |
+| JSX props: `placeholder=`, `aria-label=`, `title=`        | `t`…`` via `useLingui`             | `import { useLingui } from "@lingui/macro"` then `const { t } = useLingui()` inside the component |
+| Simple `t` outside JSX (inside a render function)         | `t`…``                             | `import { t } from "@lingui/macro"`                                                               |
+| Variables/interpolation                                   | `t`Hello ${name}``                 | same — placeholders become `{0}` in the PO file                                                   |
+| Non-React `.ts` files (store handlers, event callbacks)   | `t`…``                             | `import { t } from "@lingui/macro"` — safe inside callbacks that fire after `i18n.activate()`     |
+| Module-level constants                                    | **Do not use** `t` at module scope | `t` evaluates before `i18n.activate()` runs. Move the string inside the function body.            |
+
 
 ### Correct patterns
 
@@ -303,6 +319,7 @@ Write the complete translated file back.
 ### CI checks
 
 The `i18n` job in `.github/workflows/workflow.yaml`:
+
 - **Fails** if source has `t`/`Trans` strings not yet extracted into `en/messages.po`.
 - **Fails** if compiled `.mjs` catalogs are stale relative to their `.po` files.
 - **Reports** (informational, non-blocking) how many strings are translated per locale in the job summary.
