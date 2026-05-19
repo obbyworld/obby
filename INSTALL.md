@@ -1,6 +1,6 @@
 # Installing Native Obsidian IRC
 
-Grab the latest version for your platform from https://github.com/ObsidianIRC/ObsidianIRC/releases
+Grab the latest version for your platform from [https://github.com/ObsidianIRC/ObsidianIRC/releases](https://github.com/ObsidianIRC/ObsidianIRC/releases)
 
 ## Choosing the Right Version
 
@@ -14,6 +14,7 @@ Grab the latest version for your platform from https://github.com/ObsidianIRC/Ob
   - `.deb` package: `ObsidianIRC_*_arm64.deb` for Debian/Ubuntu
   - `.rpm` package: `ObsidianIRC-*-1.aarch64.rpm` for Fedora/CentOS/RHEL
   - AppImage: `ObsidianIRC_*_aarch64.AppImage` for any Linux distro
+- **NixOS / Nix-with-flakes (`x86_64-linux`, `aarch64-linux`)**: Build from source — see [BUILD.md — Nix (flake)](BUILD.md#nix-flake).
 
 ### macOS
 
@@ -133,9 +134,9 @@ yay -S obsidianirc
 ## Docker
 
 ```sh
-docker run -p 8080:80 mattfly/obdisianirc:latest
+docker run -p 8080:80 mattfly/obsidian:latest
 ```
 
-## Manual Build
+## Manual build and development
 
-Refer to [BUILD.md](BUILD.md) for instructions on how to build ObsidianIRC from source.
+Compiling from source: [BUILD.md](BUILD.md). Contributor setup (optional toolchains, hooks, local test stack): [CONTRIBUTING.md](CONTRIBUTING.md).

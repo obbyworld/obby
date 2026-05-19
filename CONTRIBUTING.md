@@ -9,6 +9,14 @@ npm install
 npm run dev  # Start the development server
 ```
 
+Use **`npm run …`** for scripts regardless of which toolchain you choose below.
+
+**Optional — Nix** (Nix installs on other OSes too — [non-NixOS Linux](https://nixos.org/download/) is common): **`nix develop`** from this repo works only where the **ObsidianIRC** flake exposes a **devShell**, i.e. **`x86_64-linux`** / **`aarch64-linux`** today (**`nix build .#obsidianirc`** same). On **macOS or Windows** extend `flake.nix` or install **Node ≥22** and **Rust stable** (**rustfmt**, **clippy**) per [`rust-toolchain.toml`](rust-toolchain.toml). Desktop build via Nix: [BUILD.md — Nix (flake)](BUILD.md#nix-flake). Details: [AGENTS.md](AGENTS.md).
+
+**Home Manager:** upstream patterns are summarized in **[Home Manager manual — Flakes](https://nix-community.github.io/home-manager/index.xhtml#ch-nix-flakes)** (e.g. **`inputs.home-manager.inputs.nixpkgs.follows`** in your flake, **`home-manager.extraSpecialArgs`**, **`useGlobalPkgs`**, **`useUserPackages`** where applicable). This repo exposes **`outputs.homeManagerModules.obsidianirc`** and **`outputs.homeModules.obsidianirc`** (same module). Detailed **`useGlobalPkgs`** overlay wiring: [BUILD.md — Nix (flake)](BUILD.md#nix-flake). If Home Manager doesn’t manage your shell, **`hm-session-vars.sh`** sourcing is unchanged from upstream — see the manual’s Installing / FAQ sections.
+
+**Optional — [direnv](https://direnv.net/) + Nix:** install the [shell hook](https://direnv.net/docs/hook.html), then **`direnv allow`** so [.envrc](.envrc) runs **`use flake`** (nix-direnv is optional; **`.direnv/`** is gitignored).
+
 Alternatively to run the full ObsidianIRC stack:
 
 ```sh
@@ -28,7 +36,7 @@ npm run format
 ## Git Hooks
 
 We use [lefthook](https://github.com/evilmartians/lefthook) for managing git hooks.
-We have commit hooks to enforce coding style. You can install the hoooks with:
+We have commit hooks to enforce coding style. You can install the hooks with:
 
 ```sh
 npm run commit-hook-install

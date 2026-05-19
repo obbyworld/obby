@@ -19,6 +19,21 @@ npm run format; npm run fix:unsafe; npm run test; npm run build
 
 ---
 
+## Tool versions
+
+- **JavaScript:** **Node ≥22** ([`package.json` `engines`](package.json)); **`npm install`** from the repo root.
+- **Rust (Tauri):** [`rust-toolchain.toml`](rust-toolchain.toml) — **stable** + **rustfmt**/**clippy**; MSRV in [src-tauri/Cargo.toml](src-tauri/Cargo.toml).
+
+---
+
+## Nix
+
+- **`nix develop`** — full dev environment (Node 22 + Tauri Linux deps + rustup). Linux only (`x86_64`/`aarch64`).
+- **`nix build .#obsidianirc`** — produces `result/bin/ObsidianIRC`. Bump `npmDeps` in [nix/obsidianirc.nix](nix/obsidianirc.nix) when `package-lock.json` changes.
+- Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
+
+---
+
 ## Project Layout
 
 ```
