@@ -165,6 +165,26 @@ const profileSettings: SettingDefinition[] = [
  */
 const notificationSettings: SettingDefinition[] = [
   {
+    id: "notifications.enable",
+    key: "enableNotifications",
+    category: "notifications",
+    subcategory: "General",
+    title: msg`Enable Notifications`,
+    description: msg`Show desktop notifications for mentions and DMs. On servers that support push (soju.im/webpush) this also wakes this device when the app is closed.`,
+    type: "toggle",
+    defaultValue: false,
+    searchKeywords: [
+      "notification",
+      "push",
+      "desktop",
+      "alert",
+      "mention",
+      "dm",
+      "webpush",
+    ],
+    priority: 0,
+  },
+  {
     id: "notifications.enableSounds",
     key: "enableNotificationSounds",
     category: "notifications",

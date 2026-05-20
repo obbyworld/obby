@@ -27,7 +27,7 @@ import { openExternalUrl } from "../../lib/openUrl";
 import { isTauri } from "../../lib/platformUtils";
 import { settingsRegistry } from "../../lib/settings";
 import type { SettingValue } from "../../lib/settings/types";
-import { registerWebPush } from "../../lib/webpush";
+import { registerWebPush, unregisterWebPush } from "../../lib/webpush";
 import useStore, {
   type GlobalSettings,
   loadSavedServers,
@@ -697,16 +697,25 @@ export const UserSettings: React.FC = React.memo(() => {
       quitMessage,
     });
 
-    // Turning notifications on is the user gesture we use to prompt for
-    // browser notification permission and, if granted, opt this device
-    // into soju.im/webpush on every connected server that supports it.
-    if ((settings as Partial<GlobalSettings>).enableNotifications) {
+    // The notifications toggle is the user gesture we use to manage
+    // soju.im/webpush. Turning it on prompts for browser permission and,
+    // if granted, subscribes this device on every connected server that
+    // supports push; turning it off tears the subscription down.
+    const wantNotifications = (settings as Partial<GlobalSettings>)
+      .enableNotifications;
+    if (wantNotifications) {
       const permission = await requestNotificationPermission();
       if (permission === "granted") {
         for (const srv of servers) {
           if (srv.vapidKey && srv.capabilities?.includes("soju.im/webpush")) {
             void registerWebPush(srv.id, srv.vapidKey);
           }
+        }
+      }
+    } else if (wantNotifications === false) {
+      for (const srv of servers) {
+        if (srv.capabilities?.includes("soju.im/webpush")) {
+          void unregisterWebPush(srv.id);
         }
       }
     }
