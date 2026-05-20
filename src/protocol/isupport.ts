@@ -115,5 +115,22 @@ export function registerISupportHandler(
       });
       return;
     }
+
+    // soju.im/webpush: the VAPID public key (URL-safe base64, P-256
+    // ECDSA) the client feeds to PushManager.subscribe().  Stored on
+    // the server so the push-registration flow can pick it up once
+    // CAP negotiation + the soju.im/webpush ack have landed.
+    if (key === "VAPID") {
+      useStore.setState((state) => {
+        const updatedServers = state.servers.map((server: Server) => {
+          if (server.id === serverId) {
+            return { ...server, vapidKey: value };
+          }
+          return server;
+        });
+        return { servers: updatedServers };
+      });
+      return;
+    }
   });
 }

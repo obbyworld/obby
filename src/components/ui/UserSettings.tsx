@@ -22,10 +22,12 @@ import {
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useModalBehavior } from "../../hooks/useModalBehavior";
 import ircClient from "../../lib/ircClient";
+import { requestNotificationPermission } from "../../lib/notifications";
 import { openExternalUrl } from "../../lib/openUrl";
 import { isTauri } from "../../lib/platformUtils";
 import { settingsRegistry } from "../../lib/settings";
 import type { SettingValue } from "../../lib/settings/types";
+import { registerWebPush } from "../../lib/webpush";
 import useStore, {
   type GlobalSettings,
   loadSavedServers,
@@ -695,6 +697,20 @@ export const UserSettings: React.FC = React.memo(() => {
       quitMessage,
     });
 
+    // Turning notifications on is the user gesture we use to prompt for
+    // browser notification permission and, if granted, opt this device
+    // into soju.im/webpush on every connected server that supports it.
+    if ((settings as Partial<GlobalSettings>).enableNotifications) {
+      const permission = await requestNotificationPermission();
+      if (permission === "granted") {
+        for (const srv of servers) {
+          if (srv.vapidKey && srv.capabilities?.includes("soju.im/webpush")) {
+            void registerWebPush(srv.id, srv.vapidKey);
+          }
+        }
+      }
+    }
+
     // Save notification sound file
     if (notificationSoundFile) {
       const reader = new FileReader();
@@ -750,6 +766,7 @@ export const UserSettings: React.FC = React.memo(() => {
     originalValues?.homepage,
     originalValues?.pronouns,
     originalValues?.status,
+    servers,
   ]);
 
   // Handle close
