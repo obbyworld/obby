@@ -111,6 +111,29 @@ export interface TokenlessUploadOptions {
 }
 
 /**
+ * Extract the uploaded file's URL from a draft/FILEHOST response. The spec
+ * uses the `Location` header (201), but real filehosts vary, so we accept
+ * (in order): the Location header, a JSON body with `url`/`saved_url`, or a
+ * plain-text URL body. Returns null when none is present.
+ */
+export function parseFilehostUploadResponse(
+  location: string | null,
+  body: string,
+): string | null {
+  if (location) return location;
+  const text = body.trim();
+  try {
+    const parsed = JSON.parse(text) as { url?: string; saved_url?: string };
+    const u = parsed.url ?? parsed.saved_url;
+    if (u) return u;
+  } catch {
+    // not JSON -- fall through to plain-text handling
+  }
+  if (/^https?:\/\/\S+$/.test(text)) return text;
+  return null;
+}
+
+/**
  * Upload via the standard tokenless IRCv3 draft/FILEHOST flow: POST the
  * file (multipart `file` field) directly to an advertised endpoint, no auth.
  *
@@ -140,24 +163,12 @@ export function uploadFileTokenless(
         reject(xhr.responseText || `${xhr.status} ${xhr.statusText}`);
         return;
       }
-      const location = xhr.getResponseHeader("Location");
-      if (location) {
-        resolve(location);
-        return;
-      }
-      const text = (xhr.responseText || "").trim();
-      try {
-        const body = JSON.parse(text) as { url?: string; saved_url?: string };
-        const u = body.url ?? body.saved_url;
-        if (u) {
-          resolve(u);
-          return;
-        }
-      } catch {
-        // not JSON -- fall through to plain-text handling
-      }
-      if (/^https?:\/\/\S+$/.test(text)) {
-        resolve(text);
+      const url = parseFilehostUploadResponse(
+        xhr.getResponseHeader("Location"),
+        xhr.responseText || "",
+      );
+      if (url) {
+        resolve(url);
         return;
       }
       reject("Filehost response did not include a URL");
