@@ -5,20 +5,18 @@ import path from "node:path";
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from "@vitejs/plugin-react";
 
-// Single-tenant hosted deployments (VITE_HIDE_SERVER_LIST=true) ship a
-// PWA manifest + service worker so the page is installable on Android/
-// desktop with the configured network's name and theme. The generic
-// multi-network build is a server-picker and doesn't claim a PWA identity.
-function hostedPwaPlugin(env: Record<string, string>): Plugin {
-  const hosted = env.VITE_HIDE_SERVER_LIST === 'true';
+// Every build ships a PWA manifest + service worker so the page is
+// installable on Android/desktop and can receive Web Push. Single-tenant
+// hosted builds (VITE_HIDE_SERVER_LIST=true) get the configured network's
+// name; the generic multi-network build falls back to "ObsidianIRC".
+function pwaPlugin(env: Record<string, string>): Plugin {
   const networkName = env.VITE_DEFAULT_IRC_SERVER_NAME || 'ObsidianIRC';
   const shortName = networkName.length > 12 ? networkName.slice(0, 12) : networkName;
   return {
-    name: 'hosted-pwa',
+    name: 'pwa',
     apply: 'build',
     enforce: 'post',
     transformIndexHtml(html) {
-      if (!hosted) return html;
       const tags = [
         '<link rel="manifest" href="/manifest.webmanifest" />',
         '<link rel="apple-touch-icon" href="/pwa/icon-192.png" />',
@@ -30,7 +28,6 @@ function hostedPwaPlugin(env: Record<string, string>): Plugin {
       return html.replace('</head>', `  ${tags}\n</head>`);
     },
     generateBundle() {
-      if (!hosted) return;
       const manifest = {
         name: networkName,
         short_name: shortName,
@@ -87,7 +84,7 @@ export default defineConfig(({ mode }) => {
           plugins: ["@lingui/babel-plugin-lingui-macro"],
         },
       }),
-      hostedPwaPlugin(process.env as Record<string, string>),
+      pwaPlugin(process.env as Record<string, string>),
     ],
     base: "./",
     test: {

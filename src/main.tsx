@@ -7,11 +7,11 @@ import { pdfjs } from "react-pdf";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import { registerHostedServiceWorker } from "./lib/registerServiceWorker";
+import { registerAppServiceWorker } from "./lib/registerServiceWorker";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
-registerHostedServiceWorker();
+registerAppServiceWorker();
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
