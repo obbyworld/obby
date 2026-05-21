@@ -405,13 +405,7 @@ export function registerChannelHandlers(store: StoreApi<AppState>): void {
         }
         return server;
       });
-
-      // Per-user metadata is fetched lazily now (MemberList scroll-stop
-      // visibility + CHANMSG/USERMSG speak triggers). On a 200-user
-      // channel this loop used to fire 200 METADATA LIST commands in a
-      // tight burst on JOIN, tripping recvq/sendq protection on
-      // UnrealIRCd and dropping the connection (issue #116).
-
+      
       // Check if current user has operator status in this channel and update their modes
       const currentUser = state.currentUser;
       if (currentUser) {
