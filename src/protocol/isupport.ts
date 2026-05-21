@@ -90,6 +90,20 @@ export function registerISupportHandler(
       return;
     }
 
+    // Standard tokenless IRCv3 draft/FILEHOST: a space-separated list of
+    // upload endpoints the client POSTs to directly (no auth). parseIsupport
+    // has already turned \x20 back into spaces, so just split.
+    if (key === "draft/FILEHOST") {
+      const hosts = value.split(/\s+/).filter((u) => /^https?:\/\//i.test(u));
+      useStore.setState((state) => {
+        const updatedServers = state.servers.map((server: Server) =>
+          server.id === serverId ? { ...server, fileHosts: hosts } : server,
+        );
+        return { servers: updatedServers };
+      });
+      return;
+    }
+
     if (key === "ELIST") {
       useStore.setState((state) => {
         const updatedServers = state.servers.map((server: Server) => {

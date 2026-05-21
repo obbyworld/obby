@@ -103,6 +103,83 @@ export function uploadFile(file: File, opts: UploadOptions): Promise<string> {
   });
 }
 
+export interface TokenlessUploadOptions {
+  /** Endpoint from draft/FILEHOST; we POST the file here as-is. */
+  endpoint: string;
+  onProgress?: (loaded: number, total: number) => void;
+  signal?: AbortSignal;
+}
+
+/**
+ * Upload via the standard tokenless IRCv3 draft/FILEHOST flow: POST the
+ * file (multipart `file` field) directly to an advertised endpoint, no auth.
+ *
+ * The spec returns 201 + a `Location` header, but real filehosts vary, so we
+ * accept (in order): the `Location` header, a JSON body with `url`/`saved_url`,
+ * or a plain-text URL body. Resolves with the file URL.
+ *
+ * Note: from a browser this only works if the endpoint serves CORS
+ * (`Access-Control-Allow-Origin`), and reading a 201 `Location` cross-origin
+ * additionally needs `Access-Control-Expose-Headers: Location`. Native clients
+ * have no such restriction.
+ */
+export function uploadFileTokenless(
+  file: File,
+  opts: TokenlessUploadOptions,
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (!e.lengthComputable) return;
+      opts.onProgress?.(e.loaded, e.total);
+    });
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(xhr.responseText || `${xhr.status} ${xhr.statusText}`);
+        return;
+      }
+      const location = xhr.getResponseHeader("Location");
+      if (location) {
+        resolve(location);
+        return;
+      }
+      const text = (xhr.responseText || "").trim();
+      try {
+        const body = JSON.parse(text) as { url?: string; saved_url?: string };
+        const u = body.url ?? body.saved_url;
+        if (u) {
+          resolve(u);
+          return;
+        }
+      } catch {
+        // not JSON -- fall through to plain-text handling
+      }
+      if (/^https?:\/\/\S+$/.test(text)) {
+        resolve(text);
+        return;
+      }
+      reject("Filehost response did not include a URL");
+    });
+    xhr.addEventListener("error", () => reject("Network error during upload"));
+    xhr.addEventListener("abort", () => reject("Upload cancelled"));
+
+    if (opts.signal) {
+      if (opts.signal.aborted) {
+        reject("Upload cancelled");
+        return;
+      }
+      opts.signal.addEventListener("abort", () => xhr.abort());
+    }
+
+    xhr.open("POST", opts.endpoint);
+    const form = new FormData();
+    form.append("file", file);
+    xhr.send(form);
+  });
+}
+
 /**
  * Best-effort client-side validation against fetchUploadInfo() output.
  * Returns null when the file is OK; otherwise a human-readable reason
