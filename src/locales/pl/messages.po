@@ -826,6 +826,10 @@ msgstr "Nie ostrzegaj mnie o niskim poziomie bezpieczeństwa połączeń dla teg
 msgid "Download"
 msgstr "Pobierz"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Upuść pliki, aby je przesłać"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "np. 100:1440"

@@ -826,6 +826,10 @@ msgstr "Niet meer waarschuwen over lage verbindingsbeveiliging voor deze server"
 msgid "Download"
 msgstr "Downloaden"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Sleep bestanden hierheen om te uploaden"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "bijv. 100:1440"

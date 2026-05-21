@@ -826,6 +826,10 @@ msgstr "Nu mă avertiza despre securitatea scăzută a legăturilor pentru acest
 msgid "Download"
 msgstr "Descarcă"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Plasați fișierele pentru a le încărca"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "ex., 100:1440"

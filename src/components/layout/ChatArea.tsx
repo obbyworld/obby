@@ -162,6 +162,11 @@ export const ChatArea: React.FC<{
     file: null,
     previewUrl: null,
   });
+  // True while a file is being dragged over the input area, so we can
+  // show a drop overlay. A counter avoids the flicker that dragenter/
+  // dragleave cause as the pointer crosses child elements.
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const dragDepthRef = useRef(0);
   // Multimedia uploads in flight.  Each job tracks one file's
   // XHR-driven progress; once they all settle we send a single
   // PRIVMSG with the URLs joined.
@@ -1142,6 +1147,53 @@ export const ChatArea: React.FC<{
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
+  // Shared by the file picker and drag-and-drop: a single image keeps the
+  // confirm-then-send preview so the user can eyeball it first; anything
+  // else goes straight to the parallel uploader.
+  const handleSelectedFiles = (files: File[]) => {
+    if (files.length === 0) return;
+    if (files.length === 1 && files[0].type.startsWith("image/")) {
+      const previewUrl = URL.createObjectURL(files[0]);
+      setImagePreview({ isOpen: true, file: files[0], previewUrl });
+      return;
+    }
+    handleFilesUpload(files);
+  };
+
+  // Dropping a file onto the textarea otherwise triggers the browser
+  // default, which pastes the local file path as text. Intercept it on the
+  // input container, mirror the file picker, and ignore non-file drags
+  // (e.g. dragging selected text) so normal text DnD still works.
+  const dragHasFiles = (e: React.DragEvent) =>
+    Array.from(e.dataTransfer.types).includes("Files");
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    e.preventDefault();
+    dragDepthRef.current += 1;
+    setIsDraggingFile(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!dragHasFiles(e)) return;
+    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+    if (dragDepthRef.current === 0) setIsDraggingFile(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    e.preventDefault();
+    dragDepthRef.current = 0;
+    setIsDraggingFile(false);
+    handleSelectedFiles(Array.from(e.dataTransfer.files));
+  };
+
   const handleGifSend = (gifUrl: string) => {
     // Send the GIF URL directly to the current channel/user
     const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
@@ -2114,7 +2166,19 @@ export const ChatArea: React.FC<{
           {(selectedChannel || selectedPrivateChat) && (
             <div
               className={`${!isNarrowView && "px-4"} pb-4 relative chat-input-area`}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
             >
+              {isDraggingFile && (
+                <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
+                  <span className="text-discord-text-normal font-medium flex items-center">
+                    <FaPlus className="mr-2" />
+                    <Trans>Drop files to upload</Trans>
+                  </span>
+                </div>
+              )}
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}
@@ -2220,28 +2284,11 @@ export const ChatArea: React.FC<{
                         input.multiple = true;
                         input.accept = "image/*,video/*,audio/*";
                         input.onchange = (e) => {
-                          const files = Array.from(
-                            (e.target as HTMLInputElement).files ?? [],
+                          handleSelectedFiles(
+                            Array.from(
+                              (e.target as HTMLInputElement).files ?? [],
+                            ),
                           );
-                          if (files.length === 0) return;
-                          // For a single image, keep the legacy
-                          // confirm-then-upload preview UX so users
-                          // can see the picture before sending.
-                          if (
-                            files.length === 1 &&
-                            files[0].type.startsWith("image/")
-                          ) {
-                            const previewUrl = URL.createObjectURL(files[0]);
-                            setImagePreview({
-                              isOpen: true,
-                              file: files[0],
-                              previewUrl,
-                            });
-                            return;
-                          }
-                          // Multi-file or non-image: go straight to
-                          // upload with the progress strip.
-                          handleFilesUpload(files);
                         };
                         input.click();
                         setShowPlusMenu(false);

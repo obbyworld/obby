@@ -826,6 +826,10 @@ msgstr "Não me avisar sobre baixa segurança de link para este servidor"
 msgid "Download"
 msgstr "Baixar"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Solte os arquivos para enviar"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "ex.: 100:1440"
