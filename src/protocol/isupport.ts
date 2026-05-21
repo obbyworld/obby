@@ -74,7 +74,10 @@ export function registerISupportHandler(
       return;
     }
 
-    if (key === "draft/FILEHOST") {
+    // Vendor token-authenticated uploader. obby's filehost requires an
+    // account, so it can't use the tokenless standard draft/FILEHOST; it
+    // advertises this vendor token instead, paired with draft/authtoken.
+    if (key === "obby.world/FILEHOST") {
       useStore.setState((state) => {
         const updatedServers = state.servers.map((server: Server) => {
           if (server.id === serverId) {

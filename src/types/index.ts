@@ -47,6 +47,10 @@ export interface Server {
   prefix?: string;
   chanmodes?: string; // CHANMODES ISUPPORT value defining mode groups A,B,C,D
   botMode?: string;
+  // Upload endpoint from the vendor `obby.world/FILEHOST` ISUPPORT token.
+  // This is the token-authenticated variant (mint a draft/authtoken Bearer,
+  // POST to <filehost>/upload); the standard tokenless draft/FILEHOST is
+  // discovered separately.
   filehost?: string;
   linkSecurity?: number; // Link security level from unrealircd.org/link-security
   jwtToken?: string; // JWT token for filehost authentication (from EXTJWT)
