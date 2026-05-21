@@ -78,6 +78,27 @@ function parseIrcLine(line) {
   return { msgid, nick, command: parts[0], target: parts[1] || "", text };
 }
 
+// Network name for the notification context.  The hosted build is
+// single-network, so the manifest's name is the network ("Obby").
+// Cached after first read; the SW may be killed between pushes, so the
+// fetch is cheap and falls back to "" on failure.
+let cachedNetworkName = null;
+async function getNetworkName() {
+  if (cachedNetworkName !== null) return cachedNetworkName;
+  try {
+    const res = await fetch("/manifest.webmanifest", { cache: "force-cache" });
+    const m = await res.json();
+    cachedNetworkName = m.name || m.short_name || "";
+  } catch {
+    cachedNetworkName = "";
+  }
+  return cachedNetworkName;
+}
+
+function isChannelTarget(target) {
+  return !!target && "#&^$".includes(target.charAt(0));
+}
+
 self.addEventListener("push", (event) => {
   if (!event.data) return;
   let raw;
@@ -99,15 +120,29 @@ self.addEventListener("push", (event) => {
       });
       if (wins.some((c) => c.focused)) return;
 
-      await self.registration.showNotification(parsed.nick, {
+      const network = await getNetworkName();
+      const channel = isChannelTarget(parsed.target);
+
+      // Channel highlight: "alice in #weather"; DM: "alice".
+      // The network name is appended as context when known.
+      let title = channel
+        ? `${parsed.nick} in ${parsed.target}`
+        : parsed.nick;
+      if (network) title += ` · ${network}`;
+
+      await self.registration.showNotification(title, {
         body: parsed.text || "",
         icon: "/pwa/icon-192.png",
         badge: "/pwa/icon-192.png",
-        // Collapse repeated DMs from the same person into one slot
-        // rather than stacking endlessly.
-        tag: `pm-${parsed.nick}`,
+        // Group by conversation: per-channel for highlights, per-sender
+        // for DMs -- so repeats collapse instead of stacking endlessly.
+        tag: channel ? `hl-${parsed.target}` : `pm-${parsed.nick}`,
         renotify: true,
-        data: { nick: parsed.nick, target: parsed.target },
+        data: {
+          nick: parsed.nick,
+          target: parsed.target,
+          network,
+        },
       });
     })(),
   );
