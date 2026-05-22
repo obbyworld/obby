@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { FaFileAlt, FaPlay } from "react-icons/fa";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -39,7 +40,7 @@ export const TopicMediaStrip: React.FC = () => {
   const topic = selectedChannel?.topic ?? null;
 
   const filehost = useMemo(
-    () => servers.find((s) => s.id === selectedServerId)?.filehost ?? null,
+    () => serverFilehosts(servers.find((s) => s.id === selectedServerId)),
     [servers, selectedServerId],
   );
 

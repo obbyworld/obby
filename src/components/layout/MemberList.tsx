@@ -8,6 +8,7 @@ import {
   getColorStyle,
   isUrlFromFilehost,
   processMarkdownInText,
+  serverFilehosts,
 } from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
@@ -151,9 +152,7 @@ const UserItem: React.FC<{
 
   // Determine if avatar should be shown based on media controls
   const isFilehostAvatar =
-    avatarUrl &&
-    server?.filehost &&
-    isUrlFromFilehost(avatarUrl, server.filehost);
+    avatarUrl && isUrlFromFilehost(avatarUrl, serverFilehosts(server));
   const shouldShowAvatar =
     avatarUrl &&
     ((isFilehostAvatar && showSafeMedia) || showExternalContent) &&

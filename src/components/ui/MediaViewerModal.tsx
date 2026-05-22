@@ -29,7 +29,7 @@ import {
 } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { isUrlFromFilehost } from "../../lib/ircUtils";
+import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -562,9 +562,9 @@ export function MediaViewerModal({
       return;
     }
     const storeState = useStore.getState();
-    const filehost = storeState.servers.find(
-      (s) => s.id === serverId,
-    )?.filehost;
+    const filehost = serverFilehosts(
+      storeState.servers.find((s) => s.id === serverId),
+    );
     const mediaSettings = {
       showSafeMedia,
       showTrustedSourcesMedia,
@@ -1009,9 +1009,9 @@ export function MediaViewerModal({
       let idx = mediaEntries.findIndex((e) => e.url === imgUrl);
       if (idx < 0 && serverId && channelId) {
         // Image might be from a comment posted after modal opened — rebuild index
-        const filehost = useStore
-          .getState()
-          .servers.find((s) => s.id === serverId)?.filehost;
+        const filehost = serverFilehosts(
+          useStore.getState().servers.find((s) => s.id === serverId),
+        );
         const freshEntries = getChannelMessages(serverId, channelId)
           .flatMap((msg) =>
             extractMediaFromMessage(msg).map(

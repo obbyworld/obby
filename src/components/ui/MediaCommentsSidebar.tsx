@@ -19,6 +19,7 @@ import { useScrollToBottom } from "../../hooks/useScrollToBottom";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { canShowImageUrl } from "../../lib/imageUtils";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import {
   detectMediaType,
   getEmbedThumbnailUrl,
@@ -116,9 +117,9 @@ export function MediaCommentsSidebar({
   const { mediaVisibilityLevel, sendTypingNotifications } = useStore(
     (state) => state.globalSettings,
   );
-  const filehost = useStore
-    .getState()
-    .servers.find((s) => s.id === serverId)?.filehost;
+  const filehost = serverFilehosts(
+    useStore.getState().servers.find((s) => s.id === serverId),
+  );
 
   // Look up Channel object — useMessageSending needs channel.name for PRIVMSG target
   const selectedChannel = useStore((state) => {

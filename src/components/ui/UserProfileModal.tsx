@@ -16,7 +16,7 @@ import {
   FaUserCheck,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
-import { isUrlFromFilehost } from "../../lib/ircUtils";
+import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
@@ -201,7 +201,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const pronouns = user?.metadata?.pronouns?.value;
 
   const isFilehostAvatar =
-    !!avatar && isUrlFromFilehost(avatar, server?.filehost ?? "");
+    !!avatar && isUrlFromFilehost(avatar, serverFilehosts(server));
   const canShowAvatar =
     !!avatar && ((isFilehostAvatar && showSafeMedia) || showExternalContent);
 

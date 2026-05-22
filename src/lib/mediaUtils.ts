@@ -278,7 +278,7 @@ export function filenameFromUrl(url: string): string {
 export function canShowMedia(
   url: string,
   settings: MediaSettings,
-  filehost?: string | null,
+  filehost?: string | string[] | null,
 ): boolean {
   if (settings.showExternalContent) return true;
   if (settings.showSafeMedia) {
