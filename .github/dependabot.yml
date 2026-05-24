@@ -80,6 +80,10 @@ updates:
       actions-all:
         patterns:
           - '*'
+    ignore:
+      # Pinned to the stable/nightly branch tip on purpose — the channel resolves
+      # at runtime, so there's no version for Dependabot to track.
+      - dependency-name: 'dtolnay/rust-toolchain'
 
   - package-ecosystem: docker
     directory: '/'
