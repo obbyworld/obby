@@ -29,19 +29,6 @@ jobs:
     - name: Test
       run: npm run test
 
-  nix-linux:
-    name: Nix package (Linux x86_64)
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Build obsidianirc
-        run: nix flake check && nix build .#obsidianirc --no-link --print-build-logs
-
   i18n:
     name: i18n Catalog Check
     runs-on: ubuntu-latest

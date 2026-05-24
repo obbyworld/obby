@@ -101,10 +101,12 @@
         pkgs:
         let
           pkg = pkgs.callPackage ./nix/obsidianirc.nix obsidianPackageArgs;
+          update-npm-deps-hash = pkgs.callPackage ./nix/update-npm-deps-hash.nix { };
         in
         {
           obsidianirc = pkg;
           default = pkg;
+          inherit update-npm-deps-hash;
         }
       );
 
