@@ -12,8 +12,9 @@ function emit(type: "TAGMSG", payload: Record<string, unknown>): void {
   ircClient.triggerEvent(type as any, payload as any);
 }
 
+// The handler decodes base64 tag values; wrap the JSON the way the wire does.
 function tag(value: string): Record<string, string> {
-  return { "+obby.world/ai-tools": value };
+  return { "+draft/bot-tools": Buffer.from(value, "utf8").toString("base64") };
 }
 
 describe("aiTools store handler", () => {
@@ -151,7 +152,7 @@ describe("aiTools store handler", () => {
     emit("TAGMSG", {
       serverId: SID,
       mtags: tag(
-        '{"msg":"step","wid":"unknown","sid":"s1","type":"thinking","state":"start"}',
+        '{"msg":"step","wid":"unknown","sid":"s1","type":"reasoning","state":"start"}',
       ),
       sender: BOT,
       channelName: CHAN,

@@ -10,14 +10,14 @@
  *    we now share a channel with
  */
 import type { StoreApi } from "zustand";
+import { base64DecodeUtf8 } from "../../lib/base64";
 import ircClient from "../../lib/ircClient";
 import type { BotCommand, PushBotInfo } from "../../types";
 import useStore, { type AppState } from "../index";
 
 function decodeB64Json(value: string): unknown | null {
   try {
-    const padded = value + "=".repeat((4 - (value.length % 4)) % 4);
-    return JSON.parse(atob(padded));
+    return JSON.parse(base64DecodeUtf8(value));
   } catch (e) {
     console.warn("[pushbot] base64-JSON decode failed", e);
     return null;
@@ -132,9 +132,9 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   });
 }
 
-/** Send a +draft/bot-cmds-query TAGMSG to <botNick>. */
+/** Send a +draft/bot-cmds-query TAGMSG to <botNick> (the tag is valueless). */
 export function queryBotCommands(serverId: string, botNick: string): void {
-  ircClient.sendRaw(serverId, `@+draft/bot-cmds-query=1 TAGMSG ${botNick}`);
+  ircClient.sendRaw(serverId, `@+draft/bot-cmds-query TAGMSG ${botNick}`);
 }
 
 /**

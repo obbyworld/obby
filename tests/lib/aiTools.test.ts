@@ -5,10 +5,22 @@ import {
   escapeIrcTagValue,
 } from "../../src/lib/aiTools";
 
+// Tag values are base64 of compact JSON; wrap test inputs the same way a bot
+// would on the wire.
+const b64 = (o: unknown): string =>
+  Buffer.from(JSON.stringify(o), "utf8").toString("base64");
+
 describe("decodeAiToolsValue", () => {
-  test("parses a workflow start message", () => {
+  test("parses a workflow start message with features", () => {
     const got = decodeAiToolsValue(
-      '{"msg":"workflow","id":"7f3a9b","state":"start","name":"Research","trigger":"m0042"}',
+      b64({
+        msg: "workflow",
+        id: "7f3a9b",
+        state: "start",
+        name: "Research",
+        trigger: "m0042",
+        features: ["interactive", "reasoning"],
+      }),
     );
     expect(got).toEqual({
       msg: "workflow",
@@ -16,12 +28,21 @@ describe("decodeAiToolsValue", () => {
       state: "start",
       name: "Research",
       trigger: "m0042",
+      features: ["interactive", "reasoning"],
     });
   });
 
   test("parses a step with nested-object tool-call content", () => {
     const got = decodeAiToolsValue(
-      '{"msg":"step","wid":"7f3a9b","sid":"s2","type":"tool-call","state":"start","tool":"web-search","content":{"query":"foo"}}',
+      b64({
+        msg: "step",
+        wid: "7f3a9b",
+        sid: "s2",
+        type: "tool-call",
+        state: "start",
+        tool: "web-search",
+        content: { query: "foo" },
+      }),
     );
     expect(got).toMatchObject({
       msg: "step",
@@ -33,50 +54,89 @@ describe("decodeAiToolsValue", () => {
     });
   });
 
-  test("parses an action message", () => {
+  test("parses a reasoning step", () => {
     const got = decodeAiToolsValue(
-      '{"msg":"action","action":"cancel","target":"7f3a9b"}',
+      b64({
+        msg: "step",
+        wid: "w",
+        sid: "s1",
+        type: "reasoning",
+        state: "complete",
+        content: "planning the search",
+      }),
     );
-    expect(got).toEqual({
-      msg: "action",
-      action: "cancel",
-      target: "7f3a9b",
+    expect(got).toMatchObject({
+      type: "reasoning",
+      content: "planning the search",
     });
   });
 
-  test("returns null on malformed JSON", () => {
-    expect(decodeAiToolsValue("not-json")).toBeNull();
+  test("parses an action input message", () => {
+    const got = decodeAiToolsValue(
+      b64({
+        msg: "action",
+        action: "input",
+        target: "7f3a9b",
+        content: "use the staging server",
+      }),
+    );
+    expect(got).toEqual({
+      msg: "action",
+      action: "input",
+      target: "7f3a9b",
+      content: "use the staging server",
+    });
+  });
+
+  test("returns null on malformed input", () => {
+    expect(decodeAiToolsValue("not-valid-base64-!@#")).toBeNull();
   });
 
   test("returns null on unknown msg discriminator", () => {
-    expect(decodeAiToolsValue('{"msg":"frob","x":1}')).toBeNull();
+    expect(decodeAiToolsValue(b64({ msg: "frob", x: 1 }))).toBeNull();
   });
 
   test("returns null on missing required fields", () => {
-    expect(decodeAiToolsValue('{"msg":"workflow","id":"x"}')).toBeNull();
-    expect(decodeAiToolsValue('{"msg":"step","wid":"x","sid":"y"}')).toBeNull();
+    expect(decodeAiToolsValue(b64({ msg: "workflow", id: "x" }))).toBeNull();
+    expect(
+      decodeAiToolsValue(b64({ msg: "step", wid: "x", sid: "y" })),
+    ).toBeNull();
   });
 
   test("returns null on empty input", () => {
     expect(decodeAiToolsValue("")).toBeNull();
   });
 
-  test("preserves truncated flag", () => {
+  test("preserves truncated flag and step cancelled-by", () => {
     const got = decodeAiToolsValue(
-      '{"msg":"step","wid":"w","sid":"s","type":"tool-result","state":"complete","content":"part","truncated":true}',
+      b64({
+        msg: "step",
+        wid: "w",
+        sid: "s",
+        type: "tool-result",
+        state: "cancelled",
+        content: "part",
+        truncated: true,
+        "cancelled-by": "alice",
+      }),
     );
-    expect(got).toMatchObject({ truncated: true });
+    expect(got).toMatchObject({ truncated: true, "cancelled-by": "alice" });
   });
 });
 
 describe("encodeAiToolsValue", () => {
-  test("emits compact JSON, no whitespace", () => {
+  test("emits base64 of compact JSON", () => {
     const out = encodeAiToolsValue({
       msg: "workflow",
       id: "x",
       state: "complete",
     });
-    expect(out).toBe('{"msg":"workflow","id":"x","state":"complete"}');
+    expect(out).toBe(
+      Buffer.from(
+        '{"msg":"workflow","id":"x","state":"complete"}',
+        "utf8",
+      ).toString("base64"),
+    );
   });
 
   test("round-trips through decode", () => {
@@ -87,7 +147,7 @@ describe("encodeAiToolsValue", () => {
       type: "tool-call" as const,
       state: "start" as const,
       tool: "web-search",
-      content: { query: "hello world" },
+      content: { query: "héllo wörld" },
     };
     const re = decodeAiToolsValue(encodeAiToolsValue(original));
     expect(re).toEqual(original);

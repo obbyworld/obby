@@ -36,7 +36,7 @@ function stepLabel(step: AiStep): string {
   if (step.label) return step.label;
   if (step.type === "tool-call" || step.type === "tool-result")
     return step.tool ?? step.type;
-  if (step.type === "thinking") return "Thinking";
+  if (step.type === "reasoning") return "Reasoning";
   return "Text";
 }
 

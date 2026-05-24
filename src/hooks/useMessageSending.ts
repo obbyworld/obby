@@ -4,6 +4,7 @@
  */
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { base64EncodeUtf8 } from "../lib/base64";
 import ircClient from "../lib/ircClient";
 import { makeLabel, withLabel } from "../lib/labeledResponse";
 import {
@@ -116,21 +117,31 @@ export function sendBotCommand(
   cmd: BotCommand,
   options: Record<string, string | number | boolean>,
 ): void {
-  const payload = { name: cmd.name, options };
-  const b64 = btoa(JSON.stringify(payload)).replace(/=+$/, ""); // strip trailing padding for IRCv3 tag-value friendliness
-  const isPublic = cmd.visibility !== "private";
+  const contexts = cmd.contexts ?? ["public"];
+  const canPublic = contexts.includes("public");
+  const canPrivate = contexts.includes("private");
 
-  if (channel && isPublic) {
+  // Per spec §Invoking a command: the base64 of the compact JSON invocation
+  // rides in +draft/bot-cmd. How it is addressed depends on the context.
+  if (channel && canPublic) {
+    // public: TAGMSG to the channel. Name the target bot so that when several
+    // bots in the channel share a command name, only the intended one acts.
+    const payload = { name: cmd.name, options, bot };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(
       serverId,
       `@+draft/bot-cmd=${b64} TAGMSG ${channel.name}`,
     );
-  } else if (channel && !isPublic) {
-    ircClient.sendRaw(
-      serverId,
-      `@+draft/bot-cmd=${b64};+draft/channel-context=${channel.name} TAGMSG ${bot}`,
-    );
+  } else if (channel && canPrivate) {
+    // private: TAGMSG to the bot. The channel travels in the payload, since
+    // +draft/channel-context is not valid on TAGMSG.
+    const payload = { name: cmd.name, options, channel: channel.name };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
+    ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
   } else {
+    // pm: TAGMSG to the bot, no channel.
+    const payload = { name: cmd.name, options };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
   }
 }

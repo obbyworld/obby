@@ -1,26 +1,31 @@
-// draft/ai-tools v0.4 — see doc/draft-ai-tools.md
+// draft/bot-tools — IRCv3 "Bot Tools" workflow transparency.
 //
-// Server-side IRCv3 tag-value escaping (\\, \:, \s, \r, \n, \0) is already
-// reversed by parseMessageTags in ircUtils.tsx by the time these payloads
-// reach us, so decoding here is just JSON.parse on the unescaped string.
-// Encoding is the inverse: JSON.stringify, then let the tag-emission path
-// escape on the wire.
+// All workflow state rides in a single client-only tag whose value is the
+// base64 (RFC 4648 §4, with padding) of the compact JSON body. base64 is used
+// because its alphabet never collides with IRCv3 tag-value escaping, so no
+// escape pass is needed on the wire in either direction.
 //
 // The tag name is fixed across all message kinds. The discriminator lives
 // in the JSON body as the `msg` field.
 
-export const AI_TOOLS_TAG = "+obby.world/ai-tools";
-export const AI_TOOLS_CAP = "draft/ai-tools";
+import { base64DecodeUtf8, base64EncodeUtf8 } from "./base64";
+
+export const AI_TOOLS_TAG = "+draft/bot-tools";
+export const AI_TOOLS_CAP = "draft/bot-tools";
 
 export type AiWorkflowState =
   | "start"
-  | "thinking"
+  | "reasoning"
   | "running"
   | "complete"
   | "failed"
   | "cancelled";
 
-export type AiStepType = "thinking" | "tool-call" | "tool-result" | "text";
+// Behaviours a bot advertises on its workflow `start` message so a client can
+// show the right controls before any step arrives.
+export type AiWorkflowFeature = "interactive" | "reasoning" | "approval";
+
+export type AiStepType = "reasoning" | "tool-call" | "tool-result" | "text";
 
 export type AiStepState =
   | "start"
@@ -30,7 +35,7 @@ export type AiStepState =
   | "failed"
   | "cancelled";
 
-export type AiActionType = "cancel" | "approve" | "reject" | "steer";
+export type AiActionType = "cancel" | "approve" | "reject" | "input";
 
 export interface AiWorkflowMessage {
   msg: "workflow";
@@ -38,10 +43,11 @@ export interface AiWorkflowMessage {
   state: AiWorkflowState;
   name?: string;
   trigger?: string;
-  // Short truncated copy of the prompt that started the workflow.
-  // Non-standard but useful: lets clients show "Answering <nick>:
-  // <prompt excerpt>" inline on the workflow card without scrolling
-  // back to the trigger message.
+  features?: AiWorkflowFeature[];
+  // Short truncated copy of the prompt that started the workflow. A bot-neutral
+  // hint, not part of the spec: lets a client show "Answering <nick>:
+  // <prompt excerpt>" inline on the workflow card without scrolling back to the
+  // trigger message. Decoders ignore it if absent.
   prompt?: string;
   "cancelled-by"?: string;
 }
@@ -57,6 +63,7 @@ export interface AiStepMessage {
   // For tool-call: nested JSON object of arguments. Other types: string fragment.
   content?: unknown;
   truncated?: boolean;
+  "cancelled-by"?: string;
 }
 
 export interface AiActionMessage {
@@ -71,15 +78,15 @@ export type AiToolsMessage =
   | AiStepMessage
   | AiActionMessage;
 
-// Decode a raw tag value (already IRC-unescaped by parseMessageTags) into a
-// structured message. Returns null on any parse failure or schema mismatch
-// rather than throwing, per spec §Security: malformed payloads are silently
+// Decode a raw tag value (base64 of compact JSON) into a structured message.
+// Returns null on any decode/parse failure or schema mismatch rather than
+// throwing, per spec §Security: malformed or oversized payloads are silently
 // discarded.
 export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
   if (!raw) return null;
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(base64DecodeUtf8(raw));
   } catch {
     return null;
   }
@@ -97,6 +104,10 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
       };
       if (typeof obj.name === "string") m.name = obj.name;
       if (typeof obj.trigger === "string") m.trigger = obj.trigger;
+      if (Array.isArray(obj.features))
+        m.features = obj.features.filter(
+          (f): f is AiWorkflowFeature => typeof f === "string",
+        ) as AiWorkflowFeature[];
       if (typeof obj.prompt === "string") m.prompt = obj.prompt;
       if (typeof obj["cancelled-by"] === "string")
         m["cancelled-by"] = obj["cancelled-by"] as string;
@@ -121,6 +132,8 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
       if (typeof obj.label === "string") m.label = obj.label;
       if (obj.content !== undefined) m.content = obj.content;
       if (typeof obj.truncated === "boolean") m.truncated = obj.truncated;
+      if (typeof obj["cancelled-by"] === "string")
+        m["cancelled-by"] = obj["cancelled-by"] as string;
       return m;
     }
     case "action": {
@@ -139,14 +152,13 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
   }
 }
 
-// Compact JSON (no whitespace), per spec §Value Encoding. The IRC-tag
-// escape pass happens at the wire-emission layer.
+// base64 of compact JSON (no whitespace), per spec §Value Encoding.
 export function encodeAiToolsValue(msg: AiToolsMessage): string {
-  return JSON.stringify(msg);
+  return base64EncodeUtf8(JSON.stringify(msg));
 }
 
-// User-facing step count: "thinking" frames don't count (they're the
-// model muttering, not work), and a tool-call + matching tool-result
+// User-facing step count: "reasoning" frames don't count (they're the
+// bot planning, not work), and a tool-call + matching tool-result
 // pair counts as a single step (they're the two sides of one tool
 // invocation, paired FIFO by tool name).
 export function countableSteps(
@@ -157,7 +169,7 @@ export function countableSteps(
   for (let i = 0; i < steps.length; i++) {
     if (paired.has(i)) continue;
     const s = steps[i];
-    if (s.type === "thinking") continue;
+    if (s.type === "reasoning") continue;
     if (s.type === "tool-call") {
       for (let j = i + 1; j < steps.length; j++) {
         if (paired.has(j)) continue;

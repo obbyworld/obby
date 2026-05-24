@@ -1,6 +1,6 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
-import { AI_TOOLS_TAG, escapeIrcTagValue } from "../lib/aiTools";
+import { AI_TOOLS_TAG, encodeAiToolsValue } from "../lib/aiTools";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -476,9 +476,9 @@ interface UIState {
 
 export type { GlobalSettings };
 
-// One step within a draft/ai-tools workflow. `content` is the spec's
+// One step within a draft/bot-tools workflow. `content` is the spec's
 // untyped payload: a nested object for tool-call args, a string fragment
-// for tool-result / thinking / text. We carry it through verbatim and
+// for tool-result / reasoning / text. We carry it through verbatim and
 // let the UI decide how to render.
 export interface AiStep {
   sid: string;
@@ -644,8 +644,8 @@ export interface AppState {
   processedMessageIds: Set<string>; // Set of msgid values that have already been processed
   // Auto-connect prevention
   hasConnectedToSavedServers: boolean;
-  // draft/ai-tools workflow state, indexed by serverId then workflow id.
-  // Populated by store/handlers/aiTools.ts from `+obby.world/ai-tools`
+  // draft/bot-tools workflow state, indexed by serverId then workflow id.
+  // Populated by store/handlers/aiTools.ts from `+draft/bot-tools`
   // tags carried on TAGMSG/PRIVMSG. Rendered by the floating workflow
   // tray in ChatArea.
   aiWorkflows: Record<string, Record<string, AiWorkflow>>;
@@ -964,7 +964,7 @@ export interface AppState {
   metadataSubs: (serverId: string) => void;
   metadataSync: (serverId: string, target: string) => void;
   sendRaw: (serverId: string, command: string) => void;
-  // draft/ai-tools UI helpers + control signals.
+  // draft/bot-tools UI helpers + control signals.
   aiWorkflowSetCollapsed: (
     serverId: string,
     workflowId: string,
@@ -974,8 +974,8 @@ export interface AppState {
   // Un-dismiss + expand. Used to reopen a workflow card from its
   // final-response PRIVMSG after the user has closed the tray entry.
   aiWorkflowReopen: (serverId: string, workflowId: string) => void;
-  // Send an `action` message (cancel / approve / reject / steer) to the
-  // bot's nick via TAGMSG carrying `+obby.world/ai-tools`.
+  // Send an `action` message (cancel / approve / reject / input) to the
+  // bot's nick via TAGMSG carrying `+draft/bot-tools`.
   aiSendAction: (
     serverId: string,
     botNick: string,
@@ -3897,12 +3897,9 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   aiSendAction: (serverId, botNick, action) => {
-    const json = JSON.stringify(action);
-    const escaped = escapeIrcTagValue(json);
-    ircClient.sendRaw(
-      serverId,
-      `@${AI_TOOLS_TAG}=${escaped} TAGMSG ${botNick}`,
-    );
+    // base64 of compact JSON; its alphabet needs no IRC tag-value escaping.
+    const value = encodeAiToolsValue(action);
+    ircClient.sendRaw(serverId, `@${AI_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
   },
 }));
 

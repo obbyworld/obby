@@ -32,7 +32,7 @@ interface AiToolsCardProps {
 }
 
 const STEP_TYPE_ACCENT: Record<string, string> = {
-  thinking: "bg-purple-400",
+  reasoning: "bg-purple-400",
   "tool-call": "bg-cyan-400",
   "tool-result": "bg-emerald-400",
   text: "bg-discord-text-muted",
@@ -190,7 +190,7 @@ const StepRow: React.FC<{
   </div>
 );
 
-// Render a single thinking / text step. Colored dot, terse header,
+// Render a single reasoning / text step. Colored dot, terse header,
 // then the content payload in a mono box if present.
 const Step: React.FC<{
   step: AiStep;
@@ -200,7 +200,7 @@ const Step: React.FC<{
   const accent = STEP_TYPE_ACCENT[step.type] ?? STEP_TYPE_ACCENT.text;
 
   const headerKind =
-    step.type === "thinking" ? <Trans>Thinking</Trans> : <Trans>Text</Trans>;
+    step.type === "reasoning" ? <Trans>Reasoning</Trans> : <Trans>Text</Trans>;
 
   return (
     <StepRow accent={accent} isFirst={isFirst} isLast={isLast}>

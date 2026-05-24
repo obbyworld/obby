@@ -132,12 +132,20 @@ export interface BotCommandOption {
   choices?: string[];
 }
 
+/** draft/bot-cmds §Command gating: conditions the invoker must satisfy. */
+export interface BotCommandRequires {
+  "min-channel-rank"?: "voice" | "halfop" | "op" | "admin" | "owner";
+  account?: boolean;
+  tls?: boolean;
+}
+
 export interface BotCommand {
   name: string;
   description?: string;
-  visibility?: "public" | "private";
-  scopes?: ("channel" | "dm")[];
+  /** Where the command may be invoked. Absent is treated as ["public"]. */
+  contexts?: ("public" | "private" | "pm")[];
   options?: BotCommandOption[];
+  requires?: BotCommandRequires;
 }
 
 export interface NamedModeSpec {
@@ -308,8 +316,8 @@ export interface Message {
   replyMessage: Message | null;
   mentioned: string[];
   tags?: Record<string, string>;
-  // draft/ai-tools: this message is a synthesised placeholder for a
-  // live AI workflow that hasn't produced its final PRIVMSG yet, or
+  // draft/bot-tools: this message is a synthesised placeholder for a
+  // live bot workflow that hasn't produced its final PRIVMSG yet, or
   // (once the PRIVMSG lands) was morphed from such a placeholder.
   // The pill renders off `aiToolsWorkflowId`; while `aiToolsPending`
   // is true the message body is replaced with a workflow-state
