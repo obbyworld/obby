@@ -308,6 +308,14 @@ export interface Message {
   replyMessage: Message | null;
   mentioned: string[];
   tags?: Record<string, string>;
+  // draft/ai-tools: this message is a synthesised placeholder for a
+  // live AI workflow that hasn't produced its final PRIVMSG yet, or
+  // (once the PRIVMSG lands) was morphed from such a placeholder.
+  // The pill renders off `aiToolsWorkflowId`; while `aiToolsPending`
+  // is true the message body is replaced with a workflow-state
+  // preview (current step, spinner, etc.) instead of plain content.
+  aiToolsWorkflowId?: string;
+  aiToolsPending?: boolean;
   // Whisper fields (for draft/channel-context)
   whisperTarget?: string; // The recipient of a whisper
   // Standard reply fields. `command`, `code`, and `context` are

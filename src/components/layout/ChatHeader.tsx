@@ -32,6 +32,7 @@ import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
+import { AiToolsHistoryButton } from "../ui/AiToolsHistoryButton";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
@@ -628,6 +629,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   <FaFilm />
                 </button>
               )}
+              {/* AI workflow history — renders nothing when empty */}
+              {selectedServerId && (
+                <AiToolsHistoryButton
+                  serverId={selectedServerId}
+                  channel={selectedChannel.name}
+                />
+              )}
               {/* Search */}
               <button
                 className="md:hidden p-2 hover:text-discord-text-normal"
@@ -884,6 +892,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               >
                 <span aria-hidden="true">🎮</span>
               </button>
+              {selectedServerId && (
+                <AiToolsHistoryButton
+                  serverId={selectedServerId}
+                  channel={selectedPrivateChat.username}
+                />
+              )}
               <button
                 className="md:hidden p-2 hover:text-discord-text-normal"
                 onClick={() => setIsSearchExpanded(!isSearchExpanded)}

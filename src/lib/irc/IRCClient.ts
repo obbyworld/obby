@@ -572,6 +572,7 @@ export class IRCClient implements IRCClientContext {
     "sasl",
     "cap-notify",
     "draft/channel-rename",
+    "draft/ai-tools",
     "setname",
     "account-notify",
     "account-tag",
