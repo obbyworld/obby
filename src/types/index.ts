@@ -142,10 +142,14 @@ export interface BotCommandRequires {
 export interface BotCommand {
   name: string;
   description?: string;
-  /** Where the command may be invoked. Absent is treated as ["public"]. */
+  /** Where the command may be invoked (spec schema). */
   contexts?: ("public" | "private" | "pm")[];
   options?: BotCommandOption[];
   requires?: BotCommandRequires;
+  /** Legacy obby.world/bot-info directory fields, used only as a fallback to
+   * derive `contexts` when the directory entry predates the spec schema. */
+  visibility?: "public" | "private";
+  scopes?: ("channel" | "dm")[];
 }
 
 export interface NamedModeSpec {

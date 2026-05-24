@@ -110,6 +110,20 @@ function tryDispatchBotCommand(
  * path above and by the param modal, which collects values directly
  * via form controls.
  */
+// Where a command may be invoked. Prefer the spec `contexts`; fall back to the
+// legacy obby.world/bot-info `visibility`/`scopes` pair so a private command is
+// NEVER routed publicly just because the directory hasn't sent `contexts` yet.
+function resolveContexts(cmd: BotCommand): ("public" | "private" | "pm")[] {
+  if (Array.isArray(cmd.contexts) && cmd.contexts.length > 0)
+    return cmd.contexts;
+  const scopes = cmd.scopes ?? ["channel"];
+  const priv = cmd.visibility === "private";
+  const out: ("public" | "private" | "pm")[] = [];
+  if (scopes.includes("channel")) out.push(priv ? "private" : "public");
+  if (scopes.includes("dm")) out.push("pm");
+  return out.length > 0 ? out : [priv ? "private" : "public"];
+}
+
 export function sendBotCommand(
   serverId: string,
   channel: Channel | null,
@@ -117,7 +131,7 @@ export function sendBotCommand(
   cmd: BotCommand,
   options: Record<string, string | number | boolean>,
 ): void {
-  const contexts = cmd.contexts ?? ["public"];
+  const contexts = resolveContexts(cmd);
   const canPublic = contexts.includes("public");
   const canPrivate = contexts.includes("private");
 
