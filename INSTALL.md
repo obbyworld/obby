@@ -131,7 +131,7 @@ yay -S obsidianirc
 ## Docker
 
 ```sh
-docker run -p 8080:80 mattfly/obby:latest
+docker run -p 8080:80 obbyirc/obby:latest
 ```
 
 ## Manual build and development
