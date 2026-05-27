@@ -83,6 +83,47 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.package-version.outputs.tag_name }}
 
+  update-linux-nix:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Update npmDeps hash on main
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git checkout main
+          git pull --rebase origin main
+
+          nix run .#update-npm-deps-hash
+
+          if git diff --exit-code --quiet -- nix/obsidianirc.nix; then
+            echo "npmDeps hash on main is already up to date."
+            exit 0
+          fi
+
+          nix flake check && nix build .#obsidianirc --no-link --print-build-logs
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nix/obsidianirc.nix
+          git commit -m "build(nix): update npmDeps hash [skip ci]"
+          git push origin main
+
   publish-tauri:
     needs: collect-version
     permissions:
