@@ -1374,6 +1374,21 @@ msgstr "Median esikatselut"
 msgid "Members — {0}"
 msgstr "Jäsenet — {0}"
 
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0}"
+msgstr ""
+
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0} (Enter for new line, Shift+Enter to send)"
+msgstr ""
+
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0} (Shift+Enter for new line)"
+msgstr ""
+
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
 msgid "Message @{0}"
@@ -1388,21 +1403,6 @@ msgstr "Viesti @{0} (Enter = uusi rivi, Shift+Enter = lähetä)"
 #: src/components/layout/ChatArea.tsx
 msgid "Message @{0} (Shift+Enter for new line)"
 msgstr "Viesti @{0} (Shift+Enter = uusi rivi)"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0}"
-msgstr "Viesti #{0}"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0} (Enter for new line, Shift+Enter to send)"
-msgstr "Viesti #{0} (Enter = uusi rivi, Shift+Enter = lähetä)"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0} (Shift+Enter for new line)"
-msgstr "Viesti #{0} (Shift+Enter = uusi rivi)"
 
 #. placeholder {0}: searchTerm.trim()
 #: src/components/ui/AddPrivateChatModal.tsx

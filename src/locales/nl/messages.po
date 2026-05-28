@@ -1374,6 +1374,21 @@ msgstr "Mediavoorbeeldweergaven"
 msgid "Members — {0}"
 msgstr "Leden — {0}"
 
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0}"
+msgstr ""
+
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0} (Enter for new line, Shift+Enter to send)"
+msgstr ""
+
+#. placeholder {0}: selectedChannel.name
+#: src/components/layout/ChatArea.tsx
+msgid "Message {0} (Shift+Enter for new line)"
+msgstr ""
+
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
 msgid "Message @{0}"
@@ -1388,21 +1403,6 @@ msgstr "Bericht aan @{0} (Enter voor nieuwe regel, Shift+Enter om te verzenden)"
 #: src/components/layout/ChatArea.tsx
 msgid "Message @{0} (Shift+Enter for new line)"
 msgstr "Bericht aan @{0} (Shift+Enter voor nieuwe regel)"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0}"
-msgstr "Bericht in #{0}"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0} (Enter for new line, Shift+Enter to send)"
-msgstr "Bericht in #{0} (Enter voor nieuwe regel, Shift+Enter om te verzenden)"
-
-#. placeholder {0}: selectedChannel.name.replace(/^#/, "")
-#: src/components/layout/ChatArea.tsx
-msgid "Message #{0} (Shift+Enter for new line)"
-msgstr "Bericht in #{0} (Shift+Enter voor nieuwe regel)"
 
 #. placeholder {0}: searchTerm.trim()
 #: src/components/ui/AddPrivateChatModal.tsx
