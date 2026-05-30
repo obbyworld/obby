@@ -1,0 +1,34 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:1:1-18:12
+INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:1:1-18:12
+	package
+		INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:1:11-69
+application
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:3:5-15:19
+service#com.obsidianirc.unifiedpush.PushServiceImpl
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:8:9-14:19
+	android:exported
+		ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:10:13-37
+	android:name
+		ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:9:13-71
+intent-filter#action:name:org.unifiedpush.android.connector.PUSH_EVENT
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:11:13-13:29
+action#org.unifiedpush.android.connector.PUSH_EVENT
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:12:17-87
+	android:name
+		ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:12:25-84
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:17:5-77
+	android:name
+		ADDED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:17:22-74
+uses-sdk
+INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml
+INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml

@@ -1,0 +1,35 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.obsidianirc.unifiedpush" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+7-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:17:5-77
+7-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:17:22-74
+8
+9    <application>
+9-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:3:5-15:19
+10
+11        <!--
+12             UnifiedPush connector 3.x delivers endpoint + decrypted
+13             messages to this Service (action PUSH_EVENT). It runs even
+14             when the app's WebView is gone, so notifications are shown
+15             natively here.
+16        -->
+17        <service
+17-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:8:9-14:19
+18            android:name="com.obsidianirc.unifiedpush.PushServiceImpl"
+18-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:9:13-71
+19            android:exported="false" >
+19-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:10:13-37
+20            <intent-filter>
+20-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:11:13-13:29
+21                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT" />
+21-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:12:17-87
+21-->/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android/src/main/AndroidManifest.xml:12:25-84
+22            </intent-filter>
+23        </service>
+24    </application>
+25
+26</manifest>

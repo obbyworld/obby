@@ -38,6 +38,10 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     });
   });
 
+  ircClient.on("rawLine", ({ serverId, direction, line }) => {
+    store.getState().appendRawLogLine({ serverId, direction, line });
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
