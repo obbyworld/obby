@@ -14,6 +14,30 @@ import * as storage from "../localStorage";
 export const readyProcessedServers = new Set<string>();
 
 export function registerConnectionHandlers(store: StoreApi<AppState>): void {
+  ircClient.on("rateLimited", ({ serverId, message }) => {
+    const server = store.getState().servers.find((s) => s.id === serverId);
+    store.getState().addGlobalNotification({
+      type: "warn",
+      command: "ERROR",
+      code: "RATE_LIMITED",
+      message,
+      target: server?.host ?? serverId,
+      serverId,
+    });
+  });
+
+  ircClient.on("serverError", ({ serverId, message }) => {
+    const server = store.getState().servers.find((s) => s.id === serverId);
+    store.getState().addGlobalNotification({
+      type: "fail",
+      command: "ERROR",
+      code: "SERVER_ERROR",
+      message,
+      target: server?.host ?? serverId,
+      serverId,
+    });
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
