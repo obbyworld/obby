@@ -3,6 +3,7 @@ import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
 import ircClient from "../../lib/ircClient";
 import {
@@ -352,6 +353,19 @@ export const MessageItem = memo((props: MessageItemProps) => {
   // message.content is already combined for multiline messages by the IRC client
   const messageContent = message.content;
 
+  // Author + time + raw markdown source, surfaced as data attributes so the
+  // chat copy handler (chatMarkdownCopy) can rebuild a markdown transcript that
+  // preserves authorship and markdown the rendered DOM would otherwise strip.
+  const copyAuthor = formatCopyAuthor(displayName, message.userId, isSystem);
+  const copyTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(message.timestamp)),
+    [message.timestamp],
+  );
+
   // draft/custom-emoji: gather pack URLs for this message's channel +
   // network in priority order so a channel pack can shadow a network
   // shortcode of the same name.
@@ -668,6 +682,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
     <div
       ref={messageRowRef}
       data-message-id={message.id}
+      data-md-author={copyAuthor}
+      data-md-time={copyTime}
+      data-md-source={messageContent}
       className={`px-4 hover:bg-discord-message-hover group relative transition-colors duration-150 ${
         showHeader ? "mt-4" : "py-0.5"
       }${isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""}${
