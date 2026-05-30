@@ -495,6 +495,10 @@ export interface EventMap {
     message: string;
     retryAfter: number;
   };
+  serverError: {
+    serverId: string;
+    message: string;
+  };
 }
 
 type EventKey = keyof EventMap;
