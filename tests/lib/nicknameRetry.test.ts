@@ -73,6 +73,7 @@ describe("Nickname retry functionality", () => {
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore.getState to return our mock state
@@ -170,6 +171,7 @@ describe("Nickname retry functionality", () => {
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore methods
