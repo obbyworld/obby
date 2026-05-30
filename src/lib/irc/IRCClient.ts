@@ -831,7 +831,21 @@ export class IRCClient implements IRCClientContext {
         server.connectionState = "disconnected";
         this.sockets.delete(server.id);
         this.pendingConnections.delete(connectionKey);
-        reject(new Error(`Failed to connect to ${actualHost}:${actualPort}`));
+        const cause =
+          error instanceof Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : String(error);
+        this.triggerEvent("serverError", {
+          serverId: server.id,
+          message: cause || `Failed to connect to ${actualHost}:${actualPort}`,
+        });
+        reject(
+          new Error(
+            `Failed to connect to ${actualHost}:${actualPort}: ${cause}`,
+          ),
+        );
       };
 
       socket.onmessage = (event) => {
