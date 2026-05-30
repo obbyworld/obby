@@ -533,6 +533,7 @@ msgid "Choose file"
 msgstr "파일 선택"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "지우기"
 
@@ -585,6 +586,7 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -678,6 +680,10 @@ msgstr "미디어 표시 및 외부 콘텐츠 제어"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copied"
 msgstr "복사됨"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1589,6 +1595,10 @@ msgstr "이 채널에 미디어가 없습니다"
 #: src/components/ui/UserSettings.tsx
 msgid "No media previews are loaded."
 msgstr "미디어 미리보기가 로드되지 않습니다."
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr ""
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"

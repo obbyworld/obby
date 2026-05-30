@@ -533,6 +533,7 @@ msgid "Choose file"
 msgstr "選擇檔案"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "清除"
 
@@ -585,6 +586,7 @@ msgstr "用戶端限制 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -678,6 +680,10 @@ msgstr "控制媒体显示和外部内容"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copied"
 msgstr "已复制"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1589,6 +1595,10 @@ msgstr "此頻道沒有媒體"
 #: src/components/ui/UserSettings.tsx
 msgid "No media previews are loaded."
 msgstr "未加载任何媒体预览。"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr ""
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
