@@ -1,14 +1,14 @@
-# Compile ObsidianIRC
+# Compile Obby
 
-This covers instructions for how to manually build ObsidianIRC from source for different platforms. If you are willing
+This covers instructions for how to manually build Obby from source for different platforms. If you are willing
 to simply install it, maybe take a look at [Install instructions](INSTALL.md) first.
 
 ## Clone Repo
 
 ```sh
 cd ~
-git clone https://github.com/ObsidianIRC/ObsidianIRC
-cd ObsidianIRC
+git clone https://github.com/obbyworld/obby
+cd obby
 npm install
 ```
 

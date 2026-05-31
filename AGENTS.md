@@ -1,4 +1,4 @@
-# ObsidianIRC — Agent Reference
+# Obby — Agent Reference
 
 React + TypeScript + TailwindCSS + DaisyUI + Zustand + Tauri (desktop/mobile).
 WebSocket-only IRC client. Tauri wraps the web app with native bindings for TCP sockets

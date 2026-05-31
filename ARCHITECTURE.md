@@ -1,4 +1,4 @@
-# ObsidianIRC Architecture
+# Obby Architecture
 
 > **Modern IRC Client** - React + TypeScript + TailwindCSS + Tauri
 > Next-generation IRC client supporting websockets only
@@ -6,7 +6,7 @@
 ## 🏗️ Project Structure
 
 ```
-ObsidianIRC/
+obby/
 ├── src/
 │   ├── components/
 │   │   ├── layout/          # Core layout components

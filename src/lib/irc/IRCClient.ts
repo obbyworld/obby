@@ -12,6 +12,7 @@ import type {
   Server,
   User,
 } from "../../types";
+import { APP_NAME } from "../branding";
 import { parseIrcUrl } from "../ircUrlParser";
 import { isChannelTarget, parseMessageTags } from "../ircUtils";
 import { createSocket, type ISocket } from "../socket";
@@ -856,7 +857,10 @@ export class IRCClient implements IRCClientContext {
     if (socket) {
       const message =
         quitMessage ||
-        i18n._({ id: "ObsidianIRC - Bringing IRC to the future" });
+        i18n._({
+          id: "{APP_NAME} - Bringing IRC to the future",
+          values: { APP_NAME },
+        });
       socket.send(`QUIT :${message}`);
       socket.close();
       this.sockets.delete(serverId);

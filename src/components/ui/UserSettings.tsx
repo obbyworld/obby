@@ -21,6 +21,13 @@ import {
 } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useModalBehavior } from "../../hooks/useModalBehavior";
+import {
+  APP_NAME,
+  APP_PRIVACY_URL,
+  APP_REPO_LABEL,
+  APP_REPO_URL,
+  APP_SUPPORT_EMAIL,
+} from "../../lib/branding";
 import ircClient from "../../lib/ircClient";
 import { openExternalUrl } from "../../lib/openUrl";
 import { isTauri } from "../../lib/platformUtils";
@@ -411,7 +418,7 @@ export const UserSettings: React.FC = React.memo(() => {
 
     const initialAwayMessage = globalSettings.awayMessage || "";
     const initialQuitMessage =
-      globalSettings.quitMessage || t`ObsidianIRC - Bringing IRC to the future`;
+      globalSettings.quitMessage || t`${APP_NAME} - Bringing IRC to the future`;
     setAwayMessage(initialAwayMessage);
     setQuitMessage(initialQuitMessage);
 
@@ -885,7 +892,7 @@ export const UserSettings: React.FC = React.memo(() => {
               type="button"
               onClick={() => {
                 if (isTauri()) {
-                  openExternalUrl("https://obsidianirc.pages.dev/privacy");
+                  openExternalUrl(APP_PRIVACY_URL);
                 } else {
                   window.open("/privacy", "_blank");
                 }
@@ -966,10 +973,10 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>Email:</Trans>
               </strong>{" "}
               <a
-                href="mailto:obsidianirc@gmail.com"
+                href={`mailto:${APP_SUPPORT_EMAIL}`}
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                obsidianirc@gmail.com
+                {APP_SUPPORT_EMAIL}
               </a>
             </p>
             <p>
@@ -978,12 +985,12 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>GitHub:</Trans>
               </strong>{" "}
               <a
-                href="https://github.com/ObsidianIRC/ObsidianIRC"
+                href={APP_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                github.com/ObsidianIRC/ObsidianIRC
+                {APP_REPO_LABEL}
               </a>
             </p>
           </div>
@@ -1353,7 +1360,7 @@ export const UserSettings: React.FC = React.memo(() => {
               placeholder={
                 quitMessageSetting?.placeholder
                   ? i18n._(quitMessageSetting.placeholder)
-                  : t`ObsidianIRC - Bringing IRC to the future`
+                  : t`${APP_NAME} - Bringing IRC to the future`
               }
               className="w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary"
             />

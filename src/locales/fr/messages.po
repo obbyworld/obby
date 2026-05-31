@@ -15,8 +15,8 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Amener IRC vers le futur"
+msgid "{APP_NAME} - Bringing IRC to the future"
+msgstr "{APP_NAME} - Amener IRC vers le futur"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
@@ -65,6 +65,12 @@ msgstr "{0}, {1} et {2} sont en train d'écrire..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} et {3} autres sont en train d'écrire..."
+
+#: src/components/ui/UserSettings.tsx
+#: src/components/ui/UserSettings.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "{APP_NAME} - Bringing IRC to the future"
+msgstr "{APP_NAME} - L'IRC vers le futur"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -777,8 +783,8 @@ msgid "Discover"
 msgstr "Découvrir"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Découvrez le monde de l'IRC avec ObsidianIRC"
+msgid "Discover the world of IRC with {APP_NAME}"
+msgstr "Découvrez le monde de l'IRC avec {APP_NAME}"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"
@@ -1641,16 +1647,6 @@ msgstr "Son de notification"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "Notifications"
-
-#: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
-
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - L'IRC vers le futur"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"

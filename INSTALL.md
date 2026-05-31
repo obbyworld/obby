@@ -1,6 +1,6 @@
-# Installing Native Obsidian IRC
+# Installing Native Obby
 
-Grab the latest version for your platform from [https://github.com/ObsidianIRC/ObsidianIRC/releases](https://github.com/ObsidianIRC/ObsidianIRC/releases)
+Grab the latest version for your platform from [https://github.com/obbyworld/obby/releases](https://github.com/obbyworld/obby/releases)
 
 ## Choosing the Right Version
 

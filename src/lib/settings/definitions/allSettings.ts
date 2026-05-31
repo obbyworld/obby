@@ -1,6 +1,7 @@
 import { msg } from "@lingui/core/macro";
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
+import { APP_NAME } from "../../branding";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -154,7 +155,7 @@ const profileSettings: SettingDefinition[] = [
     description: msg`Message shown when you disconnect from the server`,
     type: "text",
     defaultValue: "",
-    placeholder: msg`ObsidianIRC - Bringing IRC to the future`,
+    placeholder: msg`${APP_NAME} - Bringing IRC to the future`,
     searchKeywords: ["quit", "disconnect", "message", "leave"],
     priority: 10,
   },
