@@ -3,38 +3,6 @@
 version = 3
 
 [[package]]
-name = "ObsidianIRC"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "jni",
- "log",
- "native-tls",
- "ndk-context",
- "reqwest 0.12.28",
- "rfd",
- "rustls",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-deep-link",
- "tauri-plugin-dialog",
- "tauri-plugin-haptics",
- "tauri-plugin-ios-keyboard",
- "tauri-plugin-log",
- "tauri-plugin-notification",
- "tauri-plugin-opener",
- "tauri-plugin-os",
- "tauri-plugin-share-sheet",
- "tauri-plugin-single-instance",
- "tokio",
- "tokio-native-tls",
- "tokio-rustls",
- "webpki-roots 0.26.11",
-]
-
-[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2624,6 +2592,38 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c7398b9c8b70908f6371f47ed36737907c87c52af34c268fed0bf0ceb92ead9"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "obby"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "jni",
+ "log",
+ "native-tls",
+ "ndk-context",
+ "reqwest 0.12.28",
+ "rfd",
+ "rustls",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-deep-link",
+ "tauri-plugin-dialog",
+ "tauri-plugin-haptics",
+ "tauri-plugin-ios-keyboard",
+ "tauri-plugin-log",
+ "tauri-plugin-notification",
+ "tauri-plugin-opener",
+ "tauri-plugin-os",
+ "tauri-plugin-share-sheet",
+ "tauri-plugin-single-instance",
+ "tokio",
+ "tokio-native-tls",
+ "tokio-rustls",
+ "webpki-roots 0.26.11",
 ]
 
 [[package]]

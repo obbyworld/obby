@@ -224,7 +224,7 @@ Multi-stage build:
 
 **Environment Variables (builder):**
 
-All names below are optional `Dockerfile` **`ARG`**s (forwarded into `npm run build`). The Nix derivation accepts the same prefixes via **`viteBuildEnv`** (see **`nix/obsidianirc.nix`**).
+All names below are optional `Dockerfile` **`ARG`**s (forwarded into `npm run build`). The Nix derivation accepts the same prefixes via **`viteBuildEnv`** (see **`nix/obby.nix`**).
 
 ```bash
 # vite.config.ts `define`

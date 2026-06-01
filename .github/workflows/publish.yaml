@@ -114,19 +114,19 @@ jobs:
 
           nix run .#update-npm-deps-hash
 
-          if git diff --exit-code --quiet -- nix/obsidianirc.nix; then
+          if git diff --exit-code --quiet -- nix/obby.nix; then
             echo "npmDeps hash on main is already up to date."
             exit 0
           fi
 
-          nix flake check && nix build .#obsidianirc --no-link --print-build-logs
+          nix flake check && nix build .#obby --no-link --print-build-logs
 
           # main's branch ruleset blocks direct bot pushes, so route the hash bump through a PR.
           BRANCH="automation/nix-npmdeps-${GITHUB_REF_NAME}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
-          git add nix/obsidianirc.nix
+          git add nix/obby.nix
           git commit -m "build(nix): update npmDeps hash for ${GITHUB_REF_NAME}"
           git push -f origin "$BRANCH"
 
@@ -596,8 +596,8 @@ jobs:
       - name: Archive iOS (unsigned)
         run: |
           xcodebuild \
-            -project src-tauri/gen/apple/ObsidianIRC.xcodeproj \
-            -scheme ObsidianIRC_iOS \
+            -project src-tauri/gen/apple/Obby.xcodeproj \
+            -scheme Obby_iOS \
             -sdk iphoneos \
             -configuration release \
             -destination 'generic/platform=iOS' \

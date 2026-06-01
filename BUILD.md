@@ -163,11 +163,11 @@ npm run tauri build -- --bundles appimage
 
 ```sh
 nix develop              # Node 22 + Tauri Linux deps + rustup
-nix build .#obsidianirc  # → result/bin/ObsidianIRC
+nix build .#obby  # → result/bin/Obby
 ```
 
 - **direnv:** `direnv allow` activates [.envrc](.envrc) (`use flake`).
-- **Home Manager:** `programs.obsidianirc` module — see [nix/hm-module.nix](nix/hm-module.nix) for options and usage.
+- **Home Manager:** `programs.obby` module — see [nix/hm-module.nix](nix/hm-module.nix) for options and usage.
 - **Maintenance:** when `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally. On version tag releases, [`publish.yaml`](.github/workflows/publish.yaml) (`update-linux-nix`) builds the Nix package and commits any hash fix to `main`.
 ### macOS
 

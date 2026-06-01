@@ -36,7 +36,7 @@ let
           value
         else
           throw ''
-            obsidianirc: viteBuildEnv key '${name}' must start with VITE_ (see vite.config.ts and BUILD.md).
+            obby: viteBuildEnv key '${name}' must start with VITE_ (see vite.config.ts and BUILD.md).
           ''
       ) filtered
     )
@@ -45,7 +45,7 @@ in
 
 rustPlatform.buildRustPackage (
   {
-    pname = "obsidianirc";
+    pname = "obby";
     inherit version src;
 
     cargoLock = {
@@ -54,7 +54,7 @@ rustPlatform.buildRustPackage (
 
     # Fetched npm tarball hash — bump when package-lock.json changes (Nix will print the expected value on mismatch).
     npmDeps = fetchNpmDeps {
-      name = "obsidianirc-npm-deps-${version}";
+      name = "obby-npm-deps-${version}";
       inherit src;
       hash = "sha256-JBagIH3/F891OQkYTpQGcImtUbSV24CMW1nh5MZF0QU=";
     };

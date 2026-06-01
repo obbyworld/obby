@@ -11,7 +11,7 @@ import react from "@vitejs/plugin-react";
 // multi-network build is a server-picker and doesn't claim a PWA identity.
 function hostedPwaPlugin(env: Record<string, string>): Plugin {
   const hosted = env.VITE_HIDE_SERVER_LIST === 'true';
-  const networkName = env.VITE_DEFAULT_IRC_SERVER_NAME || 'ObsidianIRC';
+  const networkName = env.VITE_DEFAULT_IRC_SERVER_NAME || 'Obby';
   const shortName = networkName.length > 12 ? networkName.slice(0, 12) : networkName;
   return {
     name: 'hosted-pwa',

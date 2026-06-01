@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A9A3FA91AC954CB42CCCBB32"
-               BuildableName = "ObsidianIRC.app"
-               BlueprintName = "ObsidianIRC_iOS"
-               ReferencedContainer = "container:ObsidianIRC.xcodeproj">
+               BuildableName = "Obby.app"
+               BlueprintName = "Obby_iOS"
+               ReferencedContainer = "container:Obby.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -31,9 +31,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A9A3FA91AC954CB42CCCBB32"
-            BuildableName = "ObsidianIRC.app"
-            BlueprintName = "ObsidianIRC_iOS"
-            ReferencedContainer = "container:ObsidianIRC.xcodeproj">
+            BuildableName = "Obby.app"
+            BlueprintName = "Obby_iOS"
+            ReferencedContainer = "container:Obby.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -66,9 +66,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A9A3FA91AC954CB42CCCBB32"
-            BuildableName = "ObsidianIRC.app"
-            BlueprintName = "ObsidianIRC_iOS"
-            ReferencedContainer = "container:ObsidianIRC.xcodeproj">
+            BuildableName = "Obby.app"
+            BlueprintName = "Obby_iOS"
+            ReferencedContainer = "container:Obby.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -95,9 +95,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A9A3FA91AC954CB42CCCBB32"
-            BuildableName = "ObsidianIRC.app"
-            BlueprintName = "ObsidianIRC_iOS"
-            ReferencedContainer = "container:ObsidianIRC.xcodeproj">
+            BuildableName = "Obby.app"
+            BlueprintName = "Obby_iOS"
+            ReferencedContainer = "container:Obby.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
