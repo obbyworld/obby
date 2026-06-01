@@ -533,6 +533,7 @@ msgid "Choose file"
 msgstr "Välj fil"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Rensa"
 
@@ -585,6 +586,7 @@ msgstr "Klientgräns (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -678,6 +680,10 @@ msgstr "Styr medievisning och externt innehåll"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copied"
 msgstr "Kopierat"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1589,6 +1595,10 @@ msgstr "Inget media i den här kanalen"
 #: src/components/ui/UserSettings.tsx
 msgid "No media previews are loaded."
 msgstr "Inga medieförhandsvisningar laddas."
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr ""
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"

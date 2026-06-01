@@ -495,6 +495,15 @@ export interface EventMap {
     message: string;
     retryAfter: number;
   };
+  serverError: {
+    serverId: string;
+    message: string;
+  };
+  rawLine: {
+    serverId: string;
+    direction: "tx" | "rx" | "info";
+    line: string;
+  };
 }
 
 type EventKey = keyof EventMap;
@@ -756,9 +765,20 @@ export class IRCClient implements IRCClientContext {
       });
       this.nicks.set(server.id, nickname);
 
+      this.triggerEvent("rawLine", {
+        serverId: server.id,
+        direction: "info",
+        line: `** connecting to ${url}`,
+      });
+
       socket.onopen = () => {
         //registerAllProtocolHandlers(this);
 
+        this.triggerEvent("rawLine", {
+          serverId: server.id,
+          direction: "info",
+          line: `** connected to ${actualHost}:${actualPort}`,
+        });
         socket.send("CAP LS 302");
 
         // Send password if provided (before CAP negotiation completes)
@@ -827,7 +847,26 @@ export class IRCClient implements IRCClientContext {
         server.connectionState = "disconnected";
         this.sockets.delete(server.id);
         this.pendingConnections.delete(connectionKey);
-        reject(new Error(`Failed to connect to ${actualHost}:${actualPort}`));
+        const cause =
+          error instanceof Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : String(error);
+        this.triggerEvent("rawLine", {
+          serverId: server.id,
+          direction: "info",
+          line: `** socket error: ${cause || "(no detail)"}`,
+        });
+        this.triggerEvent("serverError", {
+          serverId: server.id,
+          message: cause || `Failed to connect to ${actualHost}:${actualPort}`,
+        });
+        reject(
+          new Error(
+            `Failed to connect to ${actualHost}:${actualPort}: ${cause}`,
+          ),
+        );
       };
 
       socket.onmessage = (event) => {
@@ -835,6 +874,18 @@ export class IRCClient implements IRCClientContext {
           (id) => this.sockets.get(id) === socket,
         );
         if (serverId) {
+          const data =
+            typeof event.data === "string"
+              ? event.data
+              : String(event.data ?? "");
+          for (const line of data.split(/\r?\n/)) {
+            if (line.length === 0) continue;
+            this.triggerEvent("rawLine", {
+              serverId,
+              direction: "rx",
+              line,
+            });
+          }
           this.handleMessage(event.data, serverId);
         }
       };
@@ -1021,8 +1072,18 @@ export class IRCClient implements IRCClientContext {
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(command);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "tx",
+        line: command,
+      });
     } else {
       console.error(`Socket for server ${serverId} is not open`);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "info",
+        line: `** dropped TX (socket not open): ${command}`,
+      });
     }
   }
 

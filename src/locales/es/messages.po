@@ -533,6 +533,7 @@ msgid "Choose file"
 msgstr "Elegir archivo"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Limpiar"
 
@@ -585,6 +586,7 @@ msgstr "Límite de usuarios (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -678,6 +680,10 @@ msgstr "Controlar la visualización de medios y contenido externo"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copied"
 msgstr "Copiado"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1589,6 +1595,10 @@ msgstr "No hay medios en este canal"
 #: src/components/ui/UserSettings.tsx
 msgid "No media previews are loaded."
 msgstr "No se carga ninguna vista previa de medios."
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr ""
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"

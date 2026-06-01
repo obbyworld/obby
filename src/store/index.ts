@@ -496,6 +496,16 @@ export interface AppState {
     serverId: string;
     timestamp: Date;
   }[];
+  rawLog: Record<
+    string,
+    {
+      seq: number;
+      direction: "tx" | "rx" | "info";
+      line: string;
+      timestamp: number;
+    }[]
+  >;
+  rawLogViewerServerId: string | null;
   channelList: Record<
     string,
     { channel: string; userCount: number; topic: string }[]
@@ -766,6 +776,14 @@ export interface AppState {
   }) => void;
   removeGlobalNotification: (notificationId: string) => void;
   clearGlobalNotifications: () => void;
+  appendRawLogLine: (entry: {
+    serverId: string;
+    direction: "tx" | "rx" | "info";
+    line: string;
+  }) => void;
+  clearRawLog: (serverId: string) => void;
+  openRawLogViewer: (serverId: string) => void;
+  closeRawLogViewer: () => void;
   selectServer: (
     serverId: string | null,
     options?: { clearSelection?: boolean },
@@ -951,6 +969,8 @@ const useStore = create<AppState>((set, get) => ({
   connectingServerId: null,
   isAddingNewServer: false,
   connectionError: null,
+  rawLog: {},
+  rawLogViewerServerId: null,
   messages: {},
   typingUsers: {},
   typingTimers: {},
@@ -1866,6 +1886,34 @@ const useStore = create<AppState>((set, get) => ({
     set(() => ({
       globalNotifications: [],
     }));
+  },
+
+  appendRawLogLine: ({ serverId, direction, line }) => {
+    set((state) => {
+      const existing = state.rawLog[serverId] ?? [];
+      const lastSeq = existing.length ? existing[existing.length - 1].seq : 0;
+      const next = [
+        ...existing,
+        { seq: lastSeq + 1, direction, line, timestamp: Date.now() },
+      ];
+      const MAX = 2000;
+      const trimmed = next.length > MAX ? next.slice(next.length - MAX) : next;
+      return { rawLog: { ...state.rawLog, [serverId]: trimmed } };
+    });
+  },
+
+  clearRawLog: (serverId) => {
+    set((state) => ({
+      rawLog: { ...state.rawLog, [serverId]: [] },
+    }));
+  },
+
+  openRawLogViewer: (serverId) => {
+    set(() => ({ rawLogViewerServerId: serverId }));
+  },
+
+  closeRawLogViewer: () => {
+    set(() => ({ rawLogViewerServerId: null }));
   },
 
   selectServer: (serverId, options) => {
