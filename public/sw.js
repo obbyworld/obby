@@ -10,7 +10,7 @@
 // trimmed to the single latest navigation entry to avoid unbounded
 // growth.
 
-const NAV_CACHE = "obsidianirc-hosted-nav-v1";
+const NAV_CACHE = "obby-hosted-nav-v1";
 
 self.addEventListener("install", () => {
   self.skipWaiting();

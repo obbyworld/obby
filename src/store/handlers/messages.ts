@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { APP_NAME } from "../../lib/branding";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
@@ -1538,7 +1539,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (parv[0] === "\u0001VERSION\u0001") {
       ircClient.sendRaw(
         server.id,
-        `NOTICE ${response.sender} :\u0001VERSION ObsidianIRC v${ircClient.version}\u0001`,
+        `NOTICE ${response.sender} :\u0001VERSION ${APP_NAME} v${ircClient.version}\u0001`,
       );
     }
     if (parv[0] === "\u0001PING") {

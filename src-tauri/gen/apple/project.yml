@@ -10,7 +10,7 @@ configs:
 settingGroups:
   app:
     base:
-      PRODUCT_NAME: ObsidianIRC
+      PRODUCT_NAME: Obby
       PRODUCT_BUNDLE_IDENTIFIER: com.obsidianirc.dev
 targetTemplates:
   app:

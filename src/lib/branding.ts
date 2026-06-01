@@ -16,8 +16,11 @@ export const APP_REPO_URL = "https://github.com/obbyworld/obby";
 /** Repo URL without the scheme, for inline display. */
 export const APP_REPO_LABEL = APP_REPO_URL.replace(/^https?:\/\//, "");
 
-/** Contact address shown in privacy/settings. Pending a dedicated brand mailbox. */
-export const APP_SUPPORT_EMAIL = "obsidianirc@gmail.com";
+/** Public website / landing page. */
+export const APP_WEBSITE_URL = "https://hello.obby.world";
 
-/** Hosted privacy policy. Pending the move to the new brand domain. */
-export const APP_PRIVACY_URL = "https://obsidianirc.pages.dev/privacy";
+/** Contact address shown in privacy/settings. */
+export const APP_SUPPORT_EMAIL = "hello@obby.world";
+
+/** Hosted privacy policy. */
+export const APP_PRIVACY_URL = `${APP_WEBSITE_URL}/privacy`;

@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "ObsidianIRC",
+  "productName": "Obby",
   "version": "../package.json",
   "identifier": "com.obsidianirc.dev",
   "build": {

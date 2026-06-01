@@ -98,7 +98,7 @@ rustPlatform.buildRustPackage (
       description = "Modern IRC Client for the web, desktop and mobile.";
       homepage = "https://github.com/obbyworld/obby";
       license = lib.licenses.gpl3Only;
-      mainProgram = "ObsidianIRC";
+      mainProgram = "Obby";
       platforms = [
         "aarch64-linux"
         "x86_64-linux"

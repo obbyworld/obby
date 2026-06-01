@@ -190,7 +190,7 @@ describe("Metadata Display Features", () => {
         mediaVisibilityLevel: 3,
         enableMarkdownRendering: false,
         awayMessage: "",
-        quitMessage: "ObsidianIRC - Bringing IRC to the future",
+        quitMessage: "Obby - Bringing IRC to the future",
       },
     });
 
