@@ -38,6 +38,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@fontsource/roboto-mono": "^5.2.9",
     "@heroicons/react": "^2.2.0",
     "@lingui/core": "^5.9.5",
     "@lingui/macro": "^5.9.5",
