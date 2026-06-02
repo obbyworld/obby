@@ -47,6 +47,7 @@ vi.mock("react-pdf", () => ({
       { "data-testid": "pdf-page" },
       `Page ${pageNumber}`,
     ),
+  pdfjs: { GlobalWorkerOptions: { workerSrc: "" } },
 }));
 
 vi.mock("../../src/lib/platformUtils", () => ({

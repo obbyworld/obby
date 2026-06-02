@@ -50,7 +50,14 @@ import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
 const LazyDocument = lazy(() =>
-  import("react-pdf").then((m) => ({ default: m.Document })),
+  import("react-pdf").then((m) => {
+    // Configure the pdfjs worker on first PDF load; keeping this off the eager
+    // path is what keeps pdfjs out of the main bundle.
+    if (m.pdfjs?.GlobalWorkerOptions) {
+      m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    }
+    return { default: m.Document };
+  }),
 );
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),

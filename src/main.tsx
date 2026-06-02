@@ -3,7 +3,6 @@ import { I18nProvider } from "@lingui/react";
 import { locale as tauriLocale } from "@tauri-apps/plugin-os";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { pdfjs } from "react-pdf";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "@fontsource/roboto-mono/400.css";
@@ -14,8 +13,6 @@ import "@fontsource/roboto-mono/400-italic.css";
 import "@fontsource/roboto-mono/700-italic.css";
 import "./index.css";
 import { registerHostedServiceWorker } from "./lib/registerServiceWorker";
-
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
 registerHostedServiceWorker();
 

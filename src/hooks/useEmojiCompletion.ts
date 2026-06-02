@@ -82,7 +82,7 @@ export function useEmojiCompletion(
   const [unicodeEmoji, setUnicodeEmoji] = useState<EmojiItem[]>([]);
   useEffect(() => {
     let active = true;
-    import("emoji-datasource").then((m) => {
+    import("virtual:emoji-slim").then((m) => {
       if (active)
         setUnicodeEmoji(processEmojiData(m.default as RawEmojiData[]));
     });
