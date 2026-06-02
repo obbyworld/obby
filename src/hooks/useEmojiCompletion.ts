@@ -49,7 +49,6 @@ interface EmojiCompletionResult {
   updatePreviousText: (text: string) => void;
 }
 
-// emoji-datasource is ~1.5MB; lazy-load it so it stays out of the main bundle.
 function processEmojiData(raw: RawEmojiData[]): EmojiItem[] {
   return raw.map((emoji) => ({
     unified: emoji.unified,
@@ -82,10 +81,12 @@ export function useEmojiCompletion(
   const [unicodeEmoji, setUnicodeEmoji] = useState<EmojiItem[]>([]);
   useEffect(() => {
     let active = true;
-    import("virtual:emoji-slim").then((m) => {
-      if (active)
-        setUnicodeEmoji(processEmojiData(m.default as RawEmojiData[]));
-    });
+    import("virtual:emoji-slim")
+      .then((m) => {
+        if (active)
+          setUnicodeEmoji(processEmojiData(m.default as RawEmojiData[]));
+      })
+      .catch(() => {});
     return () => {
       active = false;
     };

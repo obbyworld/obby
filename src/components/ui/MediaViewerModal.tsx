@@ -51,8 +51,7 @@ import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
 const LazyDocument = lazy(() =>
   import("react-pdf").then((m) => {
-    // Configure the pdfjs worker on first PDF load; keeping this off the eager
-    // path is what keeps pdfjs out of the main bundle.
+    // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
     if (m.pdfjs?.GlobalWorkerOptions) {
       m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
     }
