@@ -1190,13 +1190,17 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      // Trigger event to notify store that history loading started (only if we actually requested it)
       if (server.capabilities?.includes("draft/chathistory")) {
         this.triggerEvent("CHATHISTORY_LOADING", {
           serverId,
           channelName,
           isLoading: true,
         });
+      } else {
+        // No CHATHISTORY support, so the LOADING(false) callback that
+        // normally fires WHO will never run. Send it now.
+        this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+        channel.needsWhoRequest = false;
       }
 
       return channel;
