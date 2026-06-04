@@ -978,12 +978,12 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>GitHub:</Trans>
               </strong>{" "}
               <a
-                href="https://github.com/ObsidianIRC/ObsidianIRC"
+                href="https://github.com/obbyworld/obby"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                github.com/ObsidianIRC/ObsidianIRC
+                github.com/obbyworld/obby
               </a>
             </p>
           </div>

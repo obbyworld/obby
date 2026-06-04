@@ -5,6 +5,7 @@ import { FaPencilAlt, FaPlus, FaRedo, FaTrash } from "react-icons/fa";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
@@ -43,7 +44,11 @@ const ServerIcon: React.FC<ServerIconProps> = ({
     server.privateChats?.some((pc) => pc.isMentioned);
 
   const iconUrl = server.icon;
-  const showIcon = canShowAvatarUrl(iconUrl, server.filehost, mediaSettings);
+  const showIcon = canShowAvatarUrl(
+    iconUrl,
+    serverFilehosts(server),
+    mediaSettings,
+  );
 
   const getServerInitial = (s: Server): string => {
     const displayName = s.networkName || s.name;

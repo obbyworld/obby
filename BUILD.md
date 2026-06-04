@@ -7,7 +7,7 @@ to simply install it, maybe take a look at [Install instructions](INSTALL.md) fi
 
 ```sh
 cd ~
-git clone https://github.com/ObsidianIRC/ObsidianIRC
+git clone https://github.com/obbyworld/obby
 cd ObsidianIRC
 npm install
 ```

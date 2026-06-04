@@ -27,6 +27,7 @@ import {
   getChannelAvatarUrl,
   getChannelDisplayName,
   processMarkdownInText,
+  serverFilehosts,
 } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriDesktop, isTauriMobile } from "../../lib/platformUtils";
@@ -659,7 +660,7 @@ export const ChannelList: React.FC<{
                                 );
                                 const shouldShowAvatar = canShowAvatarUrl(
                                   avatarUrl,
-                                  selectedServer?.filehost,
+                                  serverFilehosts(selectedServer),
                                   mediaSettings,
                                 );
 
@@ -709,7 +710,7 @@ export const ChannelList: React.FC<{
                                     );
                                     const shouldShowAvatar = canShowAvatarUrl(
                                       avatarUrl,
-                                      selectedServer?.filehost,
+                                      serverFilehosts(selectedServer),
                                       mediaSettings,
                                     );
                                     return shouldShowAvatar
@@ -1147,7 +1148,7 @@ export const ChannelList: React.FC<{
                               );
                               const shouldShowAvatar = canShowAvatarUrl(
                                 avatarUrl,
-                                selectedServer?.filehost,
+                                serverFilehosts(selectedServer),
                                 mediaSettings,
                               );
 
@@ -1196,7 +1197,7 @@ export const ChannelList: React.FC<{
                               );
                               const shouldShowAvatar = canShowAvatarUrl(
                                 avatarUrl,
-                                selectedServer?.filehost,
+                                serverFilehosts(selectedServer),
                                 mediaSettings,
                               );
 
@@ -1675,7 +1676,7 @@ export const ChannelList: React.FC<{
                   const shouldShowAvatar =
                     canShowAvatarUrl(
                       avatarUrl,
-                      selectedServer?.filehost,
+                      serverFilehosts(selectedServer),
                       mediaSettings,
                     ) && !avatarLoadFailed;
 

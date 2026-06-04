@@ -562,7 +562,7 @@ const PrivacyPolicy = () => {
                   obsidianirc@gmail.com
                 </a>
                 <a
-                  href="https://github.com/ObsidianIRC/ObsidianIRC"
+                  href="https://github.com/obbyworld/obby"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-discord-dark-200 text-discord-text-normal rounded-lg hover:bg-discord-dark-300 transition-colors border border-discord-dark-500/30"

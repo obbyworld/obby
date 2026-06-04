@@ -16,6 +16,7 @@ import {
   FaUserCheck,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
@@ -201,7 +202,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   const canShowAvatar = canShowAvatarUrl(
     avatar,
-    server?.filehost,
+    serverFilehosts(server),
     mediaSettings,
   );
 

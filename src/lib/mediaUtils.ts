@@ -282,7 +282,7 @@ export function filenameFromUrl(url: string): string {
 export function canShowMedia(
   url: string,
   settings: MediaSettings,
-  filehost?: string | null,
+  filehost?: string | string[] | null,
 ): boolean {
   if (!url || !isAbsoluteHttpUrl(url)) return false;
   if (settings.showExternalContent) return true;
@@ -306,7 +306,7 @@ export function canShowMedia(
  *  callers cannot forget it (history: relative URLs leaked the user's IP to the app origin). */
 export function canShowAvatarUrl(
   url: string | undefined | null,
-  serverFilehost: string | undefined | null,
+  serverFilehost: string | string[] | undefined | null,
   settings: MediaSettings,
 ): boolean {
   if (!url || !isAbsoluteHttpUrl(url)) return false;

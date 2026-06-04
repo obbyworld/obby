@@ -1,5 +1,6 @@
 import type React from "react";
 import { useState } from "react";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 
@@ -40,7 +41,7 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
 
   const shouldShowAvatar = canShowAvatarUrl(
     avatarUrl,
-    server?.filehost,
+    serverFilehosts(server),
     mediaSettings,
   );
 

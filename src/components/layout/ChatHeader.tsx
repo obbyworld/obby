@@ -22,7 +22,11 @@ import {
   FaUser,
   FaUserPlus,
 } from "react-icons/fa";
-import { getChannelAvatarUrl, getChannelDisplayName } from "../../lib/ircUtils";
+import {
+  getChannelAvatarUrl,
+  getChannelDisplayName,
+  serverFilehosts,
+} from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
@@ -412,7 +416,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               );
               const shouldShowAvatar = canShowAvatarUrl(
                 avatarUrl,
-                selectedServer?.filehost,
+                serverFilehosts(selectedServer),
                 mediaSettings,
               );
 
@@ -455,7 +459,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                       );
                       return canShowAvatarUrl(
                         avatarUrl,
-                        selectedServer?.filehost,
+                        serverFilehosts(selectedServer),
                         mediaSettings,
                       )
                         ? "none"
@@ -669,7 +673,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 const shouldShowAvatar =
                   canShowAvatarUrl(
                     privateChatAvatar,
-                    selectedServer?.filehost,
+                    serverFilehosts(selectedServer),
                     mediaSettings,
                   ) && !avatarLoadFailed;
 

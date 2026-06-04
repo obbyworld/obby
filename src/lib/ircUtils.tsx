@@ -5,12 +5,12 @@ import React from "react";
 import type { Server, User } from "../types";
 import { isTauri } from "./platformUtils";
 
-// highlight.js is ~1.6MB — lazy-load it so it doesn't block the initial bundle.
-// Start the import immediately (parallel with app startup) but don't wait for it.
-// The first code block render falls back to plain text; subsequent ones are highlighted.
-type HljsType = typeof import("highlight.js").default;
+// highlight.js core + a curated ~25-language subset (see ./hljs) instead of the
+// full ~1.6MB build. Lazy-loaded as one chunk so it never blocks startup; the
+// first code block render falls back to plain text until it resolves.
+type HljsType = typeof import("./hljs").default;
 let hljsModule: HljsType | null = null;
-import("highlight.js").then((m) => {
+import("./hljs").then((m) => {
   hljsModule = m.default;
 });
 
@@ -1049,31 +1049,49 @@ export function isAbsoluteHttpUrl(url: string): boolean {
 }
 
 /**
- * Check if a URL is from a specific filehost using proper URL parsing
- * This is safer than using string.startsWith() as it properly handles URL components
+ * True if `url` is served by one of the given filehost(s). Matching is on
+ * origin (protocol + host + port) only: a filehost serves its files from the
+ * domain root even when its upload endpoint sits under a path (e.g. the
+ * tokenless draft/FILEHOST endpoint `https://host/api/` returns files at
+ * `https://host/xyz`), so the path must be ignored. Accepts a single host or
+ * a list.
  */
 export function isUrlFromFilehost(
-  avatarUrl: string,
-  filehost: string,
+  url: string,
+  filehost: string | string[] | null | undefined,
 ): boolean {
-  if (!avatarUrl || !filehost) return false;
-
+  if (!url || !filehost) return false;
+  let urlOrigin: string;
   try {
-    const avatarUrlObj = new URL(avatarUrl);
-    const filehostUrl = new URL(filehost);
-
-    // Check if origins match (protocol + host + port)
-    if (avatarUrlObj.origin !== filehostUrl.origin) {
-      return false;
-    }
-
-    // Check if the pathname starts with the filehost pathname
-    // This handles cases where filehost might be a subdirectory
-    return avatarUrlObj.pathname.startsWith(filehostUrl.pathname);
+    urlOrigin = new URL(url).origin;
   } catch {
-    // If URL parsing fails, fall back to false
     return false;
   }
+  const hosts = Array.isArray(filehost) ? filehost : [filehost];
+  return hosts.some((h) => {
+    if (!h) return false;
+    try {
+      return new URL(h).origin === urlOrigin;
+    } catch {
+      return false;
+    }
+  });
+}
+
+/**
+ * Every origin a server trusts for uploaded media: the vendor
+ * obby.world/FILEHOST endpoint plus the tokenless draft/FILEHOST list. Pass
+ * the result wherever a filehost is needed for media-trust checks so both
+ * upload mechanisms are covered.
+ */
+export function serverFilehosts(
+  server?: { filehost?: string; fileHosts?: string[] } | null,
+): string[] {
+  if (!server) return [];
+  const hosts: string[] = [];
+  if (server.filehost) hosts.push(server.filehost);
+  if (server.fileHosts) hosts.push(...server.fileHosts);
+  return hosts;
 }
 
 /**
@@ -1082,7 +1100,7 @@ export function isUrlFromFilehost(
  */
 export function isUrlFromTrustedSource(
   url: string,
-  serverFilehost?: string,
+  serverFilehost?: string | string[],
 ): boolean {
   if (!url) return false;
 
