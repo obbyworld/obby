@@ -966,10 +966,10 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>Email:</Trans>
               </strong>{" "}
               <a
-                href="mailto:obsidianirc@gmail.com"
+                href="mailto:support@obby.world"
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                obsidianirc@gmail.com
+                support@obby.world
               </a>
             </p>
             <p>
