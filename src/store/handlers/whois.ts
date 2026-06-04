@@ -3,6 +3,7 @@ import ircClient from "../../lib/ircClient";
 import type { User } from "../../types";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { bufferWhoReply, flushWhoReplies } from "../whoReplyBatcher";
 
 export function registerWhoisHandlers(store: StoreApi<AppState>): void {
   // WHOIS event handlers
@@ -339,100 +340,31 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
         }
       }
 
-      // Create user object from WHO data with proper User type
-      const user: User = {
-        id: nick,
-        username: nick,
-        hostname: host, // Store the hostname from WHO reply
-        realname: realname, // Store the realname/gecos from WHO reply
-        avatar: undefined,
-        isOnline: true,
-        isAway: isAway,
-        isBot: false,
-        isIrcOp: flags ? flags.includes("*") : false, // Check for IRC operator flag
-        status: channelStatus, // Set the channel status here
-        metadata: {},
-      };
-      // Check for bot flags if bot mode is enabled
-      if (serverData.botMode) {
-        const botFlag = serverData.botMode;
-        const isBot = flags.includes(botFlag);
+      const botFlag = serverData.botMode;
+      const isBotFromFlags = !!(botFlag && flags?.includes(botFlag));
 
-        if (isBot) {
-          user.isBot = true;
-          user.metadata = {
-            bot: { value: "true", visibility: "public" },
-          };
-        }
-      }
-
-      // Load saved metadata for this user from localStorage
-      const savedMetadata = storage.metadata.load();
-      if (savedMetadata[serverId]?.[nick]) {
-        user.metadata = {
-          ...user.metadata,
-          ...savedMetadata[serverId][nick],
-        };
-      }
-
-      // Update the channel's user list with this user
-      store.setState((state) => {
-        const updatedServers = state.servers.map((s) => {
-          if (s.id === serverId) {
-            // Update channels
-            const updatedChannels = s.channels.map((ch) => {
-              if (ch.name === channel) {
-                // Check if user already exists in the list
-                const existingUserIndex = ch.users.findIndex(
-                  (u) => u.username === nick,
-                );
-
-                if (existingUserIndex !== -1) {
-                  // Update existing user
-                  const updatedUsers = [...ch.users];
-                  updatedUsers[existingUserIndex] = {
-                    ...updatedUsers[existingUserIndex],
-                    ...user,
-                    metadata: {
-                      ...updatedUsers[existingUserIndex].metadata,
-                      ...user.metadata,
-                    },
-                  };
-                  return { ...ch, users: updatedUsers };
-                }
-                // Add new user
-                return { ...ch, users: [...ch.users, user] };
-              }
-              return ch;
-            });
-
-            // Also update private chats if this user has a PM tab open
-            const updatedPrivateChats = s.privateChats.map((pm) => {
-              if (pm.username.toLowerCase() === nick.toLowerCase()) {
-                // Update the PM tab with realname from WHO
-                return {
-                  ...pm,
-                  realname: realname,
-                };
-              }
-              return pm;
-            });
-
-            return {
-              ...s,
-              channels: updatedChannels,
-              privateChats: updatedPrivateChats,
-            };
-          }
-          return s;
-        });
-
-        return { servers: updatedServers };
+      // Buffer this per-user update so we render the member list once
+      // for the whole WHO burst instead of N times.
+      bufferWhoReply(store, serverId, channel, {
+        nick,
+        host,
+        realname,
+        flags,
+        isAway,
+        isBot: isBotFromFlags,
+        isIrcOp: flags ? flags.includes("*") : false,
+        status: channelStatus,
       });
     },
   );
 
   ircClient.on("WHO_END", ({ serverId, mask }) => {
+    // Flush any pending batched WHO replies for this channel so the
+    // member list updates at the END_OF_WHO boundary instead of waiting
+    // out the idle timer.
+    if (mask?.startsWith("#")) {
+      flushWhoReplies(store, serverId, mask);
+    }
     // When WHO list is complete for a channel, request metadata for all users
     // This ensures we get current metadata for users who were already in the channel
     const state = store.getState();
@@ -503,6 +435,25 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
       const isBotFromFlags = flags.includes("B");
       const isIrcOpFromFlags = flags.includes("*");
       const accountValue = account === "0" ? undefined : account;
+
+      // Channel WHOX: buffer the per-user update so the member list
+      // renders once for the whole WHO burst, not N times. PM-only
+      // refresh (no channel) falls through to the immediate setState
+      // path below since it's a single line, not part of a burst.
+      if (channel && channel !== "*") {
+        bufferWhoReply(store, serverId, channel, {
+          nick,
+          host,
+          realname,
+          flags,
+          account: accountValue ?? null,
+          isAway,
+          isBot: isBotFromFlags,
+          isIrcOp: isIrcOpFromFlags,
+          status: opLevel,
+        });
+        return;
+      }
 
       store.setState((state) => {
         const updatedServers = state.servers.map((s) => {

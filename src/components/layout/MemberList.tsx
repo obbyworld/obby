@@ -100,16 +100,16 @@ const UserItem: React.FC<{
     channelId: string,
     avatarElement?: Element | null,
   ) => void;
-  // Lazy-metadata: parent observes each item with an IntersectionObserver
-  // so we only METADATA LIST users the user actually scrolls to.
-  registerObserverItem?: (username: string, el: Element | null) => void;
+  // The very first member item gets refMeasure(el) so the parent can
+  // sample offsetHeight for its scrollTop-based visibility math.
+  refMeasure?: (el: HTMLDivElement | null) => void;
 }> = ({
   user,
   serverId,
   channelId,
   currentUser,
   onContextMenu,
-  registerObserverItem,
+  refMeasure,
 }) => {
   const { t } = useLingui();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
@@ -175,7 +175,7 @@ const UserItem: React.FC<{
 
   return (
     <div
-      ref={(el) => registerObserverItem?.(user.username, el)}
+      ref={refMeasure}
       data-username={user.username}
       className="flex items-center gap-3 py-2 px-3 mx-2 mb-1 rounded cursor-pointer bg-discord-dark-400/30 hover:bg-discord-dark-400/50 transition-colors"
       onClick={(e) => {
@@ -350,26 +350,53 @@ export const MemberList: React.FC = () => {
   };
   const { selectedChannelId } = currentSelection;
 
-  // Lazy-metadata wiring. We track which nicks the scroller has actually
-  // landed on (via IntersectionObserver), wait for scrolling to come to
-  // rest (SCROLL_IDLE_MS), then ask the store to METADATA LIST any
-  // currently-visible nick we haven't already requested. The store
-  // dedups + the lazy queue drips so a burst of visible nicks doesn't
-  // hammer the server (issue #116).
+  // Lazy-metadata wiring: on scroll-stop, compute which slice of
+  // sortedUsers is currently inside the scroll container's viewport
+  // (from scrollTop + clientHeight, not IntersectionObserver -- IO was
+  // misreporting on this layout, fetching members from the bottom of
+  // the list upward instead of from the visible top). Then dispatch
+  // METADATA LIST for that slice in top-to-bottom order. The store
+  // dedups and the lazy queue drips so a burst of new visible nicks
+  // can't hammer the server (issue #116).
   const SCROLL_IDLE_MS = 250;
+  // Cap per scroll-stop so a sudden landing on a wall of unfetched
+  // nicks doesn't queue hundreds at once.
+  const MAX_FETCH_PER_FLUSH = 30;
+  // Render a couple of off-screen rows ahead/behind so the avatars are
+  // ready by the time the user scrolls to them.
+  const VISIBILITY_OVERSCAN = 5;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const itemsRef = useRef(new Map<string, Element>());
-  const visibleUsernamesRef = useRef(new Set<string>());
+  const firstItemRef = useRef<HTMLDivElement | null>(null);
+  // Mirror of the current sorted member list so flushVisible can map an
+  // index back to a nick without going through React state.
+  const sortedOrderRef = useRef<string[]>([]);
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
 
   const flushVisible = useCallback(() => {
     if (!selectedServerId) return;
+    const root = scrollContainerRef.current;
+    const order = sortedOrderRef.current;
+    if (!root || order.length === 0) return;
+    const itemHeight = firstItemRef.current?.offsetHeight || 56;
+    const start = Math.max(
+      0,
+      Math.floor(root.scrollTop / itemHeight) - VISIBILITY_OVERSCAN,
+    );
+    const end = Math.min(
+      order.length,
+      Math.ceil((root.scrollTop + root.clientHeight) / itemHeight) +
+        VISIBILITY_OVERSCAN,
+    );
+    if (end <= start) return;
     const list = useStore.getState().metadataList;
-    for (const username of visibleUsernamesRef.current) {
+    let queued = 0;
+    for (let i = start; i < end && queued < MAX_FETCH_PER_FLUSH; i++) {
+      const username = order[i];
+      if (!username) continue;
       list(selectedServerId, username);
+      queued++;
     }
   }, [selectedServerId]);
 
@@ -378,54 +405,22 @@ export const MemberList: React.FC = () => {
     flushTimerRef.current = setTimeout(flushVisible, SCROLL_IDLE_MS);
   }, [flushVisible]);
 
-  const registerObserverItem = useCallback(
-    (username: string, el: Element | null) => {
-      if (!el) {
-        const old = itemsRef.current.get(username);
-        if (old && observerRef.current) observerRef.current.unobserve(old);
-        itemsRef.current.delete(username);
-        visibleUsernamesRef.current.delete(username);
-        return;
-      }
-      itemsRef.current.set(username, el);
-      observerRef.current?.observe(el);
-    },
-    [],
-  );
-
   useEffect(() => {
     const root = scrollContainerRef.current;
     if (!root) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const username = (entry.target as HTMLElement).dataset.username;
-          if (!username) continue;
-          if (entry.isIntersecting) visibleUsernamesRef.current.add(username);
-          else visibleUsernamesRef.current.delete(username);
-        }
-        scheduleFlush();
-      },
-      { root, threshold: 0 },
-    );
-    observerRef.current = obs;
-    for (const el of itemsRef.current.values()) obs.observe(el);
     const onScroll = () => scheduleFlush();
     root.addEventListener("scroll", onScroll, { passive: true });
+    // Initial sweep once layout has settled so the topmost visible
+    // chunk gets fetched without requiring user interaction.
+    scheduleFlush();
     return () => {
-      obs.disconnect();
-      observerRef.current = null;
       root.removeEventListener("scroll", onScroll);
       if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
     };
   }, [scheduleFlush]);
 
-  // Channel changes remount items so the observer naturally re-binds via
-  // the callback ref; reset the visibility set so we don't carry over
-  // a stale "X was visible" from the previous channel.
-  useEffect(() => {
-    visibleUsernamesRef.current.clear();
-  }, []);
+  // (Initial-sweep re-arm useEffect moved below sortedUsers declaration
+  //  -- see "memberlist sweep" comment further down.)
 
   const [userContextMenu, setUserContextMenu] = useState<{
     isOpen: boolean;
@@ -495,6 +490,22 @@ export const MemberList: React.FC = () => {
     }
     return a.username.localeCompare(b.username);
   });
+  // Keep an order ref so flushVisible (a stable useCallback) can find
+  // each visible nick's on-screen position without going back into the
+  // store. Updated synchronously during render -- read in callbacks
+  // that fire after.
+  sortedOrderRef.current = sortedUsers?.map((u) => u.username) ?? [];
+
+  // memberlist sweep: re-arm flushVisible whenever (a) the channel
+  // changes or (b) the user count changes -- in particular when it
+  // jumps from 0 to N as the batched WHO reply lands. Without this the
+  // very first flushVisible runs while sortedOrderRef is still empty
+  // (returns early, no fetch) and we then wait for a scroll event
+  // before any metadata is requested.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scheduleFlush identity is stable
+  useEffect(() => {
+    scheduleFlush();
+  }, [selectedChannelId, sortedUsers?.length]);
 
   const handleUsernameClick = (
     e: React.MouseEvent,
@@ -634,7 +645,7 @@ export const MemberList: React.FC = () => {
       <h3 className="text-xs font-semibold text-discord-channels-default uppercase mb-2 px-2">
         <Trans>Members — {sortedUsers?.length || 0}</Trans>
       </h3>
-      {sortedUsers?.map((user) => (
+      {sortedUsers?.map((user, idx) => (
         <UserItem
           key={user.id}
           user={user}
@@ -642,7 +653,13 @@ export const MemberList: React.FC = () => {
           channelId={selectedChannelId || ""}
           currentUser={currentUser}
           onContextMenu={handleUsernameClick}
-          registerObserverItem={registerObserverItem}
+          refMeasure={
+            idx === 0
+              ? (el) => {
+                  firstItemRef.current = el;
+                }
+              : undefined
+          }
         />
       ))}
 

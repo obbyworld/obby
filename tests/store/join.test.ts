@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
 import { readyProcessedServers } from "../../src/store/handlers/connection";
+import * as storage from "../../src/store/localStorage";
 import type { Channel } from "../../src/types";
 
 function makeChannel(overrides: Partial<Channel> = {}): Channel {
@@ -46,19 +47,20 @@ const AVATAR_META = {
   avatar: { value: "http://cdn.example.com/avatar.png", visibility: "public" },
 };
 
-// storage.metadata.load() reads localStorage.getItem("serverMetadata")
-function mockLocalStorageMeta(data: Record<string, unknown>) {
-  vi.mocked(window.localStorage.getItem).mockReturnValue(JSON.stringify(data));
+// metadata is now an in-memory module cache; seed it via storage.metadata.save().
+// biome-ignore lint/suspicious/noExplicitAny: test helper accepts loose shape
+function seedMetadata(data: Record<string, any>) {
+  storage.metadata.save(data);
 }
 
 describe("live JOIN — metadata restoration", () => {
   beforeEach(() => {
     setupServer();
-    vi.mocked(window.localStorage.getItem).mockReturnValue("{}");
+    storage.metadata.save({});
   });
 
   it("attaches localStorage metadata to user on live join", () => {
-    mockLocalStorageMeta({ "srv-1": { bob: AVATAR_META } });
+    seedMetadata({ "srv-1": { bob: AVATAR_META } });
 
     ircClient.triggerEvent("JOIN", {
       serverId: "srv-1",

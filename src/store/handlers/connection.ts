@@ -143,18 +143,22 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       });
     }
 
-    // Subscribe and sync own metadata in the background — don't await so channel joins
-    // happen immediately. The metadata send runs 1 s later inside fetchAndMergeOwnMetadata.
+    // Sync our own metadata in the background -- don't await so channel
+    // joins happen immediately.
+    //
+    // We deliberately do NOT send METADATA SUB any more. The server's
+    // join-time push of every subscribed key for every existing channel
+    // member is the "metadata firehose": on a 500-user channel that's
+    // hundreds of pushes in a burst, in the server's internal iteration
+    // order (which on rejoin appears reverse-of-set, so users see
+    // avatars/display-names trickling in from the bottom of the
+    // nicklist). Since the client already lazy-GETs metadata as nicks
+    // come into view (MemberList.flushVisible), SUB is pure overhead --
+    // we'd be paying the firehose cost twice (once for SUB push, once
+    // for our own GETs). Live updates after the initial GET are not
+    // visible to us, but display-name / avatar don't change often and
+    // the profile modal re-GETs anyway.
     if (serverSupportsMetadata(store.getState(), serverId)) {
-      // Narrow SUB to two keys (display-name, avatar) so the server's
-      // "metadata firehose" on JOIN doesn't push 8 keys × N users at us
-      // and trip recvq/sendq protection on big channels. Other keys are
-      // pulled lazily via metadataList when the user is visible in the
-      // nicklist or speaks. Re-sent on every connect because some
-      // servers don't persist subscriptions across sessions.
-      const defaultKeys = ["display-name", "avatar"];
-      store.getState().metadataSub(serverId, defaultKeys);
-
       fetchAndMergeOwnMetadata(store, serverId).then(() => {
         const savedMetadataAfterMerge = storage.metadata.load();
         const serverMetadataAfterMerge = savedMetadataAfterMerge[serverId];
