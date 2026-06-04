@@ -921,6 +921,10 @@ msgstr "Не попереджати мене про низький рівень 
 msgid "Download"
 msgstr "Завантажити"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Перетягніть файли для завантаження"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "напр., 100:1440"

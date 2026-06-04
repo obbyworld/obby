@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+import { serverFilehosts } from "../../src/lib/ircUtils";
 import {
+  canShowAvatarUrl,
   canShowMedia,
   detectMediaType,
   extractMediaFromMessage,
@@ -359,6 +361,73 @@ describe("canShowMedia", () => {
   });
 });
 
+describe("canShowMedia — filehost trust is origin-based", () => {
+  const settings = {
+    showSafeMedia: true,
+    showTrustedSourcesMedia: false,
+    showExternalContent: false,
+  };
+
+  // girafiles: the upload endpoint is https://host/api/ but files are served
+  // from the host root, so trust must ignore the filehost's path.
+  test("trusts a root file when the filehost endpoint has a path", () => {
+    expect(
+      canShowMedia(
+        "https://s.h4ks.com/HrE.txt",
+        settings,
+        "https://s.h4ks.com/api/",
+      ),
+    ).toBe(true);
+  });
+
+  test("still denies a different origin when the filehost has a path", () => {
+    expect(
+      canShowMedia(
+        "https://evil.com/x.jpg",
+        settings,
+        "https://s.h4ks.com/api/",
+      ),
+    ).toBe(false);
+  });
+
+  test("accepts a list of filehosts (vendor + tokenless)", () => {
+    expect(
+      canShowMedia("https://s.h4ks.com/HrE.txt", settings, [
+        "https://obby.t3ks.com",
+        "https://s.h4ks.com/api/",
+      ]),
+    ).toBe(true);
+  });
+
+  test("an empty filehost list trusts nothing under safe-media", () => {
+    expect(canShowMedia("https://s.h4ks.com/x.txt", settings, [])).toBe(false);
+  });
+});
+
+describe("serverFilehosts", () => {
+  test("combines the vendor filehost and the tokenless fileHosts", () => {
+    expect(
+      serverFilehosts({
+        filehost: "https://obby.t3ks.com",
+        fileHosts: ["https://s.h4ks.com/api/", "https://x.example/"],
+      }),
+    ).toEqual([
+      "https://obby.t3ks.com",
+      "https://s.h4ks.com/api/",
+      "https://x.example/",
+    ]);
+  });
+
+  test("tolerates missing fields and no server", () => {
+    expect(serverFilehosts({ fileHosts: ["https://b"] })).toEqual([
+      "https://b",
+    ]);
+    expect(serverFilehosts({ filehost: "https://a" })).toEqual(["https://a"]);
+    expect(serverFilehosts({})).toEqual([]);
+    expect(serverFilehosts(undefined)).toEqual([]);
+  });
+});
+
 describe("mediaLevelToSettings", () => {
   test("level 0 disables all media", () => {
     expect(mediaLevelToSettings(0)).toEqual({
@@ -437,6 +506,99 @@ describe("mediaLevelToSettings", () => {
         null,
       ),
     ).toBe(true);
+  });
+});
+
+describe("canShowAvatarUrl", () => {
+  const filehost = "https://files.example.com";
+
+  // Non-absolute URLs must be blocked at every level — this is the invariant
+  // that prevents `<img src=":https://...">` and `<img src="/relative">` from
+  // resolving against the app origin and leaking the user's IP.
+  test.each([
+    [":https://attacker.com/pixel.png"],
+    ["/relative/path.png"],
+    ["//protocol-relative.example.com/x.png"],
+    ["data:image/png;base64,AAAA"],
+    ["javascript:alert(1)"],
+    [""],
+  ])("blocks non-absolute URL %s at level 3", (url) => {
+    expect(canShowAvatarUrl(url, filehost, mediaLevelToSettings(3))).toBe(
+      false,
+    );
+  });
+
+  test("blocks null/undefined URL at any level", () => {
+    expect(canShowAvatarUrl(null, filehost, mediaLevelToSettings(3))).toBe(
+      false,
+    );
+    expect(canShowAvatarUrl(undefined, filehost, mediaLevelToSettings(3))).toBe(
+      false,
+    );
+  });
+
+  test("level 0 blocks all URLs", () => {
+    expect(
+      canShowAvatarUrl(`${filehost}/a.png`, filehost, mediaLevelToSettings(0)),
+    ).toBe(false);
+  });
+
+  test("level 1 allows filehost URL", () => {
+    expect(
+      canShowAvatarUrl(`${filehost}/a.png`, filehost, mediaLevelToSettings(1)),
+    ).toBe(true);
+  });
+
+  test("level 1 blocks arbitrary external URL", () => {
+    expect(
+      canShowAvatarUrl(
+        "https://evil.com/track.png",
+        filehost,
+        mediaLevelToSettings(1),
+      ),
+    ).toBe(false);
+  });
+
+  test("level 2 allows URL from known embed domain", () => {
+    expect(
+      canShowAvatarUrl(
+        "https://i.imgur.com/avatar.jpg",
+        filehost,
+        mediaLevelToSettings(2),
+      ),
+    ).toBe(true);
+  });
+
+  // Regression: prior implementation treated `showTrustedSourcesMedia` as
+  // unconditional permission, admitting any HTTPS host at level 2.
+  test("level 2 blocks arbitrary external URL", () => {
+    expect(
+      canShowAvatarUrl(
+        "https://evil.com/track.png",
+        filehost,
+        mediaLevelToSettings(2),
+      ),
+    ).toBe(false);
+  });
+
+  test("level 3 allows arbitrary external URL", () => {
+    expect(
+      canShowAvatarUrl(
+        "https://anywhere.example.com/a.png",
+        filehost,
+        mediaLevelToSettings(3),
+      ),
+    ).toBe(true);
+  });
+
+  // Browsers normalize scheme case and strip leading whitespace before fetching.
+  test.each([
+    ["HTTPS://evil.com/x.png"],
+    [" \thttps://evil.com/x.png"],
+  ])("level 1 blocks normalized-but-untrusted URL %s", (url) => {
+    expect(canShowAvatarUrl(url, filehost, mediaLevelToSettings(1))).toBe(
+      false,
+    );
   });
 });
 

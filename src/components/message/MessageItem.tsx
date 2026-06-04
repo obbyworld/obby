@@ -9,6 +9,7 @@ import {
   isUrlFromFilehost,
   isUserVerified,
   processMarkdownInText,
+  serverFilehosts,
 } from "../../lib/ircUtils";
 import {
   canShowMedia,
@@ -335,6 +336,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
       [message.serverId],
     ),
   );
+  // Origins trusted for uploaded media: vendor obby.world/FILEHOST plus the
+  // tokenless draft/FILEHOST list. fileHostsKey is a stable memo dependency.
+  const fileHosts = serverFilehosts(server);
+  const fileHostsKey = fileHosts.join(" ");
   const mediaVisibilityLevel = useStore(
     useCallback((state) => state.globalSettings.mediaVisibilityLevel, []),
   );
@@ -410,9 +415,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const isSingleToken = !/\s/.test(strippedContent.trim());
 
   // Kept for isFilehostImage prop passed to ImagePreview (EXIF banner)
-  const isFilehostUrl =
-    !!server?.filehost &&
-    isUrlFromFilehost(strippedContent.trim(), server.filehost);
+  const isFilehostUrl = isUrlFromFilehost(strippedContent.trim(), fileHosts);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: strippedContent derived from message.content
   const mediaEntries = useMemo(() => {
@@ -420,10 +423,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
       canShowMedia(
         e.url,
         { showSafeMedia, showTrustedSourcesMedia, showExternalContent },
-        server?.filehost,
+        fileHosts,
       ),
     );
-  }, [strippedContent, mediaVisibilityLevel, server?.filehost]);
+  }, [strippedContent, mediaVisibilityLevel, fileHostsKey]);
 
   const [showAllImages, setShowAllImages] = useState(false);
 
@@ -744,10 +747,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
                 <MediaPreview
                   entry={mediaEntries[0]}
                   msgid={message.msgid}
-                  isFilehostImage={
-                    !!server?.filehost &&
-                    isUrlFromFilehost(mediaEntries[0].url, server.filehost)
-                  }
+                  isFilehostImage={isUrlFromFilehost(
+                    mediaEntries[0].url,
+                    fileHosts,
+                  )}
                   serverId={message.serverId}
                   channelId={mediaChannelId}
                   onOpenProfile={onOpenProfile}
@@ -817,10 +820,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
                     <MediaPreview
                       entry={mediaEntries[0]}
                       msgid={message.msgid}
-                      isFilehostImage={
-                        !!server?.filehost &&
-                        isUrlFromFilehost(mediaEntries[0].url, server.filehost)
-                      }
+                      isFilehostImage={isUrlFromFilehost(
+                        mediaEntries[0].url,
+                        fileHosts,
+                      )}
                       serverId={message.serverId}
                       channelId={mediaChannelId}
                       onOpenProfile={onOpenProfile}
@@ -843,13 +846,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
                         key={firstKnownNotAtZero.url}
                         entry={firstKnownNotAtZero}
                         msgid={message.msgid}
-                        isFilehostImage={
-                          !!server?.filehost &&
-                          isUrlFromFilehost(
-                            firstKnownNotAtZero.url,
-                            server.filehost,
-                          )
-                        }
+                        isFilehostImage={isUrlFromFilehost(
+                          firstKnownNotAtZero.url,
+                          fileHosts,
+                        )}
                         serverId={message.serverId}
                         channelId={mediaChannelId}
                         onOpenProfile={onOpenProfile}
@@ -863,10 +863,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
                               key={entry.url}
                               entry={entry}
                               msgid={message.msgid}
-                              isFilehostImage={
-                                !!server?.filehost &&
-                                isUrlFromFilehost(entry.url, server.filehost)
-                              }
+                              isFilehostImage={isUrlFromFilehost(
+                                entry.url,
+                                fileHosts,
+                              )}
                               serverId={message.serverId}
                               channelId={mediaChannelId}
                               onOpenProfile={onOpenProfile}

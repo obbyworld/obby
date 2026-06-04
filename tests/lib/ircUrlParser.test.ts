@@ -14,7 +14,7 @@ describe("ircUrlParser", () => {
 
       expect(result).toEqual({
         host: "irc.libera.chat",
-        port: 8000,
+        port: 6667,
         scheme: "irc",
         channels: [],
         nick: "user",
@@ -27,7 +27,7 @@ describe("ircUrlParser", () => {
 
       expect(result).toEqual({
         host: "irc.libera.chat",
-        port: 443,
+        port: 6697,
         scheme: "ircs",
         channels: [],
         nick: "user",
@@ -232,10 +232,10 @@ describe("ircUrlParser", () => {
     it("should parse and reconstruct URLs correctly", () => {
       const testCases = [
         {
-          url: "irc://irc.libera.chat:8000/",
+          url: "irc://irc.libera.chat:6667/",
           expected: {
             host: "irc.libera.chat",
-            port: 8000,
+            port: 6667,
             scheme: "irc" as const,
             channels: [],
             nick: "user",
@@ -255,7 +255,7 @@ describe("ircUrlParser", () => {
           url: "irc://irc.freenode.net/?nick=testuser",
           expected: {
             host: "irc.freenode.net",
-            port: 8000,
+            port: 6667,
             scheme: "irc" as const,
             channels: [],
             nick: "testuser",

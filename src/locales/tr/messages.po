@@ -921,6 +921,10 @@ msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 msgid "Download"
 msgstr "İndir"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Yüklemek için dosyaları buraya bırakın"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "örn. 100:1440"

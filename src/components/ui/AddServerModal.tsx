@@ -117,7 +117,7 @@ export const AddServerModal: React.FC = () => {
         // Strip scheme AND any embedded :port / path so we don't end up
         // appending port twice (e.g. ircs://host:6697:6697).
         const cleanHost = serverHost
-          .replace(/^(https?|wss|ircs?|irc):\/\//, "")
+          .replace(/^(https?|wss?|ircs?|irc):\/\//, "")
           .replace(/[:/].*$/, "");
         finalHost = useWebSocket
           ? `wss://${cleanHost}:${port}`

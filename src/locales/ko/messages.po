@@ -921,6 +921,10 @@ msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 msgid "Download"
 msgstr "다운로드"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "업로드할 파일을 여기에 놓으세요"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "예: 100:1440"

@@ -921,6 +921,10 @@ msgstr "不再提醒我此服务器的低链路安全问题"
 msgid "Download"
 msgstr "下载"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "拖放文件以上传"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "例如：100:1440"

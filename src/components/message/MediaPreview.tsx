@@ -31,7 +31,13 @@ import useStore from "../../store";
 
 const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
-  import("react-pdf").then((m) => ({ default: m.Document })),
+  import("react-pdf").then((m) => {
+    // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
+    if (m.pdfjs?.GlobalWorkerOptions) {
+      m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    }
+    return { default: m.Document };
+  }),
 );
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),

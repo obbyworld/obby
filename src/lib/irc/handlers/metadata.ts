@@ -11,7 +11,9 @@ export function handleMetadata(
   const key = parv[1];
   const visibility = parv[2] || "";
   // draft/metadata-2: SET = 4 params [target, key, "*", value]; DEL = 3 params [target, key, "*"] (no value)
-  const value = parv.length >= 4 ? parv[parv.length - 1] : "";
+  // Strip leading ":" — some clients double-encode the trailing param, leaving one colon after the parser strips its own.
+  const rawValue = parv.length >= 4 ? parv[parv.length - 1] : "";
+  const value = rawValue.startsWith(":") ? rawValue.substring(1) : rawValue;
 
   ctx.triggerEvent("METADATA", {
     serverId,
@@ -32,7 +34,10 @@ export function handleMetadataWhoisKeyValue(
   const target = parv[0];
   const key = parv[1];
   const visibility = parv[2];
-  const value = parv.slice(3).join(" ");
+  const rawWhoisValue = parv.slice(3).join(" ");
+  const value = rawWhoisValue.startsWith(":")
+    ? rawWhoisValue.substring(1)
+    : rawWhoisValue;
   ctx.triggerEvent("METADATA_WHOIS", {
     serverId,
     target,

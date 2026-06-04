@@ -921,6 +921,10 @@ msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 msgid "Download"
 msgstr "Ladda ned"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Släpp filer för att ladda upp"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "t.ex. 100:1440"

@@ -860,6 +860,17 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       target,
       serverId,
     });
+    // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
+    // event that normally chains the WHO request will never fire on
+    // its own. Synthesise it here so the channel doesn't stay
+    // permanently flagged needsWhoRequest=true.
+    if (command === "CHATHISTORY" && target && target.startsWith("#")) {
+      ircClient.triggerEvent("CHATHISTORY_LOADING", {
+        serverId,
+        channelName: target,
+        isLoading: false,
+      });
+    }
   });
 
   ircClient.on(

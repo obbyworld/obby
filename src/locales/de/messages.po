@@ -921,6 +921,10 @@ msgstr "Nicht mehr vor geringer Verbindungssicherheit für diesen Server warnen"
 msgid "Download"
 msgstr "Herunterladen"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Dateien zum Hochladen hier ablegen"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "z.B. 100:1440"

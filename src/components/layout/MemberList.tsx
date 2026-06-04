@@ -6,10 +6,10 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
 import {
   getColorStyle,
-  isUrlFromFilehost,
   processMarkdownInText,
+  serverFilehosts,
 } from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
@@ -121,7 +121,7 @@ const UserItem: React.FC<{
     }
   })();
 
-  const { showSafeMedia, showExternalContent } = mediaLevelToSettings(
+  const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
 
@@ -149,14 +149,8 @@ const UserItem: React.FC<{
     user.account !== "0" &&
     user.username.toLowerCase() === user.account.toLowerCase();
 
-  // Determine if avatar should be shown based on media controls
-  const isFilehostAvatar =
-    avatarUrl &&
-    server?.filehost &&
-    isUrlFromFilehost(avatarUrl, server.filehost);
   const shouldShowAvatar =
-    avatarUrl &&
-    ((isFilehostAvatar && showSafeMedia) || showExternalContent) &&
+    canShowAvatarUrl(avatarUrl, serverFilehosts(server), mediaSettings) &&
     !avatarLoadFailed;
   // Reset avatar load failed state when avatar URL changes
   useEffect(() => {

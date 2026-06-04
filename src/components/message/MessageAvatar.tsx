@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
-import { isUrlFromTrustedSource } from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 
 interface MessageAvatarProps {
@@ -32,21 +32,18 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const username = userId;
 
-  const { showSafeMedia, showTrustedSourcesMedia, showExternalContent } =
-    mediaLevelToSettings(
-      useStore((state) => state.globalSettings.mediaVisibilityLevel),
-    );
+  const mediaSettings = mediaLevelToSettings(
+    useStore((state) => state.globalSettings.mediaVisibilityLevel),
+  );
   const server = serverId
     ? useStore.getState().servers.find((s) => s.id === serverId)
     : null;
 
-  const isTrustedAvatar =
-    avatarUrl && isUrlFromTrustedSource(avatarUrl, server?.filehost);
-  const shouldShowAvatar =
-    avatarUrl &&
-    ((isTrustedAvatar && showSafeMedia) ||
-      showTrustedSourcesMedia ||
-      showExternalContent);
+  const shouldShowAvatar = canShowAvatarUrl(
+    avatarUrl,
+    serverFilehosts(server),
+    mediaSettings,
+  );
 
   if (!showHeader) {
     return (
