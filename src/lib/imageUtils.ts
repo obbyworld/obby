@@ -17,7 +17,7 @@ export function extractImageUrlsFromMessage(message: Message): string[] {
 export function canShowImageUrl(
   url: string,
   level: MediaVisibilityLevel,
-  filehost?: string | null,
+  filehost?: string | string[] | null,
 ): boolean {
   // Trusted-sources (level 2) covers embedded services, not arbitrary images,
   // so showTrustedSourcesMedia is intentionally false for image-only contexts.

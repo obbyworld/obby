@@ -26,6 +26,7 @@ import {
   getChannelAvatarUrl,
   getChannelDisplayName,
   isUrlFromFilehost,
+  serverFilehosts,
 } from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
@@ -416,8 +417,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               );
               const isFilehostAvatar =
                 avatarUrl &&
-                selectedServer?.filehost &&
-                isUrlFromFilehost(avatarUrl, selectedServer.filehost);
+                isUrlFromFilehost(avatarUrl, serverFilehosts(selectedServer));
               const shouldShowAvatar =
                 avatarUrl &&
                 ((isFilehostAvatar && showSafeMedia) || showExternalContent);
@@ -461,8 +461,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                       );
                       const isFilehostAvatar =
                         avatarUrl &&
-                        selectedServer?.filehost &&
-                        isUrlFromFilehost(avatarUrl, selectedServer.filehost);
+                        isUrlFromFilehost(
+                          avatarUrl,
+                          serverFilehosts(selectedServer),
+                        );
                       const shouldShowAvatar =
                         avatarUrl &&
                         ((isFilehostAvatar && showSafeMedia) ||
@@ -676,8 +678,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 );
                 const isFilehostAvatar =
                   privateChatAvatar &&
-                  selectedServer?.filehost &&
-                  isUrlFromFilehost(privateChatAvatar, selectedServer.filehost);
+                  isUrlFromFilehost(
+                    privateChatAvatar,
+                    serverFilehosts(selectedServer),
+                  );
                 const shouldShowAvatar =
                   privateChatAvatar &&
                   ((isFilehostAvatar && showSafeMedia) ||

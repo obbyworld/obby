@@ -27,6 +27,7 @@ import { parseIrcUrl } from "../../lib/ircUrlParser";
 import {
   fetchUploadInfo,
   uploadFile,
+  uploadFileTokenless,
   validateFileAgainstInfo,
 } from "../../lib/mediaUpload";
 import {
@@ -607,6 +608,12 @@ export const ChatArea: React.FC<{
     [servers, selectedServerId],
   );
 
+  // The server offers file uploads via either the vendor token uploader
+  // (obby.world/FILEHOST) or the standard tokenless one (draft/FILEHOST).
+  const canUpload = !!(
+    selectedServer?.filehost || selectedServer?.fileHosts?.length
+  );
+
   const selectedChannel = useMemo(
     () => selectedServer?.channels.find((c) => c.id === selectedChannelId),
     [selectedServer, selectedChannelId],
@@ -916,36 +923,37 @@ export const ChatArea: React.FC<{
   // progress, and on full success sends a single PRIVMSG containing
   // all the resulting URLs separated by spaces.
   const handleFilesUpload = async (files: File[]) => {
-    if (!selectedServer?.filehost || !selectedServerId || files.length === 0) {
-      return;
-    }
-    const filehostUrl = selectedServer.filehost;
+    if (!selectedServerId || files.length === 0) return;
+    // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
+    // fall back to the vendor token-authenticated obby.world/FILEHOST.
+    const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
+    const filehostUrl = selectedServer?.filehost;
+    if (!tokenlessEndpoint && !filehostUrl) return;
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
     if (!target) return;
 
-    // Pre-flight: pull the policy so we can reject obviously-bad
-    // files before pushing bytes.
-    const info = await fetchUploadInfo(filehostUrl);
-
-    // Acquire one draft/authtoken Bearer per file.  Tokens are
-    // single-use (the IRCd consumes each one on the validate-RPC the
-    // backend runs before accepting the upload), so we can't share
-    // a single Bearer across the batch like the old EXTJWT path did.
-    // Mints are serialised because `waitForAuthToken` resolves on the
-    // first matching TOKEN_GENERATE event -- parallel mints would
-    // race for the same reply.
-    const scope = target?.startsWith("#") ? `channel:${target}` : undefined;
+    // The token path pulls the in-house policy and mints one single-use
+    // draft/authtoken Bearer per file (the IRCd burns each on validate, so
+    // they can't be shared across the batch). The tokenless path needs
+    // neither -- it POSTs straight to the advertised endpoint.
+    let info: Awaited<ReturnType<typeof fetchUploadInfo>> = null;
     const tokens: string[] = [];
-    for (let i = 0; i < files.length; i++) {
-      ircClient.requestToken(selectedServerId, "filehost", scope);
-      const tok = await waitForAuthToken(selectedServerId, "filehost");
-      if (!tok) {
-        console.error(
-          "draft/authtoken: server did not return a filehost token",
-        );
-        return;
+    if (!tokenlessEndpoint && filehostUrl) {
+      info = await fetchUploadInfo(filehostUrl);
+      // Serialised because waitForAuthToken resolves on the first matching
+      // TOKEN_GENERATE event -- parallel mints would race for the reply.
+      const scope = target.startsWith("#") ? `channel:${target}` : undefined;
+      for (let i = 0; i < files.length; i++) {
+        ircClient.requestToken(selectedServerId, "filehost", scope);
+        const tok = await waitForAuthToken(selectedServerId, "filehost");
+        if (!tok) {
+          console.error(
+            "draft/authtoken: server did not return a filehost token",
+          );
+          return;
+        }
+        tokens.push(tok);
       }
-      tokens.push(tok);
     }
 
     // Build the job list in one go so the progress strip appears
@@ -981,12 +989,21 @@ export const ChatArea: React.FC<{
         uploadAbortsRef.current.set(job.id, ac);
         updateJob(job.id, { status: "uploading" });
         try {
-          const url = await uploadFile(job.file, {
-            filehostUrl,
-            bearerToken: tokens[jobIdx],
-            signal: ac.signal,
-            onProgress: (loaded, total) => updateJob(job.id, { loaded, total }),
-          });
+          const onProgress = (loaded: number, total: number) =>
+            updateJob(job.id, { loaded, total });
+          const url = tokenlessEndpoint
+            ? await uploadFileTokenless(job.file, {
+                endpoint: tokenlessEndpoint,
+                signal: ac.signal,
+                onProgress,
+              })
+            : await uploadFile(job.file, {
+                // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when tokenlessEndpoint isn't (guarded above)
+                filehostUrl: filehostUrl!,
+                bearerToken: tokens[jobIdx],
+                signal: ac.signal,
+                onProgress,
+              });
           updateJob(job.id, {
             status: "done",
             loaded: job.file.size,
@@ -1067,14 +1084,14 @@ export const ChatArea: React.FC<{
     Array.from(e.dataTransfer.types).includes("Files");
 
   const handleDragEnter = (e: React.DragEvent) => {
-    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    if (!canUpload || !dragHasFiles(e)) return;
     e.preventDefault();
     dragDepthRef.current += 1;
     setIsDraggingFile(true);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    if (!canUpload || !dragHasFiles(e)) return;
     e.preventDefault();
     e.dataTransfer.dropEffect = "copy";
   };
@@ -1086,7 +1103,7 @@ export const ChatArea: React.FC<{
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    if (!selectedServer?.filehost || !dragHasFiles(e)) return;
+    if (!canUpload || !dragHasFiles(e)) return;
     e.preventDefault();
     dragDepthRef.current = 0;
     setIsDraggingFile(false);
@@ -2170,7 +2187,7 @@ export const ChatArea: React.FC<{
                     left: "16px",
                   }}
                 >
-                  {selectedServer?.filehost && (
+                  {canUpload && (
                     <button
                       className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
                       onClick={() => {

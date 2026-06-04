@@ -52,6 +52,9 @@ export interface Server {
   // POST to <filehost>/upload); the standard tokenless draft/FILEHOST is
   // discovered separately.
   filehost?: string;
+  // Endpoints from the standard tokenless `draft/FILEHOST` ISUPPORT token:
+  // POST the file directly, no auth, take the returned URL.
+  fileHosts?: string[];
   linkSecurity?: number; // Link security level from unrealircd.org/link-security
   jwtToken?: string; // JWT token for filehost authentication (from EXTJWT)
   // Bearer token from draft/authtoken (TOKEN GENERATE).  Used as the

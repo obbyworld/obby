@@ -28,6 +28,7 @@ import {
   getChannelDisplayName,
   isUrlFromFilehost,
   processMarkdownInText,
+  serverFilehosts,
 } from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriDesktop, isTauriMobile } from "../../lib/platformUtils";
@@ -660,10 +661,9 @@ export const ChannelList: React.FC<{
                                 );
                                 const isFilehostAvatar =
                                   avatarUrl &&
-                                  selectedServer?.filehost &&
                                   isUrlFromFilehost(
                                     avatarUrl,
-                                    selectedServer.filehost,
+                                    serverFilehosts(selectedServer),
                                   );
                                 const shouldShowAvatar =
                                   avatarUrl &&
@@ -716,9 +716,9 @@ export const ChannelList: React.FC<{
                                     );
                                     const isFilehostAvatar =
                                       avatarUrl &&
-                                      selectedServer?.filehost &&
-                                      avatarUrl.startsWith(
-                                        selectedServer.filehost,
+                                      isUrlFromFilehost(
+                                        avatarUrl,
+                                        serverFilehosts(selectedServer),
                                       );
                                     const shouldShowAvatar =
                                       avatarUrl &&
@@ -1159,10 +1159,9 @@ export const ChannelList: React.FC<{
                               );
                               const isFilehostAvatar =
                                 avatarUrl &&
-                                selectedServer?.filehost &&
                                 isUrlFromFilehost(
                                   avatarUrl,
-                                  selectedServer.filehost,
+                                  serverFilehosts(selectedServer),
                                 );
                               const shouldShowAvatar =
                                 avatarUrl &&
@@ -1214,10 +1213,9 @@ export const ChannelList: React.FC<{
                               );
                               const isFilehostAvatar =
                                 avatarUrl &&
-                                selectedServer?.filehost &&
                                 isUrlFromFilehost(
                                   avatarUrl,
-                                  selectedServer.filehost,
+                                  serverFilehosts(selectedServer),
                                 );
                               const shouldShowAvatar =
                                 avatarUrl &&
@@ -1698,8 +1696,10 @@ export const ChannelList: React.FC<{
                   );
                   const isFilehostAvatar =
                     avatarUrl &&
-                    selectedServer?.filehost &&
-                    isUrlFromFilehost(avatarUrl, selectedServer.filehost);
+                    isUrlFromFilehost(
+                      avatarUrl,
+                      serverFilehosts(selectedServer),
+                    );
                   const shouldShowAvatar =
                     avatarUrl &&
                     ((isFilehostAvatar && showSafeMedia) ||
