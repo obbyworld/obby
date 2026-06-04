@@ -114,10 +114,9 @@ export const AddServerModal: React.FC = () => {
       let finalHost = serverHost;
       if (isTauri()) {
         const port = Number.parseInt(serverPort, 10);
-        const cleanHost = serverHost.replace(
-          /^(https?|wss|ircs?|irc):\/\//,
-          "",
-        );
+        const cleanHost = serverHost
+          .replace(/^(https?|wss?|ircs?):\/\//, "")
+          .replace(/:\d+$/, "");
         finalHost = useWebSocket
           ? `wss://${cleanHost}:${port}`
           : `ircs://${cleanHost}:${port}`;

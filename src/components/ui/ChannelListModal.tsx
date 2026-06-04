@@ -5,12 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaDesktop, FaHashtag, FaUsers, FaVolumeUp } from "react-icons/fa";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
 import ircClient from "../../lib/ircClient";
-import {
-  getChannelAvatarUrl,
-  isUrlFromFilehost,
-  serverFilehosts,
-} from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { getChannelAvatarUrl, serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { BaseModal } from "../../lib/modal/BaseModal";
 import useStore from "../../store";
 import { TextInput } from "./TextInput";
@@ -58,7 +54,7 @@ const ChannelListModal: React.FC = () => {
 
   const selectedServer = servers.find((s) => s.id === selectedServerId);
   const filehost = serverFilehosts(selectedServer);
-  const { showSafeMedia, showExternalContent } = mediaLevelToSettings(
+  const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
   const elist = (selectedServer?.elist || "").toUpperCase();
@@ -550,12 +546,11 @@ const ChannelListModal: React.FC = () => {
                   >
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center mt-0.5">
                       {(() => {
-                        const isFilehostAvatar =
-                          !!avatarUrl && isUrlFromFilehost(avatarUrl, filehost);
-                        const canShowAvatar =
-                          !!avatarUrl &&
-                          ((isFilehostAvatar && showSafeMedia) ||
-                            showExternalContent);
+                        const canShowAvatar = canShowAvatarUrl(
+                          avatarUrl,
+                          filehost,
+                          mediaSettings,
+                        );
                         const { Icon, color } = channelTypeMeta(
                           channel.channel,
                         );
@@ -563,7 +558,7 @@ const ChannelListModal: React.FC = () => {
                           <>
                             {canShowAvatar ? (
                               <img
-                                src={avatarUrl}
+                                src={avatarUrl ?? ""}
                                 alt={channel.channel}
                                 className="w-8 h-8 rounded-full object-cover"
                                 onError={(e) => {

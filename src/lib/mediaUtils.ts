@@ -1,5 +1,9 @@
 import type { Message } from "../types/index";
-import { isUrlFromFilehost } from "./ircUtils";
+import {
+  isAbsoluteHttpUrl,
+  isUrlFromFilehost,
+  isUrlFromTrustedSource,
+} from "./ircUtils";
 import { stripIrcFormatting } from "./messageFormatter";
 
 export type MediaType = "image" | "video" | "audio" | "pdf" | "embed";
@@ -280,6 +284,7 @@ export function canShowMedia(
   settings: MediaSettings,
   filehost?: string | string[] | null,
 ): boolean {
+  if (!url || !isAbsoluteHttpUrl(url)) return false;
   if (settings.showExternalContent) return true;
   if (settings.showSafeMedia) {
     if (filehost && isUrlFromFilehost(url, filehost)) return true;
@@ -287,6 +292,30 @@ export function canShowMedia(
       if (trustedUrl && isUrlFromFilehost(url, trustedUrl)) return true;
     }
   }
+  if (settings.showTrustedSourcesMedia) {
+    const hostname = extractHostname(url);
+    if (hostname === null) return false;
+    for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
+      if (hostname === domain || hostname.endsWith(`.${domain}`)) return true;
+    }
+  }
+  return false;
+}
+
+/** Gates every avatar/icon <img> render. Absolute-URL check is unconditional so
+ *  callers cannot forget it (history: relative URLs leaked the user's IP to the app origin). */
+export function canShowAvatarUrl(
+  url: string | undefined | null,
+  serverFilehost: string | string[] | undefined | null,
+  settings: MediaSettings,
+): boolean {
+  if (!url || !isAbsoluteHttpUrl(url)) return false;
+  if (settings.showExternalContent) return true;
+  if (
+    settings.showSafeMedia &&
+    isUrlFromTrustedSource(url, serverFilehost ?? undefined)
+  )
+    return true;
   if (settings.showTrustedSourcesMedia) {
     const hostname = extractHostname(url);
     if (hostname === null) return false;

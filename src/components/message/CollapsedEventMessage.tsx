@@ -3,6 +3,8 @@ import type React from "react";
 import { useState } from "react";
 import { type EventGroup, getEventGroupTooltip } from "../../lib/eventGrouping";
 import ircClient from "../../lib/ircClient";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import useStore from "../../store";
 import type { User } from "../../types";
 
 interface CollapsedEventMessageProps {
@@ -28,6 +30,10 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
   const serverId = eventGroup.messages[0]?.serverId || "";
   const channelId = eventGroup.messages[0]?.channelId || "";
   const ircCurrentUser = ircClient.getCurrentUser(serverId);
+  const mediaSettings = mediaLevelToSettings(
+    useStore((state) => state.globalSettings.mediaVisibilityLevel),
+  );
+  const server = useStore.getState().servers.find((s) => s.id === serverId);
 
   if (eventGroup.type !== "eventGroup") return null;
 
@@ -56,9 +62,13 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
           )
         }
       >
-        {user?.metadata?.avatar?.value && !failedAvatars.has(username) ? (
+        {canShowAvatarUrl(
+          user?.metadata?.avatar?.value,
+          server?.filehost,
+          mediaSettings,
+        ) && !failedAvatars.has(username) ? (
           <img
-            src={user.metadata.avatar.value}
+            src={user?.metadata?.avatar?.value}
             alt={username}
             className="w-full h-full rounded-full object-cover"
             onError={() =>

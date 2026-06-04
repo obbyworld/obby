@@ -16,8 +16,8 @@ import {
   FaUserCheck,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
-import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
@@ -98,7 +98,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const setAway = useStore((state) => state.setAway);
   const clearAway = useStore((state) => state.clearAway);
   const server = servers.find((s) => s.id === serverId);
-  const { showSafeMedia, showExternalContent } = mediaLevelToSettings(
+  const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
 
@@ -200,10 +200,11 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const color = user?.metadata?.color?.value;
   const pronouns = user?.metadata?.pronouns?.value;
 
-  const isFilehostAvatar =
-    !!avatar && isUrlFromFilehost(avatar, serverFilehosts(server));
-  const canShowAvatar =
-    !!avatar && ((isFilehostAvatar && showSafeMedia) || showExternalContent);
+  const canShowAvatar = canShowAvatarUrl(
+    avatar,
+    serverFilehosts(server),
+    mediaSettings,
+  );
 
   // Check if user is a bot (from metadata or isBot flag)
   const isBot = user?.isBot || bot === "true" || !!bot;

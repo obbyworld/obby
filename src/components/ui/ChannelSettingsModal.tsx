@@ -20,7 +20,11 @@ import {
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useModalBehavior } from "../../hooks/useModalBehavior";
 import ircClient from "../../lib/ircClient";
-import { hasOpPermission, humanizeNamedMode } from "../../lib/ircUtils";
+import {
+  hasOpPermission,
+  humanizeNamedMode,
+  isAbsoluteHttpUrl,
+} from "../../lib/ircUtils";
 import {
   lookupNamedModeMeta,
   NAMED_MODE_GROUP_LABELS,
@@ -1408,7 +1412,7 @@ const ChannelSettingsModal: React.FC<ChannelSettingsModalProps> = ({
                       placeholder={t`https://example.com/avatar/{size}/channel.jpg`}
                       className="w-full p-2 bg-discord-dark-300 text-white rounded text-sm"
                     />
-                    {channelAvatar && (
+                    {channelAvatar && isAbsoluteHttpUrl(channelAvatar) && (
                       <div className="mt-2">
                         <p className="text-xs text-discord-text-muted mb-1">
                           <Trans>Preview:</Trans>

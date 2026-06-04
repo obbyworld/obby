@@ -5,12 +5,12 @@ import React from "react";
 import type { Server, User } from "../types";
 import { isTauri } from "./platformUtils";
 
-// highlight.js is ~1.6MB — lazy-load it so it doesn't block the initial bundle.
-// Start the import immediately (parallel with app startup) but don't wait for it.
-// The first code block render falls back to plain text; subsequent ones are highlighted.
-type HljsType = typeof import("highlight.js").default;
+// highlight.js core + a curated ~25-language subset (see ./hljs) instead of the
+// full ~1.6MB build. Lazy-loaded as one chunk so it never blocks startup; the
+// first code block render falls back to plain text until it resolves.
+type HljsType = typeof import("./hljs").default;
 let hljsModule: HljsType | null = null;
-import("highlight.js").then((m) => {
+import("./hljs").then((m) => {
   hljsModule = m.default;
 });
 
@@ -1038,6 +1038,14 @@ export function hasOpPermission(userStatus?: string): boolean {
     userStatus.includes("&") ||
     userStatus.includes("~")
   );
+}
+
+/** Blocks relative paths, protocol-relative URLs, and non-http schemes that would
+ * resolve against the app origin or trigger unexpected fetches. Browsers strip
+ * leading whitespace and are scheme-case-insensitive, so we normalize the same way. */
+export function isAbsoluteHttpUrl(url: string): boolean {
+  const u = url.trimStart().toLowerCase();
+  return u.startsWith("https://") || u.startsWith("http://");
 }
 
 /**

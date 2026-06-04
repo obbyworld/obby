@@ -6,8 +6,8 @@ name: Deploy to Cloudflare Pages
 on:
   pull_request:
   push:
-      branches:
-        - main
+    branches:
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,13 +18,15 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Build
         run: npm install && npm run build
 
       - name: Deploy
         id: deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3.15.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -40,11 +42,11 @@ jobs:
 
       - name: maintain-comment
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions-cool/maintain-one-comment@v3
+        uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
         with:
-          body: |
+          header: cloudflare-preview
+          message: |
             [![Pages Preview](https://img.shields.io/badge/Pages%20Preview-obsidianirc-blue?style=flat-square)](${{ steps.deploy.outputs.pages-deployment-alias-url }})
             Preview URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
 
             Automated deployment preview for the PR in the Cloudflare Pages.
-          emojis: 'rocket, eyes, +1, -1'
