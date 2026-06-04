@@ -2377,8 +2377,11 @@ export const ChatArea: React.FC<{
                   )) {
                     const botScope: "channel" | "server" =
                       srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick);
-                    if (botScope === "channel" && selectedChannel && !inChannel)
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
                       continue;
                     const scope: "channel" | "server" = botScope;
                     for (const c of list) {
@@ -2510,8 +2513,11 @@ export const ChatArea: React.FC<{
                   )) {
                     const botScope: "channel" | "server" =
                       srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick);
-                    if (botScope === "channel" && selectedChannel && !inChannel)
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
                       continue;
                     for (const c of list) {
                       const entry = {

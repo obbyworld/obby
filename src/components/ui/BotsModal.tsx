@@ -373,7 +373,7 @@ const BotsModal: React.FC<BotsModalProps> = ({
       .filter((b) =>
         query
           ? b.nick.toLowerCase().includes(query.toLowerCase()) ||
-            b.realname.toLowerCase().includes(query.toLowerCase())
+            (b.realname ?? "").toLowerCase().includes(query.toLowerCase())
           : true,
       )
       .sort((a, b) => {

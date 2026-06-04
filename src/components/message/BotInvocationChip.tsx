@@ -8,6 +8,7 @@
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { useMemo } from "react";
+import { base64DecodeUtf8 } from "../../lib/base64";
 
 interface Decoded {
   nick?: string;
@@ -18,11 +19,7 @@ interface Decoded {
 function decode(b64: string | undefined): Decoded | null {
   if (!b64) return null;
   try {
-    // Tolerate IRCv3 tag values stripped of '=' padding.
-    const pad = (4 - (b64.length % 4)) % 4;
-    const padded = b64 + "=".repeat(pad);
-    const json = atob(padded);
-    const obj = JSON.parse(json);
+    const obj = JSON.parse(base64DecodeUtf8(b64));
     if (!obj || typeof obj !== "object") return null;
     return obj as Decoded;
   } catch {

@@ -193,7 +193,7 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
   // needed.
   const inputRect = inputElement?.getBoundingClientRect();
   const bottom = inputRect ? window.innerHeight - inputRect.top + 6 : 100;
-  const left = inputRect ? inputRect.left + window.scrollX : 100;
+  const left = inputRect ? inputRect.left : 100;
 
   return (
     <div

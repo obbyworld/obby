@@ -415,6 +415,7 @@ export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
     }
     setSecondsLeft(FADE_SECONDS);
   }, [isTerminal, workflow.collapsed]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: dismiss is a Zustand action with unstable ref
   useEffect(() => {
     if (secondsLeft === null || paused) return;
     if (secondsLeft <= 0) {
@@ -423,7 +424,7 @@ export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
     }
     const t = setTimeout(() => setSecondsLeft((s) => (s ?? 0) - 1), 1000);
     return () => clearTimeout(t);
-  }, [secondsLeft, paused, dismiss, workflow.serverId, workflow.id]);
+  }, [secondsLeft, paused, workflow.serverId, workflow.id]);
 
   // Auto-scroll the expanded step list.  We can't check "is the user
   // at the bottom?" inside the content-update effect, because by the
@@ -469,11 +470,21 @@ export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
       onMouseLeave={() => setPaused(false)}
       className="w-[680px] max-w-full bg-discord-dark-300/95 backdrop-blur-sm border border-discord-dark-400 rounded-lg shadow-xl overflow-hidden"
     >
-      {/* Header — collapsed row */}
-      <button
-        type="button"
+      {/* Header — collapsed row. <div> with role=button because the
+          row holds Dismiss/Cancel <button>s and HTML forbids nested
+          interactive controls. */}
+      {/* biome-ignore lint/a11y/useSemanticElements: outer must NOT be a <button>; inner Dismiss/Cancel are buttons. */}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onToggle}
-        className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-discord-dark-400/60 transition-colors text-left"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
+        className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-discord-dark-400/60 transition-colors text-left cursor-pointer"
         aria-expanded={!workflow.collapsed}
       >
         <span className="w-6 h-6 flex items-center justify-center shrink-0">
@@ -525,7 +536,7 @@ export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
             <FaChevronUp className="text-xs" />
           )}
         </span>
-      </button>
+      </div>
 
       {/* Countdown drain on a collapsed, terminal card */}
       {secondsLeft !== null && (

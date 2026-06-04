@@ -134,6 +134,7 @@ export function sendBotCommand(
   const contexts = resolveContexts(cmd);
   const canPublic = contexts.includes("public");
   const canPrivate = contexts.includes("private");
+  const canPm = contexts.includes("pm");
 
   // Per spec §Invoking a command: the base64 of the compact JSON invocation
   // rides in +draft/bot-cmd. How it is addressed depends on the context.
@@ -152,7 +153,7 @@ export function sendBotCommand(
     const payload = { name: cmd.name, options, channel: channel.name };
     const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
-  } else {
+  } else if (canPm) {
     // pm: TAGMSG to the bot, no channel.
     const payload = { name: cmd.name, options };
     const b64 = base64EncodeUtf8(JSON.stringify(payload));

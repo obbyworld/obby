@@ -78,6 +78,35 @@ export type AiToolsMessage =
   | AiStepMessage
   | AiActionMessage;
 
+const WORKFLOW_STATES: ReadonlySet<AiWorkflowState> = new Set([
+  "start",
+  "reasoning",
+  "running",
+  "complete",
+  "failed",
+  "cancelled",
+]);
+const STEP_TYPES: ReadonlySet<AiStepType> = new Set([
+  "reasoning",
+  "tool-call",
+  "tool-result",
+  "text",
+]);
+const STEP_STATES: ReadonlySet<AiStepState> = new Set([
+  "start",
+  "running",
+  "pending-approval",
+  "complete",
+  "failed",
+  "cancelled",
+]);
+const ACTION_TYPES: ReadonlySet<AiActionType> = new Set([
+  "cancel",
+  "approve",
+  "reject",
+  "input",
+]);
+
 // Decode a raw tag value (base64 of compact JSON) into a structured message.
 // Returns null on any decode/parse failure or schema mismatch rather than
 // throwing, per spec §Security: malformed or oversized payloads are silently
@@ -95,7 +124,11 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
 
   switch (obj.msg) {
     case "workflow": {
-      if (typeof obj.id !== "string" || typeof obj.state !== "string")
+      if (
+        typeof obj.id !== "string" ||
+        typeof obj.state !== "string" ||
+        !WORKFLOW_STATES.has(obj.state as AiWorkflowState)
+      )
         return null;
       const m: AiWorkflowMessage = {
         msg: "workflow",
@@ -118,7 +151,9 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
         typeof obj.wid !== "string" ||
         typeof obj.sid !== "string" ||
         typeof obj.type !== "string" ||
-        typeof obj.state !== "string"
+        typeof obj.state !== "string" ||
+        !STEP_TYPES.has(obj.type as AiStepType) ||
+        !STEP_STATES.has(obj.state as AiStepState)
       )
         return null;
       const m: AiStepMessage = {
@@ -137,7 +172,11 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
       return m;
     }
     case "action": {
-      if (typeof obj.action !== "string" || typeof obj.target !== "string")
+      if (
+        typeof obj.action !== "string" ||
+        typeof obj.target !== "string" ||
+        !ACTION_TYPES.has(obj.action as AiActionType)
+      )
         return null;
       const m: AiActionMessage = {
         msg: "action",
