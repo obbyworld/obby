@@ -22,6 +22,10 @@ msgstr "ObsidianIRC - Привносимо IRC у майбутнє"
 msgid "— open in viewer"
 msgstr "— відкрити у переглядачі"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "(handled by ObsidianIRC)"
+msgstr "(обробляється ObsidianIRC)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "(призупинено)"
@@ -1904,6 +1908,10 @@ msgstr "Офлайн"
 msgid "on"
 msgstr "увімк"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "one of:"
+msgstr "один з:"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2265,6 +2273,10 @@ msgstr "Знову відкрити робочий процес, який ств
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "Reply"
 msgstr "Відповісти"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "required"
+msgstr "обов'язково"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
@@ -2947,6 +2959,11 @@ msgstr "Дуже розслаблений"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Strict"
 msgstr "Дуже строгий"
+
+#. placeholder {0}: entry.botNick
+#: src/components/ui/SlashParamHint.tsx
+msgid "via @{0}"
+msgstr "через @{0}"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

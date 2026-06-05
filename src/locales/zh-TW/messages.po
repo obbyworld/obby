@@ -22,6 +22,10 @@ msgstr "ObsidianIRC - 將 IRC 帶入未來"
 msgid "— open in viewer"
 msgstr "— 在檢視器中開啟"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "(handled by ObsidianIRC)"
+msgstr "(由 ObsidianIRC 處理)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "（已停用）"
@@ -1904,6 +1908,10 @@ msgstr "离线"
 msgid "on"
 msgstr "開啟"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "one of:"
+msgstr "其中之一："
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2265,6 +2273,10 @@ msgstr "重新開啟產生此訊息的工作流程（{stepCount} 個步驟）"
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "Reply"
 msgstr "回复"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "required"
+msgstr "必填"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
@@ -2947,6 +2959,11 @@ msgstr "非常宽松"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Strict"
 msgstr "非常严格"
+
+#. placeholder {0}: entry.botNick
+#: src/components/ui/SlashParamHint.tsx
+msgid "via @{0}"
+msgstr "透過 @{0}"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

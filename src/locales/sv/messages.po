@@ -22,6 +22,10 @@ msgstr "ObsidianIRC - För IRC in i framtiden"
 msgid "— open in viewer"
 msgstr "— öppna i visaren"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "(handled by ObsidianIRC)"
+msgstr "(hanteras av ObsidianIRC)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "(avstängd)"
@@ -1904,6 +1908,10 @@ msgstr "Offline"
 msgid "on"
 msgstr "på"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "one of:"
+msgstr "en av:"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2265,6 +2273,10 @@ msgstr "Öppna arbetsflödet som skapade detta meddelande igen ({stepCount} steg
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "Reply"
 msgstr "Svara"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "required"
+msgstr "obligatoriskt"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
@@ -2947,6 +2959,11 @@ msgstr "Mycket avslappnat"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Strict"
 msgstr "Mycket strikt"
+
+#. placeholder {0}: entry.botNick
+#: src/components/ui/SlashParamHint.tsx
+msgid "via @{0}"
+msgstr "via @{0}"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

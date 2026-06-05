@@ -22,6 +22,10 @@ msgstr "ObsidianIRC - Portare IRC nel futuro"
 msgid "— open in viewer"
 msgstr "— apri nel visualizzatore"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "(handled by ObsidianIRC)"
+msgstr "(gestito da ObsidianIRC)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "(sospeso)"
@@ -1904,6 +1908,10 @@ msgstr "Non in linea"
 msgid "on"
 msgstr "attivo"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "one of:"
+msgstr "uno di:"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2265,6 +2273,10 @@ msgstr "Riapri il workflow che ha prodotto questo messaggio ({stepCount} passagg
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "Reply"
 msgstr "Rispondi"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "required"
+msgstr "richiesto"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
@@ -2947,6 +2959,11 @@ msgstr "Molto rilassato"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Strict"
 msgstr "Molto rigido"
+
+#. placeholder {0}: entry.botNick
+#: src/components/ui/SlashParamHint.tsx
+msgid "via @{0}"
+msgstr "tramite @{0}"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

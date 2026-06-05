@@ -22,6 +22,10 @@ msgstr "ObsidianIRC - IRC를 미래로"
 msgid "— open in viewer"
 msgstr "— 뷰어에서 열기"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "(handled by ObsidianIRC)"
+msgstr "(ObsidianIRC가 처리)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "(정지됨)"
@@ -1904,6 +1908,10 @@ msgstr "오프라인"
 msgid "on"
 msgstr "켜기"
 
+#: src/components/ui/SlashParamHint.tsx
+msgid "one of:"
+msgstr "다음 중 하나:"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2265,6 +2273,10 @@ msgstr "이 메시지를 생성한 워크플로 다시 열기 ({stepCount}단계
 #: src/components/mobile/MessageBottomSheet.tsx
 msgid "Reply"
 msgstr "답장"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "required"
+msgstr "필수"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
@@ -2947,6 +2959,11 @@ msgstr "매우 완화"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Strict"
 msgstr "매우 엄격"
+
+#. placeholder {0}: entry.botNick
+#: src/components/ui/SlashParamHint.tsx
+msgid "via @{0}"
+msgstr "@{0} 통해"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
