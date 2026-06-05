@@ -1,6 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
@@ -100,7 +100,17 @@ const UserItem: React.FC<{
     channelId: string,
     avatarElement?: Element | null,
   ) => void;
-}> = ({ user, serverId, channelId, currentUser, onContextMenu }) => {
+  // The very first member item gets refMeasure(el) so the parent can
+  // sample offsetHeight for its scrollTop-based visibility math.
+  refMeasure?: (el: HTMLDivElement | null) => void;
+}> = ({
+  user,
+  serverId,
+  channelId,
+  currentUser,
+  onContextMenu,
+  refMeasure,
+}) => {
   const { t } = useLingui();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
 
@@ -159,6 +169,8 @@ const UserItem: React.FC<{
 
   return (
     <div
+      ref={refMeasure}
+      data-username={user.username}
       className="flex items-center gap-3 py-2 px-3 mx-2 mb-1 rounded cursor-pointer bg-discord-dark-400/30 hover:bg-discord-dark-400/50 transition-colors"
       onClick={(e) => {
         const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
@@ -332,6 +344,78 @@ export const MemberList: React.FC = () => {
   };
   const { selectedChannelId } = currentSelection;
 
+  // Lazy-metadata wiring: on scroll-stop, compute which slice of
+  // sortedUsers is currently inside the scroll container's viewport
+  // (from scrollTop + clientHeight, not IntersectionObserver -- IO was
+  // misreporting on this layout, fetching members from the bottom of
+  // the list upward instead of from the visible top). Then dispatch
+  // METADATA LIST for that slice in top-to-bottom order. The store
+  // dedups and the lazy queue drips so a burst of new visible nicks
+  // can't hammer the server (issue #116).
+  const SCROLL_IDLE_MS = 250;
+  // Cap per scroll-stop so a sudden landing on a wall of unfetched
+  // nicks doesn't queue hundreds at once.
+  const MAX_FETCH_PER_FLUSH = 30;
+  // Render a couple of off-screen rows ahead/behind so the avatars are
+  // ready by the time the user scrolls to them.
+  const VISIBILITY_OVERSCAN = 5;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const firstItemRef = useRef<HTMLDivElement | null>(null);
+  // Mirror of the current sorted member list so flushVisible can map an
+  // index back to a nick without going through React state.
+  const sortedOrderRef = useRef<string[]>([]);
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  const flushVisible = useCallback(() => {
+    if (!selectedServerId) return;
+    const root = scrollContainerRef.current;
+    const order = sortedOrderRef.current;
+    if (!root || order.length === 0) return;
+    const itemHeight = firstItemRef.current?.offsetHeight || 56;
+    const start = Math.max(
+      0,
+      Math.floor(root.scrollTop / itemHeight) - VISIBILITY_OVERSCAN,
+    );
+    const end = Math.min(
+      order.length,
+      Math.ceil((root.scrollTop + root.clientHeight) / itemHeight) +
+        VISIBILITY_OVERSCAN,
+    );
+    if (end <= start) return;
+    const list = useStore.getState().metadataList;
+    let queued = 0;
+    for (let i = start; i < end && queued < MAX_FETCH_PER_FLUSH; i++) {
+      const username = order[i];
+      if (!username) continue;
+      list(selectedServerId, username);
+      queued++;
+    }
+  }, [selectedServerId]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(flushVisible, SCROLL_IDLE_MS);
+  }, [flushVisible]);
+
+  useEffect(() => {
+    const root = scrollContainerRef.current;
+    if (!root) return;
+    const onScroll = () => scheduleFlush();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    // Initial sweep once layout has settled so the topmost visible
+    // chunk gets fetched without requiring user interaction.
+    scheduleFlush();
+    return () => {
+      root.removeEventListener("scroll", onScroll);
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    };
+  }, [scheduleFlush]);
+
+  // (Initial-sweep re-arm useEffect moved below sortedUsers declaration
+  //  -- see "memberlist sweep" comment further down.)
+
   const [userContextMenu, setUserContextMenu] = useState<{
     isOpen: boolean;
     x: number;
@@ -400,6 +484,22 @@ export const MemberList: React.FC = () => {
     }
     return a.username.localeCompare(b.username);
   });
+  // Keep an order ref so flushVisible (a stable useCallback) can find
+  // each visible nick's on-screen position without going back into the
+  // store. Updated synchronously during render -- read in callbacks
+  // that fire after.
+  sortedOrderRef.current = sortedUsers?.map((u) => u.username) ?? [];
+
+  // memberlist sweep: re-arm flushVisible whenever (a) the channel
+  // changes or (b) the user count changes -- in particular when it
+  // jumps from 0 to N as the batched WHO reply lands. Without this the
+  // very first flushVisible runs while sortedOrderRef is still empty
+  // (returns early, no fetch) and we then wait for a scroll event
+  // before any metadata is requested.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scheduleFlush identity is stable
+  useEffect(() => {
+    scheduleFlush();
+  }, [selectedChannelId, sortedUsers?.length]);
 
   const handleUsernameClick = (
     e: React.MouseEvent,
@@ -527,7 +627,7 @@ export const MemberList: React.FC = () => {
 
   const isMobileView = useMediaQuery();
   return (
-    <div className="px-1 py-3 h-full overflow-y-auto">
+    <div ref={scrollContainerRef} className="px-1 py-3 h-full overflow-y-auto">
       {isMobileView && (
         <button
           onClick={() => toggleMemberList(false)}
@@ -539,7 +639,7 @@ export const MemberList: React.FC = () => {
       <h3 className="text-xs font-semibold text-discord-channels-default uppercase mb-2 px-2">
         <Trans>Members — {sortedUsers?.length || 0}</Trans>
       </h3>
-      {sortedUsers?.map((user) => (
+      {sortedUsers?.map((user, idx) => (
         <UserItem
           key={user.id}
           user={user}
@@ -547,6 +647,13 @@ export const MemberList: React.FC = () => {
           channelId={selectedChannelId || ""}
           currentUser={currentUser}
           onContextMenu={handleUsernameClick}
+          refMeasure={
+            idx === 0
+              ? (el) => {
+                  firstItemRef.current = el;
+                }
+              : undefined
+          }
         />
       ))}
 
