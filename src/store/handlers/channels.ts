@@ -405,7 +405,7 @@ export function registerChannelHandlers(store: StoreApi<AppState>): void {
         }
         return server;
       });
-      
+
       // Check if current user has operator status in this channel and update their modes
       const currentUser = state.currentUser;
       if (currentUser) {
