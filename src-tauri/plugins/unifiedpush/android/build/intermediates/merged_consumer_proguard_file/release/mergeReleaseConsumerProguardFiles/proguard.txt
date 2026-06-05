@@ -1,3 +1,0 @@
-# UnifiedPush plugin ProGuard rules (consumer).
--keep class org.unifiedpush.android.connector.** { *; }
--keep class com.obsidianirc.unifiedpush.** { *; }
