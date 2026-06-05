@@ -60,7 +60,7 @@ msgstr "{0} печатает..."
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "{0} network{1} — pick one to join"
-msgstr ""
+msgstr "{0} сеть{1} — выберите одну для подключения"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -81,6 +81,21 @@ msgstr "{0}, {1} и {2} печатают..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} и ещё {3} печатают..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0} Ð´Ð½. Ð½Ð°Ð·Ð°Ð´"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0} Ñ. Ð½Ð°Ð·Ð°Ð´"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0} Ð¼Ð¸Ð½. Ð½Ð°Ð·Ð°Ð´"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -113,6 +128,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#ÐºÐ°Ð½Ð°Ð» (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -386,7 +405,7 @@ msgstr "Вернуться к изображению"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
-msgstr ""
+msgstr "К списку сетей"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -565,6 +584,7 @@ msgid "Choose file"
 msgstr "Выбрать файл"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Очистить"
 
@@ -573,6 +593,10 @@ msgstr "Очистить"
 #: src/components/layout/ChatHeader.tsx
 msgid "Clear search"
 msgstr "Очистить поиск"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "ÐÐ°Ð¶Ð¼Ð¸ÑÐµ ÐµÑÑ ÑÐ°Ð· Ð´Ð»Ñ Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ¶Ð´ÐµÐ½Ð¸Ñ"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -617,6 +641,7 @@ msgstr "Лимит пользователей (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -671,6 +696,10 @@ msgstr "Настройте подробные правила защиты от �
 msgid "Configure notification sounds and highlights"
 msgstr "Настройка звуков уведомлений и выделений"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "ÐÐ¾Ð´ÑÐ²ÐµÑÐ´Ð¸ÑÑ?"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -709,8 +738,17 @@ msgid "Control media display and external content"
 msgstr "Управление отображением медиа и внешнего контента"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Скопировано"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "ÐÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°ÑÑ"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "ÐÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°ÑÑ Ð²ÑÑ"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -724,9 +762,25 @@ msgstr "Копировать форматированный вывод"
 msgid "Copy JSON"
 msgstr "Копировать JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "ÐÐ¾Ð¿Ð¸ÑÐ¾Ð²Ð°ÑÑ ÑÑÑÐ»ÐºÑ"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Копировать URL"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "Ð¡Ð¾Ð·Ð´Ð°ÑÑ"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "Ð¡Ð¾Ð·Ð´Ð°ÑÑ Ð½Ð¾Ð²ÑÑ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÑ ÑÑÑÐ»ÐºÑ"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ Ð¸ ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð²Ð°ÑÐ¸Ð¼Ð¸ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÐ¼Ð¸ ÑÑÑÐ»ÐºÐ°Ð¼Ð¸"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -781,6 +835,7 @@ msgid "Default Nickname"
 msgstr "Никнейм по умолчанию"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Удалить"
 
@@ -800,6 +855,10 @@ msgstr "Удалить сеть"
 msgid "Delete Private Chat"
 msgstr "Удалить личную переписку"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "Ð£Ð´Ð°Ð»Ð¸ÑÑ ÑÑÐ¾ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐµÐ½Ð¸Ðµ"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Удалить это сообщение? Это действие нельзя отменить."
@@ -807,6 +866,10 @@ msgstr "Удалить это сообщение? Это действие нел
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Delete this network?"
 msgstr "Удалить эту сеть?"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "ÐÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾, Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ Â«ÐÐµÑÐ°-ÑÐµÑÑÐµÑÑ Q3Â»)"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -866,6 +929,10 @@ msgstr "Не предупреждать меня о низком уровне б
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Скачать"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "ÐÐµÑÐµÑÐ°ÑÐ¸ÑÐµ ÑÐ°Ð¹Ð»Ñ Ð´Ð»Ñ Ð·Ð°Ð³ÑÑÐ·ÐºÐ¸"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1188,6 +1255,7 @@ msgid "Invalid value"
 msgstr "Неверное значение"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Приглашения"
 
@@ -1263,6 +1331,10 @@ msgstr "подключился и отключился"
 msgid "Joined the channel"
 msgstr "Присоединился к каналу"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "ÑÐ¾Ð»ÑÐºÐ¾ ÑÑÐ¾"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1296,6 +1368,10 @@ msgstr "Подробнее о профилях →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Покинуть канал"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "ÐÑÑÐ°Ð²ÑÑÐµ Ð¿Ð¾Ð»Ðµ ÐºÐ°Ð½Ð°Ð»Ð° Ð¿ÑÑÑÑÐ¼ Ð´Ð»Ñ Ð¾Ð±ÑÐµÐ³Ð¾ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐµÐ½Ð¸Ñ Ð² ÑÐµÑÑ. ÐÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ Ð½ÑÐ¶Ð½Ð¾ ÑÐ¾Ð»ÑÐºÐ¾ Ð´Ð»Ñ Ð²Ð°ÑÐ¸Ñ Ð·Ð°Ð¿Ð¸ÑÐµÐ¹ â Ð¾Ð½Ð¾ Ð²Ð¸Ð´Ð½Ð¾ ÑÐ¾Ð»ÑÐºÐ¾ Ð²Ð°Ð¼ Ð² ÑÑÐ¾Ð¼ ÑÐ¿Ð¸ÑÐºÐµ."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1541,6 +1617,10 @@ msgstr "Включить или отключить звуки уведомлен
 msgid "Name:"
 msgstr "Имя:"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "ÑÐµÑÑ"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -1657,9 +1737,17 @@ msgstr "В этом канале нет медиафайлов"
 msgid "No media previews are loaded."
 msgstr "Предпросмотр медиа не загружается."
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "ÐÐµÐ¾Ð±ÑÐ°Ð±Ð¾ÑÐ°Ð½Ð½ÑÐ¹ IRC-ÑÑÐ°ÑÐ¸Ðº Ð¿Ð¾ÐºÐ° Ð½Ðµ Ð·Ð°ÑÐ¸ÐºÑÐ¸ÑÐ¾Ð²Ð°Ð½. ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð¿Ð¾Ð´ÐºÐ»ÑÑÐ¸ÑÑÑÑ Ð¸Ð»Ð¸ Ð¾ÑÐ¿ÑÐ°Ð²Ð¸ÑÑ ÑÐ¾Ð¾Ð±ÑÐµÐ½Ð¸Ðµ."
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Результаты не найдены"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "Ð¡ÐµÑÐ²ÐµÑ Ð½Ðµ Ð²ÑÐ±ÑÐ°Ð½. Ð¡Ð½Ð°ÑÐ°Ð»Ð° Ð²ÑÐ±ÐµÑÐ¸ÑÐµ ÑÐµÑÐ²ÐµÑ Ð½Ð° Ð±Ð¾ÐºÐ¾Ð²Ð¾Ð¹ Ð¿Ð°Ð½ÐµÐ»Ð¸; Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÐµ ÑÑÑÐ»ÐºÐ¸ ÑÐ¿ÑÐ°Ð²Ð»ÑÑÑÑÑ Ð¾ÑÐ´ÐµÐ»ÑÐ½Ð¾ Ð´Ð»Ñ ÐºÐ°Ð¶Ð´Ð¾Ð³Ð¾ ÑÐµÑÐ²ÐµÑÐ°."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1769,7 +1857,7 @@ msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
-msgstr ""
+msgstr "Открыть"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
@@ -2020,6 +2108,11 @@ msgstr "Причина (необязательно)"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Переподключиться к серверу"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "ÐÐ±Ð½Ð¾Ð²Ð¸ÑÑ"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2448,9 +2541,17 @@ msgstr "Это поле обязательно для заполнения"
 msgid "This image has expired"
 msgstr "Срок действия этого изображения истёк"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "Ð¡ÑÐ¾Ð»ÑÐºÐ¾ ÑÐµÐ»Ð¾Ð²ÐµÐº Ð·Ð°ÑÐµÐ³Ð¸ÑÑÑÐ¸ÑÐ¾Ð²Ð°Ð»Ð¾ÑÑ Ð¿Ð¾ ÑÑÐ¾Ð¹ ÑÑÑÐ»ÐºÐµ"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Этот сервер не поддерживает расширенные метаданные профиля (расширение IRCv3 METADATA). Дополнительные поля, такие как аватар, отображаемое имя и статус, недоступны."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "Ð­ÑÐ¾Ñ ÑÐµÑÐ²ÐµÑ Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑÐ¶Ð¸Ð²Ð°ÐµÑ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÐµ ÑÑÑÐ»ÐºÐ¸ (Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ÑÑÑ<0>obby.world/invitation</0>Ð½Ðµ Ð¾Ð±ÑÑÐ²Ð»ÐµÐ½Ð°). ÐÑ Ð¿Ð¾-Ð¿ÑÐµÐ¶Ð½ÐµÐ¼Ñ Ð¼Ð¾Ð¶ÐµÑÐµ Ð¾Ð±ÑÐ°ÑÑÑÑ Ð² ÑÐ°ÑÐµ ÐºÐ°Ðº Ð¾Ð±ÑÑÐ½Ð¾; ÑÑÐ° Ð¿Ð°Ð½ÐµÐ»Ñ Ð¿ÑÐµÐ´Ð½Ð°Ð·Ð½Ð°ÑÐµÐ½Ð° Ð´Ð»Ñ ÑÐµÑÐµÐ¹ Ð½Ð° Ð±Ð°Ð·Ðµ obbyircd."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2605,6 +2706,10 @@ msgstr "Использовать WebSocket вместо обычного TCP"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Используйте маски: * соответствует любой последовательности, ? — любому одному символу. Примеры: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "Ð¸ÑÐ¿Ð¾Ð»ÑÐ·Ð¾Ð²Ð°Ð½Ð¾"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2800,6 +2905,10 @@ msgstr "Вы являетесь IRC-оператором"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "У вас есть несохранённые изменения. Вы уверены, что хотите закрыть без сохранения?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "ÐÑ ÐµÑÑ Ð½Ðµ ÑÐ¾Ð·Ð´Ð°Ð»Ð¸ Ð½Ð¸ Ð¾Ð´Ð½Ð¾Ð¹ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½Ð¾Ð¹ ÑÑÑÐ»ÐºÐ¸. ÐÑÐ¿Ð¾Ð»ÑÐ·ÑÐ¹ÑÐµ ÑÐ¾ÑÐ¼Ñ Ð²ÑÑÐµ, ÑÑÐ¾Ð±Ñ ÑÐ¾Ð·Ð´Ð°ÑÑ Ð¿ÐµÑÐ²ÑÑ."
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Вы пригласили {target} присоединиться к {channel}"
@@ -2819,6 +2928,10 @@ msgstr "У вашего баунсера ещё нет сетей. Добавь�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Ваш никнейм по умолчанию для всех серверов"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "ÐÐ°ÑÐ¸ Ð¿ÑÐ¸Ð³Ð»Ð°ÑÐ¸ÑÐµÐ»ÑÐ½ÑÐµ ÑÑÑÐ»ÐºÐ¸"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

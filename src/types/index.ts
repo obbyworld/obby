@@ -99,7 +99,14 @@ export interface Server {
   prefix?: string;
   chanmodes?: string; // CHANMODES ISUPPORT value defining mode groups A,B,C,D
   botMode?: string;
+  // Upload endpoint from the vendor `obby.world/FILEHOST` ISUPPORT token.
+  // This is the token-authenticated variant (mint a draft/authtoken Bearer,
+  // POST to <filehost>/upload); the standard tokenless draft/FILEHOST is
+  // discovered separately.
   filehost?: string;
+  // Endpoints from the standard tokenless `draft/FILEHOST` ISUPPORT token:
+  // POST the file directly, no auth, take the returned URL.
+  fileHosts?: string[];
   linkSecurity?: number; // Link security level from unrealircd.org/link-security
   jwtToken?: string; // JWT token for filehost authentication (from EXTJWT)
   // Bearer token from draft/authtoken (TOKEN GENERATE).  Used as the
@@ -427,6 +434,25 @@ export type JsonValue =
   | null
   | { [key: string]: JsonValue }
   | JsonValue[];
+
+/**
+ * obbyircd invitation share-id entry, as emitted by the server's
+ * `INVITELINK LIST` response. Populated client-side by the dispatch
+ * handler and stored per-server in the UI store so the
+ * InvitationsPanel can render the list without re-querying on every
+ * navigation.
+ *
+ * Spec: doc/specs/whois-batch.md? No — see src/modules/invitation.c
+ * in the obbyircd repo for the wire shapes.
+ */
+export interface InviteLink {
+  shareId: string;
+  channel?: string;
+  createdAt: string; // ISO-8601 from the server
+  redeemCount: number;
+  url: string;
+  description?: string;
+}
 
 export interface WhoisData {
   nick: string;

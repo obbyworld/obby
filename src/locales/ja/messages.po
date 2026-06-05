@@ -60,7 +60,7 @@ msgstr "{0} が入力中..."
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "{0} network{1} — pick one to join"
-msgstr ""
+msgstr "{0} ネットワーク{1} — 参加するものを選択"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -81,6 +81,21 @@ msgstr "{0}、{1}、{2} が入力中..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}、{1}、{2} と他 {3} 人が入力中..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0}æ¥å"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0}æéå"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0}åå"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -113,6 +128,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#ãã£ã³ãã«ï¼ä»»æï¼"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -386,7 +405,7 @@ msgstr "画像に戻る"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
-msgstr ""
+msgstr "ネットワーク一覧に戻る"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -565,6 +584,7 @@ msgid "Choose file"
 msgstr "ファイルを選択"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "クリア"
 
@@ -573,6 +593,10 @@ msgstr "クリア"
 #: src/components/layout/ChatHeader.tsx
 msgid "Clear search"
 msgstr "検索をクリア"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "ããä¸åº¦ã¯ãªãã¯ãã¦ç¢ºèª"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -617,6 +641,7 @@ msgstr "クライアント制限 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -671,6 +696,10 @@ msgstr "詳細なフラッド保護ルールを設定します。各ルールは
 msgid "Configure notification sounds and highlights"
 msgstr "通知音とハイライトを設定する"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "ç¢ºèªãã¾ããï¼"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -709,8 +738,17 @@ msgid "Control media display and external content"
 msgstr "メディア表示と外部コンテンツを制御する"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "コピーしました"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "ã³ãã¼"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "ãã¹ã¦ã³ãã¼"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -724,9 +762,25 @@ msgstr "フォーマット済み出力をコピー"
 msgid "Copy JSON"
 msgstr "JSONをコピー"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "ãªã³ã¯ãã³ãã¼"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URLをコピー"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "ä½æ"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "æ°ããæå¾ãªã³ã¯ãä½æ"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "æå¾ãªã³ã¯ãä½æã»ç®¡çãã"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -781,6 +835,7 @@ msgid "Default Nickname"
 msgstr "デフォルトニックネーム"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "削除"
 
@@ -800,6 +855,10 @@ msgstr "ネットワークを削除"
 msgid "Delete Private Chat"
 msgstr "プライベートチャットを削除"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "ãã®æå¾ãåé¤"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "このメッセージを削除しますか？この操作は元に戻せません。"
@@ -807,6 +866,10 @@ msgstr "このメッセージを削除しますか？この操作は元に戻せ
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Delete this network?"
 msgstr "このネットワークを削除しますか？"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "èª¬æï¼ä»»æãä¾ï¼ãQ3ãã¼ã¿ãã¹ã¿ã¼ãï¼"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -866,6 +929,10 @@ msgstr "このサーバーのリンクセキュリティが低い場合に警告
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "ダウンロード"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "ãã¡ã¤ã«ããã­ãããã¦ã¢ããã­ã¼ã"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1188,6 +1255,7 @@ msgid "Invalid value"
 msgstr "無効な値"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "招待"
 
@@ -1263,6 +1331,10 @@ msgstr "参加して退出しました"
 msgid "Joined the channel"
 msgstr "チャンネルに参加しました"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "ãã£ãä»"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1296,6 +1368,10 @@ msgstr "プロファイルについて詳しく →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "チャンネルを退出"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "ãã£ã³ãã«ãç©ºæ¬ã«ããã¨ãæ±ç¨ã®ãããã¯ã¼ã¯æå¾ã«ãªãã¾ããèª¬æã¯ããªãå°ç¨ã®è¨é²ã§ããã®ãªã¹ãã§èªåã«ã®ã¿è¡¨ç¤ºããã¾ãã"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1541,6 +1617,10 @@ msgstr "通知音をミュートまたはミュート解除する"
 msgid "Name:"
 msgstr "名前："
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "ãããã¯ã¼ã¯"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -1657,9 +1737,17 @@ msgstr "このチャンネルにはメディアがありません"
 msgid "No media previews are loaded."
 msgstr "メディアプレビューは読み込まれません。"
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "ã¾ã çã®IRCãã©ãã£ãã¯ãåå¾ãã¦ãã¾ãããæ¥ç¶ãããã¡ãã»ã¼ã¸ãéä¿¡ãã¦ãã ããã"
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "結果が見つかりません"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "ãµã¼ãã¼ãé¸æããã¦ãã¾ãããã¾ããµã¤ããã¼ãããµã¼ãã¼ãé¸æãã¦ãã ãããæå¾ãªã³ã¯ã¯ãµã¼ãã¼ãã¨ã«ç®¡çããã¾ãã"
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1769,7 +1857,7 @@ msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
-msgstr ""
+msgstr "開く"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
@@ -2020,6 +2108,11 @@ msgstr "理由（任意）"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "æ´æ°"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2448,9 +2541,17 @@ msgstr "この項目は必須です"
 msgid "This image has expired"
 msgstr "この画像の有効期限が切れています"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "ãã®ãªã³ã¯ããç»é²ããäººæ°"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "このサーバーは拡張プロフィールメタデータ（IRCv3 METADATA拡張）をサポートしていません。アバター、表示名、ステータスなどの追加フィールドは利用できません。"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "ãã®ãµã¼ãã¼ã¯æå¾ãªã³ã¯ã«å¯¾å¿ãã¦ãã¾ããï¼<0>obby.world/invitation</0>ã±ã¤ãããªãã£ãåç¥ããã¦ãã¾ããï¼ãéå¸¸éããã£ããã¯å©ç¨ã§ãã¾ãããã®ããã«ã¯obbyircdãã¼ã¹ã®ãããã¯ã¼ã¯ç¨ã§ãã"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2605,6 +2706,10 @@ msgstr "生のTCPの代わりにWebSocketを使用する"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "ワイルドカードを使用してください：* は任意の文字列、? は任意の1文字に一致します。例：nick!*@*、*!*@host.com、*!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "ä½¿ç¨æ¸ã¿"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2800,6 +2905,10 @@ msgstr "あなたはIRC Operatorです"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "保存されていない変更があります。保存せずに閉じてもよいですか？"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "ã¾ã æå¾ãªã³ã¯ãä½æãã¦ãã¾ãããä¸ã®ãã©ã¼ã ããæåã®æå¾ãªã³ã¯ãä½æãã¦ãã ããã"
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "{target} を {channel} に招待しました"
@@ -2819,6 +2928,10 @@ msgstr "バウンサーにはまだネットワークがありません。最初
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "すべてのサーバーで使用するデフォルトのニックネーム"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "ããªãã®æå¾ãªã³ã¯"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

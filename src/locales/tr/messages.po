@@ -60,7 +60,7 @@ msgstr "{0} yazıyor..."
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "{0} network{1} — pick one to join"
-msgstr ""
+msgstr "{0} ağ{1} — katılmak için birini seçin"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -81,6 +81,21 @@ msgstr "{0}, {1} ve {2} yazıyor..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} ve {3} kişi daha yazıyor..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0}g Ã¶nce"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0}s Ã¶nce"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0}dk Ã¶nce"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -113,6 +128,10 @@ msgstr "*kanal*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#kanal (isteÄe baÄlÄ±)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -386,7 +405,7 @@ msgstr "Görüntüye geri dön"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
-msgstr ""
+msgstr "Ağ listesine geri dön"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -565,6 +584,7 @@ msgid "Choose file"
 msgstr "Dosya seç"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Temizle"
 
@@ -573,6 +593,10 @@ msgstr "Temizle"
 #: src/components/layout/ChatHeader.tsx
 msgid "Clear search"
 msgstr "Aramayı temizle"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "Onaylamak iÃ§in tekrar tÄ±klayÄ±n"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -617,6 +641,7 @@ msgstr "İstemci Sınırı (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -671,6 +696,10 @@ msgstr "Ayrıntılı flood koruma kurallarını yapılandırın. Her kural, hang
 msgid "Configure notification sounds and highlights"
 msgstr "Bildirim seslerini ve vurguları yapılandır"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "OnaylÄ±yor musunuz?"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -709,8 +738,17 @@ msgid "Control media display and external content"
 msgstr "Medya gösterimini ve harici içeriği denetleyin"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Kopyalandı"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "Kopyala"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "TÃ¼mÃ¼nÃ¼ kopyala"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -724,9 +762,25 @@ msgstr "Biçimlendirilmiş çıktıyı kopyala"
 msgid "Copy JSON"
 msgstr "JSON kopyala"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "BaÄlantÄ±yÄ± kopyala"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URL'yi Kopyala"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "OluÅtur"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "Yeni bir davet baÄlantÄ±sÄ± oluÅtur"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "Davet baÄlantÄ±larÄ±nÄ±zÄ± oluÅturun ve yÃ¶netin"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -781,6 +835,7 @@ msgid "Default Nickname"
 msgstr "Varsayılan Takma Ad"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Sil"
 
@@ -800,6 +855,10 @@ msgstr "Ağı sil"
 msgid "Delete Private Chat"
 msgstr "Özel Sohbeti Sil"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "Bu daveti sil"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Bu mesaj silinsin mi? Bu işlem geri alınamaz."
@@ -807,6 +866,10 @@ msgstr "Bu mesaj silinsin mi? Bu işlem geri alınamaz."
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Delete this network?"
 msgstr "Bu ağ silinsin mi?"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "AÃ§Ä±klama (isteÄe baÄlÄ±, Ã¶rn. \"Beta test ekibi Ã3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -866,6 +929,10 @@ msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "İndir"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "YÃ¼klemek iÃ§in dosyalarÄ± bÄ±rakÄ±n"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1188,6 +1255,7 @@ msgid "Invalid value"
 msgstr "Geçersiz değer"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Davetler"
 
@@ -1263,6 +1331,10 @@ msgstr "katıldı ve ayrıldı"
 msgid "Joined the channel"
 msgstr "Kanala katıldı"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "az Ã¶nce"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1296,6 +1368,10 @@ msgstr "Profiller hakkında daha fazla bilgi →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Kanaldan ayrıl"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "Genel bir aÄ daveti iÃ§in kanal alanÄ±nÄ± boÅ bÄ±rakÄ±n. AÃ§Ä±klama yalnÄ±zca sizin kayÄ±tlarÄ±nÄ±z iÃ§indir â bu listede yalnÄ±zca sizin gÃ¶rebileceÄiniz Åekilde gÃ¶sterilir."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1541,6 +1617,10 @@ msgstr "Bildirim seslerini sessize al veya aç"
 msgid "Name:"
 msgstr "Ad:"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "aÄ"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -1657,9 +1737,17 @@ msgstr "Bu kanalda medya yok"
 msgid "No media previews are loaded."
 msgstr "Medya önizlemesi yüklenmiyor."
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "HenÃ¼z ham IRC trafiÄi yakalanmadÄ±. BaÄlanmayÄ± veya bir mesaj gÃ¶ndermeyi deneyin."
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Sonuç bulunamadı"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "HiÃ§bir sunucu seÃ§ilmedi. Ãnce kenar Ã§ubuÄundan bir sunucu seÃ§in; davet baÄlantÄ±larÄ± sunucu baÅÄ±na yÃ¶netilir."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1769,7 +1857,7 @@ msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
-msgstr ""
+msgstr "Aç"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
@@ -2020,6 +2108,11 @@ msgstr "Neden (isteğe bağlı)"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Sunucuya yeniden bağlan"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "Yenile"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2448,9 +2541,17 @@ msgstr "Bu alan zorunludur"
 msgid "This image has expired"
 msgstr "Bu görüntünün süresi doldu"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "Bu baÄlantÄ± aracÄ±lÄ±ÄÄ±yla kayÄ±t olan kiÅi sayÄ±sÄ±"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Bu sunucu genişletilmiş profil meta verilerini (IRCv3 METADATA uzantısı) desteklemiyor. Avatar, görünen ad ve durum gibi ek alanlar mevcut değil."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "Bu sunucu davet baÄlantÄ±larÄ±nÄ± desteklemiyor (<0>obby.world/invitation</0> yeteneÄi duyurulmuyor). Yine de normal Åekilde sohbet edebilirsiniz; bu panel obbyircd tabanlÄ± aÄlar iÃ§indir."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2605,6 +2706,10 @@ msgstr "Ham TCP yerine WebSocket kullan"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Joker karakter kullanın: * herhangi bir diziyle eşleşir, ? herhangi bir tek karakterle eşleşir. Örnekler: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "kullanÄ±ldÄ±"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2800,6 +2905,10 @@ msgstr "IRC Operatörüsünüz"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "Kaydedilmemiş değişiklikleriniz var. Kaydetmeden kapatmak istediğinizden emin misiniz?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "HenÃ¼z hiÃ§ davet baÄlantÄ±sÄ± oluÅturmadÄ±nÄ±z. Ä°lkini oluÅturmak iÃ§in yukarÄ±daki formu kullanÄ±n."
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "{target} kişisini {channel} kanalına davet ettiniz"
@@ -2819,6 +2928,10 @@ msgstr "Bouncer'ınızda henüz ağ yok. Başlamak için bir tane ekleyin."
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Tüm sunucular için varsayılan takma adınız"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "Davet baÄlantÄ±larÄ±nÄ±z"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

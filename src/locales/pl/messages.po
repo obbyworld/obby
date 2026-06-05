@@ -60,7 +60,7 @@ msgstr "{0} pisze..."
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "{0} network{1} — pick one to join"
-msgstr ""
+msgstr "{0} sieć{1} — wybierz jedną, aby dołączyć"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -81,6 +81,21 @@ msgstr "{0}, {1} i {2} piszą..."
 #: src/components/layout/ChatArea.tsx
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} i {3} innych pisze..."
+
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0} dni temu"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0} godz. temu"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0} min temu"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -113,6 +128,10 @@ msgstr "*kanał*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#kanaÅ (opcjonalnie)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -386,7 +405,7 @@ msgstr "Wróć do obrazu"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
-msgstr ""
+msgstr "Powrót do listy sieci"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -565,6 +584,7 @@ msgid "Choose file"
 msgstr "Wybierz plik"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Wyczyść"
 
@@ -573,6 +593,10 @@ msgstr "Wyczyść"
 #: src/components/layout/ChatHeader.tsx
 msgid "Clear search"
 msgstr "Wyczyść wyszukiwanie"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "Kliknij ponownie, aby potwierdziÄ"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -617,6 +641,7 @@ msgstr "Limit klientów (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -671,6 +696,10 @@ msgstr "Konfiguruj szczegółowe reguły ochrony przed floodem. Każda reguła o
 msgid "Configure notification sounds and highlights"
 msgstr "Konfiguruj dźwięki powiadomień i podświetlenia"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "PotwierdziÄ?"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -709,8 +738,17 @@ msgid "Control media display and external content"
 msgstr "Kontroluj wyświetlanie mediów i zewnętrznych treści"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Skopiowano"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "Kopiuj"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "Kopiuj wszystko"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -724,9 +762,25 @@ msgstr "Kopiuj sformatowane wyjście"
 msgid "Copy JSON"
 msgstr "Kopiuj JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "Kopiuj link"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Kopiuj URL"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "UtwÃ³rz"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "UtwÃ³rz nowy link zapraszajÄcy"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "TwÃ³rz i zarzÄdzaj swoimi linkami zapraszajÄcymi"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -781,6 +835,7 @@ msgid "Default Nickname"
 msgstr "Domyślny nick"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Usuń"
 
@@ -800,6 +855,10 @@ msgstr "Usuń sieć"
 msgid "Delete Private Chat"
 msgstr "Usuń prywatną rozmowę"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "UsuÅ to zaproszenie"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Usunąć tę wiadomość? Tej operacji nie można cofnąć."
@@ -807,6 +866,10 @@ msgstr "Usunąć tę wiadomość? Tej operacji nie można cofnąć."
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Delete this network?"
 msgstr "Usunąć tę sieć?"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "Opis (opcjonalnie, np. \"Testerzy beta Q3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -866,6 +929,10 @@ msgstr "Nie ostrzegaj mnie o niskim poziomie bezpieczeństwa połączeń dla teg
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Pobierz"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "UpuÅÄ pliki, aby przesÅaÄ"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1188,6 +1255,7 @@ msgid "Invalid value"
 msgstr "Nieprawidłowa wartość"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Zaproszenia"
 
@@ -1263,6 +1331,10 @@ msgstr "dołączył i wyszedł"
 msgid "Joined the channel"
 msgstr "Dołączył do kanału"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "przed chwilÄ"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1296,6 +1368,10 @@ msgstr "Dowiedz się więcej o profilach →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Opuść kanał"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "Pozostaw kanaÅ pusty, aby utworzyÄ ogÃ³lne zaproszenie do sieci. Opis sÅuÅ¼y wyÅÄcznie do Twoich notatek â widoczny jest tylko dla Ciebie na tej liÅcie."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1541,6 +1617,10 @@ msgstr "Wycisz lub odcisz dźwięki powiadomień"
 msgid "Name:"
 msgstr "Nazwa:"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "sieÄ"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -1657,9 +1737,17 @@ msgstr "Brak mediów na tym kanale"
 msgid "No media previews are loaded."
 msgstr "Nie wczytano żadnych podglądów mediów."
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "Nie przechwycono jeszcze surowego ruchu IRC. SprÃ³buj siÄ poÅÄczyÄ lub wysÅaÄ wiadomoÅÄ."
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Nie znaleziono wyników"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "Nie wybrano serwera. Wybierz najpierw serwer z paska bocznego; linki zapraszajÄce sÄ zarzÄdzane osobno dla kaÅ¼dego serwera."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1769,7 +1857,7 @@ msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
-msgstr ""
+msgstr "Otwórz"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
@@ -2020,6 +2108,11 @@ msgstr "Powód (opcjonalnie)"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Ponownie połącz z serwerem"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "OdÅwieÅ¼"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2448,9 +2541,17 @@ msgstr "To pole jest wymagane"
 msgid "This image has expired"
 msgstr "Ten obraz wygasł"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "Tylu osÃ³b zarejestrowaÅo siÄ przez ten link"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Ten serwer nie obsługuje rozszerzonych metadanych profilu (rozszerzenie IRCv3 METADATA). Dodatkowe pola, takie jak awatar, wyświetlana nazwa i status, nie są dostępne."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "Ten serwer nie obsÅuguje linkÃ³w zapraszajÄcych (moÅ¼liwoÅÄ<0>obby.world/invitation</0>nie jest ogÅaszana). Nadal moÅ¼esz normalnie czatowaÄ; ten panel jest przeznaczony dla sieci opartych na obbyircd."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2605,6 +2706,10 @@ msgstr "Użyj WebSocket zamiast surowego TCP"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Użyj symboli wieloznacznych: * pasuje do dowolnej sekwencji, ? pasuje do dowolnego pojedynczego znaku. Przykłady: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "uÅ¼yte"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2800,6 +2905,10 @@ msgstr "Jesteś operatorem IRC"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "Masz niezapisane zmiany. Czy na pewno chcesz zamknąć bez zapisywania?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "Nie utworzyÅeÅ jeszcze Å¼adnych linkÃ³w zapraszajÄcych. UÅ¼yj formularza powyÅ¼ej, aby utworzyÄ swÃ³j pierwszy."
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Zaprosiłeś {target} do dołączenia do {channel}"
@@ -2819,6 +2928,10 @@ msgstr "Twój bouncer nie ma jeszcze żadnych sieci. Dodaj jedną, aby zacząć.
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Twój domyślny nick dla wszystkich serwerów"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "Twoje linki zapraszajÄce"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

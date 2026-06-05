@@ -28,13 +28,25 @@ export const servers = {
   },
 };
 
+// In-memory metadata cache. We intentionally do NOT persist user/channel
+// metadata across page reloads: with random-uuid nicks (cat-bot tests)
+// or rapidly-rotating display-names, stale entries pollute resolveUser-
+// Metadata and the metadataList skip-if-cached check, making the
+// nicklist look blank even after a fresh GET would have populated it.
+// Memory-only is fine because (a) we lazy-GET on visibility anyway, and
+// (b) localStorage churn from constant metadata writes wasn't paying
+// for itself. Wipe any pre-existing key so old persisted data doesn't
+// hang around in localStorage forever.
+try {
+  localStorage.removeItem(KEYS.METADATA);
+} catch {
+  // private-window or storage-disabled -- not fatal
+}
+let metadataCache: SavedMetadata = {};
 export const metadata = {
-  load: (): SavedMetadata => {
-    return JSON.parse(localStorage.getItem(KEYS.METADATA) || "{}");
-  },
-
+  load: (): SavedMetadata => metadataCache,
   save: (data: SavedMetadata) => {
-    localStorage.setItem(KEYS.METADATA, JSON.stringify(data));
+    metadataCache = data;
   },
 };
 

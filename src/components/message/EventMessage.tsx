@@ -2,6 +2,8 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import ircClient from "../../lib/ircClient";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import useStore from "../../store";
 import type { Message as MessageType, User } from "../../types";
 
 interface EventMessageProps {
@@ -25,6 +27,13 @@ export const EventMessage: React.FC<EventMessageProps> = ({
   const { t, i18n } = useLingui();
   const [showTooltip, setShowTooltip] = useState(false);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
+
+  const mediaSettings = mediaLevelToSettings(
+    useStore((state) => state.globalSettings.mediaVisibilityLevel),
+  );
+  const server = useStore
+    .getState()
+    .servers.find((s) => s.id === message.serverId);
 
   const currentUser = ircClient.getCurrentUser(message.serverId);
 
@@ -78,9 +87,13 @@ export const EventMessage: React.FC<EventMessageProps> = ({
           className="w-3 h-3 rounded-full bg-black flex items-center justify-center text-white text-xs cursor-pointer hover:opacity-80 transform transition-all duration-200 hover:scale-250 hover:w-8 hover:h-8 hover:text-base relative z-10 hover:z-20"
           onClick={handleAvatarClick}
         >
-          {messageUser?.metadata?.avatar?.value && !imageLoadFailed ? (
+          {canShowAvatarUrl(
+            messageUser?.metadata?.avatar?.value,
+            server?.filehost,
+            mediaSettings,
+          ) && !imageLoadFailed ? (
             <img
-              src={messageUser.metadata.avatar.value}
+              src={messageUser?.metadata?.avatar?.value}
               alt={username}
               className="w-3 h-3 rounded-full object-cover hover:w-8 hover:h-8 transition-all duration-200"
               onError={() => {

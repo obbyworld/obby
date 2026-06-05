@@ -132,6 +132,7 @@ export type SettingCategory =
   | "privacy"
   | "media"
   | "account"
+  | "invitations"
   | "advanced"
   | "experimental"
   | "accessibility"
