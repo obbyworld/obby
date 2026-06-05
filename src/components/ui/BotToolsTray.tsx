@@ -1,9 +1,9 @@
 import type React from "react";
 import { useMemo } from "react";
 import useStore from "../../store";
-import { AiToolsCard } from "./AiToolsCard";
+import { BotToolsCard } from "./BotToolsCard";
 
-interface AiToolsTrayProps {
+interface BotToolsTrayProps {
   serverId: string | null;
   // Channel name or PM target the user is currently viewing. Workflows
   // are scoped to their announce-channel so we only show what's relevant
@@ -11,7 +11,7 @@ interface AiToolsTrayProps {
   channel: string | null;
 }
 
-export const AiToolsTray: React.FC<AiToolsTrayProps> = ({
+export const BotToolsTray: React.FC<BotToolsTrayProps> = ({
   serverId,
   channel,
 }) => {
@@ -37,11 +37,11 @@ export const AiToolsTray: React.FC<AiToolsTrayProps> = ({
     <div className="pointer-events-none absolute top-3 right-3 z-30 flex flex-col gap-2 max-h-[calc(100%-2rem)] overflow-y-auto">
       {visible.map((w) => (
         <div key={w.id} className="pointer-events-auto">
-          <AiToolsCard workflow={w} />
+          <BotToolsCard workflow={w} />
         </div>
       ))}
     </div>
   );
 };
 
-export default AiToolsTray;
+export default BotToolsTray;

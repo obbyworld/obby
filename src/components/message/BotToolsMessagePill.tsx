@@ -3,13 +3,13 @@ import type React from "react";
 import { useMemo } from "react";
 import { FaProjectDiagram } from "react-icons/fa";
 import {
-  AI_TOOLS_TAG,
+  BOT_TOOLS_TAG,
   countableSteps,
-  decodeAiToolsValue,
-} from "../../lib/aiTools";
+  decodeBotToolsValue,
+} from "../../lib/botTools";
 import useStore from "../../store";
 
-interface AiToolsMessagePillProps {
+interface BotToolsMessagePillProps {
   serverId: string;
   tags?: Record<string, string>;
 }
@@ -20,16 +20,16 @@ interface AiToolsMessagePillProps {
 // affordance, sized to sit cleanly in the gutter without pushing the
 // message body sideways. Caller is expected to position it absolutely
 // (see MessageItem).
-export const AiToolsMessagePill: React.FC<AiToolsMessagePillProps> = ({
+export const BotToolsMessagePill: React.FC<BotToolsMessagePillProps> = ({
   serverId,
   tags,
 }) => {
   const { t } = useLingui();
-  const rawTag = tags?.[AI_TOOLS_TAG];
+  const rawTag = tags?.[BOT_TOOLS_TAG];
 
   const workflowId = useMemo(() => {
     if (!rawTag) return undefined;
-    const decoded = decodeAiToolsValue(rawTag);
+    const decoded = decodeBotToolsValue(rawTag);
     if (!decoded) return undefined;
     if (decoded.msg === "workflow") return decoded.id;
     if (decoded.msg === "step") return decoded.wid;
@@ -74,4 +74,4 @@ export const AiToolsMessagePill: React.FC<AiToolsMessagePillProps> = ({
   );
 };
 
-export default AiToolsMessagePill;
+export default BotToolsMessagePill;

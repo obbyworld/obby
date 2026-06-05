@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "{0} ältere Nachrichten"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0} Schritt(e)"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} Schritt(e) warten auf Genehmigung"
 
@@ -311,9 +311,9 @@ msgstr "Filter anwenden & Aktualisieren"
 msgid "Applying..."
 msgstr "Wird angewendet..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Genehmigen"
 
@@ -350,7 +350,7 @@ msgstr "Authentifiziertes Konto"
 msgid "Auto Fallback to Single Line"
 msgstr "Automatisch auf einzeilig wechseln"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Automatisch ausblenden in {secondsLeft}s"
 
@@ -382,6 +382,10 @@ msgstr "Abwesend"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Nicht am Rechner"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "Abwesenheitsnachricht"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "Verbindung abbrechen"
 msgid "Cancel reply"
 msgstr "Antwort abbrechen"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "Workflow abbrechen"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Kanalnamen ändern (nur Operatoren)"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "Deinen Spitznamen auf diesem Server ändern"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "Kanalbesitzer"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Kanaleinstellungen"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "Beizutretender Kanal (#name)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "Zu verlassender Kanal (Standard: aktueller)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "Kopiert"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "Alles kopieren"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "Entdecken"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Entdecke die Welt von IRC mit ObsidianIRC"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "Ausblenden"
 
@@ -1071,6 +1087,10 @@ msgstr "Kanäle filtern..."
 msgid "Filter members…"
 msgstr "Mitglieder filtern…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "Erste zu sendende Nachricht"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Flood-Profil (+F)"
@@ -1226,7 +1246,7 @@ msgstr "Bild {0} von {1}"
 msgid "Image preview"
 msgstr "Bildvorschau"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "EIN"
 
@@ -1313,6 +1333,10 @@ msgstr "{0} beitreten"
 msgid "Join {value}"
 msgstr "{value} beitreten"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "Einem Kanal beitreten"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "Mehr über benutzerdefinierte Regeln erfahren →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "Mehr über Profile erfahren →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "Einen Kanal verlassen"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "Profilinformationen und Metadaten verwalten"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Als Bot markieren – normalerweise 'on' oder leer"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "Sich als abwesend markieren"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "Sich als zurück markieren"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "Netzwerkname"
 msgid "New DM"
 msgstr "Neue Direktnachricht"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "Neuer Spitzname"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "Nächstes Bild"
@@ -1707,7 +1747,7 @@ msgstr "Es werden keine Medienvorschauen geladen."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "Noch kein roher IRC-Datenverkehr aufgezeichnet. Versuche dich zu verbinden oder eine Nachricht zu senden."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "Ups! Netz-Split! ⚠️"
 msgid "Op"
 msgstr "Op"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "Eine private Nachricht an einen Benutzer öffnen"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "Kanaleinstellungen öffnen"
@@ -1872,12 +1916,12 @@ msgstr "Operator-Aktionen"
 msgid "Optional crash reports to improve the app"
 msgstr "Optionale Absturzberichte zur App-Verbesserung"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "AUS"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "Ausgabe gekürzt"
 
@@ -2077,7 +2121,7 @@ msgstr "Grund"
 msgid "Reason (optional)"
 msgstr "Grund (optional)"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Überlegung"
 
@@ -2089,8 +2133,8 @@ msgstr "Erneut mit Server verbinden"
 msgid "Register for an account"
 msgstr "Konto registrieren"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "Ablehnen"
 
@@ -2134,7 +2178,7 @@ msgstr "Diesen Kanal auf dem Server umbenennen. Alle Benutzer sehen den neuen Na
 msgid "Render markdown formatting in messages"
 msgstr "Markdown-Formatierung in Nachrichten rendern"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Den Workflow erneut öffnen, der diese Nachricht erzeugt hat ({stepCount} Schritte)"
 
@@ -2143,11 +2187,11 @@ msgstr "Den Workflow erneut öffnen, der diese Nachricht erzeugt hat ({stepCount
 msgid "Reply"
 msgstr "Antworten"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "Im Chat geantwortet"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Die Antwortnachricht ist nicht mehr sichtbar"
 
@@ -2194,7 +2238,7 @@ msgstr "Gespeichert"
 msgid "Saving..."
 msgstr "Wird gespeichert..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Chat zu dieser Antwort scrollen"
 
@@ -2292,6 +2336,10 @@ msgstr "GIF senden"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "Warnmeldung an {username} senden"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "Eine Aktion / Emote senden"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "Quelle"
 msgid "Start Private Message"
 msgstr "Privatnachricht starten"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Workflow wird gestartet…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "Statusnachrichten"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Stopp"
@@ -2533,7 +2581,7 @@ msgstr "Sperren"
 msgid "System"
 msgstr "System"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
 
@@ -2561,7 +2609,7 @@ msgstr "Das Thema für diesen Kanal. Alle Benutzer können es sehen."
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Der Benutzer erhält eine Einladung, {channelName} beizutreten."
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Der Workflow, der diese Nachricht erzeugt hat, ist nicht mehr im Zustand vorhanden"
 
@@ -2624,7 +2672,7 @@ msgstr "Benachrichtigungen umschalten"
 msgid "Toggle search"
 msgstr "Suche umschalten"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "Werkzeug"
 
@@ -2852,7 +2900,7 @@ msgstr "Benutzer mit Sprachrecht"
 msgid "Volume"
 msgstr "Lautstärke"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Warten auf den ersten Schritt…"
 
@@ -2902,6 +2950,10 @@ msgstr "Was machst du gerade?"
 msgid "What this means:"
 msgstr "Was das bedeutet:"
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "Was du gerade tust"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "Was denkst du gerade?"
@@ -2909,6 +2961,10 @@ msgstr "Was denkst du gerade?"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "WHISPER"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "Einem Benutzer im aktuellen Kanalkontext zuflüstern"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "Weit – Breiterer Schutzbereich"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Standardmäßig 'kein Grund', wenn leer gelassen"
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "Workflow-Verlauf"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Workflow-Verlauf ({0})"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "Wird ausgeführt…"
 

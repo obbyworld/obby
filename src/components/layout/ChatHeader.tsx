@@ -32,7 +32,7 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
-import { AiToolsHistoryButton } from "../ui/AiToolsHistoryButton";
+import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
@@ -627,7 +627,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               )}
               {/* AI workflow history — renders nothing when empty */}
               {selectedServerId && (
-                <AiToolsHistoryButton
+                <BotToolsHistoryButton
                   serverId={selectedServerId}
                   channel={selectedChannel.name}
                 />
@@ -886,7 +886,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <span aria-hidden="true">🎮</span>
               </button>
               {selectedServerId && (
-                <AiToolsHistoryButton
+                <BotToolsHistoryButton
                   serverId={selectedServerId}
                   channel={selectedPrivateChat.username}
                 />

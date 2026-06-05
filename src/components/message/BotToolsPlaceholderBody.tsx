@@ -10,7 +10,7 @@ import {
 import type { AiStep } from "../../store";
 import useStore from "../../store";
 
-interface AiToolsPlaceholderBodyProps {
+interface BotToolsPlaceholderBodyProps {
   serverId: string;
   workflowId: string;
 }
@@ -40,10 +40,9 @@ function stepLabel(step: AiStep): string {
   return "Text";
 }
 
-export const AiToolsPlaceholderBody: React.FC<AiToolsPlaceholderBodyProps> = ({
-  serverId,
-  workflowId,
-}) => {
+export const BotToolsPlaceholderBody: React.FC<
+  BotToolsPlaceholderBodyProps
+> = ({ serverId, workflowId }) => {
   const workflow = useStore((s) => s.aiWorkflows[serverId]?.[workflowId]);
 
   if (!workflow) {
@@ -81,4 +80,4 @@ export const AiToolsPlaceholderBody: React.FC<AiToolsPlaceholderBodyProps> = ({
   );
 };
 
-export default AiToolsPlaceholderBody;
+export default BotToolsPlaceholderBody;

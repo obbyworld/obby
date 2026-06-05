@@ -1,6 +1,6 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
-import { AI_TOOLS_TAG, encodeAiToolsValue } from "../lib/aiTools";
+import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -482,8 +482,8 @@ export type { GlobalSettings };
 // let the UI decide how to render.
 export interface AiStep {
   sid: string;
-  type: import("../lib/aiTools").AiStepType;
-  state: import("../lib/aiTools").AiStepState;
+  type: import("../lib/botTools").AiStepType;
+  state: import("../lib/botTools").AiStepState;
   tool?: string;
   label?: string;
   content?: unknown;
@@ -501,7 +501,7 @@ export interface AiWorkflow {
   // The bot's nick (sender of the original workflow TAGMSG).
   senderNick: string;
   name?: string;
-  state: import("../lib/aiTools").AiWorkflowState;
+  state: import("../lib/botTools").AiWorkflowState;
   // msgid of the IRC message that triggered the workflow, if the bot
   // included `trigger` in the start event. Lets the UI correlate.
   trigger?: string;
@@ -511,7 +511,7 @@ export interface AiWorkflow {
   prompt?: string;
   cancelledBy?: string;
   // msgid of the PRIVMSG that carried the final workflow-complete tag.
-  // Set by the aiTools handler when a tagged PRIVMSG arrives so the
+  // Set by the botTools handler when a tagged PRIVMSG arrives so the
   // card can deep-link to that message ("Responded in chat" footer).
   finalMsgid?: string;
   startedAt: number;
@@ -655,7 +655,7 @@ export interface AppState {
   // Auto-connect prevention
   hasConnectedToSavedServers: boolean;
   // draft/bot-tools workflow state, indexed by serverId then workflow id.
-  // Populated by store/handlers/aiTools.ts from `+draft/bot-tools`
+  // Populated by store/handlers/botTools.ts from `+draft/bot-tools`
   // tags carried on TAGMSG/PRIVMSG. Rendered by the floating workflow
   // tray in ChatArea.
   aiWorkflows: Record<string, Record<string, AiWorkflow>>;
@@ -997,7 +997,7 @@ export interface AppState {
   aiSendAction: (
     serverId: string,
     botNick: string,
-    action: import("../lib/aiTools").AiActionMessage,
+    action: import("../lib/botTools").AiActionMessage,
   ) => void;
 }
 
@@ -3946,8 +3946,8 @@ const useStore = create<AppState>((set, get) => ({
 
   aiSendAction: (serverId, botNick, action) => {
     // base64 of compact JSON; its alphabet needs no IRC tag-value escaping.
-    const value = encodeAiToolsValue(action);
-    ircClient.sendRaw(serverId, `@${AI_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
+    const value = encodeBotToolsValue(action);
+    ircClient.sendRaw(serverId, `@${BOT_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
   },
 }));
 

@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "{0} starších zpráv"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0} krok(ů)"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} krok(ů) čeká na schválení"
 
@@ -311,9 +311,9 @@ msgstr "Použít filtry a obnovit"
 msgid "Applying..."
 msgstr "Používám..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Schválit"
 
@@ -350,7 +350,7 @@ msgstr "Ověřený účet"
 msgid "Auto Fallback to Single Line"
 msgstr "Automatický návrat na jeden řádek"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Automatické zavření za {secondsLeft} s"
 
@@ -382,6 +382,10 @@ msgstr "Nepřítomen"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Pryč od klávesnice"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "Zpráva o nepřítomnosti"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "Zrušit připojení"
 msgid "Cancel reply"
 msgstr "Zrušit odpověď"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "Zrušit pracovní postup"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Změnit název kanálu (pouze operátoři)"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "Změnit vaši přezdívku na tomto serveru"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "Vlastník kanálu"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Nastavení kanálu"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "Kanál k připojení (#název)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "Kanál k opuštění (výchozí aktuální)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "Zkopírováno"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "Kopírovat vše"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "Objevovat"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Objevte svět IRC s ObsidianIRC"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "Zavřít"
 
@@ -1071,6 +1087,10 @@ msgstr "Filtrovat kanály..."
 msgid "Filter members…"
 msgstr "Filtrovat členy…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "První zpráva k odeslání"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Profil floodingu (+F)"
@@ -1226,7 +1246,7 @@ msgstr "Obrázek {0} z {1}"
 msgid "Image preview"
 msgstr "Náhled obrázku"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "VSTUP"
 
@@ -1313,6 +1333,10 @@ msgstr "Připojit se k {0}"
 msgid "Join {value}"
 msgstr "Připojit se k {value}"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "Připojit se ke kanálu"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "Zjistit více o vlastních pravidlech →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "Zjistit více o profilech →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "Opustit kanál"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "Spravujte informace profilu a metadata"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Označit jako bot - obvykle 'on' nebo prázdné"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "Označit se jako nepřítomný"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "Označit se jako zpět"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "Název sítě"
 msgid "New DM"
 msgstr "Nová DM"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "Nová přezdívka"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "Další obrázek"
@@ -1707,7 +1747,7 @@ msgstr "Nejsou načteny žádné náhledy médií."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "Zatím nebyl zachycen žádný surový IRC provoz. Zkuste se připojit nebo odeslat zprávu."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "Jejda! Síť se rozdělila! ⚠️"
 msgid "Op"
 msgstr "Op"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "Otevřít soukromou zprávu uživateli"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "Otevřít nastavení konfigurace kanálu"
@@ -1872,12 +1916,12 @@ msgstr "Akce operátora"
 msgid "Optional crash reports to improve the app"
 msgstr "Volitelné zprávy o pádu pro zlepšení aplikace"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "VÝSTUP"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "výstup zkrácen"
 
@@ -2077,7 +2121,7 @@ msgstr "Důvod"
 msgid "Reason (optional)"
 msgstr "Důvod (volitelné)"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Uvažování"
 
@@ -2089,8 +2133,8 @@ msgstr "Znovu připojit k serveru"
 msgid "Register for an account"
 msgstr "Zaregistrovat účet"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "Zamítnout"
 
@@ -2134,7 +2178,7 @@ msgstr "Přejmenovat tento kanál na serveru. Nový název uvidí všichni uživ
 msgid "Render markdown formatting in messages"
 msgstr "Zobrazovat Markdown formátování ve zprávách"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Znovu otevřít pracovní postup, který vytvořil tuto zprávu ({stepCount} kroků)"
 
@@ -2143,11 +2187,11 @@ msgstr "Znovu otevřít pracovní postup, který vytvořil tuto zprávu ({stepCo
 msgid "Reply"
 msgstr "Odpovědět"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "Odpovězeno v chatu"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Zpráva s odpovědí již není zobrazena"
 
@@ -2194,7 +2238,7 @@ msgstr "Uloženo"
 msgid "Saving..."
 msgstr "Ukládám..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Přejít v chatu na tuto odpověď"
 
@@ -2292,6 +2336,10 @@ msgstr "Odeslat GIF"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "Odeslat varovnou zprávu uživateli {username}"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "Odeslat akci / emote"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "Zdroj"
 msgid "Start Private Message"
 msgstr "Začít soukromou zprávu"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Spouštění pracovního postupu…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "Stavové zprávy"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Zastavit"
@@ -2533,7 +2581,7 @@ msgstr "Pozastavit"
 msgid "System"
 msgstr "Systém"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
 
@@ -2561,7 +2609,7 @@ msgstr "Téma, které bude zobrazeno pro tento kanál. Téma mohou vidět všich
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Pracovní postup, který vytvořil tuto zprávu, již není ve stavu"
 
@@ -2624,7 +2672,7 @@ msgstr "Přepnout oznámení"
 msgid "Toggle search"
 msgstr "Přepnout hledání"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "Nástroj"
 
@@ -2852,7 +2900,7 @@ msgstr "Uživatel s hlasem"
 msgid "Volume"
 msgstr "Hlasitost"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Čekání na první krok…"
 
@@ -2902,6 +2950,10 @@ msgstr "Co teď děláš?"
 msgid "What this means:"
 msgstr "Co to znamená:"
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "Co děláte"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "Na co myslíte?"
@@ -2909,6 +2961,10 @@ msgstr "Na co myslíte?"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "ŠEPOT"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "Šeptat uživateli v kontextu aktuálního kanálu"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "Široký - širší rozsah ochrany"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Výchozí bude 'bez důvodu', pokud ponecháte prázdné"
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "Historie pracovních postupů"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Historie pracovních postupů ({0})"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "Pracuji…"
 

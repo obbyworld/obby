@@ -17,7 +17,7 @@ function tag(value: string): Record<string, string> {
   return { "+draft/bot-tools": Buffer.from(value, "utf8").toString("base64") };
 }
 
-describe("aiTools store handler", () => {
+describe("botTools store handler", () => {
   beforeEach(() => {
     useStore.setState({ aiWorkflows: {} } as Partial<AppState>);
   });

@@ -192,8 +192,13 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
   // or whether any rows carry a description -- no row-height estimate
   // needed.
   const inputRect = inputElement?.getBoundingClientRect();
-  const bottom = inputRect ? window.innerHeight - inputRect.top + 6 : 100;
-  const left = inputRect ? inputRect.left : 100;
+  // Refuse to render until the input has a real position on screen --
+  // otherwise the first frame shows the popover anchored at viewport
+  // (100, 100) for a flash before the ref resolves and it snaps to
+  // the input.
+  if (!inputRect || inputRect.height === 0) return null;
+  const bottom = window.innerHeight - inputRect.top + 6;
+  const left = inputRect.left;
 
   return (
     <div

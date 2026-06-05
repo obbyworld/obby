@@ -7,11 +7,11 @@ import {
   FaSpinner,
   FaTimesCircle,
 } from "react-icons/fa";
-import { countableSteps } from "../../lib/aiTools";
+import { countableSteps } from "../../lib/botTools";
 import type { AiWorkflow } from "../../store";
 import useStore from "../../store";
 
-interface AiToolsHistoryButtonProps {
+interface BotToolsHistoryButtonProps {
   serverId: string;
   channel: string | null;
 }
@@ -43,7 +43,7 @@ function fmtAgo(ts: number): string {
 // Workflow history button + popover for the chat header. Renders nothing
 // when no workflows exist for the current target -- so the icon doesn't
 // take up space until there's something to surface.
-export const AiToolsHistoryButton: React.FC<AiToolsHistoryButtonProps> = ({
+export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
   serverId,
   channel,
 }) => {
@@ -149,4 +149,4 @@ export const AiToolsHistoryButton: React.FC<AiToolsHistoryButtonProps> = ({
   );
 };
 
-export default AiToolsHistoryButton;
+export default BotToolsHistoryButton;

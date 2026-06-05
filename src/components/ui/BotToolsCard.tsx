@@ -27,7 +27,7 @@ function scrollToMessageId(internalId: string): boolean {
   return true;
 }
 
-interface AiToolsCardProps {
+interface BotToolsCardProps {
   workflow: AiWorkflow;
 }
 
@@ -340,7 +340,7 @@ function buildRenderItems(steps: AiStep[]): RenderItem[] {
   return items;
 }
 
-export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
+export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
   const { t } = useLingui();
   const setCollapsed = useStore((s) => s.aiWorkflowSetCollapsed);
   const dismiss = useStore((s) => s.aiWorkflowDismiss);
@@ -664,4 +664,4 @@ export const AiToolsCard: React.FC<AiToolsCardProps> = ({ workflow }) => {
   );
 };
 
-export default AiToolsCard;
+export default BotToolsCard;

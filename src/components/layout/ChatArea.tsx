@@ -17,7 +17,7 @@ import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { waitForAuthToken } from "../../lib/authToken";
-import { CLIENT_COMMANDS } from "../../lib/clientCommands";
+import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -42,10 +42,10 @@ import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
 import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
-import { AiToolsTray } from "../ui/AiToolsTray";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import BotsModal from "../ui/BotsModal";
+import { BotToolsTray } from "../ui/BotToolsTray";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
@@ -2046,7 +2046,7 @@ export const ChatArea: React.FC<{
           <div
             className={`relative flex flex-col min-h-0 ${channelKey ? "flex-grow" : ""}`}
           >
-            <AiToolsTray
+            <BotToolsTray
               serverId={selectedServerId}
               channel={
                 selectedChannel?.name ?? selectedPrivateChat?.username ?? null
@@ -2349,7 +2349,7 @@ export const ChatArea: React.FC<{
                 // listed first because they own those names and the
                 // server's cmdslist may shadow them.
                 const inChannelView = !!selectedChannel;
-                for (const c of CLIENT_COMMANDS) {
+                for (const c of getClientCommands()) {
                   if (c.scope === "channel-only" && !inChannelView) continue;
                   suggestions.push({
                     name: c.name,
@@ -2490,7 +2490,7 @@ export const ChatArea: React.FC<{
                 // Client-side commands first; bot schemas overwrite
                 // only if there's a real collision (none in practice
                 // because the client owns /me, /msg, etc).
-                for (const c of CLIENT_COMMANDS) {
+                for (const c of getClientCommands()) {
                   schemas[c.name.toLowerCase()] = {
                     command: {
                       name: c.name,

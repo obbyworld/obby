@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "{0} mesaje mai vechi"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0} pas(i)"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} pas(i) în așteptarea aprobării"
 
@@ -311,9 +311,9 @@ msgstr "Aplică filtrele și actualizează"
 msgid "Applying..."
 msgstr "Se aplică..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Aprobă"
 
@@ -350,7 +350,7 @@ msgstr "Cont autentificat"
 msgid "Auto Fallback to Single Line"
 msgstr "Revenire automată la o singură linie"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Se închide automat în {secondsLeft}s"
 
@@ -382,6 +382,10 @@ msgstr "Absent"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Departe de tastatură"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "Mesaj de absență"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "Anulează conexiunea"
 msgid "Cancel reply"
 msgstr "Anulează răspunsul"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "Anulează fluxul de lucru"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Schimbă numele canalului (numai operatori)"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "Schimbă-ți pseudonimul pe acest server"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "Proprietar de canal"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Setări canal"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "Canal de intrat (#nume)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "Canal de părăsit (implicit cel curent)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "Copiat"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "Copiază tot"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "Descoperă"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Descoperă lumea IRC cu ObsidianIRC"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "Închide"
 
@@ -1071,6 +1087,10 @@ msgstr "Filtrează canale..."
 msgid "Filter members…"
 msgstr "Filtrează membri…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "Primul mesaj de trimis"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Profil flood (+F)"
@@ -1226,7 +1246,7 @@ msgstr "Imaginea {0} din {1}"
 msgid "Image preview"
 msgstr "Previzualizare imagine"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "INTRARE"
 
@@ -1313,6 +1333,10 @@ msgstr "Alătură-te la {0}"
 msgid "Join {value}"
 msgstr "Intrați în {value}"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "Intră pe un canal"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "Aflați mai multe despre regulile personalizate →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "Aflați mai multe despre profiluri →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "Părăsește un canal"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "Gestionează informațiile profilului și metadatele"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Marcați ca bot, de obicei 'on' sau gol"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "Marchează-te ca absent"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "Marchează-te ca revenit"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "Nume rețea"
 msgid "New DM"
 msgstr "Mesaj direct nou"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "Pseudonim nou"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "Imaginea următoare"
@@ -1707,7 +1747,7 @@ msgstr "Nu sunt încărcate previzualizări media."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "Niciun trafic IRC brut capturat încă. Încearcă să te conectezi sau să trimiți un mesaj."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "Oops! Rețeaua s-a împărțit! ⚠️"
 msgid "Op"
 msgstr "Op"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "Deschide un mesaj privat către un utilizator"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "Deschide setările de configurare ale canalului"
@@ -1872,12 +1916,12 @@ msgstr "Acțiuni de operator"
 msgid "Optional crash reports to improve the app"
 msgstr "Rapoarte opționale de erori pentru îmbunătățirea aplicației"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "IEȘIRE"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "ieșire trunchiată"
 
@@ -2077,7 +2121,7 @@ msgstr "Motiv"
 msgid "Reason (optional)"
 msgstr "Motiv (opțional)"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Raționament"
 
@@ -2089,8 +2133,8 @@ msgstr "Reconectează-te la server"
 msgid "Register for an account"
 msgstr "Înregistrează un cont"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "Respinge"
 
@@ -2134,7 +2178,7 @@ msgstr "Redenumiți acest canal pe server. Toți utilizatorii vor vedea noul num
 msgid "Render markdown formatting in messages"
 msgstr "Afișați formatarea Markdown în mesaje"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Redeschide fluxul de lucru care a produs acest mesaj ({stepCount} pași)"
 
@@ -2143,11 +2187,11 @@ msgstr "Redeschide fluxul de lucru care a produs acest mesaj ({stepCount} pași)
 msgid "Reply"
 msgstr "Răspunde"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "A răspuns în chat"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Mesajul de răspuns nu mai este vizibil"
 
@@ -2194,7 +2238,7 @@ msgstr "Salvat"
 msgid "Saving..."
 msgstr "Se salvează..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Derulează chatul la acest răspuns"
 
@@ -2292,6 +2336,10 @@ msgstr "Trimite un GIF"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "Trimite un mesaj de avertizare către {username}"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "Trimite o acțiune / emote"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "Sursă"
 msgid "Start Private Message"
 msgstr "Începe un mesaj privat"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Se pornește fluxul de lucru…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "Mesaje de stare"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Oprește"
@@ -2533,7 +2581,7 @@ msgstr "Suspendă"
 msgid "System"
 msgstr "Sistem"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
 
@@ -2561,7 +2609,7 @@ msgstr "Subiectul afișat pentru acest canal. Toți utilizatorii îl pot vedea."
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Fluxul de lucru care a produs acest mesaj nu mai este în stare"
 
@@ -2624,7 +2672,7 @@ msgstr "Comută notificările"
 msgid "Toggle search"
 msgstr "Comută căutarea"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "Instrument"
 
@@ -2852,7 +2900,7 @@ msgstr "Utilizator cu drept de vorbire"
 msgid "Volume"
 msgstr "Volum"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Se așteaptă primul pas…"
 
@@ -2902,6 +2950,10 @@ msgstr "Ce faci?"
 msgid "What this means:"
 msgstr "Ce înseamnă aceasta:"
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "Ce faci"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "La ce te gândești?"
@@ -2909,6 +2961,10 @@ msgstr "La ce te gândești?"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "WHISPER"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "Șoptește unui utilizator în contextul canalului curent"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "Larg – Domeniu de protecție mai amplu"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Va fi implicit „niciun motiv\" dacă este lăsat gol"
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "Istoric fluxuri de lucru"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Istoric fluxuri de lucru ({0})"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "Se lucrează…"
 

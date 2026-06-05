@@ -1,10 +1,10 @@
 import type { StoreApi } from "zustand";
 import {
-  AI_TOOLS_TAG,
   type AiStepMessage,
   type AiWorkflowMessage,
-  decodeAiToolsValue,
-} from "../../lib/aiTools";
+  BOT_TOOLS_TAG,
+  decodeBotToolsValue,
+} from "../../lib/botTools";
 import ircClient from "../../lib/ircClient";
 import { extractMentions } from "../../lib/notifications";
 import type { Message } from "../../types";
@@ -112,7 +112,7 @@ function applyStepUpdate(
   };
 }
 
-export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
+export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
   // Decide whether an event arrived inside a CHATHISTORY batch by
   // looking at the @batch tag and resolving its type against the
   // store's active-batch map. Returns true for replayed events, so
@@ -142,9 +142,9 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
     fromPrivmsg: boolean;
     body?: string;
   }): void => {
-    const raw = mtags?.[AI_TOOLS_TAG];
+    const raw = mtags?.[BOT_TOOLS_TAG];
     if (!raw) return;
-    const msg = decodeAiToolsValue(raw);
+    const msg = decodeBotToolsValue(raw);
     if (!msg) return;
     const historical = isReplayed(serverId, mtags);
 
@@ -171,7 +171,7 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
           [serverId]: { ...server, [msg.id]: merged },
         };
 
-        // In-chat placeholder Message owned by aiTools. We create one
+        // In-chat placeholder Message owned by botTools. We create one
         // on live workflow start, then morph it in place when the
         // final PRIVMSG arrives so the row reads as the bot's answer
         // (with the workflow pill alongside) without ever jumping
@@ -196,7 +196,7 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
 
         const channelKey = channel && `${serverId}-${channel.id}`;
         if (!channelKey) return { aiWorkflows };
-        const placeholderId = `ai-wf-${serverId}-${msg.id}`;
+        const placeholderId = `bot-wf-${serverId}-${msg.id}`;
         const existing = state.messages[channelKey] ?? [];
         const idx = existing.findIndex((m) => m.id === placeholderId);
         const isTerminal =
@@ -241,7 +241,7 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
               userId: sender,
               replyMessage,
               mentioned: mentions,
-              aiToolsPending: false,
+              botToolsPending: false,
             };
             const updated = existing.slice();
             updated[idx] = morphed;
@@ -260,7 +260,7 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
         // untagged reply -- which the CHANMSG handler will append as a
         // normal row, complete with reply quote -- isn't shadowed by a
         // stuck "Thinking…" spinner.
-        if (isTerminal && idx >= 0 && existing[idx].aiToolsPending) {
+        if (isTerminal && idx >= 0 && existing[idx].botToolsPending) {
           const updated = existing.slice();
           updated.splice(idx, 1);
           return {
@@ -285,8 +285,8 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
             reactions: [],
             replyMessage: null,
             mentioned: [],
-            aiToolsWorkflowId: msg.id,
-            aiToolsPending: true,
+            botToolsWorkflowId: msg.id,
+            botToolsPending: true,
           };
           return {
             aiWorkflows,
@@ -330,7 +330,7 @@ export function registerAiToolsHandlers(store: StoreApi<AppState>): void {
     });
   });
 
-  // PRIVMSG carrying the ai-tools tag is the bot's final response. We do
+  // PRIVMSG carrying the bot-tools tag is the bot's final response. We do
   // NOT suppress it from chat -- the user wants to see the answer -- but
   // we mirror its workflow-state update into the workflow record so the
   // card reflects the same lifecycle, and we record the message's msgid

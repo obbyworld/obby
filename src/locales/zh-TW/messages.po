@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "{0} 則較早的訊息"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0} 個步驟"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} 個步驟等待核准"
 
@@ -311,9 +311,9 @@ msgstr "套用篩選並重新整理"
 msgid "Applying..."
 msgstr "正在套用..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "核准"
 
@@ -350,7 +350,7 @@ msgstr "已驗證帳戶"
 msgid "Auto Fallback to Single Line"
 msgstr "自動回退至單行"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft} 秒後自動關閉"
 
@@ -382,6 +382,10 @@ msgstr "离开"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "暂时离开"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "離開訊息"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "取消连接"
 msgid "Cancel reply"
 msgstr "取消回复"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "取消工作流程"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "更改频道名称（仅限管理员）"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "在此伺服器上更改你的暱稱"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "頻道擁有者"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "频道设置"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "要加入的頻道 (#name)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "要離開的頻道 (預設為目前頻道)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "已复制"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "全部複製"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "探索"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "使用 ObsidianIRC 探索 IRC 的世界"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "關閉"
 
@@ -1071,6 +1087,10 @@ msgstr "筛选频道..."
 msgid "Filter members…"
 msgstr "筛选成员…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "要傳送的第一則訊息"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "洪水設定檔 (+F)"
@@ -1226,7 +1246,7 @@ msgstr "第 {0} 張，共 {1} 張"
 msgid "Image preview"
 msgstr "图片预览"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "傳入"
 
@@ -1313,6 +1333,10 @@ msgstr "加入 {0}"
 msgid "Join {value}"
 msgstr "加入 {value}"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "加入頻道"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "了解更多自訂規則 →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "了解更多設定檔 →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "離開頻道"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "管理您的个人资料信息和元数据"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "標記為機器人——通常為 'on' 或空白"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "將自己標記為離開"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "將自己標記為回來"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "网络名称"
 msgid "New DM"
 msgstr "新私訊"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "新暱稱"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "下一张图片"
@@ -1707,7 +1747,7 @@ msgstr "未加载任何媒体预览。"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "尚未擷取任何原始 IRC 流量。請嘗試連線或傳送訊息。"
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "哎呀！網路分裂！⚠️"
 msgid "Op"
 msgstr "管理员"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "開啟與使用者的私訊"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "打开频道配置设置"
@@ -1872,12 +1916,12 @@ msgstr "操作員操作"
 msgid "Optional crash reports to improve the app"
 msgstr "可選的當機報告以改善應用程式"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "傳出"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "輸出已截斷"
 
@@ -2077,7 +2121,7 @@ msgstr "原因"
 msgid "Reason (optional)"
 msgstr "原因（可选）"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "推理"
 
@@ -2089,8 +2133,8 @@ msgstr "重新连接服务器"
 msgid "Register for an account"
 msgstr "注册账户"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "拒絕"
 
@@ -2134,7 +2178,7 @@ msgstr "在伺服器上重新命名此頻道，所有使用者都會看到新名
 msgid "Render markdown formatting in messages"
 msgstr "在訊息中渲染 Markdown 格式"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "重新開啟產生此訊息的工作流程（{stepCount} 個步驟）"
 
@@ -2143,11 +2187,11 @@ msgstr "重新開啟產生此訊息的工作流程（{stepCount} 個步驟）"
 msgid "Reply"
 msgstr "回复"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "已在聊天中回覆"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "回覆訊息已不在檢視範圍內"
 
@@ -2194,7 +2238,7 @@ msgstr "已儲存"
 msgid "Saving..."
 msgstr "正在儲存..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "將聊天捲動至此回覆"
 
@@ -2292,6 +2336,10 @@ msgstr "发送 GIF"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "向 {username} 发送警告消息"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "傳送動作 / 表情"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "來源"
 msgid "Start Private Message"
 msgstr "发起私信"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "正在啟動工作流程…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "状态消息"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "停止"
@@ -2533,7 +2581,7 @@ msgstr "停用"
 msgid "System"
 msgstr "系统"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "文字"
 
@@ -2561,7 +2609,7 @@ msgstr "此頻道顯示的主題，所有使用者均可查看。"
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "使用者將收到加入 {channelName} 的邀請。"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "產生此訊息的工作流程已不在狀態中"
 
@@ -2624,7 +2672,7 @@ msgstr "切换通知"
 msgid "Toggle search"
 msgstr "切换搜索"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "工具"
 
@@ -2852,7 +2900,7 @@ msgstr "有發言權的使用者"
 msgid "Volume"
 msgstr "音量"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "正在等待第一個步驟…"
 
@@ -2902,6 +2950,10 @@ msgstr "你在做什麼?"
 msgid "What this means:"
 msgstr "这意味着："
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "你正在做什麼"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "您在想什么？"
@@ -2909,6 +2961,10 @@ msgstr "您在想什么？"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "WHISPER"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "在目前頻道情境中對使用者悄悄話"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "寬泛 – 更廣的保護範圍"
 msgid "Will default to 'no reason' if left empty"
 msgstr "留空将默认显示\"无原因\""
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "工作流程歷史"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "工作流程歷史（{0}）"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "處理中…"
 

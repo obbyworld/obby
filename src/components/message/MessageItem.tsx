@@ -23,9 +23,9 @@ import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
-import { AiToolsMessagePill } from "./AiToolsMessagePill";
-import { AiToolsPlaceholderBody } from "./AiToolsPlaceholderBody";
 import { BotInvocationChip } from "./BotInvocationChip";
+import { BotToolsMessagePill } from "./BotToolsMessagePill";
+import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
 import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -772,15 +772,15 @@ export const MessageItem = memo((props: MessageItemProps) => {
                     className="absolute top-[5px] z-10"
                     style={{ right: "100%", marginRight: "4px" }}
                   >
-                    <AiToolsMessagePill
+                    <BotToolsMessagePill
                       serverId={message.serverId}
                       tags={message.tags}
                     />
                   </span>
-                  {message.aiToolsPending && message.aiToolsWorkflowId ? (
-                    <AiToolsPlaceholderBody
+                  {message.botToolsPending && message.botToolsWorkflowId ? (
+                    <BotToolsPlaceholderBody
                       serverId={message.serverId}
-                      workflowId={message.aiToolsWorkflowId}
+                      workflowId={message.botToolsWorkflowId}
                     />
                   ) : (
                     collapsibleContent

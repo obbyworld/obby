@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "이전 메시지 {0}개"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0}단계"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0}단계가 승인 대기 중"
 
@@ -311,9 +311,9 @@ msgstr "필터 적용 및 새로 고침"
 msgid "Applying..."
 msgstr "적용 중..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "승인"
 
@@ -350,7 +350,7 @@ msgstr "인증된 계정"
 msgid "Auto Fallback to Single Line"
 msgstr "자동으로 한 줄 모드로 전환"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft}초 후 자동으로 닫힘"
 
@@ -382,6 +382,10 @@ msgstr "자리 비움"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "자리 비움 (AFK)"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "자리 비움 메시지"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "연결 취소"
 msgid "Cancel reply"
 msgstr "답장 취소"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "워크플로 취소"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "채널 이름 변경 (운영자 전용)"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "이 서버에서 닉네임 변경"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "채널 소유자"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "채널 설정"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "참여할 채널 (#이름)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "나갈 채널 (기본값: 현재 채널)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "복사됨"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "모두 복사"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "채널 탐색"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "ObsidianIRC와 함께 IRC의 세계를 탐험하세요"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "닫기"
 
@@ -1071,6 +1087,10 @@ msgstr "채널 필터링..."
 msgid "Filter members…"
 msgstr "멤버 필터링…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "보낼 첫 메시지"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "플러드 프로필 (+F)"
@@ -1226,7 +1246,7 @@ msgstr "{1}개 중 {0}번째 이미지"
 msgid "Image preview"
 msgstr "이미지 미리보기"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "수신"
 
@@ -1313,6 +1333,10 @@ msgstr "{0} 참가"
 msgid "Join {value}"
 msgstr "{value} 참여"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "채널 참여"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "사용자 정의 규칙에 대해 더 알아보기 →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "프로필에 대해 더 알아보기 →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "채널 나가기"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "프로필 정보 및 메타데이터 관리"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "봇으로 표시 - 보통 'on' 또는 비워두기"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "자리 비움으로 표시"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "돌아옴으로 표시"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "네트워크 이름"
 msgid "New DM"
 msgstr "새 DM"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "새 닉네임"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "다음 이미지"
@@ -1707,7 +1747,7 @@ msgstr "미디어 미리보기가 로드되지 않습니다."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "아직 캡처된 원시 IRC 트래픽이 없습니다. 연결하거나 메시지를 보내 보세요."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "이런! 네트워크 분리! ⚠️"
 msgid "Op"
 msgstr "Op"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "사용자에게 개인 메시지 열기"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "채널 구성 설정 열기"
@@ -1872,12 +1916,12 @@ msgstr "운영자 작업"
 msgid "Optional crash reports to improve the app"
 msgstr "앱 개선을 위한 선택적 충돌 보고서"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "송신"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "출력이 잘림"
 
@@ -2077,7 +2121,7 @@ msgstr "사유"
 msgid "Reason (optional)"
 msgstr "사유 (선택 사항)"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "추론"
 
@@ -2089,8 +2133,8 @@ msgstr "서버에 재연결"
 msgid "Register for an account"
 msgstr "계정 등록"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "거부"
 
@@ -2134,7 +2178,7 @@ msgstr "서버에서 이 채널의 이름을 변경합니다. 모든 사용자�
 msgid "Render markdown formatting in messages"
 msgstr "메시지에서 마크다운 서식 렌더링"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "이 메시지를 생성한 워크플로 다시 열기 ({stepCount}단계)"
 
@@ -2143,11 +2187,11 @@ msgstr "이 메시지를 생성한 워크플로 다시 열기 ({stepCount}단계
 msgid "Reply"
 msgstr "답장"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "채팅으로 응답함"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "응답 메시지가 더 이상 표시되지 않습니다"
 
@@ -2194,7 +2238,7 @@ msgstr "저장됨"
 msgid "Saving..."
 msgstr "저장 중..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "이 응답으로 채팅 스크롤"
 
@@ -2292,6 +2336,10 @@ msgstr "GIF 보내기"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "{username}에게 경고 메시지 보내기"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "액션 / 감정표현 보내기"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "소스"
 msgid "Start Private Message"
 msgstr "비공개 메시지 시작"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "워크플로 시작 중…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "상태 메시지"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "정지"
@@ -2533,7 +2581,7 @@ msgstr "정지"
 msgid "System"
 msgstr "시스템"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "텍스트"
 
@@ -2561,7 +2609,7 @@ msgstr "이 채널에 표시될 주제입니다. 모든 사용자가 주제를 �
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "사용자가 {channelName} 참여 초대를 받게 됩니다."
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "이 메시지를 생성한 워크플로가 더 이상 상태에 없습니다"
 
@@ -2624,7 +2672,7 @@ msgstr "알림 전환"
 msgid "Toggle search"
 msgstr "검색 전환"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "도구"
 
@@ -2852,7 +2900,7 @@ msgstr "Voice 사용자"
 msgid "Volume"
 msgstr "볼륨"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "첫 단계 대기 중…"
 
@@ -2902,6 +2950,10 @@ msgstr "지금 뭐 하세요?"
 msgid "What this means:"
 msgstr "이것이 의미하는 바:"
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "현재 하고 있는 일"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "무슨 생각을 하고 계신가요?"
@@ -2909,6 +2961,10 @@ msgstr "무슨 생각을 하고 계신가요?"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "WHISPER"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "현재 채널에서 사용자에게 귓속말 보내기"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "광역 - 더 넓은 보호 범위"
 msgid "Will default to 'no reason' if left empty"
 msgstr "비워두면 기본값인 '사유 없음'이 사용됩니다"
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "워크플로 기록"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "워크플로 기록 ({0})"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "작업 중…"
 

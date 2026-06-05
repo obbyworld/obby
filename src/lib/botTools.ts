@@ -10,8 +10,8 @@
 
 import { base64DecodeUtf8, base64EncodeUtf8 } from "./base64";
 
-export const AI_TOOLS_TAG = "+draft/bot-tools";
-export const AI_TOOLS_CAP = "draft/bot-tools";
+export const BOT_TOOLS_TAG = "+draft/bot-tools";
+export const BOT_TOOLS_CAP = "draft/bot-tools";
 
 export type AiWorkflowState =
   | "start"
@@ -73,7 +73,7 @@ export interface AiActionMessage {
   content?: string;
 }
 
-export type AiToolsMessage =
+export type BotToolsMessage =
   | AiWorkflowMessage
   | AiStepMessage
   | AiActionMessage;
@@ -111,7 +111,7 @@ const ACTION_TYPES: ReadonlySet<AiActionType> = new Set([
 // Returns null on any decode/parse failure or schema mismatch rather than
 // throwing, per spec §Security: malformed or oversized payloads are silently
 // discarded.
-export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
+export function decodeBotToolsValue(raw: string): BotToolsMessage | null {
   if (!raw) return null;
   let parsed: unknown;
   try {
@@ -192,7 +192,7 @@ export function decodeAiToolsValue(raw: string): AiToolsMessage | null {
 }
 
 // base64 of compact JSON (no whitespace), per spec §Value Encoding.
-export function encodeAiToolsValue(msg: AiToolsMessage): string {
+export function encodeBotToolsValue(msg: BotToolsMessage): string {
   return base64EncodeUtf8(JSON.stringify(msg));
 }
 

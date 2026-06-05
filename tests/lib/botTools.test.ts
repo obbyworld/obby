@@ -1,18 +1,18 @@
 import { describe, expect, test } from "vitest";
 import {
-  decodeAiToolsValue,
-  encodeAiToolsValue,
+  decodeBotToolsValue,
+  encodeBotToolsValue,
   escapeIrcTagValue,
-} from "../../src/lib/aiTools";
+} from "../../src/lib/botTools";
 
 // Tag values are base64 of compact JSON; wrap test inputs the same way a bot
 // would on the wire.
 const b64 = (o: unknown): string =>
   Buffer.from(JSON.stringify(o), "utf8").toString("base64");
 
-describe("decodeAiToolsValue", () => {
+describe("decodeBotToolsValue", () => {
   test("parses a workflow start message with features", () => {
-    const got = decodeAiToolsValue(
+    const got = decodeBotToolsValue(
       b64({
         msg: "workflow",
         id: "7f3a9b",
@@ -33,7 +33,7 @@ describe("decodeAiToolsValue", () => {
   });
 
   test("parses a step with nested-object tool-call content", () => {
-    const got = decodeAiToolsValue(
+    const got = decodeBotToolsValue(
       b64({
         msg: "step",
         wid: "7f3a9b",
@@ -55,7 +55,7 @@ describe("decodeAiToolsValue", () => {
   });
 
   test("parses a reasoning step", () => {
-    const got = decodeAiToolsValue(
+    const got = decodeBotToolsValue(
       b64({
         msg: "step",
         wid: "w",
@@ -72,7 +72,7 @@ describe("decodeAiToolsValue", () => {
   });
 
   test("parses an action input message", () => {
-    const got = decodeAiToolsValue(
+    const got = decodeBotToolsValue(
       b64({
         msg: "action",
         action: "input",
@@ -89,26 +89,26 @@ describe("decodeAiToolsValue", () => {
   });
 
   test("returns null on malformed input", () => {
-    expect(decodeAiToolsValue("not-valid-base64-!@#")).toBeNull();
+    expect(decodeBotToolsValue("not-valid-base64-!@#")).toBeNull();
   });
 
   test("returns null on unknown msg discriminator", () => {
-    expect(decodeAiToolsValue(b64({ msg: "frob", x: 1 }))).toBeNull();
+    expect(decodeBotToolsValue(b64({ msg: "frob", x: 1 }))).toBeNull();
   });
 
   test("returns null on missing required fields", () => {
-    expect(decodeAiToolsValue(b64({ msg: "workflow", id: "x" }))).toBeNull();
+    expect(decodeBotToolsValue(b64({ msg: "workflow", id: "x" }))).toBeNull();
     expect(
-      decodeAiToolsValue(b64({ msg: "step", wid: "x", sid: "y" })),
+      decodeBotToolsValue(b64({ msg: "step", wid: "x", sid: "y" })),
     ).toBeNull();
   });
 
   test("returns null on empty input", () => {
-    expect(decodeAiToolsValue("")).toBeNull();
+    expect(decodeBotToolsValue("")).toBeNull();
   });
 
   test("preserves truncated flag and step cancelled-by", () => {
-    const got = decodeAiToolsValue(
+    const got = decodeBotToolsValue(
       b64({
         msg: "step",
         wid: "w",
@@ -124,9 +124,9 @@ describe("decodeAiToolsValue", () => {
   });
 });
 
-describe("encodeAiToolsValue", () => {
+describe("encodeBotToolsValue", () => {
   test("emits base64 of compact JSON", () => {
-    const out = encodeAiToolsValue({
+    const out = encodeBotToolsValue({
       msg: "workflow",
       id: "x",
       state: "complete",
@@ -149,7 +149,7 @@ describe("encodeAiToolsValue", () => {
       tool: "web-search",
       content: { query: "héllo wörld" },
     };
-    const re = decodeAiToolsValue(encodeAiToolsValue(original));
+    const re = decodeBotToolsValue(encodeBotToolsValue(original));
     expect(re).toEqual(original);
   });
 });

@@ -1,8 +1,8 @@
 import type { StoreApi } from "zustand";
 import type { AppState } from "../index";
-import { registerAiToolsHandlers } from "./aiTools";
 import { registerAuthHandlers } from "./auth";
 import { registerBatchHandlers } from "./batches";
+import { registerBotToolsHandlers } from "./botTools";
 import { registerChannelHandlers } from "./channels";
 import { registerConnectionHandlers } from "./connection";
 import { registerMessageHandlers } from "./messages";
@@ -16,11 +16,11 @@ import { registerWhoisHandlers } from "./whois";
 
 export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerConnectionHandlers(store);
-  // aiTools fires before message handlers so the workflow-PRIVMSG can
+  // botTools fires before message handlers so the workflow-PRIVMSG can
   // morph an existing placeholder Message in place (and pre-add its
   // msgid to processedMessageIds) before the generic CHANMSG handler
   // would otherwise append a duplicate row.
-  registerAiToolsHandlers(store);
+  registerBotToolsHandlers(store);
   registerMessageHandlers(store);
   registerUserHandlers(store);
   registerChannelHandlers(store);

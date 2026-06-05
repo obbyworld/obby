@@ -330,11 +330,11 @@ export interface Message {
   // draft/bot-tools: this message is a synthesised placeholder for a
   // live bot workflow that hasn't produced its final PRIVMSG yet, or
   // (once the PRIVMSG lands) was morphed from such a placeholder.
-  // The pill renders off `aiToolsWorkflowId`; while `aiToolsPending`
+  // The pill renders off `botToolsWorkflowId`; while `botToolsPending`
   // is true the message body is replaced with a workflow-state
   // preview (current step, spinner, etc.) instead of plain content.
-  aiToolsWorkflowId?: string;
-  aiToolsPending?: boolean;
+  botToolsWorkflowId?: string;
+  botToolsPending?: boolean;
   // Whisper fields (for draft/channel-context)
   whisperTarget?: string; // The recipient of a whisper
   // Standard reply fields. `command`, `code`, and `context` are

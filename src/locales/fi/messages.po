@@ -71,12 +71,12 @@ msgid "{0} older messages"
 msgstr "{0} vanhempaa viestiä"
 
 #. placeholder {0}: countableSteps(w.steps)
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} step(s)"
 msgstr "{0} vaihe(tta)"
 
 #. placeholder {0}: pendingApprovals.length
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} vaihe(tta) odottaa hyväksyntää"
 
@@ -311,9 +311,9 @@ msgstr "Käytä suodattimet ja päivitä"
 msgid "Applying..."
 msgstr "Käytetään..."
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Hyväksy"
 
@@ -350,7 +350,7 @@ msgstr "Tunnistautunut tili"
 msgid "Auto Fallback to Single Line"
 msgstr "Automaattinen palautuminen yksiriviseksi"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Sulkeutuu automaattisesti {secondsLeft} s kuluttua"
 
@@ -382,6 +382,10 @@ msgstr "Poissa"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Poissa näppäimistöltä"
+
+#: src/lib/clientCommands.ts
+msgid "Away message"
+msgstr "Poissaoloviesti"
 
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -486,13 +490,17 @@ msgstr "Peruuta yhteys"
 msgid "Cancel reply"
 msgstr "Peruuta vastaus"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Cancel workflow"
 msgstr "Peruuta työnkulku"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Muuta kanavan nimeä (vain operaattorit)"
+
+#: src/lib/clientCommands.ts
+msgid "Change your nickname on this server"
+msgstr "Vaihda lempinimesi tällä palvelimella"
 
 #: src/components/message/EventMessage.tsx
 msgid "Changed channel modes"
@@ -566,6 +574,14 @@ msgstr "Kanavan omistaja"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Kanavan asetukset"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to join (#name)"
+msgstr "Kanava, jolle liitytään (#nimi)"
+
+#: src/lib/clientCommands.ts
+msgid "Channel to leave (defaults to current)"
+msgstr "Kanava, jolta poistutaan (oletuksena nykyinen)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Topic"
@@ -762,7 +778,7 @@ msgstr "Kopioitu"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "Kopioi kaikki"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -871,7 +887,7 @@ msgstr "Selaa"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Tutustu IRC:n maailmaan ObsidianIRC:llä"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Dismiss"
 msgstr "Hylkää"
 
@@ -1071,6 +1087,10 @@ msgstr "Suodata kanavia..."
 msgid "Filter members…"
 msgstr "Suodata jäseniä…"
 
+#: src/lib/clientCommands.ts
+msgid "First message to send"
+msgstr "Ensimmäinen lähetettävä viesti"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Tulvasuojausprofiili (+F)"
@@ -1226,7 +1246,7 @@ msgstr "Kuva {0}/{1}"
 msgid "Image preview"
 msgstr "Kuvan esikatselu"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "IN"
 msgstr "SISÄÄN"
 
@@ -1313,6 +1333,10 @@ msgstr "Liity kanavalle {0}"
 msgid "Join {value}"
 msgstr "Liity kanavaan {value}"
 
+#: src/lib/clientCommands.ts
+msgid "Join a channel"
+msgstr "Liity kanavalle"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1355,6 +1379,10 @@ msgstr "Lue lisää mukautetuista säännöistä →"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Learn more about profiles →"
 msgstr "Lue lisää profiileista →"
+
+#: src/lib/clientCommands.ts
+msgid "Leave a channel"
+msgstr "Poistu kanavalta"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
@@ -1445,6 +1473,14 @@ msgstr "Hallinnoi profiilitietojasi ja metatietoja"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Merkitse botiksi – yleensä 'on' tai tyhjä"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as away"
+msgstr "Merkitse itsesi poissaolevaksi"
+
+#: src/lib/clientCommands.ts
+msgid "Mark yourself as back"
+msgstr "Merkitse itsesi palanneeksi"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
@@ -1604,6 +1640,10 @@ msgstr "Verkon nimi"
 msgid "New DM"
 msgstr "Uusi DM"
 
+#: src/lib/clientCommands.ts
+msgid "New nickname"
+msgstr "Uusi lempinimi"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
 msgstr "Seuraava kuva"
@@ -1707,7 +1747,7 @@ msgstr "Median esikatseluja ei ladata."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "Raakaa IRC-liikennettä ei ole vielä tallennettu. Kokeile yhdistämistä tai viestin lähettämistä."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
@@ -1820,6 +1860,10 @@ msgstr "Hups! Verkon jako! ⚠️"
 msgid "Op"
 msgstr "Op"
 
+#: src/lib/clientCommands.ts
+msgid "Open a private message to a user"
+msgstr "Avaa yksityisviesti käyttäjälle"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
 msgstr "Avaa kanavan asetukset"
@@ -1872,12 +1916,12 @@ msgstr "Operaattoritoiminnot"
 msgid "Optional crash reports to improve the app"
 msgstr "Valinnaiset kaatumisraportit sovelluksen parantamiseksi"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "ULOS"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "output truncated"
 msgstr "tuloste katkaistu"
 
@@ -2077,7 +2121,7 @@ msgstr "Syy"
 msgid "Reason (optional)"
 msgstr "Syy (valinnainen)"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Päättely"
 
@@ -2089,8 +2133,8 @@ msgstr "Yhdistä uudelleen palvelimeen"
 msgid "Register for an account"
 msgstr "Rekisteröidy tilille"
 
-#: src/components/ui/AiToolsCard.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Reject"
 msgstr "Hylkää"
 
@@ -2134,7 +2178,7 @@ msgstr "Nimeä tämä kanava uudelleen palvelimella. Kaikki käyttäjät näkev�
 msgid "Render markdown formatting in messages"
 msgstr "Näytä Markdown-muotoilu viesteissä"
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Avaa uudelleen työnkulku, joka tuotti tämän viestin ({stepCount} vaihetta)"
 
@@ -2143,11 +2187,11 @@ msgstr "Avaa uudelleen työnkulku, joka tuotti tämän viestin ({stepCount} vaih
 msgid "Reply"
 msgstr "Vastaa"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Responded in chat"
 msgstr "Vastasi keskustelussa"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Vastausviesti ei ole enää näkyvissä"
 
@@ -2194,7 +2238,7 @@ msgstr "Tallennettu"
 msgid "Saving..."
 msgstr "Tallennetaan..."
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Vieritä keskustelu tähän vastaukseen"
 
@@ -2292,6 +2336,10 @@ msgstr "Lähetä GIF"
 #: src/components/ui/ModerationModal.tsx
 msgid "Send a warning message to {username}"
 msgstr "Lähetä varoitusviesti käyttäjälle {username}"
+
+#: src/lib/clientCommands.ts
+msgid "Send an action / emote"
+msgstr "Lähetä toiminto / emote"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Send Invite"
@@ -2497,7 +2545,7 @@ msgstr "Lähde"
 msgid "Start Private Message"
 msgstr "Aloita yksityiskeskustelu"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Käynnistetään työnkulkua…"
 
@@ -2512,7 +2560,7 @@ msgid "Status Messages"
 msgstr "Tilaviestit"
 
 #: src/components/message/MediaPreview.tsx
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Pysäytä"
@@ -2533,7 +2581,7 @@ msgstr "Jäädytä"
 msgid "System"
 msgstr "Järjestelmä"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Teksti"
 
@@ -2561,7 +2609,7 @@ msgstr "Aihe, joka näytetään tälle kanavalle. Kaikki käyttäjät voivat nä
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
 
-#: src/components/message/AiToolsMessagePill.tsx
+#: src/components/message/BotToolsMessagePill.tsx
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Tämän viestin tuottanut työnkulku ei ole enää tilassa"
 
@@ -2624,7 +2672,7 @@ msgstr "Näytä/piilota ilmoitukset"
 msgid "Toggle search"
 msgstr "Näytä/piilota haku"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
 msgstr "Työkalu"
 
@@ -2852,7 +2900,7 @@ msgstr "Voice-käyttäjä"
 msgid "Volume"
 msgstr "Äänenvoimakkuus"
 
-#: src/components/ui/AiToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Odotetaan ensimmäistä vaihetta…"
 
@@ -2902,6 +2950,10 @@ msgstr "Mitä olet tekemässä?"
 msgid "What this means:"
 msgstr "Mitä tämä tarkoittaa:"
 
+#: src/lib/clientCommands.ts
+msgid "What you're doing"
+msgstr "Mitä olet tekemässä"
+
 #: src/components/ui/UserSettings.tsx
 msgid "What's on your mind?"
 msgstr "Mitä ajattelet?"
@@ -2909,6 +2961,10 @@ msgstr "Mitä ajattelet?"
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
 msgstr "WHISPER"
+
+#: src/lib/clientCommands.ts
+msgid "Whisper to a user in the current channel context"
+msgstr "Kuiskaa käyttäjälle nykyisen kanavan kontekstissa"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
@@ -2918,16 +2974,16 @@ msgstr "Laaja – laajempi suojauslaajuus"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Oletusarvo on 'ei syytä', jos jätetään tyhjäksi"
 
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "Työnkulkuhistoria"
 
 #. placeholder {0}: workflows.length
-#: src/components/ui/AiToolsHistoryButton.tsx
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Työnkulkuhistoria ({0})"
 
-#: src/components/message/AiToolsPlaceholderBody.tsx
+#: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Working…"
 msgstr "Työstetään…"
 
