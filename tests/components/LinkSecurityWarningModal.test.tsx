@@ -33,6 +33,7 @@ const mockSaveServersToLocalStorage = vi.mocked(saveServersToLocalStorage);
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    sendCapEnd: vi.fn(),
     userOnConnect: vi.fn(),
   },
 }));

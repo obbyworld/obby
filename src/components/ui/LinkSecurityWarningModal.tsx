@@ -122,7 +122,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
     removeWarning();
 
     // Resume connection by sending CAP END
-    ircClient.sendRaw(serverId, "CAP END");
+    ircClient.sendCapEnd(serverId);
     ircClient.userOnConnect(serverId);
   };
 

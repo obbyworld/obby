@@ -639,7 +639,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
 
     if (!preventCapEnd) {
-      ircClient.sendRaw(serverId, "CAP END");
+      ircClient.sendCapEnd(serverId);
       ircClient.userOnConnect(serverId);
     }
   });

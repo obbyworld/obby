@@ -532,6 +532,11 @@ export class IRCClient implements IRCClientContext {
     new Map();
   private pendingConnections: Map<string, Promise<Server>> = new Map();
   private pendingCapReqs: Map<string, number> = new Map(); // Track how many CAP REQ batches are pending ACK
+  // soju.im/bouncer-networks BIND: when a serverId is mapped here, the
+  // next CAP END for that server is preceded by a `BOUNCER BIND <netid>`
+  // line so the connection lands inside the named upstream network's
+  // session rather than the bouncer's control channel.
+  private pendingBouncerBind: Map<string, string> = new Map();
   capNegotiationComplete: Map<string, boolean> = new Map(); // Track if CAP negotiation is complete
   private reconnectionAttempts: Map<string, number> = new Map(); // Track reconnection attempts per server
   reconnectionTimeouts: Map<string, NodeJS.Timeout> = new Map(); // Track reconnection timeouts per server
@@ -641,7 +646,11 @@ export class IRCClient implements IRCClientContext {
     serverId?: string,
     oauthBearerEnabled?: boolean,
   ): Promise<Server> {
-    const connectionKey = `${host}:${port}`;
+    // Bouncer child connections share host:port with the control
+    // connection (and with each other). Scope the pending-connection
+    // dedup by serverId when one is provided so each child gets its
+    // own promise rather than landing on a sibling's.
+    const connectionKey = serverId ?? `${host}:${port}`;
 
     // Check if there's already a pending connection to this server
     const existingConnection = this.pendingConnections.get(connectionKey);
@@ -1517,6 +1526,24 @@ export class IRCClient implements IRCClientContext {
   bouncerBind(serverId: string, netid: string): void {
     this.sendRaw(serverId, `BOUNCER BIND ${netid}`);
   }
+  // Mark a server connection as a bouncer-child for the upcoming CAP
+  // negotiation. The next sendCapEnd() will emit `BOUNCER BIND <netid>`
+  // immediately before `CAP END`. Call this BEFORE the WS opens (or at
+  // least before CAP LS arrives) so we never miss the bind window.
+  setPendingBouncerBind(serverId: string, netid: string): void {
+    this.pendingBouncerBind.set(serverId, netid);
+  }
+  // Centralised CAP END sender. All call sites should use this instead
+  // of raw sendRaw("CAP END") so the BIND-before-end invariant is
+  // enforced in one place.
+  sendCapEnd(serverId: string): void {
+    const netid = this.pendingBouncerBind.get(serverId);
+    if (netid) {
+      this.pendingBouncerBind.delete(serverId);
+      this.sendRaw(serverId, `BOUNCER BIND ${netid}`);
+    }
+    this.sendRaw(serverId, "CAP END");
+  }
   bouncerAddNetwork(serverId: string, encodedAttrs: string): void {
     this.sendRaw(serverId, `BOUNCER ADDNETWORK ${encodedAttrs}`);
   }
@@ -1916,7 +1943,7 @@ export class IRCClient implements IRCClientContext {
               console.log(
                 `[CAP TIMEOUT] Timeout reached for ${serverId}, ending CAP negotiation`,
               );
-              this.sendRaw(serverId, "CAP END");
+              this.sendCapEnd(serverId);
               this.capNegotiationComplete.set(serverId, true);
               this.userOnConnect(serverId);
             }
@@ -1931,7 +1958,7 @@ export class IRCClient implements IRCClientContext {
         console.log(
           `[CAP LS] No capabilities to request for ${serverId}, ending CAP negotiation`,
         );
-        this.sendRaw(serverId, "CAP END");
+        this.sendCapEnd(serverId);
         this.capNegotiationComplete.set(serverId, true);
         this.userOnConnect(serverId);
       }
@@ -2003,7 +2030,7 @@ export class IRCClient implements IRCClientContext {
           );
         } else {
           // No SASL or SASL not acknowledged - complete CAP negotiation now
-          this.sendRaw(serverId, "CAP END");
+          this.sendCapEnd(serverId);
           this.capNegotiationComplete.set(serverId, true);
           this.userOnConnect(serverId);
         }

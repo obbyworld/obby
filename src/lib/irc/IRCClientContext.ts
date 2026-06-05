@@ -35,6 +35,10 @@ export interface IRCClientContext {
 
   // Public methods
   sendRaw(serverId: string, command: string): void;
+  // CAP END that first emits a queued `BOUNCER BIND <netid>` if this
+  // serverId was marked as a bouncer child. Centralised so the
+  // bind-before-end invariant lives in one place.
+  sendCapEnd(serverId: string): void;
   triggerEvent<K extends EventKey>(event: K, data: EventMap[K]): void;
 
   // Private methods exposed for handlers

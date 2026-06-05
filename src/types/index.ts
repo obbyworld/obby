@@ -68,6 +68,16 @@ export interface Server {
   id: string;
   name: string;
   networkName?: string; // Network name from ISUPPORT NETWORK token
+  // soju.im/bouncer-networks linkage:
+  //   `bouncerServerId` — set on a child connection; points back to the
+  //     control connection's server id.
+  //   `bouncerNetid` — the upstream `netid` this connection bound to
+  //     via BOUNCER BIND before CAP END.
+  //   `isBouncerControl` — true on the parent control connection (the
+  //     one that did CAP REQ soju.im/bouncer-networks without binding).
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
   host: string;
   port: number;
   channels: Channel[];
@@ -165,6 +175,12 @@ export interface ServerConfig {
   operOnConnect?: boolean;
   addedAt?: number; // Timestamp when server was added (ms since epoch)
   oauth?: ServerOAuthConfig;
+  // soju.im/bouncer-networks: persisted form of the parent/child link
+  // so child connections re-bind to their upstream automatically after
+  // a page reload.
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
 }
 
 export interface ServerOAuthConfig {
