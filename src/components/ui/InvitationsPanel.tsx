@@ -63,7 +63,7 @@ const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
 
   // Initial load.  We re-fetch when the cap status flips so a server
   // reconnect that re-acks the cap pulls fresh data.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: cap toggles trigger reload by design
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (serverId && cap) loadInvitations(serverId);
   }, [serverId, cap]);
