@@ -126,7 +126,11 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
           );
           if (exists) return {};
 
+          // Treat the soju bouncer control session as having no
+          // chathistory: it FAILs every CHATHISTORY against the meta
+          // connection and we just want WHO for the nicklist (#120).
           const hasChathistory =
+            !server.isBouncerControl &&
             !!server.capabilities?.includes("draft/chathistory");
           newChannelHadCap = hasChathistory;
 

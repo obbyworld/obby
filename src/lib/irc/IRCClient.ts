@@ -1230,8 +1230,16 @@ export class IRCClient implements IRCClientContext {
 
       this.sendRaw(serverId, `JOIN ${channelName}`);
 
-      // Only request CHATHISTORY if the server supports it
-      if (server.capabilities?.includes("draft/chathistory")) {
+      // CHATHISTORY is meaningless on the soju.im/bouncer-networks meta
+      // connection -- it has no real channels of its own, just BOUNCER
+      // control traffic, so soju FAILs every CHATHISTORY against it and
+      // the user sees an error toast per channel after resume (#120).
+      // Treat the bouncer control session like a cap-less server.
+      const wantsChathistory =
+        !server.isBouncerControl &&
+        !!server.capabilities?.includes("draft/chathistory");
+
+      if (wantsChathistory) {
         this.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
       }
 
@@ -1245,23 +1253,23 @@ export class IRCClient implements IRCClientContext {
         isMentioned: false,
         messages: [],
         users: [],
-        isLoadingHistory: !!server.capabilities?.includes("draft/chathistory"), // Only loading if we requested history
-        hasMoreHistory: !!server.capabilities?.includes("draft/chathistory"), // Assume there's history until proven otherwise
-        needsWhoRequest: true, // Need to request WHO after CHATHISTORY completes (or immediately if no CHATHISTORY)
-        chathistoryRequested:
-          !!server.capabilities?.includes("draft/chathistory"), // Mark that we've requested CHATHISTORY only if supported
+        isLoadingHistory: wantsChathistory,
+        hasMoreHistory: wantsChathistory,
+        needsWhoRequest: true,
+        chathistoryRequested: wantsChathistory,
       };
       server.channels.push(channel);
 
-      if (server.capabilities?.includes("draft/chathistory")) {
+      if (wantsChathistory) {
         this.triggerEvent("CHATHISTORY_LOADING", {
           serverId,
           channelName,
           isLoading: true,
         });
       } else {
-        // No CHATHISTORY support, so the LOADING(false) callback that
-        // normally fires WHO will never run. Send it now.
+        // No CHATHISTORY support (or it's the bouncer control session) --
+        // the LOADING(false) callback that normally fires WHO will never
+        // run. Send it now.
         this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
         channel.needsWhoRequest = false;
       }
@@ -1278,6 +1286,9 @@ export class IRCClient implements IRCClientContext {
   ): void {
     const server = this.servers.get(serverId);
     if (!server?.capabilities?.includes("draft/chathistory")) return;
+    // Soju FAILs every CHATHISTORY against the bouncer-networks meta
+    // session; don't waste a round-trip or surface the error toast.
+    if (server.isBouncerControl) return;
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
     // and restores scroll position once isLoadingHistory goes false (batch end).

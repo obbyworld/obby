@@ -292,12 +292,16 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
 
       // chathistoryRequested is reset to false on disconnect — re-fetch missed history
       // for channels that were already joined (ircClient.joinChannel early-returns for them,
-      // so CHATHISTORY never gets sent through the normal join path)
+      // so CHATHISTORY never gets sent through the normal join path).
+      // Skip the soju bouncer control session: it has no real channels of
+      // its own and FAILs every CHATHISTORY, which surfaced as a flood of
+      // error toasts on resume-from-suspend (#120).
       setTimeout(() => {
         const reconnectedServer = store
           .getState()
           .servers.find((s) => s.id === serverId);
         if (!reconnectedServer) return;
+        if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
           if (!ch.chathistoryRequested) {
             ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${ch.name} * 50`);

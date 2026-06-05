@@ -1094,6 +1094,10 @@ msgstr "Flood Profili (+F)"
 msgid "Flood Protection Settings"
 msgstr "Flood Koruma Ayarları"
 
+#: src/components/ui/AddServerModal.tsx
+msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
+msgstr "Standart olmayan WebSocket uç noktaları için (ör. ters proxy arkasındaki soju) yolu da içeren tam URL'yi girin: <0>wss://host:port/socket</0>."
+
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Found {0} messages matching \"{searchQuery}\""

@@ -311,7 +311,7 @@ export const BouncerNetworkForm: React.FC<BouncerNetworkFormProps> = ({
           <button
             type="submit"
             disabled={!canSave || isSaving}
-            className="px-3 py-1.5 rounded bg-primary hover:bg-primary-hover text-white text-sm font-semibold flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            className="px-3 py-1.5 rounded bg-discord-primary hover:bg-discord-primary/90 text-white text-sm font-semibold flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             data-testid="bouncer-form-save"
           >
             <FaCheck />

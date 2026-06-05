@@ -60,6 +60,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
   const bouncerChangeNetwork = useStore((s) => s.bouncerChangeNetwork);
   const bouncerDelNetwork = useStore((s) => s.bouncerDelNetwork);
   const bouncerConnectNetwork = useStore((s) => s.bouncerConnectNetwork);
+  const bouncerListNetworks = useStore((s) => s.bouncerListNetworks);
   const selectServer = useStore((s) => s.selectServer);
 
   const [mode, setMode] = useState<Mode>({ kind: "list" });
@@ -90,6 +91,13 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
   // Close the inline form after a brief optimistic delay if no error
   // surfaced -- soju doesn't ack ADDNETWORK explicitly, but a missing
   // FAIL within 500ms is a strong signal it succeeded.
+  //
+  // Also fire LISTNETWORKS on the success path: soju only pushes a
+  // BOUNCER NETWORK notification when its `-notify` cap is ACK'd, and
+  // some deployments don't advertise it. Without the refresh, the new
+  // network never lands in `bouncer.networks` for the rest of the
+  // session and the user thinks they have to reload (see issue #120).
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (!bouncer || !pendingFor) return;
     const timer = setTimeout(() => {
@@ -97,10 +105,11 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
         if (pendingFor !== "*") setConfirmedSuccessFor(pendingFor);
         setMode({ kind: "list" });
         setPendingFor(null);
+        bouncerListNetworks(bouncerServerId);
       }
     }, 500);
     return () => clearTimeout(timer);
-  }, [bouncer, pendingFor]);
+  }, [bouncer, pendingFor, bouncerServerId]);
 
   const lastError = bouncer?.lastError;
   const errorForForm = useMemo(() => {
@@ -162,7 +171,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
             <FaArrowLeft />
           </button>
         ) : (
-          <span className="w-9 h-9 rounded-lg bg-primary/20 text-primary flex items-center justify-center shrink-0">
+          <span className="w-9 h-9 rounded-lg bg-discord-primary/20 text-discord-primary flex items-center justify-center shrink-0">
             <FaLayerGroup />
           </span>
         )}
@@ -195,7 +204,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
           <button
             type="button"
             onClick={() => setMode({ kind: "add" })}
-            className="flex items-center gap-2 px-3 py-2 rounded bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded bg-discord-primary hover:bg-discord-primary/90 text-white text-sm font-semibold transition-colors"
             data-testid="bouncer-add-network-button"
           >
             <FaPlus /> <Trans>Add Network</Trans>
@@ -225,7 +234,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
                 <button
                   type="button"
                   onClick={() => setMode({ kind: "add" })}
-                  className="mt-2 px-4 py-2 rounded bg-primary hover:bg-primary-hover text-white text-sm font-semibold flex items-center gap-2 transition-colors"
+                  className="mt-2 px-4 py-2 rounded bg-discord-primary hover:bg-discord-primary/90 text-white text-sm font-semibold flex items-center gap-2 transition-colors"
                 >
                   <FaPlus /> <Trans>Add your first network</Trans>
                 </button>
@@ -306,7 +315,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
                         className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm font-semibold transition-colors ${
                           childOpen
                             ? "bg-discord-dark-300 hover:bg-discord-dark-400 text-discord-text-normal"
-                            : "bg-primary hover:bg-primary-hover text-white"
+                            : "bg-discord-primary hover:bg-discord-primary/90 text-white"
                         }`}
                         data-testid={`bouncer-row-connect-${net.netid}`}
                       >

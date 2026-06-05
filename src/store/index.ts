@@ -3136,16 +3136,14 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.removeServer(serverId);
 
     set((state) => {
-      const serverToDelete = state.servers.find(
-        (server) => server.id === serverId,
-      );
-
       const savedServers = loadSavedServers();
-      const updatedServers = savedServers.filter(
-        (s) =>
-          normalizeHost(s.host) !== normalizeHost(serverToDelete?.host || "") ||
-          s.port !== serverToDelete?.port,
-      );
+      // Key the delete on the unique server id, NOT host:port. Bouncer
+      // child connections all share their parent's host:port (only the
+      // bouncerNetid distinguishes them) -- keying on host:port wipes
+      // the parent and every sibling network from localStorage along
+      // with the one the user actually asked to delete. On next reload
+      // savedServers is empty / wrong and reconnection fails.
+      const updatedServers = savedServers.filter((s) => s.id !== serverId);
       saveServersToLocalStorage(updatedServers);
 
       const savedMetadata = loadSavedMetadata();
