@@ -228,10 +228,8 @@ describe("server-initiated own-JOIN — CHATHISTORY/WHO fanout", () => {
     ircClient.sendRaw = (id: string, line: string) => sent.push(line);
 
     const loadings: { channel: string; isLoading: boolean }[] = [];
-    ircClient.on(
-      "CHATHISTORY_LOADING",
-      ({ channelName, isLoading }) =>
-        loadings.push({ channel: channelName, isLoading }),
+    ircClient.on("CHATHISTORY_LOADING", ({ channelName, isLoading }) =>
+      loadings.push({ channel: channelName, isLoading }),
     );
 
     ircClient.triggerEvent("JOIN", {
