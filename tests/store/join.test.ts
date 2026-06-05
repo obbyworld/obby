@@ -190,3 +190,132 @@ describe("readyProcessedServers — reconnect guard", () => {
     expect(readyProcessedServers.has("srv-1")).toBe(true);
   });
 });
+
+describe("server-initiated own-JOIN — CHATHISTORY/WHO fanout", () => {
+  function setupServerWithCaps(caps: string[]) {
+    useStore.setState({
+      servers: [
+        {
+          id: "srv-1",
+          name: "TestServer",
+          host: "irc.example.com",
+          port: 6667,
+          channels: [],
+          privateChats: [],
+          isConnected: true,
+          users: [],
+          capabilities: caps,
+        },
+      ],
+      messages: {},
+      activeBatches: {},
+      globalSettings: {
+        showEvents: true,
+        showJoinsParts: true,
+      },
+    } as unknown as AppState);
+    ircClient.nicks.set("srv-1", "me");
+  }
+
+  beforeEach(() => {
+    ircClient.nicks.delete("srv-1");
+  });
+
+  it("draft/chathistory cap: requests CHATHISTORY + triggers LOADING(true), leaves needsWhoRequest=true for the batch close to clear", () => {
+    setupServerWithCaps(["draft/chathistory", "message-tags"]);
+    const sent: string[] = [];
+    const origSendRaw = ircClient.sendRaw.bind(ircClient);
+    ircClient.sendRaw = (id: string, line: string) => sent.push(line);
+
+    const loadings: { channel: string; isLoading: boolean }[] = [];
+    ircClient.on(
+      "CHATHISTORY_LOADING",
+      ({ channelName, isLoading }) =>
+        loadings.push({ channel: channelName, isLoading }),
+    );
+
+    ircClient.triggerEvent("JOIN", {
+      serverId: "srv-1",
+      username: "me",
+      channelName: "#unreal-support",
+    });
+
+    ircClient.sendRaw = origSendRaw;
+
+    const ch = useStore
+      .getState()
+      .servers.find((s) => s.id === "srv-1")
+      ?.channels.find((c) => c.name === "#unreal-support");
+    expect(ch).toBeDefined();
+    expect(ch?.needsWhoRequest).toBe(true);
+    expect(ch?.chathistoryRequested).toBe(true);
+    expect(ch?.isLoadingHistory).toBe(true);
+    expect(sent).toContain("CHATHISTORY LATEST #unreal-support * 50");
+    expect(sent.some((l) => l.startsWith("WHO "))).toBe(false);
+    expect(loadings).toContainEqual({
+      channel: "#unreal-support",
+      isLoading: true,
+    });
+  });
+
+  it("no chathistory cap: sends WHO immediately, marks needsWhoRequest=false", () => {
+    setupServerWithCaps(["message-tags"]);
+    const sent: string[] = [];
+    const origSendRaw = ircClient.sendRaw.bind(ircClient);
+    ircClient.sendRaw = (id: string, line: string) => sent.push(line);
+
+    ircClient.triggerEvent("JOIN", {
+      serverId: "srv-1",
+      username: "me",
+      channelName: "#inspircd-help",
+    });
+
+    ircClient.sendRaw = origSendRaw;
+
+    const ch = useStore
+      .getState()
+      .servers.find((s) => s.id === "srv-1")
+      ?.channels.find((c) => c.name === "#inspircd-help");
+    expect(ch).toBeDefined();
+    expect(ch?.needsWhoRequest).toBe(false);
+    expect(ch?.chathistoryRequested).toBe(false);
+    expect(ch?.isLoadingHistory).toBe(false);
+    expect(sent).toContain("WHO #inspircd-help %cuhnfaro");
+    expect(sent.some((l) => l.startsWith("CHATHISTORY "))).toBe(false);
+  });
+
+  it("channel already exists (joinChannel ran first): does NOT double-send CHATHISTORY/WHO", () => {
+    setupServerWithCaps(["draft/chathistory"]);
+    useStore.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === "srv-1"
+          ? {
+              ...s,
+              channels: [
+                makeChannel({
+                  name: "#preexisting",
+                  chathistoryRequested: true,
+                  isLoadingHistory: true,
+                  needsWhoRequest: true,
+                }),
+              ],
+            }
+          : s,
+      ),
+    }));
+    const sent: string[] = [];
+    const origSendRaw = ircClient.sendRaw.bind(ircClient);
+    ircClient.sendRaw = (id: string, line: string) => sent.push(line);
+
+    ircClient.triggerEvent("JOIN", {
+      serverId: "srv-1",
+      username: "me",
+      channelName: "#preexisting",
+    });
+
+    ircClient.sendRaw = origSendRaw;
+
+    expect(sent.some((l) => l.startsWith("CHATHISTORY "))).toBe(false);
+    expect(sent.some((l) => l.startsWith("WHO "))).toBe(false);
+  });
+});
