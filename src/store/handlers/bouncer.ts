@@ -91,15 +91,14 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
     },
   );
 
-  // CAP ACK plumbing: when the bouncer-networks cap is acked, mark the
-  // bouncer as supported; when the -notify variant is acked, mark it so
-  // the UI can skip an explicit LISTNETWORKS (the server pushes the
-  // initial dump unprompted).
-  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
-    if (key !== "ACK" && key !== "NEW") return;
-    const caps = capabilities.split(" ");
-    const supported = caps.includes("soju.im/bouncer-networks");
-    const notify = caps.includes("soju.im/bouncer-networks-notify");
+  // CAP ACK plumbing: CAP_ACKNOWLEDGED fires once per acked cap with the
+  // cap name in `key`. Mark supported when bouncer-networks is acked, and
+  // notifyEnabled when the -notify variant is acked (the latter lets us
+  // skip an explicit LISTNETWORKS since the server pushes the initial
+  // dump unprompted).
+  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
+    const supported = key === "soju.im/bouncer-networks";
+    const notify = key === "soju.im/bouncer-networks-notify";
     if (!supported && !notify) return;
     store.setState((state) => ({
       bouncers: ensureBouncer(state, serverId, {

@@ -20,9 +20,13 @@ describe("bouncer store reducer", () => {
   test("CAP_ACKNOWLEDGED sets the supported / notifyEnabled flags", () => {
     ircClient.triggerEvent("CAP_ACKNOWLEDGED", {
       serverId: SID,
-      key: "ACK",
-      capabilities:
-        "soju.im/bouncer-networks soju.im/bouncer-networks-notify message-tags",
+      key: "soju.im/bouncer-networks",
+      capabilities: "",
+    });
+    ircClient.triggerEvent("CAP_ACKNOWLEDGED", {
+      serverId: SID,
+      key: "soju.im/bouncer-networks-notify",
+      capabilities: "",
     });
     const b = getBouncer(useStore.getState());
     expect(b?.supported).toBe(true);
