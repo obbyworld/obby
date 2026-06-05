@@ -69,17 +69,17 @@ msgstr "{0}님, {1}님, {2}님 외 {3}명이 입력 중..."
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}d ago"
-msgstr ""
+msgstr "{0}일 전"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}h ago"
-msgstr ""
+msgstr "{0}시간 전"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}m ago"
-msgstr ""
+msgstr "{0}분 전"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -115,7 +115,7 @@ msgstr "*spam*"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
-msgstr ""
+msgstr "#채널 (선택사항)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -552,6 +552,7 @@ msgid "Choose file"
 msgstr "파일 선택"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "지우기"
 
@@ -563,7 +564,7 @@ msgstr "검색 지우기"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
-msgstr ""
+msgstr "확인하려면 다시 클릭하세요"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -608,6 +609,7 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -664,7 +666,7 @@ msgstr "알림 소리 및 강조 표시 설정"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
-msgstr ""
+msgstr "확인하시겠습니까?"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
@@ -709,7 +711,11 @@ msgstr "복사됨"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copy"
-msgstr ""
+msgstr "복사"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "모두 복사"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -725,7 +731,7 @@ msgstr "JSON 복사"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copy link"
-msgstr ""
+msgstr "링크 복사"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
@@ -733,15 +739,15 @@ msgstr "URL 복사"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
-msgstr ""
+msgstr "생성"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create a new invite link"
-msgstr ""
+msgstr "새 초대 링크 생성"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
-msgstr ""
+msgstr "초대 링크 생성 및 관리"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -814,7 +820,7 @@ msgstr "비공개 채팅 삭제"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
-msgstr ""
+msgstr "이 초대 삭제"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
@@ -822,7 +828,7 @@ msgstr "이 메시지를 삭제하시겠습니까? 이 작업은 취소할 수 �
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
-msgstr ""
+msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -882,6 +888,10 @@ msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "다운로드"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "업로드할 파일을 끌어다 놓으세요"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1275,7 +1285,7 @@ msgstr "채널에 참여했습니다"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "just now"
-msgstr ""
+msgstr "방금"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -1313,7 +1323,7 @@ msgstr "채널 나가기"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
-msgstr ""
+msgstr "일반 네트워크 초대를 보내려면 채널을 비워두세요. 설명은 본인 기록용일 뿐이며 이 목록에서 본인에게만 표시됩니다."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1553,7 +1563,7 @@ msgstr "이름:"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "network"
-msgstr ""
+msgstr "네트워크"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
@@ -1660,13 +1670,17 @@ msgstr "이 채널에 미디어가 없습니다"
 msgid "No media previews are loaded."
 msgstr "미디어 미리보기가 로드되지 않습니다."
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "아직 캡처된 IRC 원시 트래픽이 없습니다. 연결하거나 메시지를 보내보세요."
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "결과를 찾을 수 없습니다"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
-msgstr ""
+msgstr "선택된 서버가 없습니다. 먼저 사이드바에서 서버를 선택하세요. 초대 링크는 서버별로 관리됩니다."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -2017,7 +2031,7 @@ msgstr "서버에 재연결"
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "새로 고침"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2443,7 +2457,7 @@ msgstr "이 이미지가 만료되었습니다"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
-msgstr ""
+msgstr "이 링크를 통해 등록한 사람 수"
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
@@ -2451,7 +2465,7 @@ msgstr "이 서버는 확장 프로필 메타데이터(IRCv3 METADATA 확장)를
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
-msgstr ""
+msgstr "이 서버는 초대 링크를 지원하지 않습니다 (<0>obby.world/invitation</0> 기능이 광고되지 않음). 일반 채팅은 계속할 수 있으며, 이 패널은 obbyircd 기반 네트워크용입니다."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2601,7 +2615,7 @@ msgstr "와일드카드 사용: *는 임의의 문자열, ?는 임의의 단일 
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "used"
-msgstr ""
+msgstr "사용됨"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2794,7 +2808,7 @@ msgstr "저장되지 않은 변경 사항이 있습니다. 저장하지 않고 �
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "You haven't created any invite links yet. Use the form above to mint your first one."
-msgstr ""
+msgstr "아직 초대 링크를 생성하지 않았습니다. 위 양식을 사용하여 첫 링크를 만들어보세요."
 
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
@@ -2814,7 +2828,7 @@ msgstr "모든 서버에 사용할 기본 닉네임"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"
-msgstr ""
+msgstr "내 초대 링크"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

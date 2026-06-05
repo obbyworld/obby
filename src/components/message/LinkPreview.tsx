@@ -1,7 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
-import { isUrlFromTrustedSource } from "../../lib/ircUtils";
+import { isUrlFromTrustedSource, serverFilehosts } from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { openExternalUrl } from "../../lib/openUrl";
@@ -49,7 +49,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   // Check if image is from a trusted source (server filehost or globally configured trusted URLs)
   const isTrustedImage =
-    imageUrl && isUrlFromTrustedSource(imageUrl, server?.filehost);
+    imageUrl && isUrlFromTrustedSource(imageUrl, serverFilehosts(server));
   // Show image if it's from a trusted source and safe media is enabled, or if external content is allowed
   const shouldShowImage =
     imageUrl && ((isTrustedImage && showSafeMedia) || showExternalContent);

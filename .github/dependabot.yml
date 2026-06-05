@@ -1,11 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: '/'
     schedule:
       interval: weekly
       day: monday
-      time: "06:00"
+      time: '06:00'
       timezone: Etc/UTC
     open-pull-requests-limit: 5
     labels:
@@ -20,18 +20,18 @@ updates:
       npm-security:
         applies-to: security-updates
         patterns:
-          - "*"
+          - '*'
     ignore:
-      - dependency-name: "*"
+      - dependency-name: '*'
         update-types:
           - version-update:semver-major
 
   - package-ecosystem: cargo
-    directory: "/src-tauri"
+    directory: '/src-tauri'
     schedule:
       interval: weekly
       day: monday
-      time: "06:00"
+      time: '06:00'
       timezone: Etc/UTC
     open-pull-requests-limit: 5
     labels:
@@ -46,30 +46,31 @@ updates:
       cargo-security:
         applies-to: security-updates
         patterns:
-          - "*"
+          - '*'
     ignore:
-      - dependency-name: "*"
+      - dependency-name: '*'
         update-types:
           - version-update:semver-major
-      - dependency-name: "tauri"
-        update-types:
-          - version-update:semver-minor
-          - version-update:semver-major
-      - dependency-name: "tauri-build"
+      - dependency-name: 'tauri'
         update-types:
           - version-update:semver-minor
           - version-update:semver-major
-      - dependency-name: "tauri-plugin-*"
+      - dependency-name: 'tauri-build'
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-major
+      - dependency-name: 'tauri-plugin-*'
         update-types:
           - version-update:semver-minor
           - version-update:semver-major
 
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: '/'
+    # Monthly, grouped into one PR. Actions are SHA-pinned with a `# vX.Y.Z`
+    # comment, so Dependabot bumps both the SHA and the comment in place.
     schedule:
-      interval: weekly
-      day: monday
-      time: "06:00"
+      interval: monthly
+      time: '06:00'
       timezone: Etc/UTC
     open-pull-requests-limit: 3
     labels:
@@ -78,20 +79,24 @@ updates:
     groups:
       actions-all:
         patterns:
-          - "*"
+          - '*'
+    ignore:
+      # Pinned to the stable/nightly branch tip on purpose — the channel resolves
+      # at runtime, so there's no version for Dependabot to track.
+      - dependency-name: 'dtolnay/rust-toolchain'
 
   - package-ecosystem: docker
-    directory: "/"
+    directory: '/'
     schedule:
       interval: weekly
       day: monday
-      time: "06:00"
+      time: '06:00'
       timezone: Etc/UTC
     open-pull-requests-limit: 2
     labels:
       - dependencies
       - docker
     ignore:
-      - dependency-name: "*"
+      - dependency-name: '*'
         update-types:
           - version-update:semver-major

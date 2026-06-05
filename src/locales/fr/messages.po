@@ -69,17 +69,17 @@ msgstr "{0}, {1}, {2} et {3} autres sont en train d'écrire..."
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}d ago"
-msgstr ""
+msgstr "il y a {0} j"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}h ago"
-msgstr ""
+msgstr "il y a {0} h"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
 msgid "{0}m ago"
-msgstr ""
+msgstr "il y a {0} min"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -115,7 +115,7 @@ msgstr "*spam*"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
-msgstr ""
+msgstr "#canal (optionnel)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -552,6 +552,7 @@ msgid "Choose file"
 msgstr "Choisir un fichier"
 
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Effacer"
 
@@ -563,7 +564,7 @@ msgstr "Effacer la recherche"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
-msgstr ""
+msgstr "Cliquez à nouveau pour confirmer"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -608,6 +609,7 @@ msgstr "Limite de clients (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -664,7 +666,7 @@ msgstr "Configurer les sons de notification et les mises en évidence"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
-msgstr ""
+msgstr "Confirmer ?"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
@@ -709,7 +711,11 @@ msgstr "Copié"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copy"
-msgstr ""
+msgstr "Copier"
+
+#: src/components/ui/RawLogViewer.tsx
+msgid "Copy all"
+msgstr "Tout copier"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -725,7 +731,7 @@ msgstr "Copier JSON"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copy link"
-msgstr ""
+msgstr "Copier le lien"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
@@ -733,15 +739,15 @@ msgstr "Copier l'URL"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
-msgstr ""
+msgstr "Créer"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create a new invite link"
-msgstr ""
+msgstr "Créer un nouveau lien d'invitation"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
-msgstr ""
+msgstr "Créer et gérer vos liens d'invitation"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -814,7 +820,7 @@ msgstr "Supprimer la conversation privée"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
-msgstr ""
+msgstr "Supprimer cette invitation"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
@@ -822,7 +828,7 @@ msgstr "Supprimer ce message ? Cette action est irréversible."
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
-msgstr ""
+msgstr "Description (optionnelle, ex. « Bêta-testeurs T3 »)"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -882,6 +888,10 @@ msgstr "Ne plus m'avertir de la faible sécurité des liens pour ce serveur"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Télécharger"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Drop files to upload"
+msgstr "Déposez les fichiers pour les téléverser"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
@@ -1275,7 +1285,7 @@ msgstr "A rejoint le canal"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "just now"
-msgstr ""
+msgstr "à l'instant"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -1313,7 +1323,7 @@ msgstr "Quitter le canal"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
-msgstr ""
+msgstr "Laissez le canal vide pour une invitation générique au réseau. La description sert uniquement à vos notes — visible uniquement par vous dans cette liste."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1553,7 +1563,7 @@ msgstr "Nom :"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "network"
-msgstr ""
+msgstr "réseau"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
@@ -1660,13 +1670,17 @@ msgstr "Aucun média dans ce salon"
 msgid "No media previews are loaded."
 msgstr "Aucun aperçu de média n'est chargé."
 
+#: src/components/ui/RawLogViewer.tsx
+msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
+msgstr "Aucun trafic IRC brut capturé pour le moment. Essayez de vous connecter ou d'envoyer un message."
+
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Aucun résultat trouvé"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
-msgstr ""
+msgstr "Aucun serveur sélectionné. Choisissez d'abord un serveur dans la barre latérale ; les liens d'invitation sont gérés par serveur."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -2017,7 +2031,7 @@ msgstr "Se reconnecter au serveur"
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2443,7 +2457,7 @@ msgstr "Cette image a expiré"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
-msgstr ""
+msgstr "Nombre de personnes inscrites via ce lien"
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
@@ -2451,7 +2465,7 @@ msgstr "Ce serveur ne supporte pas les métadonnées de profil étendues (extens
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
-msgstr ""
+msgstr "Ce serveur ne prend pas en charge les liens d'invitation (la capacité<0>obby.world/invitation</0>n'est pas annoncée). Vous pouvez toujours discuter normalement ; ce panneau est destiné aux réseaux propulsés par obbyircd."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2601,7 +2615,7 @@ msgstr "Jokers : * correspond à toute séquence, ? à un seul caractère. Exemp
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "used"
-msgstr ""
+msgstr "utilisé"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2794,7 +2808,7 @@ msgstr "Vous avez des modifications non enregistrées. Voulez-vous vraiment ferm
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "You haven't created any invite links yet. Use the form above to mint your first one."
-msgstr ""
+msgstr "Vous n'avez encore créé aucun lien d'invitation. Utilisez le formulaire ci-dessus pour créer le premier."
 
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
@@ -2814,7 +2828,7 @@ msgstr "Votre pseudo par défaut pour tous les serveurs"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"
-msgstr ""
+msgstr "Vos liens d'invitation"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

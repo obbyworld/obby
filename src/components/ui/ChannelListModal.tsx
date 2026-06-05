@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaDesktop, FaHashtag, FaUsers, FaVolumeUp } from "react-icons/fa";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
 import ircClient from "../../lib/ircClient";
-import { getChannelAvatarUrl } from "../../lib/ircUtils";
+import { getChannelAvatarUrl, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { BaseModal } from "../../lib/modal/BaseModal";
 import useStore from "../../store";
@@ -53,7 +53,7 @@ const ChannelListModal: React.FC = () => {
   const joinAndSelectChannel = useJoinAndSelectChannel();
 
   const selectedServer = servers.find((s) => s.id === selectedServerId);
-  const filehost = selectedServer?.filehost ?? "";
+  const filehost = serverFilehosts(selectedServer);
   const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );

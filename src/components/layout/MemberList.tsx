@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
-import { getColorStyle, processMarkdownInText } from "../../lib/ircUtils";
+import {
+  getColorStyle,
+  processMarkdownInText,
+  serverFilehosts,
+} from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
@@ -146,7 +150,7 @@ const UserItem: React.FC<{
     user.username.toLowerCase() === user.account.toLowerCase();
 
   const shouldShowAvatar =
-    canShowAvatarUrl(avatarUrl, server?.filehost, mediaSettings) &&
+    canShowAvatarUrl(avatarUrl, serverFilehosts(server), mediaSettings) &&
     !avatarLoadFailed;
   // Reset avatar load failed state when avatar URL changes
   useEffect(() => {

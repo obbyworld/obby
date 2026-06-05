@@ -18,6 +18,7 @@ const RiReplyFill = ({ className }: { className?: string }) => (
 );
 
 import { canShowImageUrl } from "../../lib/imageUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { imageCanHaveTransparency } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore from "../../store";
@@ -107,7 +108,7 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
         canShowImageUrl(
           firstImageUrl,
           mediaVisibilityLevel,
-          server?.filehost,
+          serverFilehosts(server),
         ) && (
           <img
             src={firstImageUrl}

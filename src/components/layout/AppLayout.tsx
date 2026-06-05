@@ -7,6 +7,7 @@ import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
+import RawLogViewer from "../ui/RawLogViewer";
 import { ChannelList } from "./ChannelList";
 import { ChatArea } from "./ChatArea";
 import { MemberList } from "./MemberList";
@@ -152,6 +153,27 @@ export const AppLayout: React.FC = () => {
     mobileViewActiveColumn,
     setMobileViewActiveColumn,
   ]);
+
+  const openRawLogViewer = useStore((s) => s.openRawLogViewer);
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        (event.key === "L" || event.key === "l")
+      ) {
+        const state = useStore.getState();
+        const targetServerId =
+          state.ui.selectedServerId ?? state.servers[0]?.id ?? null;
+        if (targetServerId) {
+          event.preventDefault();
+          openRawLogViewer(targetServerId);
+        }
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [openRawLogViewer]);
 
   const {
     containerRef,
@@ -379,6 +401,7 @@ export const AppLayout: React.FC = () => {
         preferTopicEntry={ui.openedMedia?.preferTopicEntry}
         preferLastEntry={ui.openedMedia?.preferLastEntry}
       />
+      <RawLogViewer />
     </div>
   );
 };
