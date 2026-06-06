@@ -79,7 +79,7 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
 
   return (
     <div
-      className="relative w-12 rounded-full flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border transition-all duration-300 group/pill"
+      className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border transition-all duration-300 group/pill"
       style={{
         borderColor,
         boxShadow: isAnyMemberSelected
