@@ -123,7 +123,7 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
 
       <button
         type="button"
-        className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border border-discord-dark-600 shadow-md flex items-center justify-center opacity-0 group-hover/pill:opacity-100 transition-opacity duration-200"
+        className="absolute -top-1 -left-1 z-30 w-5 h-5 rounded-full border border-discord-dark-600 shadow-md flex items-center justify-center opacity-0 group-hover/pill:opacity-100 transition-opacity duration-200"
         style={{ backgroundColor: accent }}
         onClick={() => colorInputRef.current?.click()}
         title={t`Change accent color`}
