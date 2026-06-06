@@ -13,9 +13,18 @@ const CHILD_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 // Auto-bind networks the bouncer reports as `state=connected`. The user
 // asked for this (issue #120 followup): once you've connected a network
 // on the bouncer side, the client should follow without a manual click
-// -- including across page reloads. Idempotent through bouncerConnectNetwork's
-// existing dedup. `connected` is the only state we treat as a follow signal;
-// `connecting` / `disconnected` are left alone.
+// -- including across page reloads. `connected` is the only state we
+// treat as a follow signal; `connecting` / `disconnected` are left alone.
+//
+// Dedup uses a module-scope Set keyed by childId rather than re-reading
+// state.servers on every call. The store-state check was unreliable
+// when the per-event trigger fired multiple BOUNCER_NETWORK events in
+// the same tick: each invocation's snapshot read happened before
+// preceding sync set()s had visibly committed in some flows, so the
+// same network produced multiple seed rows. The Set is cheap and
+// correct.
+const autoBindAttempted = new Set<string>();
+
 function autoBindConnectedNetworks(
   store: StoreApi<AppState>,
   bouncerServerId: string,
@@ -26,7 +35,12 @@ function autoBindConnectedNetworks(
   for (const net of Object.values(bouncer.networks)) {
     if (net.attributes.state !== "connected") continue;
     const childId = uuidv5(`${bouncerServerId}:${net.netid}`, CHILD_NAMESPACE);
-    if (state.servers.some((s) => s.id === childId)) continue;
+    if (autoBindAttempted.has(childId)) continue;
+    if (state.servers.some((s) => s.id === childId)) {
+      autoBindAttempted.add(childId);
+      continue;
+    }
+    autoBindAttempted.add(childId);
     void state.bouncerConnectNetwork(bouncerServerId, net.netid);
   }
 }
