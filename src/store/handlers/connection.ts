@@ -42,6 +42,15 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     store.getState().appendRawLogLine({ serverId, direction, line });
   });
 
+  ircClient.on("ISUPPORT", ({ serverId, key, value }) => {
+    if (key !== "NETWORK" || !value) return;
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, networkName: value } : s,
+      ),
+    }));
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {

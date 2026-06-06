@@ -8,8 +8,10 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaCog,
+  FaCrown,
   FaDesktop,
   FaHashtag,
+  FaPlug,
   FaPlus,
   FaSpinner,
   FaThumbtack,
@@ -17,6 +19,7 @@ import {
   FaUser,
   FaVolumeUp,
 } from "react-icons/fa";
+import { GiGlassShot } from "react-icons/gi";
 import { useShallow } from "zustand/react/shallow";
 import { useChannelMru } from "../../hooks/useChannelTabSwitching";
 import { useDragReorder } from "../../hooks/useDragReorder";
@@ -463,8 +466,28 @@ export const ChannelList: React.FC<{
       {/* Server header */}
       <div className="px-4 h-12 shadow-md flex items-center justify-between border-b border-discord-dark-400">
         <div className="flex flex-col min-w-0 flex-1">
-          <h1 className="font-bold text-white truncate">
-            {selectedServer?.networkName || selectedServer?.name || "Home"}
+          <h1 className="font-bold text-white truncate flex items-center gap-2">
+            {(selectedServer?.isBouncerControl ||
+              !!selectedServer?.bouncerNetid) && (
+              <span
+                className="inline-flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5"
+                title={
+                  selectedServer?.isBouncerControl
+                    ? t`soju bouncer (control)`
+                    : t`Network bound through soju bouncer`
+                }
+              >
+                <GiGlassShot className="text-amber-300 text-[10px]" />
+                {selectedServer?.isBouncerControl ? (
+                  <FaCrown className="text-yellow-400 text-[8px]" />
+                ) : (
+                  <FaPlug className="text-sky-300 text-[8px]" />
+                )}
+              </span>
+            )}
+            <span className="truncate">
+              {selectedServer?.networkName || selectedServer?.name || "Home"}
+            </span>
           </h1>
           {selectedServer?.networkName &&
             selectedServer.name !== selectedServer.networkName && (
