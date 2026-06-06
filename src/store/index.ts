@@ -646,6 +646,8 @@ export interface AppState {
   };
   // Channel order persistence
   channelOrder: ChannelOrderMap; // serverId -> ordered array of channel names
+  // Per-bouncer accent color (hex string, e.g. "#fcd34d")
+  bouncerGroupAccents: Record<string, string>;
   // Message deduplication tracking
   processedMessageIds: Set<string>; // Set of msgid values that have already been processed
   // Auto-connect prevention
@@ -872,6 +874,7 @@ export interface AppState {
   consumePendingBouncerEdit: () => void;
   requestDeleteServer: (serverId: string) => void;
   cancelDeleteServer: () => void;
+  setBouncerGroupAccent: (parentServerId: string, hex: string | null) => void;
   toggleSettingsModal: (isOpen?: boolean) => void;
   toggleQuickActions: (isOpen?: boolean) => void;
   requestChatInputFocus: () => void;
@@ -1063,6 +1066,7 @@ const useStore = create<AppState>((set, get) => ({
   pendingTwofaChallenge: null,
   tictactoe: { games: {}, open: null },
   channelOrder: loadChannelOrder(),
+  bouncerGroupAccents: storage.bouncerGroupAccents.load(),
   processedMessageIds: new Set<string>(),
   hasConnectedToSavedServers: false,
   selectedServerId: null,
@@ -3177,6 +3181,16 @@ const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       ui: { ...state.ui, disconnectConfirmTarget: null },
     }));
+  },
+
+  setBouncerGroupAccent: (parentServerId, hex) => {
+    set((state) => {
+      const next = { ...state.bouncerGroupAccents };
+      if (hex) next[parentServerId] = hex;
+      else delete next[parentServerId];
+      storage.bouncerGroupAccents.save(next);
+      return { bouncerGroupAccents: next };
+    });
   },
 
   tictactoeInvite: (serverId, opponent) =>

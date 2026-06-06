@@ -15,7 +15,23 @@ const KEYS = {
   PINNED_PMS: "pinnedPrivateChats",
   UI_SELECTION: "uiSelections",
   MIGRATION_VERSION: "migrationVersion",
+  BOUNCER_GROUP_ACCENTS: "bouncerGroupAccents",
 } as const;
+
+export const bouncerGroupAccents = {
+  load: (): Record<string, string> => {
+    try {
+      return JSON.parse(
+        localStorage.getItem(KEYS.BOUNCER_GROUP_ACCENTS) || "{}",
+      );
+    } catch {
+      return {};
+    }
+  },
+  save: (map: Record<string, string>) => {
+    localStorage.setItem(KEYS.BOUNCER_GROUP_ACCENTS, JSON.stringify(map));
+  },
+};
 
 export const servers = {
   load: (): ServerConfig[] => {

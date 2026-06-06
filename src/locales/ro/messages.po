@@ -476,6 +476,11 @@ msgstr "Anulează conexiunea"
 msgid "Cancel reply"
 msgstr "Anulează răspunsul"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Schimbați culoarea de accent"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Schimbă numele canalului (numai operatori)"
@@ -873,6 +878,7 @@ msgstr "Ștergeți această rețea?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descriere (opÈional, ex. âTesteri beta T3â)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "Editează {0}"
 msgid "Edit Profile"
 msgstr "Editați profilul"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "Nume:"
 msgid "network"
 msgstr "reÈea"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Rețea legată prin bouncerul soju"
@@ -2124,6 +2132,7 @@ msgstr "Motiv"
 msgid "Reason (optional)"
 msgstr "Motiv (opțional)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Reconectează-te la server"
@@ -2489,6 +2498,8 @@ msgstr "Conectat la"
 msgid "Software:"
 msgstr "Software:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (control)"

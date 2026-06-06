@@ -1,7 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useCallback, useMemo, useState } from "react";
-import { FaPencilAlt, FaRedo, FaTrash } from "react-icons/fa";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { FaPalette, FaPencilAlt, FaRedo, FaTrash } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
 import { useLongPress } from "../../hooks/useLongPress";
 import { serverFilehosts } from "../../lib/ircUtils";
@@ -9,6 +9,16 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
+
+const DEFAULT_ACCENT = "#fcd34d";
+
+function hexWithAlpha(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const r = Number.parseInt(h.slice(0, 2), 16);
+  const g = Number.parseInt(h.slice(2, 4), 16);
+  const b = Number.parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 interface BouncerServerGroupProps {
   control: Server;
@@ -33,6 +43,13 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
   onDelete,
   onReconnect,
 }) => {
+  const { t } = useLingui();
+  const accent = useStore(
+    (s) => s.bouncerGroupAccents[control.id] || DEFAULT_ACCENT,
+  );
+  const setBouncerGroupAccent = useStore((s) => s.setBouncerGroupAccent);
+  const colorInputRef = useRef<HTMLInputElement>(null);
+
   const sortedChildren = useMemo(
     () =>
       [...networks].sort((a, b) => {
@@ -56,23 +73,25 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
         s.privateChats?.some((pc) => pc.isMentioned),
     );
 
+  const borderColor = hexWithAlpha(accent, isAnyMemberSelected ? 0.6 : 0.15);
+  const glowColor = hexWithAlpha(accent, 0.45);
+  const dividerColor = hexWithAlpha(accent, 0.2);
+
   return (
     <div
-      className={`
-        relative w-12 rounded-3xl flex flex-col items-center py-2 px-1 gap-1.5
-        bg-gradient-to-b from-discord-dark-300 to-discord-dark-500
-        border transition-all duration-300
-        ${
-          isAnyMemberSelected
-            ? "border-amber-300/60 shadow-[0_0_24px_-4px_rgba(252,211,77,0.45)]"
-            : "border-amber-300/15 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.5)]"
-        }
-      `}
+      className="relative w-12 rounded-full flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border transition-all duration-300 group/pill"
+      style={{
+        borderColor,
+        boxShadow: isAnyMemberSelected
+          ? `0 0 24px -4px ${glowColor}`
+          : "0 2px 8px -4px rgba(0, 0, 0, 0.5)",
+      }}
     >
       {sortedChildren.map((child) => (
         <GroupedAvatar
           key={child.id}
           server={child}
+          accent={accent}
           isSelected={selectedServerId === child.id}
           isShimmering={shimmeringServers.has(child.id)}
           isTouchDevice={isTouchDevice}
@@ -84,11 +103,15 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
       ))}
 
       {sortedChildren.length > 0 && (
-        <div className="w-7 h-px bg-amber-300/20 my-0.5" />
+        <div
+          className="w-7 h-px my-0.5"
+          style={{ backgroundColor: dividerColor }}
+        />
       )}
 
       <GroupedAvatar
         server={control}
+        accent={accent}
         isControl
         isSelected={selectedServerId === control.id}
         isShimmering={shimmeringServers.has(control.id)}
@@ -102,12 +125,31 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
       {hasGroupMentions && !isAnyMemberSelected && (
         <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-discord-dark-600 pointer-events-none" />
       )}
+
+      <button
+        type="button"
+        className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border border-discord-dark-600 shadow-md flex items-center justify-center opacity-0 group-hover/pill:opacity-100 transition-opacity duration-200"
+        style={{ backgroundColor: accent }}
+        onClick={() => colorInputRef.current?.click()}
+        title={t`Change accent color`}
+      >
+        <FaPalette className="text-discord-dark-600 text-[9px]" />
+      </button>
+      <input
+        ref={colorInputRef}
+        type="color"
+        value={accent}
+        onChange={(e) => setBouncerGroupAccent(control.id, e.target.value)}
+        className="sr-only"
+        aria-label={t`Change accent color`}
+      />
     </div>
   );
 };
 
 interface GroupedAvatarProps {
   server: Server;
+  accent: string;
   isControl?: boolean;
   isSelected: boolean;
   isShimmering: boolean;
@@ -120,6 +162,7 @@ interface GroupedAvatarProps {
 
 const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
   server,
+  accent,
   isControl,
   isSelected,
   isShimmering,
@@ -168,20 +211,22 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
   const sizeBox = controlNoIcon ? "w-6 h-6" : "w-9 h-9";
   const innerImg = controlNoIcon ? "w-6 h-6" : "w-9 h-9";
 
+  const selectedRingStyle: React.CSSProperties = isSelected
+    ? {
+        boxShadow: `0 0 0 2px ${hexWithAlpha(accent, 0.8)}, 0 0 0 3px var(--discord-dark-400, #2f3136)`,
+      }
+    : {};
+
   return (
     <>
       <div
         className={`
           relative ${sizeBox} rounded-full flex items-center justify-center
           transition-all duration-200 cursor-pointer group shimmer-host
-          ${
-            isSelected
-              ? "ring-2 ring-amber-300/80 ring-offset-1 ring-offset-discord-dark-400"
-              : ""
-          }
           ${isShimmering ? "shimmer" : ""}
           ${isTouchDevice ? "no-touch-action no-select" : ""}
         `}
+        style={selectedRingStyle}
         onClick={handleClick}
         onContextMenu={isTouchDevice ? (e) => e.preventDefault() : undefined}
         {...(isTouchDevice
@@ -219,10 +264,17 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
           />
         ) : controlNoIcon ? (
           <div
-            className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-400/30 to-amber-700/30 border border-amber-300/40 flex items-center justify-center"
+            className="w-6 h-6 rounded-full flex items-center justify-center border"
+            style={{
+              background: `linear-gradient(to bottom right, ${hexWithAlpha(accent, 0.3)}, ${hexWithAlpha(accent, 0.05)})`,
+              borderColor: hexWithAlpha(accent, 0.4),
+            }}
             title={t`soju bouncer (control)`}
           >
-            <GiGlassShot className="text-amber-200 text-sm" />
+            <GiGlassShot
+              className="text-sm"
+              style={{ color: hexWithAlpha(accent, 0.85) }}
+            />
           </div>
         ) : (
           <div className="w-9 h-9 rounded-full bg-discord-dark-400 flex items-center justify-center text-sm font-semibold text-white">

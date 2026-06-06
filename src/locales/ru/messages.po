@@ -476,6 +476,11 @@ msgstr "Отменить подключение"
 msgid "Cancel reply"
 msgstr "Отменить ответ"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Изменить цвет акцента"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Изменить имя канала (только для операторов)"
@@ -873,6 +878,7 @@ msgstr "Удалить эту сеть?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "ÐÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ»ÑÐ½Ð¾, Ð½Ð°Ð¿ÑÐ¸Ð¼ÐµÑ Â«ÐÐµÑÐ°-ÑÐµÑÑÐµÑÑ Q3Â»)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "Изменить {0}"
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "Имя:"
 msgid "network"
 msgstr "ÑÐµÑÑ"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Сеть, связанная через bouncer soju"
@@ -2124,6 +2132,7 @@ msgstr "Причина"
 msgid "Reason (optional)"
 msgstr "Причина (необязательно)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Переподключиться к серверу"
@@ -2489,6 +2498,8 @@ msgstr "В сети с"
 msgid "Software:"
 msgstr "Программа:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (управление)"

@@ -476,6 +476,11 @@ msgstr "Peruuta yhteys"
 msgid "Cancel reply"
 msgstr "Peruuta vastaus"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Vaihda korostusväriä"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Muuta kanavan nimeä (vain operaattorit)"
@@ -873,6 +878,7 @@ msgstr "Poistetaanko tämä verkko?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "Muokkaa: {0}"
 msgid "Edit Profile"
 msgstr "Muokkaa profiilia"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "Nimi:"
 msgid "network"
 msgstr "verkko"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Verkko sidottu soju-bouncerin kautta"
@@ -2124,6 +2132,7 @@ msgstr "Syy"
 msgid "Reason (optional)"
 msgstr "Syy (valinnainen)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
@@ -2489,6 +2498,8 @@ msgstr "Kirjautunut"
 msgid "Software:"
 msgstr "Ohjelmisto:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju-bouncer (hallinta)"

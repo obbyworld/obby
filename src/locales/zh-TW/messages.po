@@ -476,6 +476,11 @@ msgstr "取消连接"
 msgid "Cancel reply"
 msgstr "取消回复"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "變更強調色"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "更改频道名称（仅限管理员）"
@@ -873,6 +878,7 @@ msgstr "刪除此網路？"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "æè¿°ï¼é¸å¡«ï¼ä¾å¦ãç¬¬ä¸å­£ Beta æ¸¬è©¦èãï¼"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "編輯 {0}"
 msgid "Edit Profile"
 msgstr "編輯資料"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "名稱："
 msgid "network"
 msgstr "ç¶²è·¯"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "透過 soju bouncer 綁定的網路"
@@ -2124,6 +2132,7 @@ msgstr "原因"
 msgid "Reason (optional)"
 msgstr "原因（可选）"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
@@ -2489,6 +2498,8 @@ msgstr "登入時間"
 msgid "Software:"
 msgstr "軟體："
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju bouncer（控制）"

@@ -476,6 +476,11 @@ msgstr "Bağlantıyı İptal Et"
 msgid "Cancel reply"
 msgstr "Yanıtı iptal et"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Vurgu rengini değiştir"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Kanal adını değiştir (yalnızca operatörler)"
@@ -873,6 +878,7 @@ msgstr "Bu ağ silinsin mi?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "AÃ§Ä±klama (isteÄe baÄlÄ±, Ã¶rn. \"Beta test ekibi Ã3\")"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "{0} ögesini düzenle"
 msgid "Edit Profile"
 msgstr "Profili Düzenle"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "Ad:"
 msgid "network"
 msgstr "aÄ"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "soju bouncer üzerinden bağlı ağ"
@@ -2124,6 +2132,7 @@ msgstr "Neden"
 msgid "Reason (optional)"
 msgstr "Neden (isteğe bağlı)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Sunucuya yeniden bağlan"
@@ -2489,6 +2498,8 @@ msgstr "Giriş Yapıldı"
 msgid "Software:"
 msgstr "Yazılım:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (kontrol)"

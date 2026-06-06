@@ -476,6 +476,11 @@ msgstr "Verbindung abbrechen"
 msgid "Cancel reply"
 msgstr "Antwort abbrechen"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Akzentfarbe ändern"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Kanalnamen ändern (nur Operatoren)"
@@ -873,6 +878,7 @@ msgstr "Dieses Netzwerk löschen?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beschreibung (optional, z.B. \"Beta-Tester Q3\")"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "{0} bearbeiten"
 msgid "Edit Profile"
 msgstr "Profil bearbeiten"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "Name:"
 msgid "network"
 msgstr "Netzwerk"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Netzwerk gebunden über soju Bouncer"
@@ -2124,6 +2132,7 @@ msgstr "Grund"
 msgid "Reason (optional)"
 msgstr "Grund (optional)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Erneut mit Server verbinden"
@@ -2489,6 +2498,8 @@ msgstr "Angemeldet seit"
 msgid "Software:"
 msgstr "Software:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju Bouncer (Steuerung)"

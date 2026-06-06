@@ -476,6 +476,11 @@ msgstr "接続をキャンセル"
 msgid "Cancel reply"
 msgstr "返信をキャンセル"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "アクセントカラーを変更"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "チャンネル名を変更する（オペレーターのみ）"
@@ -873,6 +878,7 @@ msgstr "このネットワークを削除しますか？"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "èª¬æï¼ä»»æãä¾ï¼ãQ3ãã¼ã¿ãã¹ã¿ã¼ãï¼"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "{0} を編集"
 msgid "Edit Profile"
 msgstr "プロフィールを編集"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "名前："
 msgid "network"
 msgstr "ãããã¯ã¼ã¯"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "soju バウンサー経由でバインドされたネットワーク"
@@ -2124,6 +2132,7 @@ msgstr "理由"
 msgid "Reason (optional)"
 msgstr "理由（任意）"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
@@ -2489,6 +2498,8 @@ msgstr "サインイン日時"
 msgid "Software:"
 msgstr "ソフトウェア："
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju バウンサー（制御）"

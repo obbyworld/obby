@@ -476,6 +476,11 @@ msgstr "연결 취소"
 msgid "Cancel reply"
 msgstr "답장 취소"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "강조 색상 변경"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "채널 이름 변경 (운영자 전용)"
@@ -873,6 +878,7 @@ msgstr "이 네트워크를 삭제하시겠습니까?"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "ì¤ëª (ì íì¬í­, ì: \"3ë¶ê¸° ë² í íì¤í°\")"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -963,6 +969,7 @@ msgstr "{0} 편집"
 msgid "Edit Profile"
 msgstr "프로필 편집"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1636,6 +1643,7 @@ msgstr "이름:"
 msgid "network"
 msgstr "ë¤í¸ìí¬"
 
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "soju 바운서를 통해 바인딩된 네트워크"
@@ -2124,6 +2132,7 @@ msgstr "사유"
 msgid "Reason (optional)"
 msgstr "사유 (선택 사항)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
@@ -2489,6 +2498,8 @@ msgstr "접속 시각"
 msgid "Software:"
 msgstr "소프트웨어:"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "soju bouncer (control)"
 msgstr "soju 바운서(제어)"
