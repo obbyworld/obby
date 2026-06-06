@@ -271,6 +271,20 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
+      // Bouncer sessions (control + bound children) skip the
+      // client-side rejoin entirely. The saved channels list for any
+      // bouncer-bound server is unreliable because the persist path
+      // keys on host:port and clobbers across siblings, and soju
+      // itself replays the user's joined channels after BIND -- the
+      // last thing we want is the client retrying every saved name
+      // on every network (including #linux on the control session).
+      const reconnectingServer = store
+        .getState()
+        .servers.find((s) => s.id === serverId);
+      const isBouncerSession =
+        !!reconnectingServer?.isBouncerControl ||
+        !!reconnectingServer?.bouncerNetid;
+
       // Get the saved channel order for this server
       const savedChannelOrder = store.getState().channelOrder[serverId];
 
@@ -284,9 +298,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         channelsToJoin = savedServer.channels;
       }
 
-      for (const channelName of channelsToJoin) {
-        if (channelName) {
-          store.getState().joinChannel(serverId, channelName);
+      if (!isBouncerSession) {
+        for (const channelName of channelsToJoin) {
+          if (channelName) {
+            store.getState().joinChannel(serverId, channelName);
+          }
         }
       }
 

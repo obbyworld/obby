@@ -1499,18 +1499,29 @@ const useStore = create<AppState>((set, get) => ({
           return server;
         });
 
-        // Update localStorage with the new channel
-        const savedServers = loadSavedServers();
+        // Update localStorage with the new channel -- but ONLY for
+        // standalone servers. Bouncer-bound sessions (control or child)
+        // share host:port with their siblings, and the lookup keys on
+        // host:port; persisting #linux on "Libera" risks landing the
+        // entry on the soju control row or on OFTC. Soju already
+        // tracks per-network channel state and replays JOINs after
+        // BIND, so we let the bouncer remember and skip our own
+        // persistence/replay entirely (see also connection.ts).
         const currentServer = state.servers.find((s) => s.id === serverId);
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) ===
-              normalizeHost(currentServer?.host || "") &&
-            s.port === currentServer?.port,
-        );
-        if (savedServer && !savedServer.channels.includes(channel.name)) {
-          savedServer.channels.push(channel.name);
-          saveServersToLocalStorage(savedServers);
+        const isBouncerSession =
+          !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
+        if (!isBouncerSession) {
+          const savedServers = loadSavedServers();
+          const savedServer = savedServers.find(
+            (s) =>
+              normalizeHost(s.host) ===
+                normalizeHost(currentServer?.host || "") &&
+              s.port === currentServer?.port,
+          );
+          if (savedServer && !savedServer.channels.includes(channel.name)) {
+            savedServer.channels.push(channel.name);
+            saveServersToLocalStorage(savedServers);
+          }
         }
 
         // Update channelOrder state to include the new channel
@@ -1551,17 +1562,25 @@ const useStore = create<AppState>((set, get) => ({
         return server;
       });
 
-      // Update localStorage to remove the channel
-      const savedServers = loadSavedServers();
+      // Skip channel persistence for bouncer sessions -- see joinChannel
+      // for the full rationale (host:port-keyed lookup is ambiguous when
+      // multiple sibling network bindings share a soju endpoint).
       const currentServer = updatedServers.find((s) => s.id === serverId);
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(currentServer?.host || "") &&
-          s.port === currentServer?.port,
-      );
-      if (savedServer) {
-        savedServer.channels = currentServer?.channels.map((c) => c.name) || [];
-        saveServersToLocalStorage(savedServers);
+      const isBouncerSession =
+        !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
+      if (!isBouncerSession) {
+        const savedServers = loadSavedServers();
+        const savedServer = savedServers.find(
+          (s) =>
+            normalizeHost(s.host) ===
+              normalizeHost(currentServer?.host || "") &&
+            s.port === currentServer?.port,
+        );
+        if (savedServer) {
+          savedServer.channels =
+            currentServer?.channels.map((c) => c.name) || [];
+          saveServersToLocalStorage(savedServers);
+        }
       }
 
       // Update channelOrder to remove the channel
@@ -2360,44 +2379,43 @@ const useStore = create<AppState>((set, get) => ({
 
   reorderChannels: (serverId, channelIds) => {
     set((state) => {
-      // Also update the savedServer.channels array to match the new order
       const server = state.servers.find((s) => s.id === serverId);
-      if (server) {
+      if (!server) return {};
+
+      const isBouncerSession =
+        !!server.isBouncerControl || !!server.bouncerNetid;
+
+      const channelNames = channelIds
+        .map((id) => server.channels.find((c) => c.id === id)?.name)
+        .filter((name): name is string => name !== undefined);
+
+      // Update channelOrder state (and persist its own storage slot) for
+      // all servers, bouncer or not -- it's keyed by serverId so there's
+      // no sibling-ambiguity, and reordering is a UI preference worth
+      // remembering session-to-session.
+      const newChannelOrder = {
+        ...state.channelOrder,
+        [serverId]: channelNames,
+      };
+      saveChannelOrder(newChannelOrder);
+
+      // savedServer.channels is host:port-keyed and gets clobbered by
+      // sibling networks on a soju bouncer (see joinChannel for the
+      // long explanation). Skip the persist for bouncer sessions.
+      if (!isBouncerSession) {
         const savedServers = loadSavedServers();
         const savedServer = savedServers.find(
           (s) =>
             normalizeHost(s.host) === normalizeHost(server.host) &&
             s.port === server.port,
         );
-
         if (savedServer) {
-          // Convert channel IDs to channel names in the correct order
-          const channelNames = channelIds
-            .map((id) => {
-              const channel = server.channels.find((c) => c.id === id);
-              return channel?.name;
-            })
-            .filter((name): name is string => name !== undefined);
-
           savedServer.channels = channelNames;
           saveServersToLocalStorage(savedServers);
-
-          // Store channel names in channelOrder state (not IDs)
-          const newChannelOrder = {
-            ...state.channelOrder,
-            [serverId]: channelNames,
-          };
-
-          saveChannelOrder(newChannelOrder);
-
-          return {
-            channelOrder: newChannelOrder,
-          };
         }
       }
 
-      // Fallback if server not found
-      return {};
+      return { channelOrder: newChannelOrder };
     });
   },
 
