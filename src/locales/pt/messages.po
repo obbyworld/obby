@@ -1125,10 +1125,6 @@ msgstr "Perfil de flood (+F)"
 msgid "Flood Protection Settings"
 msgstr "Configurações de proteção contra flood"
 
-#: src/components/ui/AddServerModal.tsx
-#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-#~ msgstr "Para endpoints WebSocket não padrão (ex. soju atrás de um proxy reverso), insira a URL completa incluindo o caminho: <0>wss://host:port/socket</0>."
-
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Found {0} messages matching \"{searchQuery}\""

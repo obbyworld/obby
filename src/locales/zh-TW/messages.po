@@ -1125,10 +1125,6 @@ msgstr "洪水設定檔 (+F)"
 msgid "Flood Protection Settings"
 msgstr "洪水保護設定"
 
-#: src/components/ui/AddServerModal.tsx
-#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-#~ msgstr "對於非標準的 WebSocket 端點（例如反向代理後的 soju），請輸入包含路徑的完整 URL: <0>wss://host:port/socket</0>。"
-
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Found {0} messages matching \"{searchQuery}\""

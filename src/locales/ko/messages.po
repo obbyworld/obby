@@ -1125,10 +1125,6 @@ msgstr "플러드 프로필 (+F)"
 msgid "Flood Protection Settings"
 msgstr "플러드 방지 설정"
 
-#: src/components/ui/AddServerModal.tsx
-#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-#~ msgstr "비표준 WebSocket 엔드포인트(예: 리버스 프록시 뒤의 soju)의 경우 경로를 포함한 전체 URL을 입력하세요: <0>wss://host:port/socket</0>."
-
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Found {0} messages matching \"{searchQuery}\""

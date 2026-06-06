@@ -1125,10 +1125,6 @@ msgstr "フラッドプロファイル (+F)"
 msgid "Flood Protection Settings"
 msgstr "フラッド保護設定"
 
-#: src/components/ui/AddServerModal.tsx
-#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-#~ msgstr "標準ではない WebSocket エンドポイント (例: リバースプロキシ越しの soju) の場合は、パスを含む完全な URL を入力してください: <0>wss://host:port/socket</0>。"
-
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Found {0} messages matching \"{searchQuery}\""
