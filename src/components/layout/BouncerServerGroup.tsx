@@ -76,14 +76,12 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
   const dividerColor = hexWithAlpha(accent, 0.2);
 
   return (
-    <div className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border border-discord-dark-500/40 transition-all duration-300 group/pill overflow-hidden">
-      <div
-        className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full pointer-events-none transition-opacity duration-200"
-        style={{
-          backgroundColor: accent,
-          opacity: isAnyMemberSelected ? 1 : 0.55,
-        }}
-      />
+    <div
+      className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-discord-dark-400 transition-all duration-300 group/pill"
+      style={{
+        boxShadow: `inset 3px 0 0 0 ${hexWithAlpha(accent, isAnyMemberSelected ? 1 : 0.55)}`,
+      }}
+    >
       {sortedChildren.map((child) => (
         <GroupedAvatar
           key={child.id}
