@@ -1625,6 +1625,10 @@ msgstr "Name:"
 msgid "network"
 msgstr "Netzwerk"
 
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "Netzwerk gebunden über soju Bouncer"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -2273,6 +2277,10 @@ msgstr "Vor-/Zurückspulen"
 msgid "Select a channel"
 msgstr "Kanal auswählen"
 
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "Netzwerk auswählen"
+
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
 msgstr "Mitglied auswählen"
@@ -2469,6 +2477,10 @@ msgstr "Angemeldet seit"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "Software:"
+
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "soju Bouncer (Steuerung)"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"

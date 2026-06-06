@@ -1625,6 +1625,10 @@ msgstr "Ad:"
 msgid "network"
 msgstr "aÄ"
 
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "soju bouncer üzerinden bağlı ağ"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -2273,6 +2277,10 @@ msgstr "Konuma git"
 msgid "Select a channel"
 msgstr "Bir kanal seçin"
 
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "Bir ağ seçin"
+
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
 msgstr "Üye Seç"
@@ -2469,6 +2477,10 @@ msgstr "Giriş Yapıldı"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "Yazılım:"
+
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "soju bouncer (kontrol)"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"

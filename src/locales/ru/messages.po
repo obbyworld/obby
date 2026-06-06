@@ -1625,6 +1625,10 @@ msgstr "Имя:"
 msgid "network"
 msgstr "ÑÐµÑÑ"
 
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "Сеть, связанная через bouncer soju"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -2273,6 +2277,10 @@ msgstr "Перемотка"
 msgid "Select a channel"
 msgstr "Выберите канал"
 
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "Выберите сеть"
+
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
 msgstr "Выбрать участника"
@@ -2469,6 +2477,10 @@ msgstr "В сети с"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "Программа:"
+
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "bouncer soju (управление)"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"

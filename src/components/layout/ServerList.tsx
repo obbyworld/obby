@@ -1,7 +1,15 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { FaPencilAlt, FaPlus, FaRedo, FaTrash } from "react-icons/fa";
+import {
+  FaCrown,
+  FaPencilAlt,
+  FaPlug,
+  FaPlus,
+  FaRedo,
+  FaTrash,
+} from "react-icons/fa";
+import { GiGlassShot } from "react-icons/gi";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
@@ -126,8 +134,26 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           </div>
         )}
 
+        {(server.isBouncerControl || !!server.bouncerNetid) && (
+          <div
+            className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5 shadow"
+            title={
+              server.isBouncerControl
+                ? t`soju bouncer (control)`
+                : t`Network bound through soju bouncer`
+            }
+          >
+            <GiGlassShot className="text-amber-300 text-[10px]" />
+            {server.isBouncerControl ? (
+              <FaCrown className="text-yellow-400 text-[8px]" />
+            ) : (
+              <FaPlug className="text-sky-300 text-[8px]" />
+            )}
+          </div>
+        )}
+
         {hasMentions && !isSelected && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
         )}
 
         {isSelected && !isTouchDevice && (
@@ -184,6 +210,7 @@ export const ServerList: React.FC = () => {
     toggleChannelListModal,
     reconnectServer,
     toggleEditServerModal,
+    editBouncerNetwork,
   } = useStore();
 
   const [shimmeringServers, setShimmeringServers] = useState<Set<string>>(
@@ -265,7 +292,11 @@ export const ServerList: React.FC = () => {
             isShimmering={shimmeringServers.has(server.id)}
             isTouchDevice={isTouchDevice}
             onSelect={() => selectServer(server.id, { clearSelection: true })}
-            onEdit={() => toggleEditServerModal(true, server.id)}
+            onEdit={() =>
+              server.bouncerNetid
+                ? editBouncerNetwork(server.id)
+                : toggleEditServerModal(true, server.id)
+            }
             onDelete={() => deleteServer(server.id)}
             onReconnect={() => reconnectServer(server.id)}
           />

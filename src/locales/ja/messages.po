@@ -1625,6 +1625,10 @@ msgstr "名前："
 msgid "network"
 msgstr "ãããã¯ã¼ã¯"
 
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "soju バウンサー経由でバインドされたネットワーク"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -2273,6 +2277,10 @@ msgstr "シーク"
 msgid "Select a channel"
 msgstr "チャンネルを選択"
 
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "ネットワークを選択"
+
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
 msgstr "メンバーを選択"
@@ -2469,6 +2477,10 @@ msgstr "サインイン日時"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "ソフトウェア："
+
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "soju バウンサー（制御）"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"

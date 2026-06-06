@@ -62,6 +62,10 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
   const bouncerConnectNetwork = useStore((s) => s.bouncerConnectNetwork);
   const bouncerListNetworks = useStore((s) => s.bouncerListNetworks);
   const selectServer = useStore((s) => s.selectServer);
+  const pendingBouncerEdit = useStore((s) => s.ui.pendingBouncerEdit);
+  const consumePendingBouncerEdit = useStore(
+    (s) => s.consumePendingBouncerEdit,
+  );
 
   const [mode, setMode] = useState<Mode>({ kind: "list" });
   const [pendingFor, setPendingFor] = useState<string | null>(null);
@@ -87,6 +91,19 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
     const t = setTimeout(() => setConfirmedSuccessFor(null), 1400);
     return () => clearTimeout(t);
   }, [confirmedSuccessFor]);
+
+  // ServerList's pencil button for a bouncer-bound child sets a
+  // pendingBouncerEdit on the store; we pick it up here and switch
+  // straight into the inline edit form for the right netid. Clearing
+  // happens immediately so a stale value can't re-fire on a future
+  // re-render.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    if (!pendingBouncerEdit) return;
+    if (pendingBouncerEdit.bouncerServerId !== bouncerServerId) return;
+    setMode({ kind: "edit", netid: pendingBouncerEdit.netid });
+    consumePendingBouncerEdit();
+  }, [pendingBouncerEdit, bouncerServerId]);
 
   // Close the inline form after a brief optimistic delay if no error
   // surfaced -- soju doesn't ack ADDNETWORK explicitly, but a missing

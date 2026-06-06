@@ -1625,6 +1625,10 @@ msgstr "Nume:"
 msgid "network"
 msgstr "reÈea"
 
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "Rețea legată prin bouncerul soju"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
@@ -2273,6 +2277,10 @@ msgstr "Derulare"
 msgid "Select a channel"
 msgstr "Selectează un canal"
 
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "Selectați o rețea"
+
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
 msgstr "Selectează un membru"
@@ -2469,6 +2477,10 @@ msgstr "Conectat la"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "Software:"
+
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "bouncer soju (control)"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"

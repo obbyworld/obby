@@ -408,6 +408,10 @@ interface UIState {
   isAddServerModalOpen: boolean | undefined;
   isEditServerModalOpen: boolean;
   editServerId: string | null;
+  // Bouncer-network edit hand-off: set by editBouncerNetwork(),
+  // consumed by BouncerNetworksPanel on mount to open its inline form
+  // on the named netid. Cleared once the panel reads it.
+  pendingBouncerEdit?: { bouncerServerId: string; netid: string } | null;
   isTwoFactorSettingsOpen: boolean;
   twoFactorSettingsServerId: string | null;
   isSettingsModalOpen: boolean;
@@ -859,6 +863,12 @@ export interface AppState {
     prefillDetails?: ConnectionDetails | null,
   ) => void;
   toggleEditServerModal: (isOpen?: boolean, serverId?: string | null) => void;
+  // Edit a bouncer-bound child server through the BouncerNetworksPanel
+  // (parent's inline form) instead of the generic AddServerModal --
+  // most ServerConfig fields are unused / inherited from the parent
+  // for bouncer-bound rows, so the panel's narrower form is the right UX.
+  editBouncerNetwork: (childServerId: string) => void;
+  consumePendingBouncerEdit: () => void;
   toggleSettingsModal: (isOpen?: boolean) => void;
   toggleQuickActions: (isOpen?: boolean) => void;
   requestChatInputFocus: () => void;
@@ -1067,6 +1077,7 @@ const useStore = create<AppState>((set, get) => ({
     isTwoFactorSettingsOpen: false,
     twoFactorSettingsServerId: null,
     editServerId: null,
+    pendingBouncerEdit: null,
     isSettingsModalOpen: false,
     isQuickActionsOpen: false,
     isDarkMode: true,
@@ -3107,6 +3118,30 @@ const useStore = create<AppState>((set, get) => ({
         isEditServerModalOpen: isOpen ?? false,
         editServerId: serverId,
       },
+    }));
+  },
+
+  editBouncerNetwork: (childServerId) => {
+    const state = get();
+    const child = state.servers.find((s) => s.id === childServerId);
+    if (!child?.bouncerServerId || !child.bouncerNetid) return;
+    const parent = state.servers.find((s) => s.id === child.bouncerServerId);
+    if (!parent) return;
+    set((s) => ({
+      ui: {
+        ...s.ui,
+        selectedServerId: parent.id,
+        pendingBouncerEdit: {
+          bouncerServerId: parent.id,
+          netid: child.bouncerNetid as string,
+        },
+      },
+    }));
+  },
+
+  consumePendingBouncerEdit: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBouncerEdit: null },
     }));
   },
 

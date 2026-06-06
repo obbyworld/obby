@@ -279,7 +279,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     !selectedPrivateChat &&
     selectedChannelId !== "server-notices"
   ) {
-    const title = selectedServerId ? t`Select a channel` : t`Home`;
+    const minimalHeaderServer = servers.find((s) => s.id === selectedServerId);
+    // The soju bouncer control session has no real channels of its own --
+    // we only land here to drive the BouncerNetworksPanel, so call the
+    // call-to-action what it actually is.
+    const title = selectedServerId
+      ? minimalHeaderServer?.isBouncerControl
+        ? t`Select a Network`
+        : t`Select a channel`
+      : t`Home`;
     return (
       <div className="px-4 py-2.5 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12">
         {(isNarrowView || !isChanListVisible) && (
