@@ -31,16 +31,41 @@ function autoBindConnectedNetworks(
 ) {
   const state = store.getState();
   const bouncer = state.bouncers[bouncerServerId];
+  console.warn(
+    "[autoBind] bouncerServerId=",
+    bouncerServerId,
+    "networks=",
+    bouncer ? Object.keys(bouncer.networks).length : "no bouncer",
+    "current servers=",
+    state.servers.length,
+    "attempted set size=",
+    autoBindAttempted.size,
+  );
   if (!bouncer) return;
   for (const net of Object.values(bouncer.networks)) {
     if (net.attributes.state !== "connected") continue;
     const childId = uuidv5(`${bouncerServerId}:${net.netid}`, CHILD_NAMESPACE);
+    console.warn(
+      "[autoBind] netid=",
+      net.netid,
+      "childId=",
+      childId,
+      "attempted?",
+      autoBindAttempted.has(childId),
+      "in servers?",
+      state.servers.some((s) => s.id === childId),
+    );
     if (autoBindAttempted.has(childId)) continue;
     if (state.servers.some((s) => s.id === childId)) {
       autoBindAttempted.add(childId);
       continue;
     }
     autoBindAttempted.add(childId);
+    console.warn(
+      "[autoBind] DISPATCHING bouncerConnectNetwork",
+      bouncerServerId,
+      net.netid,
+    );
     void state.bouncerConnectNetwork(bouncerServerId, net.netid);
   }
 }
