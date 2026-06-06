@@ -454,6 +454,7 @@ msgstr "Sunucudaki tüm kanalları görüntüle"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "İstemci Sınırı (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "AÃ§Ä±klama (isteÄe baÄlÄ±, Ã¶rn. \"Beta test ekibi Ã3\"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Bağlantıyı Kes"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "soju bouncer bağlantısı kesilsin mi?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "Bu sunucu davet baÄlantÄ±larÄ±nÄ± desteklemiyor (<0>obby.world/
 msgid "This server only supports one connection type"
 msgstr "Bu sunucu yalnızca bir bağlantı türünü destekliyor"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Bu, aşağıdaki bağlı {0} ağı da kapatacak."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Bu, aşağıdaki bağlı ağı da kapatacak."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Süre (dk)"
@@ -2928,6 +2944,11 @@ msgstr "HenÃ¼z hiÃ§ davet baÄlantÄ±sÄ± oluÅturmadÄ±nÄ±z. Ä°l
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "{target} kişisini {channel} kanalına davet ettiniz"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "<0>{0}</0> sunucusuna bağlısınız."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

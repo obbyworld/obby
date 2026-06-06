@@ -454,6 +454,7 @@ msgstr "서버의 모든 채널 검색"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "ì¤ëª (ì íì¬í­, ì: \"3ë¶ê¸° ë² í
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "연결 끊기"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "soju 바운서에서 연결을 끊으시겠습니까?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "ì´ ìë²ë ì´ë ë§í¬ë¥¼ ì§ìí
 msgid "This server only supports one connection type"
 msgstr "이 서버는 하나의 연결 유형만 지원합니다"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "아래의 바인딩된 네트워크 {0}개도 함께 종료됩니다."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "아래의 바인딩된 네트워크도 함께 종료됩니다."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "시간 (분)"
@@ -2928,6 +2944,11 @@ msgstr "ìì§ ì´ë ë§í¬ë¥¼ ìì±íì§ ì
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "{target}을(를) {channel}에 초대했습니다"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "<0>{0}</0>에 연결되어 있습니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

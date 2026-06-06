@@ -454,6 +454,7 @@ msgstr "Selaa kaikkia palvelimen kanavia"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "Käyttäjäraja (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Katkaise yhteys"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "Katkaistaanko soju-bouncerin yhteys?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "TÃ¤mÃ¤ palvelin ei tue kutsulinkkejÃ¤ (<0>obby.world/invitation</0
 msgid "This server only supports one connection type"
 msgstr "Tämä palvelin tukee vain yhtä yhteystyyppiä"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Tämä sulkee myös alla olevat {0} sidottua verkkoa."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Tämä sulkee myös alla olevan sidotun verkon."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Aika (min)"
@@ -2928,6 +2944,11 @@ msgstr "Et ole vielÃ¤ luonut yhtÃ¤Ã¤n kutsulinkkiÃ¤. KÃ¤ytÃ¤ yllÃ¤
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Kutsuit {target} liittymään kanavalle {channel}"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "Olet yhteydessä palvelimeen <0>{0}</0>."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

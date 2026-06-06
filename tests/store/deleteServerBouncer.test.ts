@@ -107,12 +107,13 @@ describe("deleteServer keys on id, not host:port", () => {
     expect(ids).toEqual([CHILD_B, PARENT_ID].sort());
   });
 
-  test("deleting the parent leaves the children alone", () => {
+  test("deleting the bouncer parent cascades to every bound child", () => {
     useStore.getState().deleteServer(PARENT_ID);
 
     const stored = JSON.parse(lsBacking.get("savedServers") ?? "[]");
-    const ids = stored.map((s: { id: string }) => s.id).sort();
-    expect(ids).toEqual([CHILD_A, CHILD_B].sort());
+    expect(stored).toEqual([]);
+    const remaining = useStore.getState().servers.map((s) => s.id);
+    expect(remaining).toEqual([]);
   });
 
   test("deleting a standalone server (no siblings) still works", () => {

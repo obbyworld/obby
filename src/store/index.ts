@@ -412,6 +412,7 @@ interface UIState {
   // consumed by BouncerNetworksPanel on mount to open its inline form
   // on the named netid. Cleared once the panel reads it.
   pendingBouncerEdit?: { bouncerServerId: string; netid: string } | null;
+  disconnectConfirmTarget?: string | null;
   isTwoFactorSettingsOpen: boolean;
   twoFactorSettingsServerId: string | null;
   isSettingsModalOpen: boolean;
@@ -869,6 +870,8 @@ export interface AppState {
   // for bouncer-bound rows, so the panel's narrower form is the right UX.
   editBouncerNetwork: (childServerId: string) => void;
   consumePendingBouncerEdit: () => void;
+  requestDeleteServer: (serverId: string) => void;
+  cancelDeleteServer: () => void;
   toggleSettingsModal: (isOpen?: boolean) => void;
   toggleQuickActions: (isOpen?: boolean) => void;
   requestChatInputFocus: () => void;
@@ -1078,6 +1081,7 @@ const useStore = create<AppState>((set, get) => ({
     twoFactorSettingsServerId: null,
     editServerId: null,
     pendingBouncerEdit: null,
+    disconnectConfirmTarget: null,
     isSettingsModalOpen: false,
     isQuickActionsOpen: false,
     isDarkMode: true,
@@ -3050,32 +3054,40 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   deleteServer: (serverId) => {
-    clearServerConnectionTimeout(serverId);
-    ircClient.removeServer(serverId);
+    // Cascade: when target is a bouncer control session, also drop every
+    // bound child. Each child shares the parent's socket-side identity
+    // with soju and has no useful life beyond the control session.
+    const preState = get();
+    const target = preState.servers.find((s) => s.id === serverId);
+    const cascadeIds: string[] = target?.isBouncerControl
+      ? preState.servers
+          .filter((s) => s.bouncerServerId === serverId)
+          .map((s) => s.id)
+      : [];
+    const toRemove = new Set<string>([serverId, ...cascadeIds]);
+
+    for (const id of toRemove) {
+      clearServerConnectionTimeout(id);
+      ircClient.removeServer(id);
+    }
 
     set((state) => {
       const savedServers = loadSavedServers();
-      // Key the delete on the unique server id, NOT host:port. Bouncer
-      // child connections all share their parent's host:port (only the
-      // bouncerNetid distinguishes them) -- keying on host:port wipes
-      // the parent and every sibling network from localStorage along
-      // with the one the user actually asked to delete. On next reload
-      // savedServers is empty / wrong and reconnection fails.
-      const updatedServers = savedServers.filter((s) => s.id !== serverId);
+      const updatedServers = savedServers.filter((s) => !toRemove.has(s.id));
       saveServersToLocalStorage(updatedServers);
 
       const savedMetadata = loadSavedMetadata();
-      delete savedMetadata[serverId];
+      for (const id of toRemove) delete savedMetadata[id];
       saveMetadataToLocalStorage(savedMetadata);
 
       const remainingServers = state.servers.filter(
-        (server) => server.id !== serverId,
+        (server) => !toRemove.has(server.id),
       );
       const newSelectedServerId =
         remainingServers.length > 0 ? remainingServers[0].id : null;
 
       const clearConnectionState =
-        state.connectingServerId === serverId
+        state.connectingServerId && toRemove.has(state.connectingServerId)
           ? { isConnecting: false, connectingServerId: null }
           : {};
 
@@ -3088,6 +3100,7 @@ const useStore = create<AppState>((set, get) => ({
           selectedChannelId: newSelectedServerId
             ? remainingServers[0].channels[0]?.id || null
             : null,
+          disconnectConfirmTarget: null,
         },
       };
     });
@@ -3145,6 +3158,24 @@ const useStore = create<AppState>((set, get) => ({
   consumePendingBouncerEdit: () => {
     set((state) => ({
       ui: { ...state.ui, pendingBouncerEdit: null },
+    }));
+  },
+
+  requestDeleteServer: (serverId) => {
+    const state = get();
+    const target = state.servers.find((s) => s.id === serverId);
+    if (target?.isBouncerControl) {
+      set((s) => ({
+        ui: { ...s.ui, disconnectConfirmTarget: serverId },
+      }));
+      return;
+    }
+    get().deleteServer(serverId);
+  },
+
+  cancelDeleteServer: () => {
+    set((state) => ({
+      ui: { ...state.ui, disconnectConfirmTarget: null },
     }));
   },
 

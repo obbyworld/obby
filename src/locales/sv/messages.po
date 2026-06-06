@@ -454,6 +454,7 @@ msgstr "Bläddra bland alla kanaler på servern"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "Klientgräns (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "Beskrivning (valfri, t.ex. \"Betatestare Q3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Koppla från"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "Koppla från soju-bouncern?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "Den hÃ¤r servern stÃ¶der inte inbjudningslÃ¤nkar (kapabiliteten<0>
 msgid "This server only supports one connection type"
 msgstr "Den här servern stöder bara en anslutningstyp"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Detta stänger även de {0} bundna nätverken nedan."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Detta stänger även det bundna nätverket nedan."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Tid (min)"
@@ -2928,6 +2944,11 @@ msgstr "Du har inte skapat nÃ¥gra inbjudningslÃ¤nkar Ã¤n. AnvÃ¤nd formul
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Du bjöd in {target} att gå med i {channel}"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "Du är ansluten till <0>{0}</0>."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

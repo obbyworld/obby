@@ -454,6 +454,7 @@ msgstr "Przeglądaj wszystkie kanały na serwerze"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "Limit klientów (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "Opis (opcjonalnie, np. \"Testerzy beta Q3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Rozłącz"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "Rozłączyć z bouncerem soju?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "Ten serwer nie obsÅuguje linkÃ³w zapraszajÄcych (moÅ¼liwoÅ�
 msgid "This server only supports one connection type"
 msgstr "Ten serwer obsługuje tylko jeden typ połączenia"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Spowoduje to także zamknięcie {0} powiązanych sieci poniżej."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Spowoduje to także zamknięcie powiązanej sieci poniżej."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Czas (min)"
@@ -2928,6 +2944,11 @@ msgstr "Nie utworzyÅeÅ jeszcze Å¼adnych linkÃ³w zapraszajÄcych. UÅ
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Zaprosiłeś {target} do dołączenia do {channel}"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "Połączono z <0>{0}</0>."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

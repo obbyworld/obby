@@ -206,11 +206,11 @@ export const ServerList: React.FC = () => {
     ui: { selectedServerId },
     selectServer,
     toggleAddServerModal,
-    deleteServer,
     toggleChannelListModal,
     reconnectServer,
     toggleEditServerModal,
     editBouncerNetwork,
+    requestDeleteServer,
   } = useStore();
 
   const [shimmeringServers, setShimmeringServers] = useState<Set<string>>(
@@ -297,7 +297,7 @@ export const ServerList: React.FC = () => {
                 ? editBouncerNetwork(server.id)
                 : toggleEditServerModal(true, server.id)
             }
-            onDelete={() => deleteServer(server.id)}
+            onDelete={() => requestDeleteServer(server.id)}
             onReconnect={() => reconnectServer(server.id)}
           />
         ))}

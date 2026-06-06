@@ -454,6 +454,7 @@ msgstr "Просмотреть все каналы на сервере"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "Лимит пользователей (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "ÐÐ¿Ð¸ÑÐ°Ð½Ð¸Ðµ (Ð½ÐµÐ¾Ð±ÑÐ·Ð°ÑÐµÐ
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Отключиться"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "Отключиться от bouncer soju?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "Ð­ÑÐ¾Ñ ÑÐµÑÐ²ÐµÑ Ð½Ðµ Ð¿Ð¾Ð´Ð´Ðµ�
 msgid "This server only supports one connection type"
 msgstr "Этот сервер поддерживает только один тип подключения"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Также будут закрыты {0} связанных сетей ниже."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Также будет закрыта связанная сеть ниже."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Время (мин)"
@@ -2928,6 +2944,11 @@ msgstr "ÐÑ ÐµÑÑ Ð½Ðµ ÑÐ¾Ð·Ð´Ð°Ð»Ð¸ Ð½Ð¸ Ð�
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Вы пригласили {target} присоединиться к {channel}"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "Вы подключены к <0>{0}</0>."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

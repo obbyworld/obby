@@ -454,6 +454,7 @@ msgstr "浏览服务器上的所有频道"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -638,6 +639,7 @@ msgstr "客户端限制 (+l)"
 #: src/components/layout/ChannelList.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -873,8 +875,13 @@ msgstr "æè¿°ï¼å¯éï¼ä¾å¦ \"ç¬¬ä¸å­£å�
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect"
 msgstr "断开连接"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "断开与 soju bouncer 的连接？"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2573,6 +2580,15 @@ msgstr "æ­¤æå¡å¨ä¸æ¯æéè¯·é¾æ¥ï¼
 msgid "This server only supports one connection type"
 msgstr "此服务器仅支持一种连接类型"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "这还将关闭下方 {0} 个绑定的网络。"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "这还将关闭下方绑定的网络。"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "时间（分钟）"
@@ -2928,6 +2944,11 @@ msgstr "æ¨è¿æ²¡æåå»ºä»»ä½éè¯·é¾æ¥
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "您邀请了 {target} 加入 {channel}"
+
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "已连接到 <0>{0}</0>。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
