@@ -1,15 +1,4 @@
-/**
- * deleteServer must key on the unique server id, not host:port.
- *
- * Bouncer children share their parent's host:port (only bouncerNetid
- * differs). The old filter `s.host !== deleted.host || s.port !== deleted.port`
- * matched all three -- parent + every child -- wiping the whole
- * bouncer tree from localStorage with one delete click. Mupuf's
- * "settings lost on reload" report (#120) was a likely victim.
- *
- * These tests pin the id-keyed filter so a regression rebuilds this
- * footgun.
- */
+/** deleteServer must key on the unique server id, not host:port. */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import useStore, { type AppState } from "../../src/store";

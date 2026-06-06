@@ -92,11 +92,6 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
     return () => clearTimeout(t);
   }, [confirmedSuccessFor]);
 
-  // ServerList's pencil button for a bouncer-bound child sets a
-  // pendingBouncerEdit on the store; we pick it up here and switch
-  // straight into the inline edit form for the right netid. Clearing
-  // happens immediately so a stale value can't re-fire on a future
-  // re-render.
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (!pendingBouncerEdit) return;
@@ -105,15 +100,8 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
     consumePendingBouncerEdit();
   }, [pendingBouncerEdit, bouncerServerId]);
 
-  // Close the inline form after a brief optimistic delay if no error
-  // surfaced -- soju doesn't ack ADDNETWORK explicitly, but a missing
-  // FAIL within 500ms is a strong signal it succeeded.
-  //
-  // Also fire LISTNETWORKS on the success path: soju only pushes a
-  // BOUNCER NETWORK notification when its `-notify` cap is ACK'd, and
-  // some deployments don't advertise it. Without the refresh, the new
-  // network never lands in `bouncer.networks` for the rest of the
-  // session and the user thinks they have to reload (see issue #120).
+  // Close the inline form optimistically after 500ms with no FAIL;
+  // also LISTNETWORKS to cover deployments without bouncer-networks-notify.
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (!bouncer || !pendingFor) return;

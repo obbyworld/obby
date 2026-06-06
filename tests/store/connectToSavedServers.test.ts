@@ -1,16 +1,4 @@
-/**
- * Boot-time reconnect for bouncer parents and standalone servers.
- *
- * Previous behaviour pre-seeded child Server rows from localStorage and
- * dispatched their connects after each parent's `ready` event. That
- * raced soju's auth in some setups and surfaced as an "Authentication
- * required" loop (issue #120 follow-up). The new design treats the
- * bouncer's own `state=connected` set as the source of truth: parents
- * reconnect here, children come back via the bouncer reducer's
- * `autoBindConnectedNetworks` after LISTNETWORKS lands. These tests
- * pin the boot path to "parents only" so a regression to the racy
- * pre-seed shows up here.
- */
+/** connectToSavedServers reconnects parents only; bouncer children come back via autoBindConnectedNetworks. */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import useStore, { type AppState } from "../../src/store";

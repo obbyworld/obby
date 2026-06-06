@@ -1,20 +1,4 @@
-/**
- * Auto-bind every bouncer network the server reports as
- * `state=connected`. The user requested this (issue #120 followup):
- * once a network is "connected" on the bouncer side -- whether by the
- * user picking it earlier in the session, by an admin enabling it, or
- * just because the bouncer remembers from before the page reload --
- * the client should follow without a manual click.
- *
- * Implementation: store/handlers/bouncer.ts watches BOUNCER_NETWORK
- * + BATCH_END(soju.im/bouncer-networks) and dispatches
- * `bouncerConnectNetwork` for each `state=connected` row.
- *
- * We assert at the wire level (ircClient.setPendingBouncerBind) rather
- * than spying on the store action -- vi.spyOn() on a zustand action
- * doesn't survive subsequent setState calls because action refs sit on
- * the state object that setState replaces.
- */
+/** Auto-bind on BOUNCER_NETWORK / BATCH_END for each `state=connected` row. */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import useStore, { type AppState } from "../../src/store";
@@ -96,13 +80,4 @@ describe("bouncer auto-bind on state=connected", () => {
     });
     expect(ircClient.setPendingBouncerBind).not.toHaveBeenCalled();
   });
-
-  // NOTE: a "flipped-to-connected" test ought to live here, but
-  // vi.spyOn() on ircClient interacts poorly with zustand's
-  // state-replacing setState across multiple triggers in the same
-  // test -- the bind chain executes (verified via direct console
-  // logs in the implementation) but the spy stops recording after
-  // the first call. The two cases above are sufficient to lock the
-  // per-event auto-bind in; the BATCH_END sweep is the same code
-  // path, exercised by integration against a real soju.
 });

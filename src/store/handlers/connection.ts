@@ -271,13 +271,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
-      // Bouncer sessions (control + bound children) skip the
-      // client-side rejoin entirely. The saved channels list for any
-      // bouncer-bound server is unreliable because the persist path
-      // keys on host:port and clobbers across siblings, and soju
-      // itself replays the user's joined channels after BIND -- the
-      // last thing we want is the client retrying every saved name
-      // on every network (including #linux on the control session).
+      // Skip client-side rejoin for bouncer sessions; soju replays after BIND.
       const reconnectingServer = store
         .getState()
         .servers.find((s) => s.id === serverId);
@@ -306,12 +300,9 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
-      // chathistoryRequested is reset to false on disconnect — re-fetch missed history
-      // for channels that were already joined (ircClient.joinChannel early-returns for them,
-      // so CHATHISTORY never gets sent through the normal join path).
-      // Skip the soju bouncer control session: it has no real channels of
-      // its own and FAILs every CHATHISTORY, which surfaced as a flood of
-      // error toasts on resume-from-suspend (#120).
+      // Re-fetch CHATHISTORY for already-joined channels: ircClient.joinChannel
+      // early-returns for them, so the normal join path doesn't send it.
+      // soju bouncer control sessions have no real channels — skip.
       setTimeout(() => {
         const reconnectedServer = store
           .getState()

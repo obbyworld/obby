@@ -4,25 +4,12 @@ import ircClient from "../../lib/ircClient";
 import type { BouncerState } from "../../types";
 import type { AppState } from "../index";
 
-// Mirrors CHANNEL_NAMESPACE in src/store/index.ts -- used to derive the
-// deterministic child-server id from (parentId, netid). We recompute it
-// here so the auto-bind handler can dedup against an already-existing
-// child Server row without round-tripping through the store action.
+// Mirrors CHANNEL_NAMESPACE in src/store/index.ts.
 const CHILD_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
-// Auto-bind networks the bouncer reports as `state=connected`. The user
-// asked for this (issue #120 followup): once you've connected a network
-// on the bouncer side, the client should follow without a manual click
-// -- including across page reloads. `connected` is the only state we
-// treat as a follow signal; `connecting` / `disconnected` are left alone.
-//
-// Dedup uses a module-scope Set keyed by childId rather than re-reading
-// state.servers on every call. The store-state check was unreliable
-// when the per-event trigger fired multiple BOUNCER_NETWORK events in
-// the same tick: each invocation's snapshot read happened before
-// preceding sync set()s had visibly committed in some flows, so the
-// same network produced multiple seed rows. The Set is cheap and
-// correct.
+// Module-scope so a single childId only ever dispatches one bind across
+// the burst of BOUNCER_NETWORK events that arrive during the initial
+// LISTNETWORKS dump.
 const autoBindAttempted = new Set<string>();
 
 function autoBindConnectedNetworks(
@@ -30,12 +17,9 @@ function autoBindConnectedNetworks(
   bouncerServerId: string,
 ) {
   const state = store.getState();
-  // Skip if this serverId is itself a bouncer CHILD. Soju advertises
-  // soju.im/bouncer-networks on bound child connections too and sends
-  // them LISTNETWORKS, so without this guard each child would auto-bind
-  // its own "grandchildren" with childIds derived from the child's
-  // serverId -- producing an exponential explosion of Server rows
-  // (3 networks -> 3 grandchildren -> 9 g-grandchildren -> ...).
+  // Skip events that fired against a bouncer CHILD (which itself
+  // negotiates the same cap); otherwise we'd recursively bind
+  // "grandchildren" off each child.
   const sourceServer = state.servers.find((s) => s.id === bouncerServerId);
   if (sourceServer?.bouncerNetid) return;
   const bouncer = state.bouncers[bouncerServerId];
@@ -119,9 +103,6 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
           },
         };
       });
-      // If the post-update network state is `connected`, follow it
-      // with a client bind. setState above already committed the
-      // attributes, so the auto-binder reads the fresh state.
       if (attributes.state === "connected" || (!deleted && attributes.state)) {
         autoBindConnectedNetworks(store, serverId);
       }
@@ -162,10 +143,6 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
         notifyEnabled:
           notify || state.bouncers[serverId]?.notifyEnabled || false,
       }),
-      // Tag the Server row so the sidebar badge (shotglass+crown) shows
-      // for ad-hoc bouncer connections too -- isBouncerControl was
-      // previously only set on servers restored from saved storage, so
-      // fresh AddServerModal flows never got the visual.
       servers:
         supported && !state.servers.find((s) => s.id === serverId)?.bouncerNetid
           ? state.servers.map((s) =>
@@ -201,11 +178,6 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => ({
       bouncers: ensureBouncer(state, serverId, { listed: true }),
     }));
-    // Initial LISTNETWORKS dump just landed -- this is the post-login
-    // moment to auto-bind every network the bouncer reports as
-    // connected. Handles the page-reload case: bouncer parent
-    // reconnects, sends the listing, we follow each upstream that's
-    // still active on the bouncer side without any saved-child state.
     autoBindConnectedNetworks(store, serverId);
   });
 }

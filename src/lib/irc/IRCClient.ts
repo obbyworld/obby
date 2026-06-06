@@ -1230,11 +1230,7 @@ export class IRCClient implements IRCClientContext {
 
       this.sendRaw(serverId, `JOIN ${channelName}`);
 
-      // CHATHISTORY is meaningless on the soju.im/bouncer-networks meta
-      // connection -- it has no real channels of its own, just BOUNCER
-      // control traffic, so soju FAILs every CHATHISTORY against it and
-      // the user sees an error toast per channel after resume (#120).
-      // Treat the bouncer control session like a cap-less server.
+      // soju bouncer control sessions have no real channels — treat as cap-less.
       const wantsChathistory =
         !server.isBouncerControl &&
         !!server.capabilities?.includes("draft/chathistory");
@@ -1286,8 +1282,6 @@ export class IRCClient implements IRCClientContext {
   ): void {
     const server = this.servers.get(serverId);
     if (!server?.capabilities?.includes("draft/chathistory")) return;
-    // Soju FAILs every CHATHISTORY against the bouncer-networks meta
-    // session; don't waste a round-trip or surface the error toast.
     if (server.isBouncerControl) return;
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
