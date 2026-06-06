@@ -73,20 +73,17 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
         s.privateChats?.some((pc) => pc.isMentioned),
     );
 
-  const borderColor = hexWithAlpha(accent, isAnyMemberSelected ? 0.6 : 0.15);
-  const glowColor = hexWithAlpha(accent, 0.45);
   const dividerColor = hexWithAlpha(accent, 0.2);
 
   return (
-    <div
-      className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border transition-all duration-300 group/pill"
-      style={{
-        borderColor,
-        boxShadow: isAnyMemberSelected
-          ? `0 0 24px -4px ${glowColor}`
-          : "0 2px 8px -4px rgba(0, 0, 0, 0.5)",
-      }}
-    >
+    <div className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-gradient-to-b from-discord-dark-300 to-discord-dark-500 border border-discord-dark-500/40 transition-all duration-300 group/pill overflow-hidden">
+      <div
+        className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full pointer-events-none transition-opacity duration-200"
+        style={{
+          backgroundColor: accent,
+          opacity: isAnyMemberSelected ? 1 : 0.55,
+        }}
+      />
       {sortedChildren.map((child) => (
         <GroupedAvatar
           key={child.id}
