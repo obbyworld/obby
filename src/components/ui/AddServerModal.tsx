@@ -199,9 +199,7 @@ export const AddServerModal: React.FC = () => {
                 {!disableServerConnectionInfo && (
                   <p className="text-[11px] text-discord-text-muted mt-1">
                     <Trans>
-                      For non-standard WebSocket endpoints (e.g. soju behind a
-                      reverse proxy), enter the full URL including the path:{" "}
-                      <code>wss://host:port/socket</code>.
+                      e.g. <code>wss://host:port/socket</code>
                     </Trans>
                   </p>
                 )}

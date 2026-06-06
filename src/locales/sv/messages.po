@@ -941,6 +941,10 @@ msgstr "Ladda ned"
 msgid "Drop files to upload"
 msgstr "SlÃ¤pp filer fÃ¶r att ladda upp"
 
+#: src/components/ui/AddServerModal.tsx
+msgid "e.g. <0>wss://host:port/socket</0>"
+msgstr "t.ex. <0>wss://host:port/socket</0>"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "t.ex. 100:1440"
@@ -1102,8 +1106,8 @@ msgid "Flood Protection Settings"
 msgstr "Inställningar för flödeskydd"
 
 #: src/components/ui/AddServerModal.tsx
-msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-msgstr "För icke-standardiserade WebSocket-endpoints (t.ex. soju bakom en reverse proxy), ange hela URL:en inklusive sökvägen: <0>wss://host:port/socket</0>."
+#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
+#~ msgstr "För icke-standardiserade WebSocket-endpoints (t.ex. soju bakom en reverse proxy), ange hela URL:en inklusive sökvägen: <0>wss://host:port/socket</0>."
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx

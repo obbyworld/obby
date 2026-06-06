@@ -941,6 +941,10 @@ msgstr "下载"
 msgid "Drop files to upload"
 msgstr "ææ¾æä»¶ä»¥ä¸ä¼ "
 
+#: src/components/ui/AddServerModal.tsx
+msgid "e.g. <0>wss://host:port/socket</0>"
+msgstr "例如 <0>wss://host:port/socket</0>"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "例如：100:1440"
@@ -1102,8 +1106,8 @@ msgid "Flood Protection Settings"
 msgstr "洪水保护设置"
 
 #: src/components/ui/AddServerModal.tsx
-msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-msgstr "对于非标准的 WebSocket 端点（例如反向代理后的 soju），请输入包含路径的完整 URL：<0>wss://host:port/socket</0>。"
+#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
+#~ msgstr "对于非标准的 WebSocket 端点（例如反向代理后的 soju），请输入包含路径的完整 URL：<0>wss://host:port/socket</0>。"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx

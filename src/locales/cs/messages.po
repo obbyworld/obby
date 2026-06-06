@@ -941,6 +941,10 @@ msgstr "Stáhnout"
 msgid "Drop files to upload"
 msgstr "PÅetÃ¡hnÄte soubory pro nahrÃ¡nÃ­"
 
+#: src/components/ui/AddServerModal.tsx
+msgid "e.g. <0>wss://host:port/socket</0>"
+msgstr "např. <0>wss://host:port/socket</0>"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "např. 100:1440"
@@ -1102,8 +1106,8 @@ msgid "Flood Protection Settings"
 msgstr "Nastavení ochrany proti floodingu"
 
 #: src/components/ui/AddServerModal.tsx
-msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
-msgstr "Pro nestandardní WebSocket endpointy (např. soju za reverzní proxy) zadejte celou URL včetně cesty: <0>wss://host:port/socket</0>."
+#~ msgid "For non-standard WebSocket endpoints (e.g. soju behind a reverse proxy), enter the full URL including the path: <0>wss://host:port/socket</0>."
+#~ msgstr "Pro nestandardní WebSocket endpointy (např. soju za reverzní proxy) zadejte celou URL včetně cesty: <0>wss://host:port/socket</0>."
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
