@@ -18,6 +18,7 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
+import { BouncerServerGroup } from "./BouncerServerGroup";
 
 interface ServerIconProps {
   server: Server;
@@ -284,23 +285,70 @@ export const ServerList: React.FC = () => {
         className="flex flex-col space-y-2 w-full items-center"
         data-testid="server-list"
       >
-        {servers.map((server) => (
-          <ServerIcon
-            key={server.id}
-            server={server}
-            isSelected={selectedServerId === server.id}
-            isShimmering={shimmeringServers.has(server.id)}
-            isTouchDevice={isTouchDevice}
-            onSelect={() => selectServer(server.id, { clearSelection: true })}
-            onEdit={() =>
-              server.bouncerNetid
-                ? editBouncerNetwork(server.id)
-                : toggleEditServerModal(true, server.id)
+        {(() => {
+          const childrenByParent = new Map<string, Server[]>();
+          for (const s of servers) {
+            if (s.bouncerServerId) {
+              const arr = childrenByParent.get(s.bouncerServerId) ?? [];
+              arr.push(s);
+              childrenByParent.set(s.bouncerServerId, arr);
             }
-            onDelete={() => requestDeleteServer(server.id)}
-            onReconnect={() => reconnectServer(server.id)}
-          />
-        ))}
+          }
+          const rendered = new Set<string>();
+          const handleSelect = (id: string) =>
+            selectServer(id, { clearSelection: true });
+          const handleEdit = (id: string) => {
+            const target = servers.find((s) => s.id === id);
+            if (target?.bouncerNetid) editBouncerNetwork(id);
+            else toggleEditServerModal(true, id);
+          };
+          const handleDelete = (id: string) => requestDeleteServer(id);
+          const handleReconnect = (id: string) => reconnectServer(id);
+
+          return servers.map((server) => {
+            if (rendered.has(server.id)) return null;
+            if (server.isBouncerControl) {
+              const boundNetworks = childrenByParent.get(server.id) ?? [];
+              rendered.add(server.id);
+              for (const child of boundNetworks) rendered.add(child.id);
+              return (
+                <BouncerServerGroup
+                  key={server.id}
+                  control={server}
+                  networks={boundNetworks}
+                  selectedServerId={selectedServerId}
+                  shimmeringServers={shimmeringServers}
+                  isTouchDevice={isTouchDevice}
+                  onSelect={handleSelect}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onReconnect={handleReconnect}
+                />
+              );
+            }
+            if (server.bouncerServerId) {
+              // Child of a parent already rendered (or not in state).
+              // If the parent isn't in state, render the child standalone
+              // as a graceful fallback.
+              if (servers.some((s) => s.id === server.bouncerServerId))
+                return null;
+            }
+            rendered.add(server.id);
+            return (
+              <ServerIcon
+                key={server.id}
+                server={server}
+                isSelected={selectedServerId === server.id}
+                isShimmering={shimmeringServers.has(server.id)}
+                isTouchDevice={isTouchDevice}
+                onSelect={() => handleSelect(server.id)}
+                onEdit={() => handleEdit(server.id)}
+                onDelete={() => handleDelete(server.id)}
+                onReconnect={() => handleReconnect(server.id)}
+              />
+            );
+          });
+        })()}
       </div>
     </div>
   );
