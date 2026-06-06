@@ -30,42 +30,25 @@ function autoBindConnectedNetworks(
   bouncerServerId: string,
 ) {
   const state = store.getState();
+  // Skip if this serverId is itself a bouncer CHILD. Soju advertises
+  // soju.im/bouncer-networks on bound child connections too and sends
+  // them LISTNETWORKS, so without this guard each child would auto-bind
+  // its own "grandchildren" with childIds derived from the child's
+  // serverId -- producing an exponential explosion of Server rows
+  // (3 networks -> 3 grandchildren -> 9 g-grandchildren -> ...).
+  const sourceServer = state.servers.find((s) => s.id === bouncerServerId);
+  if (sourceServer?.bouncerNetid) return;
   const bouncer = state.bouncers[bouncerServerId];
-  console.warn(
-    "[autoBind] bouncerServerId=",
-    bouncerServerId,
-    "networks=",
-    bouncer ? Object.keys(bouncer.networks).length : "no bouncer",
-    "current servers=",
-    state.servers.length,
-    "attempted set size=",
-    autoBindAttempted.size,
-  );
   if (!bouncer) return;
   for (const net of Object.values(bouncer.networks)) {
     if (net.attributes.state !== "connected") continue;
     const childId = uuidv5(`${bouncerServerId}:${net.netid}`, CHILD_NAMESPACE);
-    console.warn(
-      "[autoBind] netid=",
-      net.netid,
-      "childId=",
-      childId,
-      "attempted?",
-      autoBindAttempted.has(childId),
-      "in servers?",
-      state.servers.some((s) => s.id === childId),
-    );
     if (autoBindAttempted.has(childId)) continue;
     if (state.servers.some((s) => s.id === childId)) {
       autoBindAttempted.add(childId);
       continue;
     }
     autoBindAttempted.add(childId);
-    console.warn(
-      "[autoBind] DISPATCHING bouncerConnectNetwork",
-      bouncerServerId,
-      net.netid,
-    );
     void state.bouncerConnectNetwork(bouncerServerId, net.netid);
   }
 }
