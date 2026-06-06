@@ -162,6 +162,16 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
         notifyEnabled:
           notify || state.bouncers[serverId]?.notifyEnabled || false,
       }),
+      // Tag the Server row so the sidebar badge (shotglass+crown) shows
+      // for ad-hoc bouncer connections too -- isBouncerControl was
+      // previously only set on servers restored from saved storage, so
+      // fresh AddServerModal flows never got the visual.
+      servers:
+        supported && !state.servers.find((s) => s.id === serverId)?.bouncerNetid
+          ? state.servers.map((s) =>
+              s.id === serverId ? { ...s, isBouncerControl: true } : s,
+            )
+          : state.servers,
     }));
   });
 
