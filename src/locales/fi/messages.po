@@ -455,6 +455,7 @@ msgstr "Selaa kaikkia palvelimen kanavia"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -645,6 +646,7 @@ msgstr "Käyttäjäraja (+l)"
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -882,12 +884,23 @@ msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Disconnect"
 msgstr "Katkaise yhteys"
+
+#. placeholder {0}: network.name
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect <0>{0}</0>?"
+msgstr "Katkaistaanko <0>{0}</0> -yhteys?"
 
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect from soju bouncer?"
 msgstr "Katkaistaanko soju-bouncerin yhteys?"
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect network?"
+msgstr "Katkaistaanko verkon yhteys?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2582,6 +2595,10 @@ msgstr "Tämä kuva on vanhentunut"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "TÃ¤mÃ¤n verran ihmisiÃ¤ on rekisterÃ¶itynyt tÃ¤mÃ¤n linkin kautta"
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
+msgstr "Tämä poistaa verkon soju-bouncerista. Käyttääksesi sitä uudelleen, sinun täytyy lisätä se takaisin."
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."

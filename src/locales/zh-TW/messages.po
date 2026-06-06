@@ -455,6 +455,7 @@ msgstr "浏览服务器上的所有频道"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -645,6 +646,7 @@ msgstr "用戶端限制 (+l)"
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -882,12 +884,23 @@ msgstr "æè¿°ï¼é¸å¡«ï¼ä¾å¦ãç¬¬ä¸å­£
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Disconnect"
 msgstr "断开连接"
+
+#. placeholder {0}: network.name
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect <0>{0}</0>?"
+msgstr "中斷 <0>{0}</0> 的連線？"
 
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect from soju bouncer?"
 msgstr "中斷與 soju bouncer 的連線？"
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect network?"
+msgstr "中斷網路連線？"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -2582,6 +2595,10 @@ msgstr "此图片已过期"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "å·²ééæ­¤é£çµè¨»åçäººæ¸"
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
+msgstr "這會將網路從您的 soju bouncer 中移除。若要再次使用，您需要重新新增。"
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."

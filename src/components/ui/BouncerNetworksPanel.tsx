@@ -9,6 +9,7 @@ import {
   FaPencilAlt,
   FaPlay,
   FaPlus,
+  FaStop,
 } from "react-icons/fa";
 import { v5 as uuidv5 } from "uuid";
 import useStore from "../../store";
@@ -60,6 +61,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
   const bouncerChangeNetwork = useStore((s) => s.bouncerChangeNetwork);
   const bouncerDelNetwork = useStore((s) => s.bouncerDelNetwork);
   const bouncerConnectNetwork = useStore((s) => s.bouncerConnectNetwork);
+  const requestDeleteServer = useStore((s) => s.requestDeleteServer);
   const bouncerListNetworks = useStore((s) => s.bouncerListNetworks);
   const selectServer = useStore((s) => s.selectServer);
   const pendingBouncerEdit = useStore((s) => s.ui.pendingBouncerEdit);
@@ -336,6 +338,17 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
                           </>
                         )}
                       </button>
+                      {childServer && (
+                        <button
+                          type="button"
+                          onClick={() => requestDeleteServer(childServer.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded text-discord-text-muted hover:text-red-400 hover:bg-discord-dark-300"
+                          aria-label={t`Disconnect`}
+                          data-testid={`bouncer-row-disconnect-${net.netid}`}
+                        >
+                          <FaStop />
+                        </button>
+                      )}
                     </li>
                   );
                 })}

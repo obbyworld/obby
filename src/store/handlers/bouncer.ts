@@ -106,6 +106,20 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
       if (attributes.state === "connected" || (!deleted && attributes.state)) {
         autoBindConnectedNetworks(store, serverId);
       }
+      // Sync the local Server side when the bouncer reports the network
+      // as disconnected: drop the bound child so we stop attempting to
+      // talk to a network the bouncer is no longer holding.
+      if (!deleted && attributes.state === "disconnected") {
+        const childId = uuidv5(`${serverId}:${netid}`, CHILD_NAMESPACE);
+        const live = store.getState().servers.find((s) => s.id === childId);
+        if (live) store.getState().deleteServer(childId);
+      }
+      // A BOUNCER NETWORK delete also drops the local child if present.
+      if (deleted) {
+        const childId = uuidv5(`${serverId}:${netid}`, CHILD_NAMESPACE);
+        const live = store.getState().servers.find((s) => s.id === childId);
+        if (live) store.getState().deleteServer(childId);
+      }
     },
   );
 

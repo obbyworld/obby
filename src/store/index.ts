@@ -413,6 +413,11 @@ interface UIState {
   // on the named netid. Cleared once the panel reads it.
   pendingBouncerEdit?: { bouncerServerId: string; netid: string } | null;
   disconnectConfirmTarget?: string | null;
+  disconnectNetworkConfirmTarget?: {
+    bouncerServerId: string;
+    netid: string;
+    childServerId: string;
+  } | null;
   isTwoFactorSettingsOpen: boolean;
   twoFactorSettingsServerId: string | null;
   isSettingsModalOpen: boolean;
@@ -874,6 +879,8 @@ export interface AppState {
   consumePendingBouncerEdit: () => void;
   requestDeleteServer: (serverId: string) => void;
   cancelDeleteServer: () => void;
+  cancelDisconnectNetwork: () => void;
+  confirmDisconnectNetwork: () => void;
   setBouncerGroupAccent: (parentServerId: string, hex: string | null) => void;
   toggleSettingsModal: (isOpen?: boolean) => void;
   toggleQuickActions: (isOpen?: boolean) => void;
@@ -1086,6 +1093,7 @@ const useStore = create<AppState>((set, get) => ({
     editServerId: null,
     pendingBouncerEdit: null,
     disconnectConfirmTarget: null,
+    disconnectNetworkConfirmTarget: null,
     isSettingsModalOpen: false,
     isQuickActionsOpen: false,
     isDarkMode: true,
@@ -3174,12 +3182,42 @@ const useStore = create<AppState>((set, get) => ({
       }));
       return;
     }
+    if (target?.bouncerServerId && target.bouncerNetid) {
+      set((s) => ({
+        ui: {
+          ...s.ui,
+          disconnectNetworkConfirmTarget: {
+            bouncerServerId: target.bouncerServerId as string,
+            netid: target.bouncerNetid as string,
+            childServerId: serverId,
+          },
+        },
+      }));
+      return;
+    }
     get().deleteServer(serverId);
   },
 
   cancelDeleteServer: () => {
     set((state) => ({
       ui: { ...state.ui, disconnectConfirmTarget: null },
+    }));
+  },
+
+  cancelDisconnectNetwork: () => {
+    set((state) => ({
+      ui: { ...state.ui, disconnectNetworkConfirmTarget: null },
+    }));
+  },
+
+  confirmDisconnectNetwork: () => {
+    const state = get();
+    const target = state.ui.disconnectNetworkConfirmTarget;
+    if (!target) return;
+    state.bouncerDelNetwork(target.bouncerServerId, target.netid);
+    state.deleteServer(target.childServerId);
+    set((s) => ({
+      ui: { ...s.ui, disconnectNetworkConfirmTarget: null },
     }));
   },
 
