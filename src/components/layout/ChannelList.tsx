@@ -169,6 +169,19 @@ export const ChannelList: React.FC<{
     (server) => server.id === selectedServerId,
   );
 
+  const upstreamSubtitle = useStore((state) => {
+    if (!selectedServer) return undefined;
+    if (selectedServer.bouncerServerId && selectedServer.bouncerNetid) {
+      const net =
+        state.bouncers[selectedServer.bouncerServerId]?.networks[
+          selectedServer.bouncerNetid
+        ];
+      return net?.attributes.host || undefined;
+    }
+    if (selectedServer.isBouncerControl) return selectedServer.host;
+    return undefined;
+  });
+
   // Get user status based on server connection and away status
   const userStatus = useMemo(() => {
     if (!selectedServer?.isConnected) {
@@ -466,35 +479,36 @@ export const ChannelList: React.FC<{
       {/* Server header */}
       <div className="px-4 h-12 shadow-md flex items-center justify-between border-b border-discord-dark-400">
         <div className="flex flex-col min-w-0 flex-1">
-          <h1 className="font-bold text-white truncate flex items-center gap-2">
-            {(selectedServer?.isBouncerControl ||
-              !!selectedServer?.bouncerNetid) && (
-              <span
-                className="inline-flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5"
-                title={
-                  selectedServer?.isBouncerControl
-                    ? t`soju bouncer (control)`
-                    : t`Network bound through soju bouncer`
-                }
-              >
-                <GiGlassShot className="text-amber-300 text-[10px]" />
-                {selectedServer?.isBouncerControl ? (
-                  <FaCrown className="text-yellow-400 text-[8px]" />
-                ) : (
-                  <FaPlug className="text-sky-300 text-[8px]" />
-                )}
-              </span>
-            )}
-            <span className="truncate">
-              {selectedServer?.networkName || selectedServer?.name || "Home"}
-            </span>
+          <h1 className="font-bold text-white truncate">
+            {selectedServer?.networkName || selectedServer?.name || "Home"}
           </h1>
-          {selectedServer?.networkName &&
-            selectedServer.name !== selectedServer.networkName && (
-              <div className="text-xs text-discord-channels-default truncate">
-                {selectedServer.name}
-              </div>
-            )}
+          {(upstreamSubtitle ||
+            (selectedServer?.networkName &&
+              selectedServer.name !== selectedServer.networkName)) && (
+            <div className="text-xs text-discord-channels-default truncate flex items-center gap-1">
+              <span className="truncate">
+                {upstreamSubtitle || selectedServer?.name}
+              </span>
+              {(selectedServer?.isBouncerControl ||
+                !!selectedServer?.bouncerNetid) && (
+                <span
+                  className="inline-flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5 flex-shrink-0"
+                  title={
+                    selectedServer?.isBouncerControl
+                      ? t`soju bouncer (control)`
+                      : t`Network bound through soju bouncer`
+                  }
+                >
+                  <GiGlassShot className="text-amber-300 text-[10px]" />
+                  {selectedServer?.isBouncerControl ? (
+                    <FaCrown className="text-yellow-400 text-[8px]" />
+                  ) : (
+                    <FaPlug className="text-sky-300 text-[8px]" />
+                  )}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <button
           onClick={handleCollapseClick}
