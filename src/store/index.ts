@@ -2891,96 +2891,15 @@ const useStore = create<AppState>((set, get) => ({
 
     const savedServers = loadSavedServers();
 
-    // Bouncer children share host:port with their parent control session
-    // and the bouncer commonly rejects child auth that races the parent's
-    // SASL.  Gate every child reconnect on its parent's `ready` event so
-    // the BIND lands on an authenticated session, not on one mid-handshake.
-    // Standalone servers and bouncer parents still connect immediately in
-    // parallel.
+    // Reconnect only parent / standalone servers here. Bouncer children
+    // are no longer dispatched from saved state -- the bouncer's own
+    // `state=connected` set is the source of truth, and the bouncer
+    // reducer auto-binds each one after the parent's LISTNETWORKS lands
+    // (see store/handlers/bouncer.ts `autoBindConnectedNetworks`).
+    // This removes a race where the saved children's SASL/BIND would
+    // hit soju before the parent's auth completed and surface as an
+    // "Authentication required" loop (#120 followup).
     const parents = savedServers.filter((s) => !s.bouncerNetid);
-    const children = savedServers.filter((s) => !!s.bouncerNetid);
-
-    // Seed each child Server row in "connecting" state up-front so the
-    // sidebar shows the row immediately, even before the parent is ready.
-    set((state) => {
-      const next = [...state.servers];
-      for (const child of children) {
-        if (next.some((s) => s.id === child.id)) continue;
-        const childUrlHost = ensureUrlFormat(child.host, child.port);
-        next.push({
-          id: child.id,
-          name: child.name || normalizeHost(childUrlHost),
-          host: normalizeHost(childUrlHost),
-          port: child.port,
-          channels: [],
-          privateChats: [],
-          isConnected: false,
-          connectionState: "connecting",
-          users: [],
-          bouncerServerId: child.bouncerServerId,
-          bouncerNetid: child.bouncerNetid,
-          isBouncerControl: child.isBouncerControl,
-        });
-      }
-      return { servers: next };
-    });
-
-    // Helper: actually fire the WSS connect for a child.  Used after the
-    // parent reports `ready` (or immediately if the parent is already up).
-    const dispatchChildConnect = (savedServer: ServerConfig) => {
-      const { id, name, host, port, nickname, password } = savedServer;
-      const urlHost = ensureUrlFormat(host, port);
-      ircClient.setPendingBouncerBind(id, savedServer.bouncerNetid as string);
-      const p = ircClient.connect(
-        name || normalizeHost(urlHost),
-        urlHost,
-        port,
-        nickname,
-        password,
-        savedServer.saslAccountName,
-        savedServer.saslPassword,
-        id,
-      );
-      p.catch((error) => {
-        console.error(`Failed to reconnect bouncer child ${urlHost}`, error);
-        set((state) => ({
-          servers: state.servers.map((s) =>
-            s.id === id
-              ? { ...s, connectionState: "disconnected" as const }
-              : s,
-          ),
-        }));
-      });
-      return p;
-    };
-
-    // Index children by parent id so a single `ready` event from a parent
-    // dispatches every child it owns in one burst.
-    const childrenByParent = new Map<string, ServerConfig[]>();
-    for (const c of children) {
-      const pid = c.bouncerServerId;
-      if (!pid) continue;
-      const arr = childrenByParent.get(pid) ?? [];
-      arr.push(c);
-      childrenByParent.set(pid, arr);
-    }
-
-    // Register the deferred-child trigger BEFORE kicking off parents so
-    // there is no window where the parent's RPL_WELCOME could race past
-    // an unregistered listener.
-    const pendingParents = new Set(childrenByParent.keys());
-    const onParentReady = ({ serverId }: { serverId: string }) => {
-      if (!pendingParents.has(serverId)) return;
-      pendingParents.delete(serverId);
-      const kids = childrenByParent.get(serverId) ?? [];
-      for (const child of kids) dispatchChildConnect(child);
-      if (pendingParents.size === 0) {
-        ircClient.deleteHook("ready", onParentReady);
-      }
-    };
-    if (pendingParents.size > 0) {
-      ircClient.on("ready", onParentReady);
-    }
 
     const connectionPromises: Promise<unknown>[] = [];
     for (const savedServer of parents) {
@@ -3043,29 +2962,14 @@ const useStore = create<AppState>((set, get) => ({
               : s,
           ),
         }));
-        // If a parent fails outright, its children will never get `ready`.
-        // Mark them disconnected so the UI stops spinning, and detach the
-        // listener once all parents have settled.
-        if (childrenByParent.has(id)) {
-          pendingParents.delete(id);
-          set((state) => ({
-            servers: state.servers.map((s) =>
-              s.bouncerServerId === id
-                ? { ...s, connectionState: "disconnected" as const }
-                : s,
-            ),
-          }));
-          if (pendingParents.size === 0) {
-            ircClient.deleteHook("ready", onParentReady);
-          }
-        }
       });
 
       connectionPromises.push(connectionPromise);
     }
 
-    // Only await the parent burst here.  Children are kicked off
-    // asynchronously from the `ready` listener above and don't block
+    // Wait for the parent burst to settle. Bouncer children come back
+    // asynchronously via the bouncer reducer's autoBindConnectedNetworks
+    // hook once the parent has posted LISTNETWORKS -- they don't block
     // initial app boot.
     await Promise.all(connectionPromises);
   },

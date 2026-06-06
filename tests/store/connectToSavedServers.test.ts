@@ -1,12 +1,15 @@
 /**
- * Boot-time reconnect ordering for bouncer parents and their children.
+ * Boot-time reconnect for bouncer parents and standalone servers.
  *
- * The previous behaviour fired parent + child reconnects in parallel,
- * which raced the children's SASL/BIND against the parent's not-yet-
- * authenticated session and surfaced as "invalid password" against
- * soju. The fix: dispatch each child only after its parent emits
- * `ready`. These tests pin that ordering down so a regression shows
- * up here, not in production.
+ * Previous behaviour pre-seeded child Server rows from localStorage and
+ * dispatched their connects after each parent's `ready` event. That
+ * raced soju's auth in some setups and surfaced as an "Authentication
+ * required" loop (issue #120 follow-up). The new design treats the
+ * bouncer's own `state=connected` set as the source of truth: parents
+ * reconnect here, children come back via the bouncer reducer's
+ * `autoBindConnectedNetworks` after LISTNETWORKS lands. These tests
+ * pin the boot path to "parents only" so a regression to the racy
+ * pre-seed shows up here.
  */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
@@ -70,13 +73,11 @@ function seedParentAndChild() {
   } as Partial<AppState>);
 }
 
-describe("connectToSavedServers gates bouncer children on parent ready", () => {
+describe("connectToSavedServers reconnects parents but leaves children to autoBindConnectedNetworks", () => {
   beforeEach(() => {
     seedParentAndChild();
-    // Track ircClient.on/deleteHook so we can fire the `ready` event ourselves.
     vi.spyOn(ircClient, "connect").mockResolvedValue(undefined as never);
     vi.spyOn(ircClient, "setPendingBouncerBind");
-    // Store-level connect for non-bouncer parents — also a no-op spy.
     vi.spyOn(useStore.getState(), "connect").mockResolvedValue(
       undefined as never,
     );
@@ -85,10 +86,6 @@ describe("connectToSavedServers gates bouncer children on parent ready", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     lsBacking.clear();
-    // Drop every listener the test registered. The store under test
-    // attaches a `ready` listener to ircClient that survives across
-    // tests if we don't clear it -- multiple stacked listeners would
-    // dispatch the same child connect more than once.
     (
       ircClient as unknown as { eventCallbacks: Record<string, unknown[]> }
     ).eventCallbacks = {};
@@ -98,52 +95,32 @@ describe("connectToSavedServers gates bouncer children on parent ready", () => {
     } as Partial<AppState>);
   });
 
-  test("seeds child Server immediately so the UI shows a row from t=0", async () => {
+  test("dispatches the parent connect through the store action", async () => {
+    await useStore.getState().connectToSavedServers();
+    // Parent reconnect goes through the store-level `connect` (saslEnabled etc.)
+    const parentCalls = (
+      useStore.getState().connect as ReturnType<typeof vi.fn>
+    ).mock.calls;
+    expect(parentCalls.length).toBe(1);
+  });
+
+  test("does NOT pre-seed a child Server row", async () => {
     await useStore.getState().connectToSavedServers();
     const child = useStore.getState().servers.find((s) => s.id === CHILD_ID);
-    expect(child).toBeDefined();
-    expect(child?.bouncerServerId).toBe(PARENT_ID);
-    expect(child?.bouncerNetid).toBe("42");
-    expect(child?.connectionState).toBe("connecting");
+    expect(child).toBeUndefined();
   });
 
-  test("does NOT dispatch the child connect before parent emits ready", async () => {
+  test("does NOT dispatch any child connect, even after the parent emits ready", async () => {
     await useStore.getState().connectToSavedServers();
-    // The parent's connect happened (store-level); the child should not have
-    // its own WS yet.
-    const ircConnectCalls = (
-      ircClient.connect as ReturnType<typeof vi.fn>
-    ).mock.calls.filter((c) => c[c.length - 1] === CHILD_ID);
-    expect(ircConnectCalls).toHaveLength(0);
-    expect(ircClient.setPendingBouncerBind).not.toHaveBeenCalled();
-  });
-
-  test("dispatches the child connect once the parent's ready event fires", async () => {
-    await useStore.getState().connectToSavedServers();
-    // Fire ready for the parent — the deferred-child listener should
-    // pick it up and call ircClient.connect with the child id.
     ircClient.triggerEvent("ready", {
       serverId: PARENT_ID,
       serverName: "soju.example",
       nickname: "alice",
     });
-    expect(ircClient.setPendingBouncerBind).toHaveBeenCalledWith(
-      CHILD_ID,
-      "42",
-    );
-    const callsForChild = (
+    expect(ircClient.setPendingBouncerBind).not.toHaveBeenCalled();
+    const directChildConnects = (
       ircClient.connect as ReturnType<typeof vi.fn>
     ).mock.calls.filter((c) => c[c.length - 1] === CHILD_ID);
-    expect(callsForChild).toHaveLength(1);
-  });
-
-  test("ignores ready events from unrelated servers", async () => {
-    await useStore.getState().connectToSavedServers();
-    ircClient.triggerEvent("ready", {
-      serverId: "some-other-server",
-      serverName: "irrelevant",
-      nickname: "alice",
-    });
-    expect(ircClient.setPendingBouncerBind).not.toHaveBeenCalled();
+    expect(directChildConnects).toHaveLength(0);
   });
 });

@@ -1,7 +1,35 @@
+import { v5 as uuidv5 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { BouncerState } from "../../types";
 import type { AppState } from "../index";
+
+// Mirrors CHANNEL_NAMESPACE in src/store/index.ts -- used to derive the
+// deterministic child-server id from (parentId, netid). We recompute it
+// here so the auto-bind handler can dedup against an already-existing
+// child Server row without round-tripping through the store action.
+const CHILD_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+
+// Auto-bind networks the bouncer reports as `state=connected`. The user
+// asked for this (issue #120 followup): once you've connected a network
+// on the bouncer side, the client should follow without a manual click
+// -- including across page reloads. Idempotent through bouncerConnectNetwork's
+// existing dedup. `connected` is the only state we treat as a follow signal;
+// `connecting` / `disconnected` are left alone.
+function autoBindConnectedNetworks(
+  store: StoreApi<AppState>,
+  bouncerServerId: string,
+) {
+  const state = store.getState();
+  const bouncer = state.bouncers[bouncerServerId];
+  if (!bouncer) return;
+  for (const net of Object.values(bouncer.networks)) {
+    if (net.attributes.state !== "connected") continue;
+    const childId = uuidv5(`${bouncerServerId}:${net.netid}`, CHILD_NAMESPACE);
+    if (state.servers.some((s) => s.id === childId)) continue;
+    void state.bouncerConnectNetwork(bouncerServerId, net.netid);
+  }
+}
 
 // Helper that lazily creates a BouncerState entry for a serverId.
 // We can't always know in advance which servers will turn out to be
@@ -69,6 +97,12 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
           },
         };
       });
+      // If the post-update network state is `connected`, follow it
+      // with a client bind. setState above already committed the
+      // attributes, so the auto-binder reads the fresh state.
+      if (attributes.state === "connected" || (!deleted && attributes.state)) {
+        autoBindConnectedNetworks(store, serverId);
+      }
     },
   );
 
@@ -135,5 +169,11 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => ({
       bouncers: ensureBouncer(state, serverId, { listed: true }),
     }));
+    // Initial LISTNETWORKS dump just landed -- this is the post-login
+    // moment to auto-bind every network the bouncer reports as
+    // connected. Handles the page-reload case: bouncer parent
+    // reconnects, sends the listing, we follow each upstream that's
+    // still active on the bouncer side without any saved-child state.
+    autoBindConnectedNetworks(store, serverId);
   });
 }
