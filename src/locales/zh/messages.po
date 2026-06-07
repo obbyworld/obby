@@ -66,6 +66,21 @@ msgstr "{0}、{1} 和 {2} 正在输入..."
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}、{1}、{2} 以及另外 {3} 人正在输入..."
 
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0} 天前"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0} 小时前"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0} 分钟前"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, other {{c} 次}}"
@@ -97,6 +112,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#频道（可选）"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -543,6 +562,10 @@ msgstr "清除"
 msgid "Clear search"
 msgstr "清除搜索"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "再次点击以确认"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -641,6 +664,10 @@ msgstr "配置详细的洪水保护规则。每条规则指定要监控的活动
 msgid "Configure notification sounds and highlights"
 msgstr "配置通知声音和高亮提示"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "确认？"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
 msgstr "连接"
@@ -678,12 +705,17 @@ msgid "Control media display and external content"
 msgstr "控制媒体显示和外部内容"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "已复制"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "复制"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "全部复制"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -697,9 +729,25 @@ msgstr "复制格式化输出"
 msgid "Copy JSON"
 msgstr "复制 JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "复制链接"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "复制链接"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "创建"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "创建新的邀请链接"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "创建并管理您的邀请链接"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -754,6 +802,7 @@ msgid "Default Nickname"
 msgstr "默认昵称"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "删除"
 
@@ -769,9 +818,17 @@ msgstr "删除消息"
 msgid "Delete Private Chat"
 msgstr "删除私聊"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "删除此邀请"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "删除此消息？此操作无法撤销。"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -1150,6 +1207,7 @@ msgid "Invalid value"
 msgstr "值无效"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "邀请"
 
@@ -1225,6 +1283,10 @@ msgstr "已加入并退出"
 msgid "Joined the channel"
 msgstr "已加入频道"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "刚刚"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1258,6 +1320,10 @@ msgstr "了解更多配置文件 →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "离开频道"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "频道留空可用于通用网络邀请。描述仅用于您自己的记录——只有您能在此列表中看到。"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1495,6 +1561,10 @@ msgstr "开启或关闭通知声音"
 msgid "Name:"
 msgstr "名称："
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "网络"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
 msgstr "网络名称"
@@ -1602,11 +1672,15 @@ msgstr "未加载任何媒体预览。"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "尚未捕获任何原始 IRC 流量。请尝试连接或发送一条消息。"
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "未找到结果"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "未选择服务器。请先从侧边栏选择一个服务器；邀请链接按服务器分别管理。"
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1953,6 +2027,11 @@ msgstr "原因（可选）"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "刷新"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2376,9 +2455,17 @@ msgstr "此字段为必填项"
 msgid "This image has expired"
 msgstr "此图片已过期"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "通过此链接注册的人数"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "此服务器不支持扩展个人资料元数据（IRCv3 METADATA 扩展）。头像、显示名称和状态等字段不可用。"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "此服务器不支持邀请链接（未声明 <0>obby.world/invitation</0> 能力）。您仍可正常聊天；此面板适用于由 obbyircd 提供支持的网络。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2525,6 +2612,10 @@ msgstr "使用 WebSocket 而非原始 TCP"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "通配符：* 匹配任意字符，? 匹配单个字符。示例：nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "已使用"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2715,6 +2806,10 @@ msgstr "您是 IRC Operator"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "您有未保存的更改。确定要关闭而不保存吗？"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "您还没有创建任何邀请链接。使用上面的表单来创建您的第一个。"
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "您邀请了 {target} 加入 {channel}"
@@ -2730,6 +2825,10 @@ msgstr "您的账户认证用户名"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "所有服务器的默认昵称"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "您的邀请链接"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

@@ -15,6 +15,7 @@ import {
   FaCog,
   FaImage,
   FaServer,
+  FaShareSquare,
   FaShieldAlt,
   FaTimes,
   FaUser,
@@ -33,6 +34,7 @@ import useStore, {
 } from "../../store";
 import AvatarUpload from "./AvatarUpload";
 import EmojiPackAdminModal from "./EmojiPackAdminModal";
+import InvitationsPanel from "./InvitationsPanel";
 import PersistenceSettingsPanel from "./PersistenceSettingsPanel";
 import { SettingField } from "./settings/SettingRenderer";
 import { TextInput } from "./TextInput";
@@ -92,6 +94,7 @@ type SettingsCategory =
   | "preferences"
   | "media"
   | "account"
+  | "invitations"
   | "privacy";
 
 interface CategoryInfo {
@@ -183,6 +186,12 @@ export const UserSettings: React.FC = React.memo(() => {
       title: t`Account`,
       icon: <FaServer className="w-5 h-5" />,
       description: t`Manage your account and authentication`,
+    },
+    {
+      id: "invitations",
+      title: t`Invitations`,
+      icon: <FaShareSquare className="w-5 h-5" />,
+      description: t`Create and manage your invite links`,
     },
     {
       id: "privacy",
@@ -1579,10 +1588,14 @@ export const UserSettings: React.FC = React.memo(() => {
               {activeCategory === "account" && renderAccountFields()}
               {activeCategory === "media" && renderMediaFields()}
               {activeCategory === "privacy" && renderPrivacyFields()}
+              {activeCategory === "invitations" && (
+                <InvitationsPanel serverId={currentServer?.id} />
+              )}
               {activeCategory !== "profile" &&
                 activeCategory !== "account" &&
                 activeCategory !== "media" &&
-                activeCategory !== "privacy" && (
+                activeCategory !== "privacy" &&
+                activeCategory !== "invitations" && (
                   <div className="space-y-4">
                     {activeCategory === "preferences" && (
                       <div className="flex flex-col gap-1">
@@ -1770,11 +1783,17 @@ export const UserSettings: React.FC = React.memo(() => {
             {/* Privacy category - custom rendering */}
             {activeCategory === "privacy" && renderPrivacyFields()}
 
+            {/* Invitations category - custom rendering */}
+            {activeCategory === "invitations" && (
+              <InvitationsPanel serverId={currentServer?.id} />
+            )}
+
             {/* Other categories - use SettingRenderer */}
             {activeCategory !== "profile" &&
               activeCategory !== "account" &&
               activeCategory !== "media" &&
-              activeCategory !== "privacy" && (
+              activeCategory !== "privacy" &&
+              activeCategory !== "invitations" && (
                 <div className="space-y-4">
                   {activeCategory === "preferences" && (
                     <div className="flex flex-col gap-1">

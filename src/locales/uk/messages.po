@@ -66,6 +66,21 @@ msgstr "{0}, {1} та {2} пишуть..."
 msgid "{0}, {1}, {2} and {3} others are typing..."
 msgstr "{0}, {1}, {2} та ще {3} пишуть..."
 
+#. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}d ago"
+msgstr "{0} д тому"
+
+#. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}h ago"
+msgstr "{0} год тому"
+
+#. placeholder {0}: Math.floor(secs / 60)
+#: src/components/ui/InvitationsPanel.tsx
+msgid "{0}m ago"
+msgstr "{0} хв тому"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 раз} few {{c} рази} many {{c} разів} other {{c} рази}}"
@@ -97,6 +112,10 @@ msgstr "*канал*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*спам*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "#channel (optional)"
+msgstr "#канал (необов'язково)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "#new-channel-name"
@@ -543,6 +562,10 @@ msgstr "Очистити"
 msgid "Clear search"
 msgstr "Очистити пошук"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Click again to confirm"
+msgstr "Натисніть ще раз для підтвердження"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -641,6 +664,10 @@ msgstr "Налаштуйте детальні правила захисту ві
 msgid "Configure notification sounds and highlights"
 msgstr "Налаштувати звуки сповіщень та виділення"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Confirm?"
+msgstr "Підтвердити?"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connect"
 msgstr "Підключитися"
@@ -678,12 +705,17 @@ msgid "Control media display and external content"
 msgstr "Керувати відображенням медіа та зовнішнього вмісту"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
 msgstr "Скопійовано"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy"
+msgstr "Копіювати"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
-msgstr ""
+msgstr "Копіювати все"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -697,9 +729,25 @@ msgstr "Скопіювати форматований вивід"
 msgid "Copy JSON"
 msgstr "Скопіювати JSON"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Copy link"
+msgstr "Копіювати посилання"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Копіювати URL"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create"
+msgstr "Створити"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Create a new invite link"
+msgstr "Створити нове запрошувальне посилання"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Create and manage your invite links"
+msgstr "Створюйте та керуйте своїми запрошувальними посиланнями"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -754,6 +802,7 @@ msgid "Default Nickname"
 msgstr "Стандартний псевдонім"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Видалити"
 
@@ -769,9 +818,17 @@ msgstr "Видалити повідомлення"
 msgid "Delete Private Chat"
 msgstr "Видалити приватний чат"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Delete this invite"
+msgstr "Видалити це запрошення"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Видалити це повідомлення? Цю дію неможливо скасувати."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Description (optional, e.g. \"Beta testers Q3\")"
+msgstr "Опис (необов'язково, напр. \"Бета-тестувальники Q3\")"
 
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
@@ -1150,6 +1207,7 @@ msgid "Invalid value"
 msgstr "Недійсне значення"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "Invitations"
 msgstr "Запрошення"
 
@@ -1225,6 +1283,10 @@ msgstr "приєднався та вийшов"
 msgid "Joined the channel"
 msgstr "Приєднався до каналу"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "just now"
+msgstr "щойно"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -1258,6 +1320,10 @@ msgstr "Дізнатися більше про профілі →"
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Покинути канал"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+msgstr "Залиште поле каналу порожнім для загального запрошення в мережу. Опис призначений лише для ваших записів — видимий лише вам у цьому списку."
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -1495,6 +1561,10 @@ msgstr "Вимкнути або увімкнути звуки сповіщень
 msgid "Name:"
 msgstr "Ім'я:"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "network"
+msgstr "мережа"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Network Name"
 msgstr "Назва мережі"
@@ -1602,11 +1672,15 @@ msgstr "Медіа-перегляди не завантажені."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
-msgstr ""
+msgstr "Поки що не зафіксовано необробленого IRC-трафіку. Спробуйте підключитися або надіслати повідомлення."
 
 #: src/components/ui/QuickActions.tsx
 msgid "No results found"
 msgstr "Результатів не знайдено"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
+msgstr "Жоден сервер не вибрано. Спочатку оберіть сервер з бічної панелі; запрошувальні посилання керуються окремо для кожного сервера."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
@@ -1953,6 +2027,11 @@ msgstr "Причина (необов'язково)"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Перепідключитися до сервера"
+
+#: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Refresh"
+msgstr "Оновити"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2376,9 +2455,17 @@ msgstr "Це поле обов'язкове"
 msgid "This image has expired"
 msgstr "Термін дії цього зображення минув"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This many people registered through this link"
+msgstr "Стільки людей зареєструвалося через це посилання"
+
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Цей сервер не підтримує розширені метадані профілю (розширення IRCv3 METADATA). Додаткові поля, такі як аватар, відображуване ім'я та статус, недоступні."
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
+msgstr "Цей сервер не підтримує запрошувальні посилання (можливість<0>obby.world/invitation</0>не оголошена). Ви все ще можете нормально спілкуватися; ця панель призначена для мереж на основі obbyircd."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -2525,6 +2612,10 @@ msgstr "Використовувати WebSocket замість звичайно
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Використовуйте шаблони: * відповідає будь-якій послідовності, ? відповідає будь-якому одному символу. Приклади: nick!*@*, *!*@host.com, *!*user@*"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "used"
+msgstr "використано"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -2715,6 +2806,10 @@ msgstr "Ви є IRC-оператором"
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
 msgstr "У вас є незбережені зміни. Ви впевнені, що хочете закрити без збереження?"
 
+#: src/components/ui/InvitationsPanel.tsx
+msgid "You haven't created any invite links yet. Use the form above to mint your first one."
+msgstr "Ви ще не створили жодного запрошувального посилання. Скористайтеся формою вище, щоб створити перше."
+
 #: src/store/handlers/users.ts
 msgid "You invited {target} to join {channel}"
 msgstr "Ви запросили {target} приєднатися до {channel}"
@@ -2730,6 +2825,10 @@ msgstr "Ім'я користувача вашого акаунту для авт
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Ваш псевдонім за замовчуванням для всіх серверів"
+
+#: src/components/ui/InvitationsPanel.tsx
+msgid "Your invite links"
+msgstr "Ваші запрошувальні посилання"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Your messages and settings are stored locally on your device"

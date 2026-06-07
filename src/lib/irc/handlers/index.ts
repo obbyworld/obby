@@ -43,6 +43,7 @@ import {
   handleSaslFailure,
   handleSaslSuccess,
 } from "./connection";
+import { handleInvitelink } from "./invitelink";
 import {
   handleBatch,
   handleNotice,
@@ -308,6 +309,8 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleExtjwt(ctx, serverId, source, parv, mtags),
   PERSISTENCE: (ctx, serverId, source, parv, mtags) =>
     handlePersistence(ctx, serverId, source, parv, mtags),
+  INVITELINK: (ctx, serverId, source, parv, mtags) =>
+    handleInvitelink(ctx, serverId, source, parv, mtags),
   MARKREAD: (ctx, serverId, source, parv, mtags) =>
     handleMarkread(ctx, serverId, source, parv, mtags),
   CMDSLIST: (ctx, serverId, source, parv, mtags) =>

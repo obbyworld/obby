@@ -377,6 +377,25 @@ export type JsonValue =
   | { [key: string]: JsonValue }
   | JsonValue[];
 
+/**
+ * obbyircd invitation share-id entry, as emitted by the server's
+ * `INVITELINK LIST` response. Populated client-side by the dispatch
+ * handler and stored per-server in the UI store so the
+ * InvitationsPanel can render the list without re-querying on every
+ * navigation.
+ *
+ * Spec: doc/specs/whois-batch.md? No — see src/modules/invitation.c
+ * in the obbyircd repo for the wire shapes.
+ */
+export interface InviteLink {
+  shareId: string;
+  channel?: string;
+  createdAt: string; // ISO-8601 from the server
+  redeemCount: number;
+  url: string;
+  description?: string;
+}
+
 export interface WhoisData {
   nick: string;
   username?: string;
