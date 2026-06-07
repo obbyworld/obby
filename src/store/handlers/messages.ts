@@ -19,7 +19,7 @@ import {
   resolveReplyMessage,
   serverSupportsMetadata,
 } from "../helpers";
-import type { AppState } from "../index";
+import { rememberMsgId, rememberMsgIds, type AppState } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
@@ -151,7 +151,8 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             // Track the msgid so subsequent duplicate-echo guards work.
             if (mtags.msgid) {
               store.setState((state) => ({
-                processedMessageIds: new Set(state.processedMessageIds).add(
+                processedMessageIds: rememberMsgId(
+                  state.processedMessageIds,
                   mtags.msgid as string,
                 ),
               }));
@@ -317,10 +318,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
           // Add processed message ID if present
           if (mtags?.msgid) {
-            newState.processedMessageIds = new Set([
-              ...state.processedMessageIds,
+            newState.processedMessageIds = rememberMsgId(
+              state.processedMessageIds,
               mtags.msgid,
-            ]);
+            );
           }
 
           return newState;
@@ -486,10 +487,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               : [];
         if (idsToTrack.length > 0) {
           store.setState((state) => ({
-            processedMessageIds: new Set([
-              ...state.processedMessageIds,
-              ...idsToTrack,
-            ]),
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              idsToTrack,
+            ),
           }));
         }
 
@@ -710,10 +711,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               : [];
         if (idsToTrack.length > 0) {
           store.setState((state) => ({
-            processedMessageIds: new Set([
-              ...state.processedMessageIds,
-              ...idsToTrack,
-            ]),
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              idsToTrack,
+            ),
           }));
         }
 

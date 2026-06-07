@@ -47,6 +47,41 @@ function generateDeterministicId(serverId: string, name: string): string {
   return uuidv5(`${serverId}:${name}`, CHANNEL_NAMESPACE);
 }
 
+const MSG_DEDUP_CAP = 10000;
+const MSG_DEDUP_EVICT_BATCH = 1000;
+
+export function rememberMsgId(set: Set<string>, id: string): Set<string> {
+  if (set.has(id)) return set;
+  const next = new Set(set);
+  next.add(id);
+  if (next.size > MSG_DEDUP_CAP) {
+    const evict = next.size - (MSG_DEDUP_CAP - MSG_DEDUP_EVICT_BATCH);
+    let dropped = 0;
+    for (const v of next) {
+      if (dropped >= evict) break;
+      next.delete(v);
+      dropped++;
+    }
+  }
+  return next;
+}
+
+export function rememberMsgIds(set: Set<string>, ids: string[]): Set<string> {
+  if (ids.length === 0) return set;
+  const next = new Set(set);
+  for (const id of ids) next.add(id);
+  if (next.size > MSG_DEDUP_CAP) {
+    const evict = next.size - (MSG_DEDUP_CAP - MSG_DEDUP_EVICT_BATCH);
+    let dropped = 0;
+    for (const v of next) {
+      if (dropped >= evict) break;
+      next.delete(v);
+      dropped++;
+    }
+  }
+  return next;
+}
+
 // Helper function to normalize host for comparison (extract hostname from URL or return as-is)
 function normalizeHost(host: string): string {
   if (host.includes("://")) {
