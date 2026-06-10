@@ -176,6 +176,17 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
       sender: sender ?? "",
       fragments: [],
     });
+    if (sender) {
+      const key = sender.toLowerCase();
+      store.setState((state) => ({
+        servers: state.servers.map((s) => {
+          if (s.id !== serverId) return s;
+          const current = s.botCommandsLoading ?? [];
+          if (current.includes(key)) return s;
+          return { ...s, botCommandsLoading: [...current, key] };
+        }),
+      }));
+    }
   });
 
   ircClient.on("BATCH_END", ({ serverId, batchId }) => {
@@ -183,6 +194,16 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
     const entry = botCmdsBatches.get(key);
     if (!entry) return;
     botCmdsBatches.delete(key);
+    if (entry.sender) {
+      const nickKey = entry.sender.toLowerCase();
+      store.setState((state) => ({
+        servers: state.servers.map((s) => {
+          if (s.id !== serverId || !s.botCommandsLoading) return s;
+          const next = s.botCommandsLoading.filter((n) => n !== nickKey);
+          return { ...s, botCommandsLoading: next };
+        }),
+      }));
+    }
     const joined = entry.fragments.join("");
     console.log("[bot-cmds] BATCH end", {
       batchId,

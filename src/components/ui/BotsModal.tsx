@@ -80,10 +80,16 @@ const FILTER_LABELS: Record<FilterMode, string> = {
 interface BotRowProps {
   bot: PushBotInfo;
   selected: boolean;
+  loading?: boolean;
   onSelect: () => void;
 }
 
-const BotRow: React.FC<BotRowProps> = ({ bot, selected, onSelect }) => (
+const BotRow: React.FC<BotRowProps> = ({
+  bot,
+  selected,
+  loading,
+  onSelect,
+}) => (
   <button
     type="button"
     onClick={onSelect}
@@ -101,6 +107,12 @@ const BotRow: React.FC<BotRowProps> = ({ bot, selected, onSelect }) => (
         title={bot.online ? t`Gateway connected` : t`Offline`}
       />
       <span className="font-mono text-sm truncate">{bot.nick}</span>
+      {loading && (
+        <span
+          className="ml-1 inline-block w-3 h-3 rounded-full border-2 border-discord-text-muted/40 border-t-discord-blue animate-spin flex-shrink-0"
+          title={t`Receiving command list…`}
+        />
+      )}
       <span
         className={`ml-auto px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide flex-shrink-0 ${SCOPE_BADGE[bot.scope].cls}`}
         title={SCOPE_BADGE[bot.scope].title}
@@ -449,6 +461,10 @@ const BotsModal: React.FC<BotsModalProps> = ({
               key={b.bot_id || b.nick}
               bot={b}
               selected={selectedNick?.toLowerCase() === b.nick.toLowerCase()}
+              loading={
+                server?.botCommandsLoading?.includes(b.nick.toLowerCase()) ??
+                false
+              }
               onSelect={() => onPickBot(b.nick)}
             />
           ))

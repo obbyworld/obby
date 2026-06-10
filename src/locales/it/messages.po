@@ -483,6 +483,10 @@ msgid "Bots"
 msgstr "Bot"
 
 #: src/components/layout/ChatHeader.tsx
+msgid "Bots (loading {botsLoadingCount})"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Bot su questa rete"
@@ -2206,6 +2210,10 @@ msgstr "Motivo (opzionale)"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Ragionamento"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Receiving command list…"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"

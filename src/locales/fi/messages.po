@@ -483,6 +483,10 @@ msgid "Bots"
 msgstr "Botit"
 
 #: src/components/layout/ChatHeader.tsx
+msgid "Bots (loading {botsLoadingCount})"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Tämän verkon botit"
@@ -2206,6 +2210,10 @@ msgstr "Syy (valinnainen)"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Päättely"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Receiving command list…"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"

@@ -97,6 +97,12 @@ export interface Server {
   // as bots come online / register commands / get suspended.  Keyed
   // by lowercased nick.
   bots?: Record<string, PushBotInfo>;
+
+  // Set of lowercased bot nicks currently inside an open draft/bot-cmds
+  // BATCH -- chunked schema is still arriving from the bot.  UI surfaces
+  // this as a spinner on the chat-header bot button and on the matching
+  // row in the bots modal.
+  botCommandsLoading?: string[];
 }
 
 export interface PushBotInfo {

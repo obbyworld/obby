@@ -96,6 +96,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const ui = useStore((state) => state.ui);
   const topicModalRequest = useStore((state) => state.ui.topicModalRequest);
   const profileViewRequest = useStore((state) => state.ui.profileViewRequest);
+  const botsLoadingCount = useStore(
+    (state) =>
+      state.servers.find((s) => s.id === selectedServerId)?.botCommandsLoading
+        ?.length ?? 0,
+  );
   const nativeMobile = isTauriMobile();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -325,8 +330,16 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedChannel,
     },
     {
-      label: t`Bots`,
-      icon: <FaRobot />,
+      label:
+        botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
+      icon: (
+        <span className="relative inline-flex items-center">
+          <FaRobot />
+          {botsLoadingCount > 0 && (
+            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-discord-blue animate-pulse" />
+          )}
+        </span>
+      ),
       onClick: onOpenBots,
       show: !!selectedServerId,
     },

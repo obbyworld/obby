@@ -483,6 +483,10 @@ msgid "Bots"
 msgstr "Botlar"
 
 #: src/components/layout/ChatHeader.tsx
+msgid "Bots (loading {botsLoadingCount})"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Bu ağdaki botlar"
@@ -2206,6 +2210,10 @@ msgstr "Neden (isteğe bağlı)"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Reasoning"
 msgstr "Akıl yürütme"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Receiving command list…"
+msgstr ""
 
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
