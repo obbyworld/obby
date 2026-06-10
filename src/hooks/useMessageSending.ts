@@ -16,13 +16,84 @@ import useStore, { serverSupportsMultiline } from "../store";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
 
 /**
+ * Slash names we'll never dispatch to a bot, even if a bot has
+ * registered a matching command via +draft/bot-cmds.  These are
+ * reserved for the server, services, or the user's own session --
+ * letting a third-party bot intercept "oper" or "ns identify" would
+ * hand it the user's password.
+ */
+const PRIVILEGED_COMMANDS: ReadonlySet<string> = new Set([
+  "oper",
+  "deoper",
+  "ns",
+  "nickserv",
+  "cs",
+  "chanserv",
+  "ms",
+  "memoserv",
+  "os",
+  "operserv",
+  "bs",
+  "botserv",
+  "hs",
+  "hostserv",
+  "identify",
+  "register",
+  "ghost",
+  "recover",
+  "regain",
+  "release",
+  "sajoin",
+  "sapart",
+  "sanick",
+  "samode",
+  "saquit",
+  "kill",
+  "kline",
+  "gline",
+  "zline",
+  "shun",
+  "kick",
+  "mode",
+  "ban",
+  "unban",
+  "akick",
+  "akill",
+  "restart",
+  "rehash",
+  "die",
+  "msg",
+  "query",
+  "sendpass",
+  "setpass",
+  "resetpass",
+  "login",
+  "logout",
+  "auth",
+  "pass",
+  "password",
+  "server",
+  "connect",
+  "squit",
+  "certfp",
+  "tls",
+  "sasl",
+]);
+
+/**
  * Try to dispatch a slash command as a +draft/bot-cmd TAGMSG.
  * Returns true if a matching bot command was found and the TAGMSG
- * was sent.  Resolution order:
- *   1) explicit `/cmd@botnick` syntax targets one bot
- *   2) otherwise scan bots in the current channel for a matching name
- *   3) DM target matches if its nick is a bot
- *   4) server-wide bots (no channel) fall through last
+ * was sent.  Resolution is scoped to bots the user can actually see
+ * as +B in the current view -- never a server-wide name lookup --
+ * so a bot lurking in another channel can't shadow `/oper`, `/ns
+ * identify`, or any other privileged builtin.
+ *
+ *   1) explicit `/cmd@botnick` where botnick is a +B user in the
+ *      current channel or is the current DM peer (and is +B)
+ *   2) otherwise scan +B users in the current channel
+ *   3) DM target if the peer is +B
+ * Privileged names listed in PRIVILEGED_COMMANDS are refused
+ * outright.
  */
 function tryDispatchBotCommand(
   serverId: string,
@@ -31,9 +102,6 @@ function tryDispatchBotCommand(
   rawCmdName: string,
   args: string[],
 ): boolean {
-  const server = useStore.getState().servers.find((s) => s.id === serverId);
-  if (!server?.botCommands) return false;
-  const bots = server.botCommands;
   let target = rawCmdName;
   let cmdName = rawCmdName;
   if (rawCmdName.includes("@")) {
@@ -44,46 +112,57 @@ function tryDispatchBotCommand(
     target = "";
   }
   const lowerCmd = cmdName.toLowerCase();
+  if (PRIVILEGED_COMMANDS.has(lowerCmd)) return false;
+
+  const server = useStore.getState().servers.find((s) => s.id === serverId);
+  if (!server?.botCommands) return false;
+  const bots = server.botCommands;
+
+  const isKnownBotNick = (nick: string): boolean => {
+    const k = nick.toLowerCase();
+    if (server.bots?.[k]) return true;
+    return server.channels.some((c) =>
+      c.users.some((u) => u.username.toLowerCase() === k && u.isBot === true),
+    );
+  };
 
   type Match = { bot: string; cmd: BotCommand };
   const matches: Match[] = [];
-  // explicit target via /cmd@botnick
+  // explicit target via /cmd@botnick -- must be a +B nick in scope
   if (target) {
-    const list = bots[target.toLowerCase()];
-    if (list) {
+    const tkey = target.toLowerCase();
+    const inChannel = !!channel?.users.some(
+      (u) => u.username.toLowerCase() === tkey && u.isBot === true,
+    );
+    const isDmPeer =
+      !!privateChat &&
+      privateChat.username.toLowerCase() === tkey &&
+      isKnownBotNick(privateChat.username);
+    const list = bots[tkey];
+    if (list && (inChannel || isDmPeer)) {
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
       if (cmd) matches.push({ bot: target, cmd });
     }
   }
-  // channel-bot search: any bot we know AND who's in the channel
+  // channel-bot search: must be +B AND in the channel
   if (!matches.length && channel) {
-    const nicksInChannel = new Set(
-      channel.users.map((u) => u.username.toLowerCase()),
-    );
-    for (const [bot, list] of Object.entries(bots)) {
-      if (!nicksInChannel.has(bot)) continue;
+    for (const u of channel.users) {
+      if (u.isBot !== true) continue;
+      const list = bots[u.username.toLowerCase()];
+      if (!list) continue;
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
-      if (cmd) matches.push({ bot, cmd });
+      if (cmd) matches.push({ bot: u.username, cmd });
     }
   }
-  // DM with a bot
-  if (!matches.length && privateChat) {
+  // DM with a bot -- peer must be +B
+  if (!matches.length && privateChat && isKnownBotNick(privateChat.username)) {
     const list = bots[privateChat.username.toLowerCase()];
     if (list) {
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
       if (cmd) matches.push({ bot: privateChat.username, cmd });
     }
   }
-  // server-wide bots (any bot we know that defines the command)
-  if (!matches.length) {
-    for (const [bot, list] of Object.entries(bots)) {
-      const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
-      if (cmd) matches.push({ bot, cmd });
-    }
-  }
   if (!matches.length) return false;
-  // First match wins (channel-scope already preferred over server-scope
-  // by virtue of the lookup ordering above).
   const { bot, cmd } = matches[0];
 
   // Naive arg parsing: map positional args onto declared options in

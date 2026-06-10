@@ -54,6 +54,30 @@ function commitBotCmds(
   cmds: BotCommand[],
 ): void {
   const key = senderNick.toLowerCase();
+  // Don't cache a +draft/bot-cmds payload unless we have independent
+  // evidence the sender is actually a bot: either a server-pushed
+  // entry in s.bots (only the IRCd can emit that) or a +B WHO flag
+  // in a channel we share. Otherwise any nick can ship a forged
+  // payload that shadows real bot commands at slash-dispatch time.
+  const initialState = store.getState();
+  const initialServer = initialState.servers.find((s) => s.id === serverId);
+  if (initialServer) {
+    const knownBot = initialServer.bots?.[key];
+    const seenAsBot =
+      knownBot !== undefined ||
+      initialServer.channels.some((c) =>
+        c.users.some(
+          (u) => u.username.toLowerCase() === key && u.isBot === true,
+        ),
+      );
+    if (!seenAsBot) {
+      console.warn(
+        "[pushbot] dropping +draft/bot-cmds from non-bot sender",
+        senderNick,
+      );
+      return;
+    }
+  }
   store.setState((state) => ({
     servers: state.servers.map((s) => {
       if (s.id !== serverId) return s;

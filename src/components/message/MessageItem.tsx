@@ -726,7 +726,11 @@ export const MessageItem = memo((props: MessageItemProps) => {
           )}
 
           <div className="relative min-w-0">
-            <BotInvocationChip tagValue={message.tags?.["+draft/invoked-by"]} />
+            {isBot && (
+              <BotInvocationChip
+                tagValue={message.tags?.["+draft/invoked-by"]}
+              />
+            )}
             {message.replyMessage && (
               <MessageReply
                 replyMessage={message.replyMessage}

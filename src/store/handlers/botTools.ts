@@ -209,10 +209,10 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
         // so the generic CHANMSG handler (which runs after this one)
         // skips appending its own duplicate row.
         if (fromPrivmsg) {
-          const processedMessageIds = mtags?.msgid
-            ? new Set([...state.processedMessageIds, mtags.msgid])
-            : state.processedMessageIds;
           if (idx >= 0) {
+            const processedMessageIds = mtags?.msgid
+              ? new Set([...state.processedMessageIds, mtags.msgid])
+              : state.processedMessageIds;
             // Resolve reply + mentions the same way the generic CHANMSG
             // handler would, so the morphed row reads identically to a
             // plain bot reply (quote block, ping highlight, etc.) and
@@ -251,7 +251,11 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
               processedMessageIds,
             };
           }
-          return { aiWorkflows, processedMessageIds };
+          // No placeholder to morph (bot skipped 'start', or we joined
+          // mid-workflow). Leave processedMessageIds untouched so the
+          // generic CHANMSG/USERMSG handler renders the bot's final
+          // answer as a normal chat row instead of deduping it away.
+          return { aiWorkflows };
         }
 
         // Terminal-state TAGMSG and the placeholder is still pending

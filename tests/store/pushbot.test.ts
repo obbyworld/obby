@@ -10,7 +10,27 @@ function setupServer() {
         name: "TestServer",
         host: "irc.example.com",
         port: 6667,
-        channels: [],
+        channels: [
+          {
+            id: "chan-1",
+            name: "#bots",
+            topic: "",
+            users: [
+              {
+                id: "Weather",
+                username: "Weather",
+                isOnline: true,
+                isBot: true,
+              },
+            ],
+            messages: [],
+            isPrivate: false,
+            unreadCount: 0,
+            isMentioned: false,
+            hasNewMessages: false,
+            modes: { mode: "", parameters: [] },
+          },
+        ],
         privateChats: [],
         isConnected: true,
         users: [],
