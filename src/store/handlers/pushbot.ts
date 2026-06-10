@@ -149,10 +149,12 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
     }
   });
 
-  ircClient.on("BATCH_START", ({ serverId, batchId, type, parameters }) => {
+  ircClient.on("BATCH_START", ({ serverId, batchId, type, sender }) => {
     if (type !== "draft/bot-cmds") return;
-    const sender = parameters?.[0] ?? "";
-    botCmdsBatches.set(`${serverId}:${batchId}`, { sender, fragments: [] });
+    botCmdsBatches.set(`${serverId}:${batchId}`, {
+      sender: sender ?? "",
+      fragments: [],
+    });
   });
 
   ircClient.on("BATCH_END", ({ serverId, batchId }) => {

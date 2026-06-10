@@ -115,6 +115,7 @@ export interface EventMap {
     batchId: string;
     type: string;
     parameters?: string[];
+    sender?: string;
   };
   BATCH_END: BaseIRCEvent & { batchId: string };
   MULTILINE_MESSAGE: BaseMessageEvent & {
