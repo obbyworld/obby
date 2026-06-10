@@ -44,6 +44,24 @@ function decodeBotInfo(value: string): PushBotInfo | null {
   return null;
 }
 
+type BotCmdsFragments = { sender: string; fragments: string[] };
+const botCmdsBatches = new Map<string, BotCmdsFragments>();
+
+function commitBotCmds(
+  store: StoreApi<AppState>,
+  serverId: string,
+  senderNick: string,
+  cmds: BotCommand[],
+): void {
+  const key = senderNick.toLowerCase();
+  store.setState((state) => ({
+    servers: state.servers.map((s) => {
+      if (s.id !== serverId) return s;
+      return { ...s, botCommands: { ...(s.botCommands ?? {}), [key]: cmds } };
+    }),
+  }));
+}
+
 export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   // When WHO completes for a channel, pre-fetch slash-command schemas
   // for any +B users we now share a channel with so the autocomplete
@@ -105,15 +123,15 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
     if (!botNick) return;
 
     if (mtags["+draft/bot-cmds"]) {
+      const batchRef = mtags.batch;
+      if (batchRef && botCmdsBatches.has(`${serverId}:${batchRef}`)) {
+        botCmdsBatches
+          .get(`${serverId}:${batchRef}`)
+          ?.fragments.push(mtags["+draft/bot-cmds"]);
+        return;
+      }
       const cmds = decodeBotCmds(mtags["+draft/bot-cmds"]);
-      if (!cmds) return;
-      store.setState((state) => ({
-        servers: state.servers.map((s) => {
-          if (s.id !== serverId) return s;
-          const next = { ...(s.botCommands ?? {}), [botNick]: cmds };
-          return { ...s, botCommands: next };
-        }),
-      }));
+      if (cmds) commitBotCmds(store, serverId, sender, cmds);
       return;
     }
 
@@ -129,6 +147,22 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
       }));
       // refetch on next slash invocation; UI doesn't need a proactive query
     }
+  });
+
+  ircClient.on("BATCH_START", ({ serverId, batchId, type, parameters }) => {
+    if (type !== "draft/bot-cmds") return;
+    const sender = parameters?.[0] ?? "";
+    botCmdsBatches.set(`${serverId}:${batchId}`, { sender, fragments: [] });
+  });
+
+  ircClient.on("BATCH_END", ({ serverId, batchId }) => {
+    const key = `${serverId}:${batchId}`;
+    const entry = botCmdsBatches.get(key);
+    if (!entry) return;
+    botCmdsBatches.delete(key);
+    if (!entry.fragments.length) return;
+    const cmds = decodeBotCmds(entry.fragments.join(""));
+    if (cmds) commitBotCmds(store, serverId, entry.sender, cmds);
   });
 }
 

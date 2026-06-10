@@ -1,4 +1,4 @@
-// When a bot's channel reply carries `+obby.world/invoked-by`, this
+// When a bot's channel reply carries `+draft/invoked-by`, this
 // chip renders above the message body to show who ran the slash
 // command and which arguments they passed.  The slash command itself
 // is sent as a TAGMSG (no chat-visible message), so without this
