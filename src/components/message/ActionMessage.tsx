@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import type React from "react";
 import ircClient from "../../lib/ircClient";
 import type { MessageType, User } from "../../types";
+import { BotInvocationChip } from "./BotInvocationChip";
 import { MessageAvatar } from "./MessageAvatar";
 import { MessageReply } from "./MessageReply";
 import { ReactionsWithActions } from "./ReactionsWithActions";
@@ -87,6 +88,7 @@ export const ActionMessage: React.FC<ActionMessageProps> = ({
               {formatTime(new Date(message.timestamp))}
             </span>
           </div>
+          <BotInvocationChip tagValue={message.tags?.["+draft/invoked-by"]} />
           {message.replyMessage && (
             <MessageReply replyMessage={message.replyMessage} theme="discord" />
           )}
