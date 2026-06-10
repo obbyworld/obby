@@ -610,12 +610,22 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <FaUserPlus />
               </button>
               <button
-                className="hidden md:block hover:text-discord-text-normal"
+                className="hidden md:block hover:text-discord-text-normal relative"
                 onClick={onOpenBots}
-                title={t`Bots on this network`}
+                title={
+                  botsLoadingCount > 0
+                    ? t`Bots — receiving ${botsLoadingCount} command list(s)`
+                    : t`Bots on this network`
+                }
                 aria-label={t`Bots`}
               >
                 <FaRobot />
+                {botsLoadingCount > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-discord-blue ring-2 ring-discord-dark-500 animate-pulse"
+                    aria-hidden="true"
+                  />
+                )}
               </button>
               <button
                 className="hidden md:block hover:text-discord-text-normal"

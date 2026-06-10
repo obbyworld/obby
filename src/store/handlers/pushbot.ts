@@ -58,16 +58,19 @@ function commitBotCmds(
     servers: state.servers.map((s) => {
       if (s.id !== serverId) return s;
       const existingBot = s.bots?.[key];
+      const sharedChannels = s.channels
+        .filter((c) => c.users.some((u) => u.username.toLowerCase() === key))
+        .map((c) => c.name);
       const synthesisedBot: PushBotInfo = existingBot ?? {
         bot_id: `draft-bot-cmds:${key}`,
         nick: senderNick,
         realname: "",
-        scope: "server",
+        scope: "channel",
         transport: "gateway",
         status: "active",
         online: true,
         from_config: false,
-        channels: [],
+        channels: sharedChannels,
         commands: cmds,
       };
       return {
@@ -75,7 +78,9 @@ function commitBotCmds(
         botCommands: { ...(s.botCommands ?? {}), [key]: cmds },
         bots: {
           ...(s.bots ?? {}),
-          [key]: { ...synthesisedBot, commands: cmds },
+          [key]: existingBot
+            ? { ...existingBot, commands: cmds }
+            : { ...synthesisedBot, channels: sharedChannels, commands: cmds },
         },
       };
     }),

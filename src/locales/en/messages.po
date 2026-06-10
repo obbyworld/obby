@@ -482,6 +482,10 @@ msgid "Bots"
 msgstr "Bots"
 
 #: src/components/layout/ChatHeader.tsx
+msgid "Bots — receiving {botsLoadingCount} command list(s)"
+msgstr "Bots — receiving {botsLoadingCount} command list(s)"
+
+#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bots (loading {botsLoadingCount})"
 
