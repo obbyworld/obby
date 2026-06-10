@@ -151,6 +151,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("BATCH_START", ({ serverId, batchId, type, sender }) => {
     if (type !== "draft/bot-cmds") return;
+    console.log("[bot-cmds] BATCH start", { batchId, sender });
     botCmdsBatches.set(`${serverId}:${batchId}`, {
       sender: sender ?? "",
       fragments: [],
@@ -162,9 +163,26 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
     const entry = botCmdsBatches.get(key);
     if (!entry) return;
     botCmdsBatches.delete(key);
+    const joined = entry.fragments.join("");
+    console.log("[bot-cmds] BATCH end", {
+      batchId,
+      sender: entry.sender,
+      fragments: entry.fragments.length,
+      joinedLength: joined.length,
+    });
     if (!entry.fragments.length) return;
-    const cmds = decodeBotCmds(entry.fragments.join(""));
-    if (cmds) commitBotCmds(store, serverId, entry.sender, cmds);
+    const cmds = decodeBotCmds(joined);
+    if (cmds) {
+      console.log("[bot-cmds] decoded ok", { count: cmds.length });
+      commitBotCmds(store, serverId, entry.sender, cmds);
+    } else {
+      console.warn(
+        "[bot-cmds] DECODE FAILED — sample base64:",
+        joined.slice(0, 80),
+        "...",
+        joined.slice(-80),
+      );
+    }
   });
 }
 
