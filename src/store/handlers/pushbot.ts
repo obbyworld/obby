@@ -57,7 +57,27 @@ function commitBotCmds(
   store.setState((state) => ({
     servers: state.servers.map((s) => {
       if (s.id !== serverId) return s;
-      return { ...s, botCommands: { ...(s.botCommands ?? {}), [key]: cmds } };
+      const existingBot = s.bots?.[key];
+      const synthesisedBot: PushBotInfo = existingBot ?? {
+        bot_id: `draft-bot-cmds:${key}`,
+        nick: senderNick,
+        realname: "",
+        scope: "server",
+        transport: "gateway",
+        status: "active",
+        online: true,
+        from_config: false,
+        channels: [],
+        commands: cmds,
+      };
+      return {
+        ...s,
+        botCommands: { ...(s.botCommands ?? {}), [key]: cmds },
+        bots: {
+          ...(s.bots ?? {}),
+          [key]: { ...synthesisedBot, commands: cmds },
+        },
+      };
     }),
   }));
 }
