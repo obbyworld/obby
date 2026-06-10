@@ -561,7 +561,8 @@ const BotsModal: React.FC<BotsModalProps> = ({
   }
 
   // ── desktop: backdrop + centered card with sidebar + content ───────
-  return (
+  const portalTarget = document.getElementById("root") || document.body;
+  return createPortal(
     <div
       {...getBackdropProps()}
       className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] modal-container"
@@ -601,7 +602,8 @@ const BotsModal: React.FC<BotsModalProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    portalTarget,
   );
 };
 

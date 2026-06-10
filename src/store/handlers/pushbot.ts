@@ -187,8 +187,36 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
         servers: state.servers.map((s) => {
           if (s.id !== serverId) return s;
           const current = s.botCommandsLoading ?? [];
-          if (current.includes(key)) return s;
-          return { ...s, botCommandsLoading: [...current, key] };
+          const loadingNext = current.includes(key)
+            ? current
+            : [...current, key];
+          // Insert a placeholder PushBotInfo so the modal renders this
+          // bot as a row immediately, with the spinner from
+          // botCommandsLoading. Real commands replace it on BATCH_END.
+          const sharedChannels = s.channels
+            .filter((c) =>
+              c.users.some((u) => u.username.toLowerCase() === key),
+            )
+            .map((c) => c.name);
+          const existingBot = s.bots?.[key];
+          const botsNext = existingBot
+            ? s.bots
+            : {
+                ...(s.bots ?? {}),
+                [key]: {
+                  bot_id: `draft-bot-cmds:${key}`,
+                  nick: sender,
+                  realname: "",
+                  scope: "channel",
+                  transport: "gateway",
+                  status: "active",
+                  online: true,
+                  from_config: false,
+                  channels: sharedChannels,
+                  commands: [],
+                } satisfies PushBotInfo,
+              };
+          return { ...s, botCommandsLoading: loadingNext, bots: botsNext };
         }),
       }));
     }
