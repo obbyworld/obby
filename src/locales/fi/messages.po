@@ -476,7 +476,6 @@ msgid "Bot"
 msgstr "Botti"
 
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""

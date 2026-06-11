@@ -475,7 +475,6 @@ msgid "Bot"
 msgstr "Bot"
 
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr "Bot Commands"

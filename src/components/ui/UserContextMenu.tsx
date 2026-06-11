@@ -71,7 +71,24 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
   );
   const requestBotsModalOpen = useStore((state) => state.requestBotsModalOpen);
   const [botCommandsOpen, setBotCommandsOpen] = useState(false);
-  const botSubmenuRef = useRef<HTMLDivElement>(null);
+  const botRowRef = useRef<HTMLButtonElement>(null);
+  const botCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [botSubmenuPos, setBotSubmenuPos] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
+  const cancelBotClose = () => {
+    if (botCloseTimer.current) {
+      clearTimeout(botCloseTimer.current);
+      botCloseTimer.current = null;
+    }
+  };
+  const scheduleBotClose = () => {
+    cancelBotClose();
+    botCloseTimer.current = setTimeout(() => {
+      setBotCommandsOpen(false);
+    }, 150);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -272,86 +289,56 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
             </span>
           </button>
           {isBot && botCommands && botCommands.length > 0 && (
-            <div
-              className="relative"
-              onMouseEnter={() => setBotCommandsOpen(true)}
-              onMouseLeave={() => setBotCommandsOpen(false)}
-              ref={botSubmenuRef}
+            <button
+              ref={botRowRef}
+              type="button"
+              onMouseEnter={() => {
+                cancelBotClose();
+                const r = botRowRef.current?.getBoundingClientRect();
+                if (r) {
+                  setBotSubmenuPos({ left: r.right + 4, top: r.top });
+                }
+                setBotCommandsOpen(true);
+              }}
+              onMouseLeave={scheduleBotClose}
+              onClick={() => {
+                cancelBotClose();
+                const r = botRowRef.current?.getBoundingClientRect();
+                if (r) {
+                  setBotSubmenuPos({ left: r.right + 4, top: r.top });
+                }
+                setBotCommandsOpen((v) => !v);
+              }}
+              className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
+              aria-haspopup="menu"
+              aria-expanded={botCommandsOpen}
             >
-              <button
-                type="button"
-                onClick={() => setBotCommandsOpen((v) => !v)}
-                className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
-                aria-haspopup="menu"
-                aria-expanded={botCommandsOpen}
-                title={t`Bot Commands`}
+              <svg
+                className="w-4 h-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-4 h-4 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 9l3 3-3 3M13 15h3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
-                  />
-                </svg>
-                <span className="truncate flex-1">
-                  <Trans>Bot Commands</Trans>
-                </span>
-                <span className="text-xs text-discord-text-muted">
-                  {botCommands.length}
-                </span>
-                <span
-                  className="text-discord-text-muted text-xs"
-                  aria-hidden="true"
-                >
-                  ▸
-                </span>
-              </button>
-              {botCommandsOpen && (
-                <div
-                  className="absolute left-full top-0 ml-1 w-64 bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl py-1 max-h-[60vh] overflow-y-auto z-[100001]"
-                  role="menu"
-                  // Keep submenu mounted while pointer is in it
-                  onMouseEnter={() => setBotCommandsOpen(true)}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      requestBotsModalOpen(serverId, username);
-                      onClose();
-                    }}
-                    className="w-full px-3 py-2 text-left text-discord-blue text-xs font-semibold hover:bg-discord-dark-200 transition-colors sticky top-0 bg-discord-dark-300 border-b border-discord-dark-500"
-                  >
-                    <Trans>Show in Bots Menu →</Trans>
-                  </button>
-                  {botCommands.map((c) => (
-                    <button
-                      key={c.name}
-                      type="button"
-                      onClick={() => {
-                        if (onPickBotCommand) onPickBotCommand(username, c);
-                        onClose();
-                      }}
-                      className="w-full px-3 py-1.5 text-left hover:bg-discord-dark-200 transition-colors"
-                    >
-                      <div className="font-mono text-xs text-discord-text-link">
-                        /{c.name}
-                      </div>
-                      {c.description && (
-                        <div className="text-discord-text-muted text-[11px] truncate">
-                          {c.description}
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 9l3 3-3 3M13 15h3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
+                />
+              </svg>
+              <span className="truncate flex-1">
+                <Trans>Bot Commands</Trans>
+              </span>
+              <span className="text-xs text-discord-text-muted">
+                {botCommands.length}
+              </span>
+              <span
+                className="text-discord-text-muted text-xs"
+                aria-hidden="true"
+              >
+                ▸
+              </span>
+            </button>
           )}
           {!isOwnUser && (
             <button
@@ -495,6 +482,60 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
           )}
         </div>
       </div>
+      {/* Bot Commands flyout — portal-sibling of the main menu so it
+          isn't clipped by the menu's overflow-y-auto.  Positioned in
+          viewport coords from the row's bounding rect. */}
+      {botCommandsOpen &&
+        botCommands &&
+        botCommands.length > 0 &&
+        botSubmenuPos && (
+          <div
+            className="fixed w-64 bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl py-1 max-h-[60vh] overflow-y-auto z-[100001]"
+            style={{
+              left: Math.min(botSubmenuPos.left, window.innerWidth - 260),
+              top: Math.min(
+                botSubmenuPos.top,
+                window.innerHeight -
+                  Math.min(window.innerHeight * 0.6, 400) -
+                  10,
+              ),
+            }}
+            role="menu"
+            onMouseEnter={cancelBotClose}
+            onMouseLeave={scheduleBotClose}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                requestBotsModalOpen(serverId, username);
+                onClose();
+              }}
+              className="w-full px-3 py-2 text-left text-discord-blue text-xs font-semibold hover:bg-discord-dark-200 transition-colors sticky top-0 bg-discord-dark-300 border-b border-discord-dark-500"
+            >
+              <Trans>Show in Bots Menu →</Trans>
+            </button>
+            {botCommands.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                onClick={() => {
+                  if (onPickBotCommand) onPickBotCommand(username, c);
+                  onClose();
+                }}
+                className="w-full px-3 py-1.5 text-left hover:bg-discord-dark-200 transition-colors"
+              >
+                <div className="font-mono text-xs text-discord-text-link">
+                  /{c.name}
+                </div>
+                {c.description && (
+                  <div className="text-discord-text-muted text-[11px] truncate">
+                    {c.description}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
     </>
   );
 
