@@ -15,7 +15,22 @@ interface BotToolsPlaceholderBodyProps {
   workflowId: string;
 }
 
-const MAX_PARAM_CHARS = 32;
+const MAX_PARAM_VALUE_CHARS = 10;
+
+function truncateValue(v: unknown): string {
+  let s: string;
+  if (typeof v === "string") s = v;
+  else if (v == null) return "";
+  else s = JSON.stringify(v) ?? "";
+  return s.length > MAX_PARAM_VALUE_CHARS
+    ? `${s.slice(0, MAX_PARAM_VALUE_CHARS - 1)}…`
+    : s;
+}
+
+interface ParamPair {
+  key: string;
+  value: string;
+}
 
 function stepGlyph(state: AiStep["state"]) {
   switch (state) {
@@ -36,40 +51,34 @@ function stepGlyph(state: AiStep["state"]) {
 
 // Render the tool-call's params object as a single truncated string the
 // pill can wear. The bot publishes them as arbitrary JSON, so this is
-// best-effort: prefer a `query` / `q` / `prompt` / `path` / `cmd` field
-// because those carry the most signal, otherwise compact-JSON the whole
-// thing.  Never renders raw HTML; the pill's `truncate` class clips at
-// the box.
-function paramSummary(content: unknown): string {
-  if (content == null) return "";
-  if (typeof content === "string") {
-    return content.length > MAX_PARAM_CHARS
-      ? `${content.slice(0, MAX_PARAM_CHARS - 1)}…`
-      : content;
+// Decode the tool-call's `content` (arbitrary JSON the bot publishes)
+// into ParamPair[] for pill rendering.  Each value is truncated to 10
+// characters; the key is shown verbatim.  Primitive / string content is
+// surfaced as a single anonymous pair.
+function paramPairs(content: unknown): ParamPair[] {
+  if (content == null) return [];
+  if (
+    typeof content === "string" ||
+    typeof content === "number" ||
+    typeof content === "boolean"
+  ) {
+    return [{ key: "", value: truncateValue(content) }];
   }
-  if (typeof content === "number" || typeof content === "boolean") {
-    return String(content);
-  }
-  if (typeof content === "object") {
-    const obj = content as Record<string, unknown>;
-    for (const key of ["query", "q", "prompt", "path", "cmd", "name", "url"]) {
-      const v = obj[key];
-      if (typeof v === "string" && v.length > 0) {
-        return v.length > MAX_PARAM_CHARS
-          ? `${v.slice(0, MAX_PARAM_CHARS - 1)}…`
-          : v;
-      }
+  if (typeof content === "object" && !Array.isArray(content)) {
+    const out: ParamPair[] = [];
+    for (const [k, v] of Object.entries(content as Record<string, unknown>)) {
+      if (v == null || v === "") continue;
+      out.push({ key: k, value: truncateValue(v) });
     }
-    try {
-      const json = JSON.stringify(content);
-      return json.length > MAX_PARAM_CHARS
-        ? `${json.slice(0, MAX_PARAM_CHARS - 1)}…`
-        : json;
-    } catch {
-      return "";
-    }
+    return out;
   }
-  return "";
+  if (Array.isArray(content)) {
+    return content.slice(0, 4).map((v, i) => ({
+      key: String(i),
+      value: truncateValue(v),
+    }));
+  }
+  return [];
 }
 
 // While a workflow is running, the bot's PRIVMSG row is a placeholder
@@ -130,25 +139,36 @@ export const BotToolsPlaceholderBody: React.FC<
         )}
       </div>
       {callSteps.length > 0 && (
-        <div className="flex gap-1 overflow-x-auto pb-1 -mb-1 max-w-full pl-4">
+        <div className="flex flex-wrap gap-1 pl-4">
           {callSteps.map((step) => {
-            const params = paramSummary(step.content);
+            const pairs = paramPairs(step.content);
             const tool = step.tool ?? step.label ?? "tool";
+            const tooltip = pairs.length
+              ? `${tool}(${pairs.map((p) => (p.key ? `${p.key}=${p.value}` : p.value)).join(", ")})`
+              : tool;
             return (
               <span
                 key={step.sid}
-                className="inline-flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full bg-discord-dark-300 border border-discord-dark-400 not-italic"
-                title={params ? `${tool} · ${params}` : tool}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-discord-dark-300 border border-discord-dark-400 not-italic max-w-full"
+                title={tooltip}
               >
                 <span className="shrink-0">{stepGlyph(step.state)}</span>
-                <span className="text-discord-text-normal text-[11px] font-mono">
+                <span className="text-discord-text-normal text-[11px] font-mono shrink-0">
                   {tool}
                 </span>
-                {params && (
-                  <span className="text-discord-text-muted text-[11px] font-mono max-w-[18ch] truncate">
-                    {params}
+                {pairs.map((p, i) => (
+                  <span
+                    key={`${step.sid}-${i}`}
+                    className="text-discord-text-muted text-[11px] font-mono inline-flex items-center gap-0.5"
+                  >
+                    {p.key && (
+                      <span className="text-discord-text-muted/60">
+                        {p.key}=
+                      </span>
+                    )}
+                    <span className="text-discord-text-normal">{p.value}</span>
                   </span>
-                )}
+                ))}
               </span>
             );
           })}

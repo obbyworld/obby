@@ -719,6 +719,8 @@ msgstr "用戶端限制 (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -973,10 +975,6 @@ msgstr "探索"
 #: src/components/ui/HomeScreen.tsx
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "使用 ObsidianIRC 探索 IRC 的世界"
-
-#: src/components/ui/BotToolsCard.tsx
-msgid "Dismiss"
-msgstr "關閉"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"

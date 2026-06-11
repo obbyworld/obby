@@ -7,7 +7,11 @@ import {
   FaSpinner,
   FaTimesCircle,
 } from "react-icons/fa";
-import { countableSteps } from "../../lib/botTools";
+import {
+  countableSteps,
+  effectiveWorkflowState,
+  isStale,
+} from "../../lib/botTools";
 import type { AiWorkflow } from "../../store";
 import useStore from "../../store";
 import LoadingSpinner from "./LoadingSpinner";
@@ -24,6 +28,7 @@ const ACTIVE_STATES: ReadonlySet<AiWorkflow["state"]> = new Set([
 ]);
 
 function isActive(w: AiWorkflow): boolean {
+  if (isStale(w)) return false;
   return ACTIVE_STATES.has(w.state);
 }
 
@@ -218,7 +223,7 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                             className="w-full flex items-start gap-2.5 pl-9 pr-3 py-2 text-left hover:bg-discord-dark-400/60 transition-colors"
                           >
                             <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
-                              {stateGlyph(w.state)}
+                              {stateGlyph(effectiveWorkflowState(w))}
                             </span>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-baseline gap-1.5">
@@ -231,10 +236,13 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                               </div>
                               <div className="text-[10px] text-discord-text-muted">
                                 <Trans>{countableSteps(w.steps)} step(s)</Trans>
-                                {w.state !== "running" &&
-                                  w.state !== "start" && (
-                                    <span> · {w.state}</span>
-                                  )}
+                                {(() => {
+                                  const eff = effectiveWorkflowState(w);
+                                  if (eff === "running" || eff === "start")
+                                    return null;
+                                  const label = isStale(w) ? "timed out" : eff;
+                                  return <span> · {label}</span>;
+                                })()}
                               </div>
                             </div>
                           </button>

@@ -13,6 +13,10 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "./base64";
 export const BOT_TOOLS_TAG = "+draft/bot-tools";
 export const BOT_TOOLS_CAP = "draft/bot-tools";
 
+// After this much elapsed time without a terminal state, a workflow is
+// shown as timed out so a stuck card doesn't sit "running" forever.
+export const WORKFLOW_TIMEOUT_MS = 10 * 60 * 1000;
+
 export type AiWorkflowState =
   | "start"
   | "reasoning"
@@ -20,6 +24,31 @@ export type AiWorkflowState =
   | "complete"
   | "failed"
   | "cancelled";
+
+/** True when the workflow is in a state the bot will not advance from. */
+export function isTerminalState(state: AiWorkflowState): boolean {
+  return state === "complete" || state === "failed" || state === "cancelled";
+}
+
+/** True when the workflow has been open longer than WORKFLOW_TIMEOUT_MS
+ *  and has not reached a terminal state. */
+export function isStale(
+  workflow: { state: AiWorkflowState; startedAt: number },
+  now: number = Date.now(),
+): boolean {
+  if (isTerminalState(workflow.state)) return false;
+  return now - workflow.startedAt > WORKFLOW_TIMEOUT_MS;
+}
+
+/** Effective state for UI: the wire state if terminal, "failed" when
+ *  stale, else the wire state. */
+export function effectiveWorkflowState(
+  workflow: { state: AiWorkflowState; startedAt: number },
+  now: number = Date.now(),
+): AiWorkflowState {
+  if (isStale(workflow, now)) return "failed";
+  return workflow.state;
+}
 
 // Behaviours a bot advertises on its workflow `start` message so a client can
 // show the right controls before any step arrives.

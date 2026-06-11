@@ -12,6 +12,11 @@ import {
   FaTimes,
   FaTimesCircle,
 } from "react-icons/fa";
+import {
+  effectiveWorkflowState,
+  isTerminalState,
+  WORKFLOW_TIMEOUT_MS,
+} from "../../lib/botTools";
 import type { AiStep, AiWorkflow } from "../../store";
 import useStore from "../../store";
 
@@ -364,10 +369,20 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
     return undefined;
   });
 
-  const isTerminal =
-    workflow.state === "complete" ||
-    workflow.state === "failed" ||
-    workflow.state === "cancelled";
+  // Re-render at the 10-minute timeout boundary so a still-running
+  // workflow flips to "timed out" without a user interaction.
+  const [, forceTick] = useState(0);
+  useEffect(() => {
+    if (isTerminalState(workflow.state)) return;
+    const elapsed = Date.now() - workflow.startedAt;
+    const remaining = WORKFLOW_TIMEOUT_MS - elapsed;
+    if (remaining <= 0) return;
+    const id = setTimeout(() => forceTick((n) => n + 1), remaining + 50);
+    return () => clearTimeout(id);
+  }, [workflow.state, workflow.startedAt]);
+
+  const displayState = effectiveWorkflowState(workflow);
+  const isTerminal = isTerminalState(displayState);
 
   const onToggle = () =>
     setCollapsed(workflow.serverId, workflow.id, !workflow.collapsed);
@@ -488,7 +503,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
         aria-expanded={!workflow.collapsed}
       >
         <span className="w-6 h-6 flex items-center justify-center shrink-0">
-          {workflowHeaderIcon(workflow.state)}
+          {workflowHeaderIcon(displayState)}
         </span>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-white truncate flex items-center gap-1.5">
@@ -506,20 +521,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
             </div>
           )}
         </div>
-        {isTerminal && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              dismiss(workflow.serverId, workflow.id);
-            }}
-            className="text-discord-text-muted hover:text-white p-1 rounded"
-            aria-label={t`Dismiss`}
-          >
-            <FaTimes className="text-xs" />
-          </button>
-        )}
-        {!isTerminal && (
+        {!isTerminal && workflow.state !== "complete" && (
           <button
             type="button"
             onClick={onCancel}
@@ -529,6 +531,21 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
             <Trans>Stop</Trans>
           </button>
         )}
+        {/* Permanent close — hides the card from the tray regardless
+            of state.  The workflow is still in the history dropdown
+            and can be re-opened from there. */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            dismiss(workflow.serverId, workflow.id);
+          }}
+          className="text-discord-text-muted hover:text-white p-1 rounded"
+          aria-label={t`Close`}
+          title={t`Close`}
+        >
+          <FaTimes className="text-xs" />
+        </button>
         <span className="text-discord-text-muted shrink-0 ml-1">
           {workflow.collapsed ? (
             <FaChevronDown className="text-xs" />

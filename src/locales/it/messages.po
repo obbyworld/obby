@@ -719,6 +719,8 @@ msgstr "Limite client (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -973,10 +975,6 @@ msgstr "Scopri"
 #: src/components/ui/HomeScreen.tsx
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Scopri il mondo di IRC con ObsidianIRC"
-
-#: src/components/ui/BotToolsCard.tsx
-msgid "Dismiss"
-msgstr "Ignora"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"

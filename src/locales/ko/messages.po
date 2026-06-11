@@ -719,6 +719,8 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -973,10 +975,6 @@ msgstr "채널 탐색"
 #: src/components/ui/HomeScreen.tsx
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "ObsidianIRC와 함께 IRC의 세계를 탐험하세요"
-
-#: src/components/ui/BotToolsCard.tsx
-msgid "Dismiss"
-msgstr "닫기"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"
