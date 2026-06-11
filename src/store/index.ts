@@ -542,6 +542,13 @@ export interface AiWorkflow {
   // channel doesn't pop a wall of old workflow cards; they still
   // appear in the history popover for inspection.
   historical: boolean;
+  // True once the user has explicitly opened the floating card -- either
+  // via the chat-header workflow icon's dropdown, or via the "view
+  // workflow" affordance on a closed PRIVMSG.  Without this flag we'd
+  // pop a card automatically on every workflow start, which gets
+  // invasive when several bots are working at once.  Reset on dismiss
+  // so closing the card hides it from the tray again.
+  userOpened?: boolean;
 }
 
 export interface AppState {
@@ -4027,7 +4034,7 @@ const useStore = create<AppState>((set, get) => ({
           ...state.aiWorkflows,
           [serverId]: {
             ...server,
-            [workflowId]: { ...wf, dismissed: true },
+            [workflowId]: { ...wf, dismissed: true, userOpened: false },
           },
         },
       };
@@ -4043,6 +4050,9 @@ const useStore = create<AppState>((set, get) => ({
       // keep the tray quiet on channel-join chathistory replay, but
       // once the user has explicitly clicked the inline pill to view
       // this run they want the card surfaced even if it was replayed.
+      // userOpened is what BotToolsTray gates on now (live workflows
+      // no longer auto-pop), so setting it here is what makes the
+      // dropdown's "View" item actually surface the card.
       return {
         aiWorkflows: {
           ...state.aiWorkflows,
@@ -4053,6 +4063,7 @@ const useStore = create<AppState>((set, get) => ({
               dismissed: false,
               collapsed: false,
               historical: false,
+              userOpened: true,
             },
           },
         },

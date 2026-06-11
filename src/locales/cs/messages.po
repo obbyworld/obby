@@ -84,6 +84,11 @@ msgstr "{0} krok(ů)"
 msgid "{0} step(s) awaiting approval"
 msgstr "{0} krok(ů) čeká na schválení"
 
+#. placeholder {0}: list.length
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "{0} workflow(s)"
+msgstr ""
+
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
 #. placeholder {2}: typingUsers[2].username
@@ -3116,8 +3121,17 @@ msgid "Will default to 'no reason' if left empty"
 msgstr "Výchozí bude 'bez důvodu', pokud ponecháte prázdné"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
+msgid "Workflow"
+msgstr ""
+
+#: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
 msgstr "Historie pracovních postupů"
+
+#. placeholder {0}: workflows.length
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "Workflow history ({0}, {activeTotal} active)"
+msgstr ""
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
