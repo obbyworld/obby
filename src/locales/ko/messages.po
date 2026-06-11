@@ -178,6 +178,10 @@ msgstr "<0>💡 권장사항:</0> 이 서버를 신뢰하고 위험을 충분히
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>위험:</0> 민감한 정보(메시지, 비공개 대화, 인증 정보)가 네트워크 관리자나 IRC 서버 간에 위치한 공격자에게 노출될 수 있습니다."
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "About this attribution"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "계정"
@@ -1322,6 +1326,10 @@ msgstr "수신"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "정보:"
+
+#: src/components/message/BotInvocationChip.tsx
+msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
+msgstr ""
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"

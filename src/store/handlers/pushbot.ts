@@ -12,6 +12,10 @@
 import type { StoreApi } from "zustand";
 import { base64DecodeUtf8 } from "../../lib/base64";
 import ircClient from "../../lib/ircClient";
+import {
+  botCanRegisterPrivileged,
+  PRIVILEGED_COMMANDS,
+} from "../../lib/privilegedCommands";
 import type { BotCommand, PushBotInfo } from "../../types";
 import useStore, { type AppState } from "../index";
 
@@ -82,6 +86,23 @@ function commitBotCmds(
     servers: state.servers.map((s) => {
       if (s.id !== serverId) return s;
       const existingBot = s.bots?.[key];
+      // Strip privileged command names unless this bot is config-defined.
+      // A channel bot publishing `oper` or `identify` in its schema is a
+      // credential-capture trap; the slash picker should never even show
+      // those entries for a self-registered bot.  See the bot-tools spec
+      // security-considerations note on shadowing privileged names.
+      const filteredCmds = botCanRegisterPrivileged(existingBot)
+        ? cmds
+        : cmds.filter((c) => {
+            if (PRIVILEGED_COMMANDS.has(c.name.toLowerCase())) {
+              console.warn(
+                "[pushbot] dropping privileged command from non-config bot",
+                { bot: senderNick, cmd: c.name },
+              );
+              return false;
+            }
+            return true;
+          });
       const sharedChannels = s.channels
         .filter((c) => c.users.some((u) => u.username.toLowerCase() === key))
         .map((c) => c.name);
@@ -95,16 +116,20 @@ function commitBotCmds(
         online: true,
         from_config: false,
         channels: sharedChannels,
-        commands: cmds,
+        commands: filteredCmds,
       };
       return {
         ...s,
-        botCommands: { ...(s.botCommands ?? {}), [key]: cmds },
+        botCommands: { ...(s.botCommands ?? {}), [key]: filteredCmds },
         bots: {
           ...(s.bots ?? {}),
           [key]: existingBot
-            ? { ...existingBot, commands: cmds }
-            : { ...synthesisedBot, channels: sharedChannels, commands: cmds },
+            ? { ...existingBot, commands: filteredCmds }
+            : {
+                ...synthesisedBot,
+                channels: sharedChannels,
+                commands: filteredCmds,
+              },
         },
       };
     }),

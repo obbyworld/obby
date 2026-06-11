@@ -178,6 +178,10 @@ msgstr "<0>💡 Aanbeveling:</0> Ga alleen verder als je deze server vertrouwt e
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Risico:</0> Gevoelige informatie (berichten, privégesprekken, authenticatiegegevens) kan worden blootgesteld aan netwerkbeheerders of aanvallers tussen IRC-servers."
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "About this attribution"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Account"
@@ -1322,6 +1326,10 @@ msgstr "IN"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "Info:"
+
+#: src/components/message/BotInvocationChip.tsx
+msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
+msgstr ""
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"

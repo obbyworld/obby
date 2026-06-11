@@ -178,6 +178,10 @@ msgstr "<0>💡 建议：</0> 仅在您信任此服务器并了解相关风险�
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>风险：</0> 敏感信息（消息、私人对话、身份验证详情）可能会暴露给网络管理员或位于 IRC 服务器之间的攻击者。"
 
+#: src/components/message/BotInvocationChip.tsx
+msgid "About this attribution"
+msgstr ""
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "账户"
@@ -1322,6 +1326,10 @@ msgstr "入站"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "信息："
+
+#: src/components/message/BotInvocationChip.tsx
+msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
+msgstr ""
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"

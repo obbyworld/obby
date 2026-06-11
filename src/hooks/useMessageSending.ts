@@ -12,73 +12,9 @@ import {
   formatMessageForIrc,
 } from "../lib/messageFormatter";
 import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
+import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
-
-/**
- * Slash names we'll never dispatch to a bot, even if a bot has
- * registered a matching command via +draft/bot-cmds.  These are
- * reserved for the server, services, or the user's own session --
- * letting a third-party bot intercept "oper" or "ns identify" would
- * hand it the user's password.
- */
-const PRIVILEGED_COMMANDS: ReadonlySet<string> = new Set([
-  "oper",
-  "deoper",
-  "ns",
-  "nickserv",
-  "cs",
-  "chanserv",
-  "ms",
-  "memoserv",
-  "os",
-  "operserv",
-  "bs",
-  "botserv",
-  "hs",
-  "hostserv",
-  "identify",
-  "register",
-  "ghost",
-  "recover",
-  "regain",
-  "release",
-  "sajoin",
-  "sapart",
-  "sanick",
-  "samode",
-  "saquit",
-  "kill",
-  "kline",
-  "gline",
-  "zline",
-  "shun",
-  "kick",
-  "mode",
-  "ban",
-  "unban",
-  "akick",
-  "akill",
-  "restart",
-  "rehash",
-  "die",
-  "msg",
-  "query",
-  "sendpass",
-  "setpass",
-  "resetpass",
-  "login",
-  "logout",
-  "auth",
-  "pass",
-  "password",
-  "server",
-  "connect",
-  "squit",
-  "certfp",
-  "tls",
-  "sasl",
-]);
 
 /**
  * Try to dispatch a slash command as a +draft/bot-cmd TAGMSG.
