@@ -2200,9 +2200,9 @@ export const ChatArea: React.FC<{
                         !isNativeMobile &&
                         !isCompactInput
                         ? globalSettings.multilineOnShiftEnter
-                          ? t`Message #${selectedChannel.name.replace(/^#/, "")} (Shift+Enter for new line)`
-                          : t`Message #${selectedChannel.name.replace(/^#/, "")} (Enter for new line, Shift+Enter to send)`
-                        : t`Message #${selectedChannel.name.replace(/^#/, "")}`
+                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
+                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
+                        : t`Message ${selectedChannel.name}`
                       : selectedPrivateChat
                         ? globalSettings.enableMultilineInput &&
                           !isMobile &&

@@ -28,6 +28,7 @@ import {
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
+import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
 
 const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
@@ -1027,20 +1028,22 @@ const PdfPreview: React.FC<{
         />
       }
     >
-      <LazyDocument
-        file={url}
-        options={{ isEvalSupported: false }}
-        loading={null}
-        onLoadError={() => setPdfError(true)}
-      >
-        <LazyPage
-          pageNumber={1}
-          width={PDF_THUMB_W}
-          canvasBackground="white"
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-        />
-      </LazyDocument>
+      <PdfErrorBoundary onError={() => setPdfError(true)}>
+        <LazyDocument
+          file={url}
+          options={PDF_OPTIONS}
+          loading={null}
+          onLoadError={() => setPdfError(true)}
+        >
+          <LazyPage
+            pageNumber={1}
+            width={PDF_THUMB_W}
+            canvasBackground="white"
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+          />
+        </LazyDocument>
+      </PdfErrorBoundary>
     </Suspense>,
   );
 };

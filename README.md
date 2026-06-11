@@ -1,4 +1,4 @@
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-mattfly%2Fobsidian-blue?logo=docker&style=flat-square)](https://hub.docker.com/r/mattfly/obsidian)
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-obbyworld%2Fobby-blue?logo=docker&style=flat-square)](https://hub.docker.com/r/obbyworld/obby)
 [![Cloudflare Pages](https://img.shields.io/endpoint?url=https://cloudflare-pages-badges.mattf.workers.dev//?projectName=obsidianirc)](https://obsidianirc.pages.dev/)
 [![pages-build-deployment](https://github.com/ObsidianIRC/obsidianirc.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://obsidianirc.github.io/)
 [![Google Play](https://img.shields.io/badge/Google_Play-Download-414141?logo=google-play)](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)
@@ -70,7 +70,7 @@ ObsidianIRC is a modern IRC client with extensive [IRCv3](https://ircv3.net/) su
 For now, all you need to do to get this running is the following:
 ```
 cd ~
-git clone https://github.com/ObsidianIRC/ObsidianIRC
+git clone https://github.com/obbyworld/obby
 cd ObsidianIRC
 npm install
 npm run build

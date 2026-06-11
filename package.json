@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=22"
   },
-  "homepage": "https://github.com/ObsidianIRC/ObsidianIRC",
+  "homepage": "https://github.com/obbyworld/obby",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build --outDir dist",
