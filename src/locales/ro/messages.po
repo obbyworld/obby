@@ -119,9 +119,21 @@ msgstr "acum {0}h"
 msgid "{0}m ago"
 msgstr "acum {0}min"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "{activeCount} active"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 dată} few {{c} ori} other {{c} ori}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{days} days"
+msgstr ""
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{hours} hours"
+msgstr ""
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -135,9 +147,17 @@ msgstr "{inviter} te-a invitat să te alături la {channel}"
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {s-a alăturat} few {s-a alăturat de {joinCount} ori} other {s-a alăturat de {joinCount} ori}}"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "{minutes} minutes"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {s-a reconectat} few {s-a reconectat de {reconnectCount} ori} other {s-a reconectat de {reconnectCount} ori}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{seconds} seconds"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -150,6 +170,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "#channel"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -221,6 +245,10 @@ msgstr "Cont:"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Acțiune"
+
+#: src/components/ui/BotsModal.tsx
+msgid "active"
+msgstr ""
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -539,6 +567,10 @@ msgstr "Anulează răspunsul"
 msgid "Cancel workflow"
 msgstr "Anulează fluxul de lucru"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "cancelled"
+msgstr ""
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Schimbă numele canalului (numai operatori)"
@@ -560,6 +592,10 @@ msgid "changed the topic to: {topic}"
 msgstr "a schimbat subiectul la: {topic}"
 
 #: src/components/ui/BotsModal.tsx
+msgid "channel"
+msgstr ""
+
+#: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Channel"
 msgstr "Canal"
@@ -575,6 +611,10 @@ msgstr "Avatar canal"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel avatar preview"
 msgstr "Previzualizare avatar canal"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Channel bot — only in joined channels"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -775,6 +815,10 @@ msgstr "Comentarii"
 msgid "Comments ({commentCount})"
 msgstr "Comentarii ({commentCount})"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "complete"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
 msgstr "definit în configurare"
@@ -958,6 +1002,10 @@ msgstr "Șterge această invitație"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Ștergeți acest mesaj? Această acțiune nu poate fi anulată."
+
+#: src/components/ui/BotsModal.tsx
+msgid "deleted"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1154,6 +1202,10 @@ msgstr "Profil extins"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
 msgstr "Avertisment link extern"
+
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "failed"
+msgstr ""
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1754,6 +1806,10 @@ msgstr "Imaginea următoare"
 msgid "Next page"
 msgstr "Pagina următoare"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "nick"
+msgstr ""
+
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -2072,6 +2128,10 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "Previzualizare PDF"
 
+#: src/components/ui/BotsModal.tsx
+msgid "pending"
+msgstr ""
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Permanent"
@@ -2104,6 +2164,12 @@ msgstr "Redare"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Play sounds for mentions and messages"
 msgstr "Redați sunete pentru mențiuni și mesaje"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Play Tic-Tac-Toe"
+msgstr ""
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2306,6 +2372,7 @@ msgstr "Redeschide fluxul de lucru care a produs acest mesaj ({stepCount} pași)
 msgid "Reply"
 msgstr "Răspunde"
 
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "obligatoriu"
@@ -2485,6 +2552,10 @@ msgstr "Trimiteți notificări de tastare"
 msgid "Sending"
 msgstr "Se trimite"
 
+#: src/components/ui/BotsModal.tsx
+msgid "server"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
@@ -2543,6 +2614,10 @@ msgstr "Comunicarea server-la-server poate folosi conexiuni necriptate"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide"
 msgstr "La nivel de server"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Server-wide bot — reachable from any channel"
+msgstr ""
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2645,6 +2720,7 @@ msgid "Signed On"
 msgstr "Conectat la"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Comenzi slash"
 
@@ -2703,6 +2779,10 @@ msgstr "Strict – Protecție mai agresivă"
 #: src/components/ui/BotsModal.tsx
 msgid "Suspend"
 msgstr "Suspendă"
+
+#: src/components/ui/BotsModal.tsx
+msgid "suspended"
+msgstr ""
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2776,6 +2856,10 @@ msgstr "Timp (min)"
 msgid "Time Window (seconds)"
 msgstr "Fereastră de timp (secunde)"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "timed out"
+msgstr ""
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "to"
@@ -2806,6 +2890,10 @@ msgstr "Comută notificările"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Comută căutarea"
+
+#: src/components/message/BotToolsPlaceholderBody.tsx
+msgid "tool"
+msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

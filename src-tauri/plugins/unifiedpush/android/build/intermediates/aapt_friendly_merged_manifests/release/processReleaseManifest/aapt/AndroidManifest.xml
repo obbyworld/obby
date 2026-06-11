@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.obsidianirc.unifiedpush" >
+
+    <uses-sdk android:minSdkVersion="24" />
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application>
+
+        <!--
+             UnifiedPush connector 3.x delivers endpoint + decrypted
+             messages to this Service (action PUSH_EVENT). It runs even
+             when the app's WebView is gone, so notifications are shown
+             natively here.
+        -->
+        <service
+            android:name="com.obsidianirc.unifiedpush.PushServiceImpl"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

@@ -197,7 +197,10 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                       <div className="text-[10px] text-discord-text-muted">
                         <Trans>{list.length} workflow(s)</Trans>
                         {activeCount > 0 && (
-                          <span> · {activeCount} active</span>
+                          <span>
+                            {" · "}
+                            <Trans>{activeCount} active</Trans>
+                          </span>
                         )}
                       </div>
                     </div>
@@ -240,8 +243,20 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                                   const eff = effectiveWorkflowState(w);
                                   if (eff === "running" || eff === "start")
                                     return null;
-                                  const label = isStale(w) ? "timed out" : eff;
-                                  return <span> · {label}</span>;
+                                  let label: string;
+                                  if (isStale(w)) label = t`timed out`;
+                                  else if (eff === "complete")
+                                    label = t`complete`;
+                                  else if (eff === "failed") label = t`failed`;
+                                  else if (eff === "cancelled")
+                                    label = t`cancelled`;
+                                  else label = eff;
+                                  return (
+                                    <span>
+                                      {" · "}
+                                      {label}
+                                    </span>
+                                  );
                                 })()}
                               </div>
                             </div>

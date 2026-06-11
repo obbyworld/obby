@@ -119,9 +119,21 @@ msgstr "hace {0}h"
 msgid "{0}m ago"
 msgstr "hace {0}m"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "{activeCount} active"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 vez} other {{c} veces}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{days} days"
+msgstr ""
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{hours} hours"
+msgstr ""
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -135,9 +147,17 @@ msgstr "{inviter} te ha invitado a unirte a {channel}"
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {se unió} other {se unió {joinCount} veces}}"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "{minutes} minutes"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {se reconectó} other {se reconectó {reconnectCount} veces}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{seconds} seconds"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -150,6 +170,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "#channel"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -221,6 +245,10 @@ msgstr "Cuenta:"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Acción"
+
+#: src/components/ui/BotsModal.tsx
+msgid "active"
+msgstr ""
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -539,6 +567,10 @@ msgstr "Cancelar respuesta"
 msgid "Cancel workflow"
 msgstr "Cancelar flujo de trabajo"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "cancelled"
+msgstr ""
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Cambiar el nombre del canal (solo operadores)"
@@ -560,6 +592,10 @@ msgid "changed the topic to: {topic}"
 msgstr "cambió el tema a: {topic}"
 
 #: src/components/ui/BotsModal.tsx
+msgid "channel"
+msgstr ""
+
+#: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Channel"
 msgstr "Canal"
@@ -575,6 +611,10 @@ msgstr "Avatar del canal"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel avatar preview"
 msgstr "Vista previa del avatar del canal"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Channel bot — only in joined channels"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -775,6 +815,10 @@ msgstr "Comentarios"
 msgid "Comments ({commentCount})"
 msgstr "Comentarios ({commentCount})"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "complete"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
 msgstr "definido por configuración"
@@ -958,6 +1002,10 @@ msgstr "Eliminar esta invitación"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "¿Eliminar este mensaje? Esta acción no se puede deshacer."
+
+#: src/components/ui/BotsModal.tsx
+msgid "deleted"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1154,6 +1202,10 @@ msgstr "Perfil extendido"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
 msgstr "Advertencia de enlace externo"
+
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "failed"
+msgstr ""
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1754,6 +1806,10 @@ msgstr "Imagen siguiente"
 msgid "Next page"
 msgstr "Página siguiente"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "nick"
+msgstr ""
+
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -2072,6 +2128,10 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "Vista previa de PDF"
 
+#: src/components/ui/BotsModal.tsx
+msgid "pending"
+msgstr ""
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Permanente"
@@ -2104,6 +2164,12 @@ msgstr "Reproducir"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Play sounds for mentions and messages"
 msgstr "Reproducir sonidos para menciones y mensajes"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Play Tic-Tac-Toe"
+msgstr ""
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2306,6 +2372,7 @@ msgstr "Reabrir el flujo de trabajo que produjo este mensaje ({stepCount} pasos)
 msgid "Reply"
 msgstr "Responder"
 
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "requerido"
@@ -2485,6 +2552,10 @@ msgstr "Enviar notificaciones de escritura"
 msgid "Sending"
 msgstr "Enviando"
 
+#: src/components/ui/BotsModal.tsx
+msgid "server"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
@@ -2543,6 +2614,10 @@ msgstr "La comunicación entre servidores puede usar conexiones sin cifrar"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide"
 msgstr "A nivel del servidor"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Server-wide bot — reachable from any channel"
+msgstr ""
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2645,6 +2720,7 @@ msgid "Signed On"
 msgstr "Conectado desde"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Comandos slash"
 
@@ -2703,6 +2779,10 @@ msgstr "Estricto – Protección más agresiva"
 #: src/components/ui/BotsModal.tsx
 msgid "Suspend"
 msgstr "Suspender"
+
+#: src/components/ui/BotsModal.tsx
+msgid "suspended"
+msgstr ""
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2776,6 +2856,10 @@ msgstr "Tiempo (min)"
 msgid "Time Window (seconds)"
 msgstr "Ventana de tiempo (segundos)"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "timed out"
+msgstr ""
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "to"
@@ -2806,6 +2890,10 @@ msgstr "Alternar notificaciones"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Alternar búsqueda"
+
+#: src/components/message/BotToolsPlaceholderBody.tsx
+msgid "tool"
+msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

@@ -22,6 +22,7 @@
 //
 // onSelect receives the bare command name (without the leading slash).
 
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { BotCommandOption } from "../../types";
@@ -77,19 +78,22 @@ interface BadgeStyle {
   className: string;
 }
 
-function badgeStyle(source: SlashSuggestionSource): BadgeStyle {
+function badgeStyle(
+  source: SlashSuggestionSource,
+  t: ReturnType<typeof useLingui>["t"],
+): BadgeStyle {
   switch (source.kind) {
     case "client":
       return {
-        label: "client",
-        title: "Handled by ObsidianIRC before being sent",
+        label: t`client`,
+        title: t`Handled by ObsidianIRC before being sent`,
         className:
           "bg-discord-dark-200 text-discord-text-muted border border-discord-dark-500",
       };
     case "server":
       return {
-        label: "server",
-        title: "Command provided by the IRC server",
+        label: t`server`,
+        title: t`Command provided by the IRC server`,
         className:
           "bg-emerald-700/40 text-emerald-300 border border-emerald-600/60",
       };
@@ -100,21 +104,24 @@ function badgeStyle(source: SlashSuggestionSource): BadgeStyle {
             // is bg-discord-primary, and the old purple badge tint
             // disappeared against it.  Sky still reads as "network-
             // wide service" and stays legible on both backgrounds.
-            label: "server-bot",
-            title: "Server-wide bot — reachable from any channel",
+            label: t`server-bot`,
+            title: t`Server-wide bot — reachable from any channel`,
             className: "bg-sky-700/40 text-sky-300 border border-sky-600/60",
           }
         : {
-            label: "channel-bot",
-            title: "Channel bot — present in this channel",
+            label: t`channel-bot`,
+            title: t`Channel bot — present in this channel`,
             className:
               "bg-amber-700/30 text-amber-300 border border-amber-600/50",
           };
   }
 }
 
-function sourceBadge(source: SlashSuggestionSource): React.ReactNode {
-  const { label, title, className } = badgeStyle(source);
+function sourceBadge(
+  source: SlashSuggestionSource,
+  t: ReturnType<typeof useLingui>["t"],
+): React.ReactNode {
+  const { label, title, className } = badgeStyle(source, t);
   return (
     <span
       className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${className}`}
@@ -133,6 +140,7 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
   onSelect,
   onClose,
 }) => {
+  const { t } = useLingui();
   const cursorPosition = inputElement?.selectionStart ?? inputValue.length;
   const query = getActiveSlashQuery(inputValue, cursorPosition);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -208,7 +216,7 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
     >
       <div className="py-1 max-h-72 overflow-y-auto">
         <div className="px-3 py-1 text-xs text-discord-text-muted font-semibold uppercase tracking-wide border-b border-discord-dark-500">
-          Slash commands
+          <Trans>Slash commands</Trans>
         </div>
         {matches.map((cmd, index) => {
           const sig = formatOptions(cmd.options);
@@ -236,7 +244,7 @@ export const SlashCommandPopover: React.FC<SlashCommandPopoverProps> = ({
                     </span>
                   )}
                 </span>
-                {sourceBadge(cmd.source)}
+                {sourceBadge(cmd.source, t)}
                 {cmd.source.kind === "bot" && (
                   <span
                     className={`text-xs ${isSelected ? "text-white/70" : "text-discord-text-muted"}`}

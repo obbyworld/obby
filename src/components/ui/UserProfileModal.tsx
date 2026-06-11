@@ -192,10 +192,17 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   // Format idle time
   const formatIdleTime = (seconds: number): string => {
-    if (seconds < 60) return `${seconds} seconds`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours`;
-    return `${Math.floor(seconds / 86400)} days`;
+    if (seconds < 60) return t`${seconds} seconds`;
+    if (seconds < 3600) {
+      const minutes = Math.floor(seconds / 60);
+      return t`${minutes} minutes`;
+    }
+    if (seconds < 86400) {
+      const hours = Math.floor(seconds / 3600);
+      return t`${hours} hours`;
+    }
+    const days = Math.floor(seconds / 86400);
+    return t`${days} days`;
   };
 
   // Format signon time

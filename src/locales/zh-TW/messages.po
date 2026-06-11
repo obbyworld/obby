@@ -119,9 +119,21 @@ msgstr "{0} 小時前"
 msgid "{0}m ago"
 msgstr "{0} 分鐘前"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "{activeCount} active"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, other {{c} 次}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{days} days"
+msgstr ""
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{hours} hours"
+msgstr ""
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -135,9 +147,17 @@ msgstr "{inviter} 邀請您加入 {channel}"
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, other {已加入 {joinCount} 次}}"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "{minutes} minutes"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, other {已重新連線 {reconnectCount} 次}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{seconds} seconds"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -150,6 +170,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "#channel"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -221,6 +245,10 @@ msgstr "帳戶："
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "操作"
+
+#: src/components/ui/BotsModal.tsx
+msgid "active"
+msgstr ""
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -539,6 +567,10 @@ msgstr "取消回复"
 msgid "Cancel workflow"
 msgstr "取消工作流程"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "cancelled"
+msgstr ""
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "更改频道名称（仅限管理员）"
@@ -560,6 +592,10 @@ msgid "changed the topic to: {topic}"
 msgstr "將主題更改為：{topic}"
 
 #: src/components/ui/BotsModal.tsx
+msgid "channel"
+msgstr ""
+
+#: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Channel"
 msgstr "頻道"
@@ -575,6 +611,10 @@ msgstr "頻道頭像"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel avatar preview"
 msgstr "频道头像预览"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Channel bot — only in joined channels"
+msgstr ""
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -775,6 +815,10 @@ msgstr "評論"
 msgid "Comments ({commentCount})"
 msgstr "評論 ({commentCount})"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "complete"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
 msgstr "設定定義"
@@ -958,6 +1002,10 @@ msgstr "刪除此邀請"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "刪除此訊息？此操作無法復原。"
+
+#: src/components/ui/BotsModal.tsx
+msgid "deleted"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1154,6 +1202,10 @@ msgstr "擴充個人資料"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
 msgstr "外部链接警告"
+
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "failed"
+msgstr ""
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1754,6 +1806,10 @@ msgstr "下一张图片"
 msgid "Next page"
 msgstr "下一页"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "nick"
+msgstr ""
+
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -2072,6 +2128,10 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF 預覽"
 
+#: src/components/ui/BotsModal.tsx
+msgid "pending"
+msgstr ""
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "永久"
@@ -2104,6 +2164,12 @@ msgstr "播放"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Play sounds for mentions and messages"
 msgstr "提及和訊息時播放聲音"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Play Tic-Tac-Toe"
+msgstr ""
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2306,6 +2372,7 @@ msgstr "重新開啟產生此訊息的工作流程（{stepCount} 個步驟）"
 msgid "Reply"
 msgstr "回复"
 
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "必填"
@@ -2485,6 +2552,10 @@ msgstr "傳送正在輸入通知"
 msgid "Sending"
 msgstr "傳送中"
 
+#: src/components/ui/BotsModal.tsx
+msgid "server"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
@@ -2543,6 +2614,10 @@ msgstr "服务器之间的通信可能使用未加密的连接"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide"
 msgstr "伺服器範圍"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Server-wide bot — reachable from any channel"
+msgstr ""
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2645,6 +2720,7 @@ msgid "Signed On"
 msgstr "登入時間"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "斜線命令"
 
@@ -2703,6 +2779,10 @@ msgstr "嚴格 – 更強的保護"
 #: src/components/ui/BotsModal.tsx
 msgid "Suspend"
 msgstr "停用"
+
+#: src/components/ui/BotsModal.tsx
+msgid "suspended"
+msgstr ""
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2776,6 +2856,10 @@ msgstr "時間（分鐘）"
 msgid "Time Window (seconds)"
 msgstr "時間視窗（秒）"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "timed out"
+msgstr ""
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "to"
@@ -2806,6 +2890,10 @@ msgstr "切换通知"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "切换搜索"
+
+#: src/components/message/BotToolsPlaceholderBody.tsx
+msgid "tool"
+msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

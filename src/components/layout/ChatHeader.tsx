@@ -347,7 +347,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedServerId,
     },
     {
-      label: "Play Tic-Tac-Toe",
+      label: t`Play Tic-Tac-Toe`,
       icon: <span aria-hidden="true">🎮</span>,
       onClick: () => {
         if (selectedServerId && selectedPrivateChat) {
@@ -908,8 +908,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                       );
                   }
                 }}
-                aria-label="Play Tic-Tac-Toe"
-                title="Play Tic-Tac-Toe"
+                aria-label={t`Play Tic-Tac-Toe`}
+                title={t`Play Tic-Tac-Toe`}
               >
                 <span aria-hidden="true">🎮</span>
               </button>

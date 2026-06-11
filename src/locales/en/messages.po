@@ -118,9 +118,21 @@ msgstr "{0}h ago"
 msgid "{0}m ago"
 msgstr "{0}m ago"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "{activeCount} active"
+msgstr "{activeCount} active"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 time} other {{c} times}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{days} days"
+msgstr "{days} days"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{hours} hours"
+msgstr "{hours} hours"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -134,9 +146,17 @@ msgstr "{inviter} has invited you to join {channel}"
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "{minutes} minutes"
+msgstr "{minutes} minutes"
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "{seconds} seconds"
+msgstr "{seconds} seconds"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -149,6 +169,10 @@ msgstr "*channel*"
 #: src/components/ui/ChannelListModal.tsx
 msgid "*spam*"
 msgstr "*spam*"
+
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "#channel"
+msgstr "#channel"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -220,6 +244,10 @@ msgstr "Account:"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Action"
+
+#: src/components/ui/BotsModal.tsx
+msgid "active"
+msgstr "active"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -538,6 +566,10 @@ msgstr "Cancel reply"
 msgid "Cancel workflow"
 msgstr "Cancel workflow"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "cancelled"
+msgstr "cancelled"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
 msgstr "Change the channel name (operators only)"
@@ -559,6 +591,10 @@ msgid "changed the topic to: {topic}"
 msgstr "changed the topic to: {topic}"
 
 #: src/components/ui/BotsModal.tsx
+msgid "channel"
+msgstr "channel"
+
+#: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Channel"
 msgstr "Channel"
@@ -574,6 +610,10 @@ msgstr "Channel Avatar"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel avatar preview"
 msgstr "Channel avatar preview"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Channel bot — only in joined channels"
+msgstr "Channel bot — only in joined channels"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -774,6 +814,10 @@ msgstr "Comments"
 msgid "Comments ({commentCount})"
 msgstr "Comments ({commentCount})"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "complete"
+msgstr "complete"
+
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
 msgstr "config-defined"
@@ -957,6 +1001,10 @@ msgstr "Delete this invite"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete this message? This cannot be undone."
 msgstr "Delete this message? This cannot be undone."
+
+#: src/components/ui/BotsModal.tsx
+msgid "deleted"
+msgstr "deleted"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1153,6 +1201,10 @@ msgstr "Extended Profile"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
 msgstr "External Link Warning"
+
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "failed"
+msgstr "failed"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1753,6 +1805,10 @@ msgstr "Next image"
 msgid "Next page"
 msgstr "Next page"
 
+#: src/components/ui/SlashCommandParamModal.tsx
+msgid "nick"
+msgstr "nick"
+
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -2071,6 +2127,10 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF preview"
 
+#: src/components/ui/BotsModal.tsx
+msgid "pending"
+msgstr "pending"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Permanent"
@@ -2103,6 +2163,12 @@ msgstr "Play"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Play sounds for mentions and messages"
 msgstr "Play sounds for mentions and messages"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Play Tic-Tac-Toe"
+msgstr "Play Tic-Tac-Toe"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2305,6 +2371,7 @@ msgstr "Reopen the workflow that produced this message ({stepCount} steps)"
 msgid "Reply"
 msgstr "Reply"
 
+#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "required"
@@ -2484,6 +2551,10 @@ msgstr "Send Typing Notifications"
 msgid "Sending"
 msgstr "Sending"
 
+#: src/components/ui/BotsModal.tsx
+msgid "server"
+msgstr "server"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
@@ -2542,6 +2613,10 @@ msgstr "Server-to-server communication may use unencrypted connections"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide"
 msgstr "Server-wide"
+
+#: src/components/ui/BotsModal.tsx
+msgid "Server-wide bot — reachable from any channel"
+msgstr "Server-wide bot — reachable from any channel"
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2644,6 +2719,7 @@ msgid "Signed On"
 msgstr "Signed On"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Slash commands"
 
@@ -2702,6 +2778,10 @@ msgstr "Strict - More aggressive protection"
 #: src/components/ui/BotsModal.tsx
 msgid "Suspend"
 msgstr "Suspend"
+
+#: src/components/ui/BotsModal.tsx
+msgid "suspended"
+msgstr "suspended"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2775,6 +2855,10 @@ msgstr "Time (min)"
 msgid "Time Window (seconds)"
 msgstr "Time Window (seconds)"
 
+#: src/components/ui/BotToolsHistoryButton.tsx
+msgid "timed out"
+msgstr "timed out"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "to"
@@ -2805,6 +2889,10 @@ msgstr "Toggle Notifications"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Toggle search"
+
+#: src/components/message/BotToolsPlaceholderBody.tsx
+msgid "tool"
+msgstr "tool"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

@@ -365,7 +365,7 @@ const ParamField: React.FC<ParamFieldProps> = ({
               value={String(value ?? "")}
               onChange={(e) => setValue(e.target.value)}
               className={BASE_INPUT}
-              placeholder="nick"
+              placeholder={t`nick`}
               list={listId}
               autoComplete="off"
             />
@@ -388,7 +388,7 @@ const ParamField: React.FC<ParamFieldProps> = ({
               value={String(value ?? "")}
               onChange={(e) => setValue(e.target.value)}
               className={BASE_INPUT}
-              placeholder="#channel"
+              placeholder={t`#channel`}
               list={listId}
               autoComplete="off"
             />
@@ -419,7 +419,9 @@ const ParamField: React.FC<ParamFieldProps> = ({
       <label className="text-sm text-white block mb-1">
         {option.name}
         {option.required && (
-          <span className="text-discord-red ml-1 text-xs">required</span>
+          <span className="text-discord-red ml-1 text-xs">
+            <Trans>required</Trans>
+          </span>
         )}
         <span className="text-discord-text-muted ml-2 text-xs uppercase tracking-wide">
           {option.type ?? "string"}

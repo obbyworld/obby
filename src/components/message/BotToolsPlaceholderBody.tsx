@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import {
   FaCheck,
@@ -91,6 +91,7 @@ function paramPairs(content: unknown): ParamPair[] {
 export const BotToolsPlaceholderBody: React.FC<
   BotToolsPlaceholderBodyProps
 > = ({ serverId, workflowId }) => {
+  const { t } = useLingui();
   const workflow = useStore((s) => s.aiWorkflows[serverId]?.[workflowId]);
 
   if (!workflow) {
@@ -142,7 +143,7 @@ export const BotToolsPlaceholderBody: React.FC<
         <div className="flex flex-wrap gap-1 pl-4">
           {callSteps.map((step) => {
             const pairs = paramPairs(step.content);
-            const tool = step.tool ?? step.label ?? "tool";
+            const tool = step.tool ?? step.label ?? t`tool`;
             const tooltip = pairs.length
               ? `${tool}(${pairs.map((p) => (p.key ? `${p.key}=${p.value}` : p.value)).join(", ")})`
               : tool;
