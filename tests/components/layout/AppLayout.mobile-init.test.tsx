@@ -55,6 +55,7 @@ describe("AppLayout - Mobile Initial Load", () => {
         perServerSelections: {},
         shouldFocusChatInput: false,
         pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });

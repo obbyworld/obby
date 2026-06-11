@@ -475,6 +475,8 @@ msgstr "Estot"
 msgid "Bot"
 msgstr "Botti"
 
+#: src/components/ui/UserContextMenu.tsx
+#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""
@@ -2586,7 +2588,7 @@ msgstr "Näytä kommentit"
 msgid "Show comments ({commentCount})"
 msgstr "Näytä kommentit ({commentCount})"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
 msgstr ""
 

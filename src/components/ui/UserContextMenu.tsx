@@ -19,6 +19,13 @@ interface UserContextMenuProps {
   currentUserStatus?: string;
   currentUsername?: string;
   onOpenModerationModal?: (action: ModerationAction) => void;
+  /** When the user clicks a bot command in the submenu, the parent
+   *  should open the slash-command param modal pre-filled for that
+   *  bot + command (mirrors BotsModal.onPickCommand). */
+  onPickBotCommand?: (
+    botNick: string,
+    command: import("../../types").BotCommand,
+  ) => void;
 }
 
 export const UserContextMenu: React.FC<UserContextMenuProps> = ({
@@ -34,6 +41,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
   currentUserStatus,
   currentUsername,
   onOpenModerationModal,
+  onPickBotCommand,
 }) => {
   const { t } = useLingui();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -54,6 +62,16 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
 
   const website = user?.metadata?.url?.value || user?.metadata?.website?.value;
   const status = user?.metadata?.status?.value;
+  const isBot = !!user?.isBot || user?.metadata?.bot?.value === "true";
+  const botCommands = useStore(
+    (state) =>
+      state.servers.find((s) => s.id === serverId)?.botCommands?.[
+        username.toLowerCase()
+      ] ?? null,
+  );
+  const requestBotsModalOpen = useStore((state) => state.requestBotsModalOpen);
+  const [botCommandsOpen, setBotCommandsOpen] = useState(false);
+  const botSubmenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -253,6 +271,88 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
               <Trans>View Profile</Trans>
             </span>
           </button>
+          {isBot && botCommands && botCommands.length > 0 && (
+            <div
+              className="relative"
+              onMouseEnter={() => setBotCommandsOpen(true)}
+              onMouseLeave={() => setBotCommandsOpen(false)}
+              ref={botSubmenuRef}
+            >
+              <button
+                type="button"
+                onClick={() => setBotCommandsOpen((v) => !v)}
+                className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
+                aria-haspopup="menu"
+                aria-expanded={botCommandsOpen}
+                title={t`Bot Commands`}
+              >
+                <svg
+                  className="w-4 h-4 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 9l3 3-3 3M13 15h3M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
+                  />
+                </svg>
+                <span className="truncate flex-1">
+                  <Trans>Bot Commands</Trans>
+                </span>
+                <span className="text-xs text-discord-text-muted">
+                  {botCommands.length}
+                </span>
+                <span
+                  className="text-discord-text-muted text-xs"
+                  aria-hidden="true"
+                >
+                  ▸
+                </span>
+              </button>
+              {botCommandsOpen && (
+                <div
+                  className="absolute left-full top-0 ml-1 w-64 bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl py-1 max-h-[60vh] overflow-y-auto z-[100001]"
+                  role="menu"
+                  // Keep submenu mounted while pointer is in it
+                  onMouseEnter={() => setBotCommandsOpen(true)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      requestBotsModalOpen(serverId, username);
+                      onClose();
+                    }}
+                    className="w-full px-3 py-2 text-left text-discord-blue text-xs font-semibold hover:bg-discord-dark-200 transition-colors sticky top-0 bg-discord-dark-300 border-b border-discord-dark-500"
+                  >
+                    <Trans>Show in Bots Menu →</Trans>
+                  </button>
+                  {botCommands.map((c) => (
+                    <button
+                      key={c.name}
+                      type="button"
+                      onClick={() => {
+                        if (onPickBotCommand) onPickBotCommand(username, c);
+                        onClose();
+                      }}
+                      className="w-full px-3 py-1.5 text-left hover:bg-discord-dark-200 transition-colors"
+                    >
+                      <div className="font-mono text-xs text-discord-text-link">
+                        /{c.name}
+                      </div>
+                      {c.description && (
+                        <div className="text-discord-text-muted text-[11px] truncate">
+                          {c.description}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {!isOwnUser && (
             <button
               onClick={isIgnored ? handleUnignoreUser : handleIgnoreUser}

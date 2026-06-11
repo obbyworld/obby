@@ -82,6 +82,7 @@ describe("ChatHeader - Members Button", () => {
         settingsNavigation: {},
         shouldFocusChatInput: false,
         pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });

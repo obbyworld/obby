@@ -162,6 +162,7 @@ describe("Metadata Display Features", () => {
         settingsNavigation: null,
         shouldFocusChatInput: false,
         pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
       messages: {

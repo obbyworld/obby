@@ -417,6 +417,12 @@ export const ChatArea: React.FC<{
   const clearBotsModalOpenRequest = useStore(
     (state) => state.clearBotsModalOpenRequest,
   );
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
   useEffect(() => {
     if (
       pendingBotsModalOpen &&
@@ -427,6 +433,18 @@ export const ChatArea: React.FC<{
       clearBotsModalOpenRequest();
     }
   }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      setParamModal({
+        botNick: pendingBotCommandPick.botNick,
+        command: pendingBotCommandPick.command,
+      });
+      clearBotCommandPickRequest();
+    }
+  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -2618,6 +2636,9 @@ export const ChatArea: React.FC<{
         currentUserStatus={userContextMenu.userStatusInChannel}
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
+        }
+        onPickBotCommand={(botNick, command) =>
+          setParamModal({ botNick, command })
         }
         onOpenModerationModal={(action) => {
           setModerationModal({

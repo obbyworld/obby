@@ -475,6 +475,8 @@ msgstr "Bans"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/UserContextMenu.tsx
+#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""
@@ -2586,7 +2588,7 @@ msgstr "Mostrar comentarios"
 msgid "Show comments ({commentCount})"
 msgstr "Mostrar comentarios ({commentCount})"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
 msgstr ""
 

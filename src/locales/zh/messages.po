@@ -475,6 +475,8 @@ msgstr "封禁"
 msgid "Bot"
 msgstr "机器人"
 
+#: src/components/ui/UserContextMenu.tsx
+#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""
@@ -2586,7 +2588,7 @@ msgstr "显示评论"
 msgid "Show comments ({commentCount})"
 msgstr "显示评论 ({commentCount})"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
 msgstr ""
 

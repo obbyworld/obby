@@ -132,6 +132,7 @@ describe("AppLayout Swipe Navigation", () => {
         settingsNavigation: null,
         shouldFocusChatInput: false,
         pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
       messages: {},

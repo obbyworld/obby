@@ -56,6 +56,7 @@ describe("MODE Protocol Handler", () => {
         settingsNavigation: null,
         shouldFocusChatInput: false,
         pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });

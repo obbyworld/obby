@@ -432,6 +432,14 @@ interface UIState {
   // when the user clicks "Show in Bots Menu" and ChatArea picks it up
   // to open the modal pre-selected on that bot.
   pendingBotsModalOpen: { serverId: string; botNick: string } | null;
+  // Cross-component deep-link from the member-list context menu's Bot
+  // Commands submenu — clicking a command sets this and ChatArea picks
+  // it up to open the slash-command param modal.
+  pendingBotCommandPick: {
+    serverId: string;
+    botNick: string;
+    command: import("../types").BotCommand;
+  } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -925,6 +933,12 @@ export interface AppState {
   toggleChannelListModal: (isOpen?: boolean) => void;
   requestBotsModalOpen: (serverId: string, botNick: string) => void;
   clearBotsModalOpenRequest: () => void;
+  requestBotCommandPick: (
+    serverId: string,
+    botNick: string,
+    command: import("../types").BotCommand,
+  ) => void;
+  clearBotCommandPickRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -1151,6 +1165,7 @@ const useStore = create<AppState>((set, get) => ({
     },
     prefillServerDetails: null,
     pendingBotsModalOpen: null,
+    pendingBotCommandPick: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -3416,6 +3431,21 @@ const useStore = create<AppState>((set, get) => ({
   clearBotsModalOpenRequest: () => {
     set((state) => ({
       ui: { ...state.ui, pendingBotsModalOpen: null },
+    }));
+  },
+
+  requestBotCommandPick: (serverId, botNick, command) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotCommandPick: { serverId, botNick, command },
+      },
+    }));
+  },
+
+  clearBotCommandPickRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotCommandPick: null },
     }));
   },
 

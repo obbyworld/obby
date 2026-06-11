@@ -88,7 +88,6 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   username,
   onShowInBotsMenu,
 }) => {
-  const [showBotCommands, setShowBotCommands] = useState(false);
   const botCommands = useStore(
     (state) =>
       state.servers.find((s) => s.id === serverId)?.botCommands?.[
@@ -405,16 +404,20 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
               </div>
             )}
 
-            {/* Bot Commands — expandable: header toggles a scrollable
-                list of commands; first row deep-links to BotsModal. */}
-            {isBot && botCommands && botCommands.length > 0 && (
-              <div className="mt-3 bg-discord-dark-300 rounded-lg overflow-hidden">
+            {/* Bot Commands deep-link: a one-click jump into the
+                BotsModal, pre-selected on this user. Full schema
+                browsing belongs in the modal, not duplicated here. */}
+            {isBot &&
+              botCommands &&
+              botCommands.length > 0 &&
+              onShowInBotsMenu && (
                 <button
                   type="button"
-                  onClick={() => setShowBotCommands((v) => !v)}
-                  onMouseEnter={() => setShowBotCommands(true)}
-                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-discord-dark-400 transition-colors"
-                  aria-expanded={showBotCommands}
+                  onClick={() => {
+                    onShowInBotsMenu(username);
+                    onClose();
+                  }}
+                  className="mt-3 w-full bg-discord-dark-300 hover:bg-discord-dark-400 rounded-lg p-3 flex items-center gap-3 transition-colors text-left"
                 >
                   <FaTerminal
                     className="text-emerald-400 flex-shrink-0"
@@ -427,50 +430,13 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
                     {botCommands.length}
                   </span>
                   <span
-                    className={`text-discord-text-muted text-xs transition-transform ${
-                      showBotCommands ? "rotate-180" : ""
-                    }`}
+                    className="text-discord-text-muted text-xs"
                     aria-hidden="true"
                   >
-                    ▾
+                    →
                   </span>
                 </button>
-                {showBotCommands && (
-                  <div
-                    onMouseLeave={() => setShowBotCommands(false)}
-                    className="max-h-64 overflow-y-auto border-t border-discord-dark-500"
-                  >
-                    {onShowInBotsMenu && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onShowInBotsMenu(username);
-                          onClose();
-                        }}
-                        className="w-full text-left px-3 py-2 text-xs text-discord-blue hover:bg-discord-dark-400 transition-colors border-b border-discord-dark-500 sticky top-0 bg-discord-dark-300 z-10"
-                      >
-                        <Trans>Show in Bots Menu →</Trans>
-                      </button>
-                    )}
-                    {botCommands.map((c) => (
-                      <div
-                        key={c.name}
-                        className="px-3 py-1.5 text-xs hover:bg-discord-dark-400 transition-colors"
-                      >
-                        <div className="font-mono text-discord-text-link">
-                          /{c.name}
-                        </div>
-                        {c.description && (
-                          <div className="text-discord-text-muted text-[11px] truncate">
-                            {c.description}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+              )}
 
             {/* Homepage */}
             {sanitizedHomepage && (

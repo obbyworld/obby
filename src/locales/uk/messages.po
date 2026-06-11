@@ -475,6 +475,8 @@ msgstr "Блокування"
 msgid "Bot"
 msgstr "Бот"
 
+#: src/components/ui/UserContextMenu.tsx
+#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""
@@ -2586,7 +2588,7 @@ msgstr "Показати коментарі"
 msgid "Show comments ({commentCount})"
 msgstr "Показати коментарі ({commentCount})"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
 msgstr ""
 

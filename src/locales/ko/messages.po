@@ -475,6 +475,8 @@ msgstr "차단 목록"
 msgid "Bot"
 msgstr "봇"
 
+#: src/components/ui/UserContextMenu.tsx
+#: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr ""
@@ -2586,7 +2588,7 @@ msgstr "댓글 보기"
 msgid "Show comments ({commentCount})"
 msgstr "댓글 보기 ({commentCount})"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
 msgstr ""
 
