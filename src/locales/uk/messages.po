@@ -475,6 +475,10 @@ msgstr "Блокування"
 msgid "Bot"
 msgstr "Бот"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "Bot Commands"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "Бот ще не зареєстрував жодної слеш-команди."
@@ -2581,6 +2585,10 @@ msgstr "Показати коментарі"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Показати коментарі ({commentCount})"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "Show in Bots Menu →"
+msgstr ""
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"

@@ -427,6 +427,11 @@ interface UIState {
     itemId: string | null;
   };
   prefillServerDetails: ConnectionDetails | null;
+  // Cross-component deep-link from the user-profile popover into the
+  // bots modal — UserProfileModal sets this to {serverId, botNick}
+  // when the user clicks "Show in Bots Menu" and ChatArea picks it up
+  // to open the modal pre-selected on that bot.
+  pendingBotsModalOpen: { serverId: string; botNick: string } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -918,6 +923,8 @@ export interface AppState {
     memberList?: { isVisible: boolean; width: number };
   }) => void;
   toggleChannelListModal: (isOpen?: boolean) => void;
+  requestBotsModalOpen: (serverId: string, botNick: string) => void;
+  clearBotsModalOpenRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -1143,6 +1150,7 @@ const useStore = create<AppState>((set, get) => ({
       itemId: null,
     },
     prefillServerDetails: null,
+    pendingBotsModalOpen: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -3393,6 +3401,21 @@ const useStore = create<AppState>((set, get) => ({
         isChannelListModalOpen:
           isOpen !== undefined ? isOpen : !state.ui.isChannelListModalOpen,
       },
+    }));
+  },
+
+  requestBotsModalOpen: (serverId, botNick) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotsModalOpen: { serverId, botNick },
+      },
+    }));
+  },
+
+  clearBotsModalOpenRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotsModalOpen: null },
     }));
   },
 

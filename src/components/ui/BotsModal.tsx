@@ -11,7 +11,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaChevronLeft, FaCircle, FaRobot, FaTimes } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
@@ -27,6 +27,10 @@ interface BotsModalProps {
   /** Invoked when the user clicks one of the bot's slash commands.
    *  ChatArea opens the slash-command param modal in response. */
   onPickCommand?: (botNick: string, command: BotCommand) => void;
+  /** Nick to focus when the modal opens.  Used by deep-links from
+   *  the member-list bot popover ("Show in Bots Menu") so the
+   *  selected bot's command list is the first thing visible. */
+  preselectNick?: string | null;
 }
 
 type FilterMode = "all" | "server" | "channel";
@@ -338,14 +342,25 @@ const BotsModal: React.FC<BotsModalProps> = ({
   onClose,
   serverId,
   onPickCommand,
+  preselectNick,
 }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const server = useStore((s) => s.servers.find((srv) => srv.id === serverId));
   const currentUser = useStore((s) => s.currentUser);
   const [filter, setFilter] = useState<FilterMode>("all");
   const [query, setQuery] = useState("");
-  const [selectedNick, setSelectedNick] = useState<string | null>(null);
-  const [mobileView, setMobileView] = useState<"list" | "detail">("list");
+  const [selectedNick, setSelectedNick] = useState<string | null>(
+    preselectNick ?? null,
+  );
+  const [mobileView, setMobileView] = useState<"list" | "detail">(
+    preselectNick ? "detail" : "list",
+  );
+  useEffect(() => {
+    if (isOpen && preselectNick) {
+      setSelectedNick(preselectNick);
+      setMobileView("detail");
+    }
+  }, [isOpen, preselectNick]);
 
   const { getBackdropProps, getContentProps } = useModalBehavior({
     onClose,

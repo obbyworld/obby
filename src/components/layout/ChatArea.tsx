@@ -236,6 +236,9 @@ export const ChatArea: React.FC<{
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
   const [botsModalOpen, setBotsModalOpen] = useState(false);
+  const [botsModalPreselect, setBotsModalPreselect] = useState<string | null>(
+    null,
+  );
   const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -407,6 +410,23 @@ export const ChatArea: React.FC<{
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
+
+  const pendingBotsModalOpen = useStore(
+    (state) => state.ui.pendingBotsModalOpen,
+  );
+  const clearBotsModalOpenRequest = useStore(
+    (state) => state.clearBotsModalOpenRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotsModalOpen &&
+      pendingBotsModalOpen.serverId === selectedServerId
+    ) {
+      setBotsModalPreselect(pendingBotsModalOpen.botNick);
+      setBotsModalOpen(true);
+      clearBotsModalOpenRequest();
+    }
+  }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -2649,8 +2669,12 @@ export const ChatArea: React.FC<{
       {selectedServerId && (
         <BotsModal
           isOpen={botsModalOpen}
-          onClose={() => setBotsModalOpen(false)}
+          onClose={() => {
+            setBotsModalOpen(false);
+            setBotsModalPreselect(null);
+          }}
           serverId={selectedServerId}
+          preselectNick={botsModalPreselect}
           onPickCommand={(botNick, command) => {
             setParamModal({ botNick, command });
           }}

@@ -475,6 +475,10 @@ msgstr "Bans"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "Bot Commands"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "El bot aún no ha registrado ningún comando slash."
@@ -2581,6 +2585,10 @@ msgstr "Mostrar comentarios"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Mostrar comentarios ({commentCount})"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "Show in Bots Menu →"
+msgstr ""
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"

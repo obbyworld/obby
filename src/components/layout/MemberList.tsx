@@ -741,6 +741,9 @@ export const MemberList: React.FC = () => {
           onClose={() => setUserProfileModalOpen(false)}
           serverId={selectedServerId}
           username={selectedProfileUsername}
+          onShowInBotsMenu={(botNick) => {
+            useStore.getState().requestBotsModalOpen(selectedServerId, botNick);
+          }}
         />
       )}
     </div>

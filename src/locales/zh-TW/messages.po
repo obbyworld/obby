@@ -475,6 +475,10 @@ msgstr "封禁"
 msgid "Bot"
 msgstr "机器人"
 
+#: src/components/ui/UserProfileModal.tsx
+msgid "Bot Commands"
+msgstr ""
+
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "機器人尚未註冊任何斜線命令。"
@@ -2581,6 +2585,10 @@ msgstr "顯示評論"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "顯示評論 ({commentCount})"
+
+#: src/components/ui/UserProfileModal.tsx
+msgid "Show in Bots Menu →"
+msgstr ""
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"

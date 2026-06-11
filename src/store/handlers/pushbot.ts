@@ -140,6 +140,23 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   // When WHO completes for a channel, pre-fetch slash-command schemas
   // for any +B users we now share a channel with so the autocomplete
   // cache is warm by the time the user types '/'.
+  // When a bot joins a channel we're in, query its commands so the
+  // slash picker / bots modal stays current without waiting for the
+  // user to type '/'.  We don't yet know if the joiner is +B at this
+  // moment -- WHO hasn't run -- so query unconditionally and let the
+  // bot's own discovery-noop semantics (regular users don't reply)
+  // sort it out.  Skip ourselves.
+  ircClient.on("JOIN", ({ serverId, username, channelName, batchTag }) => {
+    if (batchTag) return;
+    const state = store.getState();
+    const server = state.servers.find((s) => s.id === serverId);
+    if (!server) return;
+    const myNick = ircClient.getCurrentUser(serverId)?.username;
+    if (myNick && username.toLowerCase() === myNick.toLowerCase()) return;
+    if (server.botCommands?.[username.toLowerCase()]) return;
+    queryBotCommands(serverId, username);
+  });
+
   ircClient.on("WHO_END", ({ serverId, mask }) => {
     if (!mask?.startsWith("#")) return;
     const server = store.getState().servers.find((s) => s.id === serverId);
@@ -198,12 +215,19 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
     if (mtags["+draft/bot-cmds"]) {
       const batchRef = mtags.batch;
-      if (batchRef && botCmdsBatches.has(`${serverId}:${batchRef}`)) {
+      if (batchRef) {
+        // A batched fragment.  If we're tracking the batch (saw the
+        // BATCH +<ref> draft/bot-cmds open this session) append the
+        // chunk; otherwise drop silently -- almost certainly a
+        // chathistory replay of an old batch whose start the server
+        // doesn't redeliver, and trying to decode the partial base64
+        // as its own JSON just spams the console.
         botCmdsBatches
           .get(`${serverId}:${batchRef}`)
           ?.fragments.push(mtags["+draft/bot-cmds"]);
         return;
       }
+      // Single-shot (small command list, no BATCH wrapper).
       const cmds = decodeBotCmds(mtags["+draft/bot-cmds"]);
       if (cmds) commitBotCmds(store, serverId, sender, cmds);
       return;
