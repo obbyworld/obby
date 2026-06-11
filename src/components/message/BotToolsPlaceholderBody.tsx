@@ -156,9 +156,9 @@ export const BotToolsPlaceholderBody: React.FC<
                 <span className="text-discord-text-normal text-[11px] font-mono shrink-0">
                   {tool}
                 </span>
-                {pairs.map((p, i) => (
+                {pairs.map((p) => (
                   <span
-                    key={`${step.sid}-${i}`}
+                    key={`${step.sid}-${p.key}`}
                     className="text-discord-text-muted text-[11px] font-mono inline-flex items-center gap-0.5"
                   >
                     {p.key && (
