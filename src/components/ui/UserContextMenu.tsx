@@ -490,7 +490,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
         botCommands.length > 0 &&
         botSubmenuPos && (
           <div
-            className="fixed w-64 bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl py-1 max-h-[60vh] overflow-y-auto z-[100001]"
+            className="fixed w-64 bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl pb-1 max-h-[60vh] overflow-y-auto z-[100001]"
             style={{
               left: Math.min(botSubmenuPos.left, window.innerWidth - 260),
               top: Math.min(
