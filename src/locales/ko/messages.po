@@ -754,6 +754,10 @@ msgstr "색상"
 msgid "Color & Formatting"
 msgstr "색상 및 서식"
 
+#: src/components/ui/BotsModal.tsx
+msgid "Commands are loading…"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaViewerModal.tsx

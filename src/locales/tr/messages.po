@@ -754,6 +754,10 @@ msgstr "Renk"
 msgid "Color & Formatting"
 msgstr "Renk ve Biçimlendirme"
 
+#: src/components/ui/BotsModal.tsx
+msgid "Commands are loading…"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaViewerModal.tsx

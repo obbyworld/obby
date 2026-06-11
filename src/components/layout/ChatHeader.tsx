@@ -36,6 +36,7 @@ import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
+import LoadingSpinner from "../ui/LoadingSpinner";
 import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
@@ -336,7 +337,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         <span className="relative inline-flex items-center">
           <FaRobot />
           {botsLoadingCount > 0 && (
-            <span className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-discord-blue animate-pulse" />
+            <span className="absolute -top-1.5 -right-2 inline-flex">
+              <LoadingSpinner size="sm" text="" />
+            </span>
           )}
         </span>
       ),
@@ -622,9 +625,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <FaRobot />
                 {botsLoadingCount > 0 && (
                   <span
-                    className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-discord-blue ring-2 ring-discord-dark-500 animate-pulse"
+                    className="absolute -top-1.5 -right-2 inline-flex"
                     aria-hidden="true"
-                  />
+                  >
+                    <LoadingSpinner size="sm" text="" />
+                  </span>
                 )}
               </button>
               <button

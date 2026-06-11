@@ -19,6 +19,7 @@ import { useModalBehavior } from "../../hooks/useModalBehavior";
 import ircClient from "../../lib/ircClient";
 import useStore from "../../store";
 import type { BotCommand, PushBotInfo } from "../../types";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface BotsModalProps {
   isOpen: boolean;
@@ -113,9 +114,11 @@ const BotRow: React.FC<BotRowProps> = ({
       <span className="font-mono text-sm truncate">{bot.nick}</span>
       {loading && (
         <span
-          className="ml-1 inline-block w-3 h-3 rounded-full border-2 border-discord-text-muted/40 border-t-discord-blue animate-spin flex-shrink-0"
+          className="ml-1 inline-flex flex-shrink-0"
           title={t`Receiving command list…`}
-        />
+        >
+          <LoadingSpinner size="sm" text="" />
+        </span>
       )}
       <span
         className={`ml-auto px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide flex-shrink-0 ${SCOPE_BADGE[bot.scope].cls}`}
@@ -146,6 +149,7 @@ const BotRow: React.FC<BotRowProps> = ({
 interface BotDetailProps {
   bot: PushBotInfo;
   isOper: boolean;
+  loading?: boolean;
   onAction: (subcmd: string) => void;
   onPickCommand?: (command: BotCommand) => void;
 }
@@ -153,6 +157,7 @@ interface BotDetailProps {
 const BotDetail: React.FC<BotDetailProps> = ({
   bot,
   isOper,
+  loading,
   onAction,
   onPickCommand,
 }) => (
@@ -225,8 +230,15 @@ const BotDetail: React.FC<BotDetailProps> = ({
         <Trans>Slash commands</Trans>
       </h4>
       {bot.commands.length === 0 ? (
-        <div className="text-sm text-discord-text-muted italic">
-          <Trans>Bot hasn't registered any slash commands yet.</Trans>
+        <div className="text-sm text-discord-text-muted italic flex items-center gap-2">
+          {loading ? (
+            <>
+              <LoadingSpinner size="sm" text="" />
+              <Trans>Commands are loading…</Trans>
+            </>
+          ) : (
+            <Trans>Bot hasn't registered any slash commands yet.</Trans>
+          )}
         </div>
       ) : (
         <ul className="flex flex-col gap-2">
@@ -492,6 +504,9 @@ const BotsModal: React.FC<BotsModalProps> = ({
     <BotDetail
       bot={selected}
       isOper={isOper}
+      loading={
+        !!server?.botCommandsLoading?.includes(selected.nick.toLowerCase())
+      }
       onAction={send}
       onPickCommand={
         onPickCommand

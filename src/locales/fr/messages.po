@@ -754,6 +754,10 @@ msgstr "Couleur"
 msgid "Color & Formatting"
 msgstr "Couleur et mise en forme"
 
+#: src/components/ui/BotsModal.tsx
+msgid "Commands are loading…"
+msgstr ""
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaViewerModal.tsx
