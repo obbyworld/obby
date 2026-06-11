@@ -504,16 +504,18 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
             onMouseEnter={cancelBotClose}
             onMouseLeave={scheduleBotClose}
           >
-            <button
-              type="button"
-              onClick={() => {
-                requestBotsModalOpen(serverId, username);
-                onClose();
-              }}
-              className="w-full px-3 py-2 text-left text-discord-blue text-xs font-semibold hover:bg-discord-dark-200 transition-colors sticky top-0 bg-discord-dark-300 border-b border-discord-dark-500"
-            >
-              <Trans>Show in Bots Menu →</Trans>
-            </button>
+            <div className="sticky top-0 z-10 bg-discord-dark-300 border-b border-discord-dark-500">
+              <button
+                type="button"
+                onClick={() => {
+                  requestBotsModalOpen(serverId, username);
+                  onClose();
+                }}
+                className="w-full px-3 py-2 text-left text-xs font-semibold text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors"
+              >
+                <Trans>Show in Bots Menu →</Trans>
+              </button>
+            </div>
             {botCommands.map((c) => (
               <button
                 key={c.name}
