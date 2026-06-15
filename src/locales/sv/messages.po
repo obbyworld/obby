@@ -151,6 +151,14 @@ msgstr "{joinCount, plural, one {gick med} other {gick med {joinCount} gånger}}
 msgid "{minutes} minutes"
 msgstr ""
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} wants to start an encrypted chat"
+msgstr ""
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {återanslöt} other {återanslöt {reconnectCount} gånger}}"
@@ -209,6 +217,15 @@ msgstr "<0>Risk:</0> Känslig information (meddelanden, privata konversationer, 
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
+msgstr ""
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Accept"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Accept encrypted chat"
 msgstr ""
 
 #: src/components/ui/UserSettings.tsx
@@ -952,6 +969,15 @@ msgstr "Anpassa din IRC-klientupplevelse"
 msgid "Data Collection"
 msgstr "Datainsamling"
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Decline"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Decline encryption"
+msgstr ""
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
 msgstr "Fördjupning"
@@ -1023,6 +1049,10 @@ msgstr "Utforska"
 #: src/components/ui/HomeScreen.tsx
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Utforska IRC-världen med ObsidianIRC"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Dismiss"
+msgstr ""
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"
@@ -1121,6 +1151,24 @@ msgstr "Aktivera aviseringsljud"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "Aktivera aviseringar"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Encrypt this chat"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Encrypted end-to-end — click to end"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Encrypting…"
+msgstr ""
+
+#: src/components/layout/ChatHeader.tsx
+msgid "End encryption"
+msgstr ""
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -3131,6 +3179,10 @@ msgstr "Voice-användare"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Volym"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Waiting for {nick} to accept encryption…"
+msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

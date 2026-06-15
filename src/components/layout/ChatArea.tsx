@@ -48,6 +48,7 @@ import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
+import { E2EERequestBanner } from "../ui/E2EERequestBanner";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
@@ -2151,6 +2152,12 @@ export const ChatArea: React.FC<{
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
+              {selectedPrivateChat && selectedServerId && (
+                <E2EERequestBanner
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
+              )}
               {isDraggingFile && (
                 <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
                   <span className="text-discord-text-normal font-medium flex items-center">

@@ -1,6 +1,7 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
 import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
+import type { E2EESessionState } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -19,6 +20,15 @@ import type {
 } from "../types";
 import { registerAllHandlers } from "./handlers";
 import { readyProcessedServers } from "./handlers/connection";
+import {
+  acceptE2EEOffer as e2eeAccept,
+  rejectE2EEOffer as e2eeReject,
+  resetE2EESession as e2eeReset,
+  startE2EESession as e2eeStart,
+  verifyE2EESession as e2eeVerify,
+  isE2EEActive,
+  sendEncryptedMessage,
+} from "./handlers/e2ee";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
 import * as storage from "./localStorage";
@@ -560,6 +570,8 @@ export interface AppState {
   selectedServerId: string | null;
   connectionError: string | null;
   messages: Record<string, Message[]>;
+  e2eeSessions: Record<string, E2EESessionState>;
+  e2eeSelfFingerprint: string | null;
   typingUsers: Record<string, User[]>;
   typingTimers: Record<string, Record<string, NodeJS.Timeout>>;
   globalNotifications: {
@@ -719,6 +731,11 @@ export interface AppState {
   joinChannel: (serverId: string, channelName: string) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
+  startE2EESession: (serverId: string, nick: string) => void;
+  acceptE2EEOffer: (serverId: string, nick: string) => void;
+  rejectE2EEOffer: (serverId: string, nick: string) => void;
+  resetE2EESession: (serverId: string, nick: string) => void;
+  verifyE2EESession: (serverId: string, nick: string) => void;
   redactMessage: (
     serverId: string,
     target: string,
@@ -1101,6 +1118,8 @@ const useStore = create<AppState>((set, get) => ({
   rawLog: {},
   rawLogViewerServerId: null,
   messages: {},
+  e2eeSessions: {},
+  e2eeSelfFingerprint: null,
   typingUsers: {},
   typingTimers: {},
   globalNotifications: [],
@@ -1677,8 +1696,20 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   sendMessage: (serverId, channelId, content) => {
-    const message = ircClient.sendMessage(serverId, channelId, content);
+    const server = get().servers.find((s) => s.id === serverId);
+    const pm = server?.privateChats?.find((p) => p.id === channelId);
+    if (pm && isE2EEActive(serverId, pm.username)) {
+      sendEncryptedMessage(serverId, pm.username, content);
+      return;
+    }
+    ircClient.sendMessage(serverId, channelId, content);
   },
+
+  startE2EESession: (serverId, nick) => e2eeStart(serverId, nick),
+  acceptE2EEOffer: (serverId, nick) => e2eeAccept(serverId, nick),
+  rejectE2EEOffer: (serverId, nick) => e2eeReject(serverId, nick),
+  resetE2EESession: (serverId, nick) => e2eeReset(serverId, nick),
+  verifyE2EESession: (serverId, nick) => e2eeVerify(serverId, nick),
 
   redactMessage: (
     serverId: string,
