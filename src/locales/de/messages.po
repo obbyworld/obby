@@ -159,6 +159,10 @@ msgstr ""
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
 msgstr ""
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s fingerprint"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {erneut verbunden} other {{reconnectCount}-mal erneut verbunden}}"
@@ -223,8 +227,8 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr ""
 
@@ -517,6 +521,10 @@ msgstr "Benutzer sperren (per Nickname)"
 msgid "Bans"
 msgstr "Sperren"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Best — between Obby clients"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -780,6 +788,7 @@ msgstr "Client-Limit (+l)"
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
@@ -892,6 +901,7 @@ msgstr "Steuert, wie viele externe Medien geladen werden. Aus / Sicher / Vertrau
 msgid "Control media display and external content"
 msgstr "Medienanzeige und externe Inhalte steuern"
 
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
@@ -908,6 +918,10 @@ msgstr "Alles kopieren"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "Gesamtes JSON kopieren"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Copy fingerprint"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -973,8 +987,8 @@ msgstr "Datenerfassung"
 msgid "Decline"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr ""
 
@@ -1050,6 +1064,7 @@ msgstr "Entdecken"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Entdecke die Welt von IRC mit ObsidianIRC"
 
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
 msgstr ""
@@ -1152,21 +1167,41 @@ msgstr "Benachrichtigungstöne aktivieren"
 msgid "Enable notifications"
 msgstr "Benachrichtigungen aktivieren"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (Obby)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (OTR)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Encrypted end-to-end — click to end"
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted — verify {nick}'s identity to be sure."
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted end-to-end"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypting…"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption key changed — verify"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption options"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
 msgstr ""
 
@@ -1671,6 +1706,10 @@ msgstr "Profilinformationen und Metadaten verwalten"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Als Bot markieren – normalerweise 'on' oder leer"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Mark as verified"
+msgstr ""
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2868,6 +2907,14 @@ msgstr "Der Benutzer erhält eine Einladung, {channelName} beizutreten."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Der Workflow, der diese Nachricht erzeugt hat, ist nicht mehr im Zustand vorhanden"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Dieser Befehl nimmt keine Parameter."
@@ -3124,6 +3171,18 @@ msgstr "Ein gültiger Server-Port ist erforderlich"
 msgid "Verified account"
 msgstr "Verifiziertes Konto"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Verify encryption"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Verify fingerprint…"
+msgstr ""
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Verify…"
+msgstr ""
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
 msgstr "Sehr locker"
@@ -3280,6 +3339,10 @@ msgstr "Workflow-Verlauf ({0})"
 msgid "Working…"
 msgstr "Wird ausgeführt…"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Works with other IRC clients"
+msgstr ""
+
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
 msgid "You"
@@ -3306,6 +3369,10 @@ msgstr "Du hast noch keine Einladungslinks erstellt. Verwende das Formular oben,
 msgid "You invited {target} to join {channel}"
 msgstr "Du hast {target} eingeladen, {channel} beizutreten"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "You verified this contact."
+msgstr ""
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
 msgstr "Ihr Kontopasswort zur Authentifizierung"
@@ -3317,6 +3384,10 @@ msgstr "Ihr Kontobenutzername zur Authentifizierung"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Ihr Standard-Nickname für alle Server"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Your fingerprint"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

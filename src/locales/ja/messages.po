@@ -159,6 +159,10 @@ msgstr ""
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
 msgstr ""
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s fingerprint"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, other {{reconnectCount}回 再接続した}}"
@@ -223,8 +227,8 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr ""
 
@@ -517,6 +521,10 @@ msgstr "ユーザーをBAN（ニックネーム）"
 msgid "Bans"
 msgstr "BAN一覧"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Best — between Obby clients"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -780,6 +788,7 @@ msgstr "クライアント制限 (+l)"
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
@@ -892,6 +901,7 @@ msgstr "外部メディアの読み込み範囲を制御します。オフ／安
 msgid "Control media display and external content"
 msgstr "メディア表示と外部コンテンツを制御する"
 
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
@@ -908,6 +918,10 @@ msgstr "すべてコピー"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "JSON全体をコピー"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Copy fingerprint"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -973,8 +987,8 @@ msgstr "データ収集"
 msgid "Decline"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr ""
 
@@ -1050,6 +1064,7 @@ msgstr "探す"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "ObsidianIRCでIRCの世界を探索しよう"
 
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
 msgstr ""
@@ -1152,21 +1167,41 @@ msgstr "通知音を有効にする"
 msgid "Enable notifications"
 msgstr "通知を有効にする"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (Obby)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (OTR)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Encrypted end-to-end — click to end"
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted — verify {nick}'s identity to be sure."
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted end-to-end"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypting…"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption key changed — verify"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption options"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
 msgstr ""
 
@@ -1671,6 +1706,10 @@ msgstr "プロフィール情報とメタデータを管理する"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "ボットとしてマーク — 通常は「on」または空欄"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Mark as verified"
+msgstr ""
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2868,6 +2907,14 @@ msgstr "ユーザーは {channelName} への参加招待を受け取ります。
 msgid "The workflow that produced this message is no longer in state"
 msgstr "このメッセージを生成したワークフローはもう状態にありません"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "このコマンドはパラメータを受け取りません。"
@@ -3124,6 +3171,18 @@ msgstr "有効なサーバーポートが必要です"
 msgid "Verified account"
 msgstr "認証済みアカウント"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Verify encryption"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Verify fingerprint…"
+msgstr ""
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Verify…"
+msgstr ""
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
 msgstr "とても緩め"
@@ -3280,6 +3339,10 @@ msgstr "ワークフロー履歴（{0}）"
 msgid "Working…"
 msgstr "処理中…"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Works with other IRC clients"
+msgstr ""
+
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
 msgid "You"
@@ -3306,6 +3369,10 @@ msgstr "まだ招待リンクを作成していません。上のフォームか
 msgid "You invited {target} to join {channel}"
 msgstr "{target} を {channel} に招待しました"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "You verified this contact."
+msgstr ""
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
 msgstr "認証用のアカウントパスワード"
@@ -3317,6 +3384,10 @@ msgstr "認証用のアカウントユーザー名"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "すべてのサーバーで使用するデフォルトのニックネーム"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Your fingerprint"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

@@ -159,6 +159,10 @@ msgstr ""
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
 msgstr ""
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s fingerprint"
+msgstr ""
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, other {已重新连接 {reconnectCount} 次}}"
@@ -223,8 +227,8 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr ""
 
@@ -517,6 +521,10 @@ msgstr "封禁用户（按昵称）"
 msgid "Bans"
 msgstr "封禁"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Best — between Obby clients"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -780,6 +788,7 @@ msgstr "客户端限制 (+l)"
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
@@ -892,6 +901,7 @@ msgstr "控制加载的外部媒体量。关闭 / 安全 / 可信来源 / 所有
 msgid "Control media display and external content"
 msgstr "控制媒体显示和外部内容"
 
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
@@ -908,6 +918,10 @@ msgstr "全部复制"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "复制完整 JSON"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Copy fingerprint"
+msgstr ""
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -973,8 +987,8 @@ msgstr "数据收集"
 msgid "Decline"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr ""
 
@@ -1050,6 +1064,7 @@ msgstr "发现"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "使用 ObsidianIRC 探索 IRC 的世界"
 
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
 msgstr ""
@@ -1152,21 +1167,41 @@ msgstr "启用通知声音"
 msgid "Enable notifications"
 msgstr "启用通知"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (Obby)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (OTR)"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Encrypted end-to-end — click to end"
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted — verify {nick}'s identity to be sure."
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted end-to-end"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypting…"
 msgstr ""
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption key changed — verify"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption options"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
 msgstr ""
 
@@ -1671,6 +1706,10 @@ msgstr "管理您的个人资料信息和元数据"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "标记为机器人——通常为 'on' 或空"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Mark as verified"
+msgstr ""
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2868,6 +2907,14 @@ msgstr "用户将收到加入 {channelName} 的邀请。"
 msgid "The workflow that produced this message is no longer in state"
 msgstr "生成此消息的工作流已不在状态中"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+msgstr ""
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "此命令不需要参数。"
@@ -3124,6 +3171,18 @@ msgstr "需要有效的服务器端口"
 msgid "Verified account"
 msgstr "已验证账户"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Verify encryption"
+msgstr ""
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Verify fingerprint…"
+msgstr ""
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Verify…"
+msgstr ""
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
 msgstr "非常宽松"
@@ -3280,6 +3339,10 @@ msgstr "工作流历史（{0}）"
 msgid "Working…"
 msgstr "处理中…"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Works with other IRC clients"
+msgstr ""
+
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
 msgid "You"
@@ -3306,6 +3369,10 @@ msgstr "您还没有创建任何邀请链接。使用上面的表单来创建您
 msgid "You invited {target} to join {channel}"
 msgstr "您邀请了 {target} 加入 {channel}"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "You verified this contact."
+msgstr ""
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
 msgstr "您的账户认证密码"
@@ -3317,6 +3384,10 @@ msgstr "您的账户认证用户名"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "所有服务器的默认昵称"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Your fingerprint"
+msgstr ""
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

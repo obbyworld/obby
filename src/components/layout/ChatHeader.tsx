@@ -14,13 +14,10 @@ import {
   FaHashtag,
   FaInfoCircle,
   FaList,
-  FaLock,
-  FaLockOpen,
   FaMicrophone,
   FaPenAlt,
   FaRobot,
   FaSearch,
-  FaShieldAlt,
   FaThumbtack,
   FaTimes,
   FaUser,
@@ -36,6 +33,7 @@ import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
 import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
+import E2EELockControl from "../ui/E2EELockControl";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
@@ -105,11 +103,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       state.servers.find((s) => s.id === selectedServerId)?.botCommandsLoading
         ?.length ?? 0,
   );
-  const e2eeStatus = useStore((state) => {
-    if (!selectedPrivateChat || !selectedServerId) return "none";
-    const key = `${selectedServerId}:${selectedPrivateChat.username.toLowerCase()}`;
-    return state.e2eeSessions[key]?.status ?? "none";
-  });
   const nativeMobile = isTauriMobile();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -904,83 +897,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   <FaFilm />
                 </button>
               )}
-              {e2eeStatus === "pending-accept" ? (
-                <>
-                  <button
-                    className="p-2 md:p-0 text-discord-green hover:text-discord-text-normal"
-                    onClick={() => {
-                      if (selectedServerId && selectedPrivateChat)
-                        useStore
-                          .getState()
-                          .acceptE2EEOffer(
-                            selectedServerId,
-                            selectedPrivateChat.username,
-                          );
-                    }}
-                    aria-label={t`Accept encrypted chat`}
-                    title={t`Accept encrypted chat`}
-                  >
-                    <FaShieldAlt />
-                  </button>
-                  <button
-                    className="p-2 md:p-0 hover:text-discord-text-normal"
-                    onClick={() => {
-                      if (selectedServerId && selectedPrivateChat)
-                        useStore
-                          .getState()
-                          .rejectE2EEOffer(
-                            selectedServerId,
-                            selectedPrivateChat.username,
-                          );
-                    }}
-                    aria-label={t`Decline encryption`}
-                    title={t`Decline encryption`}
-                  >
-                    <FaLockOpen />
-                  </button>
-                </>
-              ) : (
-                <button
-                  className={`p-2 md:p-0 hover:text-discord-text-normal ${
-                    e2eeStatus === "established" ? "text-discord-green" : ""
-                  }`}
-                  disabled={e2eeStatus === "negotiating"}
-                  onClick={() => {
-                    if (!selectedServerId || !selectedPrivateChat) return;
-                    const nick = selectedPrivateChat.username;
-                    if (e2eeStatus === "established") {
-                      useStore
-                        .getState()
-                        .resetE2EESession(selectedServerId, nick);
-                    } else if (e2eeStatus !== "negotiating") {
-                      useStore
-                        .getState()
-                        .startE2EESession(selectedServerId, nick);
-                    }
-                  }}
-                  aria-label={
-                    e2eeStatus === "established"
-                      ? t`End encryption`
-                      : e2eeStatus === "negotiating"
-                        ? t`Encrypting…`
-                        : t`Encrypt this chat`
-                  }
-                  title={
-                    e2eeStatus === "established"
-                      ? t`Encrypted end-to-end — click to end`
-                      : e2eeStatus === "negotiating"
-                        ? t`Encrypting…`
-                        : t`Encrypt this chat`
-                  }
-                >
-                  {e2eeStatus === "negotiating" ? (
-                    <LoadingSpinner size="sm" text="" />
-                  ) : e2eeStatus === "established" ? (
-                    <FaLock />
-                  ) : (
-                    <FaLockOpen />
-                  )}
-                </button>
+              {selectedServerId && selectedPrivateChat && (
+                <E2EELockControl
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
               )}
               <button
                 className="p-2 md:p-0 hover:text-discord-text-normal"

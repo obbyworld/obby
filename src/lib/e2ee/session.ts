@@ -140,3 +140,10 @@ export function reduceSession(
 export function isEncrypting(state: E2EESessionState): boolean {
   return state.status === "established";
 }
+
+// The key for a conversation's E2EE session, shared by the store, the
+// orchestration, and the lock/banner UI. Single source of truth so the
+// case-folding never drifts between a write and a lookup.
+export function e2eeSessionKey(serverId: string, nick: string): string {
+  return `${serverId}:${nick.toLowerCase()}`;
+}

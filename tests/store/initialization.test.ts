@@ -2,6 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const NARROW_VIEW_QUERY = "(max-width: 768px)";
 
+// Each test re-imports the entire store (resetModules + dynamic import) to re-run
+// the matchMedia-based init under a fresh mock. Transforming/evaluating the full
+// store graph three times can exceed the 5s default when the parallel suite is
+// CPU-bound, so give these heavy imports more headroom (they run in ~1.3s alone).
+vi.setConfig({ testTimeout: 20_000 });
+
 describe("Store Initialization", () => {
   let originalWindow: typeof globalThis.window;
 

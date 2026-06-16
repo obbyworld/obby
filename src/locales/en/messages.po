@@ -158,6 +158,10 @@ msgstr "{nick} wants to start an encrypted chat"
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
 msgstr "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s fingerprint"
+msgstr "{nick}'s fingerprint"
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -222,8 +226,8 @@ msgstr "About this attribution"
 msgid "Accept"
 msgstr "Accept"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr "Accept encrypted chat"
 
@@ -516,6 +520,10 @@ msgstr "Ban User (by Nickname)"
 msgid "Bans"
 msgstr "Bans"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Best — between Obby clients"
+msgstr "Best — between Obby clients"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -779,6 +787,7 @@ msgstr "Client Limit (+l)"
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
@@ -891,6 +900,7 @@ msgstr "Control how much external media is loaded. Off / Safe / Trusted Sources 
 msgid "Control media display and external content"
 msgstr "Control media display and external content"
 
+#: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Copied"
@@ -907,6 +917,10 @@ msgstr "Copy all"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
 msgstr "Copy entire JSON"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Copy fingerprint"
+msgstr "Copy fingerprint"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -972,8 +986,8 @@ msgstr "Data Collection"
 msgid "Decline"
 msgstr "Decline"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr "Decline encryption"
 
@@ -1049,6 +1063,7 @@ msgstr "Discover"
 msgid "Discover the world of IRC with ObsidianIRC"
 msgstr "Discover the world of IRC with ObsidianIRC"
 
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
 msgstr "Dismiss"
@@ -1151,21 +1166,41 @@ msgstr "Enable Notification Sounds"
 msgid "Enable notifications"
 msgstr "Enable notifications"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (Obby)"
+msgstr "Encrypt (Obby)"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypt (OTR)"
+msgstr "Encrypt (OTR)"
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
 msgstr "Encrypt this chat"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Encrypted end-to-end — click to end"
-msgstr "Encrypted end-to-end — click to end"
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted — verify {nick}'s identity to be sure."
+msgstr "Encrypted — verify {nick}'s identity to be sure."
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted end-to-end"
+msgstr "Encrypted end-to-end"
+
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
 msgid "Encrypting…"
 msgstr "Encrypting…"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption key changed — verify"
+msgstr "Encryption key changed — verify"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encryption options"
+msgstr "Encryption options"
+
+#: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
 msgstr "End encryption"
 
@@ -1670,6 +1705,10 @@ msgstr "Manage your profile information and metadata"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Mark as bot - usually 'on' or empty"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Mark as verified"
+msgstr "Mark as verified"
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2867,6 +2906,14 @@ msgstr "The user will receive an invitation to join {channelName}."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "The workflow that produced this message is no longer in state"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+msgstr "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+msgstr "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "This command takes no parameters."
@@ -3123,6 +3170,18 @@ msgstr "Valid server port is required"
 msgid "Verified account"
 msgstr "Verified account"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Verify encryption"
+msgstr "Verify encryption"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Verify fingerprint…"
+msgstr "Verify fingerprint…"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Verify…"
+msgstr "Verify…"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
 msgstr "Very Relaxed"
@@ -3279,6 +3338,10 @@ msgstr "Workflow history ({0})"
 msgid "Working…"
 msgstr "Working…"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Works with other IRC clients"
+msgstr "Works with other IRC clients"
+
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
 msgid "You"
@@ -3305,6 +3368,10 @@ msgstr "You haven't created any invite links yet. Use the form above to mint you
 msgid "You invited {target} to join {channel}"
 msgstr "You invited {target} to join {channel}"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "You verified this contact."
+msgstr "You verified this contact."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
 msgstr "Your account password for authentication"
@@ -3316,6 +3383,10 @@ msgstr "Your account username for authentication"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Your default nickname for all servers"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Your fingerprint"
+msgstr "Your fingerprint"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

@@ -49,6 +49,7 @@ import { BotToolsTray } from "../ui/BotToolsTray";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
+import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
@@ -325,6 +326,8 @@ export const ChatArea: React.FC<{
   const servers = useStore((state) => state.servers);
   const ui = useStore((state) => state.ui);
   const globalSettings = useStore((state) => state.globalSettings);
+  const e2eeVerifyTarget = useStore((state) => state.e2eeVerifyTarget);
+  const closeE2EEVerify = useStore((state) => state.closeE2EEVerify);
   const messages = useStore((state) => state.messages);
   const toggleMemberList = useStore((state) => state.toggleMemberList);
   const openPrivateChat = useStore((state) => state.openPrivateChat);
@@ -2156,6 +2159,14 @@ export const ChatArea: React.FC<{
                 <E2EERequestBanner
                   serverId={selectedServerId}
                   nick={selectedPrivateChat.username}
+                />
+              )}
+              {e2eeVerifyTarget && (
+                <E2EEVerifyModal
+                  isOpen
+                  serverId={e2eeVerifyTarget.serverId}
+                  nick={e2eeVerifyTarget.nick}
+                  onClose={closeE2EEVerify}
                 />
               )}
               {isDraggingFile && (

@@ -21,6 +21,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
+import { handleInboundOtr } from "./otr";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
   ircClient.on("CHANMSG", (response) => {
@@ -764,6 +765,21 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         ?.username?.toLowerCase();
       if (sender && !sender.includes(".") && sender.toLowerCase() !== ourNick) {
         store.getState().metadataList(response.serverId, sender);
+      }
+
+      // OTR (cross-client E2EE) rides in the PRIVMSG body; divert it before it
+      // renders as plaintext. Our own echoes and CHATHISTORY replays (mtags.batch)
+      // are swallowed without driving a live handshake — replayed ciphertext can't
+      // decrypt and a replayed query would trigger a spurious AKE.
+      if (
+        handleInboundOtr(
+          response.serverId,
+          sender,
+          message,
+          sender.toLowerCase() === ourNick || mtags?.batch !== undefined,
+        )
+      ) {
+        return;
       }
 
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
