@@ -98,6 +98,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
         'fade-in': 'fadeIn 0.2s ease-in-out',
         'slide-in': 'slideIn 0.2s ease-in-out',
+        'pulse-bright': 'pulseBright 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         "accordion-down": {
@@ -123,6 +124,10 @@ module.exports = {
         slideIn: {
           '0%': { transform: 'translateX(10px)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        pulseBright: {
+          '0%, 100%': { filter: 'brightness(1)' },
+          '50%': { filter: 'brightness(1.6)' },
         },
       },
       container: {

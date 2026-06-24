@@ -37,7 +37,6 @@ import E2EELockControl from "../ui/E2EELockControl";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
-import LoadingSpinner from "../ui/LoadingSpinner";
 import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
@@ -335,14 +334,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       label:
         botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
       icon: (
-        <span className="relative inline-flex items-center">
-          <FaRobot />
-          {botsLoadingCount > 0 && (
-            <span className="absolute -top-1.5 -right-2 inline-flex">
-              <LoadingSpinner size="sm" text="" />
-            </span>
-          )}
-        </span>
+        <FaRobot
+          className={
+            botsLoadingCount > 0 ? "text-blue-500 animate-pulse-bright" : ""
+          }
+        />
       ),
       onClick: onOpenBots,
       show: !!selectedServerId,
@@ -614,7 +610,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <FaUserPlus />
               </button>
               <button
-                className="hidden md:block hover:text-discord-text-normal relative"
+                className={`hidden md:block ${
+                  botsLoadingCount > 0
+                    ? "text-blue-500 animate-pulse-bright"
+                    : "hover:text-discord-text-normal"
+                }`}
                 onClick={onOpenBots}
                 title={
                   botsLoadingCount > 0
@@ -624,14 +624,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 aria-label={t`Bots`}
               >
                 <FaRobot />
-                {botsLoadingCount > 0 && (
-                  <span
-                    className="absolute -top-1.5 -right-2 inline-flex"
-                    aria-hidden="true"
-                  >
-                    <LoadingSpinner size="sm" text="" />
-                  </span>
-                )}
               </button>
               <button
                 className="hidden md:block hover:text-discord-text-normal"

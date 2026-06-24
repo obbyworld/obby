@@ -483,7 +483,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
       style={{ opacity: fadeOpacity, transition: "opacity 0.8s linear" }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="w-[680px] max-w-full bg-discord-dark-300/95 backdrop-blur-sm border border-discord-dark-400 rounded-lg shadow-xl overflow-hidden"
+      className="w-full md:w-[680px] md:max-w-full bg-discord-dark-300/95 backdrop-blur-sm border border-discord-dark-400 rounded-lg shadow-xl overflow-hidden"
     >
       {/* Header — collapsed row. <div> with role=button because the
           row holds Dismiss/Cancel <button>s and HTML forbids nested
@@ -576,7 +576,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({ workflow }) => {
         <div
           ref={bodyRef}
           onScroll={onBodyScroll}
-          className="border-t border-discord-dark-400 max-h-[420px] overflow-y-auto"
+          className="border-t border-discord-dark-400 max-h-[50vh] md:max-h-[420px] overflow-y-auto"
         >
           {workflow.steps.length === 0 ? (
             <div className="px-3 py-4 text-xs text-discord-text-muted">

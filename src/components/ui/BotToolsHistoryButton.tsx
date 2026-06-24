@@ -1,8 +1,9 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   FaCheck,
+  FaChevronRight,
   FaProjectDiagram,
   FaSpinner,
   FaTimesCircle,
@@ -14,7 +15,7 @@ import {
 } from "../../lib/botTools";
 import type { AiWorkflow } from "../../store";
 import useStore from "../../store";
-import LoadingSpinner from "./LoadingSpinner";
+import Popover from "./Popover";
 
 interface BotToolsHistoryButtonProps {
   serverId: string;
@@ -56,14 +57,8 @@ function fmtAgo(ts: number): string {
   return `${Math.round(h / 24)}d`;
 }
 
-// Workflow history button + popover for the chat header.
-//
-// Now two-level: top tier lists the bots that have run a workflow in
-// the active channel (most-recently-active first); hovering or clicking
-// a bot opens a second tier of that bot's workflows, latest-first.
-// When at least one workflow is in flight the icon carries the shared
-// LoadingSpinner badge so the user can see something is happening
-// without the tray of cards we used to pop up automatically.
+// Header control listing each bot's workflows for the active channel. The inline
+// spinner marks in-flight runs so activity shows without auto-popping cards.
 export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
   serverId,
   channel,
@@ -79,9 +74,7 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
       .sort((a, b) => b.startedAt - a.startedAt);
   }, [serverWorkflows, channel]);
 
-  // Group by sender nick.  Each bucket sorted latest-first so the
-  // submenu reads top -> bottom newest-to-oldest, matching the rest
-  // of the chat surface.
+  // Sorted latest-first so the submenu reads newest-to-oldest.
   const byBot = useMemo(() => {
     const map = new Map<string, AiWorkflow[]>();
     for (const w of workflows) {
@@ -90,7 +83,6 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
       list.push(w);
       map.set(key, list);
     }
-    // Sort the bots by their latest workflow's start time.
     return Array.from(map.entries())
       .map(([nick, list]) => ({
         nick,
@@ -108,34 +100,25 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
 
   const [open, setOpen] = useState(false);
   const [expandedBot, setExpandedBot] = useState<string | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (!open) {
-      setExpandedBot(null);
-      return;
-    }
-    const onClick = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onClick);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
+  const closeMenu = () => {
+    setOpen(false);
+    setExpandedBot(null);
+  };
 
   if (workflows.length === 0) return null;
 
   return (
-    <div ref={rootRef} className="relative">
+    <>
       <button
+        ref={triggerRef}
         type="button"
-        className="hidden md:flex items-center gap-1 hover:text-discord-text-normal relative"
+        className={`flex items-center gap-1 p-2 md:p-0 ${
+          activeTotal > 0
+            ? "text-blue-500 animate-pulse-bright"
+            : "hover:text-discord-text-normal"
+        }`}
         onClick={() => setOpen((o) => !o)}
         title={
           activeTotal > 0
@@ -143,135 +126,130 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
             : t`Workflow history (${workflows.length})`
         }
         aria-expanded={open}
+        aria-haspopup="dialog"
       >
         <FaProjectDiagram />
         <span className="text-[11px] tabular-nums leading-none">
           {workflows.length}
         </span>
-        {activeTotal > 0 && (
-          <span
-            className="absolute -top-1.5 -right-2 inline-flex"
-            aria-hidden="true"
-          >
-            <LoadingSpinner size="sm" text="" />
-          </span>
-        )}
       </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-2 z-40 w-80 max-w-[90vw] bg-discord-dark-300 border border-discord-dark-400 rounded-lg shadow-2xl overflow-hidden">
-          <div className="px-3 py-2 border-b border-discord-dark-400 text-xs uppercase tracking-wide text-discord-text-muted flex items-center justify-between">
-            <span>
-              <Trans>Workflow history</Trans>
-            </span>
-            <span>{workflows.length}</span>
-          </div>
-          <ul className="max-h-[60vh] overflow-y-auto divide-y divide-discord-dark-400/60">
-            {byBot.map(({ nick, list, activeCount }) => {
-              const isExpanded = expandedBot === nick;
-              return (
-                <li key={nick}>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedBot((prev) => (prev === nick ? null : nick))
-                    }
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-discord-dark-400/60 transition-colors"
-                    aria-expanded={isExpanded}
-                  >
-                    <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
-                      {activeCount > 0 ? (
-                        <LoadingSpinner size="sm" text="" />
-                      ) : (
-                        <FaProjectDiagram className="text-discord-text-muted text-[10px]" />
-                      )}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-sm font-semibold text-white truncate">
-                          {nick}
-                        </span>
-                        <span className="text-[10px] text-discord-text-muted shrink-0">
-                          {fmtAgo(list[0].startedAt)}
-                        </span>
-                      </div>
-                      <div className="text-[10px] text-discord-text-muted">
-                        <Trans>{list.length} workflow(s)</Trans>
-                        {activeCount > 0 && (
-                          <span>
-                            {" · "}
-                            <Trans>{activeCount} active</Trans>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <span
-                      className={`text-discord-text-muted text-xs transition-transform ${
-                        isExpanded ? "rotate-90" : ""
+      <Popover
+        isOpen={open}
+        onClose={closeMenu}
+        anchor={triggerRef.current}
+        width={320}
+        title={<Trans>Workflow history</Trans>}
+        titleAdornment={
+          <span className="tabular-nums">{workflows.length}</span>
+        }
+        bodyClassName="max-h-[60vh] md:max-h-none"
+      >
+        <ul className="divide-y divide-discord-dark-400/60">
+          {byBot.map(({ nick, list, activeCount }) => {
+            const isExpanded = expandedBot === nick;
+            return (
+              <li key={nick}>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedBot((prev) => (prev === nick ? null : nick))
+                  }
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-discord-dark-400/60 transition-colors"
+                  aria-expanded={isExpanded}
+                >
+                  <span className="w-4 h-4 flex items-center justify-center shrink-0">
+                    <FaProjectDiagram
+                      className={`text-[10px] ${
+                        activeCount > 0
+                          ? "text-blue-500 animate-pulse-bright"
+                          : "text-discord-text-muted"
                       }`}
-                      aria-hidden="true"
-                    >
-                      ▸
-                    </span>
-                  </button>
-                  {isExpanded && (
-                    <ul className="bg-discord-dark-200/60 border-t border-discord-dark-400/60">
-                      {list.map((w) => (
-                        <li key={w.id}>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              reopen(w.serverId, w.id);
-                              setOpen(false);
-                            }}
-                            className="w-full flex items-start gap-2.5 pl-9 pr-3 py-2 text-left hover:bg-discord-dark-400/60 transition-colors"
-                          >
-                            <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
-                              {stateGlyph(effectiveWorkflowState(w))}
-                            </span>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-baseline gap-1.5">
-                                <span className="text-xs font-medium text-discord-text-normal truncate">
-                                  {w.name ?? t`Workflow`}
-                                </span>
-                                <span className="text-[10px] text-discord-text-muted shrink-0">
-                                  {fmtAgo(w.startedAt)}
-                                </span>
-                              </div>
-                              <div className="text-[10px] text-discord-text-muted">
-                                <Trans>{countableSteps(w.steps)} step(s)</Trans>
-                                {(() => {
-                                  const eff = effectiveWorkflowState(w);
-                                  if (eff === "running" || eff === "start")
-                                    return null;
-                                  let label: string;
-                                  if (isStale(w)) label = t`timed out`;
-                                  else if (eff === "complete")
-                                    label = t`complete`;
-                                  else if (eff === "failed") label = t`failed`;
-                                  else if (eff === "cancelled")
-                                    label = t`cancelled`;
-                                  else label = eff;
-                                  return (
-                                    <span>
-                                      {" · "}
-                                      {label}
-                                    </span>
-                                  );
-                                })()}
-                              </div>
+                    />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-sm font-semibold text-white truncate">
+                        {nick}
+                      </span>
+                      <span className="text-[10px] text-discord-text-muted shrink-0">
+                        {fmtAgo(list[0].startedAt)}
+                      </span>
+                    </div>
+                    <div className="text-[10px] text-discord-text-muted">
+                      <Trans>{list.length} workflow(s)</Trans>
+                      {activeCount > 0 && (
+                        <span>
+                          {" · "}
+                          <Trans>{activeCount} active</Trans>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <FaChevronRight
+                    className={`text-discord-text-muted text-[10px] transition-transform ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                </button>
+                {isExpanded && (
+                  <ul className="bg-discord-dark-200/60 border-t border-discord-dark-400/60">
+                    {list.map((w) => (
+                      <li key={w.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            reopen(w.serverId, w.id);
+                            closeMenu();
+                          }}
+                          className="w-full flex items-start gap-2.5 pl-9 pr-3 py-2.5 md:py-2 text-left hover:bg-discord-dark-400/60 transition-colors"
+                        >
+                          <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
+                            {stateGlyph(effectiveWorkflowState(w))}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-baseline gap-1.5">
+                              <span className="text-xs font-medium text-discord-text-normal truncate">
+                                {w.name ?? t`Workflow`}
+                              </span>
+                              <span className="text-[10px] text-discord-text-muted shrink-0">
+                                {fmtAgo(w.startedAt)}
+                              </span>
                             </div>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-    </div>
+                            <div className="text-[10px] text-discord-text-muted">
+                              <Trans>{countableSteps(w.steps)} step(s)</Trans>
+                              {(() => {
+                                const eff = effectiveWorkflowState(w);
+                                if (eff === "running" || eff === "start")
+                                  return null;
+                                let label: string;
+                                if (isStale(w)) label = t`timed out`;
+                                else if (eff === "complete")
+                                  label = t`complete`;
+                                else if (eff === "failed") label = t`failed`;
+                                else if (eff === "cancelled")
+                                  label = t`cancelled`;
+                                else label = eff;
+                                return (
+                                  <span>
+                                    {" · "}
+                                    {label}
+                                  </span>
+                                );
+                              })()}
+                            </div>
+                          </div>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </Popover>
+    </>
   );
 };
 
