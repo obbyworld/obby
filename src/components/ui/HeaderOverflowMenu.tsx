@@ -3,10 +3,12 @@ import { type ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 export interface HeaderOverflowMenuItem {
-  label: string;
+  label: ReactNode;
   icon: ReactNode;
   onClick: () => void;
   show: boolean;
+  // Stable React key + title; required when `label` isn't a plain string.
+  id?: string;
 }
 
 interface HeaderOverflowMenuProps {
@@ -81,13 +83,15 @@ export const HeaderOverflowMenu: React.FC<HeaderOverflowMenuProps> = ({
       <div className="py-1">
         {menuItems.map((item) => (
           <button
-            key={item.label}
+            key={typeof item.label === "string" ? item.label : item.id}
             role="menuitem"
             onClick={() => handleMenuItemClick(item.onClick)}
             className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
-            title={item.label}
+            title={
+              typeof item.label === "string" ? item.label : (item.id ?? "")
+            }
           >
-            <span className="flex-shrink-0 text-sm">{item.icon}</span>
+            <span className="mt-0.5 flex-shrink-0 text-sm">{item.icon}</span>
             <span className="text-sm">{item.label}</span>
           </button>
         ))}

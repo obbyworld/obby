@@ -17,7 +17,10 @@ import type { AppState } from "../index";
 
 // Give up on an unanswered handshake rather than spinning forever — the peer may
 // be offline, a client without the scheme, or on a server that strips the tags.
+// Obby-native negotiates in one round-trip; OTR's multi-round AKE against
+// flood-throttled clients (libotr/irssi pace fragments ~6s apart) needs far more.
 export const NEGOTIATION_TIMEOUT_MS = 20_000;
+export const OTR_NEGOTIATION_TIMEOUT_MS = 90_000;
 
 let storeRef: StoreApi<AppState> | null = null;
 
@@ -100,6 +103,7 @@ export function armNegotiationTimer(
   serverId: string,
   nick: string,
   onTimeout: () => void,
+  timeoutMs: number = NEGOTIATION_TIMEOUT_MS,
 ): void {
   const key = convKey(serverId, nick);
   clearNegotiationTimer(key);
@@ -114,7 +118,7 @@ export function armNegotiationTimer(
         type: "error",
         reason: "no response from peer",
       });
-    }, NEGOTIATION_TIMEOUT_MS),
+    }, timeoutMs),
   );
 }
 

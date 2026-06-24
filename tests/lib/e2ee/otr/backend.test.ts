@@ -107,4 +107,27 @@ describe("OtrBackend — identity & sessions", () => {
     alice.start(peer);
     expect(alice.hasSession(peer)).toBe(true);
   });
+
+  test("encrypt sends nothing before the session is encrypted (no plaintext leak)", () => {
+    const outbound: string[] = [];
+    const alice = new OtrBackend(
+      OTR,
+      DSA.parsePrivate(ALICE_KEY.packed),
+      {
+        onOutbound: (_p, frame) => outbound.push(frame),
+        onPlaintext: () => {},
+        onEstablished: () => {},
+        onEnded: () => {},
+        onError: () => {},
+      },
+      FAST,
+    );
+    const peer: OtrPeerRef = { serverId: "s", nick: "carol" };
+    alice.start(peer); // only the ?OTRv23? query; AKE never completes (no peer)
+    outbound.length = 0;
+    expect(alice.isEncrypting(peer)).toBe(false);
+    const sent = alice.encrypt(peer, "secret");
+    expect(sent).toBe(false);
+    expect(outbound).toHaveLength(0); // nothing on the wire — never plaintext
+  });
 });

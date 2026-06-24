@@ -153,15 +153,15 @@ msgstr ""
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
-msgstr ""
+msgstr "{nick} хочет начать зашифрованный чат"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
-msgstr ""
+msgstr "Ключ шифрования {nick} изменился — это может быть новое устройство или злоумышленник. Проверьте, прежде чем доверять ему."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
-msgstr ""
+msgstr "Отпечаток {nick}"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -230,7 +230,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
-msgstr ""
+msgstr "Принять зашифрованный чат"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -523,7 +523,7 @@ msgstr "Баны"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Best — between Obby clients"
-msgstr ""
+msgstr "Лучший вариант — между клиентами Obby"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -569,6 +569,7 @@ msgstr "Просмотреть все каналы на сервере"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ImagePreviewModal.tsx
@@ -583,6 +584,10 @@ msgstr "Отмена"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Отменить подключение"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Cancel encryption"
+msgstr "Отменить шифрование"
 
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
@@ -921,7 +926,7 @@ msgstr "Копировать весь JSON"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Copy fingerprint"
-msgstr ""
+msgstr "Копировать отпечаток"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -990,7 +995,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
-msgstr ""
+msgstr "Отклонить шифрование"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1169,41 +1174,44 @@ msgstr "Включить уведомления"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
-msgstr ""
+msgstr "Шифровать (Obby)"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (OTR)"
-msgstr ""
+msgstr "Шифровать (OTR)"
 
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
-msgstr ""
+msgstr "Зашифровать этот чат"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr ""
+msgstr "Зашифровано — подтвердите личность {nick}, чтобы быть уверенным."
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted end-to-end"
-msgstr ""
+msgstr "Сквозное шифрование"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypting with {nick}…"
+msgstr "Установка шифрования с {nick}…"
 
 #: src/components/ui/E2EELockControl.tsx
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting…"
-msgstr ""
+msgid "Encrypting… — click to cancel"
+msgstr "Установка шифрования… — нажмите, чтобы отменить"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed — verify"
-msgstr ""
+msgstr "Ключ шифрования изменился — проверьте"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption options"
-msgstr ""
+msgstr "Параметры шифрования"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
-msgstr ""
+msgstr "Завершить шифрование"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -1709,7 +1717,7 @@ msgstr "Пометить как бота — обычно «on» или пуст
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
-msgstr ""
+msgstr "Отметить как проверенный"
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2909,11 +2917,11 @@ msgstr "Рабочий процесс, создавший это сообщен�
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "Этот чат зашифрован собственной схемой Obby. Сравните отпечатки по другому каналу связи, затем отметьте его как проверенный."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "Этот чат зашифрован с помощью OTR, совместимого с другими IRC-клиентами. Сравните отпечатки по другому каналу связи, затем отметьте его как проверенный."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
@@ -3173,15 +3181,15 @@ msgstr "Верифицированный аккаунт"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
-msgstr ""
+msgstr "Проверить шифрование"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
-msgstr ""
+msgstr "Проверить отпечаток…"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
-msgstr ""
+msgstr "Проверить…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -3238,10 +3246,6 @@ msgstr "Пользователь с голосом"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Громкость"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Waiting for {nick} to accept encryption…"
-msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
@@ -3341,7 +3345,7 @@ msgstr "Выполняется…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
-msgstr ""
+msgstr "Работает с другими IRC-клиентами"
 
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
@@ -3371,7 +3375,7 @@ msgstr "Вы пригласили {target} присоединиться к {chan
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "You verified this contact."
-msgstr ""
+msgstr "Вы подтвердили этот контакт."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -3387,7 +3391,7 @@ msgstr "Ваш никнейм по умолчанию для всех серве
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Your fingerprint"
-msgstr ""
+msgstr "Ваш отпечаток"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

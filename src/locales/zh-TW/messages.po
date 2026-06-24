@@ -153,15 +153,15 @@ msgstr ""
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
-msgstr ""
+msgstr "{nick} 想要開始加密聊天"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
-msgstr ""
+msgstr "{nick} 的加密金鑰已變更 — 這可能是新裝置，也可能是攻擊者。信任之前請先驗證。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
-msgstr ""
+msgstr "{nick} 的指紋"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -230,7 +230,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
-msgstr ""
+msgstr "接受加密聊天"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -523,7 +523,7 @@ msgstr "封禁"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Best — between Obby clients"
-msgstr ""
+msgstr "最佳 — Obby 客戶端之間"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -569,6 +569,7 @@ msgstr "浏览服务器上的所有频道"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ImagePreviewModal.tsx
@@ -583,6 +584,10 @@ msgstr "取消"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "取消连接"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Cancel encryption"
+msgstr "取消加密"
 
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
@@ -921,7 +926,7 @@ msgstr "複製完整 JSON"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Copy fingerprint"
-msgstr ""
+msgstr "複製指紋"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -990,7 +995,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
-msgstr ""
+msgstr "拒絕加密"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1169,41 +1174,44 @@ msgstr "启用通知"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
-msgstr ""
+msgstr "加密 (Obby)"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (OTR)"
-msgstr ""
+msgstr "加密 (OTR)"
 
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
-msgstr ""
+msgstr "加密此聊天"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr ""
+msgstr "已加密 — 驗證 {nick} 的身分以確保安全。"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted end-to-end"
-msgstr ""
+msgstr "端對端加密"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypting with {nick}…"
+msgstr "正在與 {nick} 建立加密…"
 
 #: src/components/ui/E2EELockControl.tsx
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting…"
-msgstr ""
+msgid "Encrypting… — click to cancel"
+msgstr "正在加密… — 點擊以取消"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed — verify"
-msgstr ""
+msgstr "加密金鑰已變更 — 請驗證"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption options"
-msgstr ""
+msgstr "加密選項"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
-msgstr ""
+msgstr "結束加密"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -1709,7 +1717,7 @@ msgstr "標記為機器人——通常為 'on' 或空白"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
-msgstr ""
+msgstr "標記為已驗證"
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2909,11 +2917,11 @@ msgstr "產生此訊息的工作流程已不在狀態中"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "此聊天使用 Obby 的原生機制加密。請透過其他管道比對指紋，然後標記為已驗證。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "此聊天使用 OTR 加密，與其他 IRC 客戶端相容。請透過其他管道比對指紋，然後標記為已驗證。"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
@@ -3173,15 +3181,15 @@ msgstr "已验证账户"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
-msgstr ""
+msgstr "驗證加密"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
-msgstr ""
+msgstr "驗證指紋…"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
-msgstr ""
+msgstr "驗證…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -3238,10 +3246,6 @@ msgstr "有發言權的使用者"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "音量"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Waiting for {nick} to accept encryption…"
-msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
@@ -3341,7 +3345,7 @@ msgstr "處理中…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
-msgstr ""
+msgstr "可與其他 IRC 客戶端搭配使用"
 
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
@@ -3371,7 +3375,7 @@ msgstr "您邀請了 {target} 加入 {channel}"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "You verified this contact."
-msgstr ""
+msgstr "您已驗證此聯絡人。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -3387,7 +3391,7 @@ msgstr "所有伺服器的預設暱稱"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Your fingerprint"
-msgstr ""
+msgstr "您的指紋"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

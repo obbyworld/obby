@@ -153,15 +153,15 @@ msgstr ""
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
-msgstr ""
+msgstr "{nick}님이 암호화된 대화를 시작하려고 합니다"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
-msgstr ""
+msgstr "{nick}님의 암호화 키가 변경되었습니다 — 새 기기일 수도 있고 공격자일 수도 있습니다. 신뢰하기 전에 확인하세요."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
-msgstr ""
+msgstr "{nick}님의 지문"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -230,7 +230,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
-msgstr ""
+msgstr "암호화된 대화 수락"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -523,7 +523,7 @@ msgstr "차단 목록"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Best — between Obby clients"
-msgstr ""
+msgstr "최선 — Obby 클라이언트 간"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -569,6 +569,7 @@ msgstr "서버의 모든 채널 검색"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ImagePreviewModal.tsx
@@ -583,6 +584,10 @@ msgstr "취소"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "연결 취소"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Cancel encryption"
+msgstr "암호화 취소"
 
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
@@ -921,7 +926,7 @@ msgstr "전체 JSON 복사"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Copy fingerprint"
-msgstr ""
+msgstr "지문 복사"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -990,7 +995,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
-msgstr ""
+msgstr "암호화 거절"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1169,41 +1174,44 @@ msgstr "알림 활성화"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
-msgstr ""
+msgstr "암호화 (Obby)"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (OTR)"
-msgstr ""
+msgstr "암호화 (OTR)"
 
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
-msgstr ""
+msgstr "이 대화 암호화"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr ""
+msgstr "암호화됨 — 확실히 하려면 {nick}님의 신원을 확인하세요."
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted end-to-end"
-msgstr ""
+msgstr "종단 간 암호화됨"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypting with {nick}…"
+msgstr "{nick}님과 암호화 중…"
 
 #: src/components/ui/E2EELockControl.tsx
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting…"
-msgstr ""
+msgid "Encrypting… — click to cancel"
+msgstr "암호화 중… — 클릭하여 취소"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed — verify"
-msgstr ""
+msgstr "암호화 키 변경됨 — 확인 필요"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption options"
-msgstr ""
+msgstr "암호화 옵션"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
-msgstr ""
+msgstr "암호화 종료"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -1709,7 +1717,7 @@ msgstr "봇으로 표시 - 보통 'on' 또는 비워두기"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
-msgstr ""
+msgstr "확인됨으로 표시"
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2909,11 +2917,11 @@ msgstr "이 메시지를 생성한 워크플로가 더 이상 상태에 없습�
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "이 대화는 Obby의 자체 방식으로 암호화되어 있습니다. 별도 경로로 지문을 비교한 후 확인됨으로 표시하세요."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "이 대화는 다른 IRC 클라이언트와 호환되는 OTR로 암호화되어 있습니다. 별도 경로로 지문을 비교한 후 확인됨으로 표시하세요."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
@@ -3173,15 +3181,15 @@ msgstr "인증된 계정"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
-msgstr ""
+msgstr "암호화 확인"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
-msgstr ""
+msgstr "지문 확인…"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
-msgstr ""
+msgstr "확인…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -3238,10 +3246,6 @@ msgstr "Voice 사용자"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "볼륨"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Waiting for {nick} to accept encryption…"
-msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
@@ -3341,7 +3345,7 @@ msgstr "작업 중…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
-msgstr ""
+msgstr "다른 IRC 클라이언트와 호환"
 
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
@@ -3371,7 +3375,7 @@ msgstr "{target}을(를) {channel}에 초대했습니다"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "You verified this contact."
-msgstr ""
+msgstr "이 연락처를 확인했습니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -3387,7 +3391,7 @@ msgstr "모든 서버에 사용할 기본 닉네임"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Your fingerprint"
-msgstr ""
+msgstr "내 지문"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

@@ -153,15 +153,15 @@ msgstr ""
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
-msgstr ""
+msgstr "{nick}が暗号化されたチャットを開始しようとしています"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick}'s encryption key changed — this could be a new device or an attacker. Verify before trusting it."
-msgstr ""
+msgstr "{nick}の暗号化キーが変更されました — 新しいデバイスの可能性も、攻撃者の可能性もあります。信頼する前に確認してください。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
-msgstr ""
+msgstr "{nick}のフィンガープリント"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -230,7 +230,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
-msgstr ""
+msgstr "暗号化チャットを承認"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -523,7 +523,7 @@ msgstr "BAN一覧"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Best — between Obby clients"
-msgstr ""
+msgstr "最適 — Obbyクライアント間"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -569,6 +569,7 @@ msgstr "サーバー上のすべてのチャンネルを一覧表示"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ImagePreviewModal.tsx
@@ -583,6 +584,10 @@ msgstr "キャンセル"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "接続をキャンセル"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Cancel encryption"
+msgstr "暗号化をキャンセル"
 
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
@@ -921,7 +926,7 @@ msgstr "JSON全体をコピー"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Copy fingerprint"
-msgstr ""
+msgstr "フィンガープリントをコピー"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy formatted output"
@@ -990,7 +995,7 @@ msgstr ""
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
-msgstr ""
+msgstr "暗号化を拒否"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1169,41 +1174,44 @@ msgstr "通知を有効にする"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
-msgstr ""
+msgstr "暗号化 (Obby)"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (OTR)"
-msgstr ""
+msgstr "暗号化 (OTR)"
 
 #: src/components/ui/E2EELockControl.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt this chat"
-msgstr ""
+msgstr "このチャットを暗号化"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr ""
+msgstr "暗号化済み — 念のため{nick}の身元を確認してください。"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted end-to-end"
-msgstr ""
+msgstr "エンドツーエンドで暗号化済み"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypting with {nick}…"
+msgstr "{nick}と暗号化中…"
 
 #: src/components/ui/E2EELockControl.tsx
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting…"
-msgstr ""
+msgid "Encrypting… — click to cancel"
+msgstr "暗号化中… — クリックでキャンセル"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed — verify"
-msgstr ""
+msgstr "暗号化キーが変更されました — 確認してください"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption options"
-msgstr ""
+msgstr "暗号化オプション"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "End encryption"
-msgstr ""
+msgstr "暗号化を終了"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -1709,7 +1717,7 @@ msgstr "ボットとしてマーク — 通常は「on」または空欄"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
-msgstr ""
+msgstr "確認済みにする"
 
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
@@ -2909,11 +2917,11 @@ msgstr "このメッセージを生成したワークフローはもう状態に
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "このチャットはObbyのネイティブ方式で暗号化されています。フィンガープリントを別の経路で照合してから、確認済みにしてください。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr ""
+msgstr "このチャットはOTRで暗号化されており、他のIRCクライアントと互換性があります。フィンガープリントを別の経路で照合してから、確認済みにしてください。"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
@@ -3173,15 +3181,15 @@ msgstr "認証済みアカウント"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
-msgstr ""
+msgstr "暗号化を確認"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
-msgstr ""
+msgstr "フィンガープリントを確認…"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
-msgstr ""
+msgstr "確認…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -3238,10 +3246,6 @@ msgstr "Voiceユーザー"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "音量"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Waiting for {nick} to accept encryption…"
-msgstr ""
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
@@ -3341,7 +3345,7 @@ msgstr "処理中…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
-msgstr ""
+msgstr "他のIRCクライアントで動作します"
 
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
@@ -3371,7 +3375,7 @@ msgstr "{target} を {channel} に招待しました"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "You verified this contact."
-msgstr ""
+msgstr "この連絡先を確認しました。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -3387,7 +3391,7 @@ msgstr "すべてのサーバーで使用するデフォルトのニックネー
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Your fingerprint"
-msgstr ""
+msgstr "あなたのフィンガープリント"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Your invite links"

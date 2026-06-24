@@ -568,6 +568,7 @@ msgstr "Browse all channels on the server"
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ImagePreviewModal.tsx
@@ -582,6 +583,10 @@ msgstr "Cancel"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Cancel Connection"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Cancel encryption"
+msgstr "Cancel encryption"
 
 #: src/components/message/MessageReply.tsx
 msgid "Cancel reply"
@@ -1187,10 +1192,13 @@ msgstr "Encrypted — verify {nick}'s identity to be sure."
 msgid "Encrypted end-to-end"
 msgstr "Encrypted end-to-end"
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypting with {nick}…"
+msgstr "Encrypting with {nick}…"
+
 #: src/components/ui/E2EELockControl.tsx
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting…"
-msgstr "Encrypting…"
+msgid "Encrypting… — click to cancel"
+msgstr "Encrypting… — click to cancel"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed — verify"
@@ -3237,10 +3245,6 @@ msgstr "Voiced User"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Volume"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Waiting for {nick} to accept encryption…"
-msgstr "Waiting for {nick} to accept encryption…"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

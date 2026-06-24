@@ -109,9 +109,27 @@ export class OtrBackend {
     this.session(peer).receiveMsg(frame);
   }
 
+  // True only when the peer's session is actively encrypted. The UI lock and the
+  // send path must gate on this — a session can leave ENCRYPTED (peer ended OTR,
+  // desync) while the reducer still shows "established".
+  isEncrypting(peer: OtrPeerRef): boolean {
+    return (
+      this.sessions.get(sessionKey(peer))?.msgstate ===
+      this.otr.CONST.MSGSTATE_ENCRYPTED
+    );
+  }
+
   // Encrypt and send a user message; ciphertext frames arrive via onOutbound.
-  encrypt(peer: OtrPeerRef, content: string): void {
-    this.sessions.get(sessionKey(peer))?.sendMsg(content);
+  // Returns false (sending nothing) when the session is not in the encrypted
+  // state — arlolra's sendMsg silently falls back to PLAINTEXT otherwise, which
+  // would leak under a lock the UI still shows as secure. The caller must treat
+  // false as "not delivered".
+  encrypt(peer: OtrPeerRef, content: string): boolean {
+    const instance = this.sessions.get(sessionKey(peer));
+    if (!instance || instance.msgstate !== this.otr.CONST.MSGSTATE_ENCRYPTED)
+      return false;
+    instance.sendMsg(content);
+    return true;
   }
 
   end(peer: OtrPeerRef): void {

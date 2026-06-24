@@ -18,6 +18,7 @@ import {
   dispatch,
   getStore,
   injectMessage,
+  OTR_NEGOTIATION_TIMEOUT_MS,
   reconcilePeerTrust,
 } from "./e2eeShared";
 
@@ -99,7 +100,12 @@ export function startOtrSession(serverId: string, nick: string): void {
   // keygen (~2s) doesn't eat into the negotiation window or fire before we sent.
   withBackend(peer, (b) => {
     b.start(peer);
-    armNegotiationTimer(serverId, nick, () => backend?.end(peer));
+    armNegotiationTimer(
+      serverId,
+      nick,
+      () => backend?.end(peer),
+      OTR_NEGOTIATION_TIMEOUT_MS,
+    );
   });
 }
 
@@ -130,22 +136,49 @@ export function handleInboundOtr(
   if (fresh) dispatch(serverId, sender, { type: "start", scheme: "otr" });
   withBackend(peer, (b) => {
     b.receive(peer, body);
-    if (fresh) armNegotiationTimer(serverId, sender, () => backend?.end(peer));
+    if (fresh)
+      armNegotiationTimer(
+        serverId,
+        sender,
+        () => backend?.end(peer),
+        OTR_NEGOTIATION_TIMEOUT_MS,
+      );
+    // If an established session silently left the encrypted state (peer ended
+    // OTR / desync), correct the lock instead of leaving it green — otherwise
+    // the next outgoing message would leak as plaintext under a trusted lock.
+    const st =
+      getStore()?.getState().e2eeSessions[convKey(serverId, sender)]?.status;
+    if (st === "established" && !b.isEncrypting(peer)) {
+      dispatch(serverId, sender, {
+        type: "error",
+        reason: "peer ended encryption",
+      });
+    }
   });
   return true;
 }
 
-// Encrypt and send an outgoing PM, echoing the plaintext locally since the
-// ciphertext rides on OTR frames the sender won't otherwise see in the thread.
+// Encrypt and send an outgoing PM. The local echo only happens once the message
+// is actually encrypted — if the session has dropped out of the encrypted state
+// we must NOT fall back to plaintext under a lock the user still trusts; instead
+// surface the loss and drop the message.
 export function sendOtrMessage(
   serverId: string,
   nick: string,
   content: string,
 ): void {
   const peer: OtrPeerRef = { serverId, nick };
-  withBackend(peer, (b) => b.encrypt(peer, content));
-  const self = getStore()?.getState().currentUser?.username ?? "";
-  injectMessage(serverId, nick, self, content);
+  withBackend(peer, (b) => {
+    if (b.encrypt(peer, content)) {
+      const self = getStore()?.getState().currentUser?.username ?? "";
+      injectMessage(serverId, nick, self, content);
+    } else {
+      dispatch(serverId, nick, {
+        type: "error",
+        reason: "encryption lost — message not sent; re-encrypt to continue",
+      });
+    }
+  });
 }
 
 export function endOtrSession(serverId: string, nick: string): void {
