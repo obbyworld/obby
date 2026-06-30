@@ -91,9 +91,9 @@ const UpdateModal: React.FC = () => {
                   t`Downloading… ${percent}%`
                 )}
               </p>
-              <div className="w-full bg-discord-dark-500 rounded h-2 overflow-hidden">
+              <div className="w-full h-1.5 rounded bg-discord-dark-500 overflow-hidden">
                 <div
-                  className="bg-discord-primary h-2 transition-all"
+                  className="h-full bg-discord-blue transition-[width] duration-150"
                   style={{ width: `${percent ?? 10}%` }}
                 />
               </div>
