@@ -33,6 +33,43 @@ npm run format; npm run fix:unsafe; npm run test; npm run build
 - Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
 ---
 
+## Distribution & Desktop Auto-Update
+
+Releases run from [`.github/workflows/publish.yaml`](.github/workflows/publish.yaml): on a
+`v*.*.*` tag it builds desktop (macOS arm64/x64, Windows, Linux x64/arm64), Android (+ Google
+Play), iOS, and a web zip, all pushed to GitHub Releases via `tauri-apps/tauri-action`.
+Pushes to `main` produce `-pre` pre-releases. Linux AppImages get zsync update info embedded
+(`gh-releases-zsync`) so AppImageUpdate can self-update.
+
+Mobile updates ship through the App Store / Google Play — do **not** add an in-app updater for
+iOS/Android.
+
+Desktop auto-update (macOS/Windows/Linux) is done with the **Tauri updater plugin** backed by
+**CrabNebula Cloud** (CDN + update server with first-class Tauri-updater support; free since
+2026-06-19). Wiring lives in:
+
+- `tauri-plugin-updater` + `tauri-plugin-process` in [src-tauri/Cargo.toml](src-tauri/Cargo.toml),
+  registered inside the `#[cfg(desktop)]` block of [src-tauri/src/lib.rs](src-tauri/src/lib.rs)
+  (same place as `single-instance`) so mobile builds never link them.
+- `bundle.createUpdaterArtifacts: true` and `plugins.updater` (`endpoints` → CrabNebula CDN URL,
+  `pubkey`) in [src-tauri/tauri.conf.json](src-tauri/tauri.conf.json). Endpoint template:
+  `https://cdn.crabnebula.app/update/<org>/<app>/{{target}}-{{arch}}/{{current_version}}`.
+- `updater:default` + `process:allow-restart` in
+  [src-tauri/capabilities/default.json](src-tauri/capabilities/default.json).
+- Update signing keypair: `npm exec tauri signer generate`. The **public** key goes in
+  `tauri.conf.json`; the **private** key + password are CI secrets
+  (`TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) — never commit them.
+- CrabNebula release CI uses `crabnebula-dev/cloud-release` with `CN_API_KEY` as a **repository**
+  secret (environment secrets leak as plaintext in logs). Pin every third-party action to a full
+  commit SHA, as `publish.yaml` already does.
+
+Restart-to-update flow lives in the frontend: `check()` → `downloadAndInstall()` → `relaunch()`
+(`@tauri-apps/plugin-updater` + `@tauri-apps/plugin-process`). Gate all of it behind `isTauri()`
+so the web/Docker build is unaffected, and wrap any user-facing update text in the i18n macros
+(see the i18n section).
+
+---
+
 ## Project Layout
 
 ```

@@ -1070,6 +1070,14 @@ msgstr "Не попереджати мене про низький рівень 
 msgid "Download"
 msgstr "Завантажити"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Завантаження…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Завантаження… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Перетягніть файли для завантаження"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Вставити емодзі"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Встановити та перезапустити"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Недійсний формат"
@@ -1513,6 +1525,10 @@ msgstr "Відключити користувача"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Мова"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Пізніше"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Розслаблений"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Розслаблений - менш агресивний захист"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Примітки до випуску"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Видалити"
@@ -2384,6 +2404,10 @@ msgstr "Відповів у чаті"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Повідомлення з відповіддю більше не відображається"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Повторити"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Відкріпити цю приватну розмову"
 msgid "Unsuspend"
 msgstr "Відновити"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Доступне оновлення"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Не вдалося оновити. Спробуйте ще раз."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Завантажити"
@@ -3075,6 +3107,12 @@ msgstr "Потрібен дійсний порт сервера"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Підтверджений акаунт"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Доступна версія {0} — у вас {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

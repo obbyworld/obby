@@ -1070,6 +1070,14 @@ msgstr "Nie ostrzegaj mnie o niskim poziomie bezpieczeństwa połączeń dla teg
 msgid "Download"
 msgstr "Pobierz"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Pobieranie…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Pobieranie… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Upuść pliki, aby je przesłać"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Wstaw emoji"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Zainstaluj i uruchom ponownie"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Nieprawidłowy format"
@@ -1513,6 +1525,10 @@ msgstr "Rozłącz użytkownika"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Język"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Później"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Łagodny"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Łagodny – mniej agresywna ochrona"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Informacje o wersji"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Usuń"
@@ -2384,6 +2404,10 @@ msgstr "Odpowiedziano na czacie"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Wiadomość z odpowiedzią nie jest już widoczna"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Spróbuj ponownie"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Odepnij tę prywatną rozmowę"
 msgid "Unsuspend"
 msgstr "Wznów"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Dostępna aktualizacja"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Aktualizacja nie powiodła się. Spróbuj ponownie."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Prześlij"
@@ -3075,6 +3107,12 @@ msgstr "Wymagany jest prawidłowy port serwera"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Zweryfikowane konto"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Dostępna jest wersja {0} — masz {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

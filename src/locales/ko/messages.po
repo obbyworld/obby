@@ -1070,6 +1070,14 @@ msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 msgid "Download"
 msgstr "다운로드"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "다운로드 중…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "다운로드 중… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "업로드할 파일을 여기에 놓으세요"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "이모지 삽입"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "설치하고 다시 시작"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "잘못된 형식"
@@ -1513,6 +1525,10 @@ msgstr "사용자 연결 끊기"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "언어"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "나중에"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "완화"
 msgid "Relaxed - Less aggressive protection"
 msgstr "완화 - 덜 공격적인 보호"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "릴리스 노트"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "제거"
@@ -2384,6 +2404,10 @@ msgstr "채팅으로 응답함"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "응답 메시지가 더 이상 표시되지 않습니다"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "다시 시도"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "이 비공개 메시지 대화 고정 해제"
 msgid "Unsuspend"
 msgstr "정지 해제"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "업데이트 사용 가능"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "업데이트에 실패했습니다. 다시 시도해 주세요."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "업로드"
@@ -3075,6 +3107,12 @@ msgstr "올바른 서버 포트가 필요합니다"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "인증된 계정"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "버전 {0}을(를) 사용할 수 있습니다 — 현재 {1}입니다."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

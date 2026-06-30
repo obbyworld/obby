@@ -1070,6 +1070,14 @@ msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
 msgid "Download"
 msgstr "Lataa"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Ladataan…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Ladataan… {percent} %"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Pudota tiedostot ladataksesi"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Lisää emoji"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Asenna ja käynnistä uudelleen"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Virheellinen muoto"
@@ -1513,6 +1525,10 @@ msgstr "Katkaise yhteys"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Kieli"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Myöhemmin"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Löysä"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Löysä – vähemmän aggressiivinen suojaus"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Julkaisutiedot"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Poista"
@@ -2384,6 +2404,10 @@ msgstr "Vastasi keskustelussa"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Vastausviesti ei ole enää näkyvissä"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Yritä uudelleen"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Irrota tämä yksityisviestiketju"
 msgid "Unsuspend"
 msgstr "Poista jäädytys"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Päivitys saatavilla"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Päivitys epäonnistui. Yritä uudelleen."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Lähetä"
@@ -3075,6 +3107,12 @@ msgstr "Kelvollinen palvelinportti on pakollinen"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Vahvistettu tili"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Versio {0} on saatavilla — sinulla on {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

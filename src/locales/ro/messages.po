@@ -1070,6 +1070,14 @@ msgstr "Nu mă avertiza despre securitatea scăzută a legăturilor pentru acest
 msgid "Download"
 msgstr "Descarcă"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Se descarcă…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Se descarcă… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Plasați fișierele pentru a le încărca"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Inserează emoji"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Instalează și repornește"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Format invalid"
@@ -1513,6 +1525,10 @@ msgstr "Expulzați utilizatorul"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Limbă"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Mai târziu"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Relaxat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Relaxat – Protecție mai puțin agresivă"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Note de lansare"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Elimină"
@@ -2384,6 +2404,10 @@ msgstr "A răspuns în chat"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Mesajul de răspuns nu mai este vizibil"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Reîncearcă"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Anulează fixarea acestei conversații private"
 msgid "Unsuspend"
 msgstr "Anulează suspendarea"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Actualizare disponibilă"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Actualizarea a eșuat. Încearcă din nou."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Încărcați"
@@ -3075,6 +3107,12 @@ msgstr "Este necesar un port de server valid"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Cont verificat"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Versiunea {0} este disponibilă — tu ai {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

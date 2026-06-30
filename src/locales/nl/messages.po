@@ -1070,6 +1070,14 @@ msgstr "Niet meer waarschuwen over lage verbindingsbeveiliging voor deze server"
 msgid "Download"
 msgstr "Downloaden"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Bezig met downloaden…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Bezig met downloaden… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Sleep bestanden hierheen om te uploaden"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Emoji invoegen"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Installeren en opnieuw starten"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Ongeldig formaat"
@@ -1513,6 +1525,10 @@ msgstr "Gebruiker verbreken"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Taal"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Later"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Ontspannen"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Ontspannen — Minder agressieve beveiliging"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Release-opmerkingen"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Verwijderen"
@@ -2384,6 +2404,10 @@ msgstr "Beantwoord in chat"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Het antwoordbericht is niet meer in beeld"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Opnieuw proberen"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Dit privéberichtgesprek losmaken"
 msgid "Unsuspend"
 msgstr "Opschorting opheffen"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Update beschikbaar"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Update mislukt. Probeer het opnieuw."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Uploaden"
@@ -3075,6 +3107,12 @@ msgstr "Een geldige serverpoort is vereist"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Geverifieerd account"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Versie {0} is beschikbaar — je hebt {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
