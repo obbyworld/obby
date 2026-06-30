@@ -691,7 +691,7 @@ msgstr "Kanalen op {networkName}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
-msgstr "Kies een vooraf ingesteld floodbeveililingsprofiel. Deze profielen bieden evenwichtige beveiligingsinstellingen voor verschillende toepassingen."
+msgstr "Kies een vooraf ingesteld floodbeveiligingsprofiel. Deze profielen bieden evenwichtige beveiligingsinstellingen voor verschillende toepassingen."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
@@ -2048,7 +2048,7 @@ msgstr "Open een privébericht naar een gebruiker"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Open channel configuration settings"
-msgstr "Kanaelconfiguratie-instellingen openen"
+msgstr "Kanaalconfiguratie-instellingen openen"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx

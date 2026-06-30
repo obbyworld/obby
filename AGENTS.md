@@ -55,7 +55,8 @@ Desktop auto-update (macOS/Windows/Linux) is done with the **Tauri updater plugi
   `pubkey`) in [src-tauri/tauri.conf.json](src-tauri/tauri.conf.json). Endpoint template:
   `https://cdn.crabnebula.app/update/<org>/<app>/{{target}}-{{arch}}/{{current_version}}`.
 - `updater:default` + `process:allow-restart` in
-  [src-tauri/capabilities/default.json](src-tauri/capabilities/default.json).
+  [src-tauri/capabilities/desktop.json](src-tauri/capabilities/desktop.json)
+  (desktop-only capability, not the cross-platform `default.json`).
 - Update signing keypair: `npm exec tauri signer generate`. The **public** key goes in
   `tauri.conf.json`; the **private** key + password are CI secrets
   (`TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) — never commit them.
@@ -64,7 +65,7 @@ Desktop auto-update (macOS/Windows/Linux) is done with the **Tauri updater plugi
   commit SHA, as `publish.yaml` already does.
 
 Restart-to-update flow lives in the frontend: `check()` → `downloadAndInstall()` → `relaunch()`
-(`@tauri-apps/plugin-updater` + `@tauri-apps/plugin-process`). Gate all of it behind `isTauri()`
+(`@tauri-apps/plugin-updater` + `@tauri-apps/plugin-process`). Gate all of it behind `isTauriDesktop()`
 so the web/Docker build is unaffected, and wrap any user-facing update text in the i18n macros
 (see the i18n section).
 
