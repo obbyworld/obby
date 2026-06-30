@@ -1070,6 +1070,14 @@ msgstr "このサーバーのリンクセキュリティが低い場合に警告
 msgid "Download"
 msgstr "ダウンロード"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "ダウンロード中…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "ダウンロード中… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "アップロードするファイルをドロップ"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "絵文字を挿入"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "インストールして再起動"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "無効な形式"
@@ -1513,6 +1525,10 @@ msgstr "ユーザーを切断"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "言語"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "後で"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "緩め"
 msgid "Relaxed - Less aggressive protection"
 msgstr "緩め — 控えめな保護"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "リリースノート"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "削除"
@@ -2384,6 +2404,10 @@ msgstr "チャットで応答しました"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "応答メッセージは表示されていません"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "再試行"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "このプライベートメッセージの会話のピン留めを解除
 msgid "Unsuspend"
 msgstr "停止を解除"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "アップデートが利用可能"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "アップデートに失敗しました。もう一度お試しください。"
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "アップロード"
@@ -3075,6 +3107,12 @@ msgstr "有効なサーバーポートが必要です"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "認証済みアカウント"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "バージョン {0} が利用可能です — 現在は {1} です。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

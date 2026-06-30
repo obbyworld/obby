@@ -1070,6 +1070,14 @@ msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 msgid "Download"
 msgstr "İndir"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "İndiriliyor…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "İndiriliyor… %{percent}"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Yüklemek için dosyaları buraya bırakın"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Emoji ekle"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Yükle ve yeniden başlat"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Geçersiz biçim"
@@ -1513,6 +1525,10 @@ msgstr "Kullanıcıyı at"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Dil"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Daha sonra"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Rahat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Rahat - Daha az agresif koruma"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Sürüm notları"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Kaldır"
@@ -2384,6 +2404,10 @@ msgstr "Sohbette yanıtladı"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Yanıt mesajı artık görünümde değil"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Yeniden dene"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Bu özel mesaj konuşmasının sabitlemesini kaldır"
 msgid "Unsuspend"
 msgstr "Askıdan al"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Güncelleme mevcut"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Güncelleme başarısız oldu. Lütfen tekrar deneyin."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Yükle"
@@ -3075,6 +3107,12 @@ msgstr "Geçerli bir sunucu portu gereklidir"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Doğrulanmış hesap"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Sürüm {0} mevcut — sizde {1} var."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

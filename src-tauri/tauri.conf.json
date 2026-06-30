@@ -66,6 +66,13 @@
           "ircs"
         ]
       }
+    },
+    "updater": {
+      "endpoints": [
+        "https://cdn.crabnebula.app/update/obsidianirc/obsidianirc/{{target}}-{{arch}}/{{current_version}}"
+      ],
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEUxNDk5NjkzQzZDQ0Q0NDAKUldSQTFNekdrNVpKNGVINXY3ekZ4blo3ZFJMK0d6WGpzalZWVFNRTENRTU9DbFgzTW1FRkJkRkcK"
     }
   }
 }

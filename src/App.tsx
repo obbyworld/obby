@@ -18,6 +18,7 @@ import QuickActions from "./components/ui/QuickActions";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { TwoFactorSettingsModal } from "./components/ui/TwoFactorSettingsModal";
+import UpdateModal from "./components/ui/UpdateModal";
 import UserProfileModal from "./components/ui/UserProfileModal";
 import UserSettings from "./components/ui/UserSettings";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
@@ -392,6 +393,7 @@ const App: React.FC = () => {
               {isQuickActionsOpen && <QuickActions />}
               {isChannelListModalOpen && <ChannelListModal />}
               <LinkSecurityWarningModal />
+              <UpdateModal />
               {userProfileModalState?.isOpen && (
                 <UserProfileModal
                   isOpen={userProfileModalState.isOpen}

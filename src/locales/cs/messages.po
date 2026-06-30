@@ -1070,6 +1070,14 @@ msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
 msgid "Download"
 msgstr "Stáhnout"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Stahování…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Stahování… {percent} %"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Přetáhněte soubory k nahrání"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Vložit emoji"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Nainstalovat a restartovat"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Neplatný formát"
@@ -1513,6 +1525,10 @@ msgstr "Odpojit uživatele"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Jazyk"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Později"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Uvolněný"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Uvolněný - méně agresivní ochrana"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Poznámky k vydání"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Odebrat"
@@ -2384,6 +2404,10 @@ msgstr "Odpovězeno v chatu"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Zpráva s odpovědí již není zobrazena"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Zkusit znovu"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Odepnout tuto soukromou konverzaci"
 msgid "Unsuspend"
 msgstr "Zrušit pozastavení"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Dostupná aktualizace"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Aktualizace selhala. Zkuste to prosím znovu."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Nahrát"
@@ -3075,6 +3107,12 @@ msgstr "Je vyžadován platný port serveru"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Ověřený účet"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Je dostupná verze {0} — máte {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

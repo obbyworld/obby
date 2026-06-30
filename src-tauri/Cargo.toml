@@ -48,6 +48,9 @@ ndk-context = "0.1"
 [target."cfg(any(target_os = \"macos\", windows, target_os = \"linux\"))".dependencies]
 tauri-plugin-single-instance = { version = "2.4.2", features = ["deep-link"] }
 rfd = { version = "0.16", default-features = false, features = ["tokio", "xdg-portal", "wayland"] }
+# Desktop-only: in-app auto-update via CrabNebula Cloud. Mobile updates ship through the stores.
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 
 [target.'cfg(target_os = "ios")'.dependencies]
 tauri-plugin-ios-keyboard = { path = "plugins/ios-keyboard" }

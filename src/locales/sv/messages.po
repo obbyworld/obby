@@ -1070,6 +1070,14 @@ msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 msgid "Download"
 msgstr "Ladda ned"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Hämtar…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Hämtar… {percent} %"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "Släpp filer för att ladda upp"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "Infoga emoji"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Installera och starta om"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Ogiltigt format"
@@ -1513,6 +1525,10 @@ msgstr "Koppla från användare"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "Språk"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Senare"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "Avslappnat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Avslappnat – mindre aggressivt skydd"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Versionsinformation"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "Ta bort"
@@ -2384,6 +2404,10 @@ msgstr "Svarade i chatten"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Svarsmeddelandet visas inte längre"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Försök igen"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "Lossa den här privata meddelandekonversationen"
 msgid "Unsuspend"
 msgstr "Återaktivera"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Uppdatering tillgänglig"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Uppdateringen misslyckades. Försök igen."
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "Ladda upp"
@@ -3075,6 +3107,12 @@ msgstr "Giltig serverport krävs"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "Verifierat konto"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Version {0} är tillgänglig — du har {1}."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"

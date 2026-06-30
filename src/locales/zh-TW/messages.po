@@ -1070,6 +1070,14 @@ msgstr "不再提醒我此服务器的低链路安全问题"
 msgid "Download"
 msgstr "下载"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "正在下載…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "正在下載… {percent}%"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
 msgstr "拖放檔案以上傳"
@@ -1399,6 +1407,10 @@ msgstr ""
 msgid "Insert emoji"
 msgstr "插入表情"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "安裝並重新啟動"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "格式無效"
@@ -1513,6 +1525,10 @@ msgstr "踢出用戶"
 #: src/components/ui/UserSettings.tsx
 msgid "Language"
 msgstr "语言"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "稍後"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -2331,6 +2347,10 @@ msgstr "宽松"
 msgid "Relaxed - Less aggressive protection"
 msgstr "寬鬆 – 較弱的保護"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "更新說明"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Remove"
 msgstr "移除"
@@ -2384,6 +2404,10 @@ msgstr "已在聊天中回覆"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "回覆訊息已不在檢視範圍內"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "重試"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -2958,6 +2982,14 @@ msgstr "取消置顶此私信对话"
 msgid "Unsuspend"
 msgstr "取消停用"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "有可用更新"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "更新失敗，請重試。"
+
 #: src/components/ui/ImagePreviewModal.tsx
 msgid "Upload"
 msgstr "上傳"
@@ -3075,6 +3107,12 @@ msgstr "需要有效的服务器端口"
 #: src/components/layout/MemberList.tsx
 msgid "Verified account"
 msgstr "已验证账户"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "版本 {0} 可用 — 您目前為 {1}。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
