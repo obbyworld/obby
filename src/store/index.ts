@@ -701,6 +701,7 @@ export interface AppState {
     attrs: Record<string, string>,
   ) => void;
   bouncerDelNetwork: (bouncerServerId: string, netid: string) => void;
+  clearBouncerError: (bouncerServerId: string) => void;
   // Open a child IRC connection to the bouncer that is bound to the
   // given upstream network via BOUNCER BIND <netid> before CAP END.
   // Reuses the parent's credentials. Resolves with the new Server.
@@ -4195,9 +4196,11 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.bouncerListNetworks(bouncerServerId);
   },
   bouncerAddNetwork: (bouncerServerId, attrs) => {
+    get().clearBouncerError(bouncerServerId);
     ircClient.bouncerAddNetwork(bouncerServerId, encodeBouncerAttrs(attrs));
   },
   bouncerChangeNetwork: (bouncerServerId, netid, attrs) => {
+    get().clearBouncerError(bouncerServerId);
     ircClient.bouncerChangeNetwork(
       bouncerServerId,
       netid,
@@ -4205,7 +4208,20 @@ const useStore = create<AppState>((set, get) => ({
     );
   },
   bouncerDelNetwork: (bouncerServerId, netid) => {
+    get().clearBouncerError(bouncerServerId);
     ircClient.bouncerDelNetwork(bouncerServerId, netid);
+  },
+  clearBouncerError: (bouncerServerId) => {
+    set((state) => {
+      const bouncer = state.bouncers[bouncerServerId];
+      if (!bouncer?.lastError) return {};
+      return {
+        bouncers: {
+          ...state.bouncers,
+          [bouncerServerId]: { ...bouncer, lastError: undefined },
+        },
+      };
+    });
   },
 
   bouncerConnectNetwork: async (bouncerServerId, netid) => {

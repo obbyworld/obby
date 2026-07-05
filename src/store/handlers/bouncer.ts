@@ -1,11 +1,8 @@
-import { v5 as uuidv5 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { BouncerState } from "../../types";
+import { generateDeterministicId } from "../helpers";
 import type { AppState } from "../index";
-
-// Mirrors CHANNEL_NAMESPACE in src/store/index.ts.
-const CHILD_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 
 // Module-scope so a single childId only ever dispatches one bind across
 // the burst of BOUNCER_NETWORK events that arrive during the initial
@@ -26,7 +23,7 @@ function autoBindConnectedNetworks(
   if (!bouncer) return;
   for (const net of Object.values(bouncer.networks)) {
     if (net.attributes.state !== "connected") continue;
-    const childId = uuidv5(`${bouncerServerId}:${net.netid}`, CHILD_NAMESPACE);
+    const childId = generateDeterministicId(bouncerServerId, net.netid);
     if (autoBindAttempted.has(childId)) continue;
     if (state.servers.some((s) => s.id === childId)) {
       autoBindAttempted.add(childId);
@@ -114,7 +111,7 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
       const dropLocalChild =
         deleted || (!deleted && attributes.state === "disconnected");
       if (dropLocalChild) {
-        const childId = uuidv5(`${serverId}:${netid}`, CHILD_NAMESPACE);
+        const childId = generateDeterministicId(serverId, netid);
         autoBindAttempted.delete(childId);
         const live = store.getState().servers.find((s) => s.id === childId);
         if (live) store.getState().deleteServer(childId);
@@ -181,13 +178,19 @@ export function registerBouncerHandlers(store: StoreApi<AppState>): void {
   // "listed" flag so the UI can swap from a skeleton to the list. We
   // listen on BATCH_START to know the type and stash it; on BATCH_END
   // we look it up.
-  const batchTypes = new Map<string, string>(); // batchId -> type
-  ircClient.on("BATCH_START", ({ batchId, type }) => {
-    if (type === "soju.im/bouncer-networks") batchTypes.set(batchId, type);
+  // Batch reference tags are only unique per connection, so key by
+  // serverId too — otherwise a same-tagged batch on another connection
+  // (a bound child, a direct server) would flip the wrong bouncer's
+  // "listed" flag and orphan the real LISTNETWORKS batch.
+  const batchTypes = new Map<string, string>(); // `${serverId}:${batchId}` -> type
+  ircClient.on("BATCH_START", ({ serverId, batchId, type }) => {
+    if (type === "soju.im/bouncer-networks")
+      batchTypes.set(`${serverId}:${batchId}`, type);
   });
   ircClient.on("BATCH_END", ({ serverId, batchId }) => {
-    if (batchTypes.get(batchId) !== "soju.im/bouncer-networks") return;
-    batchTypes.delete(batchId);
+    const batchKey = `${serverId}:${batchId}`;
+    if (batchTypes.get(batchKey) !== "soju.im/bouncer-networks") return;
+    batchTypes.delete(batchKey);
     store.setState((state) => ({
       bouncers: ensureBouncer(state, serverId, { listed: true }),
     }));

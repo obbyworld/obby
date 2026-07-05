@@ -90,8 +90,8 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
   // Briefly highlight a row after its ADD/CHANGE/DEL has been acked.
   useEffect(() => {
     if (!confirmedSuccessFor) return;
-    const t = setTimeout(() => setConfirmedSuccessFor(null), 1400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setConfirmedSuccessFor(null), 1400);
+    return () => clearTimeout(timer);
   }, [confirmedSuccessFor]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs

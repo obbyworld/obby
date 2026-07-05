@@ -987,8 +987,11 @@ export class IRCClient implements IRCClientContext {
         serverId: server.id,
         connectionState: "disconnected",
       });
-      const connectionKey = `${server.host}:${server.port}`;
-      this.pendingConnections.delete(connectionKey);
+      // connect() keys the pending promise by serverId when present and
+      // falls back to host:port, so clear both to avoid a stuck entry
+      // that would block a later reconnect for the same server.
+      this.pendingConnections.delete(serverId);
+      this.pendingConnections.delete(`${server.host}:${server.port}`);
     }
     // Clear reconnection state
     this.reconnectionAttempts.delete(serverId);
@@ -1625,11 +1628,6 @@ export class IRCClient implements IRCClientContext {
   // the message-tag-style escapes for `;`, ` `, etc.
   bouncerListNetworks(serverId: string): void {
     this.sendRaw(serverId, "BOUNCER LISTNETWORKS");
-  }
-  // BIND must run before CAP END -- the bouncer ties this connection to
-  // the upstream identified by netid for the rest of its lifetime.
-  bouncerBind(serverId: string, netid: string): void {
-    this.sendRaw(serverId, `BOUNCER BIND ${netid}`);
   }
   // Mark a server connection as a bouncer-child for the upcoming CAP
   // negotiation. The next sendCapEnd() will emit `BOUNCER BIND <netid>`

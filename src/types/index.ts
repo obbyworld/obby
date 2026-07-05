@@ -34,8 +34,8 @@ export interface BouncerNetwork {
 
 // State for one bouncer "control" connection -- the WS session that did
 // CAP REQ soju.im/bouncer-networks. Child connections (one per upstream
-// network the user is actively viewing) live in `Server`s as usual; PR B
-// will link them back here via a parent reference.
+// network the user is actively viewing) live in `Server`s as usual and
+// point back here via `Server.bouncerServerId`.
 export interface BouncerState {
   // serverId of the control connection in `state.servers`.
   serverId: string;
