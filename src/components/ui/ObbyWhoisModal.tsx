@@ -35,6 +35,8 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
 import type { WhoisSession } from "../../types";
@@ -399,6 +401,9 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
   const selectChannel = useStore((state) => state.selectChannel);
   const openPrivateChat = useStore((state) => state.openPrivateChat);
   const selectPrivateChat = useStore((state) => state.selectPrivateChat);
+  const mediaSettings = mediaLevelToSettings(
+    useStore((state) => state.globalSettings.mediaVisibilityLevel),
+  );
 
   const server = servers.find((s) => s.id === serverId);
   const user = server?.channels
@@ -453,6 +458,11 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
   /* Derived display fields */
   const displayName = user?.metadata?.["display-name"]?.value || username;
   const avatar = user?.metadata?.avatar?.value;
+  const canShowAvatar = canShowAvatarUrl(
+    avatar,
+    serverFilehosts(server),
+    mediaSettings,
+  );
   const colorMeta = user?.metadata?.color?.value;
   const accent = isHexColor(colorMeta) ? colorMeta : DEFAULT_ACCENT;
   const bot = user?.metadata?.bot?.value;
@@ -565,7 +575,7 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
           className="relative bg-discord-dark-200 rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Top accent bar — replaces the old banner gradient */}
+          {/* Top accent bar */}
           <div
             className="h-1.5 w-full flex-shrink-0"
             style={{ background: accent }}
@@ -603,7 +613,7 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
                 outlineOffset: 2,
               }}
             >
-              {avatar ? (
+              {canShowAvatar ? (
                 <img
                   src={getAvatarUrl(avatar, 64)}
                   alt={displayName}
@@ -619,7 +629,7 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
               <div
                 className="w-full h-full flex items-center justify-center text-2xl font-bold text-white"
                 style={{
-                  display: avatar ? "none" : "flex",
+                  display: canShowAvatar ? "none" : "flex",
                   background: accent,
                 }}
               >
@@ -1000,7 +1010,11 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
                   </div>
                 )}
                 {whoisData?.specialMessages
-                  ?.filter((m) => !/is connected from\s+\d+\s+session/i.test(m))
+                  ?.filter(
+                    (m) =>
+                      !/is connected from\s+\d+\s+session/i.test(m) &&
+                      !(whoisData?.umodes && /is using modes/i.test(m)),
+                  )
                   .map((m) => (
                     <div
                       key={m}
