@@ -519,8 +519,6 @@ msgstr "Der Bot hat noch keine Slash-Befehle registriert."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Bots — empfange {botsLoadingCount} Befehlsliste(n)"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bots (lädt {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

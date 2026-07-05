@@ -519,8 +519,6 @@ msgstr "ボットはまだスラッシュコマンドを登録していません
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Bot — {botsLoadingCount} 件のコマンドリストを受信中"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bot（{botsLoadingCount} 件を読み込み中）"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

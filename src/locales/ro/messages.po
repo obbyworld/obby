@@ -519,8 +519,6 @@ msgstr "Botul nu a înregistrat încă nicio comandă slash."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Boți — se primesc {botsLoadingCount} listă(e) de comenzi"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Boți (se încarcă {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

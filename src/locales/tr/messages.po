@@ -519,8 +519,6 @@ msgstr "Bot henüz hiçbir eğik çizgi komutu kaydetmedi."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Botlar — {botsLoadingCount} komut listesi alınıyor"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Botlar ({botsLoadingCount} yükleniyor)"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

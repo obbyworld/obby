@@ -132,10 +132,8 @@ export function handleIsupport(
   if (trailing && tokens[tokens.length - 1] === trailing) tokens.pop();
   const tokenList = tokens.join(" ");
 
-  // Resolve per-server accumulator for the v0.2 `+=` form.  Even
-  // when the server doesn't use append, maintaining the map is
-  // cheap and gives a single place to look up "current ISUPPORT
-  // state" later if other code wants it.
+  // The v0.2 `+=` append form arrives across separate RPL_ISUPPORT
+  // lines, so the accumulator must persist between handleIsupport calls.
   let perServer = ctx.isupportValues.get(serverId);
   if (!perServer) {
     perServer = new Map();

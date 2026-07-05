@@ -519,8 +519,6 @@ msgstr "Botten har inte registrerat några snedstreckskommandon än."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Bots — tar emot {botsLoadingCount} kommandolista(or)"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bots (läser in {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

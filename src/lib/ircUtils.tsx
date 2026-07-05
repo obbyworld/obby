@@ -234,26 +234,6 @@ export function parseIsupportTokens(tokens: string): IsupportToken[] {
   return out;
 }
 
-/**
- * Backwards-compatible flat parser kept for any caller that just wants
- * a final key->value map without caring about op semantics.  Append
- * tokens are flattened onto the same key (last write wins for set;
- * append concatenates onto whatever was set within the same line).
- */
-export function parseIsupport(tokens: string): Record<string, string> {
-  const tokenMap: Record<string, string> = {};
-  for (const tok of parseIsupportTokens(tokens)) {
-    if (tok.op === "delete") {
-      delete tokenMap[tok.key];
-    } else if (tok.op === "append") {
-      tokenMap[tok.key] = (tokenMap[tok.key] ?? "") + tok.value;
-    } else {
-      tokenMap[tok.key] = tok.value;
-    }
-  }
-  return tokenMap;
-}
-
 // Thanks to Talon
 
 export const ircColors = [

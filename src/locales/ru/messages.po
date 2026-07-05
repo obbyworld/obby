@@ -519,8 +519,6 @@ msgstr "Бот ещё не зарегистрировал ни одной слэ
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Боты — получение {botsLoadingCount} списка(ов) к
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Боты (загрузка {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

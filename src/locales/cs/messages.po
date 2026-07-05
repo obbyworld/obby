@@ -519,8 +519,6 @@ msgstr "Bot zatím nezaregistroval žádné lomítkové příkazy."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Boti — přijímání {botsLoadingCount} seznamů příkazů"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Boti (načítání {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

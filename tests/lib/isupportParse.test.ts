@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIsupport, parseIsupportTokens } from "../../src/lib/ircUtils";
+import { parseIsupportTokens } from "../../src/lib/ircUtils";
 
 describe("parseIsupportTokens", () => {
   it("parses plain set tokens", () => {
@@ -45,25 +45,5 @@ describe("parseIsupportTokens", () => {
       { key: "A", op: "set", value: "1" },
       { key: "B", op: "set", value: "2" },
     ]);
-  });
-});
-
-describe("parseIsupport (flat compat)", () => {
-  it("byte-wise concatenates append form within one line", () => {
-    expect(parseIsupport("KEY=foo,bar KEY+=,qux,quux")).toEqual({
-      KEY: "foo,bar,qux,quux",
-    });
-  });
-
-  it("delete drops the key", () => {
-    expect(parseIsupport("FOO=1 -FOO BAR=2")).toEqual({
-      BAR: "2",
-    });
-  });
-
-  it("append onto unset key yields the value alone", () => {
-    expect(parseIsupport("KEY+=alone")).toEqual({
-      KEY: "alone",
-    });
   });
 });

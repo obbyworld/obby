@@ -519,8 +519,6 @@ msgstr "봇이 아직 슬래시 명령을 등록하지 않았습니다."
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
@@ -534,7 +532,6 @@ msgstr "Bot — 명령어 목록 {botsLoadingCount}개 수신 중"
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bot ({botsLoadingCount}개 로딩 중)"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"

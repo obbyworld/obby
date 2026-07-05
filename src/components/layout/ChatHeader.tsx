@@ -331,12 +331,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedChannel,
     },
     {
-      label: t`Bots`,
-      icon: <FaRobot />,
-      onClick: onOpenBots,
-      show: !!selectedServerId,
-    },
-    {
       label:
         botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
       icon: (
@@ -617,14 +611,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 title={t`Invite User`}
               >
                 <FaUserPlus />
-              </button>
-              <button
-                className="hidden md:block hover:text-discord-text-normal"
-                onClick={onOpenBots}
-                title={t`Bots on this network`}
-                aria-label={t`Bots`}
-              >
-                <FaRobot />
               </button>
               <button
                 className="hidden md:block hover:text-discord-text-normal relative"
