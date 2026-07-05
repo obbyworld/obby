@@ -59,7 +59,10 @@ export function handleError(
       message: errorMessage,
       retryAfter: 600000,
     });
+    return;
   }
+
+  ctx.triggerEvent("serverError", { serverId, message: errorMessage });
 }
 
 export function handleRplWelcome(

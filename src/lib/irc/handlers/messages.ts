@@ -165,13 +165,14 @@ export function handleRedact(
 export function handleBatch(
   ctx: IRCClientContext,
   serverId: string,
-  _source: string,
+  source: string,
   parv: string[],
   mtags: Record<string, string> | undefined,
 ): void {
   const batchRef = parv[0];
   const isStart = batchRef.startsWith("+");
   const batchId = batchRef.substring(1);
+  const sender = getNickFromNuh(source);
 
   if (isStart) {
     const batchType = parv[1];
@@ -184,6 +185,7 @@ export function handleBatch(
     ctx.activeBatches.get(serverId)?.set(batchId, {
       type: batchType,
       parameters,
+      sender,
       messages: [],
       timestamps: [],
       concatFlags: [],
@@ -229,6 +231,7 @@ export function handleBatch(
       batchId,
       type: batchType,
       parameters,
+      sender,
     });
   } else {
     const serverBatches = ctx.activeBatches.get(serverId);

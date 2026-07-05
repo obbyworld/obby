@@ -5,8 +5,8 @@ import { FaPencilAlt, FaPlus, FaRedo, FaTrash } from "react-icons/fa";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
-import { isUrlFromFilehost } from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
@@ -35,7 +35,7 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   const { t } = useLingui();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const { showSafeMedia, showExternalContent } = mediaLevelToSettings(
+  const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
 
@@ -44,10 +44,11 @@ const ServerIcon: React.FC<ServerIconProps> = ({
     server.privateChats?.some((pc) => pc.isMentioned);
 
   const iconUrl = server.icon;
-  const isFilehostIcon =
-    !!iconUrl && isUrlFromFilehost(iconUrl, server.filehost ?? "");
-  const showIcon =
-    !!iconUrl && ((isFilehostIcon && showSafeMedia) || showExternalContent);
+  const showIcon = canShowAvatarUrl(
+    iconUrl,
+    serverFilehosts(server),
+    mediaSettings,
+  );
 
   const getServerInitial = (s: Server): string => {
     const displayName = s.networkName || s.name;

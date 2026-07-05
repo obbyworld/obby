@@ -116,6 +116,7 @@ export interface EventMap {
     batchId: string;
     type: string;
     parameters?: string[];
+    sender?: string;
   };
   BATCH_END: BaseIRCEvent & { batchId: string };
   MULTILINE_MESSAGE: BaseMessageEvent & {
@@ -519,10 +520,47 @@ export interface EventMap {
     sessionCount?: number;
     securityGroups?: string[];
   };
+  /**
+   * obbyircd INVITELINK reply: a freshly-minted invite share-id +
+   * its computed URL.  Emitted in response to `INVITELINK CREATE`.
+   *
+   * Wire: `:server INVITELINK <share-id> <channel|*> :<url>`
+   */
+  INVITELINK_CREATED: {
+    serverId: string;
+    shareId: string;
+    channel?: string;
+    url: string;
+  };
+  /**
+   * obbyircd INVITELINK LIST reply: one entry per invitation owned
+   * by the caller.  Terminated by `NOTE INVITELINK LIST_END` (which
+   * surfaces via the generic NOTE event with command="INVITELINK").
+   *
+   * Wire: `:server INVITELINK ENTRY <id> <chan|*> <iso8601> <count> <url> [:<descr>]`
+   */
+  INVITELINK_ENTRY: {
+    serverId: string;
+    shareId: string;
+    channel?: string;
+    createdAt: string;
+    redeemCount: number;
+    url: string;
+    description?: string;
+  };
   rateLimited: {
     serverId: string;
     message: string;
     retryAfter: number;
+  };
+  serverError: {
+    serverId: string;
+    message: string;
+  };
+  rawLine: {
+    serverId: string;
+    direction: "tx" | "rx" | "info";
+    line: string;
   };
 }
 
@@ -613,6 +651,7 @@ export class IRCClient implements IRCClientContext {
     "sasl",
     "cap-notify",
     "draft/channel-rename",
+    "draft/bot-tools",
     "setname",
     "account-notify",
     "account-tag",
@@ -644,6 +683,11 @@ export class IRCClient implements IRCClientContext {
     // sub-batches). Without this cap a server implementing the spec
     // falls back to legacy unwrapped numerics, which we still parse.
     "obby.world/whois",
+    "draft/bot-cmds",
+    "obby.world/channel-bots",
+    // obbyircd vendor cap. Without REQ'ing it the server won't emit
+    // the INVITELINK protocol even if it advertises support in CAP LS.
+    "obby.world/invitation",
     // Note: unrealircd.org/link-security is informational only, don't request it
   ];
 
@@ -802,9 +846,20 @@ export class IRCClient implements IRCClientContext {
       });
       this.nicks.set(server.id, nickname);
 
+      this.triggerEvent("rawLine", {
+        serverId: server.id,
+        direction: "info",
+        line: `** connecting to ${url}`,
+      });
+
       socket.onopen = () => {
         //registerAllProtocolHandlers(this);
 
+        this.triggerEvent("rawLine", {
+          serverId: server.id,
+          direction: "info",
+          line: `** connected to ${actualHost}:${actualPort}`,
+        });
         socket.send("CAP LS 302");
 
         // Send password if provided (before CAP negotiation completes)
@@ -842,6 +897,7 @@ export class IRCClient implements IRCClientContext {
 
           this.stopWebSocketPing(server.id);
           this.sockets.delete(server.id);
+          this.whoisBuilders.delete(server.id);
           server.isConnected = false;
           const wasReconnecting = server.connectionState === "reconnecting";
           server.connectionState = "disconnected";
@@ -873,7 +929,26 @@ export class IRCClient implements IRCClientContext {
         server.connectionState = "disconnected";
         this.sockets.delete(server.id);
         this.pendingConnections.delete(connectionKey);
-        reject(new Error(`Failed to connect to ${actualHost}:${actualPort}`));
+        const cause =
+          error instanceof Error
+            ? error.message
+            : typeof error === "string"
+              ? error
+              : String(error);
+        this.triggerEvent("rawLine", {
+          serverId: server.id,
+          direction: "info",
+          line: `** socket error: ${cause || "(no detail)"}`,
+        });
+        this.triggerEvent("serverError", {
+          serverId: server.id,
+          message: cause || `Failed to connect to ${actualHost}:${actualPort}`,
+        });
+        reject(
+          new Error(
+            `Failed to connect to ${actualHost}:${actualPort}: ${cause}`,
+          ),
+        );
       };
 
       socket.onmessage = (event) => {
@@ -881,6 +956,18 @@ export class IRCClient implements IRCClientContext {
           (id) => this.sockets.get(id) === socket,
         );
         if (serverId) {
+          const data =
+            typeof event.data === "string"
+              ? event.data
+              : String(event.data ?? "");
+          for (const line of data.split(/\r?\n/)) {
+            if (line.length === 0) continue;
+            this.triggerEvent("rawLine", {
+              serverId,
+              direction: "rx",
+              line,
+            });
+          }
           this.handleMessage(event.data, serverId);
         }
       };
@@ -927,6 +1014,7 @@ export class IRCClient implements IRCClientContext {
     }
     // Stop WebSocket ping timers
     this.stopWebSocketPing(serverId);
+    this.whoisBuilders.delete(serverId);
   }
 
   removeServer(serverId: string): void {
@@ -1067,8 +1155,18 @@ export class IRCClient implements IRCClientContext {
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(command);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "tx",
+        line: command,
+      });
     } else {
       console.error(`Socket for server ${serverId} is not open`);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "info",
+        line: `** dropped TX (socket not open): ${command}`,
+      });
     }
   }
 
@@ -1175,13 +1273,17 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      // Trigger event to notify store that history loading started (only if we actually requested it)
       if (server.capabilities?.includes("draft/chathistory")) {
         this.triggerEvent("CHATHISTORY_LOADING", {
           serverId,
           channelName,
           isLoading: true,
         });
+      } else {
+        // No CHATHISTORY support, so the LOADING(false) callback that
+        // normally fires WHO will never run. Send it now.
+        this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+        channel.needsWhoRequest = false;
       }
 
       return channel;

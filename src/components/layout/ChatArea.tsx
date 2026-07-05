@@ -17,6 +17,7 @@ import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { waitForAuthToken } from "../../lib/authToken";
+import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -27,6 +28,7 @@ import { parseIrcUrl } from "../../lib/ircUrlParser";
 import {
   fetchUploadInfo,
   uploadFile,
+  uploadFileTokenless,
   validateFileAgainstInfo,
 } from "../../lib/mediaUpload";
 import {
@@ -36,11 +38,14 @@ import {
 } from "../../lib/messageFormatter";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
-import type { Message as MessageType, User } from "../../types";
+import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
+import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
+import BotsModal from "../ui/BotsModal";
+import { BotToolsTray } from "../ui/BotToolsTray";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
@@ -56,10 +61,13 @@ import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
+import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
   SlashCommandPopover,
+  type SlashSuggestion,
 } from "../ui/SlashCommandPopover";
+import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import {
@@ -140,6 +148,10 @@ export const ChatArea: React.FC<{
   // with "/" and we're still completing the command name -- otherwise
   // typing wouldn't trigger a re-render for this popover at all.
   const [slashInputValue, setSlashInputValue] = useState("");
+  const [paramModal, setParamModal] = useState<{
+    botNick: string;
+    command: BotCommand;
+  } | null>(null);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -162,6 +174,11 @@ export const ChatArea: React.FC<{
     file: null,
     previewUrl: null,
   });
+  // True while a file is being dragged over the input area, so we can
+  // show a drop overlay. A counter avoids the flicker that dragenter/
+  // dragleave cause as the pointer crosses child elements.
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const dragDepthRef = useRef(0);
   // Multimedia uploads in flight.  Each job tracks one file's
   // XHR-driven progress; once they all settle we send a single
   // PRIVMSG with the URLs joined.
@@ -218,6 +235,10 @@ export const ChatArea: React.FC<{
     useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
+  const [botsModalOpen, setBotsModalOpen] = useState(false);
+  const [botsModalPreselect, setBotsModalPreselect] = useState<string | null>(
+    null,
+  );
   const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -389,6 +410,41 @@ export const ChatArea: React.FC<{
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
+
+  const pendingBotsModalOpen = useStore(
+    (state) => state.ui.pendingBotsModalOpen,
+  );
+  const clearBotsModalOpenRequest = useStore(
+    (state) => state.clearBotsModalOpenRequest,
+  );
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotsModalOpen &&
+      pendingBotsModalOpen.serverId === selectedServerId
+    ) {
+      setBotsModalPreselect(pendingBotsModalOpen.botNick);
+      setBotsModalOpen(true);
+      clearBotsModalOpenRequest();
+    }
+  }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      setParamModal({
+        botNick: pendingBotCommandPick.botNick,
+        command: pendingBotCommandPick.command,
+      });
+      clearBotCommandPickRequest();
+    }
+  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -600,6 +656,12 @@ export const ChatArea: React.FC<{
   const selectedServer = useMemo(
     () => servers.find((s) => s.id === selectedServerId),
     [servers, selectedServerId],
+  );
+
+  // The server offers file uploads via either the vendor token uploader
+  // (obby.world/FILEHOST) or the standard tokenless one (draft/FILEHOST).
+  const canUpload = !!(
+    selectedServer?.filehost || selectedServer?.fileHosts?.length
   );
 
   const selectedChannel = useMemo(
@@ -905,146 +967,43 @@ export const ChatArea: React.FC<{
     inputRef.current?.focus();
   };
 
-  const handleImageUpload = async (file: File) => {
-    if (!selectedServer?.filehost || !selectedServerId) return;
-
-    // draft/authtoken: always mint a fresh token per upload, since the
-    // server may scope or expire them aggressively.  The reply URL is
-    // what the server tells us to talk to; fall back to filehost.
-    useStore.setState((state) => ({
-      servers: state.servers.map((server) =>
-        server.id === selectedServerId
-          ? {
-              ...server,
-              authToken: undefined,
-              authTokenUrl: undefined,
-              authTokenService: undefined,
-            }
-          : server,
-      ),
-    }));
-    ircClient.requestToken(selectedServerId, "filehost");
-    const authToken = await waitForAuthToken(selectedServerId);
-    if (!authToken) {
-      console.error("draft/authtoken: server did not return a filehost token");
-      return;
-    }
-    const refreshed = useStore
-      .getState()
-      .servers.find((s) => s.id === selectedServerId);
-    const baseUrl = refreshed?.authTokenUrl || refreshed?.filehost || "";
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const uploadUrl = `${baseUrl}/upload`;
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: formData,
-      });
-
-      console.log("📡 Response status:", response.status);
-      console.log(
-        "📡 Response headers:",
-        Object.fromEntries(response.headers.entries()),
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("❌ Upload failed with status:", response.status);
-        console.error("❌ Error response:", errorText);
-        throw new Error(`Upload failed: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log("✅ Upload successful:", data);
-      if (data.saved_url) {
-        // saved_url is a path under the filehost the server told us to
-        // use, so prepend the same base we uploaded to.
-        const fullImageUrl = `${baseUrl}${data.saved_url}`;
-
-        // Send the link directly to the current channel/user
-        const target =
-          selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
-
-        if (target) {
-          // Send via IRC
-          if (selectedServerId) {
-            ircClient.sendRaw(
-              selectedServerId,
-              `PRIVMSG ${target} :${fullImageUrl}`,
-            );
-          }
-
-          // Add to store for immediate display (only for private chats, channels echo back)
-          if (selectedPrivateChat && currentUser && selectedServerId) {
-            const outgoingMessage = {
-              id: uuidv4(),
-              content: fullImageUrl,
-              timestamp: new Date(),
-              userId: currentUser.username || currentUser.id,
-              channelId: selectedPrivateChat.id,
-              serverId: selectedServerId,
-              type: "message" as const,
-              reactions: [],
-              replyMessage: null,
-              mentioned: [],
-            };
-
-            const { addMessage } = useStore.getState();
-            addMessage(outgoingMessage);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Image upload failed:", error);
-      // TODO: Show error to user
-    }
-  };
-
   // Multi-file upload entry point.  Picks up an auth token (one-shot
   // per batch -- the backend accepts the same token across many
   // uploads), kicks off N uploads in parallel, surfaces per-file
   // progress, and on full success sends a single PRIVMSG containing
   // all the resulting URLs separated by spaces.
   const handleFilesUpload = async (files: File[]) => {
-    if (!selectedServer?.filehost || !selectedServerId || files.length === 0) {
-      return;
-    }
-    const filehostUrl = selectedServer.filehost;
+    if (!selectedServerId || files.length === 0) return;
+    // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
+    // fall back to the vendor token-authenticated obby.world/FILEHOST.
+    const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
+    const filehostUrl = selectedServer?.filehost;
+    if (!tokenlessEndpoint && !filehostUrl) return;
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
     if (!target) return;
 
-    // Pre-flight: pull the policy so we can reject obviously-bad
-    // files before pushing bytes.
-    const info = await fetchUploadInfo(filehostUrl);
-
-    // Acquire auth token (reuse existing EXTJWT flow).  The backend
-    // doesn't need a fresh token per file -- the same Bearer is
-    // accepted until expiry, so we mint once.
-    let jwtToken = selectedServer?.jwtToken;
-    if (!jwtToken) {
-      useStore.setState((state) => ({
-        servers: state.servers.map((server) =>
-          server.id === selectedServerId
-            ? { ...server, jwtToken: undefined }
-            : server,
-        ),
-      }));
-      ircClient.requestExtJwt(selectedServerId, "*", "filehost");
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const updated = useStore
-        .getState()
-        .servers.find((s) => s.id === selectedServerId);
-      jwtToken = updated?.jwtToken;
-    }
-    if (!jwtToken) {
-      console.error("Failed to obtain auth token for file upload");
-      return;
+    // The token path pulls the in-house policy and mints one single-use
+    // draft/authtoken Bearer per file (the IRCd burns each on validate, so
+    // they can't be shared across the batch). The tokenless path needs
+    // neither -- it POSTs straight to the advertised endpoint.
+    let info: Awaited<ReturnType<typeof fetchUploadInfo>> = null;
+    const tokens: string[] = [];
+    if (!tokenlessEndpoint && filehostUrl) {
+      info = await fetchUploadInfo(filehostUrl);
+      // Serialised because waitForAuthToken resolves on the first matching
+      // TOKEN_GENERATE event -- parallel mints would race for the reply.
+      const scope = target.startsWith("#") ? `channel:${target}` : undefined;
+      for (let i = 0; i < files.length; i++) {
+        ircClient.requestToken(selectedServerId, "filehost", scope);
+        const tok = await waitForAuthToken(selectedServerId, "filehost");
+        if (!tok) {
+          console.error(
+            "draft/authtoken: server did not return a filehost token",
+          );
+          return;
+        }
+        tokens.push(tok);
+      }
     }
 
     // Build the job list in one go so the progress strip appears
@@ -1065,7 +1024,7 @@ export const ChatArea: React.FC<{
 
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
-      initialJobs.map(async (job) => {
+      initialJobs.map(async (job, jobIdx) => {
         // Cheap client-side validation -- saves a server round-trip
         // and gives the user immediate feedback.
         const validationError = validateFileAgainstInfo(job.file, info);
@@ -1080,12 +1039,21 @@ export const ChatArea: React.FC<{
         uploadAbortsRef.current.set(job.id, ac);
         updateJob(job.id, { status: "uploading" });
         try {
-          const url = await uploadFile(job.file, {
-            filehostUrl,
-            bearerToken: jwtToken as string,
-            signal: ac.signal,
-            onProgress: (loaded, total) => updateJob(job.id, { loaded, total }),
-          });
+          const onProgress = (loaded: number, total: number) =>
+            updateJob(job.id, { loaded, total });
+          const url = tokenlessEndpoint
+            ? await uploadFileTokenless(job.file, {
+                endpoint: tokenlessEndpoint,
+                signal: ac.signal,
+                onProgress,
+              })
+            : await uploadFile(job.file, {
+                // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when tokenlessEndpoint isn't (guarded above)
+                filehostUrl: filehostUrl!,
+                bearerToken: tokens[jobIdx],
+                signal: ac.signal,
+                onProgress,
+              });
           updateJob(job.id, {
             status: "done",
             loaded: job.file.size,
@@ -1143,6 +1111,53 @@ export const ChatArea: React.FC<{
     const ac = uploadAbortsRef.current.get(id);
     if (ac) ac.abort();
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
+  };
+
+  // Shared by the file picker and drag-and-drop: a single image keeps the
+  // confirm-then-send preview so the user can eyeball it first; anything
+  // else goes straight to the parallel uploader.
+  const handleSelectedFiles = (files: File[]) => {
+    if (files.length === 0) return;
+    if (files.length === 1 && files[0].type.startsWith("image/")) {
+      const previewUrl = URL.createObjectURL(files[0]);
+      setImagePreview({ isOpen: true, file: files[0], previewUrl });
+      return;
+    }
+    handleFilesUpload(files);
+  };
+
+  // Dropping a file onto the textarea otherwise triggers the browser
+  // default, which pastes the local file path as text. Intercept it on the
+  // input container, mirror the file picker, and ignore non-file drags
+  // (e.g. dragging selected text) so normal text DnD still works.
+  const dragHasFiles = (e: React.DragEvent) =>
+    Array.from(e.dataTransfer.types).includes("Files");
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    if (!canUpload || !dragHasFiles(e)) return;
+    e.preventDefault();
+    dragDepthRef.current += 1;
+    setIsDraggingFile(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    if (!canUpload || !dragHasFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!dragHasFiles(e)) return;
+    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+    if (dragDepthRef.current === 0) setIsDraggingFile(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (!canUpload || !dragHasFiles(e)) return;
+    e.preventDefault();
+    dragDepthRef.current = 0;
+    setIsDraggingFile(false);
+    handleSelectedFiles(Array.from(e.dataTransfer.files));
   };
 
   const handleGifSend = (gifUrl: string) => {
@@ -1473,6 +1488,13 @@ export const ChatArea: React.FC<{
       getActiveSlashQuery(newText, newCursorPosition) !== null;
     if (slashActive) {
       setSlashInputValue(newText);
+      // Lazy bot-cmds discovery: the first time the user starts a
+      // slash command in this channel, query any +B users we don't
+      // already have schemas for so the popover updates as soon as
+      // the response arrives.
+      if (!slashInputValue && selectedServerId && selectedChannel) {
+        queryUncachedBotsInChannel(selectedServerId, selectedChannel.name);
+      }
     } else if (slashInputValue !== "") {
       setSlashInputValue("");
     }
@@ -2023,6 +2045,7 @@ export const ChatArea: React.FC<{
         onToggleNotificationVolume={handleToggleNotificationVolume}
         onOpenChannelSettings={() => setChannelSettingsModalOpen(true)}
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
+        onOpenBots={() => setBotsModalOpen(true)}
       />
 
       {topSlot && (
@@ -2059,8 +2082,14 @@ export const ChatArea: React.FC<{
               Embedded iframes (YouTube) are suspended by the browser, but we
               explicitly stop embed media on channel switch (see effect below). */}
           <div
-            className={`flex flex-col min-h-0 ${channelKey ? "flex-grow" : ""}`}
+            className={`relative flex flex-col min-h-0 ${channelKey ? "flex-grow" : ""}`}
           >
+            <BotToolsTray
+              serverId={selectedServerId}
+              channel={
+                selectedChannel?.name ?? selectedPrivateChat?.username ?? null
+              }
+            />
             {aliveChannels.map(
               ({
                 key,
@@ -2117,7 +2146,19 @@ export const ChatArea: React.FC<{
           {(selectedChannel || selectedPrivateChat) && (
             <div
               className={`${!isNarrowView && "px-4"} pb-4 relative chat-input-area`}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
             >
+              {isDraggingFile && (
+                <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
+                  <span className="text-discord-text-normal font-medium flex items-center">
+                    <FaPlus className="mr-2" />
+                    <Trans>Drop files to upload</Trans>
+                  </span>
+                </div>
+              )}
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}
@@ -2159,9 +2200,9 @@ export const ChatArea: React.FC<{
                         !isNativeMobile &&
                         !isCompactInput
                         ? globalSettings.multilineOnShiftEnter
-                          ? t`Message #${selectedChannel.name.replace(/^#/, "")} (Shift+Enter for new line)`
-                          : t`Message #${selectedChannel.name.replace(/^#/, "")} (Enter for new line, Shift+Enter to send)`
-                        : t`Message #${selectedChannel.name.replace(/^#/, "")}`
+                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
+                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
+                        : t`Message ${selectedChannel.name}`
                       : selectedPrivateChat
                         ? globalSettings.enableMultilineInput &&
                           !isMobile &&
@@ -2210,7 +2251,7 @@ export const ChatArea: React.FC<{
                     left: "16px",
                   }}
                 >
-                  {selectedServer?.filehost && (
+                  {canUpload && (
                     <button
                       className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
                       onClick={() => {
@@ -2223,28 +2264,11 @@ export const ChatArea: React.FC<{
                         input.multiple = true;
                         input.accept = "image/*,video/*,audio/*";
                         input.onchange = (e) => {
-                          const files = Array.from(
-                            (e.target as HTMLInputElement).files ?? [],
+                          handleSelectedFiles(
+                            Array.from(
+                              (e.target as HTMLInputElement).files ?? [],
+                            ),
                           );
-                          if (files.length === 0) return;
-                          // For a single image, keep the legacy
-                          // confirm-then-upload preview UX so users
-                          // can see the picture before sending.
-                          if (
-                            files.length === 1 &&
-                            files[0].type.startsWith("image/")
-                          ) {
-                            const previewUrl = URL.createObjectURL(files[0]);
-                            setImagePreview({
-                              isOpen: true,
-                              file: files[0],
-                              previewUrl,
-                            });
-                            return;
-                          }
-                          // Multi-file or non-image: go straight to
-                          // upload with the progress strip.
-                          handleFilesUpload(files);
                         };
                         input.click();
                         setShowPlusMenu(false);
@@ -2353,11 +2377,84 @@ export const ChatArea: React.FC<{
                 inputElement={inputRef.current}
               />
 
-              {/* obsidianirc/cmdslist: slash-command suggestion popover */}
+              {/* obsidianirc/cmdslist + draft/bot-cmds: slash-command suggestion popover */}
               {(() => {
                 const srv = servers.find((s) => s.id === selectedServerId);
-                const cmds = srv?.cmdsAvailable ?? [];
-                if (cmds.length === 0) return null;
+                const suggestions: SlashSuggestion[] = [];
+                const seen = new Set<string>();
+
+                // 1. Client-side handlers (e.g. /me, /msg, /nick) —
+                // listed first because they own those names and the
+                // server's cmdslist may shadow them.
+                const inChannelView = !!selectedChannel;
+                for (const c of getClientCommands()) {
+                  if (c.scope === "channel-only" && !inChannelView) continue;
+                  suggestions.push({
+                    name: c.name,
+                    description: c.description,
+                    options: c.options,
+                    source: { kind: "client" },
+                  });
+                  seen.add(c.name.toLowerCase());
+                }
+
+                // 2. PushBot schemas — done before the server's
+                // cmdsAvailable so that bot-defined names win the
+                // dedup set.  Channel-scope bots only appear when
+                // they're a member of the active channel; server-
+                // scope bots (helpbot, dicebot) are reachable from
+                // any context and always show.
+                if (srv?.botCommands) {
+                  const chanUsers = new Set<string>(
+                    selectedChannel?.users.map((u) =>
+                      u.username.toLowerCase(),
+                    ) ?? [],
+                  );
+                  for (const [botNick, list] of Object.entries(
+                    srv.botCommands,
+                  )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
+                      continue;
+                    const scope: "channel" | "server" = botScope;
+                    for (const c of list) {
+                      // Cross-bot collisions intentionally NOT dedup'd:
+                      // both /help entries (helpbot + another) should
+                      // show so the user picks which bot to invoke.
+                      // The picker fills `/cmd@botnick` so dispatch
+                      // routes unambiguously.
+                      suggestions.push({
+                        name: c.name,
+                        description: c.description,
+                        options: c.options,
+                        source: { kind: "bot", botNick, scope },
+                      });
+                      // Reserve the bare name so the server's
+                      // cmdsAvailable can't list a duplicate /HELP
+                      // after a bot's /help.
+                      seen.add(c.name.toLowerCase());
+                    }
+                  }
+                }
+
+                // 3. Server-provided permission list (obsidianirc/cmdslist).
+                // No schema -- just names; skip anything the client
+                // or a bot already owns so /help, /report etc. don't
+                // get shadowed by the built-in /HELP.
+                for (const name of srv?.cmdsAvailable ?? []) {
+                  if (seen.has(name.toLowerCase())) continue;
+                  suggestions.push({
+                    name,
+                    source: { kind: "server" },
+                  });
+                  seen.add(name.toLowerCase());
+                }
+                if (suggestions.length === 0) return null;
                 const slashActive =
                   getActiveSlashQuery(
                     slashInputValue,
@@ -2367,12 +2464,36 @@ export const ChatArea: React.FC<{
                   <SlashCommandPopover
                     isVisible={slashActive}
                     inputValue={slashInputValue}
-                    commands={cmds}
+                    commands={suggestions}
                     inputElement={inputRef.current}
-                    onSelect={(cmd) => {
-                      // Replace the partial command with /<cmd> + space
-                      // and put the cursor right after the space.
-                      const next = `/${cmd} `;
+                    onSelect={(sug) => {
+                      // Bot commands with declared options open the
+                      // param modal so values are entered via typed
+                      // form controls (user/channel pickers, date,
+                      // etc).  Bots without options and non-bot
+                      // sources stay on the freeform inline path.
+                      if (
+                        sug.source.kind === "bot" &&
+                        (sug.options?.length ?? 0) > 0
+                      ) {
+                        const botNick = sug.source.botNick;
+                        setParamModal({
+                          botNick,
+                          command: {
+                            name: sug.name,
+                            description: sug.description,
+                            options: sug.options,
+                          },
+                        });
+                        setSlashInputValue("");
+                        applyText("");
+                        return;
+                      }
+                      const target =
+                        sug.source.kind === "bot"
+                          ? `@${sug.source.botNick}`
+                          : "";
+                      const next = `/${sug.name}${target} `;
                       applyText(next);
                       cursorPositionRef.current = next.length;
                       setSlashInputValue("");
@@ -2385,6 +2506,83 @@ export const ChatArea: React.FC<{
                     onClose={() => {
                       setSlashInputValue("");
                     }}
+                  />
+                );
+              })()}
+
+              {/* Per-arg hint shown after the cmd name + a space.
+                  Pulls schemas from both client-side commands and
+                  any cached PushBot schemas. */}
+              {(() => {
+                const srv = servers.find((s) => s.id === selectedServerId);
+                const schemas: Record<
+                  string,
+                  {
+                    command: import("../../types").BotCommand;
+                    source: "client" | "bot";
+                    botNick?: string;
+                    scope: "channel" | "server" | "dm";
+                  }
+                > = {};
+
+                // Client-side commands first; bot schemas overwrite
+                // only if there's a real collision (none in practice
+                // because the client owns /me, /msg, etc).
+                for (const c of getClientCommands()) {
+                  schemas[c.name.toLowerCase()] = {
+                    command: {
+                      name: c.name,
+                      description: c.description,
+                      options: c.options,
+                    },
+                    source: "client",
+                    scope: "dm",
+                  };
+                }
+
+                if (srv?.botCommands) {
+                  const chanUsers = new Set<string>(
+                    selectedChannel?.users.map((u) =>
+                      u.username.toLowerCase(),
+                    ) ?? [],
+                  );
+                  for (const [botNick, list] of Object.entries(
+                    srv.botCommands,
+                  )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
+                      continue;
+                    for (const c of list) {
+                      const entry = {
+                        command: c,
+                        source: "bot" as const,
+                        botNick,
+                        scope: botScope,
+                      };
+                      // Specific key handles `/cmd@bot foo` lookups;
+                      // bare key is a fallback for `/cmd foo` (last
+                      // bot wins, which matches dispatch's fallback
+                      // ordering).
+                      schemas[
+                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
+                      ] = entry;
+                      schemas[c.name.toLowerCase()] = entry;
+                    }
+                  }
+                }
+
+                if (Object.keys(schemas).length === 0) return null;
+                return (
+                  <SlashParamHint
+                    inputValue={messageTextRef.current ?? ""}
+                    cursorPosition={cursorPositionRef.current}
+                    schemas={schemas}
+                    inputElement={inputRef.current}
                   />
                 );
               })()}
@@ -2439,6 +2637,9 @@ export const ChatArea: React.FC<{
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
+        onPickBotCommand={(botNick, command) =>
+          setParamModal({ botNick, command })
+        }
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -2484,6 +2685,20 @@ export const ChatArea: React.FC<{
           onClose={() => setInviteUserModalOpen(false)}
           serverId={selectedServerId}
           channelName={selectedChannel.name}
+        />
+      )}
+      {selectedServerId && (
+        <BotsModal
+          isOpen={botsModalOpen}
+          onClose={() => {
+            setBotsModalOpen(false);
+            setBotsModalPreselect(null);
+          }}
+          serverId={selectedServerId}
+          preselectNick={botsModalPreselect}
+          onPickCommand={(botNick, command) => {
+            setParamModal({ botNick, command });
+          }}
         />
       )}
       {selectedServerId && (
@@ -2619,6 +2834,25 @@ export const ChatArea: React.FC<{
                 )}
             </div>
           </div>,
+          document.body,
+        )}
+      {paramModal &&
+        selectedServerId &&
+        createPortal(
+          <SlashCommandParamModal
+            serverId={selectedServerId}
+            botNick={paramModal.botNick}
+            command={paramModal.command}
+            channel={selectedChannel ?? null}
+            privateChat={selectedPrivateChat ?? null}
+            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
+            joinedChannels={
+              servers
+                .find((s) => s.id === selectedServerId)
+                ?.channels.map((c) => c.name) ?? []
+            }
+            onClose={() => setParamModal(null)}
+          />,
           document.body,
         )}
     </div>

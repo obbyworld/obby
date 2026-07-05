@@ -16,6 +16,7 @@ import {
   SCROLL_TOLERANCE,
   useScrollToBottom,
 } from "../../hooks/useScrollToBottom";
+import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import ircClient from "../../lib/ircClient";
 import useStore from "../../store";
@@ -413,6 +414,18 @@ export const ChannelMessageList = forwardRef<
           className="flex-grow overflow-y-auto overflow-x-hidden flex flex-col bg-discord-dark-200 text-discord-text-normal relative"
           // Disable CSS scroll anchoring — it compounds with our useLayoutEffect delta correction causing double-jumps in browser.
           style={{ overflowAnchor: "none" }}
+          onCopy={(e) => {
+            const root = messagesContainerRef.current;
+            if (!root) return;
+            const markdown = buildMarkdownFromSelection(
+              window.getSelection(),
+              root,
+            );
+            if (markdown !== null) {
+              e.preventDefault();
+              e.clipboardData.setData("text/plain", markdown);
+            }
+          }}
         >
           {isLoadingHistory && !isFetchingMore ? (
             <div className="flex-grow flex items-center justify-center">

@@ -38,10 +38,17 @@ export function getCachedProbeResult(
   return cache.get(url) ?? null;
 }
 
+interface HttpProbe {
+  contentType: string;
+  contentLength?: number;
+  ok: boolean;
+  status: number;
+}
+
 async function tryHttpFetch(
   url: string,
   method: "HEAD" | "GET",
-): Promise<{ contentType: string; contentLength?: number } | null> {
+): Promise<HttpProbe | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 5_000);
   try {
@@ -54,15 +61,19 @@ async function tryHttpFetch(
       signal: controller.signal,
     });
     clearTimeout(timer);
-    const ct = (response.headers.get("Content-Type") ?? "")
+    const contentType = (response.headers.get("Content-Type") ?? "")
       .split(";")[0]
       .trim()
       .toLowerCase();
-    if (!ct) return null;
     const lengthHeader = response.headers.get("Content-Length");
     const contentLength =
       lengthHeader !== null ? Number(lengthHeader) : undefined;
-    return { contentType: ct, contentLength };
+    return {
+      contentType,
+      contentLength,
+      ok: response.ok,
+      status: response.status,
+    };
   } catch (_err) {
     clearTimeout(timer);
     return null;
@@ -70,15 +81,27 @@ async function tryHttpFetch(
 }
 
 /**
- * Tries HEAD then GET (with Range: bytes=0-0) to read the Content-Type header.
- * Some streaming servers (e.g. Icecast) reject HEAD but respond correctly to GET.
+ * Reads the Content-Type via HEAD, falling back to a ranged GET. Some streaming
+ * servers (e.g. Icecast, suno) reject HEAD with 405/501 but answer GET correctly,
+ * so a non-2xx HEAD must not be trusted as the resource's real type.
  */
 async function fetchContentType(
   url: string,
 ): Promise<{ contentType: string; contentLength?: number } | null> {
   const head = await tryHttpFetch(url, "HEAD");
-  if (head) return head;
-  return tryHttpFetch(url, "GET");
+  if (head?.ok && head.contentType) {
+    return { contentType: head.contentType, contentLength: head.contentLength };
+  }
+  // Only the GET retry can help when HEAD threw (CORS), was rejected as a method
+  // (405/501), or returned 2xx without a type. A 404/410/5xx won't improve on GET.
+  if (head !== null && !head.ok && head.status !== 405 && head.status !== 501) {
+    return null;
+  }
+  const get = await tryHttpFetch(url, "GET");
+  if (get?.ok && get.contentType) {
+    return { contentType: get.contentType, contentLength: get.contentLength };
+  }
+  return null;
 }
 
 /** Maps a Content-Type to a ProbeResult. Single source of truth for media classification. */

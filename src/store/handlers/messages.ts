@@ -91,6 +91,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         const isOwnMessage =
           response.sender.toLowerCase() ===
           currentServerUser?.username?.toLowerCase();
+        // Lazy-fetch the sender's metadata the first time they speak in
+        // this session. metadataList() is idempotent + cached so the
+        // cost is one METADATA LIST per unique speaker.
+        if (!isOwnMessage && response.sender) {
+          store.getState().metadataList(response.serverId, response.sender);
+        }
         const isReplyToMe =
           !isOwnMessage &&
           !!replyMessage &&
@@ -750,6 +756,16 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       .servers.find((s) => s.id === response.serverId);
 
     if (server) {
+      // Lazy-fetch sender metadata on first PM, same as CHANMSG path.
+      // Skip server pseudo-sources (those have a "." in the source) and
+      // our own echoes.
+      const ourNick = ircClient
+        .getCurrentUser(response.serverId)
+        ?.username?.toLowerCase();
+      if (sender && !sender.includes(".") && sender.toLowerCase() !== ourNick) {
+        store.getState().metadataList(response.serverId, sender);
+      }
+
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
       // Server messages should go to Server Notices, not create PM tabs
       if (sender.includes(".")) {

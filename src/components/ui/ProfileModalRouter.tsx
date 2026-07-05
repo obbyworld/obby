@@ -20,6 +20,8 @@ interface Props {
   username: string;
   /** Optional back-nav used by nested-modal entry points (UserSettings). */
   onBack?: () => void;
+  /** Deep-link into the BotsModal pre-selected on this user. */
+  onShowInBotsMenu?: (botNick: string) => void;
 }
 
 const ProfileModalRouter: React.FC<Props> = ({
@@ -28,6 +30,7 @@ const ProfileModalRouter: React.FC<Props> = ({
   serverId,
   username,
   onBack,
+  onShowInBotsMenu,
 }) => {
   const useObby = useStore((state) => {
     const srv = state.servers.find((s) => s.id === serverId);
@@ -42,6 +45,7 @@ const ProfileModalRouter: React.FC<Props> = ({
         serverId={serverId}
         username={username}
         onBack={onBack}
+        onShowInBotsMenu={onShowInBotsMenu}
       />
     );
   }
@@ -52,6 +56,7 @@ const ProfileModalRouter: React.FC<Props> = ({
       serverId={serverId}
       username={username}
       onBack={onBack}
+      onShowInBotsMenu={onShowInBotsMenu}
     />
   );
 };

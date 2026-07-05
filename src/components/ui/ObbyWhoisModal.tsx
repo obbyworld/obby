@@ -31,6 +31,7 @@ import {
   FaRobot,
   FaShieldAlt,
   FaSignInAlt,
+  FaTerminal,
   FaTimes,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
@@ -51,6 +52,8 @@ interface ObbyWhoisModalProps {
    * than dismissing the whole stack.
    */
   onBack?: () => void;
+  /** Deep-link into the BotsModal pre-selected on this bot user. */
+  onShowInBotsMenu?: (botNick: string) => void;
 }
 
 /* ------------------------------------------------------------------ *
@@ -281,8 +284,10 @@ const SessionDetail: React.FC<{
               label={<Trans>Country</Trans>}
               value={
                 <span>
-                  {flagFromCC(session.countryCode)} {session.countryName} (
-                  {session.countryCode})
+                  {flagFromCC(session.countryCode)}{" "}
+                  {session.countryName
+                    ? `${session.countryName} (${session.countryCode})`
+                    : session.countryCode}
                 </span>
               }
             />
@@ -375,13 +380,20 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
   serverId,
   username,
   onBack,
+  onShowInBotsMenu,
 }) => {
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
   const [activeSessionIdx, setActiveSessionIdx] = useState(0);
-  const whoisRequestedRef = useRef(false);
-  const metadataRequestedRef = useRef<string | null>(null);
+  const whoisRequestedForRef = useRef<string | null>(null);
+  const metadataRequestedForRef = useRef<string | null>(null);
 
   const whoisData = useStore((state) => state.whoisData[serverId]?.[username]);
+  const botCommands = useStore(
+    (state) =>
+      state.servers.find((s) => s.id === serverId)?.botCommands?.[
+        username.toLowerCase()
+      ] ?? null,
+  );
   const servers = useStore((state) => state.servers);
   const joinChannel = useStore((state) => state.joinChannel);
   const selectChannel = useStore((state) => state.selectChannel);
@@ -399,9 +411,10 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
   /* Request WHOIS + metadata on open (mirrors UserProfileModal) */
   // biome-ignore lint/correctness/useExhaustiveDependencies: WHOIS shouldn't refire on cached data updates
   useEffect(() => {
+    const targetKey = `${serverId}:${username.toLowerCase()}`;
     if (!isOpen || !serverId || !username) {
-      whoisRequestedRef.current = false;
-      metadataRequestedRef.current = null;
+      whoisRequestedForRef.current = null;
+      metadataRequestedForRef.current = null;
       return;
     }
     const now = Date.now();
@@ -409,12 +422,15 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
       ? now - whoisData.timestamp
       : Number.POSITIVE_INFINITY;
     const TTL = 5 * 60 * 1000;
-    if (!whoisRequestedRef.current && (!whoisData?.isComplete || age > TTL)) {
-      whoisRequestedRef.current = true;
+    if (
+      whoisRequestedForRef.current !== targetKey &&
+      (!whoisData?.isComplete || age > TTL)
+    ) {
+      whoisRequestedForRef.current = targetKey;
       ircClient.whois(serverId, username);
     }
-    if (metadataRequestedRef.current !== username) {
-      metadataRequestedRef.current = username;
+    if (metadataRequestedForRef.current !== targetKey) {
+      metadataRequestedForRef.current = targetKey;
       useStore
         .getState()
         .metadataGet(serverId, username, [
@@ -570,6 +586,8 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
           <button
             type="button"
             onClick={onClose}
+            aria-label={t`Close`}
+            title={t`Close`}
             className="absolute top-4 right-4 w-8 h-8 rounded-full bg-discord-dark-100/80 hover:bg-discord-dark-100 text-white flex items-center justify-center transition-colors z-10"
           >
             <FaTimes size={14} />
@@ -621,7 +639,7 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
                 )}
                 {isBot && (
                   <span className="inline-flex items-center gap-1 text-xs font-semibold bg-cyan-900/40 text-cyan-300 px-1.5 py-0.5 rounded">
-                    <FaRobot size={10} /> BOT
+                    <FaRobot size={10} /> <Trans>BOT</Trans>
                   </span>
                 )}
                 {user?.isIrcOp && (
@@ -708,6 +726,22 @@ const ObbyWhoisModal: React.FC<ObbyWhoisModalProps> = ({
                   >
                     <Trans>Refresh WHOIS</Trans>
                   </button>
+                  {isBot &&
+                    botCommands &&
+                    botCommands.length > 0 &&
+                    onShowInBotsMenu && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShowInBotsMenu(username);
+                          onClose();
+                        }}
+                        className="px-3 py-1 text-xs font-semibold rounded bg-discord-dark-100 text-emerald-300 hover:bg-discord-dark-400 transition-colors inline-flex items-center gap-1.5"
+                      >
+                        <FaTerminal size={11} />
+                        <Trans>Bot Commands</Trans>
+                      </button>
+                    )}
                 </div>
               )}
             </div>

@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/valerie/obbyircd/ObsidianIRC/src-tauri/plugins/unifiedpush/android"
+    name=":tauri-plugin-unifiedpush"
+    type="LIBRARY"
+    maven="android:tauri-plugin-unifiedpush:unspecified"
+    agpVersion="8.5.1"
+    buildFolder="build"
+    bootClassPath="/home/valerie/Android/Sdk/platforms/android-36/android.jar:/home/valerie/Android/Sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-36"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

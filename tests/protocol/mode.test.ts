@@ -55,6 +55,8 @@ describe("MODE Protocol Handler", () => {
         profileViewRequest: null,
         settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });
