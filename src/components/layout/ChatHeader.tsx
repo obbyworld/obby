@@ -312,8 +312,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t`Media`,
       icon: <FaFilm />,
       onClick: () => {
-        if (selectedServerId && selectedChannelId) {
-          openMediaExplorer(selectedServerId, selectedChannelId);
+        const chatId = selectedChannelId ?? selectedPrivateChat?.id ?? null;
+        if (selectedServerId && chatId) {
+          openMediaExplorer(selectedServerId, chatId);
         }
       },
       show: hasMedia,
@@ -896,7 +897,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 />
               )}
               <button
-                className="p-2 md:p-0 hover:text-discord-text-normal"
+                className="hidden md:block hover:text-discord-text-normal"
                 onClick={() => {
                   if (selectedServerId && selectedPrivateChat) {
                     useStore
@@ -925,6 +926,16 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 title={t`Search`}
               >
                 <FaSearch />
+              </button>
+              <button
+                ref={overflowButtonRef}
+                className="md:hidden p-2 hover:text-discord-text-normal"
+                onClick={() => setIsOverflowMenuOpen(!isOverflowMenuOpen)}
+                aria-label={t`More actions`}
+                aria-expanded={isOverflowMenuOpen}
+                title={t`More`}
+              >
+                <FaEllipsisV />
               </button>
 
               <div className="hidden md:block relative">

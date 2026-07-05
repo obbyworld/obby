@@ -48,14 +48,14 @@ describe("sendMessage E2EE routing", () => {
     expect(sendSpy).not.toHaveBeenCalled();
   });
 
-  test("drops the message while an offer is pending accept", () => {
+  test("sends plaintext while an unaccepted offer is pending (mode not chosen)", () => {
     setSession({
       status: "pending-accept",
       scheme: "obby",
       peerFingerprint: "fp",
     });
-    useStore.getState().sendMessage(SERVER_ID, PM_ID, "secret");
-    expect(sendSpy).not.toHaveBeenCalled();
+    useStore.getState().sendMessage(SERVER_ID, PM_ID, "hello");
+    expect(sendSpy).toHaveBeenCalledWith(SERVER_ID, PM_ID, "hello");
   });
 
   test("drops the message after a key change", () => {

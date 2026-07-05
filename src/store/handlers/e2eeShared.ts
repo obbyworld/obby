@@ -6,6 +6,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { E2EE_NOTICE_TAG } from "../../lib/e2ee/messageFlags";
 import type { PeerTrustStore } from "../../lib/e2ee/peerTrust";
 import {
   type E2EEEvent,
@@ -49,17 +50,8 @@ export function dispatch(
   }));
 }
 
-// Render a message in the PM thread with `chatNick`, authored by `author` (the
-// peer for inbound, ourselves for the local echo of an outgoing message). Used
-// by both backends since the ciphertext rides on a channel the chat view never
-// sees, so the plaintext has to be injected here.
-export function injectMessage(
-  serverId: string,
-  chatNick: string,
-  author: string,
-  content: string,
-): void {
-  if (!storeRef) return;
+function ensureChat(serverId: string, chatNick: string) {
+  if (!storeRef) return undefined;
   const findChat = () =>
     storeRef
       ?.getState()
@@ -72,8 +64,22 @@ export function injectMessage(
     storeRef.getState().openPrivateChat(serverId, chatNick);
     chat = findChat();
   }
+  return chat;
+}
+
+// Render a message in the PM thread with `chatNick`, authored by `author` (the
+// peer for inbound, ourselves for the local echo of an outgoing message). Used
+// by both backends since the ciphertext rides on a channel the chat view never
+// sees, so the plaintext has to be injected here.
+export function injectMessage(
+  serverId: string,
+  chatNick: string,
+  author: string,
+  content: string,
+): void {
+  const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
-  storeRef.getState().addMessage({
+  storeRef?.getState().addMessage({
     id: uuidv4(),
     content,
     timestamp: new Date(),
@@ -84,6 +90,31 @@ export function injectMessage(
     reactions: [],
     mentioned: [],
     replyMessage: null,
+  });
+}
+
+// Inject an advisory row into the PM thread, rendered distinctly from chat
+// content so an encryption warning can't be mistaken for a normal message.
+export function injectSystemNotice(
+  serverId: string,
+  chatNick: string,
+  content: string,
+  timestamp: Date = new Date(),
+): void {
+  const chat = ensureChat(serverId, chatNick);
+  if (!chat) return;
+  storeRef?.getState().addMessage({
+    id: uuidv4(),
+    content,
+    timestamp,
+    userId: "system",
+    channelId: chat.id,
+    serverId,
+    type: "system",
+    reactions: [],
+    mentioned: [],
+    replyMessage: null,
+    tags: { [E2EE_NOTICE_TAG]: "warning" },
   });
 }
 

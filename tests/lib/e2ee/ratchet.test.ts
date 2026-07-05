@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, test } from "vitest";
+import { bytesToBase64 } from "../../../src/lib/base64";
 import {
   acceptBundle,
   completeHandshake,
@@ -61,6 +62,16 @@ describe("X3DH handshake", () => {
       spk: createPreKeyBundle(alice).bundle.spk,
     };
     expect(() => acceptBundle(bob, tampered, "x")).toThrow();
+  });
+
+  test("a responder cannot present another identity's fingerprint", () => {
+    const alice = createIdentity();
+    const mallory = createIdentity();
+    const bob = createIdentity();
+    const pending = createPreKeyBundle(alice);
+    const { response } = acceptBundle(mallory, pending.bundle, "x");
+    const forged = { ...response, sik: bytesToBase64(bob.sikPub) };
+    expect(() => completeHandshake(alice, pending, forged)).toThrow();
   });
 });
 

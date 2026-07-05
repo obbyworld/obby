@@ -7,7 +7,6 @@ import useStore from "../../store";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "./HeaderOverflowMenu";
-import LoadingSpinner from "./LoadingSpinner";
 
 // The single encryption affordance for a private chat. Driven entirely by the
 // session reducer status (scheme-agnostic), so it serves both the Obby-native
@@ -20,9 +19,11 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
   nick,
 }) => {
   const { t } = useLingui();
-  const status = useStore(
-    (s) => s.e2eeSessions[e2eeSessionKey(serverId, nick)]?.status ?? "none",
+  const session = useStore(
+    (s) => s.e2eeSessions[e2eeSessionKey(serverId, nick)],
   );
+  const status = session?.status ?? "none";
+  const verified = session?.status === "established" && session.verified;
   const startE2EESession = useStore((s) => s.startE2EESession);
   const acceptE2EEOffer = useStore((s) => s.acceptE2EEOffer);
   const rejectE2EEOffer = useStore((s) => s.rejectE2EEOffer);
@@ -63,12 +64,12 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
     return (
       <button
         type="button"
-        className="p-2 hover:text-discord-text-normal md:p-0"
+        className="p-2 text-blue-400 hover:text-discord-text-normal md:p-0"
         onClick={() => resetE2EESession(serverId, nick)}
         aria-label={t`Cancel encryption`}
         title={t`Encrypting… — click to cancel`}
       >
-        <LoadingSpinner size="sm" text="" />
+        <FaLock className="animate-pulse" />
       </button>
     );
   }
@@ -83,7 +84,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
           id: "verify",
           label: <Trans>Verify fingerprint…</Trans>,
           icon: <FaShieldAlt />,
-          show: true,
+          show: established,
           onClick: () => openE2EEVerify(serverId, nick),
         },
         {
@@ -101,7 +102,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
             <span>
               <Trans>Encrypt (Obby)</Trans>
               <span className="block text-xs text-discord-text-muted">
-                <Trans>Best — between Obby clients</Trans>
+                <Trans>Strongest, but only with other Obby users</Trans>
               </span>
             </span>
           ),
@@ -136,14 +137,16 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
         onClick={() => setMenuOpen((o) => !o)}
         aria-label={locked ? t`Encryption options` : t`Encrypt this chat`}
         title={
-          established
-            ? t`Encrypted end-to-end`
-            : keyChanged
-              ? t`Encryption key changed — verify`
-              : t`Encrypt this chat`
+          verified
+            ? t`Encrypted & verified`
+            : established
+              ? t`Encrypted — not verified`
+              : keyChanged
+                ? t`Encryption key changed`
+                : t`Encrypt this chat`
         }
       >
-        {locked ? <FaLock /> : <FaLockOpen />}
+        {verified ? <FaShieldAlt /> : locked ? <FaLock /> : <FaLockOpen />}
       </button>
       <HeaderOverflowMenu
         isOpen={menuOpen}

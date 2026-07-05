@@ -19,7 +19,7 @@ export const E2EE_TAG = "+obby.world/e2ee";
 
 export type E2EEKind = "init" | "accept" | "reject" | "msg" | "frag";
 
-const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 // A client tag's value caps at 4094 bytes (message-tags spec). Values longer
 // than MAX_TAG_VALUE_BYTES are split into `frag` payloads; the per-fragment

@@ -36,8 +36,10 @@ import {
   getPreviewStyles,
   isValidFormattingType,
 } from "../../lib/messageFormatter";
+import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
+import { routeOutgoingPM } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
 import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
@@ -954,7 +956,9 @@ export const ChatArea: React.FC<{
     }
 
     channelListRefs.current.get(channelKey)?.setAtBottom();
-    sendMessage(messageTextRef.current);
+    // Withheld under an engaged-but-not-ready lock: keep the draft so the user
+    // doesn't lose what they typed when nothing was actually sent.
+    if (sendMessage(messageTextRef.current) === "withheld") return;
 
     applyText("");
     setAutocompleteInputText("");
@@ -1081,25 +1085,28 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    // Send a single PRIVMSG carrying all successful URLs space-joined.
-    // Channels echo back; PMs need a local insert so the user sees
-    // their own message immediately.
     const line = urls.join(" ");
-    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
-    if (selectedPrivateChat && currentUser) {
-      const outgoing = {
-        id: uuidv4(),
-        content: line,
-        timestamp: new Date(),
-        userId: currentUser.username || currentUser.id,
-        channelId: selectedPrivateChat.id,
-        serverId: selectedServerId,
-        type: "message" as const,
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-      };
-      useStore.getState().addMessage(outgoing);
+    const encrypted =
+      !!selectedPrivateChat &&
+      routeOutgoingPM(selectedServerId, selectedPrivateChat.username, line) !==
+        "none";
+    if (!encrypted) {
+      ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
+      if (selectedPrivateChat && currentUser) {
+        const outgoing = {
+          id: uuidv4(),
+          content: line,
+          timestamp: new Date(),
+          userId: currentUser.username || currentUser.id,
+          channelId: selectedPrivateChat.id,
+          serverId: selectedServerId,
+          type: "message" as const,
+          reactions: [],
+          replyMessage: null,
+          mentioned: [],
+        };
+        useStore.getState().addMessage(outgoing);
+      }
     }
 
     // Clear the strip after a short pause so the user can see
@@ -1167,29 +1174,37 @@ export const ChatArea: React.FC<{
   const handleGifSend = (gifUrl: string) => {
     // Send the GIF URL directly to the current channel/user
     const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
+    if (!target || !selectedServerId) return;
+    if (
+      selectedPrivateChat &&
+      routeOutgoingPM(
+        selectedServerId,
+        selectedPrivateChat.username,
+        gifUrl,
+      ) !== "none"
+    ) {
+      return;
+    }
 
-    if (target && selectedServerId) {
-      // Send via IRC
-      ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
+    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
 
-      // Add to store for immediate display (only for private chats, channels echo back)
-      if (selectedPrivateChat && currentUser) {
-        const outgoingMessage = {
-          id: uuidv4(),
-          content: gifUrl,
-          timestamp: new Date(),
-          userId: currentUser.username || currentUser.id,
-          channelId: selectedPrivateChat.id,
-          serverId: selectedServerId,
-          type: "message" as const,
-          reactions: [],
-          replyMessage: null,
-          mentioned: [],
-        };
+    // Add to store for immediate display (only for private chats, channels echo back)
+    if (selectedPrivateChat && currentUser) {
+      const outgoingMessage = {
+        id: uuidv4(),
+        content: gifUrl,
+        timestamp: new Date(),
+        userId: currentUser.username || currentUser.id,
+        channelId: selectedPrivateChat.id,
+        serverId: selectedServerId,
+        type: "message" as const,
+        reactions: [],
+        replyMessage: null,
+        mentioned: [],
+      };
 
-        const { addMessage } = useStore.getState();
-        addMessage(outgoingMessage);
-      }
+      const { addMessage } = useStore.getState();
+      addMessage(outgoingMessage);
     }
   };
 
@@ -2808,7 +2823,7 @@ export const ChatArea: React.FC<{
                       previousMessage.userId !== message.userId ||
                       new Date(message.timestamp).getTime() -
                         new Date(previousMessage.timestamp).getTime() >
-                        5 * 60 * 1000;
+                        GROUP_WINDOW_MS;
 
                     return (
                       <MessageItem

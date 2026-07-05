@@ -27,13 +27,12 @@ import {
   resetE2EESession as e2eeReset,
   startE2EESession as e2eeStart,
   verifyE2EESession as e2eeVerify,
-  sendEncryptedMessage,
 } from "./handlers/e2ee";
+import { routeOutgoingPM } from "./handlers/e2eeOutbound";
 import {
   endOtrSession as otrEnd,
   startOtrSession as otrStart,
   verifyOtrSession as otrVerify,
-  sendOtrMessage,
 } from "./handlers/otr";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
@@ -1774,24 +1773,8 @@ const useStore = create<AppState>((set, get) => ({
   sendMessage: (serverId, channelId, content) => {
     const server = get().servers.find((s) => s.id === serverId);
     const pm = server?.privateChats?.find((p) => p.id === channelId);
-    if (pm) {
-      const session = get().e2eeSessions[e2eeSessionKey(serverId, pm.username)];
-      if (session?.status === "established") {
-        if (session.scheme === "otr")
-          sendOtrMessage(serverId, pm.username, content);
-        else sendEncryptedMessage(serverId, pm.username, content);
-        return;
-      }
-      // Mid-handshake or a flagged key change: never fall back to plaintext, or
-      // the user would silently leak a message they believe is encrypted.
-      if (
-        session?.status === "negotiating" ||
-        session?.status === "pending-accept" ||
-        session?.status === "key-changed"
-      ) {
-        return;
-      }
-    }
+    if (pm && routeOutgoingPM(serverId, pm.username, content) !== "none")
+      return;
     ircClient.sendMessage(serverId, channelId, content);
   },
 
@@ -2118,6 +2101,11 @@ const useStore = create<AppState>((set, get) => ({
     );
     const wireTarget = channel?.name ?? privateChat?.username;
     if (!wireTarget) return;
+    if (
+      privateChat &&
+      routeOutgoingPM(msg.serverId, wireTarget, msg.content) !== "none"
+    )
+      return;
 
     const label = makeLabel();
     set((state) => {

@@ -1,6 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { getColorStyle } from "../../lib/ircUtils";
+import { E2EEUnprotectedBadge } from "./E2EEUnprotectedBadge";
 
 interface MessageHeaderProps {
   userId: string;
@@ -13,6 +14,7 @@ interface MessageHeaderProps {
   isBot?: boolean;
   isVerified?: boolean;
   isIrcOp?: boolean;
+  unprotected?: boolean;
 }
 
 export const MessageHeader: React.FC<MessageHeaderProps> = ({
@@ -26,6 +28,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
   isBot = false,
   isVerified = false,
   isIrcOp = false,
+  unprotected = false,
 }) => {
   const { t } = useLingui();
   const username = userId;
@@ -72,6 +75,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
       <span className={`ml-2 text-xs text-${theme}-text-muted`}>
         {formatTime(timestamp)}
       </span>
+      {unprotected && <E2EEUnprotectedBadge />}
     </div>
   );
 };

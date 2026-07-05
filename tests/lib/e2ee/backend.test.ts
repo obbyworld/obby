@@ -65,14 +65,14 @@ describe("ObbyE2EEBackend robustness", () => {
   test("a malformed offer is rejected, not silently accepted", () => {
     const bob = new ObbyE2EEBackend(createIdentity());
     expect(() =>
-      bob.acceptOffer(bobPeer, { t: "init", v: 1, bundle: "!!!garbage" }),
+      bob.acceptOffer(bobPeer, { t: "init", v: 2, bundle: "!!!garbage" }),
     ).toThrow();
   });
 
   test("completing without a pending handshake throws", () => {
     const alice = new ObbyE2EEBackend(createIdentity());
     expect(() =>
-      alice.completeSession(alicePeer, { t: "accept", v: 1, response: "x" }),
+      alice.completeSession(alicePeer, { t: "accept", v: 2, response: "x" }),
     ).toThrow();
   });
 
@@ -81,5 +81,17 @@ describe("ObbyE2EEBackend robustness", () => {
     alice.reset(alicePeer);
     expect(alice.hasSession(alicePeer)).toBe(false);
     expect(alice.peerFingerprint(alicePeer)).toBeNull();
+  });
+
+  test("the pending handshake is consumed exactly once", () => {
+    const alice = new ObbyE2EEBackend(createIdentity());
+    const bob = new ObbyE2EEBackend(createIdentity());
+    const init = alice.startSession(alicePeer);
+    expect(alice.hasPending(alicePeer)).toBe(true);
+    const accept = bob.acceptOffer(bobPeer, init);
+    alice.completeSession(alicePeer, accept);
+    // The handler gates a second accept on hasPending so a duplicate or replayed
+    // accept can't re-run completeSession and clobber the live session.
+    expect(alice.hasPending(alicePeer)).toBe(false);
   });
 });

@@ -103,6 +103,8 @@ export interface HandshakeResponse {
   ik: string;
   sik: string;
   ek: string;
+  // Ed25519(ik‖ek) by sik: binds the fingerprinted key to the session's DH keys.
+  sig: string;
   boot: RatchetMessage;
 }
 
@@ -180,11 +182,15 @@ export function acceptBundle(
   );
   const state = initSender(sk, spk);
   const boot = ratchetEncrypt(state, firstPlaintext);
+  const ekPub = x25519.getPublicKey(ekPriv);
   return {
     response: {
       ik: bytesToBase64(id.ikPub),
       sik: bytesToBase64(id.sikPub),
-      ek: bytesToBase64(x25519.getPublicKey(ekPriv)),
+      ek: bytesToBase64(ekPub),
+      sig: bytesToBase64(
+        ed25519.sign(concatBytes(id.ikPub, ekPub), id.sikPriv),
+      ),
       boot,
     },
     state,
@@ -200,6 +206,15 @@ export function completeHandshake(
 ): { state: RatchetState; firstPlaintext: string } {
   const theirIk = base64ToBytes(response.ik);
   const theirEk = base64ToBytes(response.ek);
+  if (
+    !ed25519.verify(
+      base64ToBytes(response.sig),
+      concatBytes(theirIk, theirEk),
+      base64ToBytes(response.sik),
+    )
+  ) {
+    throw new Error("e2ee: responder identity signature invalid");
+  }
   const sk = x3dhSecret(
     dh(pending.spkPriv, theirIk),
     dh(id.ikPriv, theirEk),

@@ -15,6 +15,7 @@ import {
   type E2EEAccept,
   type E2EEInit,
   type E2EEPayload,
+  PROTOCOL_VERSION,
 } from "../../lib/e2ee/protocol";
 import { FragmentReassembler, framePayload } from "../../lib/e2ee/transport";
 import ircClient from "../../lib/ircClient";
@@ -35,6 +36,11 @@ const reassembler = new FragmentReassembler();
 // Inbound offers held until the user accepts, so acceptOffer can consume the
 // original bundle rather than re-deriving it.
 const pendingOffers = new Map<string, E2EEInit>();
+
+// The initiator's first encrypted payload after completing the handshake. Its
+// arrival is how the responder learns the initiator can decrypt, so it only
+// shows the session as established once it's confirmed. Never rendered.
+const HANDSHAKE_ACK = `${String.fromCharCode(0)}obby-e2ee-handshake-ack`;
 
 function send(serverId: string, target: string, payload: E2EEPayload): void {
   for (const line of framePayload(payload, target, uuidv4())) {
@@ -59,6 +65,9 @@ function onPayload(
       return;
     case "accept":
       clearNegotiationTimer(convKey(serverId, sender));
+      // A duplicate or replayed accept arriving after we already completed (the
+      // pending handshake is consumed once) must not tear down the live session.
+      if (!backend.hasPending(peer)) return;
       try {
         backend.completeSession(peer, payload);
       } catch {
@@ -78,20 +87,44 @@ function onPayload(
         sender,
         backend.peerFingerprint(peer) ?? "",
       );
+      try {
+        send(serverId, sender, backend.encrypt(peer, HANDSHAKE_ACK));
+      } catch {
+        // Session is live; a failed ack only delays the peer's confirmation.
+      }
       return;
     case "reject":
       clearNegotiationTimer(convKey(serverId, sender));
       dispatch(serverId, sender, { type: "rejected-remote" });
       return;
-    case "msg":
+    case "msg": {
       if (!backend.hasSession(peer)) return;
+      let text: string;
       try {
-        injectMessage(serverId, sender, sender, backend.decrypt(peer, payload));
+        text = backend.decrypt(peer, payload);
       } catch {
         // A forged or out-of-session ciphertext can't decrypt; drop it rather
         // than surfacing noise. The session state is left intact (see ratchet).
+        return;
       }
+      const key = convKey(serverId, sender);
+      if (getStore()?.getState().e2eeSessions[key]?.status === "negotiating") {
+        clearNegotiationTimer(key);
+        dispatch(serverId, sender, {
+          type: "accepted-remote",
+          peerFingerprint: backend.peerFingerprint(peer) ?? "",
+        });
+        reconcilePeerTrust(
+          obbyPeerTrust,
+          serverId,
+          sender,
+          backend.peerFingerprint(peer) ?? "",
+        );
+      }
+      if (text === HANDSHAKE_ACK) return;
+      injectMessage(serverId, sender, sender, text);
       return;
+    }
   }
 }
 
@@ -108,6 +141,14 @@ export function registerE2EEHandlers(store: StoreApi<AppState>): void {
   store.setState({ e2eeSelfFingerprint: backend.selfFingerprint() });
 
   ircClient.on("TAGMSG", ({ serverId, mtags, sender }) => {
+    // With echo-message the server reflects our own handshake/ciphertext frames
+    // back to us; processing them spawns phantom self-sessions and races the real
+    // peer's frames through the shared reassembler. Only the peer's frames matter.
+    const self = ircClient.getNick(serverId);
+    if (self && sender.toLowerCase() === self.toLowerCase()) return;
+    // CHATHISTORY replays a handshake/ciphertext frame long after the fact;
+    // re-driving live session state from it would clobber the real session.
+    if (mtags?.batch !== undefined) return;
     const classified = classifyInbound({ mtags });
     if (classified.scheme !== "obby") return;
     const raw = mtags?.[classified.tag];
@@ -146,19 +187,15 @@ export function acceptE2EEOffer(serverId: string, nick: string): void {
     return;
   }
   send(serverId, nick, accept);
+  // Stay negotiating until the initiator's first encrypted payload confirms it
+  // received the accept; establishing here would show a false green if it didn't.
   dispatch(serverId, nick, { type: "accept-local" });
-  dispatch(serverId, nick, { type: "established" });
-  reconcilePeerTrust(
-    obbyPeerTrust,
-    serverId,
-    nick,
-    backend.peerFingerprint(peer) ?? "",
-  );
+  armNegotiationTimer(serverId, nick, () => backend.reset({ serverId, nick }));
 }
 
 export function rejectE2EEOffer(serverId: string, nick: string): void {
   pendingOffers.delete(convKey(serverId, nick));
-  send(serverId, nick, { t: "reject", v: 1 });
+  send(serverId, nick, { t: "reject", v: PROTOCOL_VERSION });
   dispatch(serverId, nick, { type: "reject-local" });
 }
 

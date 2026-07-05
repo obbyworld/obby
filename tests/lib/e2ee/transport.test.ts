@@ -27,7 +27,7 @@ function parseLine(line: string): {
 
 describe("framePayload — single line", () => {
   test("frames a small payload as one TAGMSG under the e2ee tag", () => {
-    const payload: E2EEPayload = { t: "msg", v: 1, ct: "Q0lQ" };
+    const payload: E2EEPayload = { t: "msg", v: 2, ct: "Q0lQ" };
     const [line, ...rest] = framePayload(payload, "bob", "id1");
     expect(rest).toHaveLength(0);
     const parsed = parseLine(line);
@@ -38,10 +38,10 @@ describe("framePayload — single line", () => {
 
   test("every kind frames under the single e2ee tag", () => {
     const kinds: E2EEPayload[] = [
-      { t: "init", v: 1, bundle: "b" },
-      { t: "accept", v: 1, response: "r" },
-      { t: "reject", v: 1 },
-      { t: "msg", v: 1, ct: "x" },
+      { t: "init", v: 2, bundle: "b" },
+      { t: "accept", v: 2, response: "r" },
+      { t: "reject", v: 2 },
+      { t: "msg", v: 2, ct: "x" },
     ];
     for (const payload of kinds) {
       const { tag } = parseLine(framePayload(payload, "bob", "id")[0]);
@@ -52,7 +52,7 @@ describe("framePayload — single line", () => {
 
 describe("framePayload — fragmentation round-trip", () => {
   test("oversized payload splits into frag lines that rebuild the original", () => {
-    const payload: E2EEPayload = { t: "msg", v: 1, ct: "Z".repeat(8000) };
+    const payload: E2EEPayload = { t: "msg", v: 2, ct: "Z".repeat(8000) };
     const lines = framePayload(payload, "bob", "msg42");
     expect(lines.length).toBeGreaterThan(1);
 
@@ -81,7 +81,7 @@ describe("FragmentReassembler", () => {
     ct: string,
   ): E2EEFragment => ({
     t: "frag",
-    v: 1,
+    v: 2,
     id,
     i,
     n,

@@ -5,6 +5,7 @@ import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
+import { isUnprotectedMessage } from "../../lib/e2ee/messageFlags";
 import ircClient from "../../lib/ircClient";
 import {
   isUrlFromFilehost,
@@ -329,6 +330,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     message.tags?.bot === "";
   const isVerified = isUserVerified(message.userId, message.tags);
   const isIrcOp = messageUser?.isIrcOp || false;
+  const isUnprotected = isUnprotectedMessage(message);
 
   // Check if message redaction is supported and possible
   const server = useStore(
@@ -694,6 +696,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
       className={`px-4 hover:bg-discord-message-hover group relative transition-colors duration-150 ${
         showHeader ? "mt-4" : "py-0.5"
       }${isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""}${
+        isUnprotected
+          ? " border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
+          : ""
+      }${
         message.status === "pending"
           ? " opacity-60"
           : message.status === "failed"
@@ -739,6 +745,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
               isBot={isBot}
               isVerified={isVerified}
               isIrcOp={isIrcOp}
+              unprotected={isUnprotected}
             />
           )}
 

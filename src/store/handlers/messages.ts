@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { E2EE_UNPROTECTED_TAG } from "../../lib/e2ee/messageFlags";
+import { e2eeSessionKey } from "../../lib/e2ee/session";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
@@ -756,6 +758,11 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       .getState()
       .servers.find((s) => s.id === response.serverId);
 
+    // A plaintext PM arriving while an encrypted session is active: the row is
+    // rendered but flagged. obbyircd is multi-client, so this is often just the
+    // peer replying from another client that isn't encrypting, not a downgrade.
+    let unprotectedUnderLock = false;
+
     if (server) {
       // Lazy-fetch sender metadata on first PM, same as CHANMSG path.
       // Skip server pseudo-sources (those have a "." in the source) and
@@ -843,6 +850,13 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       // Prefer the ratified +channel-context; fall back to +draft/channel-context.
       const channelContext =
         mtags?.["+channel-context"] ?? mtags?.["+draft/channel-context"];
+
+      unprotectedUnderLock =
+        !channelContext &&
+        mtags?.batch === undefined &&
+        sender.toLowerCase() !== ourNick &&
+        store.getState().e2eeSessions[e2eeSessionKey(server.id, sender)]
+          ?.status === "established";
 
       if (channelContext) {
         const channel = server.channels.find(
@@ -1006,7 +1020,9 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             store.getState().messages[privateChatKey] || [],
           ),
           mentioned: [],
-          tags: mtags,
+          tags: unprotectedUnderLock
+            ? { ...(mtags ?? {}), [E2EE_UNPROTECTED_TAG]: "1" }
+            : mtags,
         };
 
         // If message has bot tag, mark user as bot

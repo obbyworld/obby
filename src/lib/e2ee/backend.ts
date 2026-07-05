@@ -5,7 +5,12 @@
 // stays unit-testable on its own.
 
 import { base64DecodeUtf8, base64EncodeUtf8, base64ToBytes } from "../base64";
-import type { E2EEAccept, E2EECipher, E2EEInit } from "./protocol";
+import {
+  type E2EEAccept,
+  type E2EECipher,
+  type E2EEInit,
+  PROTOCOL_VERSION,
+} from "./protocol";
 import {
   acceptBundle,
   completeHandshake,
@@ -80,6 +85,7 @@ function decodeResponse(blob: string): HandshakeResponse {
     !isString(o.ik) ||
     !isString(o.sik) ||
     !isString(o.ek) ||
+    !isString(o.sig) ||
     !o.boot ||
     typeof o.boot !== "object"
   ) {
@@ -89,6 +95,7 @@ function decodeResponse(blob: string): HandshakeResponse {
     ik: o.ik,
     sik: o.sik,
     ek: o.ek,
+    sig: o.sig,
     boot: decodeRatchetMessage(o.boot as Record<string, unknown>),
   };
 }
@@ -121,7 +128,11 @@ export class ObbyE2EEBackend {
   startSession(peer: PeerRef): E2EEInit {
     const handshake = createPreKeyBundle(this.identity);
     this.pending.set(peerKey(peer), handshake);
-    return { t: "init", v: 1, bundle: encode(handshake.bundle) };
+    return {
+      t: "init",
+      v: PROTOCOL_VERSION,
+      bundle: encode(handshake.bundle),
+    };
   }
 
   acceptOffer(peer: PeerRef, init: E2EEInit): E2EEAccept {
@@ -130,7 +141,7 @@ export class ObbyE2EEBackend {
     const key = peerKey(peer);
     this.sessions.set(key, state);
     this.peerFingerprints.set(key, fingerprintOf(base64ToBytes(bundle.sik)));
-    return { t: "accept", v: 1, response: encode(response) };
+    return { t: "accept", v: PROTOCOL_VERSION, response: encode(response) };
   }
 
   completeSession(peer: PeerRef, accept: E2EEAccept): void {
@@ -147,7 +158,11 @@ export class ObbyE2EEBackend {
   encrypt(peer: PeerRef, plaintext: string): E2EECipher {
     const state = this.sessions.get(peerKey(peer));
     if (!state) throw new Error("e2ee: no session for peer");
-    return { t: "msg", v: 1, ct: encode(ratchetEncrypt(state, plaintext)) };
+    return {
+      t: "msg",
+      v: PROTOCOL_VERSION,
+      ct: encode(ratchetEncrypt(state, plaintext)),
+    };
   }
 
   decrypt(peer: PeerRef, cipher: E2EECipher): string {
@@ -162,6 +177,10 @@ export class ObbyE2EEBackend {
 
   hasSession(peer: PeerRef): boolean {
     return this.sessions.has(peerKey(peer));
+  }
+
+  hasPending(peer: PeerRef): boolean {
+    return this.pending.has(peerKey(peer));
   }
 
   reset(peer: PeerRef): void {
