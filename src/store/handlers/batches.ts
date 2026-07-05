@@ -3,7 +3,7 @@ import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { Message } from "../../types";
 import { type BatchInfo, MAX_MESSAGES_PER_CHANNEL } from "../helpers";
-import { rememberMsgIds, type AppState } from "../index";
+import { type AppState, rememberMsgIds } from "../index";
 
 // Chathistory messages are buffered here (outside the store) to avoid one
 // store.setState per incoming PRIVMSG.  Only flushed at BATCH_END.

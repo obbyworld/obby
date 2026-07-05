@@ -19,7 +19,7 @@ import {
   resolveReplyMessage,
   serverSupportsMetadata,
 } from "../helpers";
-import { rememberMsgId, rememberMsgIds, type AppState } from "../index";
+import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {

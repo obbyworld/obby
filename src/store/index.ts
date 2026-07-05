@@ -1,7 +1,7 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
-import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
 import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
+import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
