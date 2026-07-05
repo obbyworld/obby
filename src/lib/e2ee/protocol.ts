@@ -10,23 +10,22 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "../base64";
 
 export const E2EE_CAP = "obby.world/e2ee";
 
-// A single vendor client-only tag carries every Obby-native E2EE message; the
-// kind lives in the JSON `t` field (same convention as draft/bot-tools). It uses
-// the obby.world vendor namespace (like obby.world/channel-bots) because this is
-// Obby's own scheme; the server relays it via a registered MessageTagHandler.
-// Cross-client interop instead rides in the PRIVMSG body (OTR), never a tag.
-export const E2EE_TAG = "+obby.world/e2ee";
+// Obby frames ride in the PRIVMSG body behind this marker (like OTR's `?OTR:`),
+// so the IRC envelope — msgid, reply-to, reactions, redaction, CHATHISTORY —
+// stays real and only the payload is opaque. The kind lives in the JSON `t`
+// field. base64 never collides with the marker, so detection is a prefix test.
+export const E2EE_BODY_PREFIX = "?obe2ee:";
 
 export type E2EEKind = "init" | "accept" | "reject" | "msg" | "frag";
 
 export const PROTOCOL_VERSION = 2;
 
-// A client tag's value caps at 4094 bytes (message-tags spec). Values longer
-// than MAX_TAG_VALUE_BYTES are split into `frag` payloads; the per-fragment
-// slice is kept smaller so that the base64+JSON wrapping of each fragment still
-// fits one tag with headroom for the tag name and any sibling tags.
-export const MAX_TAG_VALUE_BYTES = 3500;
-export const MAX_FRAGMENT_SLICE = 2800;
+// A PRIVMSG body is far tighter than a client tag (a ~512-byte line vs a
+// 4094-byte tag), so single-frame payloads cap low and oversized ones split
+// into `frag` payloads carried across separate PRIVMSGs. The per-fragment slice
+// stays under the cap once wrapped in the fragment's own base64+JSON envelope.
+export const MAX_BODY_VALUE_BYTES = 400;
+export const MAX_FRAGMENT_SLICE = 220;
 
 // Handshake offer. `bundle` is the initiator's opaque X3DH pre-key bundle
 // (serialized by the crypto layer — this module stays crypto-agnostic so the
@@ -83,6 +82,18 @@ export type E2EEPayload =
 
 export function encodeE2EEPayload(payload: E2EEPayload): string {
   return base64EncodeUtf8(JSON.stringify(payload));
+}
+
+// Wrap a payload for the PRIVMSG body; `bodyToRaw` reverses it, returning null
+// for any body that isn't Obby traffic so the normal message path keeps it.
+export function frameToBody(payload: E2EEPayload): string {
+  return `${E2EE_BODY_PREFIX}${encodeE2EEPayload(payload)}`;
+}
+
+export function bodyToRaw(body: string): string | null {
+  return body.startsWith(E2EE_BODY_PREFIX)
+    ? body.slice(E2EE_BODY_PREFIX.length)
+    : null;
 }
 
 // Decode a raw tag value into a structured payload, returning null on any

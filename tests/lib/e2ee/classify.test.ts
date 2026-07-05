@@ -1,19 +1,17 @@
 import { describe, expect, test } from "vitest";
 import { classifyInbound } from "../../../src/lib/e2ee/classify";
-import { E2EE_TAG } from "../../../src/lib/e2ee/protocol";
+import { E2EE_BODY_PREFIX } from "../../../src/lib/e2ee/protocol";
 
-describe("classifyInbound — Obby-native tag", () => {
-  test("routes the e2ee tag to obby (kind comes from the decoded payload)", () => {
-    expect(classifyInbound({ mtags: { [E2EE_TAG]: "x" } })).toEqual({
+describe("classifyInbound — Obby-native body", () => {
+  test("routes the Obby marker to obby (kind comes from the decoded payload)", () => {
+    expect(classifyInbound({ body: `${E2EE_BODY_PREFIX}eyJ0Ijoi` })).toEqual({
       scheme: "obby",
-      tag: E2EE_TAG,
     });
   });
 
-  test("matches even with an empty value (valueless tag)", () => {
-    expect(classifyInbound({ mtags: { [E2EE_TAG]: "" } })).toEqual({
+  test("matches the bare marker even before any payload", () => {
+    expect(classifyInbound({ body: E2EE_BODY_PREFIX })).toEqual({
       scheme: "obby",
-      tag: E2EE_TAG,
     });
   });
 });
@@ -34,13 +32,7 @@ describe("classifyInbound — OTR bodies", () => {
   }
 });
 
-describe("classifyInbound — precedence and plaintext", () => {
-  test("a client-only tag wins over an OTR-looking body", () => {
-    expect(
-      classifyInbound({ mtags: { [E2EE_TAG]: "x" }, body: "?OTR:zzz" }),
-    ).toEqual({ scheme: "obby", tag: E2EE_TAG });
-  });
-
+describe("classifyInbound — plaintext", () => {
   test("ordinary chat is plaintext", () => {
     expect(classifyInbound({ body: "hello there" })).toEqual({
       scheme: "plaintext",
@@ -49,6 +41,12 @@ describe("classifyInbound — precedence and plaintext", () => {
 
   test("a message mentioning OTR mid-line is not OTR", () => {
     expect(classifyInbound({ body: "i use ?OTR sometimes" })).toEqual({
+      scheme: "plaintext",
+    });
+  });
+
+  test("a message mentioning the Obby marker mid-line is not Obby", () => {
+    expect(classifyInbound({ body: `see ${E2EE_BODY_PREFIX}xx` })).toEqual({
       scheme: "plaintext",
     });
   });

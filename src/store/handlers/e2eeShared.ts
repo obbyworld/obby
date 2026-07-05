@@ -69,18 +69,21 @@ function ensureChat(serverId: string, chatNick: string) {
 
 // Render a message in the PM thread with `chatNick`, authored by `author` (the
 // peer for inbound, ourselves for the local echo of an outgoing message). Used
-// by both backends since the ciphertext rides on a channel the chat view never
-// sees, so the plaintext has to be injected here.
+// by both backends since the plaintext never touches the chat view directly.
+// `msgid` is the carrying PRIVMSG's id (Obby only), adopted so replies,
+// reactions, and redaction reference the real IRC message.
 export function injectMessage(
   serverId: string,
   chatNick: string,
   author: string,
   content: string,
+  msgid?: string,
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
   storeRef?.getState().addMessage({
     id: uuidv4(),
+    msgid,
     content,
     timestamp: new Date(),
     userId: author,

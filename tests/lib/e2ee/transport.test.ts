@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
+  bodyToRaw,
   decodeE2EEPayload,
-  E2EE_TAG,
   type E2EEFragment,
   type E2EEPayload,
 } from "../../../src/lib/e2ee/protocol";
@@ -13,30 +13,23 @@ import {
   MAX_FRAGMENTS_PER_STREAM,
 } from "../../../src/lib/e2ee/transport";
 
-// A TAGMSG line is `@<tag>=<value> TAGMSG <target>`; pull the value back out the
-// same way the IRC layer's tag parser would, so tests exercise the real wire.
-function parseLine(line: string): {
-  tag: string;
-  value: string;
-  target: string;
-} {
-  const m = line.match(/^@([^=]+)=(.*) TAGMSG (.+)$/);
-  if (!m) throw new Error(`unparseable line: ${line}`);
-  return { tag: m[1], value: m[2], target: m[3] };
+// A frame is the PRIVMSG body `?obe2ee:<base64>`; pull the value back out the
+// same way the inbound path does, so tests exercise the real wire format.
+function frameValue(body: string): string {
+  const raw = bodyToRaw(body);
+  if (raw === null) throw new Error(`not an Obby frame: ${body}`);
+  return raw;
 }
 
-describe("framePayload — single line", () => {
-  test("frames a small payload as one TAGMSG under the e2ee tag", () => {
+describe("framePayload — single frame", () => {
+  test("frames a small payload as one Obby body", () => {
     const payload: E2EEPayload = { t: "msg", v: 2, ct: "Q0lQ" };
-    const [line, ...rest] = framePayload(payload, "bob", "id1");
+    const [body, ...rest] = framePayload(payload, "id1");
     expect(rest).toHaveLength(0);
-    const parsed = parseLine(line);
-    expect(parsed.tag).toBe(E2EE_TAG);
-    expect(parsed.target).toBe("bob");
-    expect(decodeE2EEPayload(parsed.value)).toEqual(payload);
+    expect(decodeE2EEPayload(frameValue(body))).toEqual(payload);
   });
 
-  test("every kind frames under the single e2ee tag", () => {
+  test("every kind frames behind the Obby marker", () => {
     const kinds: E2EEPayload[] = [
       { t: "init", v: 2, bundle: "b" },
       { t: "accept", v: 2, response: "r" },
@@ -44,23 +37,21 @@ describe("framePayload — single line", () => {
       { t: "msg", v: 2, ct: "x" },
     ];
     for (const payload of kinds) {
-      const { tag } = parseLine(framePayload(payload, "bob", "id")[0]);
-      expect(tag).toBe(E2EE_TAG);
+      const [body] = framePayload(payload, "id");
+      expect(decodeE2EEPayload(frameValue(body))).toEqual(payload);
     }
   });
 });
 
 describe("framePayload — fragmentation round-trip", () => {
-  test("oversized payload splits into frag lines that rebuild the original", () => {
+  test("oversized payload splits into frag frames that rebuild the original", () => {
     const payload: E2EEPayload = { t: "msg", v: 2, ct: "Z".repeat(8000) };
-    const lines = framePayload(payload, "bob", "msg42");
-    expect(lines.length).toBeGreaterThan(1);
+    const bodies = framePayload(payload, "msg42");
+    expect(bodies.length).toBeGreaterThan(1);
 
     const frags: E2EEFragment[] = [];
-    for (const line of lines) {
-      const { tag, value } = parseLine(line);
-      expect(tag).toBe(E2EE_TAG);
-      const decoded = decodeE2EEPayload(value);
+    for (const body of bodies) {
+      const decoded = decodeE2EEPayload(frameValue(body));
       expect(decoded?.t).toBe("frag");
       frags.push(decoded as E2EEFragment);
     }

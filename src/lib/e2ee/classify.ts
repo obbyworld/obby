@@ -1,15 +1,15 @@
-// Routes an inbound message to the encryption scheme that owns it. Obby-native
-// traffic rides in client-only tags; OTR traffic rides in the PRIVMSG body as
-// the well-known `?OTR` prefixes. Anything else is plaintext and follows the
-// normal message path untouched. Cheap, pure, and the single source of truth
-// for "which backend gets this".
+// Routes an inbound message to the encryption scheme that owns it. Both schemes
+// now ride in the PRIVMSG body behind a well-known prefix — Obby's `?obe2ee:`
+// and OTR's `?OTR…`. Anything else is plaintext and follows the normal message
+// path untouched. Cheap, pure, and the single source of truth for "which backend
+// gets this".
 
-import { E2EE_TAG } from "./protocol";
+import { E2EE_BODY_PREFIX } from "./protocol";
 
 export type OtrKind = "data" | "query" | "fragment" | "error";
 
 export type InboundScheme =
-  | { scheme: "obby"; tag: string }
+  | { scheme: "obby" }
   | { scheme: "otr"; kind: OtrKind }
   | { scheme: "plaintext" };
 
@@ -25,15 +25,10 @@ const OTR_PREFIXES: ReadonlyArray<readonly [string, OtrKind]> = [
   ["?OTR?", "query"],
 ];
 
-export function classifyInbound(input: {
-  mtags?: Record<string, string>;
-  body?: string;
-}): InboundScheme {
-  const { mtags, body } = input;
-  if (mtags?.[E2EE_TAG] !== undefined) {
-    return { scheme: "obby", tag: E2EE_TAG };
-  }
+export function classifyInbound(input: { body?: string }): InboundScheme {
+  const { body } = input;
   if (body) {
+    if (body.startsWith(E2EE_BODY_PREFIX)) return { scheme: "obby" };
     for (const [prefix, kind] of OTR_PREFIXES) {
       if (body.startsWith(prefix)) return { scheme: "otr", kind };
     }

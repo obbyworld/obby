@@ -23,6 +23,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
+import { handleInboundObby } from "./e2ee";
 import { handleInboundOtr } from "./otr";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
@@ -774,18 +775,25 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         store.getState().metadataList(response.serverId, sender);
       }
 
-      // OTR (cross-client E2EE) rides in the PRIVMSG body; divert it before it
-      // renders as plaintext. Our own echoes and CHATHISTORY replays (mtags.batch)
-      // are swallowed without driving a live handshake — replayed ciphertext can't
-      // decrypt and a replayed query would trigger a spurious AKE.
+      // Both E2EE schemes ride in the PRIVMSG body; divert them before the body
+      // renders as gibberish. Our own echoes and CHATHISTORY replays (mtags.batch)
+      // are swallowed without driving a live session — replayed ciphertext can't
+      // decrypt and a replayed handshake would spawn a spurious session. Obby
+      // passes the msgid so the decrypted row keeps the real IRC message identity.
+      const skipE2EE =
+        sender.toLowerCase() === ourNick || mtags?.batch !== undefined;
       if (
-        handleInboundOtr(
+        handleInboundObby(
           response.serverId,
           sender,
           message,
-          sender.toLowerCase() === ourNick || mtags?.batch !== undefined,
+          mtags?.msgid,
+          skipE2EE,
         )
       ) {
+        return;
+      }
+      if (handleInboundOtr(response.serverId, sender, message, skipE2EE)) {
         return;
       }
 

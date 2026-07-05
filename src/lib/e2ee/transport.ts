@@ -1,16 +1,18 @@
-// Carries E2EE payloads over IRCv3 as client-only tags on TAGMSG. A payload
-// whose encoded value fits one client tag is sent as a single line; an oversized
-// value is split into `frag` lines and rebuilt by the receiver. Outbound framing
-// is pure; inbound reassembly is a small stateful accumulator that sweeps
-// never-completed streams so a hostile or dropped sender can't leak memory.
+// Carries E2EE payloads in the PRIVMSG body behind the Obby marker. A payload
+// whose encoded value fits one body is sent as a single frame; an oversized
+// value is split into `frag` frames and rebuilt by the receiver. Outbound
+// framing is pure; inbound reassembly is a small stateful accumulator that
+// sweeps never-completed streams so a hostile or dropped sender can't leak
+// memory.
 
 import {
-  E2EE_TAG,
+  E2EE_BODY_PREFIX,
   type E2EEFragment,
   type E2EEPayload,
   encodeE2EEPayload,
   fragmentValue,
-  MAX_TAG_VALUE_BYTES,
+  frameToBody,
+  MAX_BODY_VALUE_BYTES,
   reassembleFragments,
 } from "./protocol";
 
@@ -25,21 +27,17 @@ export const FRAGMENT_TTL_MS = 30_000;
 export const MAX_FRAGMENTS_PER_STREAM = 64;
 export const MAX_CONCURRENT_STREAMS = 64;
 
-// base64 uses no characters that IRCv3 tag values must escape, so the encoded
-// value is interpolated raw — matching the draft/bot-tools / draft/bot-cmds
-// convention already used for client-only tags in this codebase.
+// Returns the marker-wrapped body frame(s) to put on the wire; the caller wraps
+// each in its own PRIVMSG so every frame keeps a real IRC envelope.
 export function framePayload(
   payload: E2EEPayload,
-  target: string,
   fragmentId: string,
 ): string[] {
   const value = encodeE2EEPayload(payload);
-  if (value.length <= MAX_TAG_VALUE_BYTES) {
-    return [`@${E2EE_TAG}=${value} TAGMSG ${target}`];
+  if (value.length <= MAX_BODY_VALUE_BYTES) {
+    return [`${E2EE_BODY_PREFIX}${value}`];
   }
-  return fragmentValue(fragmentId, value).map(
-    (frag) => `@${E2EE_TAG}=${encodeE2EEPayload(frag)} TAGMSG ${target}`,
-  );
+  return fragmentValue(fragmentId, value).map(frameToBody);
 }
 
 interface FragmentBuffer {

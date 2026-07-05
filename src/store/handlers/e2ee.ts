@@ -1,9 +1,10 @@
 // Obby-native PM E2EE orchestration: owns the Obby crypto backend and drives the
-// handshake over invisible TAGMSG client-only tags, reflecting each
+// handshake over the PRIVMSG body (behind the `?obe2ee:` marker), reflecting each
 // conversation's lifecycle into the shared session reducer (see e2eeShared).
-// Inbound encrypted messages are decrypted and injected as normal chat rows;
-// outbound ones are encrypted here instead of being sent as plaintext. The OTR
-// interop backend lives alongside in otr.ts and shares the same plumbing.
+// Inbound frames are diverted from the normal message path by handleInboundObby
+// (called by the USERMSG handler, like OTR); the decrypted row keeps the real
+// PRIVMSG msgid so replies/reactions target it. The OTR interop backend lives
+// alongside in otr.ts and shares the same plumbing.
 
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
@@ -11,6 +12,7 @@ import { ObbyE2EEBackend, type PeerRef } from "../../lib/e2ee/backend";
 import { classifyInbound } from "../../lib/e2ee/classify";
 import { getObbyIdentity, obbyPeerTrust } from "../../lib/e2ee/obbyIdentity";
 import {
+  bodyToRaw,
   decodeE2EEPayload,
   type E2EEAccept,
   type E2EEInit,
@@ -43,8 +45,8 @@ const pendingOffers = new Map<string, E2EEInit>();
 const HANDSHAKE_ACK = `${String.fromCharCode(0)}obby-e2ee-handshake-ack`;
 
 function send(serverId: string, target: string, payload: E2EEPayload): void {
-  for (const line of framePayload(payload, target, uuidv4())) {
-    ircClient.sendRaw(serverId, line);
+  for (const body of framePayload(payload, uuidv4())) {
+    ircClient.sendRaw(serverId, `PRIVMSG ${target} :${body}`);
   }
 }
 
@@ -52,6 +54,7 @@ function onPayload(
   serverId: string,
   sender: string,
   payload: E2EEPayload,
+  msgid?: string,
 ): void {
   const peer: PeerRef = { serverId, nick: sender };
   switch (payload.t) {
@@ -122,7 +125,7 @@ function onPayload(
         );
       }
       if (text === HANDSHAKE_ACK) return;
-      injectMessage(serverId, sender, sender, text);
+      injectMessage(serverId, sender, sender, text, msgid);
       return;
     }
   }
@@ -139,32 +142,37 @@ function safeFingerprint(payload: E2EEInit | E2EEAccept): string {
 export function registerE2EEHandlers(store: StoreApi<AppState>): void {
   setStore(store);
   store.setState({ e2eeSelfFingerprint: backend.selfFingerprint() });
+}
 
-  ircClient.on("TAGMSG", ({ serverId, mtags, sender }) => {
-    // With echo-message the server reflects our own handshake/ciphertext frames
-    // back to us; processing them spawns phantom self-sessions and races the real
-    // peer's frames through the shared reassembler. Only the peer's frames matter.
-    const self = ircClient.getNick(serverId);
-    if (self && sender.toLowerCase() === self.toLowerCase()) return;
-    // CHATHISTORY replays a handshake/ciphertext frame long after the fact;
-    // re-driving live session state from it would clobber the real session.
-    if (mtags?.batch !== undefined) return;
-    const classified = classifyInbound({ mtags });
-    if (classified.scheme !== "obby") return;
-    const raw = mtags?.[classified.tag];
-    if (!raw) return;
-    const payload = decodeE2EEPayload(raw);
-    if (!payload) return;
-    if (payload.t === "frag") {
-      const value = reassembler.add(payload);
-      if (!value) return;
-      const reassembled = decodeE2EEPayload(value);
-      if (reassembled && reassembled.t !== "frag")
-        onPayload(serverId, sender, reassembled);
-      return;
-    }
-    onPayload(serverId, sender, payload);
-  });
+// Returns true when `body` is Obby traffic, so the USERMSG handler consumes it
+// instead of rendering the marker+ciphertext. `skipProcessing` swallows the
+// frame without driving the session — for our own echoed sends (echo-message)
+// and CHATHISTORY replays, which must not clobber live session state. `msgid` is
+// the carrying PRIVMSG's id, adopted by the decrypted row so replies/reactions
+// target the real message.
+export function handleInboundObby(
+  serverId: string,
+  sender: string,
+  body: string,
+  msgid?: string,
+  skipProcessing = false,
+): boolean {
+  if (classifyInbound({ body }).scheme !== "obby") return false;
+  if (skipProcessing) return true;
+  const raw = bodyToRaw(body);
+  if (!raw) return true;
+  const payload = decodeE2EEPayload(raw);
+  if (!payload) return true;
+  if (payload.t === "frag") {
+    const value = reassembler.add(payload);
+    if (!value) return true;
+    const reassembled = decodeE2EEPayload(value);
+    if (reassembled && reassembled.t !== "frag")
+      onPayload(serverId, sender, reassembled, msgid);
+    return true;
+  }
+  onPayload(serverId, sender, payload, msgid);
+  return true;
 }
 
 export function startE2EESession(serverId: string, nick: string): void {
