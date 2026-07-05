@@ -671,6 +671,11 @@ export const MemberList: React.FC = () => {
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
+        onPickBotCommand={(botNick, command) => {
+          useStore
+            .getState()
+            .requestBotCommandPick(userContextMenu.serverId, botNick, command);
+        }}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -741,6 +746,9 @@ export const MemberList: React.FC = () => {
           onClose={() => setUserProfileModalOpen(false)}
           serverId={selectedServerId}
           username={selectedProfileUsername}
+          onShowInBotsMenu={(botNick) => {
+            useStore.getState().requestBotsModalOpen(selectedServerId, botNick);
+          }}
         />
       )}
     </div>

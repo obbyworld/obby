@@ -543,7 +543,7 @@ const PrivacyPolicy = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="mailto:obsidianirc@gmail.com"
+                  href="mailto:support@obby.world"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-discord-dark-200 text-discord-text-normal rounded-lg hover:bg-discord-dark-300 transition-colors border border-discord-dark-500/30"
                 >
                   <svg
@@ -559,10 +559,10 @@ const PrivacyPolicy = () => {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  obsidianirc@gmail.com
+                  support@obby.world
                 </a>
                 <a
-                  href="https://github.com/ObsidianIRC/ObsidianIRC"
+                  href="https://github.com/obbyworld/obby"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-discord-dark-200 text-discord-text-normal rounded-lg hover:bg-discord-dark-300 transition-colors border border-discord-dark-500/30"

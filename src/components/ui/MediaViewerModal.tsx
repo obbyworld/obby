@@ -46,6 +46,7 @@ import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
+import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -328,20 +329,23 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             <div className="w-64 h-96 bg-discord-dark-400/50 animate-pulse rounded" />
           }
         >
-          <LazyDocument
-            file={url}
-            onLoadSuccess={({ numPages: n }) => setNumPages(n)}
-            onLoadError={() => setUseNativeViewer(true)}
-            loading={null}
-          >
-            <LazyPage
-              pageNumber={pageNumber}
-              canvasBackground="white"
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              width={pageWidth}
-            />
-          </LazyDocument>
+          <PdfErrorBoundary onError={() => setUseNativeViewer(true)}>
+            <LazyDocument
+              file={url}
+              options={PDF_OPTIONS}
+              onLoadSuccess={({ numPages: n }) => setNumPages(n)}
+              onLoadError={() => setUseNativeViewer(true)}
+              loading={null}
+            >
+              <LazyPage
+                pageNumber={pageNumber}
+                canvasBackground="white"
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                width={pageWidth}
+              />
+            </LazyDocument>
+          </PdfErrorBoundary>
         </Suspense>
       </div>
 

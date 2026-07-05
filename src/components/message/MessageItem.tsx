@@ -3,6 +3,7 @@ import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
 import ircClient from "../../lib/ircClient";
 import {
@@ -23,6 +24,9 @@ import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
+import { BotInvocationChip } from "./BotInvocationChip";
+import { BotToolsMessagePill } from "./BotToolsMessagePill";
+import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
 import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -357,6 +361,19 @@ export const MessageItem = memo((props: MessageItemProps) => {
   // message.content is already combined for multiline messages by the IRC client
   const messageContent = message.content;
 
+  // Author + time + raw markdown source, surfaced as data attributes so the
+  // chat copy handler (chatMarkdownCopy) can rebuild a markdown transcript that
+  // preserves authorship and markdown the rendered DOM would otherwise strip.
+  const copyAuthor = formatCopyAuthor(displayName, message.userId, isSystem);
+  const copyTime = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(message.timestamp)),
+    [message.timestamp],
+  );
+
   // draft/custom-emoji: gather pack URLs for this message's channel +
   // network in priority order so a channel pack can shadow a network
   // shortcode of the same name.
@@ -671,6 +688,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
     <div
       ref={messageRowRef}
       data-message-id={message.id}
+      data-md-author={copyAuthor}
+      data-md-time={copyTime}
+      data-md-source={messageContent}
       className={`px-4 hover:bg-discord-message-hover group relative transition-colors duration-150 ${
         showHeader ? "mt-4" : "py-0.5"
       }${isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""}${
@@ -723,6 +743,11 @@ export const MessageItem = memo((props: MessageItemProps) => {
           )}
 
           <div className="relative min-w-0">
+            {isBot && (
+              <BotInvocationChip
+                tagValue={message.tags?.["+draft/invoked-by"]}
+              />
+            )}
             {message.replyMessage && (
               <MessageReply
                 replyMessage={message.replyMessage}
@@ -750,16 +775,35 @@ export const MessageItem = memo((props: MessageItemProps) => {
                   onOpenProfile={onOpenProfile}
                 />
               ) : (
-                // Unknown type (needs probe) or multi-URL: show text body
+                // The workflow pill is absolutely positioned in the
+                // avatar gutter to the LEFT of the body, so the body
+                // stays at its natural alignment and isn't pushed
+                // sideways by the pill's width.
                 <div
-                  className="overflow-hidden"
+                  className="relative"
                   style={{
                     whiteSpace: "pre-wrap",
                     overflowWrap: "break-word",
                     wordBreak: "break-word",
                   }}
                 >
-                  {collapsibleContent}
+                  <span
+                    className="absolute top-[5px] z-10"
+                    style={{ right: "100%", marginRight: "4px" }}
+                  >
+                    <BotToolsMessagePill
+                      serverId={message.serverId}
+                      tags={message.tags}
+                    />
+                  </span>
+                  {message.botToolsPending && message.botToolsWorkflowId ? (
+                    <BotToolsPlaceholderBody
+                      serverId={message.serverId}
+                      workflowId={message.botToolsWorkflowId}
+                    />
+                  ) : (
+                    collapsibleContent
+                  )}
                 </div>
               )}
             </EnhancedLinkWrapper>

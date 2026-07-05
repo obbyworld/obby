@@ -16,6 +16,7 @@ import {
   FaList,
   FaMicrophone,
   FaPenAlt,
+  FaRobot,
   FaSearch,
   FaThumbtack,
   FaTimes,
@@ -31,9 +32,11 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
+import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
+import LoadingSpinner from "../ui/LoadingSpinner";
 import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
@@ -56,6 +59,7 @@ interface ChatHeaderProps {
   onToggleNotificationVolume: () => void;
   onOpenChannelSettings: () => void;
   onOpenInviteUser: () => void;
+  onOpenBots: () => void;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -75,6 +79,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onToggleNotificationVolume,
   onOpenChannelSettings,
   onOpenInviteUser,
+  onOpenBots,
 }) => {
   const { t } = useLingui();
   const {
@@ -92,6 +97,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const ui = useStore((state) => state.ui);
   const topicModalRequest = useStore((state) => state.ui.topicModalRequest);
   const profileViewRequest = useStore((state) => state.ui.profileViewRequest);
+  const botsLoadingCount = useStore(
+    (state) =>
+      state.servers.find((s) => s.id === selectedServerId)?.botCommandsLoading
+        ?.length ?? 0,
+  );
   const nativeMobile = isTauriMobile();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -329,7 +339,23 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedChannel,
     },
     {
-      label: "Play Tic-Tac-Toe",
+      label:
+        botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
+      icon: (
+        <span className="relative inline-flex items-center">
+          <FaRobot />
+          {botsLoadingCount > 0 && (
+            <span className="absolute -top-1.5 -right-2 inline-flex">
+              <LoadingSpinner size="sm" text="" />
+            </span>
+          )}
+        </span>
+      ),
+      onClick: onOpenBots,
+      show: !!selectedServerId,
+    },
+    {
+      label: t`Play Tic-Tac-Toe`,
       icon: <span aria-hidden="true">🎮</span>,
       onClick: () => {
         if (selectedServerId && selectedPrivateChat) {
@@ -595,6 +621,26 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <FaUserPlus />
               </button>
               <button
+                className="hidden md:block hover:text-discord-text-normal relative"
+                onClick={onOpenBots}
+                title={
+                  botsLoadingCount > 0
+                    ? t`Bots — receiving ${botsLoadingCount} command list(s)`
+                    : t`Bots on this network`
+                }
+                aria-label={t`Bots`}
+              >
+                <FaRobot />
+                {botsLoadingCount > 0 && (
+                  <span
+                    className="absolute -top-1.5 -right-2 inline-flex"
+                    aria-hidden="true"
+                  >
+                    <LoadingSpinner size="sm" text="" />
+                  </span>
+                )}
+              </button>
+              <button
                 className="hidden md:block hover:text-discord-text-normal"
                 onClick={() => toggleChannelListModal(true)}
                 title={t`Server Channels`}
@@ -614,6 +660,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 >
                   <FaFilm />
                 </button>
+              )}
+              {/* AI workflow history — renders nothing when empty */}
+              {selectedServerId && (
+                <BotToolsHistoryButton
+                  serverId={selectedServerId}
+                  channel={selectedChannel.name}
+                />
               )}
               {/* Search */}
               <button
@@ -863,11 +916,17 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                       );
                   }
                 }}
-                aria-label="Play Tic-Tac-Toe"
-                title="Play Tic-Tac-Toe"
+                aria-label={t`Play Tic-Tac-Toe`}
+                title={t`Play Tic-Tac-Toe`}
               >
                 <span aria-hidden="true">🎮</span>
               </button>
+              {selectedServerId && (
+                <BotToolsHistoryButton
+                  serverId={selectedServerId}
+                  channel={selectedPrivateChat.username}
+                />
+              )}
               <button
                 className="md:hidden p-2 hover:text-discord-text-normal"
                 onClick={() => setIsSearchExpanded(!isSearchExpanded)}

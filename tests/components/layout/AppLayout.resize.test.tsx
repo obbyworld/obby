@@ -54,6 +54,8 @@ describe("AppLayout - Resize Behavior", () => {
         settingsNavigation: {},
         perServerSelections: {},
         shouldFocusChatInput: false,
+        pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });

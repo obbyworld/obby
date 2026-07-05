@@ -1,6 +1,6 @@
 # Installing Native Obsidian IRC
 
-Grab the latest version for your platform from [https://github.com/ObsidianIRC/ObsidianIRC/releases](https://github.com/ObsidianIRC/ObsidianIRC/releases)
+Grab the latest version for your platform from [https://github.com/obbyworld/obby/releases](https://github.com/obbyworld/obby/releases)
 
 ## Choosing the Right Version
 
@@ -131,7 +131,7 @@ yay -S obsidianirc
 ## Docker
 
 ```sh
-docker run -p 8080:80 mattfly/obsidian:latest
+docker run -p 8080:80 obbyworld/obby:latest
 ```
 
 ## Manual build and development

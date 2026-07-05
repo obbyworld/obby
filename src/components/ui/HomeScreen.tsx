@@ -24,7 +24,7 @@ const DiscoverGrid = () => {
     const fetchServers = async () => {
       try {
         const response = await fetch(
-          "https://raw.githubusercontent.com/ObsidianIRC/server-list/refs/heads/main/servers.json",
+          "https://raw.githubusercontent.com/obbyworld/server-list/refs/heads/main/servers.json",
         );
         if (!response.ok) {
           throw new Error("Failed to fetch servers");
@@ -103,7 +103,7 @@ const DiscoverGrid = () => {
         <div className="bg-discord-dark-100 rounded-lg flex items-center px-2 py-2">
           <button className="px-2 text-discord-text-muted hover:text-discord-text-normal">
             <a
-              href="https://github.com/ObsidianIRC/server-list"
+              href="https://github.com/obbyworld/server-list"
               target="_blank"
               rel="noreferrer"
             >

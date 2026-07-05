@@ -33,6 +33,17 @@ function makeResponse(headers: Record<string, string>): Response {
   } as unknown as Response;
 }
 
+function makeErrorResponse(
+  status: number,
+  headers: Record<string, string> = {},
+): Response {
+  return {
+    headers: makeHeaders(headers),
+    ok: false,
+    status,
+  } as unknown as Response;
+}
+
 // Use unique URL counters per test to avoid cache collisions
 let urlCounter = 0;
 function uniqueUrl(suffix = "") {
@@ -102,6 +113,30 @@ describe("probeMediaUrl", () => {
     const result = await probeMediaUrl(uniqueUrl());
     expect(result?.type).toBe("audio");
     expect(result?.streamable).toBe(false);
+  });
+
+  test("HEAD 405 then GET audio → type audio (HEAD-hostile streaming server)", async () => {
+    vi.mocked(fetch)
+      // HEAD rejected with an error body — must not be trusted as the real type
+      .mockResolvedValueOnce(
+        makeErrorResponse(405, { "content-type": "application/json" }),
+      )
+      // GET (Range: bytes=0-0) reveals the actual audio stream
+      .mockResolvedValueOnce(makeResponse({ "content-type": "audio/mp3" }));
+    const result = await probeMediaUrl(uniqueUrl());
+    expect(result?.type).toBe("audio");
+    expect(result?.streamable).toBe(true);
+    expect(vi.mocked(fetch).mock.calls).toHaveLength(2);
+  });
+
+  test("HEAD 404 → no GET retry, null", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      makeErrorResponse(404, { "content-type": "text/html" }),
+    );
+    const result = await probeMediaUrl(uniqueUrl());
+    expect(result).toBeNull();
+    // 404 won't improve on GET, so only the HEAD request is made
+    expect(vi.mocked(fetch).mock.calls).toHaveLength(1);
   });
 
   test("image/jpeg content-type → type image", async () => {

@@ -138,6 +138,83 @@ export interface Server {
   // currently invoke on this server.  Used to drive the slash-command
   // suggestion popover.  undefined = the cap is not negotiated.
   cmdsAvailable?: string[];
+
+  // draft/bot-cmds: per-bot command schemas keyed by bot nick (lowercased).
+  // Populated from TAGMSG `+draft/bot-cmds` responses.  Used to drive
+  // slash-command autocomplete + invocation routing.
+  botCommands?: Record<string, BotCommand[]>;
+
+  // obby.world/channel-bots: full bot directory.  Pushed in a BATCH
+  // at welcome time, plus per-bot 'add' / 'update' / 'remove' events
+  // as bots come online / register commands / get suspended.  Keyed
+  // by lowercased nick.
+  bots?: Record<string, PushBotInfo>;
+
+  // Set of lowercased bot nicks currently inside an open draft/bot-cmds
+  // BATCH -- chunked schema is still arriving from the bot.  UI surfaces
+  // this as a spinner on the chat-header bot button and on the matching
+  // row in the bots modal.
+  botCommandsLoading?: string[];
+}
+
+export interface PushBotInfo {
+  bot_id: string;
+  nick: string;
+  realname: string;
+  scope: "channel" | "server";
+  transport: "gateway" | "webhook" | "both";
+  status: "active" | "pending" | "suspended" | "deleted";
+  online: boolean;
+  from_config: boolean;
+  channels: string[];
+  commands: BotCommand[];
+  /** Only present when the receiving user is an oper. */
+  webhook_url?: string;
+  webhook_suspended?: boolean;
+  webhook_failures?: number;
+}
+
+export interface BotCommandOption {
+  name: string;
+  /** Drives the form-element used when the slash-command param modal
+   * renders this option.  Bot authors send the schema; the client
+   * picks the right control.  All types resolve to a string|number|
+   * boolean value on the wire. */
+  type?:
+    | "string"
+    | "int"
+    | "number"
+    | "bool"
+    | "user"
+    | "channel"
+    | "date"
+    | "time"
+    | "datetime"
+    | "country"
+    | "password";
+  required?: boolean;
+  description?: string;
+  choices?: string[];
+}
+
+/** draft/bot-cmds §Command gating: conditions the invoker must satisfy. */
+export interface BotCommandRequires {
+  "min-channel-rank"?: "voice" | "halfop" | "op" | "admin" | "owner";
+  account?: boolean;
+  tls?: boolean;
+}
+
+export interface BotCommand {
+  name: string;
+  description?: string;
+  /** Where the command may be invoked (spec schema). */
+  contexts?: ("public" | "private" | "pm")[];
+  options?: BotCommandOption[];
+  requires?: BotCommandRequires;
+  /** Legacy obby.world/bot-info directory fields, used only as a fallback to
+   * derive `contexts` when the directory entry predates the spec schema. */
+  visibility?: "public" | "private";
+  scopes?: ("channel" | "dm")[];
 }
 
 export interface NamedModeSpec {
@@ -314,6 +391,14 @@ export interface Message {
   replyMessage: Message | null;
   mentioned: string[];
   tags?: Record<string, string>;
+  // draft/bot-tools: this message is a synthesised placeholder for a
+  // live bot workflow that hasn't produced its final PRIVMSG yet, or
+  // (once the PRIVMSG lands) was morphed from such a placeholder.
+  // The pill renders off `botToolsWorkflowId`; while `botToolsPending`
+  // is true the message body is replaced with a workflow-state
+  // preview (current step, spinner, etc.) instead of plain content.
+  botToolsWorkflowId?: string;
+  botToolsPending?: boolean;
   // Whisper fields (for draft/channel-context)
   whisperTarget?: string; // The recipient of a whisper
   // Standard reply fields. `command`, `code`, and `context` are

@@ -17,6 +17,7 @@ import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { waitForAuthToken } from "../../lib/authToken";
+import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -37,12 +38,15 @@ import {
 } from "../../lib/messageFormatter";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
-import type { Message as MessageType, User } from "../../types";
+import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
+import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
+import BotsModal from "../ui/BotsModal";
+import { BotToolsTray } from "../ui/BotToolsTray";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
@@ -57,10 +61,13 @@ import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
+import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
   SlashCommandPopover,
+  type SlashSuggestion,
 } from "../ui/SlashCommandPopover";
+import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import {
@@ -142,6 +149,10 @@ export const ChatArea: React.FC<{
   // with "/" and we're still completing the command name -- otherwise
   // typing wouldn't trigger a re-render for this popover at all.
   const [slashInputValue, setSlashInputValue] = useState("");
+  const [paramModal, setParamModal] = useState<{
+    botNick: string;
+    command: BotCommand;
+  } | null>(null);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -225,6 +236,10 @@ export const ChatArea: React.FC<{
     useState(false);
   const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
+  const [botsModalOpen, setBotsModalOpen] = useState(false);
+  const [botsModalPreselect, setBotsModalPreselect] = useState<string | null>(
+    null,
+  );
   const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -397,6 +412,41 @@ export const ChatArea: React.FC<{
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
+
+  const pendingBotsModalOpen = useStore(
+    (state) => state.ui.pendingBotsModalOpen,
+  );
+  const clearBotsModalOpenRequest = useStore(
+    (state) => state.clearBotsModalOpenRequest,
+  );
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotsModalOpen &&
+      pendingBotsModalOpen.serverId === selectedServerId
+    ) {
+      setBotsModalPreselect(pendingBotsModalOpen.botNick);
+      setBotsModalOpen(true);
+      clearBotsModalOpenRequest();
+    }
+  }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      setParamModal({
+        botNick: pendingBotCommandPick.botNick,
+        command: pendingBotCommandPick.command,
+      });
+      clearBotCommandPickRequest();
+    }
+  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -1440,6 +1490,13 @@ export const ChatArea: React.FC<{
       getActiveSlashQuery(newText, newCursorPosition) !== null;
     if (slashActive) {
       setSlashInputValue(newText);
+      // Lazy bot-cmds discovery: the first time the user starts a
+      // slash command in this channel, query any +B users we don't
+      // already have schemas for so the popover updates as soon as
+      // the response arrives.
+      if (!slashInputValue && selectedServerId && selectedChannel) {
+        queryUncachedBotsInChannel(selectedServerId, selectedChannel.name);
+      }
     } else if (slashInputValue !== "") {
       setSlashInputValue("");
     }
@@ -1990,6 +2047,7 @@ export const ChatArea: React.FC<{
         onToggleNotificationVolume={handleToggleNotificationVolume}
         onOpenChannelSettings={() => setChannelSettingsModalOpen(true)}
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
+        onOpenBots={() => setBotsModalOpen(true)}
       />
 
       {topSlot && (
@@ -2032,8 +2090,14 @@ export const ChatArea: React.FC<{
               Embedded iframes (YouTube) are suspended by the browser, but we
               explicitly stop embed media on channel switch (see effect below). */}
           <div
-            className={`flex flex-col min-h-0 ${channelKey ? "flex-grow" : ""}`}
+            className={`relative flex flex-col min-h-0 ${channelKey ? "flex-grow" : ""}`}
           >
+            <BotToolsTray
+              serverId={selectedServerId}
+              channel={
+                selectedChannel?.name ?? selectedPrivateChat?.username ?? null
+              }
+            />
             {aliveChannels.map(
               ({
                 key,
@@ -2144,9 +2208,9 @@ export const ChatArea: React.FC<{
                         !isNativeMobile &&
                         !isCompactInput
                         ? globalSettings.multilineOnShiftEnter
-                          ? t`Message #${selectedChannel.name.replace(/^#/, "")} (Shift+Enter for new line)`
-                          : t`Message #${selectedChannel.name.replace(/^#/, "")} (Enter for new line, Shift+Enter to send)`
-                        : t`Message #${selectedChannel.name.replace(/^#/, "")}`
+                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
+                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
+                        : t`Message ${selectedChannel.name}`
                       : selectedPrivateChat
                         ? globalSettings.enableMultilineInput &&
                           !isMobile &&
@@ -2321,11 +2385,84 @@ export const ChatArea: React.FC<{
                 inputElement={inputRef.current}
               />
 
-              {/* obsidianirc/cmdslist: slash-command suggestion popover */}
+              {/* obsidianirc/cmdslist + draft/bot-cmds: slash-command suggestion popover */}
               {(() => {
                 const srv = servers.find((s) => s.id === selectedServerId);
-                const cmds = srv?.cmdsAvailable ?? [];
-                if (cmds.length === 0) return null;
+                const suggestions: SlashSuggestion[] = [];
+                const seen = new Set<string>();
+
+                // 1. Client-side handlers (e.g. /me, /msg, /nick) —
+                // listed first because they own those names and the
+                // server's cmdslist may shadow them.
+                const inChannelView = !!selectedChannel;
+                for (const c of getClientCommands()) {
+                  if (c.scope === "channel-only" && !inChannelView) continue;
+                  suggestions.push({
+                    name: c.name,
+                    description: c.description,
+                    options: c.options,
+                    source: { kind: "client" },
+                  });
+                  seen.add(c.name.toLowerCase());
+                }
+
+                // 2. PushBot schemas — done before the server's
+                // cmdsAvailable so that bot-defined names win the
+                // dedup set.  Channel-scope bots only appear when
+                // they're a member of the active channel; server-
+                // scope bots (helpbot, dicebot) are reachable from
+                // any context and always show.
+                if (srv?.botCommands) {
+                  const chanUsers = new Set<string>(
+                    selectedChannel?.users.map((u) =>
+                      u.username.toLowerCase(),
+                    ) ?? [],
+                  );
+                  for (const [botNick, list] of Object.entries(
+                    srv.botCommands,
+                  )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
+                      continue;
+                    const scope: "channel" | "server" = botScope;
+                    for (const c of list) {
+                      // Cross-bot collisions intentionally NOT dedup'd:
+                      // both /help entries (helpbot + another) should
+                      // show so the user picks which bot to invoke.
+                      // The picker fills `/cmd@botnick` so dispatch
+                      // routes unambiguously.
+                      suggestions.push({
+                        name: c.name,
+                        description: c.description,
+                        options: c.options,
+                        source: { kind: "bot", botNick, scope },
+                      });
+                      // Reserve the bare name so the server's
+                      // cmdsAvailable can't list a duplicate /HELP
+                      // after a bot's /help.
+                      seen.add(c.name.toLowerCase());
+                    }
+                  }
+                }
+
+                // 3. Server-provided permission list (obsidianirc/cmdslist).
+                // No schema -- just names; skip anything the client
+                // or a bot already owns so /help, /report etc. don't
+                // get shadowed by the built-in /HELP.
+                for (const name of srv?.cmdsAvailable ?? []) {
+                  if (seen.has(name.toLowerCase())) continue;
+                  suggestions.push({
+                    name,
+                    source: { kind: "server" },
+                  });
+                  seen.add(name.toLowerCase());
+                }
+                if (suggestions.length === 0) return null;
                 const slashActive =
                   getActiveSlashQuery(
                     slashInputValue,
@@ -2335,12 +2472,36 @@ export const ChatArea: React.FC<{
                   <SlashCommandPopover
                     isVisible={slashActive}
                     inputValue={slashInputValue}
-                    commands={cmds}
+                    commands={suggestions}
                     inputElement={inputRef.current}
-                    onSelect={(cmd) => {
-                      // Replace the partial command with /<cmd> + space
-                      // and put the cursor right after the space.
-                      const next = `/${cmd} `;
+                    onSelect={(sug) => {
+                      // Bot commands with declared options open the
+                      // param modal so values are entered via typed
+                      // form controls (user/channel pickers, date,
+                      // etc).  Bots without options and non-bot
+                      // sources stay on the freeform inline path.
+                      if (
+                        sug.source.kind === "bot" &&
+                        (sug.options?.length ?? 0) > 0
+                      ) {
+                        const botNick = sug.source.botNick;
+                        setParamModal({
+                          botNick,
+                          command: {
+                            name: sug.name,
+                            description: sug.description,
+                            options: sug.options,
+                          },
+                        });
+                        setSlashInputValue("");
+                        applyText("");
+                        return;
+                      }
+                      const target =
+                        sug.source.kind === "bot"
+                          ? `@${sug.source.botNick}`
+                          : "";
+                      const next = `/${sug.name}${target} `;
                       applyText(next);
                       cursorPositionRef.current = next.length;
                       setSlashInputValue("");
@@ -2353,6 +2514,83 @@ export const ChatArea: React.FC<{
                     onClose={() => {
                       setSlashInputValue("");
                     }}
+                  />
+                );
+              })()}
+
+              {/* Per-arg hint shown after the cmd name + a space.
+                  Pulls schemas from both client-side commands and
+                  any cached PushBot schemas. */}
+              {(() => {
+                const srv = servers.find((s) => s.id === selectedServerId);
+                const schemas: Record<
+                  string,
+                  {
+                    command: import("../../types").BotCommand;
+                    source: "client" | "bot";
+                    botNick?: string;
+                    scope: "channel" | "server" | "dm";
+                  }
+                > = {};
+
+                // Client-side commands first; bot schemas overwrite
+                // only if there's a real collision (none in practice
+                // because the client owns /me, /msg, etc).
+                for (const c of getClientCommands()) {
+                  schemas[c.name.toLowerCase()] = {
+                    command: {
+                      name: c.name,
+                      description: c.description,
+                      options: c.options,
+                    },
+                    source: "client",
+                    scope: "dm",
+                  };
+                }
+
+                if (srv?.botCommands) {
+                  const chanUsers = new Set<string>(
+                    selectedChannel?.users.map((u) =>
+                      u.username.toLowerCase(),
+                    ) ?? [],
+                  );
+                  for (const [botNick, list] of Object.entries(
+                    srv.botCommands,
+                  )) {
+                    const botScope: "channel" | "server" =
+                      srv.bots?.[botNick]?.scope ?? "channel";
+                    const inChannel = chanUsers.has(botNick.toLowerCase());
+                    if (
+                      botScope === "channel" &&
+                      (!selectedChannel || !inChannel)
+                    )
+                      continue;
+                    for (const c of list) {
+                      const entry = {
+                        command: c,
+                        source: "bot" as const,
+                        botNick,
+                        scope: botScope,
+                      };
+                      // Specific key handles `/cmd@bot foo` lookups;
+                      // bare key is a fallback for `/cmd foo` (last
+                      // bot wins, which matches dispatch's fallback
+                      // ordering).
+                      schemas[
+                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
+                      ] = entry;
+                      schemas[c.name.toLowerCase()] = entry;
+                    }
+                  }
+                }
+
+                if (Object.keys(schemas).length === 0) return null;
+                return (
+                  <SlashParamHint
+                    inputValue={messageTextRef.current ?? ""}
+                    cursorPosition={cursorPositionRef.current}
+                    schemas={schemas}
+                    inputElement={inputRef.current}
                   />
                 );
               })()}
@@ -2407,6 +2645,9 @@ export const ChatArea: React.FC<{
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
+        onPickBotCommand={(botNick, command) =>
+          setParamModal({ botNick, command })
+        }
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -2452,6 +2693,20 @@ export const ChatArea: React.FC<{
           onClose={() => setInviteUserModalOpen(false)}
           serverId={selectedServerId}
           channelName={selectedChannel.name}
+        />
+      )}
+      {selectedServerId && (
+        <BotsModal
+          isOpen={botsModalOpen}
+          onClose={() => {
+            setBotsModalOpen(false);
+            setBotsModalPreselect(null);
+          }}
+          serverId={selectedServerId}
+          preselectNick={botsModalPreselect}
+          onPickCommand={(botNick, command) => {
+            setParamModal({ botNick, command });
+          }}
         />
       )}
       {selectedServerId && (
@@ -2587,6 +2842,25 @@ export const ChatArea: React.FC<{
                 )}
             </div>
           </div>,
+          document.body,
+        )}
+      {paramModal &&
+        selectedServerId &&
+        createPortal(
+          <SlashCommandParamModal
+            serverId={selectedServerId}
+            botNick={paramModal.botNick}
+            command={paramModal.command}
+            channel={selectedChannel ?? null}
+            privateChat={selectedPrivateChat ?? null}
+            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
+            joinedChannels={
+              servers
+                .find((s) => s.id === selectedServerId)
+                ?.channels.map((c) => c.name) ?? []
+            }
+            onClose={() => setParamModal(null)}
+          />,
           document.body,
         )}
     </div>

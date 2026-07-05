@@ -975,10 +975,10 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>Email:</Trans>
               </strong>{" "}
               <a
-                href="mailto:obsidianirc@gmail.com"
+                href="mailto:support@obby.world"
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                obsidianirc@gmail.com
+                support@obby.world
               </a>
             </p>
             <p>
@@ -987,12 +987,12 @@ export const UserSettings: React.FC = React.memo(() => {
                 <Trans>GitHub:</Trans>
               </strong>{" "}
               <a
-                href="https://github.com/ObsidianIRC/ObsidianIRC"
+                href="https://github.com/obbyworld/obby"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-discord-primary hover:text-discord-primary-light"
               >
-                github.com/ObsidianIRC/ObsidianIRC
+                github.com/obbyworld/obby
               </a>
             </p>
           </div>
