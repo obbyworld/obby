@@ -1,10 +1,10 @@
-// Obby-native PM E2EE orchestration: owns the Obby crypto backend and drives the
-// handshake over the PRIVMSG body (behind the `?obe2ee:` marker), reflecting each
-// conversation's lifecycle into the shared session reducer (see e2eeShared).
-// Inbound frames are diverted from the normal message path by handleInboundObby
-// (called by the USERMSG handler, like OTR); the decrypted row keeps the real
-// PRIVMSG msgid so replies/reactions target it. The OTR interop backend lives
-// alongside in otr.ts and shares the same plumbing.
+// Obby-native PM E2EE orchestration: owns the Obby crypto backend and reflects
+// each conversation's lifecycle into the shared session reducer (see e2eeShared).
+// Handshake/control frames ride an invisible TAGMSG client tag (handled here);
+// message payloads ride the PRIVMSG body and are diverted by handleInboundObby
+// (called by the USERMSG handler, like OTR) so the decrypted row keeps the real
+// msgid for replies/reactions. The OTR interop backend lives alongside in otr.ts
+// and shares the same plumbing.
 
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
@@ -14,12 +14,17 @@ import { getObbyIdentity, obbyPeerTrust } from "../../lib/e2ee/obbyIdentity";
 import {
   bodyToRaw,
   decodeE2EEPayload,
+  E2EE_TAG,
   type E2EEAccept,
   type E2EEInit,
   type E2EEPayload,
   PROTOCOL_VERSION,
 } from "../../lib/e2ee/protocol";
-import { FragmentReassembler, framePayload } from "../../lib/e2ee/transport";
+import {
+  FragmentReassembler,
+  framePayload,
+  frameTagPayload,
+} from "../../lib/e2ee/transport";
 import ircClient from "../../lib/ircClient";
 import type { AppState } from "../index";
 import {
@@ -44,8 +49,24 @@ const pendingOffers = new Map<string, E2EEInit>();
 // shows the session as established once it's confirmed. Never rendered.
 const HANDSHAKE_ACK = `${String.fromCharCode(0)}obby-e2ee-handshake-ack`;
 
-function send(serverId: string, target: string, payload: E2EEPayload): void {
-  for (const body of framePayload(payload, uuidv4())) {
+// Control frames (init/accept/reject/ack) go over the invisible TAGMSG tag;
+// message payloads go over the PRIVMSG body so they keep a real msgid. The ack
+// is a `msg`-shaped cipher but is handshake control, so its call site sends it
+// over the tag.
+function send(
+  serverId: string,
+  target: string,
+  payload: E2EEPayload,
+  viaTag: boolean,
+): void {
+  const id = uuidv4();
+  if (viaTag) {
+    for (const value of frameTagPayload(payload, id)) {
+      ircClient.sendRaw(serverId, `@${E2EE_TAG}=${value} TAGMSG ${target}`);
+    }
+    return;
+  }
+  for (const body of framePayload(payload, id)) {
     ircClient.sendRaw(serverId, `PRIVMSG ${target} :${body}`);
   }
 }
@@ -91,7 +112,7 @@ function onPayload(
         backend.peerFingerprint(peer) ?? "",
       );
       try {
-        send(serverId, sender, backend.encrypt(peer, HANDSHAKE_ACK));
+        send(serverId, sender, backend.encrypt(peer, HANDSHAKE_ACK), true);
       } catch {
         // Session is live; a failed ack only delays the peer's confirmation.
       }
@@ -142,6 +163,29 @@ function safeFingerprint(payload: E2EEInit | E2EEAccept): string {
 export function registerE2EEHandlers(store: StoreApi<AppState>): void {
   setStore(store);
   store.setState({ e2eeSelfFingerprint: backend.selfFingerprint() });
+
+  // Handshake/control frames arrive here on the invisible TAGMSG tag (message
+  // payloads instead come through handleInboundObby with a real msgid).
+  ircClient.on("TAGMSG", ({ serverId, mtags, sender }) => {
+    const raw = mtags?.[E2EE_TAG];
+    if (raw === undefined) return;
+    // echo-message reflects our own control frames back; processing them spawns
+    // phantom self-sessions. CHATHISTORY (batch) replays must not drive state.
+    const self = ircClient.getNick(serverId);
+    if (self && sender.toLowerCase() === self.toLowerCase()) return;
+    if (mtags?.batch !== undefined) return;
+    const payload = decodeE2EEPayload(raw);
+    if (!payload) return;
+    if (payload.t === "frag") {
+      const value = reassembler.add(payload);
+      if (!value) return;
+      const reassembled = decodeE2EEPayload(value);
+      if (reassembled && reassembled.t !== "frag")
+        onPayload(serverId, sender, reassembled);
+      return;
+    }
+    onPayload(serverId, sender, payload);
+  });
 }
 
 // Returns true when `body` is Obby traffic, so the USERMSG handler consumes it
@@ -176,7 +220,7 @@ export function handleInboundObby(
 }
 
 export function startE2EESession(serverId: string, nick: string): void {
-  send(serverId, nick, backend.startSession({ serverId, nick }));
+  send(serverId, nick, backend.startSession({ serverId, nick }), true);
   dispatch(serverId, nick, { type: "start", scheme: "obby" });
   armNegotiationTimer(serverId, nick, () => backend.reset({ serverId, nick }));
 }
@@ -194,7 +238,7 @@ export function acceptE2EEOffer(serverId: string, nick: string): void {
     dispatch(serverId, nick, { type: "error", reason: "handshake failed" });
     return;
   }
-  send(serverId, nick, accept);
+  send(serverId, nick, accept, true);
   // Stay negotiating until the initiator's first encrypted payload confirms it
   // received the accept; establishing here would show a false green if it didn't.
   dispatch(serverId, nick, { type: "accept-local" });
@@ -203,7 +247,7 @@ export function acceptE2EEOffer(serverId: string, nick: string): void {
 
 export function rejectE2EEOffer(serverId: string, nick: string): void {
   pendingOffers.delete(convKey(serverId, nick));
-  send(serverId, nick, { t: "reject", v: PROTOCOL_VERSION });
+  send(serverId, nick, { t: "reject", v: PROTOCOL_VERSION }, true);
   dispatch(serverId, nick, { type: "reject-local" });
 }
 
@@ -229,7 +273,7 @@ export function sendEncryptedMessage(
 ): void {
   const peer: PeerRef = { serverId, nick };
   if (!backend.hasSession(peer)) return;
-  send(serverId, nick, backend.encrypt(peer, content));
+  send(serverId, nick, backend.encrypt(peer, content), false);
   const store = getStore();
   if (!store) return;
   const self = store.getState().currentUser?.username ?? "";

@@ -9,6 +9,7 @@ import {
   FRAGMENT_TTL_MS,
   FragmentReassembler,
   framePayload,
+  frameTagPayload,
   MAX_CONCURRENT_STREAMS,
   MAX_FRAGMENTS_PER_STREAM,
 } from "../../../src/lib/e2ee/transport";
@@ -40,6 +41,32 @@ describe("framePayload — single frame", () => {
       const [body] = framePayload(payload, "id");
       expect(decodeE2EEPayload(frameValue(body))).toEqual(payload);
     }
+  });
+});
+
+describe("frameTagPayload — control frames", () => {
+  test("frames a control payload as one raw tag value", () => {
+    const payload: E2EEPayload = { t: "init", v: 2, bundle: "b" };
+    const [value, ...rest] = frameTagPayload(payload, "id1");
+    expect(rest).toHaveLength(0);
+    expect(value.startsWith("?obe2ee:")).toBe(false);
+    expect(decodeE2EEPayload(value)).toEqual(payload);
+  });
+
+  test("oversized control payload splits into frag tag values", () => {
+    const payload: E2EEPayload = {
+      t: "accept",
+      v: 2,
+      response: "R".repeat(6000),
+    };
+    const values = frameTagPayload(payload, "acc1");
+    expect(values.length).toBeGreaterThan(1);
+    const frags = values.map((v) => decodeE2EEPayload(v) as E2EEFragment);
+    for (const f of frags) expect(f.t).toBe("frag");
+    const r = new FragmentReassembler();
+    let rebuilt: string | null = null;
+    for (const f of frags) rebuilt = r.add(f, 0) ?? rebuilt;
+    expect(decodeE2EEPayload(rebuilt as string)).toEqual(payload);
   });
 });
 

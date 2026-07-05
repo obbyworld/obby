@@ -10,22 +10,30 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "../base64";
 
 export const E2EE_CAP = "obby.world/e2ee";
 
-// Obby frames ride in the PRIVMSG body behind this marker (like OTR's `?OTR:`),
-// so the IRC envelope — msgid, reply-to, reactions, redaction, CHATHISTORY —
-// stays real and only the payload is opaque. The kind lives in the JSON `t`
-// field. base64 never collides with the marker, so detection is a prefix test.
+// Handshake/control frames (init, accept, reject, ack) ride in this client-only
+// TAGMSG tag: invisible to non-Obby clients and needing no msgid, since nothing
+// threads onto a handshake. Relies on the server relaying the tag.
+export const E2EE_TAG = "+obby.world/e2ee";
+
+// Message payloads ride in the PRIVMSG body behind this marker (like OTR's
+// `?OTR:`), so the IRC envelope — msgid, reply-to, reactions, redaction,
+// CHATHISTORY — stays real and only the payload is opaque. Needs no server
+// cooperation. For both transports the kind lives in the JSON `t` field, and
+// base64 never collides with the marker, so body detection is a prefix test.
 export const E2EE_BODY_PREFIX = "?obe2ee:";
 
 export type E2EEKind = "init" | "accept" | "reject" | "msg" | "frag";
 
 export const PROTOCOL_VERSION = 2;
 
-// A PRIVMSG body is far tighter than a client tag (a ~512-byte line vs a
-// 4094-byte tag), so single-frame payloads cap low and oversized ones split
-// into `frag` payloads carried across separate PRIVMSGs. The per-fragment slice
-// stays under the cap once wrapped in the fragment's own base64+JSON envelope.
+// A client tag caps near 4094 bytes (message-tags spec); a PRIVMSG body is far
+// tighter (a ~512-byte line). Payloads over the per-transport cap split into
+// `frag` frames, each sliced to stay under the cap once wrapped in its own
+// base64+JSON envelope.
+export const MAX_TAG_VALUE_BYTES = 3500;
+export const MAX_TAG_FRAGMENT_SLICE = 2800;
 export const MAX_BODY_VALUE_BYTES = 400;
-export const MAX_FRAGMENT_SLICE = 220;
+export const MAX_BODY_FRAGMENT_SLICE = 220;
 
 // Handshake offer. `bundle` is the initiator's opaque X3DH pre-key bundle
 // (serialized by the crypto layer — this module stays crypto-agnostic so the
@@ -171,7 +179,7 @@ export function decodeE2EEPayload(raw: string): E2EEPayload | null {
 export function fragmentValue(
   id: string,
   value: string,
-  sliceSize: number = MAX_FRAGMENT_SLICE,
+  sliceSize: number = MAX_BODY_FRAGMENT_SLICE,
 ): E2EEFragment[] {
   const slices: string[] = [];
   for (let i = 0; i < value.length; i += sliceSize) {
