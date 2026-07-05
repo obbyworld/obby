@@ -29,7 +29,7 @@ import {
 } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { isUrlFromFilehost } from "../../lib/ircUtils";
+import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -46,11 +46,18 @@ import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
+import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
 const LazyDocument = lazy(() =>
-  import("react-pdf").then((m) => ({ default: m.Document })),
+  import("react-pdf").then((m) => {
+    // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
+    if (m.pdfjs?.GlobalWorkerOptions) {
+      m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    }
+    return { default: m.Document };
+  }),
 );
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
@@ -322,20 +329,23 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             <div className="w-64 h-96 bg-discord-dark-400/50 animate-pulse rounded" />
           }
         >
-          <LazyDocument
-            file={url}
-            onLoadSuccess={({ numPages: n }) => setNumPages(n)}
-            onLoadError={() => setUseNativeViewer(true)}
-            loading={null}
-          >
-            <LazyPage
-              pageNumber={pageNumber}
-              canvasBackground="white"
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-              width={pageWidth}
-            />
-          </LazyDocument>
+          <PdfErrorBoundary onError={() => setUseNativeViewer(true)}>
+            <LazyDocument
+              file={url}
+              options={PDF_OPTIONS}
+              onLoadSuccess={({ numPages: n }) => setNumPages(n)}
+              onLoadError={() => setUseNativeViewer(true)}
+              loading={null}
+            >
+              <LazyPage
+                pageNumber={pageNumber}
+                canvasBackground="white"
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                width={pageWidth}
+              />
+            </LazyDocument>
+          </PdfErrorBoundary>
         </Suspense>
       </div>
 
@@ -562,9 +572,9 @@ export function MediaViewerModal({
       return;
     }
     const storeState = useStore.getState();
-    const filehost = storeState.servers.find(
-      (s) => s.id === serverId,
-    )?.filehost;
+    const filehost = serverFilehosts(
+      storeState.servers.find((s) => s.id === serverId),
+    );
     const mediaSettings = {
       showSafeMedia,
       showTrustedSourcesMedia,
@@ -1009,9 +1019,9 @@ export function MediaViewerModal({
       let idx = mediaEntries.findIndex((e) => e.url === imgUrl);
       if (idx < 0 && serverId && channelId) {
         // Image might be from a comment posted after modal opened — rebuild index
-        const filehost = useStore
-          .getState()
-          .servers.find((s) => s.id === serverId)?.filehost;
+        const filehost = serverFilehosts(
+          useStore.getState().servers.find((s) => s.id === serverId),
+        );
         const freshEntries = getChannelMessages(serverId, channelId)
           .flatMap((msg) =>
             extractMediaFromMessage(msg).map(

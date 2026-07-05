@@ -10,7 +10,27 @@ function setupServer() {
         name: "TestServer",
         host: "irc.example.com",
         port: 6667,
-        channels: [],
+        channels: [
+          {
+            id: "chan-1",
+            name: "#bots",
+            topic: "",
+            users: [
+              {
+                id: "Weather",
+                username: "Weather",
+                isOnline: true,
+                isBot: true,
+              },
+            ],
+            messages: [],
+            isPrivate: false,
+            serverId: "srv-1",
+            unreadCount: 0,
+            isMentioned: false,
+            modes: "",
+          },
+        ],
         privateChats: [],
         isConnected: true,
         users: [],
@@ -20,9 +40,8 @@ function setupServer() {
 }
 
 function encodeBotCmds(commands: unknown): string {
-  const json = JSON.stringify({ version: 1, commands });
-  // browser-style btoa via Buffer for tests
-  return Buffer.from(json, "utf8").toString("base64").replace(/=+$/, "");
+  const json = JSON.stringify({ commands });
+  return Buffer.from(json, "utf8").toString("base64");
 }
 
 describe("pushbot store handler", () => {
@@ -37,7 +56,11 @@ describe("pushbot store handler", () => {
       channelName: "ourNick",
       mtags: {
         "+draft/bot-cmds": encodeBotCmds([
-          { name: "forecast", description: "Look up the weather" },
+          {
+            name: "forecast",
+            description: "Look up the weather",
+            contexts: ["public", "pm"],
+          },
         ]),
       },
       timestamp: new Date(),
@@ -46,7 +69,11 @@ describe("pushbot store handler", () => {
     const server = useStore.getState().servers[0];
     expect(server.botCommands).toBeDefined();
     expect(server.botCommands?.weather).toEqual([
-      { name: "forecast", description: "Look up the weather" },
+      {
+        name: "forecast",
+        description: "Look up the weather",
+        contexts: ["public", "pm"],
+      },
     ]);
   });
 

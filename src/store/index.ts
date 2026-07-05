@@ -1,5 +1,6 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
+import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -7,6 +8,7 @@ import {
   registerAllProtocolHandlers,
 } from "../protocol";
 import type {
+  InviteLink,
   Message,
   PrivateChat,
   Server,
@@ -20,6 +22,7 @@ import { readyProcessedServers } from "./handlers/connection";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
 import * as storage from "./localStorage";
+import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
 import type {
   ChannelOrderMap,
@@ -424,6 +427,19 @@ interface UIState {
     itemId: string | null;
   };
   prefillServerDetails: ConnectionDetails | null;
+  // Cross-component deep-link from the user-profile popover into the
+  // bots modal — UserProfileModal sets this to {serverId, botNick}
+  // when the user clicks "Show in Bots Menu" and ChatArea picks it up
+  // to open the modal pre-selected on that bot.
+  pendingBotsModalOpen: { serverId: string; botNick: string } | null;
+  // Cross-component deep-link from the member-list context menu's Bot
+  // Commands submenu — clicking a command sets this and ChatArea picks
+  // it up to open the slash-command param modal.
+  pendingBotCommandPick: {
+    serverId: string;
+    botNick: string;
+    command: import("../types").BotCommand;
+  } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -475,6 +491,66 @@ interface UIState {
 
 export type { GlobalSettings };
 
+// One step within a draft/bot-tools workflow. `content` is the spec's
+// untyped payload: a nested object for tool-call args, a string fragment
+// for tool-result / reasoning / text. We carry it through verbatim and
+// let the UI decide how to render.
+export interface AiStep {
+  sid: string;
+  type: import("../lib/botTools").AiStepType;
+  state: import("../lib/botTools").AiStepState;
+  tool?: string;
+  label?: string;
+  content?: unknown;
+  truncated?: boolean;
+  startedAt: number;
+  updatedAt: number;
+}
+
+export interface AiWorkflow {
+  id: string;
+  serverId: string;
+  // Target the workflow was announced on (channel name or PM nick) so
+  // the tray can scope cards to the current selection.
+  channel: string;
+  // The bot's nick (sender of the original workflow TAGMSG).
+  senderNick: string;
+  name?: string;
+  state: import("../lib/botTools").AiWorkflowState;
+  // msgid of the IRC message that triggered the workflow, if the bot
+  // included `trigger` in the start event. Lets the UI correlate.
+  trigger?: string;
+  // Truncated copy of the prompt that started the workflow, if the bot
+  // included it. Rendered under the bot nick on the workflow card so
+  // the user can see what they asked without scrolling.
+  prompt?: string;
+  cancelledBy?: string;
+  // msgid of the PRIVMSG that carried the final workflow-complete tag.
+  // Set by the botTools handler when a tagged PRIVMSG arrives so the
+  // card can deep-link to that message ("Responded in chat" footer).
+  finalMsgid?: string;
+  startedAt: number;
+  updatedAt: number;
+  steps: AiStep[];
+  // UI: card starts collapsed; user can expand. Once dismissed the
+  // card is hidden from the tray (state is preserved for replay).
+  collapsed: boolean;
+  dismissed: boolean;
+  // True when the workflow was first observed inside a chathistory
+  // batch (i.e. it's being replayed from the server, not happening
+  // right now). The floating tray filters these out so joining a
+  // channel doesn't pop a wall of old workflow cards; they still
+  // appear in the history popover for inspection.
+  historical: boolean;
+  // True once the user has explicitly opened the floating card -- either
+  // via the chat-header workflow icon's dropdown, or via the "view
+  // workflow" affordance on a closed PRIVMSG.  Without this flag we'd
+  // pop a card automatically on every workflow start, which gets
+  // invasive when several bots are working at once.  Reset on dismiss
+  // so closing the card hides it from the tray again.
+  userOpened?: boolean;
+}
+
 export interface AppState {
   servers: Server[];
   currentUser: User | null;
@@ -496,6 +572,16 @@ export interface AppState {
     serverId: string;
     timestamp: Date;
   }[];
+  rawLog: Record<
+    string,
+    {
+      seq: number;
+      direction: "tx" | "rx" | "info";
+      line: string;
+      timestamp: number;
+    }[]
+  >;
+  rawLogViewerServerId: string | null;
   channelList: Record<
     string,
     { channel: string; userCount: number; topic: string }[]
@@ -551,6 +637,21 @@ export interface AppState {
   metadataChangeCounter: number; // Counter incremented on metadata changes for reactivity
   // WHOIS data cache
   whoisData: Record<string, Record<string, WhoisData>>; // serverId -> nickname -> whois data
+  /**
+   * Cached state of `INVITELINK LIST` per server.  Populated as the
+   * server streams `INVITELINK ENTRY` rows and terminated by the
+   * `NOTE INVITELINK LIST_END` standard-reply.  `loading` flips
+   * false at LIST_END (success) or when a FAIL is received.
+   */
+  inviteLinks: Record<
+    string,
+    {
+      entries: InviteLink[];
+      loading: boolean;
+      error?: string;
+      lastFetched?: number;
+    }
+  >;
   // Account registration state
   pendingRegistration: {
     serverId: string;
@@ -590,6 +691,11 @@ export interface AppState {
   processedMessageIds: Set<string>; // Set of msgid values that have already been processed
   // Auto-connect prevention
   hasConnectedToSavedServers: boolean;
+  // draft/bot-tools workflow state, indexed by serverId then workflow id.
+  // Populated by store/handlers/botTools.ts from `+draft/bot-tools`
+  // tags carried on TAGMSG/PRIVMSG. Rendered by the floating workflow
+  // tray in ChatArea.
+  aiWorkflows: Record<string, Record<string, AiWorkflow>>;
   // UI state
   ui: UIState;
   globalSettings: GlobalSettings;
@@ -766,6 +872,14 @@ export interface AppState {
   }) => void;
   removeGlobalNotification: (notificationId: string) => void;
   clearGlobalNotifications: () => void;
+  appendRawLogLine: (entry: {
+    serverId: string;
+    direction: "tx" | "rx" | "info";
+    line: string;
+  }) => void;
+  clearRawLog: (serverId: string) => void;
+  openRawLogViewer: (serverId: string) => void;
+  closeRawLogViewer: () => void;
   selectServer: (
     serverId: string | null,
     options?: { clearSelection?: boolean },
@@ -824,6 +938,14 @@ export interface AppState {
     memberList?: { isVisible: boolean; width: number };
   }) => void;
   toggleChannelListModal: (isOpen?: boolean) => void;
+  requestBotsModalOpen: (serverId: string, botNick: string) => void;
+  clearBotsModalOpenRequest: () => void;
+  requestBotCommandPick: (
+    serverId: string,
+    botNick: string,
+    command: import("../types").BotCommand,
+  ) => void;
+  clearBotCommandPickRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -889,6 +1011,14 @@ export interface AppState {
   addInputAttachment: (attachment: Attachment) => void;
   removeInputAttachment: (attachmentId: string) => void;
   clearInputAttachments: () => void;
+  // obbyircd INVITELINK management
+  loadInvitations: (serverId: string) => void;
+  createInvitation: (
+    serverId: string,
+    channel?: string,
+    description?: string,
+  ) => void;
+  deleteInvitation: (serverId: string, shareId: string) => void;
   // Metadata actions
   metadataGet: (serverId: string, target: string, keys: string[]) => void;
   metadataList: (serverId: string, target: string) => void;
@@ -905,6 +1035,23 @@ export interface AppState {
   metadataSubs: (serverId: string) => void;
   metadataSync: (serverId: string, target: string) => void;
   sendRaw: (serverId: string, command: string) => void;
+  // draft/bot-tools UI helpers + control signals.
+  aiWorkflowSetCollapsed: (
+    serverId: string,
+    workflowId: string,
+    collapsed: boolean,
+  ) => void;
+  aiWorkflowDismiss: (serverId: string, workflowId: string) => void;
+  // Un-dismiss + expand. Used to reopen a workflow card from its
+  // final-response PRIVMSG after the user has closed the tray entry.
+  aiWorkflowReopen: (serverId: string, workflowId: string) => void;
+  // Send an `action` message (cancel / approve / reject / input) to the
+  // bot's nick via TAGMSG carrying `+draft/bot-tools`.
+  aiSendAction: (
+    serverId: string,
+    botNick: string,
+    action: import("../lib/botTools").AiActionMessage,
+  ) => void;
 }
 
 // Helper functions for per-server tab selections
@@ -951,6 +1098,8 @@ const useStore = create<AppState>((set, get) => ({
   connectingServerId: null,
   isAddingNewServer: false,
   connectionError: null,
+  rawLog: {},
+  rawLogViewerServerId: null,
   messages: {},
   typingUsers: {},
   typingTimers: {},
@@ -968,6 +1117,7 @@ const useStore = create<AppState>((set, get) => ({
   userMetadataRequested: {},
   metadataChangeCounter: 0,
   whoisData: {},
+  inviteLinks: {},
   pendingRegistration: null,
   pendingTotpStepUp: null,
   twofaStatus: {},
@@ -977,6 +1127,7 @@ const useStore = create<AppState>((set, get) => ({
   channelOrder: loadChannelOrder(),
   processedMessageIds: new Set<string>(),
   hasConnectedToSavedServers: false,
+  aiWorkflows: {},
   selectedServerId: null,
 
   // UI state
@@ -1020,6 +1171,8 @@ const useStore = create<AppState>((set, get) => ({
       itemId: null,
     },
     prefillServerDetails: null,
+    pendingBotsModalOpen: null,
+    pendingBotCommandPick: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -1355,6 +1508,40 @@ const useStore = create<AppState>((set, get) => ({
         ui: newUi,
       };
     });
+  },
+
+  // obbyircd INVITELINK actions: thin wrappers over sendRaw that
+  // also flip the loading flag so UI components can render
+  // spinners.  Replies stream back asynchronously and are merged in
+  // the dedicated invitelink store-handler (store/handlers/invitelink.ts).
+  loadInvitations: (serverId) => {
+    set((state) => ({
+      inviteLinks: {
+        ...state.inviteLinks,
+        [serverId]: {
+          ...(state.inviteLinks[serverId] ?? { entries: [], loading: false }),
+          entries: [],
+          loading: true,
+          error: undefined,
+        },
+      },
+    }));
+    ircClient.sendRaw(serverId, "INVITELINK LIST");
+  },
+  createInvitation: (serverId, channel, description) => {
+    let line = "INVITELINK CREATE";
+    const ch = channel?.trim();
+    const desc = description?.trim();
+    if (ch && ch !== "*") {
+      line += ` ${ch}`;
+      if (desc) line += ` :${desc}`;
+    } else if (desc) {
+      line += ` * :${desc}`;
+    }
+    ircClient.sendRaw(serverId, line);
+  },
+  deleteInvitation: (serverId, shareId) => {
+    ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
   },
 
   joinChannel: (serverId, channelName) => {
@@ -1866,6 +2053,34 @@ const useStore = create<AppState>((set, get) => ({
     set(() => ({
       globalNotifications: [],
     }));
+  },
+
+  appendRawLogLine: ({ serverId, direction, line }) => {
+    set((state) => {
+      const existing = state.rawLog[serverId] ?? [];
+      const lastSeq = existing.length ? existing[existing.length - 1].seq : 0;
+      const next = [
+        ...existing,
+        { seq: lastSeq + 1, direction, line, timestamp: Date.now() },
+      ];
+      const MAX = 2000;
+      const trimmed = next.length > MAX ? next.slice(next.length - MAX) : next;
+      return { rawLog: { ...state.rawLog, [serverId]: trimmed } };
+    });
+  },
+
+  clearRawLog: (serverId) => {
+    set((state) => ({
+      rawLog: { ...state.rawLog, [serverId]: [] },
+    }));
+  },
+
+  openRawLogViewer: (serverId) => {
+    set(() => ({ rawLogViewerServerId: serverId }));
+  },
+
+  closeRawLogViewer: () => {
+    set(() => ({ rawLogViewerServerId: null }));
   },
 
   selectServer: (serverId, options) => {
@@ -3211,6 +3426,36 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
+  requestBotsModalOpen: (serverId, botNick) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotsModalOpen: { serverId, botNick },
+      },
+    }));
+  },
+
+  clearBotsModalOpenRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotsModalOpen: null },
+    }));
+  },
+
+  requestBotCommandPick: (serverId, botNick, command) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotCommandPick: { serverId, botNick, command },
+      },
+    }));
+  },
+
+  clearBotCommandPickRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotCommandPick: null },
+    }));
+  },
+
   toggleServerMenu: (isOpen) => {
     set((state) => ({
       ui: {
@@ -3714,7 +3959,10 @@ const useStore = create<AppState>((set, get) => ({
       },
     }));
 
-    ircClient.metadataList(serverId, target);
+    // Drip-feed through the lazy queue so a bursty source (scroll-stop
+    // on a wall of unfamiliar nicks, NAMES landing, etc.) doesn't trip
+    // server-side recvq flood protection.
+    enqueueMetadataList(ircClient, serverId, target);
   },
 
   metadataSet: (serverId, target, key, value, visibility) => {
@@ -3760,6 +4008,73 @@ const useStore = create<AppState>((set, get) => ({
 
   capAck: (serverId, key, capabilities) => {
     ircClient.capAck(serverId, key, capabilities);
+  },
+
+  aiWorkflowSetCollapsed: (serverId, workflowId, collapsed) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: { ...server, [workflowId]: { ...wf, collapsed } },
+        },
+      };
+    });
+  },
+
+  aiWorkflowDismiss: (serverId, workflowId) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: {
+            ...server,
+            [workflowId]: { ...wf, dismissed: true, userOpened: false },
+          },
+        },
+      };
+    });
+  },
+
+  aiWorkflowReopen: (serverId, workflowId) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      // Clearing `historical` here is deliberate: the flag exists to
+      // keep the tray quiet on channel-join chathistory replay, but
+      // once the user has explicitly clicked the inline pill to view
+      // this run they want the card surfaced even if it was replayed.
+      // userOpened is what BotToolsTray gates on now (live workflows
+      // no longer auto-pop), so setting it here is what makes the
+      // dropdown's "View" item actually surface the card.
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: {
+            ...server,
+            [workflowId]: {
+              ...wf,
+              dismissed: false,
+              collapsed: false,
+              historical: false,
+              userOpened: true,
+            },
+          },
+        },
+      };
+    });
+  },
+
+  aiSendAction: (serverId, botNick, action) => {
+    // base64 of compact JSON; its alphabet needs no IRC tag-value escaping.
+    const value = encodeBotToolsValue(action);
+    ircClient.sendRaw(serverId, `@${BOT_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
   },
 }));
 

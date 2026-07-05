@@ -63,7 +63,7 @@ function backendBase(authTokenUrl?: string, filehost?: string): string {
   if (!base) {
     throw new Error(
       "No backend URL is configured for this server.  Configure draft/authtoken " +
-        "or draft/FILEHOST.",
+        "or obby.world/FILEHOST.",
     );
   }
   return base.replace(/\/$/, "");

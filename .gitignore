@@ -17,6 +17,13 @@
 # misc
 .DS_Store
 .env*
+!.envrc
+
+# direnv + nix-direnv cache (regenerated on `direnv allow` / entering the directory)
+.direnv/
+
+# Nix build output symlink
+/result
 
 npm-debug.log*
 yarn-debug.log*

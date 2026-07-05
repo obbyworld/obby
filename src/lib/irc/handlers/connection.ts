@@ -59,7 +59,10 @@ export function handleError(
       message: errorMessage,
       retryAfter: 600000,
     });
+    return;
   }
+
+  ctx.triggerEvent("serverError", { serverId, message: errorMessage });
 }
 
 export function handleRplWelcome(
@@ -120,14 +123,14 @@ export function handleIsupport(
   serverId: string,
   _source: string,
   parv: string[],
+  trailing?: string,
 ): void {
-  // Strip the leading target nick (parv[0]) and any trailing
-  // ":are supported by this server" sentinel; what remains is the
-  // raw space-separated token list.
-  const tokenList = parv
-    .slice(1)
-    .filter((p) => !p.startsWith(":"))
-    .join(" ");
+  // Strip the leading target nick (parv[0]) and the trailing
+  // "are supported by this server" sentinel — the parser already
+  // colon-strips it and appends it to parv, so match it by value.
+  const tokens = parv.slice(1);
+  if (trailing && tokens[tokens.length - 1] === trailing) tokens.pop();
+  const tokenList = tokens.join(" ");
 
   // Resolve per-server accumulator for the v0.2 `+=` form.  Even
   // when the server doesn't use append, maintaining the map is

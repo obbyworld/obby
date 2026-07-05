@@ -4,6 +4,7 @@
  */
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { base64EncodeUtf8 } from "../lib/base64";
 import ircClient from "../lib/ircClient";
 import { makeLabel, withLabel } from "../lib/labeledResponse";
 import {
@@ -11,17 +12,24 @@ import {
   formatMessageForIrc,
 } from "../lib/messageFormatter";
 import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
+import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
 
 /**
  * Try to dispatch a slash command as a +draft/bot-cmd TAGMSG.
  * Returns true if a matching bot command was found and the TAGMSG
- * was sent.  Resolution order:
- *   1) explicit `/cmd@botnick` syntax targets one bot
- *   2) otherwise scan bots in the current channel for a matching name
- *   3) DM target matches if its nick is a bot
- *   4) server-wide bots (no channel) fall through last
+ * was sent.  Resolution is scoped to bots the user can actually see
+ * as +B in the current view -- never a server-wide name lookup --
+ * so a bot lurking in another channel can't shadow `/oper`, `/ns
+ * identify`, or any other privileged builtin.
+ *
+ *   1) explicit `/cmd@botnick` where botnick is a +B user in the
+ *      current channel or is the current DM peer (and is +B)
+ *   2) otherwise scan +B users in the current channel
+ *   3) DM target if the peer is +B
+ * Privileged names listed in PRIVILEGED_COMMANDS are refused
+ * outright.
  */
 function tryDispatchBotCommand(
   serverId: string,
@@ -30,9 +38,6 @@ function tryDispatchBotCommand(
   rawCmdName: string,
   args: string[],
 ): boolean {
-  const server = useStore.getState().servers.find((s) => s.id === serverId);
-  if (!server?.botCommands) return false;
-  const bots = server.botCommands;
   let target = rawCmdName;
   let cmdName = rawCmdName;
   if (rawCmdName.includes("@")) {
@@ -43,46 +48,57 @@ function tryDispatchBotCommand(
     target = "";
   }
   const lowerCmd = cmdName.toLowerCase();
+  if (PRIVILEGED_COMMANDS.has(lowerCmd)) return false;
+
+  const server = useStore.getState().servers.find((s) => s.id === serverId);
+  if (!server?.botCommands) return false;
+  const bots = server.botCommands;
+
+  const isKnownBotNick = (nick: string): boolean => {
+    const k = nick.toLowerCase();
+    if (server.bots?.[k]) return true;
+    return server.channels.some((c) =>
+      c.users.some((u) => u.username.toLowerCase() === k && u.isBot === true),
+    );
+  };
 
   type Match = { bot: string; cmd: BotCommand };
   const matches: Match[] = [];
-  // explicit target via /cmd@botnick
+  // explicit target via /cmd@botnick -- must be a +B nick in scope
   if (target) {
-    const list = bots[target.toLowerCase()];
-    if (list) {
+    const tkey = target.toLowerCase();
+    const inChannel = !!channel?.users.some(
+      (u) => u.username.toLowerCase() === tkey && u.isBot === true,
+    );
+    const isDmPeer =
+      !!privateChat &&
+      privateChat.username.toLowerCase() === tkey &&
+      isKnownBotNick(privateChat.username);
+    const list = bots[tkey];
+    if (list && (inChannel || isDmPeer)) {
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
       if (cmd) matches.push({ bot: target, cmd });
     }
   }
-  // channel-bot search: any bot we know AND who's in the channel
+  // channel-bot search: must be +B AND in the channel
   if (!matches.length && channel) {
-    const nicksInChannel = new Set(
-      channel.users.map((u) => u.username.toLowerCase()),
-    );
-    for (const [bot, list] of Object.entries(bots)) {
-      if (!nicksInChannel.has(bot)) continue;
+    for (const u of channel.users) {
+      if (u.isBot !== true) continue;
+      const list = bots[u.username.toLowerCase()];
+      if (!list) continue;
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
-      if (cmd) matches.push({ bot, cmd });
+      if (cmd) matches.push({ bot: u.username, cmd });
     }
   }
-  // DM with a bot
-  if (!matches.length && privateChat) {
+  // DM with a bot -- peer must be +B
+  if (!matches.length && privateChat && isKnownBotNick(privateChat.username)) {
     const list = bots[privateChat.username.toLowerCase()];
     if (list) {
       const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
       if (cmd) matches.push({ bot: privateChat.username, cmd });
     }
   }
-  // server-wide bots (any bot we know that defines the command)
-  if (!matches.length) {
-    for (const [bot, list] of Object.entries(bots)) {
-      const cmd = list.find((c) => c.name.toLowerCase() === lowerCmd);
-      if (cmd) matches.push({ bot, cmd });
-    }
-  }
   if (!matches.length) return false;
-  // First match wins (channel-scope already preferred over server-scope
-  // by virtue of the lookup ordering above).
   const { bot, cmd } = matches[0];
 
   // Naive arg parsing: map positional args onto declared options in
@@ -109,6 +125,20 @@ function tryDispatchBotCommand(
  * path above and by the param modal, which collects values directly
  * via form controls.
  */
+// Where a command may be invoked. Prefer the spec `contexts`; fall back to the
+// legacy obby.world/bot-info `visibility`/`scopes` pair so a private command is
+// NEVER routed publicly just because the directory hasn't sent `contexts` yet.
+function resolveContexts(cmd: BotCommand): ("public" | "private" | "pm")[] {
+  if (Array.isArray(cmd.contexts) && cmd.contexts.length > 0)
+    return cmd.contexts;
+  const scopes = cmd.scopes ?? ["channel"];
+  const priv = cmd.visibility === "private";
+  const out: ("public" | "private" | "pm")[] = [];
+  if (scopes.includes("channel")) out.push(priv ? "private" : "public");
+  if (scopes.includes("dm")) out.push("pm");
+  return out.length > 0 ? out : [priv ? "private" : "public"];
+}
+
 export function sendBotCommand(
   serverId: string,
   channel: Channel | null,
@@ -116,21 +146,32 @@ export function sendBotCommand(
   cmd: BotCommand,
   options: Record<string, string | number | boolean>,
 ): void {
-  const payload = { name: cmd.name, options };
-  const b64 = btoa(JSON.stringify(payload)).replace(/=+$/, ""); // strip trailing padding for IRCv3 tag-value friendliness
-  const isPublic = cmd.visibility !== "private";
+  const contexts = resolveContexts(cmd);
+  const canPublic = contexts.includes("public");
+  const canPrivate = contexts.includes("private");
+  const canPm = contexts.includes("pm");
 
-  if (channel && isPublic) {
+  // Per spec §Invoking a command: the base64 of the compact JSON invocation
+  // rides in +draft/bot-cmd. How it is addressed depends on the context.
+  if (channel && canPublic) {
+    // public: TAGMSG to the channel. Name the target bot so that when several
+    // bots in the channel share a command name, only the intended one acts.
+    const payload = { name: cmd.name, options, bot };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(
       serverId,
       `@+draft/bot-cmd=${b64} TAGMSG ${channel.name}`,
     );
-  } else if (channel && !isPublic) {
-    ircClient.sendRaw(
-      serverId,
-      `@+draft/bot-cmd=${b64};+draft/channel-context=${channel.name} TAGMSG ${bot}`,
-    );
-  } else {
+  } else if (channel && canPrivate) {
+    // private: TAGMSG to the bot. The channel travels in the payload, since
+    // +draft/channel-context is not valid on TAGMSG.
+    const payload = { name: cmd.name, options, channel: channel.name };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
+    ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
+  } else if (canPm) {
+    // pm: TAGMSG to the bot, no channel.
+    const payload = { name: cmd.name, options };
+    const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
   }
 }

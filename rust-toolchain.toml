@@ -1,0 +1,4 @@
+# rustup reads this for channel + rustfmt/clippy; MSRV is src-tauri/Cargo.toml rust-version.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]

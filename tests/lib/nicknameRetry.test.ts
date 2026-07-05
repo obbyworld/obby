@@ -70,9 +70,12 @@ describe("Nickname retry functionality", () => {
         profileViewRequest: null,
         settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore.getState to return our mock state
@@ -167,9 +170,12 @@ describe("Nickname retry functionality", () => {
         profileViewRequest: null,
         settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore methods

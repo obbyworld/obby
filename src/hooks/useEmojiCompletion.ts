@@ -1,5 +1,4 @@
-import emojiData from "emoji-datasource";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ResolvedShortcode } from "../lib/customEmoji";
 
 interface EmojiItem {
@@ -50,19 +49,16 @@ interface EmojiCompletionResult {
   updatePreviousText: (text: string) => void;
 }
 
-// Convert emoji data to include rendered emoji
-const processedEmojiData: EmojiItem[] = (emojiData as RawEmojiData[]).map(
-  (emoji) => ({
+function processEmojiData(raw: RawEmojiData[]): EmojiItem[] {
+  return raw.map((emoji) => ({
     unified: emoji.unified,
     short_names: emoji.short_names,
     category: emoji.category,
     emoji: String.fromCodePoint(
-      ...emoji.unified
-        .split("-")
-        .map((hex: string) => Number.parseInt(hex, 16)),
+      ...emoji.unified.split("-").map((hex) => Number.parseInt(hex, 16)),
     ),
-  }),
-);
+  }));
+}
 
 export function useEmojiCompletion(
   customShortcodes: ResolvedShortcode[] = [],
@@ -82,15 +78,29 @@ export function useEmojiCompletion(
       })),
     [customShortcodes],
   );
+  const [unicodeEmoji, setUnicodeEmoji] = useState<EmojiItem[]>([]);
+  useEffect(() => {
+    let active = true;
+    import("virtual:emoji-slim")
+      .then((m) => {
+        if (active)
+          setUnicodeEmoji(processEmojiData(m.default as RawEmojiData[]));
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const allEmojiData = useMemo<EmojiItem[]>(() => {
     const customNames = new Set(
       customEmojiData.flatMap((e) => e.short_names.map((n) => n.toLowerCase())),
     );
-    const filteredUnicode = processedEmojiData.filter(
+    const filteredUnicode = unicodeEmoji.filter(
       (u) => !u.short_names.some((n) => customNames.has(n.toLowerCase())),
     );
     return [...customEmojiData, ...filteredUnicode];
-  }, [customEmojiData]);
+  }, [customEmojiData, unicodeEmoji]);
 
   const [state, setState] = useState<EmojiCompletionState>({
     isActive: false,

@@ -228,7 +228,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
         {!baseUrl && (
           <p className="text-discord-yellow text-sm mb-4">
             This server doesn't advertise a backend URL (draft/authtoken or
-            draft/FILEHOST). The admin endpoints can't be reached.
+            obby.world/FILEHOST). The admin endpoints can't be reached.
           </p>
         )}
 

@@ -1,9 +1,12 @@
 {
   "name": "obsidianirc-client",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.2",
   "type": "module",
-  "homepage": "https://github.com/ObsidianIRC/ObsidianIRC",
+  "engines": {
+    "node": ">=22"
+  },
+  "homepage": "https://github.com/obbyworld/obby",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build --outDir dist",
@@ -35,6 +38,7 @@
     "tauri": "tauri"
   },
   "dependencies": {
+    "@fontsource/roboto-mono": "^5.2.9",
     "@heroicons/react": "^2.2.0",
     "@lingui/core": "^5.9.5",
     "@lingui/macro": "^5.9.5",

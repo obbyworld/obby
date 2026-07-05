@@ -10,6 +10,7 @@
 // Only fires for draft/bot-cmds commands -- builtin /op /me etc. don't
 // publish a schema so there's nothing to hint about.
 
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { BotCommand } from "../../types";
@@ -146,9 +147,11 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
           );
         })}
         <span className="text-xs text-discord-text-muted ml-1">
-          {entry.source === "bot"
-            ? `via @${entry.botNick}`
-            : "(handled by ObsidianIRC)"}
+          {entry.source === "bot" ? (
+            <Trans>via @{entry.botNick}</Trans>
+          ) : (
+            <Trans>(handled by ObsidianIRC)</Trans>
+          )}
         </span>
       </div>
       {opts[ctx.argIndex] && (
@@ -159,7 +162,9 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
           {" — "}
           <span>{opts[ctx.argIndex].type || "string"}</span>
           {opts[ctx.argIndex].required && (
-            <span className="text-discord-red ml-1">required</span>
+            <span className="text-discord-red ml-1">
+              <Trans>required</Trans>
+            </span>
           )}
           {opts[ctx.argIndex].description && (
             <span className="ml-1">— {opts[ctx.argIndex].description}</span>
@@ -169,7 +174,7 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
       {/* show choices if present */}
       {(opts[ctx.argIndex]?.choices?.length ?? 0) > 0 && (
         <div className="mt-1 text-xs text-discord-text-muted">
-          one of:{" "}
+          <Trans>one of:</Trans>{" "}
           <span className="font-mono text-discord-text-normal">
             {opts[ctx.argIndex].choices?.join(", ")}
           </span>

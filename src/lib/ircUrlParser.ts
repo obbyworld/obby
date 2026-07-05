@@ -63,8 +63,8 @@ export function parseIrcUrl(url: string, defaultNick = "user"): ParsedIrcUrl {
     port = pathMatch[2]
       ? Number.parseInt(pathMatch[2], 10)
       : scheme === "ircs"
-        ? 443
-        : 8000;
+        ? 6697
+        : 6667;
 
     // Parse channels from path
     if (pathMatch[3]) {
@@ -78,7 +78,7 @@ export function parseIrcUrl(url: string, defaultNick = "user"): ParsedIrcUrl {
   } else {
     // Fallback for malformed URLs
     host = cleanMainPart.split(":")[0] || "";
-    port = scheme === "ircs" ? 443 : 8000;
+    port = scheme === "ircs" ? 6697 : 6667;
   }
 
   // Parse query parameters manually
