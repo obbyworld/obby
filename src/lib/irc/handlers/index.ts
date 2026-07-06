@@ -140,8 +140,8 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleRplWelcome(ctx, serverId, source, parv),
   "002": (ctx, serverId, source, parv) =>
     handleRplYourHost(ctx, serverId, source, parv),
-  "005": (ctx, serverId, source, parv) =>
-    handleIsupport(ctx, serverId, source, parv),
+  "005": (ctx, serverId, source, parv, _mtags, trailing) =>
+    handleIsupport(ctx, serverId, source, parv, trailing),
   CAP: (ctx, serverId, source, parv, mtags, trailing) =>
     handleCap(ctx, serverId, source, parv, mtags, trailing),
   "381": (ctx, serverId, source, parv) =>

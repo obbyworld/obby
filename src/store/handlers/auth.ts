@@ -638,8 +638,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       preventCapEnd = true;
     }
 
-    if (!preventCapEnd) {
+    // CAP END is a one-shot but this handler runs per CAP ACK line.
+    // Without the capNegotiationComplete guard a multi-batch CAP REQ
+    // (which the server splits into N ACK lines) would produce N
+    // CAP END + USER pairs, racing with IRCClient.onCapAck's own
+    // counter-driven send.  capNegotiationComplete is the shared
+    // latch -- first writer wins.
+    if (!preventCapEnd && !ircClient.capNegotiationComplete.get(serverId)) {
       ircClient.sendRaw(serverId, "CAP END");
+      ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }
   });

@@ -41,6 +41,12 @@ export interface IRCClientContext {
   reconnectionTimeouts: Map<string, NodeJS.Timeout>;
   rateLimitedServers: Map<string, number>;
   capNegotiationComplete: Map<string, boolean>;
+  /** Per-server accumulated ISUPPORT values.  Needed for the v0.2
+   *  `KEY+=value` append form: each chunk arrives as its own
+   *  RPL_ISUPPORT line, so the parser must remember the running
+   *  concatenation across calls and emit the cumulative total to
+   *  downstream consumers. */
+  isupportValues: Map<string, Map<string, string>>;
   activeBatches: Map<
     string,
     Map<

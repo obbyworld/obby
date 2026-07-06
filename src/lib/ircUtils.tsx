@@ -176,21 +176,62 @@ export function isUserVerified(
   return senderNick.toLowerCase() === messageTags.account.toLowerCase();
 }
 
-export function parseIsupport(tokens: string): Record<string, string> {
-  const tokenMap: Record<string, string> = {};
-  const tokenPairs = tokens.split(" ");
+export interface IsupportToken {
+  key: string;
+  /** "set" -> replace existing value with `value`.
+   *  "append" -> byte-wise concatenate `value` onto existing.
+   *  "delete" -> drop the key entirely. */
+  op: "set" | "append" | "delete";
+  value: string;
+}
 
-  for (const token of tokenPairs) {
-    const [key, value] = token.split("=");
-    if (value) {
-      // Replace \x20 with actual space character
-      tokenMap[key] = value.replace(/\\x20/g, " ");
-    } else {
-      tokenMap[key] = ""; // empty string fallback
+/**
+ * Parse a single RPL_ISUPPORT line.  Returns an ordered list of token
+ * operations because the v0.2 spec (draft/extended-isupport-0.2)
+ * defines three forms:
+ *
+ *   KEY=value     (set / replace)
+ *   KEY+=value    (append; byte-wise concatenation onto the held value)
+ *   -KEY          (delete)
+ *
+ * Trailing ":are supported by this server" sentinel and the leading
+ * target are stripped by the caller, so `tokens` is the space-
+ * separated token list only.
+ */
+export function parseIsupportTokens(tokens: string): IsupportToken[] {
+  const out: IsupportToken[] = [];
+  if (!tokens) return out;
+
+  for (const raw of tokens.split(" ")) {
+    if (!raw) continue;
+    if (raw.startsWith("-")) {
+      const key = raw.slice(1);
+      if (key) out.push({ key, op: "delete", value: "" });
+      continue;
     }
+    const appendIdx = raw.indexOf("+=");
+    if (appendIdx > 0) {
+      out.push({
+        key: raw.slice(0, appendIdx),
+        op: "append",
+        value: raw.slice(appendIdx + 2).replace(/\\x20/g, " "),
+      });
+      continue;
+    }
+    const eqIdx = raw.indexOf("=");
+    if (eqIdx > 0) {
+      out.push({
+        key: raw.slice(0, eqIdx),
+        op: "set",
+        value: raw.slice(eqIdx + 1).replace(/\\x20/g, " "),
+      });
+      continue;
+    }
+    // Flag-form token (no value)
+    out.push({ key: raw, op: "set", value: "" });
   }
 
-  return tokenMap;
+  return out;
 }
 
 // Thanks to Talon
