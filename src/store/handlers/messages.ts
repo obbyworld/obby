@@ -786,6 +786,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         handleInboundObby(
           response.serverId,
           sender,
+          mtags,
           message,
           mtags?.msgid,
           skipE2EE,

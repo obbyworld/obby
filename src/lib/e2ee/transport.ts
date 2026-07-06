@@ -1,21 +1,16 @@
-// Frames E2EE payloads for the wire: control frames as TAGMSG tag values,
-// message frames in the PRIVMSG body behind the Obby marker. A payload that fits
-// one frame is sent whole; an oversized one is split into `frag` frames and
-// rebuilt by the receiver. Outbound framing is pure; inbound reassembly is a
-// small stateful accumulator that sweeps never-completed streams so a hostile or
-// dropped sender can't leak memory.
+// Frames an E2EE payload into base64 value(s) for the wire. A payload within
+// `maxWhole` is one value; an oversized one splits into `frag` frames sized to
+// `sliceSize` and is rebuilt by the receiver. The caller wraps each value in its
+// carrier — a control TAGMSG tag value, or a message PRIVMSG body under the flag
+// tag. Outbound framing is pure; inbound reassembly is a small stateful
+// accumulator that sweeps never-completed streams so a hostile or dropped sender
+// can't leak memory.
 
 import {
-  E2EE_BODY_PREFIX,
   type E2EEFragment,
   type E2EEPayload,
   encodeE2EEPayload,
   fragmentValue,
-  frameToBody,
-  MAX_BODY_FRAGMENT_SLICE,
-  MAX_BODY_VALUE_BYTES,
-  MAX_TAG_FRAGMENT_SLICE,
-  MAX_TAG_VALUE_BYTES,
   reassembleFragments,
 } from "./protocol";
 
@@ -30,35 +25,15 @@ export const FRAGMENT_TTL_MS = 30_000;
 export const MAX_FRAGMENTS_PER_STREAM = 64;
 export const MAX_CONCURRENT_STREAMS = 64;
 
-// Message frames: marker-wrapped body string(s); the caller wraps each in its
-// own PRIVMSG so every frame keeps a real IRC envelope.
-export function framePayload(
+export function frameValues(
   payload: E2EEPayload,
   fragmentId: string,
+  maxWhole: number,
+  sliceSize: number,
 ): string[] {
   const value = encodeE2EEPayload(payload);
-  if (value.length <= MAX_BODY_VALUE_BYTES) {
-    return [`${E2EE_BODY_PREFIX}${value}`];
-  }
-  return fragmentValue(fragmentId, value, MAX_BODY_FRAGMENT_SLICE).map(
-    frameToBody,
-  );
-}
-
-// Control frames: the raw base64 tag value(s); the caller wraps each in a
-// TAGMSG under the Obby tag. Handshakes carry no msgid and stay invisible to
-// non-Obby clients.
-export function frameTagPayload(
-  payload: E2EEPayload,
-  fragmentId: string,
-): string[] {
-  const value = encodeE2EEPayload(payload);
-  if (value.length <= MAX_TAG_VALUE_BYTES) {
-    return [value];
-  }
-  return fragmentValue(fragmentId, value, MAX_TAG_FRAGMENT_SLICE).map(
-    encodeE2EEPayload,
-  );
+  if (value.length <= maxWhole) return [value];
+  return fragmentValue(fragmentId, value, sliceSize).map(encodeE2EEPayload);
 }
 
 interface FragmentBuffer {

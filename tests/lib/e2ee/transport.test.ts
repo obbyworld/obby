@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
 import {
-  bodyToRaw,
   decodeE2EEPayload,
   type E2EEFragment,
   type E2EEPayload,
@@ -8,29 +7,23 @@ import {
 import {
   FRAGMENT_TTL_MS,
   FragmentReassembler,
-  framePayload,
-  frameTagPayload,
+  frameValues,
   MAX_CONCURRENT_STREAMS,
   MAX_FRAGMENTS_PER_STREAM,
 } from "../../../src/lib/e2ee/transport";
 
-// A frame is the PRIVMSG body `?obe2ee:<base64>`; pull the value back out the
-// same way the inbound path does, so tests exercise the real wire format.
-function frameValue(body: string): string {
-  const raw = bodyToRaw(body);
-  if (raw === null) throw new Error(`not an Obby frame: ${body}`);
-  return raw;
-}
+const BIG = 4000;
+const SLICE = 2800;
 
-describe("framePayload — single frame", () => {
-  test("frames a small payload as one Obby body", () => {
+describe("frameValues — single value", () => {
+  test("a payload within the cap frames as one base64 value", () => {
     const payload: E2EEPayload = { t: "msg", v: 2, ct: "Q0lQ" };
-    const [body, ...rest] = framePayload(payload, "id1");
+    const [value, ...rest] = frameValues(payload, "id1", BIG, SLICE);
     expect(rest).toHaveLength(0);
-    expect(decodeE2EEPayload(frameValue(body))).toEqual(payload);
+    expect(decodeE2EEPayload(value)).toEqual(payload);
   });
 
-  test("every kind frames behind the Obby marker", () => {
+  test("every kind round-trips", () => {
     const kinds: E2EEPayload[] = [
       { t: "init", v: 2, bundle: "b" },
       { t: "accept", v: 2, response: "r" },
@@ -38,47 +31,21 @@ describe("framePayload — single frame", () => {
       { t: "msg", v: 2, ct: "x" },
     ];
     for (const payload of kinds) {
-      const [body] = framePayload(payload, "id");
-      expect(decodeE2EEPayload(frameValue(body))).toEqual(payload);
+      const [value] = frameValues(payload, "id", BIG, SLICE);
+      expect(decodeE2EEPayload(value)).toEqual(payload);
     }
   });
 });
 
-describe("frameTagPayload — control frames", () => {
-  test("frames a control payload as one raw tag value", () => {
-    const payload: E2EEPayload = { t: "init", v: 2, bundle: "b" };
-    const [value, ...rest] = frameTagPayload(payload, "id1");
-    expect(rest).toHaveLength(0);
-    expect(value.startsWith("?obe2ee:")).toBe(false);
-    expect(decodeE2EEPayload(value)).toEqual(payload);
-  });
-
-  test("oversized control payload splits into frag tag values", () => {
-    const payload: E2EEPayload = {
-      t: "accept",
-      v: 2,
-      response: "R".repeat(6000),
-    };
-    const values = frameTagPayload(payload, "acc1");
-    expect(values.length).toBeGreaterThan(1);
-    const frags = values.map((v) => decodeE2EEPayload(v) as E2EEFragment);
-    for (const f of frags) expect(f.t).toBe("frag");
-    const r = new FragmentReassembler();
-    let rebuilt: string | null = null;
-    for (const f of frags) rebuilt = r.add(f, 0) ?? rebuilt;
-    expect(decodeE2EEPayload(rebuilt as string)).toEqual(payload);
-  });
-});
-
-describe("framePayload — fragmentation round-trip", () => {
-  test("oversized payload splits into frag frames that rebuild the original", () => {
+describe("frameValues — fragmentation round-trip", () => {
+  test("a payload over the cap splits into frag values that rebuild the original", () => {
     const payload: E2EEPayload = { t: "msg", v: 2, ct: "Z".repeat(8000) };
-    const bodies = framePayload(payload, "msg42");
-    expect(bodies.length).toBeGreaterThan(1);
+    const values = frameValues(payload, "msg42", 400, 220);
+    expect(values.length).toBeGreaterThan(1);
 
     const frags: E2EEFragment[] = [];
-    for (const body of bodies) {
-      const decoded = decodeE2EEPayload(frameValue(body));
+    for (const value of values) {
+      const decoded = decodeE2EEPayload(value);
       expect(decoded?.t).toBe("frag");
       frags.push(decoded as E2EEFragment);
     }

@@ -832,14 +832,10 @@ export class IRCClient implements IRCClientContext {
           connectionState: "connected",
         });
 
-        // Rejoin channels if this is a reconnection
-        if (server.channels.length > 0) {
-          for (const channel of server.channels) {
-            if (serverId) {
-              this.sendRaw(serverId, `JOIN ${channel.name}`);
-            }
-          }
-        }
+        // Channels are rejoined from the RPL_WELCOME (001) handler. Sending JOIN
+        // here — before registration completes — is ignored by the server and
+        // counts against its handshake-data-flood limit, which can get the whole
+        // IP Z-Lined on reconnect when many channels are open.
 
         // Don't start ping timer here - wait for 001 welcome message
         // to ensure connection is fully established before sending PINGs

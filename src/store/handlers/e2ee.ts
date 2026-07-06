@@ -14,17 +14,18 @@ import { getObbyIdentity, obbyPeerTrust } from "../../lib/e2ee/obbyIdentity";
 import {
   bodyToRaw,
   decodeE2EEPayload,
+  E2EE_BODY_PREFIX,
   E2EE_TAG,
   type E2EEAccept,
   type E2EEInit,
   type E2EEPayload,
+  MAX_BODY_FRAGMENT_SLICE,
+  MAX_BODY_VALUE_BYTES,
+  MAX_TAG_FRAGMENT_SLICE,
+  MAX_TAG_VALUE_BYTES,
   PROTOCOL_VERSION,
 } from "../../lib/e2ee/protocol";
-import {
-  FragmentReassembler,
-  framePayload,
-  frameTagPayload,
-} from "../../lib/e2ee/transport";
+import { FragmentReassembler, frameValues } from "../../lib/e2ee/transport";
 import ircClient from "../../lib/ircClient";
 import type { AppState } from "../index";
 import {
@@ -49,10 +50,12 @@ const pendingOffers = new Map<string, E2EEInit>();
 // shows the session as established once it's confirmed. Never rendered.
 const HANDSHAKE_ACK = `${String.fromCharCode(0)}obby-e2ee-handshake-ack`;
 
-// Control frames (init/accept/reject/ack) go over the invisible TAGMSG tag;
-// message payloads go over the PRIVMSG body so they keep a real msgid. The ack
-// is a `msg`-shaped cipher but is handshake control, so its call site sends it
-// over the tag.
+// Control frames (init/accept/reject/ack) ride the tag on a bodiless TAGMSG, so
+// the payload is the tag value. Message payloads ride the PRIVMSG body — behind
+// the marker (the reliable signal, since the tag may be stripped there) and the
+// flag tag (idiomatic where relayed) — keeping a real msgid. The ack is a
+// `msg`-shaped cipher but is handshake control, so its call site sends it over
+// the tag.
 function send(
   serverId: string,
   target: string,
@@ -60,15 +63,40 @@ function send(
   viaTag: boolean,
 ): void {
   const id = uuidv4();
-  if (viaTag) {
-    for (const value of frameTagPayload(payload, id)) {
-      ircClient.sendRaw(serverId, `@${E2EE_TAG}=${value} TAGMSG ${target}`);
-    }
+  const values = viaTag
+    ? frameValues(payload, id, MAX_TAG_VALUE_BYTES, MAX_TAG_FRAGMENT_SLICE)
+    : frameValues(payload, id, MAX_BODY_VALUE_BYTES, MAX_BODY_FRAGMENT_SLICE);
+  for (const value of values) {
+    ircClient.sendRaw(
+      serverId,
+      viaTag
+        ? `@${E2EE_TAG}=${value} TAGMSG ${target}`
+        : `@${E2EE_TAG} PRIVMSG ${target} :${E2EE_BODY_PREFIX}${value}`,
+    );
+  }
+}
+
+// Decode a raw carrier value (a TAGMSG tag value or a marker-stripped PRIVMSG
+// body) and drive the completed payload, reassembling across calls when it
+// arrived fragmented. Shared by both carriers so the fragment handling can't
+// drift between them.
+function dispatchDecoded(
+  serverId: string,
+  sender: string,
+  raw: string,
+  msgid?: string,
+): void {
+  const payload = decodeE2EEPayload(raw);
+  if (!payload) return;
+  if (payload.t === "frag") {
+    const value = reassembler.add(payload);
+    if (!value) return;
+    const reassembled = decodeE2EEPayload(value);
+    if (reassembled && reassembled.t !== "frag")
+      onPayload(serverId, sender, reassembled, msgid);
     return;
   }
-  for (const body of framePayload(payload, id)) {
-    ircClient.sendRaw(serverId, `PRIVMSG ${target} :${body}`);
-  }
+  onPayload(serverId, sender, payload, msgid);
 }
 
 function onPayload(
@@ -174,48 +202,28 @@ export function registerE2EEHandlers(store: StoreApi<AppState>): void {
     const self = ircClient.getNick(serverId);
     if (self && sender.toLowerCase() === self.toLowerCase()) return;
     if (mtags?.batch !== undefined) return;
-    const payload = decodeE2EEPayload(raw);
-    if (!payload) return;
-    if (payload.t === "frag") {
-      const value = reassembler.add(payload);
-      if (!value) return;
-      const reassembled = decodeE2EEPayload(value);
-      if (reassembled && reassembled.t !== "frag")
-        onPayload(serverId, sender, reassembled);
-      return;
-    }
-    onPayload(serverId, sender, payload);
+    dispatchDecoded(serverId, sender, raw);
   });
 }
 
-// Returns true when `body` is Obby traffic, so the USERMSG handler consumes it
-// instead of rendering the marker+ciphertext. `skipProcessing` swallows the
-// frame without driving the session — for our own echoed sends (echo-message)
-// and CHATHISTORY replays, which must not clobber live session state. `msgid` is
-// the carrying PRIVMSG's id, adopted by the decrypted row so replies/reactions
-// target the real message.
+// Returns true when the PRIVMSG body carries the Obby ciphertext marker, so the
+// USERMSG handler consumes it instead of rendering the encoded body.
+// `skipProcessing` swallows the frame without driving the session — for our own
+// echoed sends (echo-message) and CHATHISTORY replays, which must not clobber
+// live session state. `msgid` is the carrying PRIVMSG's id, adopted by the
+// decrypted row so replies/reactions target the real message.
 export function handleInboundObby(
   serverId: string,
   sender: string,
+  mtags: Record<string, string> | undefined,
   body: string,
   msgid?: string,
   skipProcessing = false,
 ): boolean {
-  if (classifyInbound({ body }).scheme !== "obby") return false;
+  if (classifyInbound({ mtags, body }).scheme !== "obby") return false;
   if (skipProcessing) return true;
   const raw = bodyToRaw(body);
-  if (!raw) return true;
-  const payload = decodeE2EEPayload(raw);
-  if (!payload) return true;
-  if (payload.t === "frag") {
-    const value = reassembler.add(payload);
-    if (!value) return true;
-    const reassembled = decodeE2EEPayload(value);
-    if (reassembled && reassembled.t !== "frag")
-      onPayload(serverId, sender, reassembled, msgid);
-    return true;
-  }
-  onPayload(serverId, sender, payload, msgid);
+  if (raw !== null) dispatchDecoded(serverId, sender, raw, msgid);
   return true;
 }
 

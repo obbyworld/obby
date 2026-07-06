@@ -10,24 +10,32 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "../base64";
 
 export const E2EE_CAP = "obby.world/e2ee";
 
-// Handshake/control frames (init, accept, reject, ack) ride in this client-only
-// TAGMSG tag: invisible to non-Obby clients and needing no msgid, since nothing
-// threads onto a handshake. Relies on the server relaying the tag.
+// Control frames (init/accept/reject/ack) ride this client-only tag on a bodiless
+// TAGMSG, so the tag VALUE is the payload. Message frames ride a PRIVMSG so they
+// keep a real msgid (reply/react/redaction/history) and set the tag as a
+// valueless flag. The tag is IRCv3-idiomatic but not reliable end-to-end — some
+// servers relay it on TAGMSG yet strip it on PRIVMSG (verified on UnrealIRCd) —
+// so message detection can't depend on it.
 export const E2EE_TAG = "+obby.world/e2ee";
 
-// Message payloads ride in the PRIVMSG body behind this marker (like OTR's
-// `?OTR:`), so the IRC envelope — msgid, reply-to, reactions, redaction,
-// CHATHISTORY — stays real and only the payload is opaque. Needs no server
-// cooperation. For both transports the kind lives in the JSON `t` field, and
-// base64 never collides with the marker, so body detection is a prefix test.
+// The message body therefore also carries this marker: it always survives (it's
+// body content), so it, not the tag, is the reliable "this is ciphertext" signal
+// (mirrors OTR's `?OTR:`). Control payloads on TAGMSG have no body and use only
+// the tag value.
 export const E2EE_BODY_PREFIX = "?obe2ee:";
+
+export function bodyToRaw(body: string): string | null {
+  return body.startsWith(E2EE_BODY_PREFIX)
+    ? body.slice(E2EE_BODY_PREFIX.length)
+    : null;
+}
 
 export type E2EEKind = "init" | "accept" | "reject" | "msg" | "frag";
 
 export const PROTOCOL_VERSION = 2;
 
 // A client tag caps near 4094 bytes (message-tags spec); a PRIVMSG body is far
-// tighter (a ~512-byte line). Payloads over the per-transport cap split into
+// tighter (a ~512-byte line). Payloads over the per-carrier cap split into
 // `frag` frames, each sliced to stay under the cap once wrapped in its own
 // base64+JSON envelope.
 export const MAX_TAG_VALUE_BYTES = 3500;
@@ -90,18 +98,6 @@ export type E2EEPayload =
 
 export function encodeE2EEPayload(payload: E2EEPayload): string {
   return base64EncodeUtf8(JSON.stringify(payload));
-}
-
-// Wrap a payload for the PRIVMSG body; `bodyToRaw` reverses it, returning null
-// for any body that isn't Obby traffic so the normal message path keeps it.
-export function frameToBody(payload: E2EEPayload): string {
-  return `${E2EE_BODY_PREFIX}${encodeE2EEPayload(payload)}`;
-}
-
-export function bodyToRaw(body: string): string | null {
-  return body.startsWith(E2EE_BODY_PREFIX)
-    ? body.slice(E2EE_BODY_PREFIX.length)
-    : null;
 }
 
 // Decode a raw tag value into a structured payload, returning null on any
