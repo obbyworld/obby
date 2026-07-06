@@ -654,6 +654,10 @@ export class IRCClient implements IRCClientContext {
     >
   > = new Map();
 
+  /** ISUPPORT accumulator for draft/extended-isupport-0.2's `+=`
+   *  append form.  See IRCClientContext for the contract. */
+  isupportValues: Map<string, Map<string, string>> = new Map();
+
   private ourCaps: string[] = [
     "multi-prefix",
     "message-tags",
@@ -671,6 +675,7 @@ export class IRCClient implements IRCClientContext {
     "draft/chathistory",
     "draft/event-playback",
     "draft/extended-isupport",
+    "draft/extended-isupport-0.2",
     "sasl",
     "cap-notify",
     "draft/channel-rename",
@@ -929,6 +934,7 @@ export class IRCClient implements IRCClientContext {
 
           this.stopWebSocketPing(server.id);
           this.sockets.delete(server.id);
+          this.isupportValues.delete(server.id);
           this.whoisBuilders.delete(server.id);
           server.isConnected = false;
           const wasReconnecting = server.connectionState === "reconnecting";
@@ -1049,6 +1055,7 @@ export class IRCClient implements IRCClientContext {
     }
     // Stop WebSocket ping timers
     this.stopWebSocketPing(serverId);
+    this.isupportValues.delete(serverId);
     this.whoisBuilders.delete(serverId);
   }
 
@@ -2089,8 +2096,9 @@ export class IRCClient implements IRCClientContext {
                 `[CAP TIMEOUT] SASL in progress for ${serverId}, not timing out CAP negotiation`,
               );
               // Don't send CAP END - let SASL complete naturally
-            } else {
-              // No SASL in progress - safe to timeout
+            } else if (!this.capNegotiationComplete.get(serverId)) {
+              // No SASL in progress and CAP negotiation hasn't been
+              // finalised by another path -- safe to timeout.
               console.log(
                 `[CAP TIMEOUT] Timeout reached for ${serverId}, ending CAP negotiation`,
               );
@@ -2101,10 +2109,13 @@ export class IRCClient implements IRCClientContext {
           }
         }, 5000); // 5 second timeout
 
-        if (capsToRequest.includes("draft/extended-isupport")) {
+        if (
+          capsToRequest.includes("draft/extended-isupport") ||
+          capsToRequest.includes("draft/extended-isupport-0.2")
+        ) {
           this.sendRaw(serverId, "ISUPPORT");
         }
-      } else {
+      } else if (!this.capNegotiationComplete.get(serverId)) {
         // No capabilities to request, end CAP negotiation immediately
         console.log(
           `[CAP LS] No capabilities to request for ${serverId}, ending CAP negotiation`,
@@ -2179,8 +2190,10 @@ export class IRCClient implements IRCClientContext {
           console.log(
             `[CAP ACK] SASL enabled for ${serverId}, waiting for SASL authentication`,
           );
-        } else {
-          // No SASL or SASL not acknowledged - complete CAP negotiation now
+        } else if (!this.capNegotiationComplete.get(serverId)) {
+          // No SASL or SASL not acknowledged, and no other path
+          // (auth.ts, SASL completion, link-security modal) has
+          // already finalised CAP negotiation -- complete it now.
           this.sendCapEnd(serverId);
           this.capNegotiationComplete.set(serverId, true);
           this.userOnConnect(serverId);
