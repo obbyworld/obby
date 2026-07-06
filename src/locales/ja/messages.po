@@ -59,6 +59,11 @@ msgstr "{0, plural, other {さらに {1} 件表示}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} と {1} が入力中..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} アイドル"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -122,16 +127,19 @@ msgstr "{0}、{1}、{2} と他 {3} 人が入力中..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}日前"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}時間前"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}分前"
 
@@ -203,6 +211,7 @@ msgstr "#new-channel-name"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← 戻る"
@@ -265,6 +274,10 @@ msgstr "アクション"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "アクティブ"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "アクティビティ"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -412,6 +425,10 @@ msgstr "は現在 **{newNick}** として知られています"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "このメッセージを削除してもよいですか？この操作は元に戻せません。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "添付オプション"
@@ -427,6 +444,10 @@ msgstr "音声の再生位置"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "管理者アクセスのためにIRC Operatorとして認証する"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "認証済み"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -479,6 +500,7 @@ msgid "Away Message"
 msgstr "離席メッセージ"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "退席中："
 
@@ -538,6 +560,11 @@ msgstr "BAN一覧"
 msgid "Bot"
 msgstr "ボット"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -604,6 +631,10 @@ msgstr "ワークフローをキャンセル"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "キャンセル済み"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/BouncerServerGroup.tsx
@@ -720,6 +751,7 @@ msgid "channel-name"
 msgstr "チャンネル名"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "チャンネル"
@@ -772,6 +804,7 @@ msgstr "クリックしてコピー"
 msgid "Click to copy as JSON"
 msgstr "JSONとしてコピーするにはクリック"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "クリックして {channel} に参加"
@@ -805,6 +838,8 @@ msgstr "クライアント制限 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -885,6 +920,10 @@ msgstr "確認しますか？"
 msgid "Connect"
 msgstr "接続"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "{sessionCount} 個のセッションから接続中"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "接続先"
@@ -896,6 +935,11 @@ msgstr "接続中"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "接続中..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "接続"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -923,6 +967,7 @@ msgid "Copied"
 msgstr "コピーしました"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "コピー"
 
@@ -949,6 +994,10 @@ msgstr "リンクをコピー"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URLをコピー"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "国"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1404,6 +1453,10 @@ msgstr "ホームページ"
 msgid "Host"
 msgstr "ホスト"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "ホスト名"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "ホスト名："
@@ -1432,6 +1485,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "戻りました"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "アイドル"
@@ -1513,6 +1571,14 @@ msgstr "{channelName} にユーザーを招待"
 msgid "Invite-Only (+i)"
 msgstr "招待制 (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1558,6 +1624,10 @@ msgstr "{value}に参加"
 msgid "Join a channel"
 msgstr "チャンネルに参加する"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "参加"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1572,6 +1642,7 @@ msgid "Joined the channel"
 msgstr "チャンネルに参加しました"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "たった今"
 
@@ -1683,6 +1754,11 @@ msgstr "WHOISデータを読み込み中..."
 msgid "Local Storage:"
 msgstr "ローカルストレージ："
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "{0} としてログイン中"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "アカウントにログイン"
@@ -1757,6 +1833,10 @@ msgstr "メディアプレビュー"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "メンバー — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "メッセージ"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -2006,6 +2086,10 @@ msgstr "このチャンネルにはメディアがありません"
 msgid "No media previews are loaded."
 msgstr "メディアプレビューは読み込まれません。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "メッセージなし"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "生のIRCトラフィックはまだキャプチャされていません。接続するかメッセージを送信してみてください。"
@@ -2079,6 +2163,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC — IRCを未来へ"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "/ {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2432,6 +2521,10 @@ msgstr "サーバーに再接続"
 msgid "Refresh"
 msgstr "更新"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "WHOIS を更新"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "アカウントを登録する"
@@ -2596,6 +2689,10 @@ msgstr "ユーザーを検索..."
 msgid "Searching..."
 msgstr "検索中..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "シークレット"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "シークレット (+s)"
@@ -2607,6 +2704,14 @@ msgstr "シークレットチャンネル"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "セキュア接続"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "セキュリティ"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "セキュリティグループ"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2746,6 +2851,19 @@ msgstr "サーバー全体"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "サーバー全体の bot — 任意のチャンネルから利用可能"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "セッション"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "セッション {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "セッション"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "トピックを設定…"
@@ -2842,6 +2960,10 @@ msgstr "すべての外部メディアを表示します。URLが不明なサー
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "サーバーの信頼済みファイルホストからのメディアを表示します。外部サービスへのリクエストは発生しません。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "サインオン"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "サインイン日時"
@@ -2885,6 +3007,7 @@ msgstr "プライベートメッセージを開始"
 msgid "Starting workflow…"
 msgstr "ワークフローを開始しています…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2953,6 +3076,10 @@ msgstr "ユーザーは {channelName} への参加招待を受け取ります。
 msgid "The workflow that produced this message is no longer in state"
 msgstr "このメッセージを生成したワークフローはもう状態にありません"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "このアカウントは {sessionCount} 個のセッションから接続されています。セッションごとの詳細は、アカウント所有者または IRC オペレーターにのみ開示されます。"
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "このコマンドはパラメータを受け取りません。"
@@ -2964,6 +3091,11 @@ msgstr "この項目は必須です"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "この画像の有効期限が切れています"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "これはあなたです"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -3007,6 +3139,7 @@ msgid "timed out"
 msgstr "タイムアウト"
 
 #: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
 
@@ -3179,6 +3312,10 @@ msgstr "ユーザーは認証済みです"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "ユーザーは離席中です"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "ユーザーモード"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

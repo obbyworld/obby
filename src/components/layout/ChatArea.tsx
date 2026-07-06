@@ -59,6 +59,7 @@ import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
@@ -75,7 +76,6 @@ import {
   UploadProgressOverlay,
 } from "../ui/UploadProgressOverlay";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 import {
   MemoChannelMessageList as ChannelMessageList,
   type ChannelMessageListHandle,
@@ -2710,7 +2710,7 @@ export const ChatArea: React.FC<{
         />
       )}
       {selectedServerId && (
-        <UserProfileModal
+        <ProfileModalRouter
           isOpen={userProfileModalOpen}
           onClose={() => setUserProfileModalOpen(false)}
           serverId={selectedServerId}

@@ -59,6 +59,11 @@ msgstr "{0, plural, one {Arată 1 element în plus} few {Arată {1} elemente în
 msgid "{0} and {1} are typing..."
 msgstr "{0} și {1} scriu..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} inactiv"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -122,16 +127,19 @@ msgstr "{0}, {1}, {2} și alți {3} scriu..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "acum {0}z"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "acum {0}h"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "acum {0}min"
 
@@ -203,6 +211,7 @@ msgstr "#new-channel-name"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Înapoi"
@@ -265,6 +274,10 @@ msgstr "Acțiune"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "activ"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Activitate"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -412,6 +425,10 @@ msgstr "acum este cunoscut ca **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Sigur doriți să ștergeți acest mesaj? Această acțiune nu poate fi anulată."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Opțiuni atașament"
@@ -427,6 +444,10 @@ msgstr "Poziție audio"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Autentificați-vă ca operator IRC pentru acces administrativ"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Autentificat"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -479,6 +500,7 @@ msgid "Away Message"
 msgstr "Mesaj de absență"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Absent:"
 
@@ -538,6 +560,11 @@ msgstr "Banuri"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -604,6 +631,10 @@ msgstr "Anulează fluxul de lucru"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "anulat"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/BouncerServerGroup.tsx
@@ -720,6 +751,7 @@ msgid "channel-name"
 msgstr "nume-canal"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Canale"
@@ -772,6 +804,7 @@ msgstr "Faceți clic pentru a copia"
 msgid "Click to copy as JSON"
 msgstr "Clic pentru copiere ca JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Faceți clic pentru a vă alătura {channel}"
@@ -805,6 +838,8 @@ msgstr "Limită clienți (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -885,6 +920,10 @@ msgstr "Confirmați?"
 msgid "Connect"
 msgstr "Conectare"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "conectat din {sessionCount} sesiuni"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Conectat la"
@@ -896,6 +935,11 @@ msgstr "Se conectează"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Se conectează..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Conexiune"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -923,6 +967,7 @@ msgid "Copied"
 msgstr "Copiat"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Copiază"
 
@@ -949,6 +994,10 @@ msgstr "Copiază linkul"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Copiază URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Țară"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1404,6 +1453,10 @@ msgstr "Pagină principală"
 msgid "Host"
 msgstr "Gazdă"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Nume gazdă"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
@@ -1432,6 +1485,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "M-am întors"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Inactiv"
@@ -1513,6 +1571,14 @@ msgstr "Invitați utilizatorul în {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Doar pe invitație (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1558,6 +1624,10 @@ msgstr "Intrați în {value}"
 msgid "Join a channel"
 msgstr "Intră pe un canal"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Membru din"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1572,6 +1642,7 @@ msgid "Joined the channel"
 msgstr "S-a alăturat canalului"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "chiar acum"
 
@@ -1683,6 +1754,11 @@ msgstr "Se încarcă datele WHOIS..."
 msgid "Local Storage:"
 msgstr "Stocare locală:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "autentificat ca {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Conectează-te la un cont"
@@ -1757,6 +1833,10 @@ msgstr "Previzualizări media"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Membri — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Mesaj"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -2006,6 +2086,10 @@ msgstr "Niciun fișier media în acest canal"
 msgid "No media previews are loaded."
 msgstr "Nu sunt încărcate previzualizări media."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "niciun mesaj"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Niciun trafic IRC brut capturat încă. Încearcă să te conectezi sau să trimiți un mesaj."
@@ -2079,6 +2163,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - Aducând IRC în viitor"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "din {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2432,6 +2521,10 @@ msgstr "Reconectează-te la server"
 msgid "Refresh"
 msgstr "Reîmprospătează"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Reîmprospătează WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Înregistrează un cont"
@@ -2596,6 +2689,10 @@ msgstr "Caută utilizatori..."
 msgid "Searching..."
 msgstr "Se caută..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Secret"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Secret (+s)"
@@ -2607,6 +2704,14 @@ msgstr "Canal secret"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Conexiune securizată"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Securitate"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Grupuri de securitate"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2746,6 +2851,19 @@ msgstr "La nivel de server"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Bot la nivel de server — accesibil din orice canal"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Sesiune"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Sesiune {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Sesiuni"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Setează un subiect…"
@@ -2842,6 +2960,10 @@ msgstr "Afișează toate conținuturile externe. Orice URL poate genera o solici
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Afișează media de pe gazda de fișiere de încredere a serverului. Nu se fac solicitări către servicii externe."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Conectat la"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Conectat la"
@@ -2885,6 +3007,7 @@ msgstr "Începe un mesaj privat"
 msgid "Starting workflow…"
 msgstr "Se pornește fluxul de lucru…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2953,6 +3076,10 @@ msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Fluxul de lucru care a produs acest mesaj nu mai este în stare"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Acest cont este conectat din {sessionCount} sesiuni. Detaliile per sesiune sunt dezvăluite doar titularului contului sau operatorilor IRC."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Această comandă nu acceptă parametri."
@@ -2964,6 +3091,11 @@ msgstr "Acest câmp este obligatoriu"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Această imagine a expirat"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Acesta ești tu"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -3007,6 +3139,7 @@ msgid "timed out"
 msgstr "expirat"
 
 #: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
 
@@ -3179,6 +3312,10 @@ msgstr "Utilizatorul este autentificat"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Utilizatorul este absent"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Moduri utilizator"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

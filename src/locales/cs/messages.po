@@ -59,6 +59,11 @@ msgstr "{0, plural, one {Zobrazit 1 další položku} few {Zobrazit {1} další 
 msgid "{0} and {1} are typing..."
 msgstr "{0} a {1} píší..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "nečinný {0}"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -122,16 +127,19 @@ msgstr "{0}, {1}, {2} a {3} dalších píší..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "před {0} dny"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "před {0} h"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "před {0} min"
 
@@ -203,6 +211,7 @@ msgstr "#nový-název-kanálu"
 msgid "#overflow"
 msgstr "#přetečení"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Zpět"
@@ -265,6 +274,10 @@ msgstr "Akce"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "aktivní"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Aktivita"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -412,6 +425,10 @@ msgstr "je nyní znám jako **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Opravdu chcete tuto zprávu smazat? Tuto akci nelze vrátit zpět."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Možnosti přílohy"
@@ -427,6 +444,10 @@ msgstr "Pozice zvuku"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Ověřit jako IRC operátor pro administrativní přístup"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Ověřeno"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -479,6 +500,7 @@ msgid "Away Message"
 msgstr "Zpráva o nepřítomnosti"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Nepřítomen:"
 
@@ -538,6 +560,11 @@ msgstr "Bany"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -604,6 +631,10 @@ msgstr "Zrušit pracovní postup"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "zrušeno"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/BouncerServerGroup.tsx
@@ -720,6 +751,7 @@ msgid "channel-name"
 msgstr "název-kanálu"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanály"
@@ -772,6 +804,7 @@ msgstr "Klikněte pro kopírování"
 msgid "Click to copy as JSON"
 msgstr "Klikněte pro kopírování jako JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Klikněte pro připojení k {channel}"
@@ -805,6 +838,8 @@ msgstr "Limit klientů (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -885,6 +920,10 @@ msgstr "Potvrdit?"
 msgid "Connect"
 msgstr "Připojit"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "připojeno z {sessionCount} relací"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Připojeno k"
@@ -896,6 +935,11 @@ msgstr "Připojování"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Připojování..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Připojení"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -923,6 +967,7 @@ msgid "Copied"
 msgstr "Zkopírováno"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopírovat"
 
@@ -949,6 +994,10 @@ msgstr "Kopírovat odkaz"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Kopírovat URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Země"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1404,6 +1453,10 @@ msgstr "Domovská stránka"
 msgid "Host"
 msgstr "Hostitel"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Název hostitele"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
@@ -1432,6 +1485,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Jsem zpět"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Nečinný"
@@ -1513,6 +1571,14 @@ msgstr "Pozvat uživatele do {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Pouze na pozvání (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1558,6 +1624,10 @@ msgstr "Připojit se k {value}"
 msgid "Join a channel"
 msgstr "Připojit se ke kanálu"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Připojeno"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1572,6 +1642,7 @@ msgid "Joined the channel"
 msgstr "Připojil se ke kanálu"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "právě teď"
 
@@ -1683,6 +1754,11 @@ msgstr "Načítám data WHOIS..."
 msgid "Local Storage:"
 msgstr "Místní úložiště:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "přihlášen jako {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Přihlásit se k účtu"
@@ -1757,6 +1833,10 @@ msgstr "Náhledy médií"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Členové — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Zpráva"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -2006,6 +2086,10 @@ msgstr "V tomto kanálu nejsou žádná média"
 msgid "No media previews are loaded."
 msgstr "Nejsou načteny žádné náhledy médií."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "žádná zpráva"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Zatím nebyl zachycen žádný surový IRC provoz. Zkuste se připojit nebo odeslat zprávu."
@@ -2079,6 +2163,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - Přinášíme IRC do budoucnosti"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "z {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2432,6 +2521,10 @@ msgstr "Znovu připojit k serveru"
 msgid "Refresh"
 msgstr "Obnovit"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Obnovit WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Zaregistrovat účet"
@@ -2596,6 +2689,10 @@ msgstr "Hledat uživatele..."
 msgid "Searching..."
 msgstr "Hledám..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Tajný"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Tajný (+s)"
@@ -2607,6 +2704,14 @@ msgstr "Tajný kanál"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Zabezpečené připojení"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Zabezpečení"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Bezpečnostní skupiny"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2746,6 +2851,19 @@ msgstr "Pro celý server"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Bot pro celý server — dostupný z libovolného kanálu"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Relace"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Relace {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Relace"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Nastavit téma…"
@@ -2842,6 +2960,10 @@ msgstr "Zobrazuje veškerá externí média. Libovolná URL může způsobit po�
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Zobrazuje média z důvěryhodného file hostu vašeho serveru. Nejsou prováděny žádné požadavky na externí služby."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Přihlášen"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Přihlášen"
@@ -2885,6 +3007,7 @@ msgstr "Začít soukromou zprávu"
 msgid "Starting workflow…"
 msgstr "Spouštění pracovního postupu…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2953,6 +3076,10 @@ msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Pracovní postup, který vytvořil tuto zprávu, již není ve stavu"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Tento účet je připojen z {sessionCount} relací. Podrobnosti o jednotlivých relacích jsou zpřístupněny pouze držiteli účtu nebo IRC operátorům."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tento příkaz nemá žádné parametry."
@@ -2964,6 +3091,11 @@ msgstr "Toto pole je povinné"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Platnost tohoto obrázku vypršela"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "To jste vy"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -3007,6 +3139,7 @@ msgid "timed out"
 msgstr "vypršel časový limit"
 
 #: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
 
@@ -3179,6 +3312,10 @@ msgstr "Uživatel je ověřen"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Uživatel je nepřítomen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Uživatelské režimy"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
