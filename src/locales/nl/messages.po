@@ -49,6 +49,11 @@ msgstr "{0, plural, one {Toon 1 item meer} other {Toon {1} items meer}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} en {1} zijn aan het typen..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} inactief"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -106,16 +111,19 @@ msgstr "{0}, {1}, {2} en {3} anderen typen..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}d geleden"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}u geleden"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}m geleden"
 
@@ -187,6 +195,7 @@ msgstr "#nieuwe-kanaalnaam"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Terug"
@@ -249,6 +258,10 @@ msgstr "Actie"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "actief"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Activiteit"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "is nu bekend als **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Weet je zeker dat je dit bericht wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Bijlageopties"
@@ -401,6 +418,10 @@ msgstr "Audiopositie"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Authenticeren als IRC Operator voor beheerderstoegang"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Geverifieerd"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Afwezigheidsbericht"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Afwezig:"
 
@@ -508,6 +530,11 @@ msgstr "Bannen"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -570,6 +597,10 @@ msgstr "Workflow annuleren"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "geannuleerd"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "kanaalnaam"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanalen"
@@ -733,6 +765,7 @@ msgstr "Klik om te kopiëren"
 msgid "Click to copy as JSON"
 msgstr "Klik om te kopiëren als JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Klik om deel te nemen aan {channel}"
@@ -764,6 +797,8 @@ msgstr "Clientlimiet (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -843,6 +878,10 @@ msgstr "Bevestigen?"
 msgid "Connect"
 msgstr "Verbinden"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "verbonden vanaf {sessionCount} sessies"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Verbonden met"
@@ -854,6 +893,11 @@ msgstr "Verbinding maken"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Verbinding maken..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Verbinding"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Gekopieerd"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopiëren"
 
@@ -907,6 +952,10 @@ msgstr "Link kopiëren"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URL kopiëren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Land"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1325,6 +1374,10 @@ msgstr "Startpagina"
 msgid "Host"
 msgstr "Host"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Hostnaam"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostnaam:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Ik ben terug"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Inactief"
@@ -1434,6 +1492,14 @@ msgstr "Gebruiker uitnodigen voor {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Alleen op uitnodiging (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1479,6 +1545,10 @@ msgstr "Deelnemen aan {value}"
 msgid "Join a channel"
 msgstr "Meedoen aan een kanaal"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Betreden"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Het kanaal betreden"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "zojuist"
 
@@ -1596,6 +1667,11 @@ msgstr "WHOIS-gegevens laden..."
 msgid "Local Storage:"
 msgstr "Lokale opslag:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "ingelogd als {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Aanmelden bij een account"
@@ -1670,6 +1746,10 @@ msgstr "Mediavoorbeeldweergaven"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Leden — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Bericht"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1903,6 +1983,10 @@ msgstr "Geen media in dit kanaal"
 msgid "No media previews are loaded."
 msgstr "Er worden geen mediavoorbeeldweergaven geladen."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "geen bericht"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Nog geen ruw IRC-verkeer vastgelegd. Probeer verbinding te maken of een bericht te versturen."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC — IRC de toekomst in"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "van {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2314,6 +2403,10 @@ msgstr "Opnieuw verbinden met server"
 msgid "Refresh"
 msgstr "Vernieuwen"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "WHOIS vernieuwen"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Registreren voor een account"
@@ -2477,6 +2570,10 @@ msgstr "Gebruikers zoeken..."
 msgid "Searching..."
 msgstr "Zoeken..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Geheim"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Geheim (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Geheim kanaal"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Beveiligde verbinding"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Beveiliging"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Beveiligingsgroepen"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2619,6 +2724,19 @@ msgstr "Serverbreed"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Serverbrede bot — bereikbaar vanaf elk kanaal"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Sessie"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Sessie {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Sessies"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Een onderwerp instellen…"
@@ -2715,6 +2833,10 @@ msgstr "Toont alle externe media. Elke URL kan een verzoek naar een onbekende se
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Toont media van de vertrouwde bestandshost van je server. Er worden geen verzoeken gedaan aan externe diensten."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Aangemeld op"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Aangemeld op"
@@ -2752,6 +2874,7 @@ msgstr "Privébericht starten"
 msgid "Starting workflow…"
 msgstr "Workflow starten…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2820,6 +2943,10 @@ msgstr "De gebruiker ontvangt een uitnodiging om deel te nemen aan {channelName}
 msgid "The workflow that produced this message is no longer in state"
 msgstr "De workflow die dit bericht heeft gemaakt, bevindt zich niet meer in de status"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Dit account is verbonden vanaf {sessionCount} sessies. Details per sessie worden alleen bekendgemaakt aan de accounthouder of IRC-operators."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Deze opdracht heeft geen parameters."
@@ -2831,6 +2958,11 @@ msgstr "Dit veld is vereist"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Deze afbeelding is verlopen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Dit ben jij"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2859,6 +2991,10 @@ msgstr "Tijdvenster (seconden)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "time-out"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3028,6 +3164,10 @@ msgstr "Gebruiker is geverifieerd"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Gebruiker is afwezig"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Gebruikersmodi"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

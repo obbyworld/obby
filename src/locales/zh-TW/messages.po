@@ -49,6 +49,11 @@ msgstr "{0, plural, other {顯示另外 {1} 個項目}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} 和 {1} 正在输入..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} 閒置"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -106,16 +111,19 @@ msgstr "{0}、{1}、{2} 以及另外 {3} 人正在输入..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0} 天前"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0} 小時前"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0} 分鐘前"
 
@@ -187,6 +195,7 @@ msgstr "#new-channel-name"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← 返回"
@@ -249,6 +258,10 @@ msgstr "操作"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "活躍"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "活動"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "現在稱為 **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "您確定要刪除此訊息嗎？此操作無法復原。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "附件选项"
@@ -401,6 +418,10 @@ msgstr "音频进度"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "以 IRC 操作員身分進行管理存取認證"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "已驗證"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "离开消息"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "離開："
 
@@ -508,6 +530,11 @@ msgstr "封禁"
 msgid "Bot"
 msgstr "机器人"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -570,6 +597,10 @@ msgstr "取消工作流程"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "已取消"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "頻道名稱"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "頻道"
@@ -733,6 +765,7 @@ msgstr "點擊複製"
 msgid "Click to copy as JSON"
 msgstr "點擊以 JSON 格式複製"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "點擊加入 {channel}"
@@ -764,6 +797,8 @@ msgstr "用戶端限制 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -843,6 +878,10 @@ msgstr "確認？"
 msgid "Connect"
 msgstr "連線"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "從 {sessionCount} 個工作階段連線"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "已連線至"
@@ -854,6 +893,11 @@ msgstr "连接中"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "正在連線..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "連線"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "已复制"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "複製"
 
@@ -907,6 +952,10 @@ msgstr "複製連結"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "复制链接"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "國家"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1325,6 +1374,10 @@ msgstr "主页"
 msgid "Host"
 msgstr "主機"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "主機名稱"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "主機名："
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "我回来了"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "閒置"
@@ -1434,6 +1492,14 @@ msgstr "邀請使用者加入 {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "僅限邀請 (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1479,6 +1545,10 @@ msgstr "加入 {value}"
 msgid "Join a channel"
 msgstr "加入頻道"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "加入時間"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "已加入频道"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "剛剛"
 
@@ -1596,6 +1667,11 @@ msgstr "正在載入 WHOIS 資料..."
 msgid "Local Storage:"
 msgstr "本機儲存："
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "已以 {0} 登入"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "登录账户"
@@ -1670,6 +1746,10 @@ msgstr "媒體預覽"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "成员 — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "訊息"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1903,6 +1983,10 @@ msgstr "此頻道沒有媒體"
 msgid "No media previews are loaded."
 msgstr "未加载任何媒体预览。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "無訊息"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "尚未擷取任何原始 IRC 流量。請嘗試連線或傳送訊息。"
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - 将 IRC 带入未来"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "共 {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2314,6 +2403,10 @@ msgstr "重新连接服务器"
 msgid "Refresh"
 msgstr "重新整理"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "重新整理 WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "注册账户"
@@ -2477,6 +2570,10 @@ msgstr "搜索用户..."
 msgid "Searching..."
 msgstr "搜尋中..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "私密"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "隱密 (+s)"
@@ -2488,6 +2585,14 @@ msgstr "秘密频道"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "安全連線"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "安全性"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "安全性群組"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2619,6 +2724,19 @@ msgstr "伺服器範圍"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "全伺服器 bot — 可從任何頻道存取"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "工作階段"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "工作階段 {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "工作階段"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "设置主题…"
@@ -2715,6 +2833,10 @@ msgstr "显示所有外部媒体。任何 URL 都可能向未知服务器发送�
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "显示来自服务器受信任文件主机的媒体。不会向外部服务发送任何请求。"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "登入時間"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "登入時間"
@@ -2752,6 +2874,7 @@ msgstr "发起私信"
 msgid "Starting workflow…"
 msgstr "正在啟動工作流程…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2820,6 +2943,10 @@ msgstr "使用者將收到加入 {channelName} 的邀請。"
 msgid "The workflow that produced this message is no longer in state"
 msgstr "產生此訊息的工作流程已不在狀態中"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "此帳號從 {sessionCount} 個工作階段連線。每個工作階段的詳細資訊僅向帳號持有人或 IRC 操作員揭露。"
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "此命令不需要參數。"
@@ -2831,6 +2958,11 @@ msgstr "此欄位為必填"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "此图片已过期"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "這是你"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2859,6 +2991,10 @@ msgstr "時間視窗（秒）"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "已逾時"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3028,6 +3164,10 @@ msgstr "用户已认证"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "使用者已離開"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "使用者模式"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

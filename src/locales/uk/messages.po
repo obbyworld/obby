@@ -49,6 +49,11 @@ msgstr "{0, plural, one {Показати ще 1 елемент} few {Показ
 msgid "{0} and {1} are typing..."
 msgstr "{0} та {1} пишуть..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} без активності"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -106,16 +111,19 @@ msgstr "{0}, {1}, {2} та ще {3} пишуть..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0} д тому"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0} год тому"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0} хв тому"
 
@@ -187,6 +195,7 @@ msgstr "#нова-назва-каналу"
 msgid "#overflow"
 msgstr "#переповнення"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Назад"
@@ -249,6 +258,10 @@ msgstr "Дія"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "активний"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Активність"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "тепер відомий як **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Ви впевнені, що хочете видалити це повідомлення? Цю дію неможливо скасувати."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Параметри вкладення"
@@ -401,6 +418,10 @@ msgstr "Позиція аудіо"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Автентифікуватися як IRC-оператор для адміністративного доступу"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Автентифіковано"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Повідомлення про відсутність"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Відсутність:"
 
@@ -508,6 +530,11 @@ msgstr "Блокування"
 msgid "Bot"
 msgstr "Бот"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -570,6 +597,10 @@ msgstr "Скасувати робочий процес"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "скасовано"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "назва-каналу"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Канали"
@@ -733,6 +765,7 @@ msgstr "Натисніть для копіювання"
 msgid "Click to copy as JSON"
 msgstr "Натисніть для копіювання як JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Натисніть, щоб приєднатися до {channel}"
@@ -764,6 +797,8 @@ msgstr "Ліміт клієнтів (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -843,6 +878,10 @@ msgstr "Підтвердити?"
 msgid "Connect"
 msgstr "Підключитися"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "підключено з {sessionCount} сеансів"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Підключено до"
@@ -854,6 +893,11 @@ msgstr "Підключення"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Підключення..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "З'єднання"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Скопійовано"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Копіювати"
 
@@ -907,6 +952,10 @@ msgstr "Копіювати посилання"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Копіювати URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Країна"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1325,6 +1374,10 @@ msgstr "Головна сторінка"
 msgid "Host"
 msgstr "Хост"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Ім'я хоста"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Хост:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Я повернувся"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Бездіяльний"
@@ -1434,6 +1492,14 @@ msgstr "Запросити користувача до {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Тільки за запрошенням (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1479,6 +1545,10 @@ msgstr "Приєднатися до {value}"
 msgid "Join a channel"
 msgstr "Приєднатися до каналу"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Приєднано"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Приєднався до каналу"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "щойно"
 
@@ -1596,6 +1667,11 @@ msgstr "Завантаження даних WHOIS..."
 msgid "Local Storage:"
 msgstr "Локальне сховище:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "увійшов як {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Увійти в акаунт"
@@ -1670,6 +1746,10 @@ msgstr "Попередній перегляд медіа"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Учасники — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Повідомлення"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1903,6 +1983,10 @@ msgstr "Немає медіа у цьому каналі"
 msgid "No media previews are loaded."
 msgstr "Медіа-перегляди не завантажені."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "немає повідомлення"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Сирий IRC-трафік ще не зафіксовано. Спробуйте підключитися або надіслати повідомлення."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - Привносимо IRC у майбутнє"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "з {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2314,6 +2403,10 @@ msgstr "Перепідключитися до сервера"
 msgid "Refresh"
 msgstr "Оновити"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Оновити WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Зареєструвати акаунт"
@@ -2477,6 +2570,10 @@ msgstr "Пошук користувачів..."
 msgid "Searching..."
 msgstr "Пошук..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Секрет"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Секретний (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Секретний канал"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Безпечне з'єднання"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Безпека"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Групи безпеки"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2619,6 +2724,19 @@ msgstr "По всьому серверу"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Бот на весь сервер — доступний з будь-якого каналу"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Сеанс"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Сеанс {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Сеанси"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Встановити тему…"
@@ -2715,6 +2833,10 @@ msgstr "Показує всі зовнішні медіа. Будь-яка URL �
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Показує медіа з надійного файлового хоста вашого сервера. Запити до зовнішніх сервісів не здійснюються."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Час входу"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Час входу"
@@ -2752,6 +2874,7 @@ msgstr "Почати приватне повідомлення"
 msgid "Starting workflow…"
 msgstr "Запуск робочого процесу…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2820,6 +2943,10 @@ msgstr "Користувач отримає запрошення приєдна�
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Робочий процес, який створив це повідомлення, більше не перебуває у стані"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Цей обліковий запис підключено з {sessionCount} сеансів. Дані окремих сеансів розкриваються лише власнику облікового запису або IRC-операторам."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Ця команда не приймає параметрів."
@@ -2831,6 +2958,11 @@ msgstr "Це поле обов'язкове"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Термін дії цього зображення минув"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Це ви"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2859,6 +2991,10 @@ msgstr "Часове вікно (секунди)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "час очікування вичерпано"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3028,6 +3164,10 @@ msgstr "Користувач автентифікований"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Користувач відсутній"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Режими користувача"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

@@ -49,6 +49,11 @@ msgstr "{0, plural, one {Visa 1 till} other {Visa {1} till}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} och {1} skriver..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} inaktiv"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -106,16 +111,19 @@ msgstr "{0}, {1}, {2} och {3} andra skriver..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}d sedan"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}h sedan"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}m sedan"
 
@@ -187,6 +195,7 @@ msgstr "#nytt-kanalnamn"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Tillbaka"
@@ -249,6 +258,10 @@ msgstr "Åtgärd"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "aktiv"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Aktivitet"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "är nu känd som **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Är du säker på att du vill ta bort det här meddelandet? Den här åtgärden kan inte ångras."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Bilagealternativ"
@@ -401,6 +418,10 @@ msgstr "Ljudposition"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Autentisera som IRC-operatör för administrativ åtkomst"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Autentiserad"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Borta-meddelande"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Frånvarande:"
 
@@ -508,6 +530,11 @@ msgstr "Banningar"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -570,6 +597,10 @@ msgstr "Avbryt arbetsflöde"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "avbruten"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "kanalnamn"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanaler"
@@ -733,6 +765,7 @@ msgstr "Klicka för att kopiera"
 msgid "Click to copy as JSON"
 msgstr "Klicka för att kopiera som JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Klicka för att gå med i {channel}"
@@ -764,6 +797,8 @@ msgstr "Klientgräns (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -843,6 +878,10 @@ msgstr "Bekräfta?"
 msgid "Connect"
 msgstr "Anslut"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "ansluten från {sessionCount} sessioner"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Ansluten till"
@@ -854,6 +893,11 @@ msgstr "Ansluter"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Ansluter..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Anslutning"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Kopierat"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopiera"
 
@@ -907,6 +952,10 @@ msgstr "Kopiera länk"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Kopiera URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Land"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1325,6 +1374,10 @@ msgstr "Hemsida"
 msgid "Host"
 msgstr "Host"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Värdnamn"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Värdnamn:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Jag är tillbaka"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Inaktiv"
@@ -1434,6 +1492,14 @@ msgstr "Bjud in användare till {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Endast inbjudna (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1479,6 +1545,10 @@ msgstr "Gå med i {value}"
 msgid "Join a channel"
 msgstr "Gå med i en kanal"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Gick med"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Gick med i kanalen"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "just nu"
 
@@ -1596,6 +1667,11 @@ msgstr "Laddar WHOIS-data..."
 msgid "Local Storage:"
 msgstr "Lokal lagring:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "inloggad som {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Logga in på ett konto"
@@ -1670,6 +1746,10 @@ msgstr "Medieförhandsvisningar"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Medlemmar — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Meddelande"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1903,6 +1983,10 @@ msgstr "Inget media i den här kanalen"
 msgid "No media previews are loaded."
 msgstr "Inga medieförhandsvisningar laddas."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "inget meddelande"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Ingen rå IRC-trafik har fångats än. Försök att ansluta eller skicka ett meddelande."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - För IRC in i framtiden"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "av {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2314,6 +2403,10 @@ msgstr "Återanslut till server"
 msgid "Refresh"
 msgstr "Uppdatera"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Uppdatera WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Registrera ett konto"
@@ -2477,6 +2570,10 @@ msgstr "Sök användare..."
 msgid "Searching..."
 msgstr "Söker..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Hemlig"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Hemlig (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Hemlig kanal"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Säker anslutning"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Säkerhet"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Säkerhetsgrupper"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2619,6 +2724,19 @@ msgstr "Hela servern"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Serveromfattande bot — nåbar från vilken kanal som helst"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Session"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Session {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Sessioner"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Ange ett ämne…"
@@ -2715,6 +2833,10 @@ msgstr "Visar allt externt media. Valfri URL kan orsaka en begäran till en okä
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Visar media från serverns betrodda filvärd. Inga begäranden görs till externa tjänster."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Inloggad"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Inloggad sedan"
@@ -2752,6 +2874,7 @@ msgstr "Starta privat meddelande"
 msgid "Starting workflow…"
 msgstr "Startar arbetsflöde…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2820,6 +2943,10 @@ msgstr "Användaren får en inbjudan att gå med i {channelName}."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Arbetsflödet som skapade detta meddelande finns inte längre i tillståndet"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Det här kontot är anslutet från {sessionCount} sessioner. Detaljer per session avslöjas endast för kontoinnehavaren eller IRC-operatörer."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Detta kommando tar inga parametrar."
@@ -2831,6 +2958,11 @@ msgstr "Det här fältet krävs"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Den här bilden har gått ut"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Det här är du"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2859,6 +2991,10 @@ msgstr "Tidsfönster (sekunder)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "tidsgräns överskreds"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3028,6 +3164,10 @@ msgstr "Användaren är autentiserad"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Användaren är borta"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Användarlägen"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx

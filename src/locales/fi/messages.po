@@ -49,6 +49,11 @@ msgstr "{0, plural, one {Näytä 1 kohde lisää} other {Näytä {1} kohdetta li
 msgid "{0} and {1} are typing..."
 msgstr "{0} ja {1} kirjoittavat..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} joutilaana"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -106,16 +111,19 @@ msgstr "{0}, {1}, {2} ja {3} muuta kirjoittavat..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}pv sitten"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}t sitten"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}min sitten"
 
@@ -187,6 +195,7 @@ msgstr "#uusi-kanavan-nimi"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Takaisin"
@@ -249,6 +258,10 @@ msgstr "Toiminto"
 #: src/components/ui/BotsModal.tsx
 msgid "active"
 msgstr "aktiivinen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Toiminta"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "on nyt tunnettu nimellä **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Haluatko varmasti poistaa tämän viestin? Tätä toimintoa ei voi kumota."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Liitteet-valinnat"
@@ -401,6 +418,10 @@ msgstr "Äänentoistoasento"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Tunnistaudu IRC-operaattoriksi ylläpito-oikeuksia varten"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Todennettu"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Poissaoloviesti"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Poissa:"
 
@@ -508,6 +530,11 @@ msgstr "Estot"
 msgid "Bot"
 msgstr "Botti"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -570,6 +597,10 @@ msgstr "Peruuta työnkulku"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "peruutettu"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "kanavan-nimi"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanavat"
@@ -733,6 +765,7 @@ msgstr "Kopioi napsauttamalla"
 msgid "Click to copy as JSON"
 msgstr "Napsauta kopioidaksesi JSON-muodossa"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Liity kanavalle {channel} napsauttamalla"
@@ -764,6 +797,8 @@ msgstr "Käyttäjäraja (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -843,6 +878,10 @@ msgstr "Vahvista?"
 msgid "Connect"
 msgstr "Yhdistä"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "yhdistetty {sessionCount} istunnosta"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Yhdistetty palvelimeen"
@@ -854,6 +893,11 @@ msgstr "Yhdistetään"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Yhdistetään..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Yhteys"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Kopioitu"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopioi"
 
@@ -907,6 +952,10 @@ msgstr "Kopioi linkki"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "Kopioi URL"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Maa"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1325,6 +1374,10 @@ msgstr "Kotisivu"
 msgid "Host"
 msgstr "Isäntä"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Isäntänimi"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Isäntänimi:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Olen takaisin"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Toimeton"
@@ -1434,6 +1492,14 @@ msgstr "Kutsu käyttäjä kanavalle {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Vain kutsulla (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1479,6 +1545,10 @@ msgstr "Liity kanavaan {value}"
 msgid "Join a channel"
 msgstr "Liity kanavalle"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Liittyi"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Liittyi kanavalle"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "juuri nyt"
 
@@ -1596,6 +1667,11 @@ msgstr "Ladataan WHOIS-tietoja..."
 msgid "Local Storage:"
 msgstr "Paikallinen tallennustila:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "kirjautunut nimellä {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Kirjaudu tilille"
@@ -1670,6 +1746,10 @@ msgstr "Median esikatselut"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Jäsenet — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Viesti"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1903,6 +1983,10 @@ msgstr "Tällä kanavalla ei ole mediaa"
 msgid "No media previews are loaded."
 msgstr "Median esikatseluja ei ladata."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "ei viestiä"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Raakaa IRC-liikennettä ei ole vielä tallennettu. Kokeile yhdistämistä tai viestin lähettämistä."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC – IRC:n tulevaisuuteen"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "/ {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2314,6 +2403,10 @@ msgstr "Yhdistä uudelleen palvelimeen"
 msgid "Refresh"
 msgstr "Päivitä"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Päivitä WHOIS"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Rekisteröidy tilille"
@@ -2477,6 +2570,10 @@ msgstr "Hae käyttäjiä..."
 msgid "Searching..."
 msgstr "Haetaan..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Salainen"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Salainen (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Salainen kanava"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Suojattu yhteys"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Tietoturva"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Tietoturvaryhmät"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2619,6 +2724,19 @@ msgstr "Palvelimenlaajuinen"
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Palvelimenlaajuinen botti — tavoitettavissa miltä tahansa kanavalta"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Istunto"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Istunto {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Istunnot"
+
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Aseta aihe…"
@@ -2715,6 +2833,10 @@ msgstr "Näyttää kaiken ulkoisen median. Mikä tahansa URL voi aiheuttaa yhtey
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Näyttää mediaa palvelimesi luotetusta tiedostoisännästä. Ulkoisille palveluille ei lähetetä pyyntöjä."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Kirjautui sisään"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Kirjautunut"
@@ -2752,6 +2874,7 @@ msgstr "Aloita yksityiskeskustelu"
 msgid "Starting workflow…"
 msgstr "Käynnistetään työnkulkua…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2820,6 +2943,10 @@ msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Tämän viestin tuottanut työnkulku ei ole enää tilassa"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Tämä tili on yhdistetty {sessionCount} istunnosta. Istuntokohtaiset tiedot paljastetaan vain tilin omistajalle tai IRC-operaattoreille."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tämä komento ei ota parametreja."
@@ -2831,6 +2958,11 @@ msgstr "Tämä kenttä on pakollinen"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Tämä kuva on vanhentunut"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Tämä olet sinä"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2859,6 +2991,10 @@ msgstr "Aikaikkuna (sekuntia)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "aikakatkaistiin"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3028,6 +3164,10 @@ msgstr "Käyttäjä on tunnistautunut"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Käyttäjä on poissa"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Käyttäjätilat"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
