@@ -49,6 +49,11 @@ msgstr "{0, plural, one {1 weiteres Element anzeigen} other {{1} weitere Element
 msgid "{0} and {1} are typing..."
 msgstr "{0} und {1} tippen..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} inaktiv"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -87,7 +92,7 @@ msgstr "{0} Schritt(e) warten auf Genehmigung"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr ""
+msgstr "{0} Workflow(s)"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -106,22 +111,25 @@ msgstr "{0}, {1}, {2} und {3} weitere tippen..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "vor {0} T."
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "vor {0} Std."
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "vor {0} Min."
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr ""
+msgstr "{activeCount} aktiv"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -129,11 +137,11 @@ msgstr "{c, plural, one {1 Mal} other {{c} Mal}}"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
-msgstr ""
+msgstr "{days} Tage"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{hours} hours"
-msgstr ""
+msgstr "{hours} Stunden"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -149,7 +157,7 @@ msgstr "{joinCount, plural, one {beigetreten} other {{joinCount}-mal beigetreten
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{minutes} minutes"
-msgstr ""
+msgstr "{minutes} Minuten"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -157,7 +165,7 @@ msgstr "{reconnectCount, plural, one {erneut verbunden} other {{reconnectCount}-
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
-msgstr ""
+msgstr "{seconds} Sekunden"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -173,7 +181,7 @@ msgstr "*spam*"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "#channel"
-msgstr ""
+msgstr "#channel"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -187,6 +195,7 @@ msgstr "#new-channel-name"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Zurück"
@@ -209,7 +218,7 @@ msgstr "<0>Risiko:</0> Sensible Informationen (Nachrichten, private Gespräche, 
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
-msgstr ""
+msgstr "Über diese Zuordnung"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -248,7 +257,11 @@ msgstr "Aktion"
 
 #: src/components/ui/BotsModal.tsx
 msgid "active"
-msgstr ""
+msgstr "aktiv"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Aktivität"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "ist jetzt bekannt als **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Bist du sicher, dass du diese Nachricht löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Anhangsoptionen"
@@ -401,6 +418,10 @@ msgstr "Audioposition"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Als IRC-Operator für Verwaltungszugriff authentifizieren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Authentifiziert"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Abwesenheitsnachricht"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Abwesend:"
 
@@ -508,10 +530,15 @@ msgstr "Sperren"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
-msgstr ""
+msgstr "Bot-Befehle"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
@@ -526,11 +553,11 @@ msgstr "Bots"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr ""
+msgstr "Bots — empfange {botsLoadingCount} Befehlsliste(n)"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr ""
+msgstr "Bots (lädt {botsLoadingCount})"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -569,7 +596,11 @@ msgstr "Workflow abbrechen"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
-msgstr ""
+msgstr "abgebrochen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -593,7 +624,7 @@ msgstr "hat das Thema geändert zu: {topic}"
 
 #: src/components/ui/BotsModal.tsx
 msgid "channel"
-msgstr ""
+msgstr "Kanal"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
@@ -614,7 +645,7 @@ msgstr "Kanal-Avatar-Vorschau"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr ""
+msgstr "Kanal-Bot — nur in betretenen Kanälen"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "Kanalname"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanäle"
@@ -733,6 +765,7 @@ msgstr "Zum Kopieren klicken"
 msgid "Click to copy as JSON"
 msgstr "Klicken zum Kopieren als JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Klicke, um {channel} beizutreten"
@@ -764,6 +797,8 @@ msgstr "Client-Limit (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -803,7 +838,7 @@ msgstr "Farbe & Formatierung"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr ""
+msgstr "Befehle werden geladen…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -817,7 +852,7 @@ msgstr "Kommentare ({commentCount})"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "complete"
-msgstr ""
+msgstr "abgeschlossen"
 
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
@@ -843,6 +878,10 @@ msgstr "Bestätigen?"
 msgid "Connect"
 msgstr "Verbinden"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "verbunden von {sessionCount} Sitzungen"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Verbunden mit"
@@ -854,6 +893,11 @@ msgstr "Verbinden..."
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Verbinde..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Verbindung"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Kopiert"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -907,6 +952,10 @@ msgstr "Link kopieren"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URL kopieren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Land"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1005,7 +1054,7 @@ msgstr "Diese Nachricht löschen? Dies kann nicht rückgängig gemacht werden."
 
 #: src/components/ui/BotsModal.tsx
 msgid "deleted"
-msgstr ""
+msgstr "gelöscht"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1205,7 +1254,7 @@ msgstr "Warnung: Externer Link"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "failed"
-msgstr ""
+msgstr "fehlgeschlagen"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1325,6 +1374,10 @@ msgstr "Homepage"
 msgid "Host"
 msgstr "Host"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Hostname"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Ich bin zurück"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Inaktiv"
@@ -1393,7 +1451,7 @@ msgstr "Info:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr ""
+msgstr "Informationen darüber, wer diesen Befehl ausgelöst hat, werden vom Bot bereitgestellt und der Absender kann vom Server nicht verifiziert werden."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -1433,6 +1491,14 @@ msgstr "Benutzer zu {channelName} einladen"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Invite-Only (+i)"
 msgstr "Nur auf Einladung (+i)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1479,6 +1545,10 @@ msgstr "{value} beitreten"
 msgid "Join a channel"
 msgstr "Einem Kanal beitreten"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Beigetreten"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Dem Kanal beigetreten"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "gerade eben"
 
@@ -1596,6 +1667,11 @@ msgstr "WHOIS-Daten werden geladen..."
 msgid "Local Storage:"
 msgstr "Lokaler Speicher:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "angemeldet als {0}"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Bei einem Konto anmelden"
@@ -1671,20 +1747,24 @@ msgstr "Medienvorschauen"
 msgid "Members — {0}"
 msgstr "Mitglieder — {0}"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Nachricht"
+
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr ""
+msgstr "Nachricht {0}"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr ""
+msgstr "Nachricht {0} (Enter für neue Zeile, Umschalt+Enter zum Senden)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr ""
+msgstr "Nachricht {0} (Umschalt+Enter für neue Zeile)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -1808,7 +1888,7 @@ msgstr "Nächste Seite"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "nick"
-msgstr ""
+msgstr "Nick"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -1903,6 +1983,10 @@ msgstr "Keine Medien in diesem Kanal"
 msgid "No media previews are loaded."
 msgstr "Es werden keine Medienvorschauen geladen."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "keine Nachricht"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Noch kein roher IRC-Datenverkehr aufgezeichnet. Versuche dich zu verbinden oder eine Nachricht zu senden."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - IRC in die Zukunft bringen"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "von {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2130,7 +2219,7 @@ msgstr "PDF-Vorschau"
 
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
-msgstr ""
+msgstr "ausstehend"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -2169,7 +2258,7 @@ msgstr "Töne bei Erwähnungen und Nachrichten abspielen"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr ""
+msgstr "Tic-Tac-Toe spielen"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2303,7 +2392,7 @@ msgstr "Überlegung"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
-msgstr ""
+msgstr "Befehlsliste wird empfangen…"
 
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
@@ -2313,6 +2402,10 @@ msgstr "Erneut mit Server verbinden"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Refresh"
 msgstr "Aktualisieren"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "WHOIS aktualisieren"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2477,6 +2570,10 @@ msgstr "Benutzer suchen..."
 msgid "Searching..."
 msgstr "Suche..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Geheim"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Geheim (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Geheimer Kanal"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Sichere Verbindung"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Sicherheit"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Sicherheitsgruppen"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2554,7 +2659,7 @@ msgstr "Wird gesendet"
 
 #: src/components/ui/BotsModal.tsx
 msgid "server"
-msgstr ""
+msgstr "Server"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
@@ -2617,7 +2722,20 @@ msgstr "Serverweit"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr ""
+msgstr "Serverweiter Bot — von jedem Kanal aus erreichbar"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Sitzung"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Sitzung {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Sitzungen"
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2671,7 +2789,7 @@ msgstr "Kommentare anzeigen ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr ""
+msgstr "Im Bots-Menü anzeigen →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -2715,6 +2833,10 @@ msgstr "Zeigt alle externen Medien. Jede URL kann eine Anfrage an einen unbekann
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Zeigt Medien vom vertrauenswürdigen Datei-Host deines Servers. Es werden keine Anfragen an externe Dienste gestellt."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Angemeldet"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Angemeldet seit"
@@ -2752,6 +2874,7 @@ msgstr "Privatnachricht starten"
 msgid "Starting workflow…"
 msgstr "Workflow wird gestartet…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2782,7 +2905,7 @@ msgstr "Sperren"
 
 #: src/components/ui/BotsModal.tsx
 msgid "suspended"
-msgstr ""
+msgstr "gesperrt"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2820,6 +2943,10 @@ msgstr "Der Benutzer erhält eine Einladung, {channelName} beizutreten."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Der Workflow, der diese Nachricht erzeugt hat, ist nicht mehr im Zustand vorhanden"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Dieses Konto ist von {sessionCount} Sitzungen verbunden. Details pro Sitzung werden nur dem Kontoinhaber oder IRC-Operatoren offengelegt."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Dieser Befehl nimmt keine Parameter."
@@ -2831,6 +2958,11 @@ msgstr "Dieses Feld ist erforderlich"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Dieses Bild ist abgelaufen"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Das bist du"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2858,7 +2990,11 @@ msgstr "Zeitfenster (Sekunden)"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
-msgstr ""
+msgstr "Zeitüberschreitung"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -2893,7 +3029,7 @@ msgstr "Suche umschalten"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
-msgstr ""
+msgstr "Tool"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
@@ -3028,6 +3164,10 @@ msgstr "Benutzer ist authentifiziert"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Benutzer ist abwesend"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Benutzermodi"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
@@ -3208,7 +3348,7 @@ msgstr "Standardmäßig 'kein Grund', wenn leer gelassen"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
-msgstr ""
+msgstr "Workflow"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
@@ -3217,7 +3357,7 @@ msgstr "Workflow-Verlauf"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr ""
+msgstr "Workflow-Verlauf ({0}, {activeTotal} aktiv)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

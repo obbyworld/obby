@@ -49,6 +49,11 @@ msgstr "{0, plural, one {1 öğe daha göster} other {{1} öğe daha göster}}"
 msgid "{0} and {1} are typing..."
 msgstr "{0} ve {1} yazıyor..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} boşta"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -87,7 +92,7 @@ msgstr "{0} adım onay bekliyor"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr ""
+msgstr "{0} iş akışı"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -106,22 +111,25 @@ msgstr "{0}, {1}, {2} ve {3} kişi daha yazıyor..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}g önce"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}s önce"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}dk önce"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr ""
+msgstr "{activeCount} aktif"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -129,11 +137,11 @@ msgstr "{c, plural, one {1 kez} other {{c} kez}}"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
-msgstr ""
+msgstr "{days} gün"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{hours} hours"
-msgstr ""
+msgstr "{hours} saat"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -149,7 +157,7 @@ msgstr "{joinCount, plural, one {katıldı} other {{joinCount} kez katıldı}}"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{minutes} minutes"
-msgstr ""
+msgstr "{minutes} dakika"
 
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
@@ -157,7 +165,7 @@ msgstr "{reconnectCount, plural, one {yeniden bağlandı} other {{reconnectCount
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
-msgstr ""
+msgstr "{seconds} saniye"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -173,7 +181,7 @@ msgstr "*spam*"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "#channel"
-msgstr ""
+msgstr "#kanal"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -187,6 +195,7 @@ msgstr "#yeni-kanal-adı"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Geri"
@@ -209,7 +218,7 @@ msgstr "<0>Risk:</0> Hassas bilgiler (mesajlar, özel konuşmalar, kimlik doğru
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
-msgstr ""
+msgstr "Bu atıf hakkında"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -248,7 +257,11 @@ msgstr "İşlem"
 
 #: src/components/ui/BotsModal.tsx
 msgid "active"
-msgstr ""
+msgstr "aktif"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Etkinlik"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
@@ -386,6 +399,10 @@ msgstr "artık **{newNick}** olarak bilinmektedir"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Bu mesajı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Ek seçenekleri"
@@ -401,6 +418,10 @@ msgstr "Ses konumu"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Yönetici erişimi için IRC Operatörü olarak kimlik doğrula"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Kimliği doğrulandı"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -453,6 +474,7 @@ msgid "Away Message"
 msgstr "Uzakta Mesajı"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Uzakta:"
 
@@ -508,10 +530,15 @@ msgstr "Yasaklar"
 msgid "Bot"
 msgstr "Bot"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
-msgstr ""
+msgstr "Bot Komutları"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
@@ -526,11 +553,11 @@ msgstr "Botlar"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr ""
+msgstr "Botlar — {botsLoadingCount} komut listesi alınıyor"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr ""
+msgstr "Botlar ({botsLoadingCount} yükleniyor)"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -569,7 +596,11 @@ msgstr "İş akışını iptal et"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
-msgstr ""
+msgstr "iptal edildi"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -593,7 +624,7 @@ msgstr "konuyu şu şekilde değiştirdi: {topic}"
 
 #: src/components/ui/BotsModal.tsx
 msgid "channel"
-msgstr ""
+msgstr "kanal"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
@@ -614,7 +645,7 @@ msgstr "Kanal avatarı önizlemesi"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr ""
+msgstr "Kanal botu — yalnızca katıldığınız kanallarda"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -681,6 +712,7 @@ msgid "channel-name"
 msgstr "kanal-adı"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Kanallar"
@@ -733,6 +765,7 @@ msgstr "Kopyalamak için tıklayın"
 msgid "Click to copy as JSON"
 msgstr "JSON olarak kopyalamak için tıklayın"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "{channel} kanalına katılmak için tıklayın"
@@ -764,6 +797,8 @@ msgstr "İstemci Sınırı (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -803,7 +838,7 @@ msgstr "Renk ve Biçimlendirme"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr ""
+msgstr "Komutlar yükleniyor…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -817,7 +852,7 @@ msgstr "Yorumlar ({commentCount})"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "complete"
-msgstr ""
+msgstr "tamamlandı"
 
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
@@ -843,6 +878,10 @@ msgstr "Onaylıyor musunuz?"
 msgid "Connect"
 msgstr "Bağlan"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "{sessionCount} oturumdan bağlı"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
 msgstr "Bağlı Olduğu Sunucu"
@@ -854,6 +893,11 @@ msgstr "Bağlanıyor"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Bağlanıyor..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Bağlantı"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -881,6 +925,7 @@ msgid "Copied"
 msgstr "Kopyalandı"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopyala"
 
@@ -907,6 +952,10 @@ msgstr "Bağlantıyı kopyala"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "Copy URL"
 msgstr "URL'yi Kopyala"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Ülke"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1005,7 +1054,7 @@ msgstr "Bu mesaj silinsin mi? Bu işlem geri alınamaz."
 
 #: src/components/ui/BotsModal.tsx
 msgid "deleted"
-msgstr ""
+msgstr "silindi"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1205,7 +1254,7 @@ msgstr "Harici Bağlantı Uyarısı"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "failed"
-msgstr ""
+msgstr "başarısız"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1325,6 +1374,10 @@ msgstr "Ana Sayfa"
 msgid "Host"
 msgstr "Host"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Ana bilgisayar adı"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Ana makine adı:"
@@ -1353,6 +1406,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Geri Döndüm"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Boşta"
@@ -1393,7 +1451,7 @@ msgstr "Bilgi:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr ""
+msgstr "Bu komutu kimin çağırdığına dair bilgi bot tarafından sağlanır ve gönderen sunucu tarafından doğrulanamaz."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -1433,6 +1491,14 @@ msgstr "{channelName} kanalına Kullanıcı Davet Et"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Invite-Only (+i)"
 msgstr "Yalnızca Davetli (+i)"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1479,6 +1545,10 @@ msgstr "{value} kanalına katıl"
 msgid "Join a channel"
 msgstr "Bir kanala katıl"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Katıldı"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1493,6 +1563,7 @@ msgid "Joined the channel"
 msgstr "Kanala katıldı"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "az önce"
 
@@ -1596,6 +1667,11 @@ msgstr "WHOIS verisi yükleniyor..."
 msgid "Local Storage:"
 msgstr "Yerel Depolama:"
 
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "{0} olarak oturum açtı"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
 msgstr "Bir hesaba giriş yap"
@@ -1671,20 +1747,24 @@ msgstr "Medya Önizlemeleri"
 msgid "Members — {0}"
 msgstr "Üyeler — {0}"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Mesaj"
+
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr ""
+msgstr "{0} için mesaj"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr ""
+msgstr "{0} için mesaj (yeni satır için Enter, göndermek için Shift+Enter)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr ""
+msgstr "{0} için mesaj (yeni satır için Shift+Enter)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -1808,7 +1888,7 @@ msgstr "Sonraki sayfa"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "nick"
-msgstr ""
+msgstr "nick"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -1903,6 +1983,10 @@ msgstr "Bu kanalda medya yok"
 msgid "No media previews are loaded."
 msgstr "Medya önizlemesi yüklenmiyor."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "mesaj yok"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Henüz ham IRC trafiği yakalanmadı. Bağlanmayı veya bir mesaj göndermeyi deneyin."
@@ -1972,6 +2056,11 @@ msgstr "ObsidianIRC"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
 msgstr "ObsidianIRC - IRC'yi geleceğe taşıyor"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "/ {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2130,7 +2219,7 @@ msgstr "PDF önizleme"
 
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
-msgstr ""
+msgstr "beklemede"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -2169,7 +2258,7 @@ msgstr "Bahisler ve mesajlar için ses çal"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr ""
+msgstr "Tic-Tac-Toe Oyna"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2303,7 +2392,7 @@ msgstr "Akıl yürütme"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
-msgstr ""
+msgstr "Komut listesi alınıyor…"
 
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
@@ -2313,6 +2402,10 @@ msgstr "Sunucuya yeniden bağlan"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Refresh"
 msgstr "Yenile"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "WHOIS'i yenile"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2477,6 +2570,10 @@ msgstr "Kullanıcı ara..."
 msgid "Searching..."
 msgstr "Aranıyor..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Gizli"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Gizli (+s)"
@@ -2488,6 +2585,14 @@ msgstr "Gizli kanal"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Güvenli Bağlantı"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Güvenlik"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Güvenlik grupları"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2554,7 +2659,7 @@ msgstr "Gönderiliyor"
 
 #: src/components/ui/BotsModal.tsx
 msgid "server"
-msgstr ""
+msgstr "sunucu"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
@@ -2617,7 +2722,20 @@ msgstr "Sunucu genelinde"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr ""
+msgstr "Sunucu genelinde bot — herhangi bir kanaldan erişilebilir"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Oturum"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Oturum {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Oturumlar"
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2671,7 +2789,7 @@ msgstr "Yorumları göster ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr ""
+msgstr "Botlar Menüsünde Göster →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -2715,6 +2833,10 @@ msgstr "Tüm harici medyayı gösterir. Herhangi bir URL bilinmeyen bir sunucuya
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Sunucunuzun güvenilir dosya hostundan medya gösterir. Harici hizmetlere istek gönderilmez."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "Giriş yaptı"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "Giriş Yapıldı"
@@ -2752,6 +2874,7 @@ msgstr "Özel Mesaj Başlat"
 msgid "Starting workflow…"
 msgstr "İş akışı başlatılıyor…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2782,7 +2905,7 @@ msgstr "Askıya al"
 
 #: src/components/ui/BotsModal.tsx
 msgid "suspended"
-msgstr ""
+msgstr "askıya alındı"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -2820,6 +2943,10 @@ msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Bu mesajı oluşturan iş akışı artık durumda değil"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Bu hesap {sessionCount} oturumdan bağlı. Oturum başına ayrıntılar yalnızca hesap sahibine veya IRC operatörlerine açıklanır."
+
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Bu komut parametre almıyor."
@@ -2831,6 +2958,11 @@ msgstr "Bu alan zorunludur"
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Bu görüntünün süresi doldu"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Bu sizsiniz"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
@@ -2858,7 +2990,11 @@ msgstr "Zaman Penceresi (saniye)"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
-msgstr ""
+msgstr "zaman aşımına uğradı"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -2893,7 +3029,7 @@ msgstr "Aramayı aç/kapat"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
-msgstr ""
+msgstr "araç"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"
@@ -3028,6 +3164,10 @@ msgstr "Kullanıcı kimliği doğrulandı"
 #: src/components/ui/UserProfileModal.tsx
 msgid "User is away"
 msgstr "Kullanıcı uzakta"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Kullanıcı modları"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
@@ -3208,7 +3348,7 @@ msgstr "Boş bırakılırsa varsayılan olarak 'neden yok' kullanılır"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
-msgstr ""
+msgstr "İş akışı"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
@@ -3217,7 +3357,7 @@ msgstr "İş akışı geçmişi"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr ""
+msgstr "İş akışı geçmişi ({0}, {activeTotal} aktif)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

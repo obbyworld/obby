@@ -11,6 +11,7 @@ import type {
   MetadataValueEvent,
   Server,
   User,
+  WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
 import { isChannelTarget, parseMessageTags } from "../ircUtils";
@@ -487,9 +488,37 @@ export interface EventMap {
     nick: string;
     message: string;
   };
+  /**
+   * Account-level umodes + snomask (RPL_WHOISMODES 379) carried in
+   * the parent obby.world/whois batch. Sub-batched 379 (legacy
+   * obbyircd) still populates WhoisSession.umodes via the per-numeric
+   * handler.
+   */
+  WHOIS_MODES: {
+    serverId: string;
+    nick: string;
+    umodes: string;
+    snomask?: string;
+  };
   WHOIS_END: {
     serverId: string;
     nick: string;
+  };
+  /**
+   * Fired when an obby.world/whois parent batch closes for `nick`.
+   * Carries the assembled per-session detail (one entry per
+   * obby.world/whois-session sub-batch) plus any session-count
+   * summary the server emitted for non-privileged queriers.
+   * The legacy per-numeric WHOIS_* events still fire for the
+   * parent-batch numerics, so account-level fields stay populated
+   * via the existing handlers.
+   */
+  OBBY_WHOIS_COMPLETE: {
+    serverId: string;
+    nick: string;
+    sessions: WhoisSession[];
+    sessionCount?: number;
+    securityGroups?: string[];
   };
   /**
    * obbyircd INVITELINK reply: a freshly-minted invite share-id +
@@ -589,6 +618,18 @@ export class IRCClient implements IRCClientContext {
       }
     >
   > = new Map(); // Track active batches per server
+  whoisBuilders: Map<
+    string,
+    Map<
+      string,
+      {
+        target: string;
+        sessionsByRef: Map<string, WhoisSession>;
+        summaryCount?: number;
+        securityGroups: string[];
+      }
+    >
+  > = new Map();
 
   private ourCaps: string[] = [
     "multi-prefix",
@@ -637,6 +678,11 @@ export class IRCClient implements IRCClientContext {
     "labeled-response",
     "draft/read-marker",
     "obsidianirc/cmdslist",
+    // Vendor: opt in to obby.world/whois batch-wrapped WHOIS replies
+    // (parent obby.world/whois batch + nested obby.world/whois-session
+    // sub-batches). Without this cap a server implementing the spec
+    // falls back to legacy unwrapped numerics, which we still parse.
+    "obby.world/whois",
     "draft/bot-cmds",
     "obby.world/channel-bots",
     // obbyircd vendor cap. Without REQ'ing it the server won't emit
@@ -851,6 +897,7 @@ export class IRCClient implements IRCClientContext {
 
           this.stopWebSocketPing(server.id);
           this.sockets.delete(server.id);
+          this.whoisBuilders.delete(server.id);
           server.isConnected = false;
           const wasReconnecting = server.connectionState === "reconnecting";
           server.connectionState = "disconnected";
@@ -967,6 +1014,7 @@ export class IRCClient implements IRCClientContext {
     }
     // Stop WebSocket ping timers
     this.stopWebSocketPing(serverId);
+    this.whoisBuilders.delete(serverId);
   }
 
   removeServer(serverId: string): void {
