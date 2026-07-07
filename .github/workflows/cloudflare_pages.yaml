@@ -50,3 +50,4 @@ jobs:
             Preview URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
 
             Automated deployment preview for the PR in the Cloudflare Pages.
+          emojis: "rocket, eyes, +1, -1"

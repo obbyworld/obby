@@ -2,9 +2,9 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tauri::{Emitter, State};
-use tokio::net::TcpStream;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::sync::{Mutex, mpsc, oneshot};
+use tokio::net::TcpStream;
+use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio::task;
 use tokio::time::{timeout, Duration};
 
@@ -13,16 +13,16 @@ const TLS_HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(15);
 
 // Platform-specific TLS imports
 #[cfg(not(target_os = "android"))]
-use tokio_native_tls::TlsConnector;
-#[cfg(not(target_os = "android"))]
 use native_tls::TlsConnector as NativeTlsConnector;
+#[cfg(not(target_os = "android"))]
+use tokio_native_tls::TlsConnector;
 
-#[cfg(target_os = "android")]
-use tokio_rustls::TlsConnector;
 #[cfg(target_os = "android")]
 use rustls::pki_types::ServerName;
 #[cfg(target_os = "android")]
 use std::sync::Arc as StdArc;
+#[cfg(target_os = "android")]
+use tokio_rustls::TlsConnector;
 #[cfg(target_os = "android")]
 use webpki_roots;
 
@@ -73,24 +73,32 @@ async fn read_task<R>(
                 // Connection closed by server
                 // Emit any remaining partial data as a final message
                 if !line_buffer.is_empty() {
-                    let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                        id: client_id.clone(),
-                        event: MessageEvent {
-                            message: Some(MessageData { data: line_buffer.clone() }),
-                            error: None,
-                            connected: None,
+                    let _ = app_handle.emit(
+                        "tcp-message",
+                        ReceivedPayload {
+                            id: client_id.clone(),
+                            event: MessageEvent {
+                                message: Some(MessageData {
+                                    data: line_buffer.clone(),
+                                }),
+                                error: None,
+                                connected: None,
+                            },
                         },
-                    });
+                    );
                 }
 
-                let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                    id: client_id.clone(),
-                    event: MessageEvent {
-                        message: None,
-                        error: None,
-                        connected: Some(false),
+                let _ = app_handle.emit(
+                    "tcp-message",
+                    ReceivedPayload {
+                        id: client_id.clone(),
+                        event: MessageEvent {
+                            message: None,
+                            error: None,
+                            connected: Some(false),
+                        },
                     },
-                });
+                );
 
                 // Remove connection from state
                 let mut connections = state.lock().await;
@@ -101,40 +109,36 @@ async fn read_task<R>(
                 // Append new data to line buffer
                 line_buffer.extend_from_slice(&read_buf[..n]);
 
-                // Extract complete lines (ending with \r\n)
-                loop {
-                    if let Some(pos) = line_buffer.windows(2).position(|w| w == b"\r\n") {
-                        // Extract the complete line including \r\n
-                        let line_data = line_buffer[..pos + 2].to_vec();
+                while let Some(pos) = line_buffer.windows(2).position(|w| w == b"\r\n") {
+                    let line_data = line_buffer[..pos + 2].to_vec();
+                    line_buffer.drain(..pos + 2);
 
-                        // Remove the line from buffer
-                        line_buffer.drain(..pos + 2);
-
-                        // Emit the complete line
-                        let _ = app_handle.emit("tcp-message", ReceivedPayload {
+                    let _ = app_handle.emit(
+                        "tcp-message",
+                        ReceivedPayload {
                             id: client_id.clone(),
                             event: MessageEvent {
                                 message: Some(MessageData { data: line_data }),
                                 error: None,
                                 connected: None,
                             },
-                        });
-                    } else {
-                        // No complete line found, wait for more data
-                        break;
-                    }
+                        },
+                    );
                 }
             }
             Err(e) => {
                 // Read error - emit error event and stop
-                let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                    id: client_id.clone(),
-                    event: MessageEvent {
-                        message: None,
-                        error: Some(format!("Read error: {}", e)),
-                        connected: Some(false),
+                let _ = app_handle.emit(
+                    "tcp-message",
+                    ReceivedPayload {
+                        id: client_id.clone(),
+                        event: MessageEvent {
+                            message: None,
+                            error: Some(format!("Read error: {}", e)),
+                            connected: Some(false),
+                        },
                     },
-                });
+                );
 
                 // Remove connection from state
                 let mut connections = state.lock().await;
@@ -223,22 +227,19 @@ pub async fn connect(
             let connector = TlsConnector::from(
                 NativeTlsConnector::builder()
                     .build()
-                    .map_err(|e| format!("Failed to create TLS connector: {}", e))?
+                    .map_err(|e| format!("Failed to create TLS connector: {}", e))?,
             );
 
-            let tls_stream = timeout(
-                TLS_HANDSHAKE_TIMEOUT,
-                connector.connect(&host, tcp_stream),
-            )
-            .await
-            .map_err(|_| {
-                format!(
-                    "TLS handshake timed out after {}s ({})",
-                    TLS_HANDSHAKE_TIMEOUT.as_secs(),
-                    host
-                )
-            })?
-            .map_err(|e| format!("TLS handshake failed: {}", e))?;
+            let tls_stream = timeout(TLS_HANDSHAKE_TIMEOUT, connector.connect(&host, tcp_stream))
+                .await
+                .map_err(|_| {
+                    format!(
+                        "TLS handshake timed out after {}s ({})",
+                        TLS_HANDSHAKE_TIMEOUT.as_secs(),
+                        host
+                    )
+                })?
+                .map_err(|e| format!("TLS handshake failed: {}", e))?;
 
             // Split the TLS stream using tokio::io::split
             let (reader, writer) = tokio::io::split(tls_stream);
@@ -323,20 +324,26 @@ pub async fn connect(
 
     // Store the connection handle
     let mut connections = state.0.lock().await;
-    connections.insert(client_id.clone(), ConnectionHandle {
-        write_tx,
-        shutdown_tx: Some(shutdown_tx),
-    });
+    connections.insert(
+        client_id.clone(),
+        ConnectionHandle {
+            write_tx,
+            shutdown_tx: Some(shutdown_tx),
+        },
+    );
 
     // Emit connected event
-    let _ = app_handle.emit("tcp-message", ReceivedPayload {
-        id: client_id,
-        event: MessageEvent {
-            message: None,
-            error: None,
-            connected: Some(true),
+    let _ = app_handle.emit(
+        "tcp-message",
+        ReceivedPayload {
+            id: client_id,
+            event: MessageEvent {
+                message: None,
+                error: None,
+                connected: Some(true),
+            },
         },
-    });
+    );
 
     Ok(())
 }
