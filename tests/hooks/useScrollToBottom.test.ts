@@ -83,7 +83,9 @@ describe("useScrollToBottom", () => {
 
     mockEndElement = {} as unknown as HTMLElement;
 
-    global.IntersectionObserver = vi.fn().mockImplementation((callback) => {
+    // vitest 4 invokes constructor mocks with `new`, which an arrow
+    // implementation can't satisfy; plain functions returning the instance can.
+    function makeIntersectionObserver(callback: IntersectionObserverCallback) {
       observerCallbacks.push(callback);
       return {
         observe: vi.fn((element) => observedElements.push(element)),
@@ -94,16 +96,20 @@ describe("useScrollToBottom", () => {
         rootMargin: "",
         thresholds: [],
       };
-    });
+    }
+    global.IntersectionObserver = vi
+      .fn()
+      .mockImplementation(makeIntersectionObserver);
 
-    global.ResizeObserver = vi.fn().mockImplementation((callback) => {
+    function makeResizeObserver(callback: ResizeObserverCallback) {
       resizeObserverCallbacks.push(callback);
       return {
         observe: vi.fn((element) => resizeObservedElements.push(element)),
         disconnect: resizeDisconnectSpy,
         unobserve: vi.fn(),
       };
-    });
+    }
+    global.ResizeObserver = vi.fn().mockImplementation(makeResizeObserver);
 
     global.requestAnimationFrame = vi.fn((cb) => {
       setTimeout(cb, 0);
@@ -197,15 +203,20 @@ describe("useScrollToBottom", () => {
 
   it("should clean up on unmount", () => {
     const intersectionDisconnectSpy = vi.fn();
-    global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      disconnect: intersectionDisconnectSpy,
-      unobserve: vi.fn(),
-      takeRecords: vi.fn(),
-      root: null,
-      rootMargin: "",
-      thresholds: [],
-    }));
+    function makeUnmountObserver() {
+      return {
+        observe: vi.fn(),
+        disconnect: intersectionDisconnectSpy,
+        unobserve: vi.fn(),
+        takeRecords: vi.fn(),
+        root: null,
+        rootMargin: "",
+        thresholds: [],
+      };
+    }
+    global.IntersectionObserver = vi
+      .fn()
+      .mockImplementation(makeUnmountObserver);
 
     const { unmount } = renderHook(() => {
       const containerRef = useRef(mockContainer);
