@@ -37,7 +37,7 @@ jobs:
       release_body: ${{ steps.release-notes.outputs.release_body }}
       name: ObsidianIRC ${{ steps.package-version.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: Get Node project version
@@ -93,7 +93,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout tag
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
 
@@ -145,7 +145,7 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -175,7 +175,7 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
-      - uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0.6.2
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -218,7 +218,7 @@ jobs:
 
       - name: Upload zsync files
         if: matrix.platform == 'ubuntu-22.04'
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           files: |
@@ -230,7 +230,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
       - name: install dependencies (ubuntu only)
@@ -278,7 +278,7 @@ jobs:
           fi
 
       - name: Publish
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -298,12 +298,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
         with:
           distribution: "zulu"
           java-version: "22"
@@ -377,7 +377,7 @@ jobs:
           retention-days: 1
 
       - name: Publish
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -398,7 +398,7 @@ jobs:
     # Only run on pushes to main branch OR manual workflow dispatch
     if: (github.ref_type == 'branch' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -412,7 +412,7 @@ jobs:
           access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
         with:
           distribution: "zulu"
           java-version: "22"
@@ -523,7 +523,7 @@ jobs:
       id-token: write
     if: github.ref_type == 'tag'
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -558,7 +558,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -644,7 +644,7 @@ jobs:
           unzip -l "${{ runner.temp }}/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa" | head -n 20
 
       - name: Publish
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -661,7 +661,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -680,7 +680,7 @@ jobs:
           zip -r ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-web.zip ./dist
 
       - name: Publish
-        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
