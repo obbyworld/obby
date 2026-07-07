@@ -64,6 +64,15 @@ class MockWebSocket extends EventTarget {
   }
 }
 
+// vitest 4 rejects `mockReturnValue` on a mock invoked with `new`; a plain
+// function that returns a prebuilt instance is the supported replacement.
+function returnsSocket(socket: MockWebSocket): () => WebSocket {
+  function Ctor() {
+    return socket;
+  }
+  return Ctor as unknown as () => WebSocket;
+}
+
 // Mock WebSocket globally
 const MockWebSocketSpy = vi.fn();
 vi.stubGlobal("WebSocket", MockWebSocketSpy);
@@ -80,7 +89,7 @@ describe("IRCClient", () => {
   describe("connect", () => {
     test("should connect to IRC server successfully", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -106,7 +115,7 @@ describe("IRCClient", () => {
       vi.useFakeTimers();
 
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -129,7 +138,7 @@ describe("IRCClient", () => {
     test("should return existing server when connecting to same host/port", async () => {
       // First connection
       const mockSocket1 = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket1);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket1));
 
       const firstConnectionPromise = client.connect(
         "Test Server",
@@ -169,7 +178,7 @@ describe("IRCClient", () => {
   describe("message handling", () => {
     test("should handle PRIVMSG correctly", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -209,7 +218,7 @@ describe("IRCClient", () => {
 
     test("should parse MODE messages", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -249,7 +258,7 @@ describe("IRCClient", () => {
 
     test("should parse MODE messages with multiple modes", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -289,7 +298,7 @@ describe("IRCClient", () => {
 
     test("should parse MODE messages for users", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -332,7 +341,7 @@ describe("IRCClient", () => {
 
     beforeEach(async () => {
       mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
 
       const connectionPromise = client.connect(
         "Test Server",
@@ -436,7 +445,7 @@ describe("IRCClient", () => {
 
     beforeEach(async () => {
       mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      MockWebSocketSpy.mockReturnValue(mockSocket);
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
       const connectionPromise = client.connect(
         "Test Server",
         "irc.example.com",
