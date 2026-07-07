@@ -45,6 +45,9 @@ jobs:
 
   nix-linux:
     name: Nix package (Linux x86_64)
+    # Heavy (~10min) build; run it only on main like the Tauri platform builds,
+    # not on every branch/PR push.
+    if: github.ref == 'refs/heads/main'
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
