@@ -11,11 +11,13 @@ import {
   FaRobot,
   FaServer,
   FaShieldAlt,
+  FaTerminal,
   FaTimes,
   FaUser,
   FaUserCheck,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
@@ -27,6 +29,10 @@ interface UserProfileModalProps {
   onBack?: () => void;
   serverId: string;
   username: string;
+  /** Called when the user clicks "Show in Bots Menu" inside the
+   *  Bot Commands section. Implementer should open the BotsModal
+   *  pre-selected on this user's nick. */
+  onShowInBotsMenu?: (botNick: string) => void;
 }
 
 // Parse channel string into individual channels with status
@@ -80,7 +86,14 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onBack,
   serverId,
   username,
+  onShowInBotsMenu,
 }) => {
+  const botCommands = useStore(
+    (state) =>
+      state.servers.find((s) => s.id === serverId)?.botCommands?.[
+        username.toLowerCase()
+      ] ?? null,
+  );
   const [isLoadingWhois, setIsLoadingWhois] = useState(false);
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
@@ -179,10 +192,17 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   // Format idle time
   const formatIdleTime = (seconds: number): string => {
-    if (seconds < 60) return `${seconds} seconds`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours`;
-    return `${Math.floor(seconds / 86400)} days`;
+    if (seconds < 60) return t`${seconds} seconds`;
+    if (seconds < 3600) {
+      const minutes = Math.floor(seconds / 60);
+      return t`${minutes} minutes`;
+    }
+    if (seconds < 86400) {
+      const hours = Math.floor(seconds / 3600);
+      return t`${hours} hours`;
+    }
+    const days = Math.floor(seconds / 86400);
+    return t`${days} days`;
   };
 
   // Format signon time
@@ -201,7 +221,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   const canShowAvatar = canShowAvatarUrl(
     avatar,
-    server?.filehost,
+    serverFilehosts(server),
     mediaSettings,
   );
 
@@ -390,6 +410,40 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <div className="text-white text-sm">{botDescription}</div>
               </div>
             )}
+
+            {/* Bot Commands deep-link: a one-click jump into the
+                BotsModal, pre-selected on this user. Full schema
+                browsing belongs in the modal, not duplicated here. */}
+            {isBot &&
+              botCommands &&
+              botCommands.length > 0 &&
+              onShowInBotsMenu && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onShowInBotsMenu(username);
+                    onClose();
+                  }}
+                  className="mt-3 w-full bg-discord-dark-300 hover:bg-discord-dark-400 rounded-lg p-3 flex items-center gap-3 transition-colors text-left"
+                >
+                  <FaTerminal
+                    className="text-emerald-400 flex-shrink-0"
+                    size={14}
+                  />
+                  <span className="text-white text-sm font-semibold">
+                    <Trans>Bot Commands</Trans>
+                  </span>
+                  <span className="ml-auto text-xs text-discord-text-muted">
+                    {botCommands.length}
+                  </span>
+                  <span
+                    className="text-discord-text-muted text-xs"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                </button>
+              )}
 
             {/* Homepage */}
             {sanitizedHomepage && (

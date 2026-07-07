@@ -1,4 +1,8 @@
-import EmojiPicker, { type EmojiClickData, Theme } from "emoji-picker-react";
+import EmojiPicker, {
+  type EmojiClickData,
+  EmojiStyle,
+  Theme,
+} from "emoji-picker-react";
 import { useEffect, useRef } from "react";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import type { PickerCustomEmoji } from "../../lib/customEmojiPicker";
@@ -59,6 +63,7 @@ export function AppEmojiPicker({
       <EmojiPicker
         onEmojiClick={onEmojiClick}
         theme={Theme.DARK}
+        emojiStyle={EmojiStyle.NATIVE}
         width="100%"
         height={isMobile ? 500 : 400}
         searchPlaceholder="Search emojis..."

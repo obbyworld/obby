@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Fully fledged IRCv3 client and more"
 authors = ["Matheus Fillipe", "Valerie Liu"]
 license = "GPL3"
-repository = "https://github.com/ObsidianIRC/ObsidianIRC"
+repository = "https://github.com/obbyworld/obby"
 edition = "2021"
 rust-version = "1.77.2"
 

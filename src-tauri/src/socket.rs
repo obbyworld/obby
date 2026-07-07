@@ -6,6 +6,10 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio::task;
+use tokio::time::{timeout, Duration};
+
+const CONNECT_TIMEOUT: Duration = Duration::from_secs(15);
+const TLS_HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(15);
 
 // Platform-specific TLS imports
 #[cfg(not(target_os = "android"))]
@@ -194,10 +198,22 @@ pub async fn connect(
     // Parse the address to determine protocol and extract host:port
     let (use_tls, host, port) = parse_address(&address)?;
 
-    // Create TCP connection
-    let tcp_stream = TcpStream::connect(format!("{}:{}", host, port))
-        .await
-        .map_err(|e| format!("Failed to connect to {}:{}: {}", host, port, e))?;
+    // Create TCP connection with a hard timeout so a stalled SYN/SYN-ACK
+    // surfaces as a clear error instead of hanging on kernel retransmits.
+    let tcp_stream = timeout(
+        CONNECT_TIMEOUT,
+        TcpStream::connect(format!("{}:{}", host, port)),
+    )
+    .await
+    .map_err(|_| {
+        format!(
+            "TCP connect timed out after {}s ({}:{})",
+            CONNECT_TIMEOUT.as_secs(),
+            host,
+            port
+        )
+    })?
+    .map_err(|e| format!("Failed to connect to {}:{}: {}", host, port, e))?;
 
     // Create channels for write operations
     let (write_tx, write_rx) = mpsc::channel::<String>(100);
@@ -214,9 +230,15 @@ pub async fn connect(
                     .map_err(|e| format!("Failed to create TLS connector: {}", e))?,
             );
 
-            let tls_stream = connector
-                .connect(&host, tcp_stream)
+            let tls_stream = timeout(TLS_HANDSHAKE_TIMEOUT, connector.connect(&host, tcp_stream))
                 .await
+                .map_err(|_| {
+                    format!(
+                        "TLS handshake timed out after {}s ({})",
+                        TLS_HANDSHAKE_TIMEOUT.as_secs(),
+                        host
+                    )
+                })?
                 .map_err(|e| format!("TLS handshake failed: {}", e))?;
 
             // Split the TLS stream using tokio::io::split
@@ -252,10 +274,19 @@ pub async fn connect(
             let server_name = ServerName::try_from(host.clone())
                 .map_err(|_| format!("Invalid DNS name: {}", host))?;
 
-            let tls_stream = connector
-                .connect(server_name, tcp_stream)
-                .await
-                .map_err(|e| format!("TLS handshake failed: {}", e))?;
+            let tls_stream = timeout(
+                TLS_HANDSHAKE_TIMEOUT,
+                connector.connect(server_name, tcp_stream),
+            )
+            .await
+            .map_err(|_| {
+                format!(
+                    "TLS handshake timed out after {}s ({})",
+                    TLS_HANDSHAKE_TIMEOUT.as_secs(),
+                    host
+                )
+            })?
+            .map_err(|e| format!("TLS handshake failed: {}", e))?;
 
             // Split the TLS stream using tokio::io::split
             let (reader, writer) = tokio::io::split(tls_stream);

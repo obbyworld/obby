@@ -19,7 +19,7 @@ import {
   resolveReplyMessage,
   serverSupportsMetadata,
 } from "../helpers";
-import type { AppState } from "../index";
+import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
@@ -91,6 +91,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         const isOwnMessage =
           response.sender.toLowerCase() ===
           currentServerUser?.username?.toLowerCase();
+        // Lazy-fetch the sender's metadata the first time they speak in
+        // this session. metadataList() is idempotent + cached so the
+        // cost is one METADATA LIST per unique speaker.
+        if (!isOwnMessage && response.sender) {
+          store.getState().metadataList(response.serverId, response.sender);
+        }
         const isReplyToMe =
           !isOwnMessage &&
           !!replyMessage &&
@@ -145,7 +151,8 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             // Track the msgid so subsequent duplicate-echo guards work.
             if (mtags.msgid) {
               store.setState((state) => ({
-                processedMessageIds: new Set(state.processedMessageIds).add(
+                processedMessageIds: rememberMsgId(
+                  state.processedMessageIds,
                   mtags.msgid as string,
                 ),
               }));
@@ -311,10 +318,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
           // Add processed message ID if present
           if (mtags?.msgid) {
-            newState.processedMessageIds = new Set([
-              ...state.processedMessageIds,
+            newState.processedMessageIds = rememberMsgId(
+              state.processedMessageIds,
               mtags.msgid,
-            ]);
+            );
           }
 
           return newState;
@@ -480,10 +487,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               : [];
         if (idsToTrack.length > 0) {
           store.setState((state) => ({
-            processedMessageIds: new Set([
-              ...state.processedMessageIds,
-              ...idsToTrack,
-            ]),
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              idsToTrack,
+            ),
           }));
         }
 
@@ -704,10 +711,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               : [];
         if (idsToTrack.length > 0) {
           store.setState((state) => ({
-            processedMessageIds: new Set([
-              ...state.processedMessageIds,
-              ...idsToTrack,
-            ]),
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              idsToTrack,
+            ),
           }));
         }
 
@@ -750,6 +757,16 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       .servers.find((s) => s.id === response.serverId);
 
     if (server) {
+      // Lazy-fetch sender metadata on first PM, same as CHANMSG path.
+      // Skip server pseudo-sources (those have a "." in the source) and
+      // our own echoes.
+      const ourNick = ircClient
+        .getCurrentUser(response.serverId)
+        ?.username?.toLowerCase();
+      if (sender && !sender.includes(".") && sender.toLowerCase() !== ourNick) {
+        store.getState().metadataList(response.serverId, sender);
+      }
+
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
       // Server messages should go to Server Notices, not create PM tabs
       if (sender.includes(".")) {

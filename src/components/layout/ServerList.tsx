@@ -1,14 +1,24 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { FaPencilAlt, FaPlus, FaRedo, FaTrash } from "react-icons/fa";
+import {
+  FaCrown,
+  FaPencilAlt,
+  FaPlug,
+  FaPlus,
+  FaRedo,
+  FaTrash,
+} from "react-icons/fa";
+import { GiGlassShot } from "react-icons/gi";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
+import { BouncerServerGroup } from "./BouncerServerGroup";
 
 interface ServerIconProps {
   server: Server;
@@ -43,7 +53,11 @@ const ServerIcon: React.FC<ServerIconProps> = ({
     server.privateChats?.some((pc) => pc.isMentioned);
 
   const iconUrl = server.icon;
-  const showIcon = canShowAvatarUrl(iconUrl, server.filehost, mediaSettings);
+  const showIcon = canShowAvatarUrl(
+    iconUrl,
+    serverFilehosts(server),
+    mediaSettings,
+  );
 
   const getServerInitial = (s: Server): string => {
     const displayName = s.networkName || s.name;
@@ -121,8 +135,26 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           </div>
         )}
 
+        {(server.isBouncerControl || !!server.bouncerNetid) && (
+          <div
+            className="absolute -top-1 -right-1 flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5 shadow"
+            title={
+              server.isBouncerControl
+                ? t`soju bouncer (control)`
+                : t`Network bound through soju bouncer`
+            }
+          >
+            <GiGlassShot className="text-amber-300 text-[10px]" />
+            {server.isBouncerControl ? (
+              <FaCrown className="text-yellow-400 text-[8px]" />
+            ) : (
+              <FaPlug className="text-sky-300 text-[8px]" />
+            )}
+          </div>
+        )}
+
         {hasMentions && !isSelected && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
         )}
 
         {isSelected && !isTouchDevice && (
@@ -175,10 +207,11 @@ export const ServerList: React.FC = () => {
     ui: { selectedServerId },
     selectServer,
     toggleAddServerModal,
-    deleteServer,
     toggleChannelListModal,
     reconnectServer,
     toggleEditServerModal,
+    editBouncerNetwork,
+    requestDeleteServer,
   } = useStore();
 
   const [shimmeringServers, setShimmeringServers] = useState<Set<string>>(
@@ -252,19 +285,70 @@ export const ServerList: React.FC = () => {
         className="flex flex-col space-y-2 w-full items-center"
         data-testid="server-list"
       >
-        {servers.map((server) => (
-          <ServerIcon
-            key={server.id}
-            server={server}
-            isSelected={selectedServerId === server.id}
-            isShimmering={shimmeringServers.has(server.id)}
-            isTouchDevice={isTouchDevice}
-            onSelect={() => selectServer(server.id, { clearSelection: true })}
-            onEdit={() => toggleEditServerModal(true, server.id)}
-            onDelete={() => deleteServer(server.id)}
-            onReconnect={() => reconnectServer(server.id)}
-          />
-        ))}
+        {(() => {
+          const childrenByParent = new Map<string, Server[]>();
+          for (const s of servers) {
+            if (s.bouncerServerId) {
+              const arr = childrenByParent.get(s.bouncerServerId) ?? [];
+              arr.push(s);
+              childrenByParent.set(s.bouncerServerId, arr);
+            }
+          }
+          const rendered = new Set<string>();
+          const handleSelect = (id: string) =>
+            selectServer(id, { clearSelection: true });
+          const handleEdit = (id: string) => {
+            const target = servers.find((s) => s.id === id);
+            if (target?.bouncerNetid) editBouncerNetwork(id);
+            else toggleEditServerModal(true, id);
+          };
+          const handleDelete = (id: string) => requestDeleteServer(id);
+          const handleReconnect = (id: string) => reconnectServer(id);
+
+          return servers.map((server) => {
+            if (rendered.has(server.id)) return null;
+            if (server.isBouncerControl) {
+              const boundNetworks = childrenByParent.get(server.id) ?? [];
+              rendered.add(server.id);
+              for (const child of boundNetworks) rendered.add(child.id);
+              return (
+                <BouncerServerGroup
+                  key={server.id}
+                  control={server}
+                  networks={boundNetworks}
+                  selectedServerId={selectedServerId}
+                  shimmeringServers={shimmeringServers}
+                  isTouchDevice={isTouchDevice}
+                  onSelect={handleSelect}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onReconnect={handleReconnect}
+                />
+              );
+            }
+            if (server.bouncerServerId) {
+              // Child of a parent already rendered (or not in state).
+              // If the parent isn't in state, render the child standalone
+              // as a graceful fallback.
+              if (servers.some((s) => s.id === server.bouncerServerId))
+                return null;
+            }
+            rendered.add(server.id);
+            return (
+              <ServerIcon
+                key={server.id}
+                server={server}
+                isSelected={selectedServerId === server.id}
+                isShimmering={shimmeringServers.has(server.id)}
+                isTouchDevice={isTouchDevice}
+                onSelect={() => handleSelect(server.id)}
+                onEdit={() => handleEdit(server.id)}
+                onDelete={() => handleDelete(server.id)}
+                onReconnect={() => handleReconnect(server.id)}
+              />
+            );
+          });
+        })()}
       </div>
     </div>
   );

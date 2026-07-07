@@ -33,7 +33,11 @@ const mockSaveServersToLocalStorage = vi.mocked(saveServersToLocalStorage);
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    sendCapEnd: vi.fn(),
     userOnConnect: vi.fn(),
+    // CAP END is gated on this map being empty/false for the
+    // current server -- see LinkSecurityWarningModal.handleContinue.
+    capNegotiationComplete: new Map(),
   },
 }));
 

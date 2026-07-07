@@ -81,6 +81,8 @@ describe("ChatHeader - Members Button", () => {
         profileViewRequest: null,
         settingsNavigation: {},
         shouldFocusChatInput: false,
+        pendingBotsModalOpen: null,
+        pendingBotCommandPick: null,
         ...defaultUIExtensions,
       },
     });
@@ -116,6 +118,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -153,6 +156,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -193,6 +197,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -231,6 +236,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -269,6 +275,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -297,6 +304,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 
@@ -323,6 +331,7 @@ describe("ChatHeader - Members Button", () => {
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
+          onOpenBots={() => {}}
         />,
       );
 

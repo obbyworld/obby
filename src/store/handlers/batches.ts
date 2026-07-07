@@ -3,7 +3,7 @@ import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { Message } from "../../types";
 import { type BatchInfo, MAX_MESSAGES_PER_CHANNEL } from "../helpers";
-import type { AppState } from "../index";
+import { type AppState, rememberMsgIds } from "../index";
 
 // Chathistory messages are buffered here (outside the store) to avoid one
 // store.setState per incoming PRIVMSG.  Only flushed at BATCH_END.
@@ -363,10 +363,10 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               [serverId]: remainingBatches,
             },
             messages: { ...state.messages, [key]: finalMessages },
-            processedMessageIds:
-              newMsgIds.length > 0
-                ? new Set([...state.processedMessageIds, ...newMsgIds])
-                : state.processedMessageIds,
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              newMsgIds,
+            ),
             servers: state.servers.map((s) => {
               if (s.id !== serverId) return s;
               return {
@@ -465,10 +465,10 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               [serverId]: remainingBatches,
             },
             messages: { ...state.messages, [key]: finalMessages },
-            processedMessageIds:
-              newMsgIds.length > 0
-                ? new Set([...state.processedMessageIds, ...newMsgIds])
-                : state.processedMessageIds,
+            processedMessageIds: rememberMsgIds(
+              state.processedMessageIds,
+              newMsgIds,
+            ),
           };
         }
 

@@ -7,7 +7,7 @@ to simply install it, maybe take a look at [Install instructions](INSTALL.md) fi
 
 ```sh
 cd ~
-git clone https://github.com/ObsidianIRC/ObsidianIRC
+git clone https://github.com/obbyworld/obby
 cd ObsidianIRC
 npm install
 ```
@@ -113,8 +113,8 @@ oauth-provider "github" {
 ### Docker
 
 ```sh
-docker build -t obsidianirc .
-docker run -p 80:80 obsidianirc
+docker build -t obby .
+docker run -p 80:80 obby
 ```
 
 #### Building Docker with custom configuration
@@ -133,7 +133,7 @@ docker build \
   --build-arg VITE_DEFAULT_OAUTH_CLIENT_ID="m0obbyircd1234" \
   --build-arg VITE_BACKEND_URL=https://api.example.net \
   --build-arg VITE_TENOR_API_KEY=your-tenor-key \
-  -t obsidianirc .
+  -t obby .
 ```
 
 ### LINUX
@@ -168,7 +168,7 @@ nix build .#obsidianirc  # → result/bin/ObsidianIRC
 
 - **direnv:** `direnv allow` activates [.envrc](.envrc) (`use flake`).
 - **Home Manager:** `programs.obsidianirc` module — see [nix/hm-module.nix](nix/hm-module.nix) for options and usage.
-- **Maintenance:** bump `npmDeps` in [nix/obsidianirc.nix](nix/obsidianirc.nix) when `package-lock.json` changes.
+- **Maintenance:** when `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally. On version tag releases, [`publish.yaml`](.github/workflows/publish.yaml) (`update-linux-nix`) builds the Nix package and commits any hash fix to `main`.
 
 ### macOS
 

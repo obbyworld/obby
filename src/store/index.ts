@@ -1,5 +1,7 @@
 import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
+import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
+import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -7,6 +9,8 @@ import {
   registerAllProtocolHandlers,
 } from "../protocol";
 import type {
+  BouncerState,
+  InviteLink,
   Message,
   PrivateChat,
   Server,
@@ -20,6 +24,7 @@ import { readyProcessedServers } from "./handlers/connection";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
 import * as storage from "./localStorage";
+import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
 import type {
   ChannelOrderMap,
@@ -41,6 +46,41 @@ const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
  */
 function generateDeterministicId(serverId: string, name: string): string {
   return uuidv5(`${serverId}:${name}`, CHANNEL_NAMESPACE);
+}
+
+const MSG_DEDUP_CAP = 10000;
+const MSG_DEDUP_EVICT_BATCH = 1000;
+
+export function rememberMsgId(set: Set<string>, id: string): Set<string> {
+  if (set.has(id)) return set;
+  const next = new Set(set);
+  next.add(id);
+  if (next.size > MSG_DEDUP_CAP) {
+    const evict = next.size - (MSG_DEDUP_CAP - MSG_DEDUP_EVICT_BATCH);
+    let dropped = 0;
+    for (const v of next) {
+      if (dropped >= evict) break;
+      next.delete(v);
+      dropped++;
+    }
+  }
+  return next;
+}
+
+export function rememberMsgIds(set: Set<string>, ids: string[]): Set<string> {
+  if (ids.length === 0) return set;
+  const next = new Set(set);
+  for (const id of ids) next.add(id);
+  if (next.size > MSG_DEDUP_CAP) {
+    const evict = next.size - (MSG_DEDUP_CAP - MSG_DEDUP_EVICT_BATCH);
+    let dropped = 0;
+    for (const v of next) {
+      if (dropped >= evict) break;
+      next.delete(v);
+      dropped++;
+    }
+  }
+  return next;
 }
 
 // Helper function to normalize host for comparison (extract hostname from URL or return as-is)
@@ -404,6 +444,16 @@ interface UIState {
   isAddServerModalOpen: boolean | undefined;
   isEditServerModalOpen: boolean;
   editServerId: string | null;
+  // Bouncer-network edit hand-off: set by editBouncerNetwork(),
+  // consumed by BouncerNetworksPanel on mount to open its inline form
+  // on the named netid. Cleared once the panel reads it.
+  pendingBouncerEdit?: { bouncerServerId: string; netid: string } | null;
+  disconnectConfirmTarget?: string | null;
+  disconnectNetworkConfirmTarget?: {
+    bouncerServerId: string;
+    netid: string;
+    childServerId: string;
+  } | null;
   isTwoFactorSettingsOpen: boolean;
   twoFactorSettingsServerId: string | null;
   isSettingsModalOpen: boolean;
@@ -424,6 +474,19 @@ interface UIState {
     itemId: string | null;
   };
   prefillServerDetails: ConnectionDetails | null;
+  // Cross-component deep-link from the user-profile popover into the
+  // bots modal — UserProfileModal sets this to {serverId, botNick}
+  // when the user clicks "Show in Bots Menu" and ChatArea picks it up
+  // to open the modal pre-selected on that bot.
+  pendingBotsModalOpen: { serverId: string; botNick: string } | null;
+  // Cross-component deep-link from the member-list context menu's Bot
+  // Commands submenu — clicking a command sets this and ChatArea picks
+  // it up to open the slash-command param modal.
+  pendingBotCommandPick: {
+    serverId: string;
+    botNick: string;
+    command: import("../types").BotCommand;
+  } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -475,6 +538,66 @@ interface UIState {
 
 export type { GlobalSettings };
 
+// One step within a draft/bot-tools workflow. `content` is the spec's
+// untyped payload: a nested object for tool-call args, a string fragment
+// for tool-result / reasoning / text. We carry it through verbatim and
+// let the UI decide how to render.
+export interface AiStep {
+  sid: string;
+  type: import("../lib/botTools").AiStepType;
+  state: import("../lib/botTools").AiStepState;
+  tool?: string;
+  label?: string;
+  content?: unknown;
+  truncated?: boolean;
+  startedAt: number;
+  updatedAt: number;
+}
+
+export interface AiWorkflow {
+  id: string;
+  serverId: string;
+  // Target the workflow was announced on (channel name or PM nick) so
+  // the tray can scope cards to the current selection.
+  channel: string;
+  // The bot's nick (sender of the original workflow TAGMSG).
+  senderNick: string;
+  name?: string;
+  state: import("../lib/botTools").AiWorkflowState;
+  // msgid of the IRC message that triggered the workflow, if the bot
+  // included `trigger` in the start event. Lets the UI correlate.
+  trigger?: string;
+  // Truncated copy of the prompt that started the workflow, if the bot
+  // included it. Rendered under the bot nick on the workflow card so
+  // the user can see what they asked without scrolling.
+  prompt?: string;
+  cancelledBy?: string;
+  // msgid of the PRIVMSG that carried the final workflow-complete tag.
+  // Set by the botTools handler when a tagged PRIVMSG arrives so the
+  // card can deep-link to that message ("Responded in chat" footer).
+  finalMsgid?: string;
+  startedAt: number;
+  updatedAt: number;
+  steps: AiStep[];
+  // UI: card starts collapsed; user can expand. Once dismissed the
+  // card is hidden from the tray (state is preserved for replay).
+  collapsed: boolean;
+  dismissed: boolean;
+  // True when the workflow was first observed inside a chathistory
+  // batch (i.e. it's being replayed from the server, not happening
+  // right now). The floating tray filters these out so joining a
+  // channel doesn't pop a wall of old workflow cards; they still
+  // appear in the history popover for inspection.
+  historical: boolean;
+  // True once the user has explicitly opened the floating card -- either
+  // via the chat-header workflow icon's dropdown, or via the "view
+  // workflow" affordance on a closed PRIVMSG.  Without this flag we'd
+  // pop a card automatically on every workflow start, which gets
+  // invasive when several bots are working at once.  Reset on dismiss
+  // so closing the card hides it from the tray again.
+  userOpened?: boolean;
+}
+
 export interface AppState {
   servers: Server[];
   currentUser: User | null;
@@ -496,6 +619,16 @@ export interface AppState {
     serverId: string;
     timestamp: Date;
   }[];
+  rawLog: Record<
+    string,
+    {
+      seq: number;
+      direction: "tx" | "rx" | "info";
+      line: string;
+      timestamp: number;
+    }[]
+  >;
+  rawLogViewerServerId: string | null;
   channelList: Record<
     string,
     { channel: string; userCount: number; topic: string }[]
@@ -549,8 +682,50 @@ export interface AppState {
   metadataFetchInProgress: Record<string, boolean>; // serverId -> is fetching own metadata
   userMetadataRequested: Record<string, Set<string>>; // serverId -> Set of usernames we've requested metadata for
   metadataChangeCounter: number; // Counter incremented on metadata changes for reactivity
+  // soju.im/bouncer-networks: per-bouncer (i.e. per control-connection)
+  // state, keyed by the serverId of the control connection. Set by the
+  // bouncer event handlers as CAP / BOUNCER lines arrive.
+  bouncers: Record<string, BouncerState>;
+  // Public actions for managing bouncer networks. These wrap the
+  // raw IRCClient.bouncer* sends with attr encoding and state tracking
+  // so call sites (UI components and tests) stay decoupled from wire
+  // formatting.
+  bouncerListNetworks: (bouncerServerId: string) => void;
+  bouncerAddNetwork: (
+    bouncerServerId: string,
+    attrs: Record<string, string>,
+  ) => void;
+  bouncerChangeNetwork: (
+    bouncerServerId: string,
+    netid: string,
+    attrs: Record<string, string>,
+  ) => void;
+  bouncerDelNetwork: (bouncerServerId: string, netid: string) => void;
+  clearBouncerError: (bouncerServerId: string) => void;
+  // Open a child IRC connection to the bouncer that is bound to the
+  // given upstream network via BOUNCER BIND <netid> before CAP END.
+  // Reuses the parent's credentials. Resolves with the new Server.
+  bouncerConnectNetwork: (
+    bouncerServerId: string,
+    netid: string,
+  ) => Promise<Server | undefined>;
   // WHOIS data cache
   whoisData: Record<string, Record<string, WhoisData>>; // serverId -> nickname -> whois data
+  /**
+   * Cached state of `INVITELINK LIST` per server.  Populated as the
+   * server streams `INVITELINK ENTRY` rows and terminated by the
+   * `NOTE INVITELINK LIST_END` standard-reply.  `loading` flips
+   * false at LIST_END (success) or when a FAIL is received.
+   */
+  inviteLinks: Record<
+    string,
+    {
+      entries: InviteLink[];
+      loading: boolean;
+      error?: string;
+      lastFetched?: number;
+    }
+  >;
   // Account registration state
   pendingRegistration: {
     serverId: string;
@@ -586,10 +761,17 @@ export interface AppState {
   };
   // Channel order persistence
   channelOrder: ChannelOrderMap; // serverId -> ordered array of channel names
+  // Per-bouncer accent color (hex string, e.g. "#fcd34d")
+  bouncerGroupAccents: Record<string, string>;
   // Message deduplication tracking
   processedMessageIds: Set<string>; // Set of msgid values that have already been processed
   // Auto-connect prevention
   hasConnectedToSavedServers: boolean;
+  // draft/bot-tools workflow state, indexed by serverId then workflow id.
+  // Populated by store/handlers/botTools.ts from `+draft/bot-tools`
+  // tags carried on TAGMSG/PRIVMSG. Rendered by the floating workflow
+  // tray in ChatArea.
+  aiWorkflows: Record<string, Record<string, AiWorkflow>>;
   // UI state
   ui: UIState;
   globalSettings: GlobalSettings;
@@ -766,6 +948,14 @@ export interface AppState {
   }) => void;
   removeGlobalNotification: (notificationId: string) => void;
   clearGlobalNotifications: () => void;
+  appendRawLogLine: (entry: {
+    serverId: string;
+    direction: "tx" | "rx" | "info";
+    line: string;
+  }) => void;
+  clearRawLog: (serverId: string) => void;
+  openRawLogViewer: (serverId: string) => void;
+  closeRawLogViewer: () => void;
   selectServer: (
     serverId: string | null,
     options?: { clearSelection?: boolean },
@@ -796,6 +986,17 @@ export interface AppState {
     prefillDetails?: ConnectionDetails | null,
   ) => void;
   toggleEditServerModal: (isOpen?: boolean, serverId?: string | null) => void;
+  // Edit a bouncer-bound child server through the BouncerNetworksPanel
+  // (parent's inline form) instead of the generic AddServerModal --
+  // most ServerConfig fields are unused / inherited from the parent
+  // for bouncer-bound rows, so the panel's narrower form is the right UX.
+  editBouncerNetwork: (childServerId: string) => void;
+  consumePendingBouncerEdit: () => void;
+  requestDeleteServer: (serverId: string) => void;
+  cancelDeleteServer: () => void;
+  cancelDisconnectNetwork: () => void;
+  confirmDisconnectNetwork: () => void;
+  setBouncerGroupAccent: (parentServerId: string, hex: string | null) => void;
   toggleSettingsModal: (isOpen?: boolean) => void;
   toggleQuickActions: (isOpen?: boolean) => void;
   requestChatInputFocus: () => void;
@@ -824,6 +1025,14 @@ export interface AppState {
     memberList?: { isVisible: boolean; width: number };
   }) => void;
   toggleChannelListModal: (isOpen?: boolean) => void;
+  requestBotsModalOpen: (serverId: string, botNick: string) => void;
+  clearBotsModalOpenRequest: () => void;
+  requestBotCommandPick: (
+    serverId: string,
+    botNick: string,
+    command: import("../types").BotCommand,
+  ) => void;
+  clearBotCommandPickRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -889,6 +1098,14 @@ export interface AppState {
   addInputAttachment: (attachment: Attachment) => void;
   removeInputAttachment: (attachmentId: string) => void;
   clearInputAttachments: () => void;
+  // obbyircd INVITELINK management
+  loadInvitations: (serverId: string) => void;
+  createInvitation: (
+    serverId: string,
+    channel?: string,
+    description?: string,
+  ) => void;
+  deleteInvitation: (serverId: string, shareId: string) => void;
   // Metadata actions
   metadataGet: (serverId: string, target: string, keys: string[]) => void;
   metadataList: (serverId: string, target: string) => void;
@@ -905,6 +1122,23 @@ export interface AppState {
   metadataSubs: (serverId: string) => void;
   metadataSync: (serverId: string, target: string) => void;
   sendRaw: (serverId: string, command: string) => void;
+  // draft/bot-tools UI helpers + control signals.
+  aiWorkflowSetCollapsed: (
+    serverId: string,
+    workflowId: string,
+    collapsed: boolean,
+  ) => void;
+  aiWorkflowDismiss: (serverId: string, workflowId: string) => void;
+  // Un-dismiss + expand. Used to reopen a workflow card from its
+  // final-response PRIVMSG after the user has closed the tray entry.
+  aiWorkflowReopen: (serverId: string, workflowId: string) => void;
+  // Send an `action` message (cancel / approve / reject / input) to the
+  // bot's nick via TAGMSG carrying `+draft/bot-tools`.
+  aiSendAction: (
+    serverId: string,
+    botNick: string,
+    action: import("../lib/botTools").AiActionMessage,
+  ) => void;
 }
 
 // Helper functions for per-server tab selections
@@ -951,6 +1185,8 @@ const useStore = create<AppState>((set, get) => ({
   connectingServerId: null,
   isAddingNewServer: false,
   connectionError: null,
+  rawLog: {},
+  rawLogViewerServerId: null,
   messages: {},
   typingUsers: {},
   typingTimers: {},
@@ -967,7 +1203,9 @@ const useStore = create<AppState>((set, get) => ({
   metadataFetchInProgress: {},
   userMetadataRequested: {},
   metadataChangeCounter: 0,
+  bouncers: {},
   whoisData: {},
+  inviteLinks: {},
   pendingRegistration: null,
   pendingTotpStepUp: null,
   twofaStatus: {},
@@ -975,8 +1213,10 @@ const useStore = create<AppState>((set, get) => ({
   pendingTwofaChallenge: null,
   tictactoe: { games: {}, open: null },
   channelOrder: loadChannelOrder(),
+  bouncerGroupAccents: storage.bouncerGroupAccents.load(),
   processedMessageIds: new Set<string>(),
   hasConnectedToSavedServers: false,
+  aiWorkflows: {},
   selectedServerId: null,
 
   // UI state
@@ -992,6 +1232,9 @@ const useStore = create<AppState>((set, get) => ({
     isTwoFactorSettingsOpen: false,
     twoFactorSettingsServerId: null,
     editServerId: null,
+    pendingBouncerEdit: null,
+    disconnectConfirmTarget: null,
+    disconnectNetworkConfirmTarget: null,
     isSettingsModalOpen: false,
     isQuickActionsOpen: false,
     isDarkMode: true,
@@ -1020,6 +1263,8 @@ const useStore = create<AppState>((set, get) => ({
       itemId: null,
     },
     prefillServerDetails: null,
+    pendingBotsModalOpen: null,
+    pendingBotCommandPick: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -1357,6 +1602,40 @@ const useStore = create<AppState>((set, get) => ({
     });
   },
 
+  // obbyircd INVITELINK actions: thin wrappers over sendRaw that
+  // also flip the loading flag so UI components can render
+  // spinners.  Replies stream back asynchronously and are merged in
+  // the dedicated invitelink store-handler (store/handlers/invitelink.ts).
+  loadInvitations: (serverId) => {
+    set((state) => ({
+      inviteLinks: {
+        ...state.inviteLinks,
+        [serverId]: {
+          ...(state.inviteLinks[serverId] ?? { entries: [], loading: false }),
+          entries: [],
+          loading: true,
+          error: undefined,
+        },
+      },
+    }));
+    ircClient.sendRaw(serverId, "INVITELINK LIST");
+  },
+  createInvitation: (serverId, channel, description) => {
+    let line = "INVITELINK CREATE";
+    const ch = channel?.trim();
+    const desc = description?.trim();
+    if (ch && ch !== "*") {
+      line += ` ${ch}`;
+      if (desc) line += ` :${desc}`;
+    } else if (desc) {
+      line += ` * :${desc}`;
+    }
+    ircClient.sendRaw(serverId, line);
+  },
+  deleteInvitation: (serverId, shareId) => {
+    ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
+  },
+
   joinChannel: (serverId, channelName) => {
     const channel = ircClient.joinChannel(serverId, channelName);
     if (channel) {
@@ -1379,18 +1658,23 @@ const useStore = create<AppState>((set, get) => ({
           return server;
         });
 
-        // Update localStorage with the new channel
-        const savedServers = loadSavedServers();
+        // Skip for bouncer sessions: savedServer lookup is host:port-keyed
+        // and a soju bouncer's parent + every bound child share that.
         const currentServer = state.servers.find((s) => s.id === serverId);
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) ===
-              normalizeHost(currentServer?.host || "") &&
-            s.port === currentServer?.port,
-        );
-        if (savedServer && !savedServer.channels.includes(channel.name)) {
-          savedServer.channels.push(channel.name);
-          saveServersToLocalStorage(savedServers);
+        const isBouncerSession =
+          !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
+        if (!isBouncerSession) {
+          const savedServers = loadSavedServers();
+          const savedServer = savedServers.find(
+            (s) =>
+              normalizeHost(s.host) ===
+                normalizeHost(currentServer?.host || "") &&
+              s.port === currentServer?.port,
+          );
+          if (savedServer && !savedServer.channels.includes(channel.name)) {
+            savedServer.channels.push(channel.name);
+            saveServersToLocalStorage(savedServers);
+          }
         }
 
         // Update channelOrder state to include the new channel
@@ -1431,17 +1715,23 @@ const useStore = create<AppState>((set, get) => ({
         return server;
       });
 
-      // Update localStorage to remove the channel
-      const savedServers = loadSavedServers();
+      // Skip for bouncer sessions (see joinChannel).
       const currentServer = updatedServers.find((s) => s.id === serverId);
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(currentServer?.host || "") &&
-          s.port === currentServer?.port,
-      );
-      if (savedServer) {
-        savedServer.channels = currentServer?.channels.map((c) => c.name) || [];
-        saveServersToLocalStorage(savedServers);
+      const isBouncerSession =
+        !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
+      if (!isBouncerSession) {
+        const savedServers = loadSavedServers();
+        const savedServer = savedServers.find(
+          (s) =>
+            normalizeHost(s.host) ===
+              normalizeHost(currentServer?.host || "") &&
+            s.port === currentServer?.port,
+        );
+        if (savedServer) {
+          savedServer.channels =
+            currentServer?.channels.map((c) => c.name) || [];
+          saveServersToLocalStorage(savedServers);
+        }
       }
 
       // Update channelOrder to remove the channel
@@ -1868,6 +2158,34 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
+  appendRawLogLine: ({ serverId, direction, line }) => {
+    set((state) => {
+      const existing = state.rawLog[serverId] ?? [];
+      const lastSeq = existing.length ? existing[existing.length - 1].seq : 0;
+      const next = [
+        ...existing,
+        { seq: lastSeq + 1, direction, line, timestamp: Date.now() },
+      ];
+      const MAX = 2000;
+      const trimmed = next.length > MAX ? next.slice(next.length - MAX) : next;
+      return { rawLog: { ...state.rawLog, [serverId]: trimmed } };
+    });
+  },
+
+  clearRawLog: (serverId) => {
+    set((state) => ({
+      rawLog: { ...state.rawLog, [serverId]: [] },
+    }));
+  },
+
+  openRawLogViewer: (serverId) => {
+    set(() => ({ rawLogViewerServerId: serverId }));
+  },
+
+  closeRawLogViewer: () => {
+    set(() => ({ rawLogViewerServerId: null }));
+  },
+
   selectServer: (serverId, options) => {
     set((state) => {
       // If selecting null (no server), just update the selectedServerId
@@ -2212,44 +2530,36 @@ const useStore = create<AppState>((set, get) => ({
 
   reorderChannels: (serverId, channelIds) => {
     set((state) => {
-      // Also update the savedServer.channels array to match the new order
       const server = state.servers.find((s) => s.id === serverId);
-      if (server) {
+      if (!server) return {};
+
+      const isBouncerSession =
+        !!server.isBouncerControl || !!server.bouncerNetid;
+
+      const channelNames = channelIds
+        .map((id) => server.channels.find((c) => c.id === id)?.name)
+        .filter((name): name is string => name !== undefined);
+
+      const newChannelOrder = {
+        ...state.channelOrder,
+        [serverId]: channelNames,
+      };
+      saveChannelOrder(newChannelOrder);
+
+      if (!isBouncerSession) {
         const savedServers = loadSavedServers();
         const savedServer = savedServers.find(
           (s) =>
             normalizeHost(s.host) === normalizeHost(server.host) &&
             s.port === server.port,
         );
-
         if (savedServer) {
-          // Convert channel IDs to channel names in the correct order
-          const channelNames = channelIds
-            .map((id) => {
-              const channel = server.channels.find((c) => c.id === id);
-              return channel?.name;
-            })
-            .filter((name): name is string => name !== undefined);
-
           savedServer.channels = channelNames;
           saveServersToLocalStorage(savedServers);
-
-          // Store channel names in channelOrder state (not IDs)
-          const newChannelOrder = {
-            ...state.channelOrder,
-            [serverId]: channelNames,
-          };
-
-          saveChannelOrder(newChannelOrder);
-
-          return {
-            channelOrder: newChannelOrder,
-          };
         }
       }
 
-      // Fallback if server not found
-      return {};
+      return { channelOrder: newChannelOrder };
     });
   },
 
@@ -2753,9 +3063,19 @@ const useStore = create<AppState>((set, get) => ({
     runPendingMigrations();
 
     const savedServers = loadSavedServers();
-    const connectionPromises = [];
 
-    for (const savedServer of savedServers) {
+    // Reconnect only parent / standalone servers here. Bouncer children
+    // are no longer dispatched from saved state -- the bouncer's own
+    // `state=connected` set is the source of truth, and the bouncer
+    // reducer auto-binds each one after the parent's LISTNETWORKS lands
+    // (see store/handlers/bouncer.ts `autoBindConnectedNetworks`).
+    // This removes a race where the saved children's SASL/BIND would
+    // hit soju before the parent's auth completed and surface as an
+    // "Authentication required" loop (#120 followup).
+    const parents = savedServers.filter((s) => !s.bouncerNetid);
+
+    const connectionPromises: Promise<unknown>[] = [];
+    for (const savedServer of parents) {
       const {
         id,
         name,
@@ -2763,33 +3083,32 @@ const useStore = create<AppState>((set, get) => ({
         port,
         nickname,
         password,
-        channels,
         saslEnabled,
         saslAccountName,
         saslPassword,
       } = savedServer;
 
-      // Ensure host is in URL format (handles old hostname-only entries)
       const urlHost = ensureUrlFormat(host, port);
 
-      // Check if server already exists in store using normalized comparison
       const existingServer = get().servers.find(
         (s) =>
           normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port,
       );
 
       if (!existingServer) {
-        // Add server to store with connecting state
         const connectingServer: Server = {
           id,
           name: name || normalizeHost(urlHost),
-          host: normalizeHost(urlHost), // Store normalized hostname in state
+          host: normalizeHost(urlHost),
           port,
           channels: [],
           privateChats: [],
           isConnected: false,
           connectionState: "connecting",
           users: [],
+          bouncerServerId: savedServer.bouncerServerId,
+          bouncerNetid: savedServer.bouncerNetid,
+          isBouncerControl: savedServer.isBouncerControl,
         };
 
         set((state) => ({
@@ -2797,38 +3116,35 @@ const useStore = create<AppState>((set, get) => ({
         }));
       }
 
-      const connectionPromise = get()
-        .connect(
-          name || normalizeHost(urlHost),
-          urlHost, // Use full URL
-          port,
-          nickname,
-          saslEnabled,
-          password,
-          saslAccountName,
-          saslPassword,
-        )
-        .catch((error) => {
-          console.error(`Failed to reconnect to server ${urlHost}`, error);
-          // Update server state to disconnected using normalized comparison
-          set((state) => ({
-            servers: state.servers.map((s) =>
-              normalizeHost(s.host) === normalizeHost(urlHost) &&
-              s.port === port
-                ? { ...s, connectionState: "disconnected" as const }
-                : s,
-            ),
-          }));
-        });
+      let connectionPromise: Promise<unknown> = get().connect(
+        name || normalizeHost(urlHost),
+        urlHost,
+        port,
+        nickname,
+        saslEnabled,
+        password,
+        saslAccountName,
+        saslPassword,
+      );
+      connectionPromise = connectionPromise.catch((error) => {
+        console.error(`Failed to reconnect to server ${urlHost}`, error);
+        set((state) => ({
+          servers: state.servers.map((s) =>
+            normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port
+              ? { ...s, connectionState: "disconnected" as const }
+              : s,
+          ),
+        }));
+      });
 
       connectionPromises.push(connectionPromise);
     }
 
-    // Wait for all connections to complete
+    // Wait for the parent burst to settle. Bouncer children come back
+    // asynchronously via the bouncer reducer's autoBindConnectedNetworks
+    // hook once the parent has posted LISTNETWORKS -- they don't block
+    // initial app boot.
     await Promise.all(connectionPromises);
-
-    // Note: UI selection is now loaded immediately from localStorage in initial state,
-    // so no need for delayed restoration here
   },
 
   reconnectServer: async (serverId: string) => {
@@ -2893,34 +3209,40 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   deleteServer: (serverId) => {
-    clearServerConnectionTimeout(serverId);
-    ircClient.removeServer(serverId);
+    // Cascade: when target is a bouncer control session, also drop every
+    // bound child. Each child shares the parent's socket-side identity
+    // with soju and has no useful life beyond the control session.
+    const preState = get();
+    const target = preState.servers.find((s) => s.id === serverId);
+    const cascadeIds: string[] = target?.isBouncerControl
+      ? preState.servers
+          .filter((s) => s.bouncerServerId === serverId)
+          .map((s) => s.id)
+      : [];
+    const toRemove = new Set<string>([serverId, ...cascadeIds]);
+
+    for (const id of toRemove) {
+      clearServerConnectionTimeout(id);
+      ircClient.removeServer(id);
+    }
 
     set((state) => {
-      const serverToDelete = state.servers.find(
-        (server) => server.id === serverId,
-      );
-
       const savedServers = loadSavedServers();
-      const updatedServers = savedServers.filter(
-        (s) =>
-          normalizeHost(s.host) !== normalizeHost(serverToDelete?.host || "") ||
-          s.port !== serverToDelete?.port,
-      );
+      const updatedServers = savedServers.filter((s) => !toRemove.has(s.id));
       saveServersToLocalStorage(updatedServers);
 
       const savedMetadata = loadSavedMetadata();
-      delete savedMetadata[serverId];
+      for (const id of toRemove) delete savedMetadata[id];
       saveMetadataToLocalStorage(savedMetadata);
 
       const remainingServers = state.servers.filter(
-        (server) => server.id !== serverId,
+        (server) => !toRemove.has(server.id),
       );
       const newSelectedServerId =
         remainingServers.length > 0 ? remainingServers[0].id : null;
 
       const clearConnectionState =
-        state.connectingServerId === serverId
+        state.connectingServerId && toRemove.has(state.connectingServerId)
           ? { isConnecting: false, connectingServerId: null }
           : {};
 
@@ -2933,6 +3255,7 @@ const useStore = create<AppState>((set, get) => ({
           selectedChannelId: newSelectedServerId
             ? remainingServers[0].channels[0]?.id || null
             : null,
+          disconnectConfirmTarget: null,
         },
       };
     });
@@ -2967,6 +3290,88 @@ const useStore = create<AppState>((set, get) => ({
         editServerId: serverId,
       },
     }));
+  },
+
+  editBouncerNetwork: (childServerId) => {
+    const state = get();
+    const child = state.servers.find((s) => s.id === childServerId);
+    if (!child?.bouncerServerId || !child.bouncerNetid) return;
+    const parent = state.servers.find((s) => s.id === child.bouncerServerId);
+    if (!parent) return;
+    set((s) => ({
+      ui: {
+        ...s.ui,
+        selectedServerId: parent.id,
+        pendingBouncerEdit: {
+          bouncerServerId: parent.id,
+          netid: child.bouncerNetid as string,
+        },
+      },
+    }));
+  },
+
+  consumePendingBouncerEdit: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBouncerEdit: null },
+    }));
+  },
+
+  requestDeleteServer: (serverId) => {
+    const state = get();
+    const target = state.servers.find((s) => s.id === serverId);
+    if (target?.isBouncerControl) {
+      set((s) => ({
+        ui: { ...s.ui, disconnectConfirmTarget: serverId },
+      }));
+      return;
+    }
+    if (target?.bouncerServerId && target.bouncerNetid) {
+      set((s) => ({
+        ui: {
+          ...s.ui,
+          disconnectNetworkConfirmTarget: {
+            bouncerServerId: target.bouncerServerId as string,
+            netid: target.bouncerNetid as string,
+            childServerId: serverId,
+          },
+        },
+      }));
+      return;
+    }
+    get().deleteServer(serverId);
+  },
+
+  cancelDeleteServer: () => {
+    set((state) => ({
+      ui: { ...state.ui, disconnectConfirmTarget: null },
+    }));
+  },
+
+  cancelDisconnectNetwork: () => {
+    set((state) => ({
+      ui: { ...state.ui, disconnectNetworkConfirmTarget: null },
+    }));
+  },
+
+  confirmDisconnectNetwork: () => {
+    const state = get();
+    const target = state.ui.disconnectNetworkConfirmTarget;
+    if (!target) return;
+    state.bouncerDelNetwork(target.bouncerServerId, target.netid);
+    state.deleteServer(target.childServerId);
+    set((s) => ({
+      ui: { ...s.ui, disconnectNetworkConfirmTarget: null },
+    }));
+  },
+
+  setBouncerGroupAccent: (parentServerId, hex) => {
+    set((state) => {
+      const next = { ...state.bouncerGroupAccents };
+      if (hex) next[parentServerId] = hex;
+      else delete next[parentServerId];
+      storage.bouncerGroupAccents.save(next);
+      return { bouncerGroupAccents: next };
+    });
   },
 
   tictactoeInvite: (serverId, opponent) =>
@@ -3208,6 +3613,36 @@ const useStore = create<AppState>((set, get) => ({
         isChannelListModalOpen:
           isOpen !== undefined ? isOpen : !state.ui.isChannelListModalOpen,
       },
+    }));
+  },
+
+  requestBotsModalOpen: (serverId, botNick) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotsModalOpen: { serverId, botNick },
+      },
+    }));
+  },
+
+  clearBotsModalOpenRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotsModalOpen: null },
+    }));
+  },
+
+  requestBotCommandPick: (serverId, botNick, command) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingBotCommandPick: { serverId, botNick, command },
+      },
+    }));
+  },
+
+  clearBotCommandPickRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingBotCommandPick: null },
     }));
   },
 
@@ -3714,7 +4149,10 @@ const useStore = create<AppState>((set, get) => ({
       },
     }));
 
-    ircClient.metadataList(serverId, target);
+    // Drip-feed through the lazy queue so a bursty source (scroll-stop
+    // on a wall of unfamiliar nicks, NAMES landing, etc.) doesn't trip
+    // server-side recvq flood protection.
+    enqueueMetadataList(ircClient, serverId, target);
   },
 
   metadataSet: (serverId, target, key, value, visibility) => {
@@ -3754,12 +4192,193 @@ const useStore = create<AppState>((set, get) => ({
     }
   },
 
+  bouncerListNetworks: (bouncerServerId) => {
+    ircClient.bouncerListNetworks(bouncerServerId);
+  },
+  bouncerAddNetwork: (bouncerServerId, attrs) => {
+    get().clearBouncerError(bouncerServerId);
+    ircClient.bouncerAddNetwork(bouncerServerId, encodeBouncerAttrs(attrs));
+  },
+  bouncerChangeNetwork: (bouncerServerId, netid, attrs) => {
+    get().clearBouncerError(bouncerServerId);
+    ircClient.bouncerChangeNetwork(
+      bouncerServerId,
+      netid,
+      encodeBouncerAttrs(attrs),
+    );
+  },
+  bouncerDelNetwork: (bouncerServerId, netid) => {
+    get().clearBouncerError(bouncerServerId);
+    ircClient.bouncerDelNetwork(bouncerServerId, netid);
+  },
+  clearBouncerError: (bouncerServerId) => {
+    set((state) => {
+      const bouncer = state.bouncers[bouncerServerId];
+      if (!bouncer?.lastError) return {};
+      return {
+        bouncers: {
+          ...state.bouncers,
+          [bouncerServerId]: { ...bouncer, lastError: undefined },
+        },
+      };
+    });
+  },
+
+  bouncerConnectNetwork: async (bouncerServerId, netid) => {
+    const state = get();
+    const parent = state.servers.find((s) => s.id === bouncerServerId);
+    if (!parent) return undefined;
+    // Idempotent: if we already have a child server for this binding,
+    // do nothing -- whatever its current connectionState is, a fresh
+    // connect would re-issue BIND on top of the existing socket. The
+    // user can use the per-server reconnect affordance to retry.
+    const childId = uuidv5(`${bouncerServerId}:${netid}`, CHANNEL_NAMESPACE);
+    if (state.servers.some((s) => s.id === childId)) return undefined;
+    // Reuse the parent's persisted credentials. Bouncers authenticate
+    // the user once on the control connection and then accept child
+    // connections from the same client with the same auth.
+    const savedParent = storage.servers
+      .load()
+      .find((s) => s.id === bouncerServerId);
+    if (!savedParent) return undefined;
+
+    // Network name from the bouncer's BOUNCER NETWORK announcement (if
+    // any) -- a friendly label for the new Server.
+    const bouncer = state.bouncers[bouncerServerId];
+    const network = bouncer?.networks[netid];
+    const friendly = network?.attributes.name || `${parent.name}/${netid}`;
+
+    // Persist the child config so a subsequent connectToSavedServers
+    // can restore the same child. ServerConfig carries the
+    // bouncerServerId + bouncerNetid linkage.
+    const savedServers = storage.servers.load();
+    if (!savedServers.find((s) => s.id === childId)) {
+      savedServers.push({
+        ...savedParent,
+        id: childId,
+        name: friendly,
+        bouncerServerId,
+        bouncerNetid: netid,
+        isBouncerControl: false,
+        addedAt: Date.now(),
+      });
+      storage.servers.save(savedServers);
+    }
+
+    // Seed an in-memory Server row in "connecting" state so the UI
+    // can show it immediately.
+    set((state) => {
+      if (state.servers.some((s) => s.id === childId)) return state;
+      const seed: Server = {
+        id: childId,
+        name: friendly,
+        host: parent.host,
+        port: parent.port,
+        channels: [],
+        privateChats: [],
+        users: [],
+        isConnected: false,
+        connectionState: "connecting",
+        bouncerServerId,
+        bouncerNetid: netid,
+      };
+      return { servers: [...state.servers, seed] };
+    });
+
+    // Queue the BIND so the next CAP END for this new connection
+    // emits `BOUNCER BIND <netid>` first.
+    ircClient.setPendingBouncerBind(childId, netid);
+
+    // The in-memory Server.host is stripped to a bare hostname during
+    // the original parent connect, which loses the protocol + path for
+    // WSS URLs (e.g. wss://obby.t3ks.com:6662/socket -> obby.t3ks.com).
+    // Use the persisted savedParent.host instead so the child landing
+    // on the same listener actually opens /socket, not the bare root.
+    return ircClient.connect(
+      friendly,
+      savedParent.host,
+      savedParent.port,
+      savedParent.nickname,
+      savedParent.password,
+      savedParent.saslAccountName,
+      savedParent.saslPassword,
+      childId,
+    );
+  },
+
   sendRaw: (serverId, command) => {
     ircClient.sendRaw(serverId, command);
   },
 
   capAck: (serverId, key, capabilities) => {
     ircClient.capAck(serverId, key, capabilities);
+  },
+
+  aiWorkflowSetCollapsed: (serverId, workflowId, collapsed) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: { ...server, [workflowId]: { ...wf, collapsed } },
+        },
+      };
+    });
+  },
+
+  aiWorkflowDismiss: (serverId, workflowId) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: {
+            ...server,
+            [workflowId]: { ...wf, dismissed: true, userOpened: false },
+          },
+        },
+      };
+    });
+  },
+
+  aiWorkflowReopen: (serverId, workflowId) => {
+    set((state) => {
+      const server = state.aiWorkflows[serverId];
+      const wf = server?.[workflowId];
+      if (!wf) return state;
+      // Clearing `historical` here is deliberate: the flag exists to
+      // keep the tray quiet on channel-join chathistory replay, but
+      // once the user has explicitly clicked the inline pill to view
+      // this run they want the card surfaced even if it was replayed.
+      // userOpened is what BotToolsTray gates on now (live workflows
+      // no longer auto-pop), so setting it here is what makes the
+      // dropdown's "View" item actually surface the card.
+      return {
+        aiWorkflows: {
+          ...state.aiWorkflows,
+          [serverId]: {
+            ...server,
+            [workflowId]: {
+              ...wf,
+              dismissed: false,
+              collapsed: false,
+              historical: false,
+              userOpened: true,
+            },
+          },
+        },
+      };
+    });
+  },
+
+  aiSendAction: (serverId, botNick, action) => {
+    // base64 of compact JSON; its alphabet needs no IRC tag-value escaping.
+    const value = encodeBotToolsValue(action);
+    ircClient.sendRaw(serverId, `@${BOT_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
   },
 }));
 

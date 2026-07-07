@@ -1,9 +1,13 @@
 /// <reference types="vitest" />
 /// <reference types="@testing-library/jest-dom" />
 
+import fs from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from "@vitejs/plugin-react";
+
+const require = createRequire(import.meta.url);
 
 // Single-tenant hosted deployments (VITE_HIDE_SERVER_LIST=true) ship a
 // PWA manifest + service worker so the page is installable on Android/
@@ -77,6 +81,36 @@ function hostedPwaPlugin(env: Record<string, string>): Plugin {
   };
 }
 
+// emoji-datasource ships 22 fields per record (~1.4MB); the tab-completer only
+// needs 3 (unified, short_names, category). Slim it at build time via a virtual
+// module so the lazy emoji chunk is ~115KB instead of 1.4MB, and it stays in
+// sync with the installed dataset version (no committed copy to drift).
+function emojiSlimPlugin(): Plugin {
+  const virtualId = "virtual:emoji-slim";
+  const resolvedId = `\0${virtualId}`;
+  return {
+    name: "emoji-slim",
+    resolveId(id) {
+      if (id === virtualId) return resolvedId;
+    },
+    load(id) {
+      if (id !== resolvedId) return;
+      const file = require.resolve("emoji-datasource/emoji.json");
+      const data = JSON.parse(fs.readFileSync(file, "utf8")) as Array<{
+        unified: string;
+        short_names: string[];
+        category: string;
+      }>;
+      const slim = data.map((e) => ({
+        unified: e.unified,
+        short_names: e.short_names,
+        category: e.category,
+      }));
+      return `export default ${JSON.stringify(slim)};`;
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -88,6 +122,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       hostedPwaPlugin(process.env as Record<string, string>),
+      emojiSlimPlugin(),
     ],
     base: "./",
     test: {
