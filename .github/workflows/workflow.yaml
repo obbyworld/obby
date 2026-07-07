@@ -9,9 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Setup Biome
-        uses: biomejs/setup-biome@v2
+        uses: biomejs/setup-biome@4c91541eaada48f67d7dbd7833600ce162b68f51 # v2.7.1
         with:
           version: latest
       - name: Run Biome
@@ -22,32 +24,23 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-    - name: Dependencies install
-      run: npm ci
-    - name: Test
-      run: npm run test
-
-  nix-linux:
-    name: Nix package (Linux x86_64)
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v31
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Build obsidianirc
-        run: nix flake check && nix build .#obsidianirc --no-link --print-build-logs
+          persist-credentials: false
+      - name: Dependencies install
+        run: npm ci
+      - name: Test
+        run: npm run test
 
   i18n:
     name: i18n Catalog Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - name: Dependencies install
         run: npm ci
       - name: Verify catalog is up to date

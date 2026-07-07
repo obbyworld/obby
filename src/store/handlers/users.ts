@@ -110,9 +110,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       const isOurJoin = username === ourNick;
 
       if (isOurJoin) {
-        // Ensure the channel exists in the store; joinChannel action usually handles this,
-        // but this catches cases where the server JOIN confirmation arrives without a prior joinChannel call.
-        // Don't add ourselves to the member list — NAMES populates it with proper modes.
+        // Server-initiated JOIN (Unreal persistence, sajoin, perform list,
+        // perform-on-connect): joinChannel() never ran, so the CHATHISTORY
+        // + WHO chain that normally lives inside it was never kicked off.
+        // Mirror joinChannel's tail here for the channel-doesn't-exist case
+        // so the nicklist actually populates. Don't add ourselves to the
+        // member list — NAMES populates it with proper modes.
+        let newChannelHadCap: boolean | null = null;
         store.setState((state) => {
           const server = state.servers.find((s) => s.id === serverId);
           if (!server) return {};
@@ -121,6 +125,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             (c) => c.name.toLowerCase() === channelName.toLowerCase(),
           );
           if (exists) return {};
+
+          // soju bouncer control session has no real chathistory.
+          const hasChathistory =
+            !server.isBouncerControl &&
+            !!server.capabilities?.includes("draft/chathistory");
+          newChannelHadCap = hasChathistory;
 
           return {
             servers: state.servers.map((s) => {
@@ -138,13 +148,28 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                     isMentioned: false,
                     messages: [],
                     users: [],
-                    needsWhoRequest: true,
+                    isLoadingHistory: hasChathistory,
+                    hasMoreHistory: hasChathistory,
+                    needsWhoRequest: !!hasChathistory,
+                    chathistoryRequested: hasChathistory,
                   },
                 ],
               };
             }),
           };
         });
+        // ircClient I/O OUTSIDE setState: triggerEvent inside setState
+        // causes a nested-setState race (see batches.ts:215-218).
+        if (newChannelHadCap === true) {
+          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
+          ircClient.triggerEvent("CHATHISTORY_LOADING", {
+            serverId,
+            channelName,
+            isLoading: true,
+          });
+        } else if (newChannelHadCap === false) {
+          ircClient.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+        }
         // Fall through to shared message creation below — same JOIN event, same path.
       } else {
         store.setState((state) => {
@@ -860,6 +885,17 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       target,
       serverId,
     });
+    // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
+    // event that normally chains the WHO request will never fire on
+    // its own. Synthesise it here so the channel doesn't stay
+    // permanently flagged needsWhoRequest=true.
+    if (command === "CHATHISTORY" && target && target.startsWith("#")) {
+      ircClient.triggerEvent("CHATHISTORY_LOADING", {
+        serverId,
+        channelName: target,
+        isLoading: false,
+      });
+    }
   });
 
   ircClient.on(

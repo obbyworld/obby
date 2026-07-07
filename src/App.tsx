@@ -10,15 +10,17 @@ import AppLayout from "./components/layout/AppLayout";
 import { ServerNoticesPopup } from "./components/message/ServerNoticesPopup";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
+import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
+import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
 import ChannelListModal from "./components/ui/ChannelListModal";
 import { EditServerModal } from "./components/ui/EditServerModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
 import LoadingOverlay from "./components/ui/LoadingOverlay";
+import ProfileModalRouter from "./components/ui/ProfileModalRouter";
 import QuickActions from "./components/ui/QuickActions";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { TwoFactorSettingsModal } from "./components/ui/TwoFactorSettingsModal";
-import UserProfileModal from "./components/ui/UserProfileModal";
 import UserSettings from "./components/ui/UserSettings";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
@@ -39,6 +41,47 @@ const askPermissions = async () => {
     permissionGranted = permission === "granted";
   }
 };
+
+/* Channel auto-join from URL query string.
+ *
+ * When the hosted client is reached via an invite-page "Join via
+ * Web" link the URL carries `?channel=<urlencoded>` (the obbyircd
+ * invite-page module appends it on channel-specific invites). Read
+ * the param once on module load, normalise the value, and stash for
+ * the first `ready` event to consume.  The query param is stripped
+ * from the visible address bar immediately so a refresh doesn't
+ * silently re-fire the auto-join. */
+let pendingJoinChannel: string | null = null;
+if (typeof window !== "undefined") {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("channel");
+    if (raw) {
+      const trimmed = raw.trim();
+      if (trimmed) {
+        // Accept both encoded ("%23weather") and unencoded ("#weather")
+        // forms.  Default to a `#` prefix when the caller passed a
+        // bare channel name; sigils &, ^, $ are preserved verbatim.
+        const first = trimmed.charAt(0);
+        pendingJoinChannel =
+          first === "#" || first === "&" || first === "^" || first === "$"
+            ? trimmed
+            : `#${trimmed}`;
+      }
+      // Strip the param so refreshes don't re-trigger.  Preserve any
+      // other query params the host page may use.
+      params.delete("channel");
+      const remaining = params.toString();
+      const newUrl =
+        window.location.pathname +
+        (remaining ? `?${remaining}` : "") +
+        window.location.hash;
+      window.history.replaceState({}, "", newUrl);
+    }
+  } catch {
+    /* malformed URL -- silently ignore */
+  }
+}
 
 const initializeEnvSettings = (
   toggleAddServerModal: (
@@ -100,6 +143,7 @@ const App: React.FC = () => {
       prefillServerDetails,
     },
     joinChannel,
+    selectChannel,
     connectToSavedServers,
     toggleServerNoticesPopup,
     clearProfileViewRequest,
@@ -172,7 +216,33 @@ const App: React.FC = () => {
     hasInitialized.current = true;
     initializeEnvSettings(toggleAddServerModal, joinChannel);
     connectToSavedServers();
-  }, [connectToSavedServers, joinChannel, toggleAddServerModal]);
+
+    /* Auto-join the channel encoded in `?channel=` on the URL the
+     * user landed on.  Fires on the first server that finishes
+     * registration so persistence reconnects and fresh connects both
+     * get caught.  Channel pending state is module-scoped and
+     * consumed exactly once. */
+    if (pendingJoinChannel) {
+      const onReady = ({ serverId }: { serverId: string }) => {
+        if (!pendingJoinChannel) return;
+        const channel = pendingJoinChannel;
+        pendingJoinChannel = null;
+        joinChannel(serverId, channel);
+        // Wait a tick for the JOIN echo to register the channel in
+        // the store, then focus it.  Same pattern UserProfileModal
+        // uses for click-to-join.
+        setTimeout(() => {
+          const srv = useStore
+            .getState()
+            .servers.find((s) => s.id === serverId);
+          const ch = srv?.channels.find((c) => c.name === channel);
+          if (ch) selectChannel(ch.id, { navigate: true });
+        }, 200);
+        ircClient.deleteHook("ready", onReady);
+      };
+      ircClient.on("ready", onReady);
+    }
+  }, [connectToSavedServers, joinChannel, selectChannel, toggleAddServerModal]);
 
   // When the server list is hidden and all saved-server connections fail, the user
   // has no other way to open the login modal, so we open it automatically.
@@ -318,6 +388,8 @@ const App: React.FC = () => {
                   onClose={() => toggleTwoFactorSettings(false)}
                 />
               )}
+              <BouncerDisconnectConfirmModal />
+              <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
               <TicTacToeModal />
               {isSettingsModalOpen && <UserSettings />}
@@ -325,7 +397,7 @@ const App: React.FC = () => {
               {isChannelListModalOpen && <ChannelListModal />}
               <LinkSecurityWarningModal />
               {userProfileModalState?.isOpen && (
-                <UserProfileModal
+                <ProfileModalRouter
                   isOpen={userProfileModalState.isOpen}
                   onClose={() => setUserProfileModalState(null)}
                   serverId={userProfileModalState.serverId}

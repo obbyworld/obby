@@ -28,10 +28,17 @@ import {
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
+import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
 
 const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
-  import("react-pdf").then((m) => ({ default: m.Document })),
+  import("react-pdf").then((m) => {
+    // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
+    if (m.pdfjs?.GlobalWorkerOptions) {
+      m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    }
+    return { default: m.Document };
+  }),
 );
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
@@ -1021,20 +1028,22 @@ const PdfPreview: React.FC<{
         />
       }
     >
-      <LazyDocument
-        file={url}
-        options={{ isEvalSupported: false }}
-        loading={null}
-        onLoadError={() => setPdfError(true)}
-      >
-        <LazyPage
-          pageNumber={1}
-          width={PDF_THUMB_W}
-          canvasBackground="white"
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-        />
-      </LazyDocument>
+      <PdfErrorBoundary onError={() => setPdfError(true)}>
+        <LazyDocument
+          file={url}
+          options={PDF_OPTIONS}
+          loading={null}
+          onLoadError={() => setPdfError(true)}
+        >
+          <LazyPage
+            pageNumber={1}
+            width={PDF_THUMB_W}
+            canvasBackground="white"
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+          />
+        </LazyDocument>
+      </PdfErrorBoundary>
     </Suspense>,
   );
 };

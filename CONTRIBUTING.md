@@ -3,7 +3,7 @@
 ## Clone and setup the repository
 
 ```sh
-git clone https://github.com/ObsidianIRC/ObsidianIRC
+git clone https://github.com/obbyworld/obby
 cd ObsidianIRC
 npm install
 npm run dev  # Start the development server
@@ -51,7 +51,7 @@ Now every time you commit the lint and format commands will run automatically.
 1. **Clone and install dependencies:**
 
    ```bash
-   git clone https://github.com/ObsidianIRC/ObsidianIRC
+   git clone https://github.com/obbyworld/obby
    cd ObsidianIRC
    npm install
    ```

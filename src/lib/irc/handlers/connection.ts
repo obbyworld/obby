@@ -1,4 +1,4 @@
-import { parseIsupport } from "../../ircUtils";
+import { parseIsupportTokens } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 
 export function handlePing(
@@ -59,7 +59,10 @@ export function handleError(
       message: errorMessage,
       retryAfter: 600000,
     });
+    return;
   }
+
+  ctx.triggerEvent("serverError", { serverId, message: errorMessage });
 }
 
 export function handleRplWelcome(
@@ -120,17 +123,48 @@ export function handleIsupport(
   serverId: string,
   _source: string,
   parv: string[],
+  trailing?: string,
 ): void {
-  const capabilities = parseIsupport(parv.join(" "));
-  for (const [key, value] of Object.entries(capabilities)) {
-    if (key === "NETWORK") {
+  // Strip the leading target nick (parv[0]) and the trailing
+  // "are supported by this server" sentinel — the parser already
+  // colon-strips it and appends it to parv, so match it by value.
+  const tokens = parv.slice(1);
+  if (trailing && tokens[tokens.length - 1] === trailing) tokens.pop();
+  const tokenList = tokens.join(" ");
+
+  // The v0.2 `+=` append form arrives across separate RPL_ISUPPORT
+  // lines, so the accumulator must persist between handleIsupport calls.
+  let perServer = ctx.isupportValues.get(serverId);
+  if (!perServer) {
+    perServer = new Map();
+    ctx.isupportValues.set(serverId, perServer);
+  }
+
+  for (const tok of parseIsupportTokens(tokenList)) {
+    let value: string;
+    if (tok.op === "delete") {
+      perServer.delete(tok.key);
+      value = "";
+    } else if (tok.op === "append") {
+      value = (perServer.get(tok.key) ?? "") + tok.value;
+      perServer.set(tok.key, value);
+    } else {
+      value = tok.value;
+      perServer.set(tok.key, value);
+    }
+
+    if (tok.key === "NETWORK") {
       const server = ctx.servers.get(serverId);
       if (server) {
         server.networkName = value;
         ctx.servers.set(serverId, server);
       }
     }
-    ctx.triggerEvent("ISUPPORT", { serverId, key, value });
+    // Downstream consumers see the cumulative total each time it
+    // changes -- they don't need to know about append vs set
+    // themselves.  For "delete" they receive value "" alongside the
+    // ISUPPORT key being out of the accumulator.
+    ctx.triggerEvent("ISUPPORT", { serverId, key: tok.key, value });
   }
 }
 
@@ -173,7 +207,7 @@ export function handleCap(
   else if (subcommand === "ACK") {
     ctx.onCapAck(serverId, caps);
   } else if (subcommand === "NAK") {
-    ctx.sendRaw(serverId, "CAP END");
+    ctx.sendCapEnd(serverId);
     ctx.capNegotiationComplete.set(serverId, true);
   } else if (subcommand === "NEW") ctx.onCapNew(serverId, caps);
   else if (subcommand === "DEL") ctx.onCapDel(serverId, caps);
@@ -198,7 +232,8 @@ export function handleSaslSuccess(
   _source: string,
   _parv: string[],
 ): void {
-  ctx.sendRaw(serverId, "CAP END");
+  if (ctx.capNegotiationComplete.get(serverId)) return;
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
 }
@@ -209,7 +244,8 @@ export function handleSaslFailure(
   _source: string,
   _parv: string[],
 ): void {
-  ctx.sendRaw(serverId, "CAP END");
+  if (ctx.capNegotiationComplete.get(serverId)) return;
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
 }
