@@ -108,9 +108,7 @@ Each handler file subscribes to `ircClient` events and updates the Zustand store
 // Pattern in every src/store/handlers/*.ts
 export function registerXxxHandlers(store: StoreApi<AppState>) {
   ircClient.on("EVENT", (payload) => {
-    store.setState((state) => ({
-      /* return Partial<AppState> — no mutation */
-    }));
+    store.setState((state) => ({/* return Partial<AppState> — no mutation */}));
   });
 }
 ```

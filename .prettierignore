@@ -27,3 +27,6 @@ src-tauri/gen
 # Lingui generated catalogs
 src/locales/**/*.po
 src/locales/**/*.mjs
+
+# Symlink (-> AGENTS.md); prettier errors on symlinked paths
+CLAUDE.md
