@@ -1,13 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
 import type React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from "vitest";
 import { useSwipeNavigation } from "../../src/hooks/useSwipeNavigation";
 
 describe("useSwipeNavigation", () => {
-  let onPageChange: ReturnType<typeof vi.fn>;
+  let onPageChange: Mock<(page: number) => void>;
 
   beforeEach(() => {
-    onPageChange = vi.fn();
+    onPageChange = vi.fn<(page: number) => void>();
     vi.useFakeTimers();
   });
 

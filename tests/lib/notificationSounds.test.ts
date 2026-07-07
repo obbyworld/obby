@@ -37,6 +37,16 @@ const mockURL = {
   revokeObjectURL: vi.fn(),
 };
 
+// vitest 4 rejects arrow implementations invoked with `new`; a plain function
+// that returns a prebuilt instance is the supported replacement for stubbing
+// the AudioContext/Audio constructors.
+function ctorReturning<T>(instance: T): () => T {
+  function Ctor() {
+    return instance;
+  }
+  return Ctor as unknown as () => T;
+}
+
 describe("notificationSounds", () => {
   beforeEach(() => {
     // Mock globals
@@ -46,14 +56,16 @@ describe("notificationSounds", () => {
         AudioContext: unknown;
         webkitAudioContext: unknown;
       }
-    ).AudioContext = vi.fn(() => mockAudioContext);
+    ).AudioContext = vi.fn(ctorReturning(mockAudioContext));
     (
       global.window as unknown as {
         AudioContext: unknown;
         webkitAudioContext: unknown;
       }
-    ).webkitAudioContext = vi.fn(() => mockAudioContext);
-    (global as unknown as { Audio: unknown }).Audio = vi.fn(() => mockAudio);
+    ).webkitAudioContext = vi.fn(ctorReturning(mockAudioContext));
+    (global as unknown as { Audio: unknown }).Audio = vi.fn(
+      ctorReturning(mockAudio),
+    );
     (global as unknown as { URL: unknown }).URL = mockURL;
 
     // Reset mocks
