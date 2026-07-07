@@ -168,8 +168,7 @@ fn write_bytes_to_content_uri(bytes: &[u8], uri_str: &str) -> Result<(), String>
     for chunk in bytes.chunks(CHUNK) {
         match env.byte_array_from_slice(chunk) {
             Ok(arr) => {
-                if let Err(e) =
-                    env.call_method(&stream, "write", "([B)V", &[JValue::Object(&*arr)])
+                if let Err(e) = env.call_method(&stream, "write", "([B)V", &[JValue::Object(&*arr)])
                 {
                     write_err = Some(e.to_string());
                     break;
@@ -244,7 +243,13 @@ pub fn run() {
             Ok(())
         })
         .manage(SocketState(Arc::new(Mutex::new(HashMap::new()))))
-        .invoke_handler(tauri::generate_handler![connect, disconnect, listen, send, download_image])
+        .invoke_handler(tauri::generate_handler![
+            connect,
+            disconnect,
+            listen,
+            send,
+            download_image
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
