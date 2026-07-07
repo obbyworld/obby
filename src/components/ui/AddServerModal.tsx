@@ -198,6 +198,13 @@ export const AddServerModal: React.FC = () => {
                   }`}
                   disabled={disableServerConnectionInfo}
                 />
+                {!disableServerConnectionInfo && (
+                  <p className="text-[11px] text-discord-text-muted mt-1">
+                    <Trans>
+                      e.g. <code>wss://host:port/socket</code>
+                    </Trans>
+                  </p>
+                )}
               </div>
 
               <div className="mb-4 flex items-end gap-4">

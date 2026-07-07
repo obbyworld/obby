@@ -64,9 +64,17 @@ export const AppLayout: React.FC = () => {
     mobileViewActiveColumn,
   } = ui;
 
-  // Hide member list for private chats and voice channels (voice has its own grid)
+  const isBouncerControlSelected = useStore(
+    (s) =>
+      !!selectedServerId &&
+      !!s.servers.find((x) => x.id === selectedServerId)?.isBouncerControl,
+  );
+
   const shouldShowMemberList =
-    isMemberListVisible && !selectedPrivateChatId && !isVoiceChannel;
+    isMemberListVisible &&
+    !selectedPrivateChatId &&
+    !isVoiceChannel &&
+    !isBouncerControlSelected;
 
   const handleChannelListWidthChange = useCallback((width: number) => {
     setChannelListWidth(width);

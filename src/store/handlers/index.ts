@@ -3,6 +3,7 @@ import type { AppState } from "../index";
 import { registerAuthHandlers } from "./auth";
 import { registerBatchHandlers } from "./batches";
 import { registerBotToolsHandlers } from "./botTools";
+import { registerBouncerHandlers } from "./bouncer";
 import { registerChannelHandlers } from "./channels";
 import { registerConnectionHandlers } from "./connection";
 import { registerInvitelinkHandlers } from "./invitelink";
@@ -33,5 +34,6 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerNamedModesHandlers(store);
   registerReadMarkerHandlers(store);
   registerTicTacToeHandlers(store);
+  registerBouncerHandlers(store);
   registerPushBotHandlers(store);
 }

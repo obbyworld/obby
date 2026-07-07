@@ -12,6 +12,7 @@ import {
   handleVerify,
   handleWarn,
 } from "./auth";
+import { handleBouncer, handleBouncerFail } from "./bouncer";
 import {
   handleListChannel,
   handleListEnd,
@@ -297,11 +298,18 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
 
   AUTHENTICATE: (ctx, serverId, source, parv, mtags) =>
     handleAuthenticate(ctx, serverId, source, parv, mtags),
-  // FAIL METADATA is a distinct protocol — route to the metadata handler
-  FAIL: (ctx, serverId, source, parv, mtags, trailing) =>
-    parv[0] === "METADATA"
-      ? handleMetadataFail(ctx, serverId, source, parv, mtags)
-      : handleFail(ctx, serverId, source, parv, mtags, trailing),
+  // soju.im/bouncer-networks: BOUNCER NETWORK / ADDNETWORK / etc.
+  BOUNCER: (ctx, serverId, source, parv, mtags) =>
+    handleBouncer(ctx, serverId, source, parv, mtags),
+  // FAIL <command> has per-command sub-protocols; dispatch on the
+  // command token rather than letting handleFail swallow them.
+  FAIL: (ctx, serverId, source, parv, mtags, trailing) => {
+    if (parv[0] === "METADATA")
+      return handleMetadataFail(ctx, serverId, source, parv, mtags);
+    if (parv[0] === "BOUNCER")
+      return handleBouncerFail(ctx, serverId, source, parv);
+    return handleFail(ctx, serverId, source, parv, mtags, trailing);
+  },
   WARN: (ctx, serverId, source, parv, mtags, trailing) =>
     handleWarn(ctx, serverId, source, parv, mtags, trailing),
   NOTE: (ctx, serverId, source, parv, mtags, trailing) =>

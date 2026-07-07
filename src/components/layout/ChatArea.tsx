@@ -46,6 +46,7 @@ import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
+import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
@@ -322,6 +323,7 @@ export const ChatArea: React.FC<{
   );
 
   const servers = useStore((state) => state.servers);
+  const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
   const globalSettings = useStore((state) => state.globalSettings);
   const messages = useStore((state) => state.messages);
@@ -2068,11 +2070,17 @@ export const ChatArea: React.FC<{
           {selectedServer &&
             !selectedChannel &&
             !selectedPrivateChat &&
-            selectedChannelId !== "server-notices" && (
+            selectedChannelId !== "server-notices" &&
+            (bouncers[selectedServer.id]?.supported &&
+            !selectedServer.bouncerNetid ? (
+              <div className="flex-grow min-h-0 flex flex-col">
+                <BouncerNetworksPanel bouncerServerId={selectedServer.id} />
+              </div>
+            ) : (
               <div className="flex-grow flex flex-col items-center justify-center bg-discord-dark-200">
                 <BlankPage />
               </div>
-            )}
+            ))}
           {!selectedServer && <DiscoverGrid />}
 
           {/* Keep-alive channel message lists — last 3 channels stay in DOM with

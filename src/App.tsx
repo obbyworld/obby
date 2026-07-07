@@ -10,6 +10,8 @@ import AppLayout from "./components/layout/AppLayout";
 import { ServerNoticesPopup } from "./components/message/ServerNoticesPopup";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
+import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
+import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
 import ChannelListModal from "./components/ui/ChannelListModal";
 import { EditServerModal } from "./components/ui/EditServerModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
@@ -386,6 +388,8 @@ const App: React.FC = () => {
                   onClose={() => toggleTwoFactorSettings(false)}
                 />
               )}
+              <BouncerDisconnectConfirmModal />
+              <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
               <TicTacToeModal />
               {isSettingsModalOpen && <UserSettings />}

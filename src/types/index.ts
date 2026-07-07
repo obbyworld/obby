@@ -22,10 +22,62 @@ export type ConnectionState =
   | "connected"
   | "reconnecting";
 
+// soju.im/bouncer-networks: one upstream network advertised by a bouncer.
+// `attributes` is the decoded `name=…;host=…;state=…` payload; treat it
+// as a free-form map -- only the entries listed in
+// BOUNCER_STANDARD_ATTRIBUTES are guaranteed to mean what the spec says
+// they mean.
+export interface BouncerNetwork {
+  netid: string;
+  attributes: Record<string, string>;
+}
+
+// State for one bouncer "control" connection -- the WS session that did
+// CAP REQ soju.im/bouncer-networks. Child connections (one per upstream
+// network the user is actively viewing) live in `Server`s as usual and
+// point back here via `Server.bouncerServerId`.
+export interface BouncerState {
+  // serverId of the control connection in `state.servers`.
+  serverId: string;
+  // True once we've seen the cap in CAP ACK.
+  supported: boolean;
+  // True if soju.im/bouncer-networks-notify is also acked (the bouncer
+  // will push initial list + live updates without us asking).
+  notifyEnabled: boolean;
+  // BOUNCER_NETID ISUPPORT token: the netid this *connection* is bound
+  // to via BOUNCER BIND, if any. Empty/absent means this is a control
+  // connection (no upstream selected).
+  boundNetid?: string;
+  // Latest known network list, keyed by netid.
+  networks: Record<string, BouncerNetwork>;
+  // True once the LISTNETWORKS batch has closed (or the notify-driven
+  // initial dump has finished). UI uses this to switch from "loading"
+  // to "empty / list" states.
+  listed: boolean;
+  // Most recent error from this bouncer (UI toasts it then clears).
+  lastError?: {
+    code: string;
+    subcommand: string;
+    description: string;
+    attribute?: string;
+    netid?: string;
+  };
+}
+
 export interface Server {
   id: string;
   name: string;
   networkName?: string; // Network name from ISUPPORT NETWORK token
+  // soju.im/bouncer-networks linkage:
+  //   `bouncerServerId` — set on a child connection; points back to the
+  //     control connection's server id.
+  //   `bouncerNetid` — the upstream `netid` this connection bound to
+  //     via BOUNCER BIND before CAP END.
+  //   `isBouncerControl` — true on the parent control connection (the
+  //     one that did CAP REQ soju.im/bouncer-networks without binding).
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
   host: string;
   port: number;
   channels: Channel[];
@@ -207,6 +259,12 @@ export interface ServerConfig {
   operOnConnect?: boolean;
   addedAt?: number; // Timestamp when server was added (ms since epoch)
   oauth?: ServerOAuthConfig;
+  // soju.im/bouncer-networks: persisted form of the parent/child link
+  // so child connections re-bind to their upstream automatically after
+  // a page reload.
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
 }
 
 export interface ServerOAuthConfig {

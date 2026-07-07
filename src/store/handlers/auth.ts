@@ -645,7 +645,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     // counter-driven send.  capNegotiationComplete is the shared
     // latch -- first writer wins.
     if (!preventCapEnd && !ircClient.capNegotiationComplete.get(serverId)) {
-      ircClient.sendRaw(serverId, "CAP END");
+      ircClient.sendCapEnd(serverId);
       ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }

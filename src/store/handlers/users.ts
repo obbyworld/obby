@@ -126,7 +126,9 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
           );
           if (exists) return {};
 
+          // soju bouncer control session has no real chathistory.
           const hasChathistory =
+            !server.isBouncerControl &&
             !!server.capabilities?.includes("draft/chathistory");
           newChannelHadCap = hasChathistory;
 

@@ -125,7 +125,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
     // doesn't race with the parallel CAP ACK / SASL completion
     // handlers).
     if (!ircClient.capNegotiationComplete.get(serverId)) {
-      ircClient.sendRaw(serverId, "CAP END");
+      ircClient.sendCapEnd(serverId);
       ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }

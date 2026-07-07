@@ -207,7 +207,7 @@ export function handleCap(
   else if (subcommand === "ACK") {
     ctx.onCapAck(serverId, caps);
   } else if (subcommand === "NAK") {
-    ctx.sendRaw(serverId, "CAP END");
+    ctx.sendCapEnd(serverId);
     ctx.capNegotiationComplete.set(serverId, true);
   } else if (subcommand === "NEW") ctx.onCapNew(serverId, caps);
   else if (subcommand === "DEL") ctx.onCapDel(serverId, caps);
@@ -233,7 +233,7 @@ export function handleSaslSuccess(
   _parv: string[],
 ): void {
   if (ctx.capNegotiationComplete.get(serverId)) return;
-  ctx.sendRaw(serverId, "CAP END");
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
 }
@@ -245,7 +245,7 @@ export function handleSaslFailure(
   _parv: string[],
 ): void {
   if (ctx.capNegotiationComplete.get(serverId)) return;
-  ctx.sendRaw(serverId, "CAP END");
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
 }
