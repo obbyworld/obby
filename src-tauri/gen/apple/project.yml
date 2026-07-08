@@ -2,7 +2,7 @@ name: ObsidianIRC
 options:
   bundleIdPrefix: com.obsidianirc.dev
   deploymentTarget:
-    iOS: 13.0
+    iOS: 16.0
 fileGroups: [../../src]
 configs:
   debug: debug
