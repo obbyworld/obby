@@ -42,6 +42,15 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     store.getState().appendRawLogLine({ serverId, direction, line });
   });
 
+  ircClient.on("ISUPPORT", ({ serverId, key, value }) => {
+    if (key !== "NETWORK" || !value) return;
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, networkName: value } : s,
+      ),
+    }));
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
@@ -281,6 +290,14 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
+      // Skip client-side rejoin for bouncer sessions; soju replays after BIND.
+      const reconnectingServer = store
+        .getState()
+        .servers.find((s) => s.id === serverId);
+      const isBouncerSession =
+        !!reconnectingServer?.isBouncerControl ||
+        !!reconnectingServer?.bouncerNetid;
+
       // Get the saved channel order for this server
       const savedChannelOrder = store.getState().channelOrder[serverId];
 
@@ -294,20 +311,23 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         channelsToJoin = savedServer.channels;
       }
 
-      for (const channelName of channelsToJoin) {
-        if (channelName) {
-          store.getState().joinChannel(serverId, channelName);
+      if (!isBouncerSession) {
+        for (const channelName of channelsToJoin) {
+          if (channelName) {
+            store.getState().joinChannel(serverId, channelName);
+          }
         }
       }
 
-      // chathistoryRequested is reset to false on disconnect — re-fetch missed history
-      // for channels that were already joined (ircClient.joinChannel early-returns for them,
-      // so CHATHISTORY never gets sent through the normal join path)
+      // Re-fetch CHATHISTORY for already-joined channels: ircClient.joinChannel
+      // early-returns for them, so the normal join path doesn't send it.
+      // soju bouncer control sessions have no real channels — skip.
       setTimeout(() => {
         const reconnectedServer = store
           .getState()
           .servers.find((s) => s.id === serverId);
         if (!reconnectedServer) return;
+        if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
           if (!ch.chathistoryRequested) {
             ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${ch.name} * 50`);

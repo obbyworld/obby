@@ -52,14 +52,17 @@ sudo apt install libwebkit2gtk-4.0-37 libgtk-3-0
 **Note:** If you get "package has unmet dependencies" errors even though the packages are installed, this is a known issue with some Tauri builds. Use one of these workarounds:
 
 1. **Force install** (not recommended but works):
-  ```sh
+
+   ```sh
    sudo dpkg -i --force-depends ObsidianIRC_*.deb
-  ```
+   ```
+
 2. **Use the AppImage instead** (recommended - no installation needed):
-  ```sh
+
+   ```sh
    chmod +x ObsidianIRC-*.AppImage
    ./ObsidianIRC-*.AppImage
-  ```
+   ```
 
 Standard installation after dependencies are installed:
 

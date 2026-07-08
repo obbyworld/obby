@@ -8,8 +8,10 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaCog,
+  FaCrown,
   FaDesktop,
   FaHashtag,
+  FaPlug,
   FaPlus,
   FaSpinner,
   FaThumbtack,
@@ -17,6 +19,7 @@ import {
   FaUser,
   FaVolumeUp,
 } from "react-icons/fa";
+import { GiGlassShot } from "react-icons/gi";
 import { useShallow } from "zustand/react/shallow";
 import { useChannelMru } from "../../hooks/useChannelTabSwitching";
 import { useDragReorder } from "../../hooks/useDragReorder";
@@ -165,6 +168,19 @@ export const ChannelList: React.FC<{
   const selectedServer = servers.find(
     (server) => server.id === selectedServerId,
   );
+
+  const upstreamSubtitle = useStore((state) => {
+    if (!selectedServer) return undefined;
+    if (selectedServer.bouncerServerId && selectedServer.bouncerNetid) {
+      const net =
+        state.bouncers[selectedServer.bouncerServerId]?.networks[
+          selectedServer.bouncerNetid
+        ];
+      return net?.attributes.host || undefined;
+    }
+    if (selectedServer.isBouncerControl) return selectedServer.host;
+    return undefined;
+  });
 
   // Get user status based on server connection and away status
   const userStatus = useMemo(() => {
@@ -466,12 +482,33 @@ export const ChannelList: React.FC<{
           <h1 className="font-bold text-white truncate">
             {selectedServer?.networkName || selectedServer?.name || "Home"}
           </h1>
-          {selectedServer?.networkName &&
-            selectedServer.name !== selectedServer.networkName && (
-              <div className="text-xs text-discord-channels-default truncate">
-                {selectedServer.name}
-              </div>
-            )}
+          {(upstreamSubtitle ||
+            (selectedServer?.networkName &&
+              selectedServer.name !== selectedServer.networkName)) && (
+            <div className="text-xs text-discord-channels-default truncate flex items-center gap-1">
+              <span className="truncate">
+                {upstreamSubtitle || selectedServer?.name}
+              </span>
+              {(selectedServer?.isBouncerControl ||
+                !!selectedServer?.bouncerNetid) && (
+                <span
+                  className="inline-flex items-center gap-0.5 bg-discord-dark-300 border border-discord-dark-500 rounded-full px-1 py-0.5 flex-shrink-0"
+                  title={
+                    selectedServer?.isBouncerControl
+                      ? t`soju bouncer (control)`
+                      : t`Network bound through soju bouncer`
+                  }
+                >
+                  <GiGlassShot className="text-amber-300 text-[10px]" />
+                  {selectedServer?.isBouncerControl ? (
+                    <FaCrown className="text-yellow-400 text-[8px]" />
+                  ) : (
+                    <FaPlug className="text-sky-300 text-[8px]" />
+                  )}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <button
           onClick={handleCollapseClick}

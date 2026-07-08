@@ -10,15 +10,17 @@ import AppLayout from "./components/layout/AppLayout";
 import { ServerNoticesPopup } from "./components/message/ServerNoticesPopup";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
+import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
+import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
 import ChannelListModal from "./components/ui/ChannelListModal";
 import { EditServerModal } from "./components/ui/EditServerModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
 import LoadingOverlay from "./components/ui/LoadingOverlay";
+import ProfileModalRouter from "./components/ui/ProfileModalRouter";
 import QuickActions from "./components/ui/QuickActions";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { TwoFactorSettingsModal } from "./components/ui/TwoFactorSettingsModal";
-import UserProfileModal from "./components/ui/UserProfileModal";
 import UserSettings from "./components/ui/UserSettings";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
@@ -386,6 +388,8 @@ const App: React.FC = () => {
                   onClose={() => toggleTwoFactorSettings(false)}
                 />
               )}
+              <BouncerDisconnectConfirmModal />
+              <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
               <TicTacToeModal />
               {isSettingsModalOpen && <UserSettings />}
@@ -393,7 +397,7 @@ const App: React.FC = () => {
               {isChannelListModalOpen && <ChannelListModal />}
               <LinkSecurityWarningModal />
               {userProfileModalState?.isOpen && (
-                <UserProfileModal
+                <ProfileModalRouter
                   isOpen={userProfileModalState.isOpen}
                   onClose={() => setUserProfileModalState(null)}
                   serverId={userProfileModalState.serverId}

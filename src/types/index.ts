@@ -22,10 +22,62 @@ export type ConnectionState =
   | "connected"
   | "reconnecting";
 
+// soju.im/bouncer-networks: one upstream network advertised by a bouncer.
+// `attributes` is the decoded `name=…;host=…;state=…` payload; treat it
+// as a free-form map -- only the entries listed in
+// BOUNCER_STANDARD_ATTRIBUTES are guaranteed to mean what the spec says
+// they mean.
+export interface BouncerNetwork {
+  netid: string;
+  attributes: Record<string, string>;
+}
+
+// State for one bouncer "control" connection -- the WS session that did
+// CAP REQ soju.im/bouncer-networks. Child connections (one per upstream
+// network the user is actively viewing) live in `Server`s as usual and
+// point back here via `Server.bouncerServerId`.
+export interface BouncerState {
+  // serverId of the control connection in `state.servers`.
+  serverId: string;
+  // True once we've seen the cap in CAP ACK.
+  supported: boolean;
+  // True if soju.im/bouncer-networks-notify is also acked (the bouncer
+  // will push initial list + live updates without us asking).
+  notifyEnabled: boolean;
+  // BOUNCER_NETID ISUPPORT token: the netid this *connection* is bound
+  // to via BOUNCER BIND, if any. Empty/absent means this is a control
+  // connection (no upstream selected).
+  boundNetid?: string;
+  // Latest known network list, keyed by netid.
+  networks: Record<string, BouncerNetwork>;
+  // True once the LISTNETWORKS batch has closed (or the notify-driven
+  // initial dump has finished). UI uses this to switch from "loading"
+  // to "empty / list" states.
+  listed: boolean;
+  // Most recent error from this bouncer (UI toasts it then clears).
+  lastError?: {
+    code: string;
+    subcommand: string;
+    description: string;
+    attribute?: string;
+    netid?: string;
+  };
+}
+
 export interface Server {
   id: string;
   name: string;
   networkName?: string; // Network name from ISUPPORT NETWORK token
+  // soju.im/bouncer-networks linkage:
+  //   `bouncerServerId` — set on a child connection; points back to the
+  //     control connection's server id.
+  //   `bouncerNetid` — the upstream `netid` this connection bound to
+  //     via BOUNCER BIND before CAP END.
+  //   `isBouncerControl` — true on the parent control connection (the
+  //     one that did CAP REQ soju.im/bouncer-networks without binding).
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
   host: string;
   port: number;
   channels: Channel[];
@@ -207,6 +259,12 @@ export interface ServerConfig {
   operOnConnect?: boolean;
   addedAt?: number; // Timestamp when server was added (ms since epoch)
   oauth?: ServerOAuthConfig;
+  // soju.im/bouncer-networks: persisted form of the parent/child link
+  // so child connections re-bind to their upstream automatically after
+  // a page reload.
+  bouncerServerId?: string;
+  bouncerNetid?: string;
+  isBouncerControl?: boolean;
 }
 
 export interface ServerOAuthConfig {
@@ -481,6 +539,49 @@ export interface InviteLink {
   description?: string;
 }
 
+/**
+ * Per-session detail captured from the obby.world/whois-session
+ * sub-batches when the server emits the obby.world/whois batch shape
+ * and the querier is privileged enough to receive per-session info
+ * (i.e. they are the target or an IRC operator).
+ *
+ * See doc/specs/whois-batch.md in the obbyircd repo.
+ */
+export interface WhoisSession {
+  /** 1-based session ordinal as emitted by the server */
+  ordinal: number;
+  /** Total session count for this WHOIS, if the server included it */
+  total?: number;
+  /** ISO-8601 timestamp of when this session's connection registered */
+  since?: string;
+  /** Real hostname (from 378) */
+  realhost?: string;
+  /** IP address (from 378) */
+  ip?: string;
+  /** Ident / username for this session (from 378) */
+  ident?: string;
+  /** Umodes (from 379) */
+  umodes?: string;
+  /** Snomask (from 379), opers only */
+  snomask?: string;
+  /** TLS state description (from 671) */
+  secureConnection?: string;
+  /** TLS client cert fingerprint (from 276), if any */
+  certFp?: string;
+  /** Idle seconds (from 317) */
+  idle?: number;
+  /** Signon UNIX timestamp (from 317) */
+  signon?: number;
+  /** GeoIP country code (from 344) */
+  countryCode?: string;
+  /** GeoIP country name (from 344) */
+  countryName?: string;
+  /** GeoIP ASN (from 569) */
+  asn?: number;
+  /** GeoIP AS name (from 569) */
+  asname?: string;
+}
+
 export interface WhoisData {
   nick: string;
   username?: string;
@@ -494,6 +595,39 @@ export interface WhoisData {
   account?: string;
   specialMessages: string[]; // For 320, 378, 379 responses
   secureConnection?: string;
+  /**
+   * Account-level user modes (RPL_WHOISMODES 379) and snomask.
+   * Single value for the account: obbyircd mirrors umodes from the
+   * canonical client onto every attached session via the persistence
+   * module's HOOKTYPE_UMODE_CHANGE handler, so per-session umodes are
+   * identical by construction. Server emits 379 in the parent batch
+   * (not in per-session sub-batches). Snomask is only included for
+   * privileged queriers (self / oper) per the underlying
+   * set::whois-details policy.
+   */
+  umodes?: string;
+  snomask?: string;
+  /**
+   * Account-level security-groups the target belongs to (from the
+   * obby.world/whois-security-groups sub-batch). Structured list so
+   * clients can render badges / chips instead of splitting the
+   * legacy comma-separated 320 string.
+   */
+  securityGroups?: string[];
+  /**
+   * Per-session details when the server emits the obby.world/whois
+   * batch shape. Set when at least one obby.world/whois-session
+   * sub-batch arrived during this WHOIS. Empty / absent for legacy
+   * single-connection servers.
+   */
+  sessions?: WhoisSession[];
+  /**
+   * Total live-session count for the queried account, derived from
+   * either `sessions.length` OR the server's privacy-preserving
+   * summary line "is connected from N sessions" for non-privileged
+   * queriers (only the count is known, not per-session detail).
+   */
+  sessionCount?: number;
   timestamp: number; // When this data was fetched
   isComplete?: boolean; // Whether we've received WHOIS_END (318)
 }

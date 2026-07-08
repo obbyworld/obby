@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
     container_name: obsidian-irc
     ports:
-      - '3000:80'
+      - "3000:80"
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://localhost/']
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -40,9 +40,9 @@ services:
     image: ghcr.io/ergochat/ergo:master
     container_name: ergo
     ports:
-      - '6667:6667'   # plain IRC (bots)
-      - '6697:6697'   # IRC over TLS — ircs://localhost:6697 (Tauri native TCP)
-      - '8097:8097'   # WebSocket over TLS — wss://localhost:8097 (browser / WebView)
+      - "6667:6667" # plain IRC (bots)
+      - "6697:6697" # IRC over TLS — ircs://localhost:6697 (Tauri native TCP)
+      - "8097:8097" # WebSocket over TLS — wss://localhost:8097 (browser / WebView)
     restart: unless-stopped
     depends_on:
       gen-certs:
@@ -64,9 +64,9 @@ services:
     environment:
       HOST: ircd
       PORT: 6667
-      CHANNEL: '#test'
+      CHANNEL: "#test"
       NICK: EchoBot
-    command: ['python', '-u', 'echobot.py']
+    command: ["python", "-u", "echobot.py"]
     restart: unless-stopped
     profiles:
       - testing
@@ -82,9 +82,9 @@ services:
     environment:
       HOST: ircd
       PORT: 6667
-      CHANNEL: '#test'
+      CHANNEL: "#test"
       NICK: HelperBot1
-    command: ['python', '-u', 'echobot.py']
+    command: ["python", "-u", "echobot.py"]
     restart: unless-stopped
     profiles:
       - testing
@@ -100,9 +100,9 @@ services:
     environment:
       HOST: ircd
       PORT: 6667
-      CHANNEL: '#test'
+      CHANNEL: "#test"
       NICK: HelperBot2
-    command: ['python', '-u', 'echobot.py']
+    command: ["python", "-u", "echobot.py"]
     restart: unless-stopped
     profiles:
       - testing

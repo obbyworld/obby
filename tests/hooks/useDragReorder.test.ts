@@ -1,13 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
 import type React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from "vitest";
 import { useDragReorder } from "../../src/hooks/useDragReorder";
 
 describe("useDragReorder", () => {
-  let onReorder: ReturnType<typeof vi.fn>;
+  let onReorder: Mock<(reorderedIds: string[]) => void>;
 
   beforeEach(() => {
-    onReorder = vi.fn();
+    onReorder = vi.fn<(reorderedIds: string[]) => void>();
     document.body.innerHTML = "";
   });
 

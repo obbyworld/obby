@@ -48,6 +48,7 @@ import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
+import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
@@ -62,6 +63,7 @@ import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
@@ -78,7 +80,6 @@ import {
   UploadProgressOverlay,
 } from "../ui/UploadProgressOverlay";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 import {
   MemoChannelMessageList as ChannelMessageList,
   type ChannelMessageListHandle,
@@ -326,6 +327,7 @@ export const ChatArea: React.FC<{
   );
 
   const servers = useStore((state) => state.servers);
+  const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
   const globalSettings = useStore((state) => state.globalSettings);
   const e2eeVerifyTarget = useStore((state) => state.e2eeVerifyTarget);
@@ -2087,11 +2089,17 @@ export const ChatArea: React.FC<{
           {selectedServer &&
             !selectedChannel &&
             !selectedPrivateChat &&
-            selectedChannelId !== "server-notices" && (
+            selectedChannelId !== "server-notices" &&
+            (bouncers[selectedServer.id]?.supported &&
+            !selectedServer.bouncerNetid ? (
+              <div className="flex-grow min-h-0 flex flex-col">
+                <BouncerNetworksPanel bouncerServerId={selectedServer.id} />
+              </div>
+            ) : (
               <div className="flex-grow flex flex-col items-center justify-center bg-discord-dark-200">
                 <BlankPage />
               </div>
-            )}
+            ))}
           {!selectedServer && <DiscoverGrid />}
 
           {/* Keep-alive channel message lists — last 3 channels stay in DOM with
@@ -2735,7 +2743,7 @@ export const ChatArea: React.FC<{
         />
       )}
       {selectedServerId && (
-        <UserProfileModal
+        <ProfileModalRouter
           isOpen={userProfileModalOpen}
           onClose={() => setUserProfileModalOpen(false)}
           serverId={selectedServerId}

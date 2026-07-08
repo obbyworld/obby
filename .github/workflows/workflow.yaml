@@ -3,63 +3,83 @@ name: Lint and Tests
 on:
   push:
 
+# Every lint/format job is a thin wrapper around `lefthook run pre-commit`
+# so lefthook.yml stays the single source of truth for what runs locally and in CI.
+
 jobs:
   biome:
-    name: Lint and Formating
+    name: Biome (lint & format)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          persist-credentials: false
-      - name: Setup Biome
-        uses: biomejs/setup-biome@4c91541eaada48f67d7dbd7833600ce162b68f51 # v2.7.1
-        with:
-          version: latest
-      - name: Run Biome
-        run: biome ci .
-
-  build:
-    name: Build and Test
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - name: Dependencies install
+          node-version: 22
+          cache: npm
+      - name: Install deps
         run: npm ci
-      - name: Test
-        run: npm run test
+      - name: Run lefthook check
+        run: npx lefthook run pre-commit --commands check --all-files
+      - name: Verify no formatting drift
+        run: git diff --exit-code
+
+  docs:
+    name: Docs (prettier & markdownlint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook docs hooks
+        run: npx lefthook run pre-commit --commands docs-format,docs-lint --all-files
+      - name: Verify no formatting drift
+        run: git diff --exit-code
+
+  nix-linux:
+    name: Nix package (Linux x86_64)
+    # Heavy (~10min) build; run it only on main like the Tauri platform builds,
+    # not on every branch/PR push.
+    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build obsidianirc
+        run: nix flake check && nix build .#obsidianirc --no-link --print-build-logs
 
   i18n:
     name: i18n Catalog Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          persist-credentials: false
-      - name: Dependencies install
+          node-version: 22
+          cache: npm
+      - name: Install deps
         run: npm ci
-      - name: Verify catalog is up to date
-        # Fails if there are t`...` strings in source that haven't been extracted
-        # into en/messages.po yet.  Fix: npm run i18n:extract && npm run i18n:compile
-        # and commit the updated src/locales/ files.
-        run: |
-          npm run i18n:extract
-          git diff --exit-code src/locales/en/messages.po || \
-            (echo "::error::Untranslated strings detected in source. Run 'npm run i18n:extract && npm run i18n:compile' and commit the updated src/locales/ files." && exit 1)
-      - name: Verify catalogs are compiled
-        # Fails if .mjs files are missing or stale relative to .po files.
-        run: |
-          npm run i18n:compile
-          git diff --exit-code src/locales/ || \
-            (echo "::error::Compiled catalogs are out of date. Run 'npm run i18n:compile' and commit the updated src/locales/ files." && exit 1)
+      - name: Run lefthook i18n hook
+        # Fails if extract/compile produces a diff against committed catalogs.
+        # Fix: npm run i18n:extract && npm run i18n:compile, commit src/locales/.
+        run: npx lefthook run pre-commit --commands i18n --all-files
+      - name: Verify catalogs are committed
+        run: git diff --exit-code src/locales/
       - name: Report untranslated strings per locale
         # Informational only — does not fail the build.
-        # Shows how many strings still need translation in each non-English locale.
         run: |
           echo "### Translation coverage" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -75,3 +95,58 @@ jobs:
               echo "- **${locale}**: ${TRANSLATED}/${TOTAL} strings translated" >> $GITHUB_STEP_SUMMARY
             fi
           done
+
+  rust:
+    name: Rust fmt & clippy
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
+      - name: Cache cargo
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+        with:
+          workspaces: |
+            src-tauri
+            src-tauri/plugins/share-sheet
+            src-tauri/plugins/ios-keyboard
+      - name: Install Tauri system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev
+      - name: Install deps
+        run: npm ci
+      - name: Run lefthook rust hooks
+        run: npx lefthook run pre-commit --commands rust-fmt,rust-clippy --all-files
+
+  build:
+    name: Build and Test
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install deps
+        run: npm ci
+      - name: Test
+        run: npm run test

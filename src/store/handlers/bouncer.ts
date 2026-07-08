@@ -1,0 +1,199 @@
+import type { StoreApi } from "zustand";
+import ircClient from "../../lib/ircClient";
+import type { BouncerState } from "../../types";
+import { generateDeterministicId } from "../helpers";
+import type { AppState } from "../index";
+
+// Module-scope so a single childId only ever dispatches one bind across
+// the burst of BOUNCER_NETWORK events that arrive during the initial
+// LISTNETWORKS dump.
+const autoBindAttempted = new Set<string>();
+
+function autoBindConnectedNetworks(
+  store: StoreApi<AppState>,
+  bouncerServerId: string,
+) {
+  const state = store.getState();
+  // Skip events that fired against a bouncer CHILD (which itself
+  // negotiates the same cap); otherwise we'd recursively bind
+  // "grandchildren" off each child.
+  const sourceServer = state.servers.find((s) => s.id === bouncerServerId);
+  if (sourceServer?.bouncerNetid) return;
+  const bouncer = state.bouncers[bouncerServerId];
+  if (!bouncer) return;
+  for (const net of Object.values(bouncer.networks)) {
+    if (net.attributes.state !== "connected") continue;
+    const childId = generateDeterministicId(bouncerServerId, net.netid);
+    if (autoBindAttempted.has(childId)) continue;
+    if (state.servers.some((s) => s.id === childId)) {
+      autoBindAttempted.add(childId);
+      continue;
+    }
+    autoBindAttempted.add(childId);
+    void state.bouncerConnectNetwork(bouncerServerId, net.netid);
+  }
+}
+
+// Helper that lazily creates a BouncerState entry for a serverId.
+// We can't always know in advance which servers will turn out to be
+// bouncers, so we treat the first BOUNCER-* event from a serverId as
+// implicit setup.
+function ensureBouncer(
+  state: AppState,
+  serverId: string,
+  patch: Partial<BouncerState> = {},
+): AppState["bouncers"] {
+  const existing = state.bouncers[serverId];
+  const base: BouncerState = existing ?? {
+    serverId,
+    supported: false,
+    notifyEnabled: false,
+    networks: {},
+    listed: false,
+  };
+  return { ...state.bouncers, [serverId]: { ...base, ...patch } };
+}
+
+export function registerBouncerHandlers(store: StoreApi<AppState>): void {
+  // BOUNCER NETWORK <netid> <attrs|"*">. Either a snapshot (full attrs,
+  // e.g. inside a LISTNETWORKS batch or an initial -notify dump) or an
+  // incremental update (only changed attrs, in notify mode).
+  ircClient.on(
+    "BOUNCER_NETWORK",
+    ({ serverId, netid, deleted, attributes }) => {
+      store.setState((state) => {
+        const existing = state.bouncers[serverId];
+        const base: BouncerState = existing ?? {
+          serverId,
+          supported: false,
+          notifyEnabled: false,
+          networks: {},
+          listed: false,
+        };
+        if (deleted) {
+          const { [netid]: _, ...rest } = base.networks;
+          return {
+            bouncers: {
+              ...state.bouncers,
+              [serverId]: { ...base, networks: rest },
+            },
+          };
+        }
+        // Spec: in notify mode, an attr with an empty value is a deletion
+        // for that attr. Merge incoming on top of existing and strip those.
+        const prev = base.networks[netid]?.attributes ?? {};
+        const merged: Record<string, string> = { ...prev };
+        for (const [k, v] of Object.entries(attributes)) {
+          if (v === "") delete merged[k];
+          else merged[k] = v;
+        }
+        return {
+          bouncers: {
+            ...state.bouncers,
+            [serverId]: {
+              ...base,
+              networks: {
+                ...base.networks,
+                [netid]: { netid, attributes: merged },
+              },
+            },
+          },
+        };
+      });
+      if (attributes.state === "connected" || (!deleted && attributes.state)) {
+        autoBindConnectedNetworks(store, serverId);
+      }
+      // Drop the bound child when soju reports state=disconnected (or
+      // the network deleted), and clear the auto-bind memory for it
+      // so a subsequent state=connected (e.g. after a CHANGENETWORK
+      // that forces an upstream reconnect) re-binds instead of
+      // skipping because the Set still thinks the bind was attempted.
+      const dropLocalChild =
+        deleted || (!deleted && attributes.state === "disconnected");
+      if (dropLocalChild) {
+        const childId = generateDeterministicId(serverId, netid);
+        autoBindAttempted.delete(childId);
+        const live = store.getState().servers.find((s) => s.id === childId);
+        if (live) store.getState().deleteServer(childId);
+      }
+    },
+  );
+
+  // ACKs from the server confirming our ADD / CHANGE / DEL took effect.
+  // The accompanying BOUNCER NETWORK update has already updated state;
+  // these events exist primarily so UI can dismiss "saving..." spinners
+  // and close modals. The store doesn't need to mutate anything here,
+  // but we expose the events to consumers via the IRCClient EventMap.
+
+  // Errors from any subcommand. Stash on the bouncer state so the UI
+  // can pick them up reactively (toast / inline form error).
+  ircClient.on(
+    "BOUNCER_FAIL",
+    ({ serverId, code, subcommand, attribute, netid, description }) => {
+      store.setState((state) => ({
+        bouncers: ensureBouncer(state, serverId, {
+          lastError: { code, subcommand, attribute, netid, description },
+        }),
+      }));
+    },
+  );
+
+  // CAP ACK plumbing: CAP_ACKNOWLEDGED fires once per acked cap with the
+  // cap name in `key`. Mark supported when bouncer-networks is acked, and
+  // notifyEnabled when the -notify variant is acked (the latter lets us
+  // skip an explicit LISTNETWORKS since the server pushes the initial
+  // dump unprompted).
+  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
+    const supported = key === "soju.im/bouncer-networks";
+    const notify = key === "soju.im/bouncer-networks-notify";
+    if (!supported && !notify) return;
+    store.setState((state) => ({
+      bouncers: ensureBouncer(state, serverId, {
+        supported: supported || state.bouncers[serverId]?.supported || false,
+        notifyEnabled:
+          notify || state.bouncers[serverId]?.notifyEnabled || false,
+      }),
+      servers:
+        supported && !state.servers.find((s) => s.id === serverId)?.bouncerNetid
+          ? state.servers.map((s) =>
+              s.id === serverId ? { ...s, isBouncerControl: true } : s,
+            )
+          : state.servers,
+    }));
+  });
+
+  // ISUPPORT BOUNCER_NETID tells us this connection is currently bound
+  // to a specific upstream network. Empty value (or missing) means it's
+  // a control connection.
+  ircClient.on("ISUPPORT", ({ serverId, key, value }) => {
+    if (key !== "BOUNCER_NETID") return;
+    store.setState((state) => ({
+      bouncers: ensureBouncer(state, serverId, {
+        boundNetid: value || undefined,
+      }),
+    }));
+  });
+
+  // BATCH_END for a soju.im/bouncer-networks batch finalises the
+  // "listed" flag so the UI can swap from a skeleton to the list. We
+  // listen on BATCH_START to know the type and stash it; on BATCH_END
+  // we look it up.
+  // Batch reference tags are only unique per connection, so key by
+  // serverId too — otherwise a same-tagged batch on another connection
+  // (a bound child, a direct server) would flip the wrong bouncer's
+  // "listed" flag and orphan the real LISTNETWORKS batch.
+  const batchTypes = new Map<string, string>(); // `${serverId}:${batchId}` -> type
+  ircClient.on("BATCH_START", ({ serverId, batchId, type }) => {
+    if (type === "soju.im/bouncer-networks")
+      batchTypes.set(`${serverId}:${batchId}`, type);
+  });
+  ircClient.on("BATCH_END", ({ serverId, batchId }) => {
+    const batchKey = `${serverId}:${batchId}`;
+    if (batchTypes.get(batchKey) !== "soju.im/bouncer-networks") return;
+    batchTypes.delete(batchKey);
+    store.setState((state) => ({
+      bouncers: ensureBouncer(state, serverId, { listed: true }),
+    }));
+    autoBindConnectedNetworks(store, serverId);
+  });
+}

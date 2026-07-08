@@ -26,9 +26,19 @@ msgstr "— открыть в просмотрщике"
 msgid "(handled by ObsidianIRC)"
 msgstr "(обрабатывается ObsidianIRC)"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "(inherit)"
+msgstr "(наследуется)"
+
 #: src/components/ui/BotsModal.tsx
 msgid "(suspended)"
 msgstr "(приостановлен)"
+
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "(unchanged)"
+msgstr "(без изменений)"
 
 #. placeholder {0}: filteredMessages.length
 #. placeholder {1}: import { plural } from "@lingui/core/macro"; import { useLingui } from "@lingui/react/macro"; import type * as React from "react"; import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, } from "react"; import { SCROLL_TOLERANCE, useScrollToBottom, } from "../../hooks/useScrollToBottom"; import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy"; import { groupConsecutiveEvents } from "../../lib/eventGrouping"; import ircClient from "../../lib/ircClient"; import { shouldShowMessageHeader } from "../../lib/messageGrouping"; import useStore from "../../store"; import type { Message as MessageType } from "../../types"; import { CollapsedEventMessage } from "../message/CollapsedEventMessage"; import { MessageItem } from "../message/MessageItem"; import LoadingSpinner from "../ui/LoadingSpinner"; import { ScrollToBottomButton } from "../ui/ScrollToBottomButton"; export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100; // Stable empty array — prevents selector from returning a new [] on every render // when the channel has no messages yet (undefined ?? [] would create a new ref each time). const EMPTY_MESSAGES: import("../../types").Message[] = []; export interface ChannelMessageListHandle { setAtBottom: () => void; scrollToBottom: () => void; getScrollState: () => { scrollTop: number; isAtBottom: boolean; visibleCount: number; }; } interface ChannelMessageListProps { channelKey: string; serverId: string; channelId: string | null; privateChatId: string | null; isActive: boolean; searchQuery: string; isMemberListVisible: boolean; onReply: (msg: MessageType | null) => void; onUsernameContextMenu: ( e: React.MouseEvent, username: string, serverId: string, channelId: string, avatarEl?: Element | null, ) => void; onIrcLinkClick: (url: string) => void; onReactClick: (msg: MessageType, el: Element) => void; onReactionUnreact: (emoji: string, msg: MessageType) => void; onOpenReactionModal: ( msg: MessageType, position: { x: number; y: number }, ) => void; onDirectReaction: (emoji: string, msg: MessageType) => void; onRedactMessage: (msg: MessageType) => void; onOpenProfile: (username: string) => void; joinChannel: (serverId: string, channelName: string) => void; onClearSearch: () => void; highlightedMessageId?: string; // undefined = first visit; null = was at bottom; object = restore to saved position initialScrollState?: { scrollTop: number; visibleCount: number } | null; } export const ChannelMessageList = forwardRef< ChannelMessageListHandle, ChannelMessageListProps >( ( { channelKey, serverId, channelId, privateChatId, isActive, searchQuery, isMemberListVisible, onReply, onUsernameContextMenu, onIrcLinkClick, onReactClick, onReactionUnreact, onOpenReactionModal, onDirectReaction, onRedactMessage, onOpenProfile, joinChannel, onClearSearch, highlightedMessageId, initialScrollState, }, ref, ) => { const { t } = useLingui(); const [visibleMessageCount, setVisibleMessageCount] = useState( initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT, ); // Ref mirror so getScrollState closure always reads the current value without needing it as a dep. const visibleMessageCountRef = useRef(visibleMessageCount); visibleMessageCountRef.current = visibleMessageCount; // Distinguishes initial join (full-screen spinner) from subsequent "load more" (button spinner). const [isFetchingMore, setIsFetchingMore] = useState(false); const isFetchingMoreRef = useRef(false); const messagesEndRef = useRef<HTMLDivElement>(null); const messagesContainerRef = useRef<HTMLDivElement>(null); const messagesInnerRef = useRef<HTMLDivElement>(null); // prev scrollHeight for prepend delta-correction. const prevScrollHeightRef = useRef(0); // Ref mirror of isScrolledUp — lets useLayoutEffect closures read current value // without listing isScrolledUp as a dep (which would re-run effects on every scroll). const isScrolledUpRef = useRef(false); const prevFilteredLengthRef = useRef(0); const prevFirstMsgIdRef = useRef<string | null>(null); // Set by the window-growth layoutEffect (or button handler) when a true prepend is detected. // Consumed by the delta-correction layoutEffect one render later (after visibleCount grows). // Using a flag instead of tracking displayedMessages[0]?.id because slice(-N) slides the // window on every bottom append, changing displayedMessages[0] even for non-prepend renders. const pendingPrependRef = useRef(false); // Shared scrollHeight baseline between the delta-correction layout effect and the inner // ResizeObserver. When scrollTop is corrected after a prepend, we update this so the RO's // "was at bottom" check is not fooled by the adjusted scrollTop vs its stale prevSH. const resizeObserverPrevSHRef = useRef(0); const channelMessages = useStore( useCallback( (state) => state.messages[channelKey] ?? EMPTY_MESSAGES, [channelKey], ), ); const servers = useStore((state) => state.servers); const mobileViewActiveColumn = useStore( (state) => state.ui.mobileViewActiveColumn, ); const channel = useMemo( () => channelId ? (servers .find((s) => s.id === serverId) ?.channels.find((c) => c.id === channelId) ?? null) : null, [servers, serverId, channelId], ); const { isScrolledUp, wasAtBottomRef, scrollToBottom } = useScrollToBottom( messagesContainerRef, messagesEndRef, { channelId: `${channelId || privateChatId}-${isMemberListVisible}` }, ); // Snapshot of the last known scroll position captured while the container was visible. // getScrollState() reads this instead of the live DOM because React commits display:none // before running cleanup effects, collapsing scrollTop/scrollHeight/clientHeight to 0. const lastScrollTopRef = useRef(initialScrollState?.scrollTop ?? 0); useEffect(() => { const container = messagesContainerRef.current; if (!container) return; const onScroll = () => { if (container.clientHeight > 0) lastScrollTopRef.current = container.scrollTop; }; container.addEventListener("scroll", onScroll, { passive: true }); return () => container.removeEventListener("scroll", onScroll); }, []); // Restore scroll position when a keep-alive channel transitions from hidden to visible. // display:none may reset scrollTop to 0; lastScrollTopRef was captured while visible. const prevActiveRef = useRef(isActive); useLayoutEffect(() => { if (isActive && !prevActiveRef.current) { const container = messagesContainerRef.current; if (container && lastScrollTopRef.current > 0) { container.scrollTop = lastScrollTopRef.current; } } prevActiveRef.current = isActive; }, [isActive]); useImperativeHandle(ref, () => ({ setAtBottom: () => { wasAtBottomRef.current = true; }, scrollToBottom, getScrollState: () => ({ scrollTop: lastScrollTopRef.current, isAtBottom: wasAtBottomRef.current, visibleCount: visibleMessageCountRef.current, }), })); const filteredMessages = useMemo(() => { if (!searchQuery.trim()) return channelMessages; const query = searchQuery.toLowerCase(); return channelMessages.filter( (msg) => msg.content.toLowerCase().includes(query) || msg.userId.toLowerCase().includes(query), ); }, [channelMessages, searchQuery]); useEffect(() => { isScrolledUpRef.current = isScrolledUp; // When the user returns to the bottom, shrink the window back to the base so // slice(-N) resumes trimming old messages from the top (memory optimization). // Only shrink if we grew above the base — preserves a sub-default saved visibleCount. if (!isScrolledUp) { setVisibleMessageCount((prev) => prev > DEFAULT_VISIBLE_MESSAGE_COUNT ? DEFAULT_VISIBLE_MESSAGE_COUNT : prev, ); } }, [isScrolledUp]); // Reset ref-tracked windowing state when switching channels. // visibleMessageCount is NOT reset here — useState(initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT) // already initializes it correctly on mount, and this effect runs once on mount for the // same channelKey (each instance is bound to exactly one channel by the parent key={}). // biome-ignore lint/correctness/useExhaustiveDependencies: intentional full reset on channel change useEffect(() => { prevFilteredLengthRef.current = 0; prevFirstMsgIdRef.current = null; prevScrollHeightRef.current = 0; pendingPrependRef.current = false; resizeObserverPrevSHRef.current = 0; }, [channelKey]); const displayedMessages = useMemo(() => { if (searchQuery.trim()) return filteredMessages; return filteredMessages.slice(-visibleMessageCount); }, [filteredMessages, visibleMessageCount, searchQuery]); const locallyHidden = filteredMessages.length > displayedMessages.length; const serverHasMore = channel?.hasMoreHistory === true; const hasMoreMessages = locallyHidden || serverHasMore; const eventGroups = useMemo( () => groupConsecutiveEvents(displayedMessages), [displayedMessages], ); const isLoadingHistory = channel?.isLoadingHistory ?? false; // Scroll to bottom on initial mount, unless a saved position was passed in. // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount only useEffect(() => { const container = messagesContainerRef.current; if (!container) return; if (initialScrollState) { container.scrollTop = initialScrollState.scrollTop; lastScrollTopRef.current = initialScrollState.scrollTop; wasAtBottomRef.current = false; } else { container.scrollTop = container.scrollHeight; lastScrollTopRef.current = container.scrollHeight; wasAtBottomRef.current = true; } }, []); // Scroll to bottom after initial join history loads; clear fetch spinner at batch end. const wasLoadingHistoryRef = useRef(false); // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable via useCallback; refs and setters are stable useLayoutEffect(() => { if (wasLoadingHistoryRef.current && !isLoadingHistory) { if (isFetchingMoreRef.current) { // delta correction for scroll position is handled by useLayoutEffect([displayedMessages]) isFetchingMoreRef.current = false; setIsFetchingMore(false); } else { scrollToBottom(); wasAtBottomRef.current = true; } } wasLoadingHistoryRef.current = isLoadingHistory; }, [isLoadingHistory]); // When older messages are prepended, grow the window so they enter displayedMessages. // When new messages arrive at the bottom while the user is scrolled up, also grow the // window to keep the current top messages visible — slice(-N) otherwise slides the // window forward and hides them, incrementing the "N older messages" counter on every // incoming message. Only let the slice trim from the top when the user is at the bottom // (where auto-scroll handles keeping them current). useLayoutEffect(() => { const newLength = filteredMessages.length; const newFirstId = filteredMessages[0]?.id ?? null; const delta = newLength - prevFilteredLengthRef.current; if (prevFilteredLengthRef.current > 0 && delta > 0) { if (newFirstId !== prevFirstMsgIdRef.current) { // Messages prepended (load-more): signal delta-correction to compensate scrollTop. pendingPrependRef.current = true; setVisibleMessageCount((prev) => prev + delta); } else if (isScrolledUpRef.current) { // Messages appended at bottom while user is scrolled up reading history. // Expand the window to prevent top messages from dropping out of the slice. setVisibleMessageCount((prev) => prev + delta); } } prevFilteredLengthRef.current = newLength; prevFirstMsgIdRef.current = newFirstId; }, [filteredMessages]); // Compensate scrollTop when content is prepended above the viewport. // biome-ignore lint/correctness/useExhaustiveDependencies: runs on every displayedMessages render to capture the resulting scrollHeight; refs are stable useLayoutEffect(() => { const container = messagesContainerRef.current; if (!container) return; // Skip while container is display:none — scrollHeight collapses to 0 and would // poison prevScrollHeightRef, causing a huge spurious delta on the next visible render. if (container.clientHeight === 0) return; const prevHeight = prevScrollHeightRef.current; const newHeight = container.scrollHeight; // Only correct when a true load-more prepend happened (flag set by the window-growth // layoutEffect or button handler). Bottom appends slide the slice(-N) window which also // changes displayedMessages[0] — ID-comparison can't distinguish the two cases. const wasPrepend = pendingPrependRef.current; // Only consume the flag when scrollHeight actually changed — the server-side load-more // path goes through two renders: Render A (filteredMessages grows, visibleCount unchanged, // same displayedMessages content, same scrollHeight) then Render B (visibleCount grows, // new messages enter displayedMessages, scrollHeight grows). The flag must survive Render A // so it's still set when Render B fires the actual correction. if (wasPrepend && newHeight !== prevHeight) { pendingPrependRef.current = false; } if ( isScrolledUpRef.current && prevHeight > 0 && newHeight > prevHeight && wasPrepend ) { const delta = newHeight - prevHeight; container.scrollTop += delta; resizeObserverPrevSHRef.current = newHeight; } prevScrollHeightRef.current = newHeight; }, [displayedMessages]); // Re-stick to bottom when inner message content grows (media/audio previews loading). // Uses prevScrollHeight instead of wasAtBottomRef to avoid stale-flag race where the // ref is true while the user is actively scrolling up. // When the container width changes (member list toggle, window resize), text reflows // and scrollHeight changes; preserve proportional scroll position for scrolled-up users. // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is a stable ref useEffect(() => { const container = messagesContainerRef.current; const inner = messagesInnerRef.current; if (!inner || !container) return; resizeObserverPrevSHRef.current = container.scrollHeight; let prevClientWidth = container.clientWidth; const observer = new ResizeObserver(() => { if (container.clientHeight === 0) return; // Effect may re-initialize while container is display:none (ref=0). // Re-seed with current dimensions and skip — no reliable "was at bottom" data. if (resizeObserverPrevSHRef.current === 0) { resizeObserverPrevSHRef.current = container.scrollHeight; prevClientWidth = container.clientWidth; return; } const currentClientWidth = container.clientWidth; const widthChanged = currentClientWidth !== prevClientWidth; prevClientWidth = currentClientWidth; const prevSH = resizeObserverPrevSHRef.current; const wasAtPrevBottom = container.scrollTop + container.clientHeight >= prevSH - SCROLL_TOLERANCE; resizeObserverPrevSHRef.current = container.scrollHeight; if (wasAtPrevBottom) { scrollToBottom(); } else if (widthChanged && prevSH > 0) { const ratio = container.scrollTop / prevSH; container.scrollTop = Math.round(ratio * container.scrollHeight); } }); observer.observe(inner); return () => observer.disconnect(); }, [isLoadingHistory, channelId, privateChatId]); // Auto-scroll on new messages — skip when this channel is hidden (display:none). // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes useEffect(() => { if (!isActive) return; const isNarrowView = window.matchMedia("(max-width: 768px)").matches; const isChatVisible = !isNarrowView || mobileViewActiveColumn === "chatView"; if (wasAtBottomRef.current && isChatVisible) { scrollToBottom(); } }, [displayedMessages, mobileViewActiveColumn, scrollToBottom, isActive]); return ( <> <div ref={messagesContainerRef} className="flex-grow overflow-y-auto overflow-x-hidden flex flex-col bg-discord-dark-200 text-discord-text-normal relative" // Disable CSS scroll anchoring — it compounds with our useLayoutEffect delta correction causing double-jumps in browser. style={{ overflowAnchor: "none" }} onCopy={(e) => { const root = messagesContainerRef.current; if (!root) return; const markdown = buildMarkdownFromSelection( window.getSelection(), root, ); if (markdown !== null) { e.preventDefault(); e.clipboardData.setData("text/plain", markdown); } }} > {isLoadingHistory && !isFetchingMore ? ( <div className="flex-grow flex items-center justify-center"> <LoadingSpinner size="lg" text="Loading chat history..." className="text-discord-text-muted" /> </div> ) : ( <div ref={messagesInnerRef} className="flex flex-col"> {hasMoreMessages && !searchQuery && ( <div className="flex justify-center py-2"> <button type="button" onClick={() => { if (locallyHidden) { pendingPrependRef.current = true; setVisibleMessageCount( (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT, ); } else if (serverHasMore && channel && channelId) { const oldest = channelMessages[0]; if (oldest?.timestamp) { const ts = new Date(oldest.timestamp).toISOString(); // WebSocket responses are macrotasks; the click handler's React batch // always commits before the response arrives, so flushSync is unnecessary. isFetchingMoreRef.current = true; setIsFetchingMore(true); ircClient.requestChathistoryBefore( serverId, channel.name, ts, ); } } }} disabled={isFetchingMore} className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full text-discord-text-muted hover:text-discord-text-normal bg-discord-dark-400 hover:bg-discord-dark-300 border border-white/5 transition-all" > {isFetchingMore ? ( <LoadingSpinner size="sm" text="" className="text-discord-text-muted" /> ) : ( <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true" > <path d="M12 19V5M5 12l7-7 7 7" /> </svg> )} {isFetchingMore ? t`Getting more messages...` : locallyHidden ? t`${filteredMessages.length - displayedMessages.length} older messages` : t`Load older messages`} </button> </div> )} {searchQuery && ( <div className="flex justify-center items-center gap-2 py-2 bg-discord-dark-300 text-discord-text-muted text-sm"> <span> {plural(filteredMessages.length, { one: t`Found 1 message matching "${searchQuery}"`, other: t`Found ${filteredMessages.length} messages matching "${searchQuery}"`, })} </span> <button type="button" onClick={onClearSearch} className="text-red-400 hover:text-red-300" title={t`Clear search`} > ✕ </button> </div> )} {eventGroups.map((group) => { if (group.type === "eventGroup") { const firstId = group.messages[0]?.id || ""; const lastId = group.messages[group.messages.length - 1]?.id || ""; const groupKey = `group-${firstId}-${lastId}`; return ( <CollapsedEventMessage key={groupKey} eventGroup={group} users={channel?.users || []} onUsernameContextMenu={onUsernameContextMenu} /> ); } const message = group.messages[0]; const originalIndex = channelMessages.findIndex( (m) => m.id === message.id, ); const previousMessage = channelMessages[originalIndex - 1]; const showHeader = shouldShowMessageHeader( previousMessage, message, ); return ( <MessageItem key={message.id} message={message} showDate={ originalIndex === 0 || new Date(message.timestamp).toDateString() !== new Date( channelMessages[originalIndex - 1]?.timestamp, ).toDateString() } showHeader={showHeader} setReplyTo={onReply} isHighlighted={message.id === highlightedMessageId} onUsernameContextMenu={onUsernameContextMenu} onIrcLinkClick={onIrcLinkClick} onReactClick={onReactClick} joinChannel={joinChannel} onReactionUnreact={onReactionUnreact} onOpenReactionModal={onOpenReactionModal} onDirectReaction={onDirectReaction} serverId={serverId} channelId={channelId || undefined} privateChatId={privateChatId || undefined} onRedactMessage={onRedactMessage} onOpenProfile={onOpenProfile} /> ); })} </div> )} <div ref={messagesEndRef} className="h-px" /> </div> <ScrollToBottomButton isVisible={isScrolledUp} onClick={scrollToBottom} /> </> ); }, ); ChannelMessageList.displayName = "ChannelMessageList"; // Wrap with memo so hidden keep-alive channels skip re-renders when their props // haven't changed (e.g. when messageText changes in the input — the only thing // that changes on typing is local state inside ChatArea, not the props we pass here). export const MemoChannelMessageList = memo(ChannelMessageList); 
@@ -49,6 +59,11 @@ msgstr "{0, plural, one {Показать ещё 1 элемент} few {Пока
 msgid "{0} and {1} are typing..."
 msgstr "{0} и {1} печатают..."
 
+#. placeholder {0}: formatIdle(s.idle)
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "{0} idle"
+msgstr "{0} без активности"
+
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
@@ -68,6 +83,12 @@ msgstr "{0} должно быть числом."
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} must be a whole number."
 msgstr "{0} должно быть целым числом."
+
+#. placeholder {0}: networks.length
+#. placeholder {1}: networks.length === 1 ? "" : "s"
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "{0} network{1} — pick one to join"
+msgstr "{0} сеть{1} — выберите одну для подключения"
 
 #. placeholder {0}: filteredMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -106,16 +127,19 @@ msgstr "{0}, {1}, {2} и ещё {3} печатают..."
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0} дн. назад"
 
 #. placeholder {0}: Math.floor(secs / 3600)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0} ч. назад"
 
 #. placeholder {0}: Math.floor(secs / 60)
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0} мин. назад"
 
@@ -203,6 +227,7 @@ msgstr "#new-channel-name"
 msgid "#overflow"
 msgstr "#overflow"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Назад"
@@ -275,6 +300,10 @@ msgstr "Действие"
 msgid "active"
 msgstr "активен"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Activity"
+msgstr "Активность"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Add"
@@ -300,6 +329,12 @@ msgstr "Добавить маску приглашения (например: ni
 msgid "Add IRC Server"
 msgstr "Добавить IRC-сервер"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Add Network"
+msgstr "Добавить сеть"
+
 #: src/components/message/MessageActions.tsx
 #: src/components/message/MessageReactions.tsx
 #: src/components/message/MessageReactions.tsx
@@ -318,6 +353,10 @@ msgstr "Добавить правило"
 #: src/components/layout/ServerList.tsx
 msgid "Add Server"
 msgstr "Добавить сервер"
+
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Add your first network"
+msgstr "Добавьте вашу первую сеть"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -411,6 +450,10 @@ msgstr "теперь известен как **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Вы уверены, что хотите удалить это сообщение? Это действие нельзя отменить."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "ASN"
+msgstr "ASN"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Параметры вложения"
@@ -426,6 +469,10 @@ msgstr "Позиция в аудио"
 #: src/components/ui/UserSettings.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Аутентифицироваться как IRC-оператор для административного доступа"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Authenticated"
+msgstr "Аутентифицирован"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
@@ -478,6 +525,7 @@ msgid "Away Message"
 msgstr "Сообщение об отсутствии"
 
 #: src/components/message/JsonLogMessage.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Отсутствие:"
 
@@ -490,6 +538,10 @@ msgstr "Назад"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
 msgstr "Вернуться к изображению"
+
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Back to network list"
+msgstr "Назад к списку сетей"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -533,6 +585,11 @@ msgstr "Баны"
 msgid "Bot"
 msgstr "Бот"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "BOT"
+msgstr "BOT"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
@@ -568,6 +625,10 @@ msgstr "Просмотреть все каналы на сервере"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
@@ -600,6 +661,15 @@ msgstr "Отменить рабочий процесс"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "отменено"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Cert FP"
+msgstr "Cert FP"
+
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Change accent color"
+msgstr "Изменить акцентный цвет"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -711,6 +781,7 @@ msgid "channel-name"
 msgstr "имя-канала"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Channels"
 msgstr "Каналы"
@@ -763,6 +834,7 @@ msgstr "Нажмите, чтобы скопировать"
 msgid "Click to copy as JSON"
 msgstr "Нажмите для копирования как JSON"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Click to join {channel}"
 msgstr "Нажмите, чтобы войти в {channel}"
@@ -791,10 +863,14 @@ msgstr "Лимит пользователей (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -871,8 +947,13 @@ msgid "Confirm?"
 msgstr "Подтвердить?"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "Подключиться"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "connected from {sessionCount} sessions"
+msgstr "подключено с {sessionCount} сессий"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Connected To"
@@ -885,6 +966,11 @@ msgstr "Подключение"
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Подключение..."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Connection"
+msgstr "Соединение"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -913,6 +999,7 @@ msgid "Copied"
 msgstr "Скопировано"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Копировать"
 
@@ -948,6 +1035,10 @@ msgstr "Копировать URL"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't encrypt with {nick} — {0}."
 msgstr "Не удалось зашифровать с {nick} — {0}."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Country"
+msgstr "Страна"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Create"
@@ -1041,6 +1132,10 @@ msgstr "Удалить канал"
 msgid "Delete message"
 msgstr "Удалить сообщение"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Delete network"
+msgstr "Удалить сеть"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete Private Chat"
 msgstr "Удалить личную переписку"
@@ -1053,6 +1148,10 @@ msgstr "Удалить это приглашение"
 msgid "Delete this message? This cannot be undone."
 msgstr "Удалить это сообщение? Это действие нельзя отменить."
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Delete this network?"
+msgstr "Удалить эту сеть?"
+
 #: src/components/ui/BotsModal.tsx
 msgid "deleted"
 msgstr "удалено"
@@ -1061,10 +1160,27 @@ msgstr "удалено"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Описание (необязательно, например «Бета-тестеры Q3»)"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Disconnect"
 msgstr "Отключиться"
+
+#. placeholder {0}: network.name
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect <0>{0}</0>?"
+msgstr "Отключить <0>{0}</0>?"
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "Disconnect from soju bouncer?"
+msgstr "Отключиться от soju bouncer?"
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "Disconnect network?"
+msgstr "Отключить сеть?"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Discover"
@@ -1129,18 +1245,29 @@ msgstr "Скачать"
 msgid "Drop files to upload"
 msgstr "Перетащите файлы для загрузки"
 
+#: src/components/ui/AddServerModal.tsx
+msgid "e.g. <0>wss://host:port/socket</0>"
+msgstr "например, <0>wss://host:port/socket</0>"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "например: 100:1440"
 
+#: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
 msgstr "Изменить"
+
+#. placeholder {0}: editingNetwork?.attributes.name || editingNetwork?.netid
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Edit {0}"
+msgstr "Изменить {0}"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
@@ -1422,9 +1549,14 @@ msgstr "ГЛАВНАЯ"
 msgid "Homepage"
 msgstr "Сайт"
 
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
 msgstr "Хост"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Hostname"
+msgstr "Имя хоста"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
@@ -1454,6 +1586,11 @@ msgstr "https://example.com/avatar/{size}/channel.jpg"
 msgid "I'm Back"
 msgstr "Я вернулся"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Ident"
+msgstr "Ident"
+
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Idle"
 msgstr "Не активен"
@@ -1535,6 +1672,14 @@ msgstr "Пригласить пользователя в {channelName}"
 msgid "Invite-Only (+i)"
 msgstr "Только по приглашению (+i)"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IP"
+msgstr "IP"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "IRC OP"
+msgstr "IRC OP"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
@@ -1580,6 +1725,10 @@ msgstr "Войти в {value}"
 msgid "Join a channel"
 msgstr "Войти в канал"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Joined"
+msgstr "Присоединился"
+
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
 msgid "joined {channelName}"
@@ -1594,6 +1743,7 @@ msgid "Joined the channel"
 msgstr "Присоединился к каналу"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "только что"
 
@@ -1661,6 +1811,10 @@ msgstr "Покинул канал"
 msgid "Let others know when you are typing"
 msgstr "Сообщать другим, когда вы печатаете"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Libera Chat"
+msgstr "Libera Chat"
+
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "Предпросмотр ссылки"
@@ -1689,6 +1843,10 @@ msgstr "Загрузка GIF..."
 msgid "Loading more channels..."
 msgstr "Загрузка дополнительных каналов..."
 
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Loading networks from your bouncer…"
+msgstr "Загрузка сетей с вашего bouncer…"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "Загрузка данных WHOIS..."
@@ -1696,6 +1854,11 @@ msgstr "Загрузка данных WHOIS..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Локальное хранилище:"
+
+#. placeholder {0}: whoisData.account
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "logged in as {0}"
+msgstr "вошёл как {0}"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -1775,6 +1938,10 @@ msgstr "Предпросмотр медиа"
 #: src/components/layout/MemberList.tsx
 msgid "Members — {0}"
 msgstr "Участники — {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Message"
+msgstr "Сообщение"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
@@ -1901,9 +2068,20 @@ msgstr "Имя:"
 msgid "network"
 msgstr "сеть"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Network bound through soju bouncer"
+msgstr "Сеть, привязанная через soju bouncer"
+
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
 msgid "Network Name"
 msgstr "Название сети"
+
+#. placeholder {0}: server?.name ?? bouncerServerId
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Networks on {0}"
+msgstr "Сети на {0}"
 
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
@@ -1935,6 +2113,7 @@ msgid "nick!user@host (e.g., spam*!*@*, *!*@badhost.com)"
 msgstr "nick!user@host (например: spam*!*@*, *!*@badhost.com)"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Nickname"
@@ -1998,6 +2177,10 @@ msgstr "Файл не выбран"
 msgid "No flood profile"
 msgstr "Без профиля флуда"
 
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "no host set"
+msgstr "хост не задан"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "No invitations found"
 msgstr "Приглашения не найдены"
@@ -2017,6 +2200,10 @@ msgstr "В этом канале нет медиафайлов"
 #: src/components/ui/UserSettings.tsx
 msgid "No media previews are loaded."
 msgstr "Предпросмотр медиа не загружается."
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "no message"
+msgstr "нет сообщения"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2045,6 +2232,10 @@ msgstr "Тема не задана"
 #: src/components/ui/QuickActions.tsx
 msgid "No unread mentions or messages"
 msgstr "Нет непрочитанных упоминаний или сообщений"
+
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "No upstream networks yet."
+msgstr "Пока нет вышестоящих сетей."
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "No users available"
@@ -2090,7 +2281,12 @@ msgstr "ObsidianIRC"
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC — IRC будущего"
+msgstr "ObsidianIRC - Перенося IRC в будущее"
+
+#. placeholder {0}: session.total
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "of {0}"
+msgstr "из {0}"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Off"
@@ -2144,6 +2340,10 @@ msgstr "Упс! Разрыв сети! ⚠️"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Op"
 msgstr "Op"
+
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Open"
+msgstr "Открыть"
 
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
@@ -2269,6 +2469,10 @@ msgstr "Закрепить личный чат"
 msgid "Pin this private message conversation"
 msgstr "Закрепить эту личную переписку"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Plaintext"
+msgstr "Открытый текст"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
@@ -2303,6 +2507,7 @@ msgid "PM User"
 msgstr "Написать в личку"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Порт"
 
@@ -2398,6 +2603,7 @@ msgstr "отреагировал на это сообщение"
 msgid "Read more"
 msgstr "Читать далее"
 
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2424,6 +2630,7 @@ msgstr "Рассуждение"
 msgid "Receiving command list…"
 msgstr "Получение списка команд…"
 
+#: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Переподключиться к серверу"
@@ -2432,6 +2639,10 @@ msgstr "Переподключиться к серверу"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Refresh"
 msgstr "Обновить"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Refresh WHOIS"
+msgstr "Обновить WHOIS"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -2521,6 +2732,7 @@ msgstr "Выполнить"
 msgid "Safe"
 msgstr "Безопасно"
 
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/TopicModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -2596,6 +2808,10 @@ msgstr "Поиск пользователей..."
 msgid "Searching..."
 msgstr "Поиск..."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Secret"
+msgstr "Секретный"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Secret (+s)"
 msgstr "Секретный (+s)"
@@ -2607,6 +2823,14 @@ msgstr "Секретный канал"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Secure Connection"
 msgstr "Защищённое соединение"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security"
+msgstr "Безопасность"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Security groups"
+msgstr "Группы безопасности"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Security Warning"
@@ -2624,6 +2848,10 @@ msgstr "Выберите бота слева, чтобы увидеть его �
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
 msgstr "Выберите канал"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Select a Network"
+msgstr "Выберите сеть"
 
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Select Member"
@@ -2726,6 +2954,10 @@ msgstr "Операторы серверов сети потенциально м
 msgid "Server Password"
 msgstr "Пароль сервера"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Server Password (PASS)"
+msgstr "Пароль сервера (PASS)"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Межсерверное взаимодействие может использовать незашифрованные соединения"
@@ -2737,6 +2969,19 @@ msgstr "По всему серверу"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Бот всего сервера — доступен из любого канала"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session"
+msgstr "Сессия"
+
+#. placeholder {0}: session.ordinal
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Session {0}"
+msgstr "Сессия {0}"
+
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Sessions"
+msgstr "Сессии"
 
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
@@ -2834,6 +3079,10 @@ msgstr "Показывает весь внешний медиаконтент. �
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Показывает медиафайлы с доверенного файлового хоста вашего сервера. Запросы к внешним сервисам не выполняются."
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "Signed on"
+msgstr "В сети с"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Signed On"
 msgstr "В сети с"
@@ -2846,6 +3095,12 @@ msgstr "Слэш-команды"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
 msgstr "Программа:"
+
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "soju bouncer (control)"
+msgstr "soju bouncer (управление)"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Sort by Name"
@@ -2871,6 +3126,7 @@ msgstr "Начать личный чат"
 msgid "Starting workflow…"
 msgstr "Запуск рабочего процесса…"
 
+#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -2943,6 +3199,10 @@ msgstr "Пользователь получит приглашение всту�
 msgid "The workflow that produced this message is no longer in state"
 msgstr "Рабочий процесс, создавший это сообщение, больше не находится в состоянии"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
+msgstr "Эта учётная запись подключена с {sessionCount} сессий. Данные по отдельным сессиям раскрываются только владельцу учётной записи или операторам IRC."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Этот чат зашифрован собственной схемой Obby. Сравните отпечатки по другому каналу связи, затем отметьте его как проверенный."
@@ -2963,6 +3223,11 @@ msgstr "Это поле обязательно для заполнения"
 msgid "This image has expired"
 msgstr "Срок действия этого изображения истёк"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "This is you"
+msgstr "Это вы"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "Столько человек зарегистрировалось по этой ссылке"
@@ -2970,6 +3235,10 @@ msgstr "Столько человек зарегистрировалось по 
 #: src/components/message/E2EEUnprotectedBadge.tsx
 msgid "This message wasn't encrypted. It may come from another of their clients that isn't using encryption."
 msgstr "Это сообщение не было зашифровано. Возможно, оно отправлено с другого клиента этого человека, который не использует шифрование."
+
+#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
+msgstr "Это удалит сеть из вашего soju bouncer. Чтобы использовать её снова, вам нужно будет добавить её заново."
 
 #: src/components/ui/UserSettings.tsx
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
@@ -2983,6 +3252,15 @@ msgstr "Этот сервер не поддерживает пригласите
 msgid "This server only supports one connection type"
 msgstr "Этот сервер поддерживает только один тип подключения"
 
+#. placeholder {0}: children.length
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the {0} bound networks below."
+msgstr "Это также закроет {0} привязанных сетей ниже."
+
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "This will also close the bound network below."
+msgstr "Это также закроет привязанную сеть ниже."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Время (мин)"
@@ -2994,6 +3272,11 @@ msgstr "Временное окно (секунды)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
 msgstr "истекло время ожидания"
+
+#: src/components/ui/BouncerNetworkForm.tsx
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "TLS"
+msgstr "TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -3052,6 +3335,7 @@ msgid "Total: {0}"
 msgstr "Всего: {0}"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "Транспорт"
 
@@ -3164,6 +3448,10 @@ msgstr "Пользователь аутентифицирован"
 msgid "User is away"
 msgstr "Пользователь отсутствует"
 
+#: src/components/ui/ObbyWhoisModal.tsx
+msgid "User modes"
+msgstr "Пользовательские режимы"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
@@ -3173,6 +3461,7 @@ msgstr "Профиль пользователя"
 msgid "User Settings"
 msgstr "Настройки пользователя"
 
+#: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 msgid "Username"
@@ -3379,6 +3668,10 @@ msgstr "Выполняется…"
 msgid "Works with other IRC clients"
 msgstr "Работает с другими IRC-клиентами"
 
+#: src/components/ui/BouncerNetworkForm.tsx
+msgid "Yes, delete"
+msgstr "Да, удалить"
+
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx
 msgid "You"
@@ -3409,6 +3702,11 @@ msgstr "Вы пригласили {target} присоединиться к {chan
 msgid "You verified this contact."
 msgstr "Вы подтвердили этот контакт."
 
+#. placeholder {0}: parent.name
+#: src/components/ui/BouncerDisconnectConfirmModal.tsx
+msgid "You're connected to <0>{0}</0>."
+msgstr "Вы подключены к <0>{0}</0>."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
 msgstr "Пароль вашего аккаунта для аутентификации"
@@ -3416,6 +3714,10 @@ msgstr "Пароль вашего аккаунта для аутентифика
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account username for authentication"
 msgstr "Имя пользователя вашего аккаунта для аутентификации"
+
+#: src/components/ui/BouncerNetworksPanel.tsx
+msgid "Your bouncer doesn't have any networks yet. Add one to get started."
+msgstr "У вашего bouncer пока нет сетей. Добавьте одну, чтобы начать."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"

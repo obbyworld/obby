@@ -33,23 +33,34 @@ const mockSaveServersToLocalStorage = vi.mocked(saveServersToLocalStorage);
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    sendCapEnd: vi.fn(),
     userOnConnect: vi.fn(),
+    // CAP END is gated on this map being empty/false for the
+    // current server -- see LinkSecurityWarningModal.handleContinue.
+    capNegotiationComplete: new Map(),
   },
 }));
 
 // Mock Audio
 const mockPlay = vi.fn();
-global.Audio = vi.fn().mockImplementation(() => ({
-  play: mockPlay,
-  volume: 0,
-}));
+function makeAudio() {
+  return {
+    play: mockPlay,
+    volume: 0,
+  };
+}
+global.Audio = vi.fn().mockImplementation(makeAudio);
 
-// Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+// Mock ResizeObserver. vitest 4 invokes constructor mocks with `new`, which an
+// arrow implementation can't satisfy; a plain function returning the instance can.
+function makeResizeObserver() {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+}
+global.ResizeObserver = vi.fn().mockImplementation(makeResizeObserver);
 
 describe("LinkSecurityWarningModal", () => {
   // biome-ignore lint/suspicious/noExplicitAny: Test mock state doesn't need full typing
