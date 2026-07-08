@@ -134,9 +134,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above).
+          - platform: "macos-15" # for Arm based macs (M1 and above).
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # for Intel based macs.
+          - platform: "macos-15" # for Intel based macs.
             args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04" # Use 22.04 for glibc 2.35 compatibility
             args: ""
@@ -148,6 +148,12 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+
+      - name: Select Xcode 16.4 (macOS only)
+        # Xcode 26 runners lack the Swift back-compat static libs that swift-rs's
+        # libapp.a force-loads, breaking the link. 16.4 has them. runner-images#13135.
+        if: startsWith(matrix.platform, 'macos')
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
@@ -165,7 +171,7 @@ jobs:
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ startsWith(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
@@ -553,7 +559,7 @@ jobs:
           releaseName: ObsidianIRC v${{ needs.collect-version.outputs.current_version }}
 
   publish-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: collect-version
     permissions:
       contents: write
@@ -561,6 +567,12 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+
+      - name: Select Xcode 16.4
+        # Xcode 26 on the runners ships without the Swift back-compat static libs
+        # (swiftCompatibility56 / swiftCompatibilityConcurrency) that swift-rs's
+        # libapp.a force-loads, so the link fails. 16.4 has them. runner-images#13135.
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
