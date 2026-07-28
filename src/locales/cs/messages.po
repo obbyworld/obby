@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Zpráva nebyla odeslána: šifrování zatím není aktivní. Počkejte, až zámek zezelená, nebo ukončete šifrování a odešlete nešifrovaně."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Zpráva nebyla odeslána: šifrování přestalo fungovat. Ukončete šifrování a odešlete nešifrovaně."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Zpráva nebyla odeslána: šifrovací klíč se změnil. Ověřte nový klíč nebo ukončete šifrování, než odešlete nešifrovaně."
 

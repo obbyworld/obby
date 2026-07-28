@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "メッセージは送信されませんでした：暗号化がまだ有効になっていません。ロックが緑色になるまで待つか、暗号化を終了して暗号化せずに送信してください。"
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "メッセージは送信されませんでした：暗号化が機能しなくなりました。暗号化を終了して暗号化せずに送信してください。"
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "メッセージは送信されませんでした：暗号化キーが変更されました。平文で送信する前に、新しいキーを確認するか、暗号化を終了してください。"
 

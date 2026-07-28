@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Meddelandet skickades inte: krypteringen är inte aktiv ännu. Vänta tills låset blir grönt, eller avsluta krypteringen för att skicka okrypterat."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Meddelandet skickades inte: krypteringen slutade fungera. Avsluta krypteringen för att skicka okrypterat."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Meddelandet skickades inte: krypteringsnyckeln har ändrats. Verifiera den nya nyckeln eller avsluta krypteringen innan du skickar i klartext."
 

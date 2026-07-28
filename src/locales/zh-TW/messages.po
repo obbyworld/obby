@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "訊息未送出：加密尚未啟用。請等待鎖頭變為綠色，或結束加密以未加密方式傳送。"
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "訊息未送出：加密已停止運作。請結束加密以未加密方式傳送。"
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "訊息未送出：加密金鑰已變更。請先驗證新金鑰，或結束加密後再以明文傳送。"
 

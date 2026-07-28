@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Bericht niet verzonden: versleuteling is nog niet actief. Wacht tot het slot groen wordt, of beëindig de versleuteling om onversleuteld te verzenden."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Bericht niet verzonden: versleuteling werkt niet meer. Beëindig de versleuteling om onversleuteld te verzenden."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Bericht niet verzonden: de versleutelingssleutel is gewijzigd. Verifieer de nieuwe sleutel of beëindig de versleuteling voordat je onversleuteld verzendt."
 

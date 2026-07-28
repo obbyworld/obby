@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Viestiä ei lähetetty: salaus ei ole vielä käytössä. Odota, että lukko muuttuu vihreäksi, tai lopeta salaus lähettääksesi salaamattomana."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Viestiä ei lähetetty: salaus lakkasi toimimasta. Lopeta salaus lähettääksesi salaamattomana."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Viestiä ei lähetetty: salausavain muuttui. Vahvista uusi avain tai lopeta salaus ennen kuin lähetät salaamattomana."
 

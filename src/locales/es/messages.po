@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Mensaje no enviado: el cifrado aún no está activo. Espera a que el candado se ponga verde o finaliza el cifrado para enviar sin cifrar."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Mensaje no enviado: el cifrado dejó de funcionar. Finaliza el cifrado para enviar sin cifrar."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Mensaje no enviado: la clave de cifrado cambió. Verifica la nueva clave o finaliza el cifrado antes de enviar sin cifrar."
 

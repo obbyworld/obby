@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Wiadomość nie została wysłana: szyfrowanie nie jest jeszcze aktywne. Poczekaj, aż kłódka zmieni kolor na zielony, lub zakończ szyfrowanie, aby wysłać bez szyfrowania."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Wiadomość nie została wysłana: szyfrowanie przestało działać. Zakończ szyfrowanie, aby wysłać bez szyfrowania."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Wiadomość nie została wysłana: klucz szyfrowania uległ zmianie. Zweryfikuj nowy klucz lub zakończ szyfrowanie przed wysłaniem bez szyfrowania."
 

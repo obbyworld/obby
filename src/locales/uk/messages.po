@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Повідомлення не надіслано: шифрування ще не активне. Зачекайте, доки замок не стане зеленим, або завершіть шифрування, щоб надіслати без шифрування."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Повідомлення не надіслано: шифрування припинило працювати. Завершіть шифрування, щоб надіслати без шифрування."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Повідомлення не надіслано: ключ шифрування змінився. Перевірте новий ключ або завершіть шифрування, перш ніж надсилати у відкритому вигляді."
 

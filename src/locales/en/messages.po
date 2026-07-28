@@ -1982,6 +1982,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Message not sent: encryption isn't active yet. Wait for the lock to turn green, or end encryption to send unencrypted."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Message not sent: encryption stopped working. End encryption to send unencrypted."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 

@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "Mesajul nu a fost trimis: criptarea nu este încă activă. Așteaptă ca lacătul să devină verde sau oprește criptarea pentru a trimite necriptat."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "Mesajul nu a fost trimis: criptarea a încetat să funcționeze. Oprește criptarea pentru a trimite necriptat."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Mesajul nu a fost trimis: cheia de criptare s-a schimbat. Verifică noua cheie sau oprește criptarea înainte de a trimite necriptat."
 

@@ -1983,6 +1983,10 @@ msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn 
 msgstr "메시지를 보내지 못했습니다: 암호화가 아직 활성화되지 않았습니다. 잠금 아이콘이 초록색으로 바뀔 때까지 기다리거나, 암호화를 종료하여 암호화되지 않은 상태로 보내세요."
 
 #: src/store/handlers/e2eeOutbound.ts
+msgid "Message not sent: encryption stopped working. End encryption to send unencrypted."
+msgstr "메시지를 보내지 못했습니다: 암호화가 더 이상 작동하지 않습니다. 암호화를 종료하여 암호화되지 않은 상태로 보내세요."
+
+#: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "메시지를 보내지 못했습니다: 암호화 키가 변경되었습니다. 평문으로 보내기 전에 새 키를 확인하거나 암호화를 종료하세요."
 
