@@ -14,8 +14,7 @@ export function shouldShowMessageHeader(
   message: Message,
 ): boolean {
   return (
-    !previous ||
-    previous.type !== "message" ||
+    previous?.type !== "message" ||
     previous.userId !== message.userId ||
     isUnprotectedMessage(previous) !== isUnprotectedMessage(message) ||
     new Date(message.timestamp).getTime() -

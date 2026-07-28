@@ -35,7 +35,7 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
   const verifyE2EESession = useStore((s) => s.verifyE2EESession);
   const [copied, setCopied] = useState(false);
 
-  if (!session || session.status !== "established") return null;
+  if (session?.status !== "established") return null;
 
   const isOtr = session.scheme === "otr";
   const selfRaw = (isOtr ? otrSelf : obbySelf) ?? "";

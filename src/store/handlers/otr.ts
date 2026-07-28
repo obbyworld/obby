@@ -24,6 +24,9 @@ import {
 
 let backend: OtrBackend | null = null;
 let backendPromise: Promise<OtrBackend> | null = null;
+// Conversations we tore down ourselves, so the engine's end callback can tell
+// our own teardown from the peer's.
+const locallyEnded = new Set<string>();
 
 function buildBackend(): Promise<OtrBackend> {
   if (backendPromise) return backendPromise;
@@ -50,8 +53,18 @@ function buildBackend(): Promise<OtrBackend> {
           );
         },
         onEnded: (peer) => {
-          clearNegotiationTimer(convKey(peer.serverId, peer.nick));
-          dispatch(peer.serverId, peer.nick, { type: "reset" });
+          const key = convKey(peer.serverId, peer.nick);
+          clearNegotiationTimer(key);
+          // A peer-initiated teardown must not silently clear the lock: the
+          // user is mid-conversation and would send the next line in the clear.
+          if (locallyEnded.delete(key)) {
+            dispatch(peer.serverId, peer.nick, { type: "reset" });
+            return;
+          }
+          dispatch(peer.serverId, peer.nick, {
+            type: "error",
+            reason: "peer ended encryption",
+          });
         },
         onError: (peer, error) => {
           // An OTR error/notice on a live session is informational (libotr
@@ -64,7 +77,14 @@ function buildBackend(): Promise<OtrBackend> {
             ]?.status;
           if (status === "established") return;
           backend?.end(peer);
-          dispatch(peer.serverId, peer.nick, { type: "error", reason: error });
+          // The engine surfaces remote-supplied text here, and the reason is
+          // rendered in the encryption banner, so a peer could otherwise write
+          // its own prose into the surface the user consults to judge safety.
+          console.warn("[OTR] session error:", error);
+          dispatch(peer.serverId, peer.nick, {
+            type: "error",
+            reason: "handshake failed",
+          });
         },
       });
       backend = built;
@@ -183,6 +203,7 @@ export function sendOtrMessage(
 
 export function endOtrSession(serverId: string, nick: string): void {
   clearNegotiationTimer(convKey(serverId, nick));
+  locallyEnded.add(convKey(serverId, nick));
   backend?.end({ serverId, nick });
   dispatch(serverId, nick, { type: "reset" });
 }

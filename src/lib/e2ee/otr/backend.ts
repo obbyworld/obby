@@ -9,6 +9,7 @@ import type {
   OtrInstance,
   OtrStatic,
 } from "../../otr/vendor/otr.bundle";
+import { e2eeSessionKey } from "../session";
 
 export interface OtrPeerRef {
   serverId: string;
@@ -38,7 +39,7 @@ const IRC_FRAGMENT_SIZE = 400;
 const IRC_SEND_INTERVAL = 200;
 
 function sessionKey(peer: OtrPeerRef): string {
-  return `${peer.serverId}:${peer.nick.toLowerCase()}`;
+  return e2eeSessionKey(peer.serverId, peer.nick);
 }
 
 export class OtrBackend {

@@ -598,7 +598,10 @@ export class IRCClient implements IRCClientContext {
   private saslCredentials: Map<string, { username: string; password: string }> =
     new Map();
   private pendingConnections: Map<string, Promise<Server>> = new Map();
-  private pendingCapReqs: Map<string, number> = new Map(); // Track how many CAP REQ batches are pending ACK
+  // Requested capabilities still awaiting an ACK. A long CAP REQ is split
+  // across batches and the server may ACK in arbitrary pieces, so completion
+  // is tracked by name rather than by counting ACK lines.
+  private pendingCapReqs: Map<string, Set<string>> = new Map();
   // soju.im/bouncer-networks BIND: when a serverId is mapped here, the
   // next CAP END for that server is preceded by a `BOUNCER BIND <netid>`
   // line so the connection lands inside the named upstream network's
@@ -914,11 +917,6 @@ export class IRCClient implements IRCClientContext {
           serverId: server.id,
           connectionState: "connected",
         });
-
-        // Channels are rejoined from the RPL_WELCOME (001) handler. Sending JOIN
-        // here — before registration completes — is ignored by the server and
-        // counts against its handshake-data-flood limit, which can get the whole
-        // IP Z-Lined on reconnect when many channels are open.
 
         // Don't start ping timer here - wait for 001 welcome message
         // to ensure connection is fully established before sending PINGs
@@ -2047,7 +2045,6 @@ export class IRCClient implements IRCClientContext {
         let currentBatch: string[] = [];
         const baseLength = "CAP REQ :".length + 2; // +2 for \r\n
         let currentLength = baseLength;
-        let batchCount = 0;
 
         for (const cap of capsToRequest) {
           const capLength = cap.length + (currentBatch.length > 0 ? 1 : 0); // +1 for space if not first
@@ -2057,7 +2054,6 @@ export class IRCClient implements IRCClientContext {
             // Send current batch
             const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
             this.sendRaw(serverId, reqMessage);
-            batchCount++;
             currentBatch = [];
             currentLength = baseLength;
           }
@@ -2070,11 +2066,9 @@ export class IRCClient implements IRCClientContext {
         if (currentBatch.length > 0) {
           const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
           this.sendRaw(serverId, reqMessage);
-          batchCount++;
         }
 
-        // Track how many CAP REQ batches we sent
-        this.pendingCapReqs.set(serverId, batchCount);
+        this.pendingCapReqs.set(serverId, new Set(capsToRequest));
 
         // Set a timeout to send CAP END if server doesn't respond
         setTimeout(() => {
@@ -2152,55 +2146,47 @@ export class IRCClient implements IRCClientContext {
     // Trigger the original event for compatibility
     this.triggerEvent("CAP ACK", { serverId, cliCaps });
 
-    // Store the acknowledged capabilities
+    // Values are tracked separately (capabilityValues); every consumer of
+    // `capabilities` matches on the bare name, so store names only.
+    const ackedNames = cliCaps
+      .split(" ")
+      .filter(Boolean)
+      .map((cap) => cap.split("=", 1)[0]);
+
     const server = this.servers.get(serverId);
     if (server) {
-      const caps = cliCaps.split(" ");
       if (!server.capabilities) {
         server.capabilities = [];
       }
-      for (const cap of caps) {
+      for (const cap of ackedNames) {
         if (!server.capabilities.includes(cap)) {
           server.capabilities.push(cap);
         }
       }
     }
 
-    // Decrement pending CAP REQ count
-    const pendingCount = this.pendingCapReqs.get(serverId) || 0;
-    if (pendingCount > 0) {
-      const newCount = pendingCount - 1;
+    const pending = this.pendingCapReqs.get(serverId);
+    if (!pending) return;
+    for (const cap of ackedNames) {
+      pending.delete(cap);
+    }
+    // Caps the server never ACKs (or NAKs) leave the set non-empty; the CAP LS
+    // timeout is the backstop that finalises negotiation in that case.
+    if (pending.size > 0) return;
 
-      if (newCount === 0) {
-        // All CAP REQ batches acknowledged
-        this.pendingCapReqs.delete(serverId);
+    this.pendingCapReqs.delete(serverId);
 
-        // Check if SASL is enabled and was acknowledged
-        const saslEnabled = this.saslEnabled.get(serverId) ?? false;
-        const saslAcknowledged =
-          server?.capabilities?.includes("sasl") ?? false;
+    const saslEnabled = this.saslEnabled.get(serverId) ?? false;
+    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
 
-        if (saslEnabled && saslAcknowledged) {
-          // SASL is enabled and was acknowledged - wait for SASL authentication to complete
-          // The SASL completion handlers (903/904-907) will send CAP END
-          console.log(
-            `[CAP ACK] SASL enabled for ${serverId}, waiting for SASL authentication`,
-          );
-        } else if (!this.capNegotiationComplete.get(serverId)) {
-          // No SASL or SASL not acknowledged, and no other path
-          // (auth.ts, SASL completion, link-security modal) has
-          // already finalised CAP negotiation -- complete it now.
-          this.sendCapEnd(serverId);
-          this.capNegotiationComplete.set(serverId, true);
-          this.userOnConnect(serverId);
-        }
-      } else {
-        this.pendingCapReqs.set(serverId, newCount);
-      }
-    } else {
-      console.log(
-        `[CAP ACK] Received unexpected CAP ACK for ${serverId} (no pending requests)`,
-      );
+    // SASL owns the rest of the handshake: its result (903 / 904-907) sends
+    // CAP END, so ending it here would strand the AUTHENTICATE exchange.
+    if (saslEnabled && saslAcknowledged) return;
+
+    if (!this.capNegotiationComplete.get(serverId)) {
+      this.sendCapEnd(serverId);
+      this.capNegotiationComplete.set(serverId, true);
+      this.userOnConnect(serverId);
     }
   }
 
@@ -2236,6 +2222,13 @@ export class IRCClient implements IRCClientContext {
     // If no serverId provided, return null (we need server context now)
     if (!serverId) return null;
     return this.currentUsers.get(serverId) || null;
+  }
+
+  // True while any requested capability is still unacknowledged. Callers that
+  // decide when to end CAP negotiation must wait: the caps that gate the rest
+  // of the handshake (sasl) may land in a later ACK line.
+  hasPendingCapReqs(serverId: string): boolean {
+    return (this.pendingCapReqs.get(serverId)?.size ?? 0) > 0;
   }
 
   hasCapability(serverId: string, cap: string): boolean {

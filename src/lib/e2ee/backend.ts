@@ -26,6 +26,7 @@ import {
   ratchetDecrypt,
   ratchetEncrypt,
 } from "./ratchet";
+import { e2eeSessionKey } from "./session";
 
 export interface PeerRef {
   serverId: string;
@@ -33,7 +34,7 @@ export interface PeerRef {
 }
 
 function peerKey(peer: PeerRef): string {
-  return `${peer.serverId}:${peer.nick.toLowerCase()}`;
+  return e2eeSessionKey(peer.serverId, peer.nick);
 }
 
 function isString(x: unknown): x is string {

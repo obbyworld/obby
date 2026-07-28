@@ -613,66 +613,6 @@ export interface AiWorkflow {
   userOpened?: boolean;
 }
 
-// One step within a draft/bot-tools workflow. `content` is the spec's
-// untyped payload: a nested object for tool-call args, a string fragment
-// for tool-result / reasoning / text. We carry it through verbatim and
-// let the UI decide how to render.
-export interface AiStep {
-  sid: string;
-  type: import("../lib/botTools").AiStepType;
-  state: import("../lib/botTools").AiStepState;
-  tool?: string;
-  label?: string;
-  content?: unknown;
-  truncated?: boolean;
-  startedAt: number;
-  updatedAt: number;
-}
-
-export interface AiWorkflow {
-  id: string;
-  serverId: string;
-  // Target the workflow was announced on (channel name or PM nick) so
-  // the tray can scope cards to the current selection.
-  channel: string;
-  // The bot's nick (sender of the original workflow TAGMSG).
-  senderNick: string;
-  name?: string;
-  state: import("../lib/botTools").AiWorkflowState;
-  // msgid of the IRC message that triggered the workflow, if the bot
-  // included `trigger` in the start event. Lets the UI correlate.
-  trigger?: string;
-  // Truncated copy of the prompt that started the workflow, if the bot
-  // included it. Rendered under the bot nick on the workflow card so
-  // the user can see what they asked without scrolling.
-  prompt?: string;
-  cancelledBy?: string;
-  // msgid of the PRIVMSG that carried the final workflow-complete tag.
-  // Set by the botTools handler when a tagged PRIVMSG arrives so the
-  // card can deep-link to that message ("Responded in chat" footer).
-  finalMsgid?: string;
-  startedAt: number;
-  updatedAt: number;
-  steps: AiStep[];
-  // UI: card starts collapsed; user can expand. Once dismissed the
-  // card is hidden from the tray (state is preserved for replay).
-  collapsed: boolean;
-  dismissed: boolean;
-  // True when the workflow was first observed inside a chathistory
-  // batch (i.e. it's being replayed from the server, not happening
-  // right now). The floating tray filters these out so joining a
-  // channel doesn't pop a wall of old workflow cards; they still
-  // appear in the history popover for inspection.
-  historical: boolean;
-  // True once the user has explicitly opened the floating card -- either
-  // via the chat-header workflow icon's dropdown, or via the "view
-  // workflow" affordance on a closed PRIVMSG.  Without this flag we'd
-  // pop a card automatically on every workflow start, which gets
-  // invasive when several bots are working at once.  Reset on dismiss
-  // so closing the card hides it from the tray again.
-  userOpened?: boolean;
-}
-
 export interface AppState {
   servers: Server[];
   currentUser: User | null;

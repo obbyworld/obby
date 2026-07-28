@@ -3,7 +3,6 @@ import {
   type E2EEEvent,
   type E2EESessionState,
   INITIAL_SESSION,
-  isEncrypting,
   reduceSession,
 } from "../../../src/lib/e2ee/session";
 
@@ -23,7 +22,6 @@ describe("initiator handshake", () => {
       peerFingerprint: "FP",
       peerAccount: "bob",
     });
-    expect(isEncrypting(state)).toBe(true);
   });
 
   test("remote reject ends in rejected", () => {
@@ -32,7 +30,6 @@ describe("initiator handshake", () => {
       { type: "rejected-remote" },
     ]);
     expect(state).toEqual({ status: "rejected", scheme: "otr" });
-    expect(isEncrypting(state)).toBe(false);
   });
 });
 
@@ -113,9 +110,35 @@ describe("reset and error are valid from any state", () => {
       expect(reduceSession(s, { type: "error", reason: "boom" })).toEqual({
         status: "error",
         reason: "boom",
+        wasEstablished: s.status === "established",
       });
     });
   }
+});
+
+// A session that broke after it was live keeps the send path from falling back
+// to plaintext, so the distinction has to survive the reducer.
+describe("error carries whether the session was live", () => {
+  test("from established, wasEstablished is true", () => {
+    const state = reduceSession(
+      {
+        status: "established",
+        scheme: "otr",
+        verified: false,
+        peerFingerprint: "FP",
+      },
+      { type: "error", reason: "peer ended encryption" },
+    );
+    expect(state).toMatchObject({ status: "error", wasEstablished: true });
+  });
+
+  test("from a failed handshake, wasEstablished is false", () => {
+    const state = reduceSession(
+      { status: "negotiating", scheme: "otr", initiator: true },
+      { type: "error", reason: "handshake failed" },
+    );
+    expect(state).toMatchObject({ status: "error", wasEstablished: false });
+  });
 });
 
 describe("invalid events are ignored", () => {

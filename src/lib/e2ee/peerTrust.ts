@@ -4,6 +4,8 @@
 // passes its own storage key — the fingerprint formats and key material differ,
 // so the pins must not be mixed.
 
+import { e2eeSessionKey } from "./session";
+
 export interface PinnedPeer {
   fingerprint: string;
   verified: boolean;
@@ -23,8 +25,7 @@ export interface PeerTrustStore {
 }
 
 export function createPeerTrustStore(storageKey: string): PeerTrustStore {
-  const peerKey = (serverId: string, nick: string) =>
-    `${serverId}:${nick.toLowerCase()}`;
+  const peerKey = e2eeSessionKey;
 
   function load(): Record<string, PinnedPeer> {
     let raw: string | null;

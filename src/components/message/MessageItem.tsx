@@ -580,16 +580,24 @@ export const MessageItem = memo((props: MessageItemProps) => {
         {showDate && (
           <DateSeparator date={new Date(message.timestamp)} theme={theme} />
         )}
-        <ActionMessage
-          message={message}
-          showDate={showDate}
-          messageUser={messageUser}
-          onUsernameContextMenu={onUsernameContextMenu}
-          setReplyTo={setReplyTo}
-          onReactClick={onReactClick}
-          onReactionUnreact={onReactionUnreact}
-          onDirectReaction={onDirectReaction}
-        />
+        <div
+          className={
+            isUnprotected
+              ? "border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
+              : undefined
+          }
+        >
+          <ActionMessage
+            message={message}
+            showDate={showDate}
+            messageUser={messageUser}
+            onUsernameContextMenu={onUsernameContextMenu}
+            setReplyTo={setReplyTo}
+            onReactClick={onReactClick}
+            onReactionUnreact={onReactionUnreact}
+            onDirectReaction={onDirectReaction}
+          />
+        </div>
       </>
     );
   }

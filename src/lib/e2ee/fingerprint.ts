@@ -1,7 +1,5 @@
-// Renders identity-key bytes as a human-comparable fingerprint and a two-party
-// combined fingerprint for out-of-band verification. The combined form is
-// order-independent so both peers, computing it from the same two keys, read
-// the identical string regardless of who initiated.
+// Renders identity-key bytes as a human-comparable fingerprint for
+// out-of-band verification.
 
 const DEFAULT_GROUP_SIZE = 4;
 const DEFAULT_GROUPS = 8;
@@ -23,8 +21,4 @@ export function formatFingerprint(
     out.push(hex.slice(i, i + groupSize));
   }
   return out.join(" ");
-}
-
-export function combinedFingerprint(fpA: string, fpB: string): string {
-  return [fpA, fpB].sort().join("  ");
 }

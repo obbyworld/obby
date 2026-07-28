@@ -34,24 +34,24 @@ export const HeaderOverflowMenu: React.FC<HeaderOverflowMenuProps> = ({
       role="menu"
     >
       <div className="py-1">
-        {menuItems.map((item) => (
-          <button
-            key={typeof item.label === "string" ? item.label : item.id}
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              item.onClick();
-              onClose();
-            }}
-            className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
-            title={
-              typeof item.label === "string" ? item.label : (item.id ?? "")
-            }
-          >
-            <span className="mt-0.5 flex-shrink-0 text-sm">{item.icon}</span>
-            <span className="text-sm">{item.label}</span>
-          </button>
-        ))}
+        {menuItems
+          .filter((item) => item.show)
+          .map((item) => (
+            <button
+              key={typeof item.label === "string" ? item.label : item.id}
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                item.onClick();
+                onClose();
+              }}
+              className="w-full px-3 py-2 text-left text-discord-text-normal hover:bg-discord-dark-200 hover:text-white transition-colors duration-150 flex items-center gap-2"
+              title={typeof item.label === "string" ? item.label : undefined}
+            >
+              <span className="mt-0.5 flex-shrink-0 text-sm">{item.icon}</span>
+              <span className="text-sm">{item.label}</span>
+            </button>
+          ))}
       </div>
     </Popover>
   );

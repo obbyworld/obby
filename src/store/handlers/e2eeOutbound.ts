@@ -38,5 +38,16 @@ export function routeOutgoingPM(
     return "withheld";
   }
 
+  // A session that broke after it was live leaves the user believing the chat
+  // is still protected, so withhold rather than fall through to plaintext.
+  if (session.status === "error" && session.wasEstablished) {
+    injectSystemNotice(
+      serverId,
+      nick,
+      t`Message not sent: encryption stopped working. End encryption to send unencrypted.`,
+    );
+    return "withheld";
+  }
+
   return "none";
 }

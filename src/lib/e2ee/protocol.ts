@@ -30,8 +30,6 @@ export function bodyToRaw(body: string): string | null {
     : null;
 }
 
-export type E2EEKind = "init" | "accept" | "reject" | "msg" | "frag";
-
 export const PROTOCOL_VERSION = 2;
 
 // A client tag caps near 4094 bytes (message-tags spec); a PRIVMSG body is far

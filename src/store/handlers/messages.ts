@@ -34,7 +34,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate message with msgid: ${mtags.msgid}`);
         return;
       }
 
@@ -368,18 +367,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         currentState.processedMessageIds.has(id),
       );
       if (hasDuplicate) {
-        console.log(
-          `Skipping duplicate multiline message with messageIds: ${messageIds.join(", ")}`,
-        );
         return;
       }
     } else if (
       mtags?.msgid &&
       currentState.processedMessageIds.has(mtags.msgid)
     ) {
-      console.log(
-        `Skipping duplicate multiline message with batch msgid: ${mtags.msgid}`,
-      );
       return;
     }
 
@@ -750,7 +743,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate USERMSG with msgid: ${mtags.msgid}`);
         return;
       }
     }
@@ -802,11 +794,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
       // Server messages should go to Server Notices, not create PM tabs
       if (sender.includes(".")) {
-        console.log(
-          "[USERMSG] Server message detected, routing to Server Notices:",
-          sender,
-        );
-
         const targetChannelId = "server-notices";
         const newMessage: Message = {
           id: uuidv4(),
@@ -1337,7 +1324,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate USERNOTICE with msgid: ${mtags.msgid}`);
         return;
       }
     }
@@ -1366,11 +1352,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check if this NOTICE is from the server itself (sender contains a ".")
     // Server notices should go to Server Notices, user notices should create PM tabs
     if (response.sender.includes(".")) {
-      console.log(
-        "[USERNOTICE] Server notice detected, routing to Server Notices:",
-        response.sender,
-      );
-
       // Check if this is a JSON log notice
       const isJsonLog = mtags?.["unrealircd.org/json-log"];
       let jsonLogData = null;

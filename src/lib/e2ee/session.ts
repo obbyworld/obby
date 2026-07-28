@@ -36,7 +36,10 @@ export type E2EESessionState =
       oldFingerprint: string;
       newFingerprint: string;
     }
-  | { status: "error"; reason: string };
+  // `wasEstablished` marks a session that broke after it was live (peer ended
+  // it, desync, key loss). The send path withholds in that case so a message
+  // the user typed under a green lock never goes out in the clear.
+  | { status: "error"; reason: string; wasEstablished?: boolean };
 
 export type E2EEEvent =
   | { type: "start"; scheme: E2EEScheme }
@@ -65,7 +68,12 @@ export function reduceSession(
   // reset and error are valid from any state — a user can always tear down a
   // session, and a backend failure always surfaces.
   if (event.type === "reset") return INITIAL_SESSION;
-  if (event.type === "error") return { status: "error", reason: event.reason };
+  if (event.type === "error")
+    return {
+      status: "error",
+      reason: event.reason,
+      wasEstablished: state.status === "established",
+    };
 
   switch (state.status) {
     case "none":
@@ -135,10 +143,6 @@ export function reduceSession(
     default:
       return state;
   }
-}
-
-export function isEncrypting(state: E2EESessionState): boolean {
-  return state.status === "established";
 }
 
 // The key for a conversation's E2EE session, shared by the store, the
