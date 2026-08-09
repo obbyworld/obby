@@ -1,0 +1,129 @@
+// soju.im/webpush client glue.
+//
+// When a server advertises the soju.im/webpush cap + a VAPID= ISUPPORT
+// token, we create a browser PushManager subscription against that VAPID
+// key and hand the resulting {endpoint, p256dh, auth} to the server via
+// `WEBPUSH REGISTER`.  From then on the server (through the hosted
+// backend) can wake the device for DMs even with the tab closed.
+//
+// The actual notification rendering lives in public/sw.js's `push`
+// handler.  This module is only the subscribe + REGISTER side.
+
+import ircClient from "./ircClient";
+
+// VAPID keys are URL-safe base64 (RFC 4648 §5).  PushManager wants the
+// applicationServerKey as a raw Uint8Array of the decoded bytes.
+function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const normalised = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(normalised);
+  // Allocate an explicit ArrayBuffer so the result is
+  // Uint8Array<ArrayBuffer> (not ...<ArrayBufferLike>), which is what
+  // PushManager's applicationServerKey BufferSource type requires.
+  const out = new Uint8Array(new ArrayBuffer(raw.length));
+  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+
+// PushSubscription.getKey() returns raw bytes; the WEBPUSH protocol wants
+// them URL-safe base64 (unpadded), matching the VAPID convention.
+function bufToBase64Url(buf: ArrayBuffer | null): string {
+  if (!buf) return "";
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function pushSupported(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    "serviceWorker" in navigator &&
+    typeof window !== "undefined" &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
+}
+
+// Track which (server, endpoint) pairs we've already REGISTERed this
+// session so a reconnect or a repeated `ready` doesn't spam the command.
+const registered = new Set<string>();
+
+/**
+ * Subscribe to push for `serverId` using `vapidKey`, then send
+ * WEBPUSH REGISTER. No-ops when push is unsupported, permission is
+ * denied, or we've already registered this endpoint with this server.
+ *
+ * Requires notification permission to already be `granted` -- we don't
+ * prompt here (prompting belongs to a user gesture in the settings UI).
+ */
+export async function registerWebPush(
+  serverId: string,
+  vapidKey: string,
+): Promise<void> {
+  if (!pushSupported() || !vapidKey) return;
+  if (Notification.permission !== "granted") return;
+
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+
+    // If a subscription exists but was minted against a different VAPID
+    // key (server rotated keys, or this device subscribed to another
+    // network), it won't decrypt our pushes -- resubscribe.
+    if (sub) {
+      const existingKey = sub.options?.applicationServerKey;
+      if (existingKey) {
+        const want = urlBase64ToUint8Array(vapidKey);
+        const have = new Uint8Array(existingKey as ArrayBuffer);
+        const same =
+          have.length === want.length && have.every((b, i) => b === want[i]);
+        if (!same) {
+          await sub.unsubscribe();
+          sub = null;
+        }
+      }
+    }
+
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      });
+    }
+
+    const endpoint = sub.endpoint;
+    const p256dh = bufToBase64Url(sub.getKey("p256dh"));
+    const auth = bufToBase64Url(sub.getKey("auth"));
+    if (!endpoint || !p256dh || !auth) return;
+
+    const dedupeKey = `${serverId}\x00${endpoint}`;
+    if (registered.has(dedupeKey)) return;
+    registered.add(dedupeKey);
+
+    ircClient.sendRaw(
+      serverId,
+      `WEBPUSH REGISTER ${endpoint} p256dh=${p256dh};auth=${auth}`,
+    );
+  } catch (err) {
+    console.warn("[webpush] subscribe/register failed:", err);
+  }
+}
+
+/**
+ * Tear down this device's push subscription and tell the server to drop
+ * it. Used when the user turns notifications off.
+ */
+export async function unregisterWebPush(serverId: string): Promise<void> {
+  if (!pushSupported()) return;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (!sub) return;
+    ircClient.sendRaw(serverId, `WEBPUSH UNREGISTER ${sub.endpoint}`);
+    registered.delete(`${serverId}\x00${sub.endpoint}`);
+    await sub.unsubscribe();
+  } catch (err) {
+    console.warn("[webpush] unregister failed:", err);
+  }
+}

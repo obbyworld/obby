@@ -706,6 +706,10 @@ export class IRCClient implements IRCClientContext {
     "labeled-response",
     "draft/read-marker",
     "obsidianirc/cmdslist",
+    // soju.im/webpush: lets us register a browser PushManager
+    // subscription with the server so DMs/highlights wake the device
+    // via the platform push service even when the tab is closed.
+    "soju.im/webpush",
     // soju.im/bouncer-networks: multi-network bouncer discovery. The
     // -notify variant gives us live add/change/del pushes without
     // polling LISTNETWORKS.

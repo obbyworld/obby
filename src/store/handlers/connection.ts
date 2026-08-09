@@ -1,5 +1,6 @@
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
+import { registerWebPush } from "../../lib/webpush";
 import type { PrivateChat } from "../../types";
 import {
   generateDeterministicId,
@@ -600,6 +601,18 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       // Note: We don't request METADATA GET for individual users as some servers reject this.
       // Instead, we rely on metadata from shared channels (if user is in a channel with us)
       // or from localStorage if we previously got their metadata.
+    }
+
+    // soju.im/webpush: if this server supports push and advertised a
+    // VAPID key, and the user has already granted notification
+    // permission, (re)subscribe this device and REGISTER it.  No-ops
+    // when push is unsupported or permission isn't granted -- the
+    // settings toggle owns the first-time permission prompt.
+    {
+      const srv = store.getState().servers.find((s) => s.id === serverId);
+      if (srv?.vapidKey && srv.capabilities?.includes("soju.im/webpush")) {
+        void registerWebPush(serverId, srv.vapidKey);
+      }
     }
   });
 }

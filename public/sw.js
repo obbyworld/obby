@@ -43,3 +43,121 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 });
+
+// --- soju.im/webpush ---------------------------------------------------
+// The server (via the hosted-backend) sends exactly one IRC message as
+// the encrypted push payload: no trailing CRLF, tags dropped except
+// msgid. We parse the minimum needed to render a notification.
+
+function parseIrcLine(line) {
+  let rest = line;
+  let msgid = null;
+  if (rest.startsWith("@")) {
+    const sp = rest.indexOf(" ");
+    if (sp === -1) return null;
+    const tags = rest.slice(1, sp);
+    for (const t of tags.split(";")) {
+      const eq = t.indexOf("=");
+      if (eq !== -1 && t.slice(0, eq) === "msgid") msgid = t.slice(eq + 1);
+    }
+    rest = rest.slice(sp + 1);
+  }
+  if (!rest.startsWith(":")) return null;
+  const sp = rest.indexOf(" ");
+  if (sp === -1) return null;
+  const nick = rest.slice(1, sp).split("!")[0];
+  rest = rest.slice(sp + 1);
+  const trailingIdx = rest.indexOf(" :");
+  let head = rest;
+  let text = "";
+  if (trailingIdx !== -1) {
+    head = rest.slice(0, trailingIdx);
+    text = rest.slice(trailingIdx + 2);
+  }
+  const parts = head.split(" ");
+  return { msgid, nick, command: parts[0], target: parts[1] || "", text };
+}
+
+// Network name for the notification context.  The hosted build is
+// single-network, so the manifest's name is the network ("Obby").
+// Cached after first read; the SW may be killed between pushes, so the
+// fetch is cheap and falls back to "" on failure.
+let cachedNetworkName = null;
+async function getNetworkName() {
+  if (cachedNetworkName !== null) return cachedNetworkName;
+  try {
+    const res = await fetch("/manifest.webmanifest", { cache: "force-cache" });
+    const m = await res.json();
+    cachedNetworkName = m.name || m.short_name || "";
+  } catch {
+    cachedNetworkName = "";
+  }
+  return cachedNetworkName;
+}
+
+function isChannelTarget(target) {
+  return !!target && "#&^$".includes(target.charAt(0));
+}
+
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+  let raw;
+  try {
+    raw = event.data.text();
+  } catch {
+    return;
+  }
+  event.waitUntil(
+    (async () => {
+      const parsed = parseIrcLine(raw);
+      if (!parsed || !parsed.nick) return;
+
+      // If a client window is focused, the in-app notifier already
+      // surfaces this message -- don't double-notify.
+      const wins = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true,
+      });
+      if (wins.some((c) => c.focused)) return;
+
+      const network = await getNetworkName();
+      const channel = isChannelTarget(parsed.target);
+
+      // Channel highlight: "alice in #weather"; DM: "alice".
+      // The network name is appended as context when known.
+      let title = channel
+        ? `${parsed.nick} in ${parsed.target}`
+        : parsed.nick;
+      if (network) title += ` · ${network}`;
+
+      await self.registration.showNotification(title, {
+        body: parsed.text || "",
+        icon: "/pwa/icon-192.png",
+        badge: "/pwa/icon-192.png",
+        // Group by conversation: per-channel for highlights, per-sender
+        // for DMs -- so repeats collapse instead of stacking endlessly.
+        tag: channel ? `hl-${parsed.target}` : `pm-${parsed.nick}`,
+        renotify: true,
+        data: {
+          nick: parsed.nick,
+          target: parsed.target,
+          network,
+        },
+      });
+    })(),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((wins) => {
+        for (const c of wins) {
+          if ("focus" in c) return c.focus();
+        }
+        if (self.clients.openWindow) return self.clients.openWindow("/");
+      }),
+  );
+});

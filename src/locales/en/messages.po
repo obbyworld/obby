@@ -1249,6 +1249,10 @@ msgid "Enable notifications"
 msgstr "Enable notifications"
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Enable Notifications"
+msgstr "Enable Notifications"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Enter account name..."
 
@@ -2912,6 +2916,10 @@ msgstr "Show comments"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Show comments ({commentCount})"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show desktop notifications for mentions and DMs. On servers that support push (soju.im/webpush) this also wakes this device when the app is closed."
+msgstr "Show desktop notifications for mentions and DMs. On servers that support push (soju.im/webpush) this also wakes this device when the app is closed."
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
