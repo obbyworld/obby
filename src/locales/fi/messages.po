@@ -180,24 +180,56 @@ msgid "{nick} declined encryption."
 msgstr "{nick} kieltäytyi salauksesta."
 
 #: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} didn't answer the encryption request."
+msgstr "{nick} ei vastannut salauspyyntöön."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} ended encryption."
+msgstr "{nick} lopetti salauksen."
+
+#: src/store/handlers/e2ee.ts
+msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
+msgstr "{nick} lähettää salattuja viestejä, joita tämä laite ei osaa lukea. Aloita salaus uudelleen lukeaksesi ne."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} uses an encryption version this client can't read."
+msgstr "{nick} käyttää salausversiota, jota tämä asiakasohjelma ei osaa lukea."
+
+#: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} haluaa aloittaa salatun keskustelun"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed — this could be a new device or an attacker. End encryption and start again to re-verify."
-msgstr "Käyttäjän {nick} salausavain muuttui — kyseessä voi olla uusi laite tai hyökkääjä. Lopeta salaus ja aloita uudelleen vahvistaaksesi sen."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
+msgstr "Käyttäjän {nick} salausavain vaihtui. Näin käy uudella laitteella, ja samalta näyttää myös hyökkääjä. Lopeta salaus ja aloita uudelleen varmistaaksesi avaimen."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
 msgstr "Käyttäjän {nick} sormenjälki"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s key is different from the one you saw before. That happens after a reinstall or a new device, and it is also what a man-in-the-middle looks like. Compare the new fingerprint out of band before you accept it."
+msgstr "{nick}:n avain eroaa aiemmin näkemästäsi. Näin käy uudelleenasennuksen jälkeen tai uudella laitteella, mutta samalta näyttää myös välimieshyökkäys. Vertaa uusi sormenjälki toista kanavaa pitkin ennen hyväksymistä."
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s new fingerprint"
+msgstr "{nick}:n uusi sormenjälki"
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {yhdisti uudelleen} other {yhdisti uudelleen {reconnectCount} kertaa}}"
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
+msgstr "Tiedoston {safeName} salausta ei voitu purkaa. Tiedosto on voinut vanhentua tai sitä on muutettu palvelimella."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
 msgstr "{seconds} sekuntia"
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} set up encryption again. Anything you sent just before this did not reach them."
+msgstr "{sender} otti salauksen uudelleen käyttöön. Juuri sitä ennen lähettämäsi ei mennyt perille."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -260,6 +292,10 @@ msgstr "Hyväksy"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr "Hyväksy salattu keskustelu"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Accept new key"
+msgstr "Hyväksy uusi avain"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -637,6 +673,7 @@ msgstr "Selaa kaikkia palvelimen kanavia"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1031,10 +1068,9 @@ msgstr "Kopioi linkki"
 msgid "Copy URL"
 msgstr "Kopioi URL"
 
-#. placeholder {0}: session.reason
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "Couldn't encrypt with {nick} — {0}."
-msgstr "Salaus käyttäjän {nick} kanssa epäonnistui — {0}."
+msgid "Couldn't set up encryption with {nick}."
+msgstr "Salausta ei voitu muodostaa käyttäjän {nick} kanssa."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Country"
@@ -1092,6 +1128,10 @@ msgstr "Hylkää"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr "Hylkää salaus"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Decrypting {safeName}…"
+msgstr "Puretaan tiedoston {safeName} salausta…"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1317,25 +1357,53 @@ msgstr "Salaa (OTR)"
 msgid "Encrypt this chat"
 msgstr "Salaa tämä keskustelu"
 
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypted — not verified"
-msgstr "Salattu — ei vahvistettu"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr "Salattu — vahvista käyttäjän {nick} henkilöllisyys varmuuden vuoksi."
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Encrypted"
+msgstr "Salattu"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted & verified"
 msgstr "Salattu ja vahvistettu"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment"
+msgstr "Salattu liite"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment from an untrusted host. Enable external content to open it."
+msgstr "Salattu liite epäluotettavalta palvelimelta. Ota ulkoinen sisältö käyttöön avataksesi sen."
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message"
+msgstr "Salattu viesti"
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message from an earlier session"
+msgstr "Salattu viesti aiemmasta istunnosta"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted, not verified"
+msgstr "Salattu, ei varmennettu"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted. Verify {nick}'s identity to be sure."
+msgstr "Salattu. Varmista käyttäjän {nick} henkilöllisyys."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypting with {nick}…"
 msgstr "Salataan käyttäjän {nick} kanssa…"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting… — click to cancel"
-msgstr "Salataan… — peruuta napsauttamalla"
+msgid "Encrypting… (click to cancel)"
+msgstr "Salataan… (peruuta napsauttamalla)"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Encryption ended before this file was sent. It was not delivered."
+msgstr "Salaus päättyi ennen kuin tämä tiedosto lähetettiin. Sitä ei toimitettu."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption isn't available on this device."
+msgstr "Salaus ei ole käytettävissä tällä laitteella."
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed"
@@ -1345,7 +1413,13 @@ msgstr "Salausavain muuttui"
 msgid "Encryption options"
 msgstr "Salausasetukset"
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption with {nick} stopped working, so the message wasn't sent. Start encryption again to continue."
+msgstr "Salaus käyttäjän {nick} kanssa lakkasi toimimasta, joten viestiä ei lähetetty. Aloita salaus uudelleen jatkaaksesi."
+
 #: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "End encryption"
 msgstr "Lopeta salaus"
@@ -1440,9 +1514,26 @@ msgstr "epäonnistui"
 msgid "Failed to load audio"
 msgstr "Äänen lataaminen epäonnistui"
 
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
+msgstr "Tiedostoa ei lähetetty: salausta vasta luodaan. Se lähtee, kun salaus on käytössä, tai kun lopetat salauksen."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
+msgstr "Tiedostoa ei lähetetty: salaus lakkasi toimimasta. Aloita salaus uudelleen, tai lopeta se ja lähetä salaamattomana."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted."
+msgstr "Tiedostoa ei lähetetty: salausavain vaihtui. Tarkista uusi avain, tai lopeta salaus ja lähetä salaamattomana."
+
 #: src/components/message/MediaPreview.tsx
 msgid "Filehost image"
 msgstr "Tiedostopalvelimen kuva"
+
+#. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
+msgstr "Yli {0} kokoiset tiedostot lähetetään sellaisenaan. Tiedostopalvelin tallentaa ne luettavassa muodossa, ja kuka tahansa linkin saanut voi avata ne."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Filter channels..."
@@ -2266,6 +2357,7 @@ msgid "Normal - Standard protection"
 msgstr "Normaali – tavallinen suojaus"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
+#: src/components/ui/UploadProgressOverlay.tsx
 msgid "Not encrypted"
 msgstr "Ei salattu"
 
@@ -2405,6 +2497,10 @@ msgstr "Operaattoritoiminnot"
 msgid "Optional crash reports to improve the app"
 msgstr "Valinnaiset kaatumisraportit sovelluksen parantamiseksi"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "OTR does not encrypt files, sent as-is"
+msgstr "OTR ei salaa tiedostoja, lähetetty sellaisenaan"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "ULOS"
@@ -2530,6 +2626,10 @@ msgstr "Esikatselu (ei vielä lähetetty)"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Preview:"
 msgstr "Esikatselu:"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Previous fingerprint"
+msgstr "Edellinen sormenjälki"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Previous image"
@@ -2724,6 +2824,10 @@ msgstr "Vastausviesti ei ole enää näkyvissä"
 msgid "Retry sending"
 msgstr "Yritä lähettää uudelleen"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Review changed key…"
+msgstr "Tarkista muuttunut avain…"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Säännöt"
@@ -2754,6 +2858,10 @@ msgstr "Tallennus epäonnistui: {msg}"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save Settings"
 msgstr "Tallenna asetukset"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Save the decrypted file"
+msgstr "Tallenna purettu tiedosto"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Saved"
@@ -2895,9 +3003,17 @@ msgstr "Lähetä viesti"
 msgid "Send private message"
 msgstr "Lähetä yksityisviesti"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send this file unencrypted?"
+msgstr "Lähetetäänkö tämä tiedosto salaamattomana?"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Send Typing Notifications"
 msgstr "Lähetä kirjoitusilmoituksia"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send unencrypted"
+msgstr "Lähetä salaamattomana"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3183,6 +3299,10 @@ msgstr "Tekstikanavat"
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Yhteydessä palvelimeen <0>{serverName}</0> on seuraavia tietoturvaongelmia:"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
+msgstr "Tiedostopalvelin tallentaa sen luettavana, ja kuka tahansa linkin saanut voi avata sen. Vaihda Obby-salaukseen, jos haluat lähettää tiedostot salattuina."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC-palvelin on ilmoittanut, että sen palvelimien väliset linkit ovat heikosti suojattuja. Tämä tarkoittaa, että verkossa välitettäviä viestejäsi ei välttämättä salata asianmukaisesti tai SSL/TLS-sertifikaatteja ei tarkisteta oikein."
@@ -3223,6 +3343,10 @@ msgstr "Tämä komento ei ota parametreja."
 msgid "This field is required"
 msgstr "Tämä kenttä on pakollinen"
 
+#: src/components/message/MessageItem.tsx
+msgid "This file isn't encrypted. Anyone with the link can open it."
+msgstr "Tätä tiedostoa ei ole salattu. Kuka tahansa linkin haltija voi avata sen."
+
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Tämä kuva on vanhentunut"
@@ -3235,6 +3359,10 @@ msgstr "Tämä olet sinä"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "Tämän verran ihmisiä on rekisteröitynyt tämän linkin kautta"
+
+#: src/components/message/MessageItem.tsx
+msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
+msgstr "Tätä viestiä ei voitu purkaa. Se salattiin istunnolle, jonka avaimia tällä laitteella ei enää ole."
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
 msgid "This message wasn't encrypted. It may come from another of their clients that isn't using encryption."
@@ -3312,6 +3440,10 @@ msgstr "Näytä/piilota ilmoitukset"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Näytä/piilota haku"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Too large to encrypt, sent unencrypted"
+msgstr "Liian suuri salattavaksi, lähetettiin salaamattomana"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
@@ -3723,6 +3855,14 @@ msgstr "Tilin käyttäjänimi tunnistautumista varten"
 msgid "Your bouncer doesn't have any networks yet. Add one to get started."
 msgstr "Bouncerissasi ei ole vielä yhtään verkkoa. Lisää yksi aloittaaksesi."
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this audio."
+msgstr "Selaimesi ei voi toistaa tätä ääntä."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this video."
+msgstr "Selaimesi ei voi toistaa tätä videota."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Oletusnimimerkkisi kaikille palvelimille"
@@ -3742,6 +3882,20 @@ msgstr "Viestisi ja asetuksesi tallennetaan paikallisesti laitteellesi"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Viestisi voidaan siepata palvelimien välillä välitettäessä"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
+msgstr "Viestisi käyttäjän {nick} kanssa on salattu OTR:llä, joka kuljettaa vain tekstiä. Nämä tiedostot lähtisivät salaamattomina."
+
+#. placeholder {0}: affected.length
+#. placeholder {1}: files.length
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
+msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. {0} / {1} tiedostosta on liian suuria salattavaksi ja lähetettäisiin selkokielisinä. Loput pysyvät salattuina."
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
+msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. Nämä tiedostot ovat liian suuria salattaviksi ja lähetettäisiin selkokielisinä."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

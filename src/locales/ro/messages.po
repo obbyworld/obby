@@ -180,24 +180,56 @@ msgid "{nick} declined encryption."
 msgstr "{nick} a refuzat criptarea."
 
 #: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} didn't answer the encryption request."
+msgstr "{nick} nu a răspuns la cererea de criptare."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} ended encryption."
+msgstr "{nick} a oprit criptarea."
+
+#: src/store/handlers/e2ee.ts
+msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
+msgstr "{nick} trimite mesaje criptate pe care acest dispozitiv nu le poate citi. Pornește criptarea din nou ca să le citești."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} uses an encryption version this client can't read."
+msgstr "{nick} folosește o versiune de criptare pe care acest client nu o poate citi."
+
+#: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} dorește să înceapă o conversație criptată"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed — this could be a new device or an attacker. End encryption and start again to re-verify."
-msgstr "Cheia de criptare a {nick} s-a schimbat — ar putea fi un dispozitiv nou sau un atacator. Încheiați criptarea și începeți din nou pentru a reverifica."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
+msgstr "Cheia de criptare a lui {nick} s-a schimbat. Se întâmplă pe un dispozitiv nou și tot așa arată și un atacator. Încheie criptarea și începe din nou pentru a reverifica."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
 msgstr "Amprenta {nick}"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s key is different from the one you saw before. That happens after a reinstall or a new device, and it is also what a man-in-the-middle looks like. Compare the new fingerprint out of band before you accept it."
+msgstr "Cheia lui {nick} este diferită de cea pe care ai văzut-o înainte. Se întâmplă după o reinstalare sau pe un dispozitiv nou, dar așa arată și un atac man-in-the-middle. Compară noua amprentă pe alt canal înainte de a o accepta."
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s new fingerprint"
+msgstr "Noua amprentă a lui {nick}"
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {s-a reconectat} few {s-a reconectat de {reconnectCount} ori} other {s-a reconectat de {reconnectCount} ori}}"
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
+msgstr "{safeName} nu a putut fi decriptat. Fișierul poate să fi expirat sau să fi fost modificat pe server."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
 msgstr "{seconds} secunde"
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} set up encryption again. Anything you sent just before this did not reach them."
+msgstr "{sender} a configurat din nou criptarea. Ce ai trimis chiar înainte nu a ajuns."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -260,6 +292,10 @@ msgstr "Acceptă"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr "Acceptă conversația criptată"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Accept new key"
+msgstr "Acceptă cheia nouă"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -637,6 +673,7 @@ msgstr "Răsfoiește toate canalele de pe server"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1031,10 +1068,9 @@ msgstr "Copiază linkul"
 msgid "Copy URL"
 msgstr "Copiază URL"
 
-#. placeholder {0}: session.reason
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "Couldn't encrypt with {nick} — {0}."
-msgstr "Nu s-a putut cripta cu {nick} — {0}."
+msgid "Couldn't set up encryption with {nick}."
+msgstr "Criptarea cu {nick} nu a putut fi configurată."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Country"
@@ -1092,6 +1128,10 @@ msgstr "Refuză"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr "Refuză criptarea"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Decrypting {safeName}…"
+msgstr "Se decriptează {safeName}…"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1317,25 +1357,53 @@ msgstr "Criptează (OTR)"
 msgid "Encrypt this chat"
 msgstr "Criptează această conversație"
 
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypted — not verified"
-msgstr "Criptat — neverificat"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr "Criptat — verificați identitatea {nick} pentru siguranță."
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Encrypted"
+msgstr "Criptat"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted & verified"
 msgstr "Criptat și verificat"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment"
+msgstr "Atașament criptat"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment from an untrusted host. Enable external content to open it."
+msgstr "Atașament criptat de la o gazdă neîncrezută. Activează conținutul extern pentru a-l deschide."
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message"
+msgstr "Mesaj criptat"
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message from an earlier session"
+msgstr "Mesaj criptat dintr-o sesiune anterioară"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted, not verified"
+msgstr "Criptat, neverificat"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted. Verify {nick}'s identity to be sure."
+msgstr "Criptat. Verifică identitatea lui {nick} ca să fii sigur."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypting with {nick}…"
 msgstr "Se criptează cu {nick}…"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting… — click to cancel"
-msgstr "Se criptează… — apăsați pentru a anula"
+msgid "Encrypting… (click to cancel)"
+msgstr "Se criptează… (clic pentru anulare)"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Encryption ended before this file was sent. It was not delivered."
+msgstr "Criptarea s-a încheiat înainte ca acest fișier să fie trimis. Nu a fost livrat."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption isn't available on this device."
+msgstr "Criptarea nu este disponibilă pe acest dispozitiv."
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed"
@@ -1345,7 +1413,13 @@ msgstr "Cheia de criptare s-a schimbat"
 msgid "Encryption options"
 msgstr "Opțiuni de criptare"
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption with {nick} stopped working, so the message wasn't sent. Start encryption again to continue."
+msgstr "Criptarea cu {nick} a încetat să funcționeze, așa că mesajul nu a fost trimis. Pornește criptarea din nou pentru a continua."
+
 #: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "End encryption"
 msgstr "Încheie criptarea"
@@ -1440,9 +1514,26 @@ msgstr "eșuat"
 msgid "Failed to load audio"
 msgstr "Eroare la încărcarea audio"
 
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
+msgstr "Fișierul nu a fost încărcat: criptarea încă se configurează. Va pleca odată ce criptarea este activă, sau după ce o închei."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
+msgstr "Fișierul nu a fost încărcat: criptarea a încetat să funcționeze. Pornește-o din nou, sau încheie criptarea pentru a încărca necriptat."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted."
+msgstr "Fișierul nu a fost încărcat: cheia de criptare s-a schimbat. Verifică noua cheie, sau încheie criptarea pentru a încărca necriptat."
+
 #: src/components/message/MediaPreview.tsx
 msgid "Filehost image"
 msgstr "Imagine filehost"
+
+#. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
+msgstr "Fișierele peste {0} sunt trimise ca atare. Gazda le păstrează în clar, iar oricine obține linkul le poate deschide."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Filter channels..."
@@ -2266,6 +2357,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – Protecție standard"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
+#: src/components/ui/UploadProgressOverlay.tsx
 msgid "Not encrypted"
 msgstr "Necriptat"
 
@@ -2405,6 +2497,10 @@ msgstr "Acțiuni de operator"
 msgid "Optional crash reports to improve the app"
 msgstr "Rapoarte opționale de erori pentru îmbunătățirea aplicației"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "OTR does not encrypt files, sent as-is"
+msgstr "OTR nu criptează fișiere, trimis ca atare"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "IEȘIRE"
@@ -2530,6 +2626,10 @@ msgstr "Previzualizare (neîncărcat încă)"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Preview:"
 msgstr "Previzualizare:"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Previous fingerprint"
+msgstr "Amprenta anterioară"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Previous image"
@@ -2724,6 +2824,10 @@ msgstr "Mesajul de răspuns nu mai este vizibil"
 msgid "Retry sending"
 msgstr "Reîncearcă trimiterea"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Review changed key…"
+msgstr "Verifică cheia schimbată…"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Reguli"
@@ -2754,6 +2858,10 @@ msgstr "Salvare eșuată: {msg}"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save Settings"
 msgstr "Salvați setările"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Save the decrypted file"
+msgstr "Salvează fișierul decriptat"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Saved"
@@ -2895,9 +3003,17 @@ msgstr "Trimite mesaj"
 msgid "Send private message"
 msgstr "Trimite mesaj privat"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send this file unencrypted?"
+msgstr "Trimiți acest fișier necriptat?"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Send Typing Notifications"
 msgstr "Trimiteți notificări de tastare"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send unencrypted"
+msgstr "Trimite necriptat"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3183,6 +3299,10 @@ msgstr "Canale text"
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Conexiunea la <0>{serverName}</0> prezintă următoarele probleme de securitate:"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
+msgstr "Serverul de fișiere îl stochează lizibil, iar oricine obține linkul îl poate deschide. Treci la criptarea Obby pentru a trimite fișiere criptate."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "Serverul IRC a raportat că legăturile sale server-la-server au un nivel scăzut de securitate. Aceasta înseamnă că atunci când mesajele tale sunt transmise între serverele IRC din rețea, este posibil ca acestea să nu fie criptate corespunzător sau certificatele SSL/TLS să nu fie validate corect."
@@ -3223,6 +3343,10 @@ msgstr "Această comandă nu acceptă parametri."
 msgid "This field is required"
 msgstr "Acest câmp este obligatoriu"
 
+#: src/components/message/MessageItem.tsx
+msgid "This file isn't encrypted. Anyone with the link can open it."
+msgstr "Acest fișier nu este criptat. Oricine are linkul îl poate deschide."
+
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Această imagine a expirat"
@@ -3235,6 +3359,10 @@ msgstr "Acesta ești tu"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "Atâtea persoane s-au înregistrat prin acest link"
+
+#: src/components/message/MessageItem.tsx
+msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
+msgstr "Acest mesaj nu a putut fi decriptat. A fost criptat pentru o sesiune ale cărei chei acest dispozitiv nu le mai are."
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
 msgid "This message wasn't encrypted. It may come from another of their clients that isn't using encryption."
@@ -3312,6 +3440,10 @@ msgstr "Comută notificările"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Comută căutarea"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Too large to encrypt, sent unencrypted"
+msgstr "Prea mare pentru criptare, trimis necriptat"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
@@ -3723,6 +3855,14 @@ msgstr "Numele de utilizator al contului dvs. pentru autentificare"
 msgid "Your bouncer doesn't have any networks yet. Add one to get started."
 msgstr "Bouncer-ul tău nu are încă nicio rețea. Adaugă una pentru a începe."
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this audio."
+msgstr "Browserul tău nu poate reda acest fișier audio."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this video."
+msgstr "Browserul tău nu poate reda acest videoclip."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Pseudonimul dvs. implicit pentru toate serverele"
@@ -3742,6 +3882,20 @@ msgstr "Mesajele și setările dvs. sunt stocate local pe dispozitivul dvs."
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Mesajele tale pot fi interceptate când sunt transmise între servere"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
+msgstr "Mesajele tale cu {nick} sunt criptate cu OTR, care transportă doar text. Aceste fișiere ar fi trimise necriptate."
+
+#. placeholder {0}: affected.length
+#. placeholder {1}: files.length
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
+msgstr "Mesajele tale cu {nick} sunt criptate. {0} din {1} fișiere sunt prea mari pentru criptare și ar fi trimise în clar. Restul rămân criptate."
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
+msgstr "Mesajele tale cu {nick} sunt criptate. Aceste fișiere sunt prea mari pentru criptare și ar fi trimise în clar."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

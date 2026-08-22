@@ -180,24 +180,56 @@ msgid "{nick} declined encryption."
 msgstr "{nick} hat die Verschlüsselung abgelehnt."
 
 #: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} didn't answer the encryption request."
+msgstr "{nick} hat auf die Verschlüsselungsanfrage nicht geantwortet."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} ended encryption."
+msgstr "{nick} hat die Verschlüsselung beendet."
+
+#: src/store/handlers/e2ee.ts
+msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
+msgstr "{nick} sendet verschlüsselte Nachrichten, die dieses Gerät nicht lesen kann. Starte die Verschlüsselung neu, um sie zu lesen."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "{nick} uses an encryption version this client can't read."
+msgstr "{nick} verwendet eine Verschlüsselungsversion, die dieser Client nicht lesen kann."
+
+#: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} möchte einen verschlüsselten Chat beginnen"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed — this could be a new device or an attacker. End encryption and start again to re-verify."
-msgstr "Der Verschlüsselungsschlüssel von {nick} hat sich geändert — das könnte ein neues Gerät oder ein Angreifer sein. Beende die Verschlüsselung und beginne erneut, um sie neu zu verifizieren."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
+msgstr "Der Verschlüsselungsschlüssel von {nick} hat sich geändert. Das passiert bei einem neuen Gerät, und genauso sieht auch ein Angreifer aus. Beende die Verschlüsselung und starte sie neu, um erneut zu verifizieren."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
 msgstr "Fingerabdruck von {nick}"
 
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s key is different from the one you saw before. That happens after a reinstall or a new device, and it is also what a man-in-the-middle looks like. Compare the new fingerprint out of band before you accept it."
+msgstr "Der Schlüssel von {nick} unterscheidet sich von dem, den du zuvor gesehen hast. Das passiert nach einer Neuinstallation oder auf einem neuen Gerät, und genauso sieht auch ein Man-in-the-Middle aus. Vergleiche den neuen Fingerabdruck über einen anderen Kanal, bevor du ihn akzeptierst."
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "{nick}'s new fingerprint"
+msgstr "Neuer Fingerabdruck von {nick}"
+
 #: src/lib/eventGrouping.ts
 msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectCount} times}}"
 msgstr "{reconnectCount, plural, one {erneut verbunden} other {{reconnectCount}-mal erneut verbunden}}"
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
+msgstr "{safeName} konnte nicht entschlüsselt werden. Die Datei ist möglicherweise abgelaufen oder wurde auf dem Server verändert."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
 msgstr "{seconds} Sekunden"
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} set up encryption again. Anything you sent just before this did not reach them."
+msgstr "{sender} hat die Verschlüsselung neu eingerichtet. Was du kurz davor gesendet hast, ist nicht angekommen."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -260,6 +292,10 @@ msgstr "Annehmen"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Accept encrypted chat"
 msgstr "Verschlüsselten Chat annehmen"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Accept new key"
+msgstr "Neuen Schlüssel akzeptieren"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -637,6 +673,7 @@ msgstr "Alle Kanäle auf dem Server durchsuchen"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1031,10 +1068,9 @@ msgstr "Link kopieren"
 msgid "Copy URL"
 msgstr "URL kopieren"
 
-#. placeholder {0}: session.reason
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "Couldn't encrypt with {nick} — {0}."
-msgstr "Verschlüsselung mit {nick} fehlgeschlagen — {0}."
+msgid "Couldn't set up encryption with {nick}."
+msgstr "Die Verschlüsselung mit {nick} konnte nicht eingerichtet werden."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Country"
@@ -1092,6 +1128,10 @@ msgstr "Ablehnen"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Decline encryption"
 msgstr "Verschlüsselung ablehnen"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Decrypting {safeName}…"
+msgstr "{safeName} wird entschlüsselt…"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Deep dive"
@@ -1317,25 +1357,53 @@ msgstr "Verschlüsseln (OTR)"
 msgid "Encrypt this chat"
 msgstr "Diesen Chat verschlüsseln"
 
-#: src/components/ui/E2EELockControl.tsx
-msgid "Encrypted — not verified"
-msgstr "Verschlüsselt — nicht verifiziert"
-
-#: src/components/ui/E2EERequestBanner.tsx
-msgid "Encrypted — verify {nick}'s identity to be sure."
-msgstr "Verschlüsselt — überprüfe die Identität von {nick}, um sicherzugehen."
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Encrypted"
+msgstr "Verschlüsselt"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypted & verified"
 msgstr "Verschlüsselt & verifiziert"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment"
+msgstr "Verschlüsselter Anhang"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Encrypted attachment from an untrusted host. Enable external content to open it."
+msgstr "Verschlüsselter Anhang von einem nicht vertrauenswürdigen Host. Aktiviere externe Inhalte, um ihn zu öffnen."
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message"
+msgstr "Verschlüsselte Nachricht"
+
+#: src/components/message/MessageItem.tsx
+msgid "Encrypted message from an earlier session"
+msgstr "Verschlüsselte Nachricht aus einer früheren Sitzung"
+
+#: src/components/ui/E2EELockControl.tsx
+msgid "Encrypted, not verified"
+msgstr "Verschlüsselt, nicht verifiziert"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encrypted. Verify {nick}'s identity to be sure."
+msgstr "Verschlüsselt. Verifiziere die Identität von {nick}, um sicherzugehen."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Encrypting with {nick}…"
 msgstr "Verschlüsselung mit {nick}…"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Encrypting… — click to cancel"
-msgstr "Verschlüsselung… — zum Abbrechen klicken"
+msgid "Encrypting… (click to cancel)"
+msgstr "Verschlüsselung läuft… (zum Abbrechen klicken)"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Encryption ended before this file was sent. It was not delivered."
+msgstr "Die Verschlüsselung wurde beendet, bevor diese Datei gesendet wurde. Sie wurde nicht zugestellt."
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption isn't available on this device."
+msgstr "Verschlüsselung ist auf diesem Gerät nicht verfügbar."
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encryption key changed"
@@ -1345,7 +1413,13 @@ msgstr "Verschlüsselungsschlüssel geändert"
 msgid "Encryption options"
 msgstr "Verschlüsselungsoptionen"
 
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Encryption with {nick} stopped working, so the message wasn't sent. Start encryption again to continue."
+msgstr "Die Verschlüsselung mit {nick} funktioniert nicht mehr, daher wurde die Nachricht nicht gesendet. Starte die Verschlüsselung erneut, um fortzufahren."
+
 #: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EELockControl.tsx
+#: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "End encryption"
 msgstr "Verschlüsselung beenden"
@@ -1440,9 +1514,26 @@ msgstr "fehlgeschlagen"
 msgid "Failed to load audio"
 msgstr "Audio konnte nicht geladen werden"
 
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
+msgstr "Datei nicht hochgeladen: die Verschlüsselung wird noch eingerichtet. Sie geht raus, sobald die Verschlüsselung aktiv ist, oder nachdem du sie beendet hast."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
+msgstr "Datei nicht hochgeladen: die Verschlüsselung funktioniert nicht mehr. Starte sie neu, oder beende sie und lade unverschlüsselt hoch."
+
+#: src/components/layout/ChatArea.tsx
+msgid "File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted."
+msgstr "Datei nicht hochgeladen: der Verschlüsselungsschlüssel hat sich geändert. Prüfe den neuen Schlüssel, oder beende die Verschlüsselung und lade unverschlüsselt hoch."
+
 #: src/components/message/MediaPreview.tsx
 msgid "Filehost image"
 msgstr "Dateiserver-Bild"
+
+#. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
+msgstr "Dateien über {0} werden unverändert gesendet. Der Dateiserver speichert sie lesbar, und jeder, der den Link erhält, kann sie öffnen."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Filter channels..."
@@ -2266,6 +2357,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – Standardschutz"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
+#: src/components/ui/UploadProgressOverlay.tsx
 msgid "Not encrypted"
 msgstr "Nicht verschlüsselt"
 
@@ -2405,6 +2497,10 @@ msgstr "Operator-Aktionen"
 msgid "Optional crash reports to improve the app"
 msgstr "Optionale Absturzberichte zur App-Verbesserung"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "OTR does not encrypt files, sent as-is"
+msgstr "OTR verschlüsselt keine Dateien, unverändert gesendet"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "OUT"
 msgstr "AUS"
@@ -2530,6 +2626,10 @@ msgstr "Vorschau (noch nicht hochgeladen)"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Preview:"
 msgstr "Vorschau:"
+
+#: src/components/ui/E2EEVerifyModal.tsx
+msgid "Previous fingerprint"
+msgstr "Vorheriger Fingerabdruck"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Previous image"
@@ -2724,6 +2824,10 @@ msgstr "Die Antwortnachricht ist nicht mehr sichtbar"
 msgid "Retry sending"
 msgstr "Erneut senden"
 
+#: src/components/ui/E2EELockControl.tsx
+msgid "Review changed key…"
+msgstr "Geänderten Schlüssel prüfen…"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Regeln"
@@ -2754,6 +2858,10 @@ msgstr "Speichern fehlgeschlagen: {msg}"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save Settings"
 msgstr "Einstellungen speichern"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Save the decrypted file"
+msgstr "Entschlüsselte Datei speichern"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Saved"
@@ -2895,9 +3003,17 @@ msgstr "Nachricht senden"
 msgid "Send private message"
 msgstr "Privatnachricht senden"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send this file unencrypted?"
+msgstr "Diese Datei unverschlüsselt senden?"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Send Typing Notifications"
 msgstr "Tipp-Benachrichtigungen senden"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Send unencrypted"
+msgstr "Unverschlüsselt senden"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3183,6 +3299,10 @@ msgstr "Textkanäle"
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Die Verbindung zu <0>{serverName}</0> hat folgende Sicherheitsbedenken:"
 
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
+msgstr "Der Datei-Host speichert sie lesbar, und wer den Link bekommt, kann sie öffnen. Wechsle zur Obby-Verschlüsselung, um Dateien verschlüsselt zu senden."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "Der IRC-Server hat gemeldet, dass seine Server-zu-Server-Verbindungen ein niedriges Sicherheitsniveau aufweisen. Das bedeutet, dass deine Nachrichten beim Weiterleiten zwischen IRC-Servern im Netzwerk möglicherweise nicht ordnungsgemäß verschlüsselt sind oder die SSL/TLS-Zertifikate nicht korrekt validiert werden."
@@ -3223,6 +3343,10 @@ msgstr "Dieser Befehl nimmt keine Parameter."
 msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
+#: src/components/message/MessageItem.tsx
+msgid "This file isn't encrypted. Anyone with the link can open it."
+msgstr "Diese Datei ist nicht verschlüsselt. Jeder mit dem Link kann sie öffnen."
+
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
 msgstr "Dieses Bild ist abgelaufen"
@@ -3235,6 +3359,10 @@ msgstr "Das bist du"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This many people registered through this link"
 msgstr "So viele Personen haben sich über diesen Link registriert"
+
+#: src/components/message/MessageItem.tsx
+msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
+msgstr "Diese Nachricht konnte nicht entschlüsselt werden. Sie wurde für eine Sitzung verschlüsselt, deren Schlüssel dieses Gerät nicht mehr hat."
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
 msgid "This message wasn't encrypted. It may come from another of their clients that isn't using encryption."
@@ -3312,6 +3440,10 @@ msgstr "Benachrichtigungen umschalten"
 #: src/components/layout/ChatHeader.tsx
 msgid "Toggle search"
 msgstr "Suche umschalten"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Too large to encrypt, sent unencrypted"
+msgstr "Zu groß zum Verschlüsseln, unverschlüsselt gesendet"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
@@ -3723,6 +3855,14 @@ msgstr "Ihr Kontobenutzername zur Authentifizierung"
 msgid "Your bouncer doesn't have any networks yet. Add one to get started."
 msgstr "Dein bouncer hat noch keine Netzwerke. Füge eines hinzu, um zu beginnen."
 
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this audio."
+msgstr "Dein Browser kann diese Audiodatei nicht abspielen."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "Your browser cannot play this video."
+msgstr "Dein Browser kann dieses Video nicht abspielen."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your default nickname for all servers"
 msgstr "Ihr Standard-Nickname für alle Server"
@@ -3742,6 +3882,20 @@ msgstr "Ihre Nachrichten und Einstellungen werden lokal gespeichert"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Deine Nachrichten könnten abgefangen werden, wenn sie zwischen Servern weitergeleitet werden"
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
+msgstr "Deine Nachrichten mit {nick} sind mit OTR verschlüsselt, das nur Text überträgt. Diese Dateien würden unverschlüsselt gesendet."
+
+#. placeholder {0}: affected.length
+#. placeholder {1}: files.length
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
+msgstr "Deine Nachrichten mit {nick} sind verschlüsselt. {0} von {1} Dateien sind zu groß zum Verschlüsseln und würden im Klartext gesendet. Der Rest bleibt verschlüsselt."
+
+#: src/components/ui/UnencryptedUploadConfirmModal.tsx
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
+msgstr "Deine Nachrichten mit {nick} sind verschlüsselt. Diese Dateien sind zu groß zum Verschlüsseln und würden im Klartext gesendet."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
