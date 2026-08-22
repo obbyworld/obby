@@ -2,7 +2,9 @@ import { describe, expect, test } from "vitest";
 import {
   type E2EEEvent,
   type E2EESessionState,
+  expectsProtection,
   INITIAL_SESSION,
+  isWithholding,
   reduceSession,
 } from "../../../src/lib/e2ee/session";
 
@@ -83,10 +85,28 @@ describe("verification and key change", () => {
       newFingerprint: "FP2",
     });
     expect(changed.status).toBe("key-changed");
-    // No event other than reset moves it out of the blocked state.
+    // Only an explicit reset or the user accepting the new key clears it.
     expect(reduceSession(changed, { type: "verify" })).toBe(changed);
     expect(reduceSession(changed, { type: "established" })).toBe(changed);
     expect(reduceSession(changed, { type: "reset" })).toEqual(INITIAL_SESSION);
+  });
+
+  test("accepting the changed key resumes under the new fingerprint, unverified", () => {
+    const changed = reduceSession(established, {
+      type: "key-change",
+      oldFingerprint: "FP",
+      newFingerprint: "FP2",
+    });
+    expect(reduceSession(changed, { type: "trust-key" })).toEqual({
+      status: "established",
+      scheme: "obby",
+      verified: false,
+      peerFingerprint: "FP2",
+    });
+  });
+
+  test("trust-key does nothing outside a key change", () => {
+    expect(reduceSession(established, { type: "trust-key" })).toBe(established);
   });
 });
 
@@ -107,9 +127,11 @@ describe("reset and error are valid from any state", () => {
       expect(reduceSession(s, { type: "reset" })).toEqual(INITIAL_SESSION);
     });
     test(`error from ${s.status}`, () => {
-      expect(reduceSession(s, { type: "error", reason: "boom" })).toEqual({
+      expect(
+        reduceSession(s, { type: "error", reason: "handshake-failed" }),
+      ).toEqual({
         status: "error",
-        reason: "boom",
+        reason: "handshake-failed",
         wasEstablished: s.status === "established",
       });
     });
@@ -127,7 +149,20 @@ describe("error carries whether the session was live", () => {
         verified: false,
         peerFingerprint: "FP",
       },
-      { type: "error", reason: "peer ended encryption" },
+      { type: "error", reason: "peer-ended" },
+    );
+    expect(state).toMatchObject({ status: "error", wasEstablished: true });
+  });
+
+  test("from key-changed, wasEstablished stays true", () => {
+    const state = reduceSession(
+      {
+        status: "key-changed",
+        scheme: "obby",
+        oldFingerprint: "FP",
+        newFingerprint: "FP2",
+      },
+      { type: "error", reason: "peer-ended" },
     );
     expect(state).toMatchObject({ status: "error", wasEstablished: true });
   });
@@ -135,7 +170,7 @@ describe("error carries whether the session was live", () => {
   test("from a failed handshake, wasEstablished is false", () => {
     const state = reduceSession(
       { status: "negotiating", scheme: "otr", initiator: true },
-      { type: "error", reason: "handshake failed" },
+      { type: "error", reason: "handshake-failed" },
     );
     expect(state).toMatchObject({ status: "error", wasEstablished: false });
   });
@@ -163,6 +198,83 @@ describe("invalid events are ignored", () => {
     const negotiating = run([{ type: "start", scheme: "obby" }]);
     expect(reduceSession(negotiating, { type: "established" })).toBe(
       negotiating,
+    );
+  });
+});
+
+// A broken session still shows the user a conversation they opened under a
+// lock, so plaintext arriving in it is worth flagging. Narrowing this to
+// "established" marks the first such message and none of the ones after it.
+describe("plaintext arriving under a lock", () => {
+  test("a live session flags it", () => {
+    expect(
+      expectsProtection({
+        status: "established",
+        scheme: "obby",
+        verified: false,
+        peerFingerprint: "FP",
+      }),
+    ).toBe(true);
+  });
+
+  test("a session that broke after it was live keeps flagging it", () => {
+    expect(
+      expectsProtection({
+        status: "error",
+        reason: "peer-ended",
+        wasEstablished: true,
+      }),
+    ).toBe(true);
+  });
+
+  test("a changed key keeps flagging it", () => {
+    expect(
+      expectsProtection({
+        status: "key-changed",
+        scheme: "obby",
+        oldFingerprint: "A",
+        newFingerprint: "B",
+      }),
+    ).toBe(true);
+  });
+
+  test("a handshake that never completed does not", () => {
+    expect(expectsProtection({ status: "error", reason: "no-response" })).toBe(
+      false,
+    );
+    expect(expectsProtection(undefined)).toBe(false);
+    expect(expectsProtection({ status: "none" })).toBe(false);
+  });
+});
+
+describe("states that refuse to carry a message", () => {
+  test("a handshake in flight withholds", () => {
+    expect(
+      isWithholding({ status: "negotiating", scheme: "obby", initiator: true }),
+    ).toBe(true);
+  });
+
+  test("a session that broke after it was live withholds", () => {
+    expect(
+      isWithholding({
+        status: "error",
+        reason: "encryption-lost",
+        wasEstablished: true,
+      }),
+    ).toBe(true);
+  });
+
+  test("a live session and a dead handshake both send", () => {
+    expect(
+      isWithholding({
+        status: "established",
+        scheme: "obby",
+        verified: false,
+        peerFingerprint: "FP",
+      }),
+    ).toBe(false);
+    expect(isWithholding({ status: "error", reason: "no-response" })).toBe(
+      false,
     );
   });
 });

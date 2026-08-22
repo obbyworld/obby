@@ -1,9 +1,7 @@
 // Routes an inbound message to the encryption scheme that owns it. A bodied
-// message (PRIVMSG) is classified by its body alone: Obby by its `?obe2ee:`
-// marker, OTR by its `?OTR…` prefix, else plaintext. The body marker is the
-// authoritative ciphertext signal, since servers may strip the client tag on a
-// PRIVMSG and any client may attach it. The tag classifies a bodiless control
-// TAGMSG, where the tag value itself is the payload.
+// message is classified by its body alone, since a replayed buffer can arrive
+// stripped of its client tags and any client may attach one. The tag classifies
+// a bodiless TAGMSG, where the tag value itself is the payload.
 
 import { E2EE_BODY_PREFIX, E2EE_TAG } from "./protocol";
 

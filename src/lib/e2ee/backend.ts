@@ -7,8 +7,10 @@
 import { base64DecodeUtf8, base64EncodeUtf8, base64ToBytes } from "../base64";
 import {
   type E2EEAccept,
+  type E2EEAck,
   type E2EECipher,
   type E2EEInit,
+  type E2EEMediaFrame,
   PROTOCOL_VERSION,
 } from "./protocol";
 import {
@@ -59,25 +61,24 @@ function decodeBundle(blob: string): PreKeyBundle {
     !isString(o.ik) ||
     !isString(o.sik) ||
     !isString(o.spk) ||
-    !isString(o.spkSig) ||
+    !isString(o.sig) ||
     !isString(o.opk)
   ) {
     throw new Error("e2ee: malformed bundle");
   }
-  return { ik: o.ik, sik: o.sik, spk: o.spk, spkSig: o.spkSig, opk: o.opk };
+  return { ik: o.ik, sik: o.sik, spk: o.spk, sig: o.sig, opk: o.opk };
 }
 
 function decodeRatchetMessage(o: Record<string, unknown>): RatchetMessage {
   if (
     !isString(o.dh) ||
-    !isString(o.nonce) ||
     !isString(o.ct) ||
     typeof o.pn !== "number" ||
     typeof o.n !== "number"
   ) {
     throw new Error("e2ee: malformed ratchet message");
   }
-  return { dh: o.dh, pn: o.pn, n: o.n, nonce: o.nonce, ct: o.ct };
+  return { dh: o.dh, pn: o.pn, n: o.n, ct: o.ct };
 }
 
 function decodeResponse(blob: string): HandshakeResponse {
@@ -116,7 +117,7 @@ export class ObbyE2EEBackend {
   }
 
   // The fingerprint claimed by an inbound offer/response, derived from its
-  // signing key — for the accept prompt and trust-on-first-use pinning before a
+  // signing key, for the accept prompt and trust-on-first-use pinning before a
   // session exists.
   offeredFingerprint(payload: E2EEInit | E2EEAccept): string {
     const sik =
@@ -166,7 +167,34 @@ export class ObbyE2EEBackend {
     };
   }
 
-  decrypt(peer: PeerRef, cipher: E2EECipher): string {
+  // An attachment descriptor, encrypted like a message but carried as its own
+  // frame so the receiver renders media instead of text.
+  encryptMediaFrame(peer: PeerRef, descriptor: string): E2EEMediaFrame {
+    const state = this.sessions.get(peerKey(peer));
+    if (!state) throw new Error("e2ee: no session for peer");
+    return {
+      t: "media",
+      v: PROTOCOL_VERSION,
+      ct: encode(ratchetEncrypt(state, descriptor)),
+    };
+  }
+
+  // The handshake proof: a ciphertext the peer can only produce with a live
+  // session, carrying no message content.
+  encryptAck(peer: PeerRef): E2EEAck {
+    const state = this.sessions.get(peerKey(peer));
+    if (!state) throw new Error("e2ee: no session for peer");
+    return {
+      t: "ack",
+      v: PROTOCOL_VERSION,
+      ct: encode(ratchetEncrypt(state, "")),
+    };
+  }
+
+  decrypt(
+    peer: PeerRef,
+    cipher: E2EECipher | E2EEAck | E2EEMediaFrame,
+  ): string {
     const state = this.sessions.get(peerKey(peer));
     if (!state) throw new Error("e2ee: no session for peer");
     return ratchetDecrypt(state, decodeRatchetMessage(parse(cipher.ct)));

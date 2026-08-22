@@ -1,7 +1,7 @@
 // Frames an E2EE payload into base64 value(s) for the wire. A payload within
 // `maxWhole` is one value; an oversized one splits into `frag` frames sized to
 // `sliceSize` and is rebuilt by the receiver. The caller wraps each value in its
-// carrier — a control TAGMSG tag value, or a message PRIVMSG body under the flag
+// carrier: a control TAGMSG tag value, or a message PRIVMSG body under the flag
 // tag. Outbound framing is pure; inbound reassembly is a small stateful
 // accumulator that sweeps never-completed streams so a hostile or dropped sender
 // can't leak memory.

@@ -95,3 +95,71 @@ describe("ObbyE2EEBackend robustness", () => {
     expect(alice.hasPending(alicePeer)).toBe(false);
   });
 });
+
+// The ack is what tells the responder the handshake completed, so it has to be
+// a payload only a live session can produce and the peer can actually open.
+describe("handshake acknowledgement", () => {
+  test("the responder can open the initiator's ack", () => {
+    const { alice, bob } = handshake();
+    const ack = alice.encryptAck(alicePeer);
+    expect(ack.t).toBe("ack");
+    expect(() => bob.decrypt(bobPeer, ack)).not.toThrow();
+  });
+
+  test("the ack carries no message content", () => {
+    const { alice, bob } = handshake();
+    expect(bob.decrypt(bobPeer, alice.encryptAck(alicePeer))).toBe("");
+  });
+
+  test("a third party cannot forge an ack for the session", () => {
+    const { bob } = handshake();
+    const mallory = new ObbyE2EEBackend(createIdentity());
+    const other = new ObbyE2EEBackend(createIdentity());
+    const init = mallory.startSession(alicePeer);
+    const accept = other.acceptOffer(bobPeer, init);
+    mallory.completeSession(alicePeer, accept);
+    expect(() => bob.decrypt(bobPeer, mallory.encryptAck(alicePeer))).toThrow();
+  });
+
+  test("after a reset the peer's ciphertext no longer opens", () => {
+    const { alice, bob } = handshake();
+    const cipher = alice.encrypt(alicePeer, "still here?");
+    bob.reset(bobPeer);
+    expect(bob.hasSession(bobPeer)).toBe(false);
+    expect(() => bob.decrypt(bobPeer, cipher)).toThrow();
+  });
+});
+
+// An attachment rides its own frame so the receiver renders media instead of
+// text, but the descriptor is protected by the same session as any message.
+describe("media frames", () => {
+  test("the descriptor round-trips through a live session", () => {
+    const { alice, bob } = handshake();
+    const descriptor = '{"url":"https://host/cat.png","k":"KEY","n":"NONCE"}';
+    const frame = alice.encryptMediaFrame(alicePeer, descriptor);
+    expect(frame.t).toBe("media");
+    expect(bob.decrypt(bobPeer, frame)).toBe(descriptor);
+  });
+
+  test("the descriptor is not readable on the wire", () => {
+    const { alice } = handshake();
+    const frame = alice.encryptMediaFrame(
+      alicePeer,
+      '{"url":"https://host/secret.png"}',
+    );
+    expect(frame.ct).not.toContain("secret.png");
+  });
+
+  test("a third party cannot open it", () => {
+    const { alice } = handshake();
+    const other = handshake();
+    const frame = alice.encryptMediaFrame(alicePeer, '{"url":"x"}');
+    expect(() => other.bob.decrypt(bobPeer, frame)).toThrow();
+  });
+
+  test("it needs a live session to produce", () => {
+    const { alice } = handshake();
+    alice.reset(alicePeer);
+    expect(() => alice.encryptMediaFrame(alicePeer, "{}")).toThrow();
+  });
+});

@@ -7,15 +7,15 @@
 //
 // Spec references: Signal "The X3DH Key Agreement Protocol" and "The Double
 // Ratchet Algorithm". The construction here follows them; only the primitive
-// choices (XChaCha20-Poly1305 AEAD with a random nonce, HKDF/HMAC-SHA256) and
-// serialization are ours.
+// choices (XChaCha20-Poly1305 AEAD, HKDF/HMAC-SHA256) and serialization are
+// ours.
 
 import { xchacha20poly1305 } from "@noble/ciphers/chacha.js";
 import { ed25519, x25519 } from "@noble/curves/ed25519.js";
 import { hkdf } from "@noble/hashes/hkdf.js";
 import { hmac } from "@noble/hashes/hmac.js";
 import { sha256 } from "@noble/hashes/sha2.js";
-import { concatBytes, randomBytes, utf8ToBytes } from "@noble/hashes/utils.js";
+import { concatBytes, utf8ToBytes } from "@noble/hashes/utils.js";
 import { base64ToBytes, bytesToBase64 } from "../base64";
 import { formatFingerprint } from "./fingerprint";
 
@@ -23,10 +23,21 @@ import { formatFingerprint } from "./fingerprint";
 // numbers jump implausibly far ahead (lost/forged fragments).
 const MAX_SKIP = 1000;
 
+// Total retained out-of-order message keys per session. Each DH ratchet step
+// resets the per-chain counter, so without a ceiling a peer could grow this
+// map forever; retained keys are also live decryption material, so the bound
+// caps how far back a compromise of the running client reaches.
+const MAX_SKIPPED_KEYS = 2000;
+
 const ROOT_INFO = utf8ToBytes("obby.world/e2ee root");
 const MESSAGE_INFO = utf8ToBytes("obby.world/e2ee message");
+const NONCE_INFO = utf8ToBytes("obby.world/e2ee nonce");
 const ZERO_SALT = new Uint8Array(32);
 const NONCE_BYTES = 24;
+
+// Plaintext is padded up to a multiple of this before encryption so ciphertext
+// length reveals only a bucket, not the exact message size.
+const PAD_BLOCK = 64;
 
 function dh(secret: Uint8Array, theirPublic: Uint8Array): Uint8Array {
   return x25519.getSharedSecret(secret, theirPublic);
@@ -52,6 +63,30 @@ function kdfChain(chainKey: Uint8Array): [Uint8Array, Uint8Array] {
 
 function aeadKey(messageKey: Uint8Array): Uint8Array {
   return hkdf(sha256, messageKey, ZERO_SALT, MESSAGE_INFO, 32);
+}
+
+// Each message key is used for exactly one message, so the nonce can be derived
+// from it rather than carried on the wire.
+function aeadNonce(messageKey: Uint8Array): Uint8Array {
+  return hkdf(sha256, messageKey, ZERO_SALT, NONCE_INFO, NONCE_BYTES);
+}
+
+// ISO/IEC 7816-4 padding: a 0x80 marker followed by zeros to the block
+// boundary, so the original length is recoverable without a length prefix.
+function pad(plaintext: Uint8Array): Uint8Array {
+  const padded = new Uint8Array(
+    (Math.floor(plaintext.length / PAD_BLOCK) + 1) * PAD_BLOCK,
+  );
+  padded.set(plaintext);
+  padded[plaintext.length] = 0x80;
+  return padded;
+}
+
+function unpad(padded: Uint8Array): Uint8Array {
+  let i = padded.length - 1;
+  while (i >= 0 && padded[i] === 0x00) i--;
+  if (i < 0 || padded[i] !== 0x80) throw new Error("e2ee: bad padding");
+  return padded.slice(0, i);
 }
 
 // The header fields are authenticated as AEAD associated data so a peer can't
@@ -87,7 +122,10 @@ export interface PreKeyBundle {
   ik: string;
   sik: string;
   spk: string;
-  spkSig: string;
+  // Ed25519(ik‖spk‖opk) by sik. Covering every offered key stops an off-path
+  // attacker from keeping the genuine signed pair and splicing in its own
+  // identity or one-time key.
+  sig: string;
   opk: string;
 }
 
@@ -95,7 +133,6 @@ export interface RatchetMessage {
   dh: string;
   pn: number;
   n: number;
-  nonce: string;
   ct: string;
 }
 
@@ -131,6 +168,14 @@ interface RatchetState {
 
 export type { RatchetState };
 
+function bundleSigningPayload(
+  ik: Uint8Array,
+  spk: Uint8Array,
+  opk: Uint8Array,
+): Uint8Array {
+  return concatBytes(ik, spk, opk);
+}
+
 // Initiator: publish a signed pre-key bundle and retain the matching private
 // keys to finish the handshake when the responder's reply arrives.
 export function createPreKeyBundle(id: Identity): PendingHandshake {
@@ -142,7 +187,9 @@ export function createPreKeyBundle(id: Identity): PendingHandshake {
     ik: bytesToBase64(id.ikPub),
     sik: bytesToBase64(id.sikPub),
     spk: bytesToBase64(spkPub),
-    spkSig: bytesToBase64(ed25519.sign(spkPub, id.sikPriv)),
+    sig: bytesToBase64(
+      ed25519.sign(bundleSigningPayload(id.ikPub, spkPub, opkPub), id.sikPriv),
+    ),
     opk: bytesToBase64(opkPub),
   };
   return { bundle, spkPriv, opkPriv };
@@ -168,11 +215,17 @@ export function acceptBundle(
 ): { response: HandshakeResponse; state: RatchetState } {
   const spk = base64ToBytes(bundle.spk);
   const sik = base64ToBytes(bundle.sik);
-  if (!ed25519.verify(base64ToBytes(bundle.spkSig), spk, sik)) {
-    throw new Error("e2ee: signed pre-key signature invalid");
-  }
   const theirIk = base64ToBytes(bundle.ik);
   const theirOpk = base64ToBytes(bundle.opk);
+  if (
+    !ed25519.verify(
+      base64ToBytes(bundle.sig),
+      bundleSigningPayload(theirIk, spk, theirOpk),
+      sik,
+    )
+  ) {
+    throw new Error("e2ee: pre-key bundle signature invalid");
+  }
   const ekPriv = x25519.utils.randomSecretKey();
   const sk = x3dhSecret(
     dh(id.ikPriv, spk),
@@ -272,19 +325,12 @@ export function ratchetEncrypt(
   const pn = state.pn;
   const n = state.ns;
   state.ns += 1;
-  const nonce = randomBytes(NONCE_BYTES);
   const ct = xchacha20poly1305(
     aeadKey(mk),
-    nonce,
+    aeadNonce(mk),
     headerAad(dhPub, pn, n),
-  ).encrypt(utf8ToBytes(plaintext));
-  return {
-    dh: dhPub,
-    pn,
-    n,
-    nonce: bytesToBase64(nonce),
-    ct: bytesToBase64(ct),
-  };
+  ).encrypt(pad(utf8ToBytes(plaintext)));
+  return { dh: dhPub, pn, n, ct: bytesToBase64(ct) };
 }
 
 export function ratchetDecrypt(
@@ -294,7 +340,7 @@ export function ratchetDecrypt(
   // Trial-decrypt against a copy and only commit the advanced ratchet state
   // once the AEAD tag verifies. Otherwise a forged packet with a valid header
   // but garbage ciphertext would burn a skipped-message key or desync the
-  // receiving chain — letting a malicious relay silently censor real messages.
+  // receiving chain, letting a malicious relay silently censor real messages.
   const working = cloneState(state);
   const plaintext = decryptStep(working, msg);
   commitState(state, working);
@@ -361,6 +407,12 @@ function skipReceivingKeys(state: RatchetState, until: number): void {
   while (state.nr < until) {
     const [nextCk, mk] = kdfChain(state.ckr);
     state.ckr = nextCk;
+    // Map iteration is insertion-ordered, so the first entry is the oldest.
+    while (state.skipped.size >= MAX_SKIPPED_KEYS) {
+      const oldest = state.skipped.keys().next().value;
+      if (oldest === undefined) break;
+      state.skipped.delete(oldest);
+    }
     state.skipped.set(`${dhPub}:${state.nr}`, mk);
     state.nr += 1;
   }
@@ -378,10 +430,10 @@ function dhRatchet(state: RatchetState, theirNewDh: Uint8Array): void {
 }
 
 function aeadDecrypt(messageKey: Uint8Array, msg: RatchetMessage): string {
-  const plaintext = xchacha20poly1305(
+  const padded = xchacha20poly1305(
     aeadKey(messageKey),
-    base64ToBytes(msg.nonce),
+    aeadNonce(messageKey),
     headerAad(msg.dh, msg.pn, msg.n),
   ).decrypt(base64ToBytes(msg.ct));
-  return new TextDecoder().decode(plaintext);
+  return new TextDecoder().decode(unpad(padded));
 }

@@ -46,7 +46,7 @@ export class OtrBackend {
   private sessions = new Map<string, OtrInstance>();
 
   // The OTR engine class is injected (rather than imported) so the vendored
-  // bundle stays lazily loaded — see vendor/loader.ts.
+  // bundle stays lazily loaded, see vendor/loader.ts.
   constructor(
     private otr: OtrStatic,
     private identity: DSAKey,
@@ -111,7 +111,7 @@ export class OtrBackend {
   }
 
   // True only when the peer's session is actively encrypted. The UI lock and the
-  // send path must gate on this — a session can leave ENCRYPTED (peer ended OTR,
+  // send path must gate on this, since a session can leave ENCRYPTED (peer ended OTR,
   // desync) while the reducer still shows "established".
   isEncrypting(peer: OtrPeerRef): boolean {
     return (
@@ -122,7 +122,7 @@ export class OtrBackend {
 
   // Encrypt and send a user message; ciphertext frames arrive via onOutbound.
   // Returns false (sending nothing) when the session is not in the encrypted
-  // state — arlolra's sendMsg silently falls back to PLAINTEXT otherwise, which
+  // state, since arlolra's sendMsg silently falls back to PLAINTEXT otherwise, which
   // would leak under a lock the UI still shows as secure. The caller must treat
   // false as "not delivered".
   encrypt(peer: OtrPeerRef, content: string): boolean {

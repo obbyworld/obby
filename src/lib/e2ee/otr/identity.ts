@@ -1,5 +1,5 @@
 // OTR long-term identity. OTRv3 mandates a per-install DSA key; we generate it
-// once (off the main thread — keygen is ~2s), persist it, and derive the 40-hex
+// once (off the main thread, since keygen is ~2s), persist it, and derive the 40-hex
 // SHA-1 fingerprint that other OTR clients (Pidgin, irssi) display so users can
 // verify across clients. Peer fingerprint pinning (TOFU) lives in the shared
 // peer-trust store.
@@ -33,7 +33,7 @@ async function loadStoredKey(): Promise<DSAKey | null> {
 
 // DSA keygen blocks for ~2s in pure JS, so run it in a worker; the persisted key
 // makes this a one-time cost. Falls back to synchronous keygen only where Worker
-// is unavailable (tests/SSR) — production always has it.
+// is unavailable (tests/SSR), since production always has it.
 async function generateKey(): Promise<DSAKey> {
   const { DSA } = await loadOtr();
   if (typeof Worker === "undefined") {

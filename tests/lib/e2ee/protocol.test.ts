@@ -4,6 +4,7 @@ import {
   type E2EEPayload,
   encodeE2EEPayload,
   fragmentValue,
+  readPayloadVersion,
   reassembleFragments,
 } from "../../../src/lib/e2ee/protocol";
 
@@ -128,5 +129,39 @@ describe("fragmentation", () => {
     const frags = fragmentValue("f4", "short", 100);
     expect(frags.length).toBe(1);
     expect(reassembleFragments(frags)).toBe("short");
+  });
+});
+
+describe("control frames", () => {
+  test("close round-trips", () => {
+    const encoded = encodeE2EEPayload({ t: "close", v: 2 });
+    expect(decodeE2EEPayload(encoded)).toEqual({ t: "close", v: 2 });
+  });
+
+  test("ack round-trips and requires its ciphertext", () => {
+    const encoded = encodeE2EEPayload({ t: "ack", v: 2, ct: "Q0lQ" });
+    expect(decodeE2EEPayload(encoded)).toEqual({ t: "ack", v: 2, ct: "Q0lQ" });
+    expect(
+      decodeE2EEPayload(
+        // biome-ignore lint/suspicious/noExplicitAny: deliberately malformed
+        encodeE2EEPayload({ t: "ack", v: 2 } as any),
+      ),
+    ).toBeNull();
+  });
+});
+
+// A frame from a version we don't speak decodes to null like garbage does, so
+// the version has to be readable separately for the peer to be told why.
+describe("readPayloadVersion", () => {
+  test("reports the version of an otherwise undecodable frame", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: a future version by construction
+    const future = encodeE2EEPayload({ t: "msg", v: 99, ct: "x" } as any);
+    expect(decodeE2EEPayload(future)).toBeNull();
+    expect(readPayloadVersion(future)).toBe(99);
+  });
+
+  test("returns null for non-payload input", () => {
+    expect(readPayloadVersion("not base64 json")).toBeNull();
+    expect(readPayloadVersion("")).toBeNull();
   });
 });

@@ -201,3 +201,58 @@ describe("identity fingerprint", () => {
     );
   });
 });
+
+describe("bundle authentication", () => {
+  test("swapping the identity key while keeping the real signature is rejected", () => {
+    const alice = createIdentity();
+    const bob = createIdentity();
+    const mallory = createIdentity();
+    const pending = createPreKeyBundle(alice);
+    // The genuine sik/spk/sig survive; only the X3DH identity key is replaced.
+    const tampered = {
+      ...pending.bundle,
+      ik: bytesToBase64(mallory.ikPub),
+    };
+    expect(() => acceptBundle(bob, tampered, "x")).toThrow();
+  });
+
+  test("swapping the one-time pre-key is rejected", () => {
+    const alice = createIdentity();
+    const bob = createIdentity();
+    const pending = createPreKeyBundle(alice);
+    const tampered = {
+      ...pending.bundle,
+      opk: createPreKeyBundle(alice).bundle.opk,
+    };
+    expect(() => acceptBundle(bob, tampered, "x")).toThrow();
+  });
+});
+
+describe("length hiding", () => {
+  test("plaintexts in the same block bucket produce equal ciphertext lengths", () => {
+    const { aliceState } = establish("x");
+    const short = ratchetEncrypt(aliceState, "hi");
+    const longer = ratchetEncrypt(aliceState, "hello there friend");
+    expect(short.ct.length).toBe(longer.ct.length);
+  });
+
+  test("a plaintext past the bucket grows to the next one", () => {
+    const { aliceState } = establish("x");
+    const small = ratchetEncrypt(aliceState, "a".repeat(10));
+    const big = ratchetEncrypt(aliceState, "a".repeat(200));
+    expect(big.ct.length).toBeGreaterThan(small.ct.length);
+  });
+
+  test("padding round-trips at an exact block boundary", () => {
+    const { aliceState, bobState } = establish("x");
+    const exact = "a".repeat(64);
+    expect(ratchetDecrypt(bobState, ratchetEncrypt(aliceState, exact))).toBe(
+      exact,
+    );
+  });
+
+  test("an empty plaintext round-trips", () => {
+    const { aliceState, bobState } = establish("x");
+    expect(ratchetDecrypt(bobState, ratchetEncrypt(aliceState, ""))).toBe("");
+  });
+});

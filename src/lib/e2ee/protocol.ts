@@ -1,4 +1,4 @@
-// Obby-native private-message E2EE — a modern Double Ratchet carried in IRCv3
+// Obby-native private-message E2EE: a modern Double Ratchet carried in IRCv3
 // client-only tags so it stays invisible to non-supporting clients and is
 // never logged as message content. All payloads are base64 (RFC 4648 §4) of
 // compact JSON; the base64 alphabet never collides with IRCv3 tag-value
@@ -10,18 +10,15 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "../base64";
 
 export const E2EE_CAP = "obby.world/e2ee";
 
-// Control frames (init/accept/reject/ack) ride this client-only tag on a bodiless
-// TAGMSG, so the tag VALUE is the payload. Message frames ride a PRIVMSG so they
-// keep a real msgid (reply/react/redaction/history) and set the tag as a
-// valueless flag. The tag is IRCv3-idiomatic but not reliable end-to-end — some
-// servers relay it on TAGMSG yet strip it on PRIVMSG (verified on UnrealIRCd) —
-// so message detection can't depend on it.
+// Control frames ride this tag on a bodiless TAGMSG, so the tag value is the
+// payload. Message frames ride a PRIVMSG to keep a real msgid for reply, react
+// and redaction. A relay may drop a client tag with an empty value, so the
+// value is always set.
 export const E2EE_TAG = "+obby.world/e2ee";
 
-// The message body therefore also carries this marker: it always survives (it's
-// body content), so it, not the tag, is the reliable "this is ciphertext" signal
-// (mirrors OTR's `?OTR:`). Control payloads on TAGMSG have no body and use only
-// the tag value.
+// Ciphertext in a PRIVMSG body identifies itself, so a replay that arrives
+// without its client tags (a bouncer serving its own buffer) can still be told
+// apart from chat rather than rendered as base64.
 export const E2EE_BODY_PREFIX = "?obe2ee:";
 
 export function bodyToRaw(body: string): string | null {
@@ -42,7 +39,7 @@ export const MAX_BODY_VALUE_BYTES = 400;
 export const MAX_BODY_FRAGMENT_SLICE = 220;
 
 // Handshake offer. `bundle` is the initiator's opaque X3DH pre-key bundle
-// (serialized by the crypto layer — this module stays crypto-agnostic so the
+// (serialized by the crypto layer, so this module stays crypto-agnostic and the
 // wire format doesn't churn with key-agreement details). `account` is the
 // sender's SASL account, the identity anchor; the fingerprint is derived by the
 // receiver from the bundle's signing key, never self-asserted on the wire.
@@ -68,6 +65,32 @@ export interface E2EEReject {
   reason?: string;
 }
 
+// Teardown. Sent when a side ends an established session so the peer's lock
+// drops too, instead of it encrypting into a conversation that no longer
+// decrypts. Rides the same control carrier as the rest of the handshake.
+export interface E2EEClose {
+  t: "close";
+  v: typeof PROTOCOL_VERSION;
+}
+
+// The initiator's proof that it can decrypt, which is how the responder learns
+// the handshake completed. Carries a ciphertext like `msg` but is never
+// rendered.
+export interface E2EEAck {
+  t: "ack";
+  v: typeof PROTOCOL_VERSION;
+  ct: string;
+}
+
+// An attachment. Encrypted like `msg`, but the plaintext is a descriptor
+// (location, file key, type) rather than chat text, so the client renders a
+// media row and the file's URL never becomes message content.
+export interface E2EEMediaFrame {
+  t: "media";
+  v: typeof PROTOCOL_VERSION;
+  ct: string;
+}
+
 // `pre` flags a session-establishing ciphertext (an Olm pre-key message) so the
 // receiving backend knows to create the session rather than decrypt on an
 // existing one.
@@ -91,15 +114,43 @@ export type E2EEPayload =
   | E2EEInit
   | E2EEAccept
   | E2EEReject
+  | E2EEClose
+  | E2EEAck
   | E2EECipher
+  | E2EEMediaFrame
   | E2EEFragment;
+
+// The tag value on a PRIVMSG carrying an Obby payload. A control payload rides
+// the tag value itself on TAGMSG, so the command already tells the two apart;
+// this exists so anything watching the wire can see an attachment without
+// decrypting. The relay accepts alphanumerics plus `+`, `/` and `=` only, which
+// is why the separator is a slash.
+export function privmsgTagValue(kind: "msg" | "media"): string {
+  return kind === "media" ? `${PROTOCOL_VERSION}/m` : `${PROTOCOL_VERSION}`;
+}
 
 export function encodeE2EEPayload(payload: E2EEPayload): string {
   return base64EncodeUtf8(JSON.stringify(payload));
 }
 
+// The protocol version a raw frame claims, for the case where decoding fails
+// only because the version differs: the peer can then be told the version is
+// unsupported rather than left waiting out a negotiation timeout.
+export function readPayloadVersion(raw: string): number | null {
+  if (!raw) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(base64DecodeUtf8(raw));
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object") return null;
+  const v = (parsed as Record<string, unknown>).v;
+  return typeof v === "number" ? v : null;
+}
+
 // Decode a raw tag value into a structured payload, returning null on any
-// decode/parse failure or schema mismatch rather than throwing — payloads are
+// decode/parse failure or schema mismatch rather than throwing: payloads are
 // attacker-controlled, so malformed input is silently discarded.
 export function decodeE2EEPayload(raw: string): E2EEPayload | null {
   if (!raw) return null;
@@ -134,6 +185,16 @@ export function decodeE2EEPayload(raw: string): E2EEPayload | null {
       const m: E2EEReject = { t: "reject", v: PROTOCOL_VERSION };
       if (typeof o.reason === "string") m.reason = o.reason;
       return m;
+    }
+    case "close":
+      return { t: "close", v: PROTOCOL_VERSION };
+    case "ack": {
+      if (typeof o.ct !== "string") return null;
+      return { t: "ack", v: PROTOCOL_VERSION, ct: o.ct };
+    }
+    case "media": {
+      if (typeof o.ct !== "string") return null;
+      return { t: "media", v: PROTOCOL_VERSION, ct: o.ct };
     }
     case "msg": {
       if (typeof o.ct !== "string") return null;
@@ -191,7 +252,7 @@ export function fragmentValue(
 }
 
 // Rebuild the original tag value from a complete fragment set, or null if any
-// fragment is missing or the set is inconsistent — mismatched totals, indices
+// fragment is missing or the set is inconsistent: mismatched totals, indices
 // out of range, or fragments from a different `id` (two concurrent streams must
 // never be spliced into one value).
 export function reassembleFragments(
