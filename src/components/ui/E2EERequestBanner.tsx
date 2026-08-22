@@ -2,8 +2,35 @@ import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
 import { FaExclamationTriangle, FaLock, FaShieldAlt } from "react-icons/fa";
+import type { E2EEErrorReason } from "../../lib/e2ee/session";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
 import useStore from "../../store";
+
+// Session failures travel as codes so the text can be translated here rather
+// than assembled in a store handler.
+function reasonMessage(reason: E2EEErrorReason, nick: string): React.ReactNode {
+  switch (reason) {
+    case "peer-ended":
+      return <Trans>{nick} ended encryption.</Trans>;
+    case "encryption-lost":
+      return (
+        <Trans>
+          Encryption with {nick} stopped working, so the message wasn't sent.
+          Start encryption again to continue.
+        </Trans>
+      );
+    case "no-response":
+      return <Trans>{nick} didn't answer the encryption request.</Trans>;
+    case "encryption-unavailable":
+      return <Trans>Encryption isn't available on this device.</Trans>;
+    case "unsupported-version":
+      return (
+        <Trans>{nick} uses an encryption version this client can't read.</Trans>
+      );
+    default:
+      return <Trans>Couldn't set up encryption with {nick}.</Trans>;
+  }
+}
 
 // In-context E2EE prompt shown above the message box for a private chat: lets
 // the recipient accept/decline an incoming encryption request, shows the
@@ -91,7 +118,7 @@ export const E2EERequestBanner: React.FC<{
       <div className="mb-2 flex items-center gap-3 rounded-md border border-discord-dark-500 bg-discord-dark-300 px-3 py-2">
         <FaShieldAlt className="flex-shrink-0 text-discord-green" />
         <div className="min-w-0 flex-1 text-sm text-discord-text-normal">
-          <Trans>Encrypted — verify {nick}'s identity to be sure.</Trans>
+          <Trans>Encrypted. Verify {nick}'s identity to be sure.</Trans>
         </div>
         <button
           type="button"
@@ -117,8 +144,9 @@ export const E2EERequestBanner: React.FC<{
         <FaExclamationTriangle className="flex-shrink-0 text-discord-red" />
         <div className="min-w-0 flex-1 text-sm text-discord-text-normal">
           <Trans>
-            {nick}'s encryption key changed — this could be a new device or an
-            attacker. End encryption and start again to re-verify.
+            {nick}'s encryption key changed. That happens on a new device, and
+            it is also what an attacker looks like. End encryption and start
+            again to re-verify.
           </Trans>
         </div>
         <button
@@ -143,11 +171,20 @@ export const E2EERequestBanner: React.FC<{
           {session.status === "rejected" ? (
             <Trans>{nick} declined encryption.</Trans>
           ) : (
-            <Trans>
-              Couldn't encrypt with {nick} — {session.reason}.
-            </Trans>
+            reasonMessage(session.reason, nick)
           )}
         </div>
+        {session.status === "error" && session.wasEstablished && (
+          // Every send is withheld in this state and the notice says to end
+          // encryption, so the banner reporting it has to carry that control.
+          <button
+            type="button"
+            className="rounded bg-discord-primary px-3 py-1 text-xs font-medium text-white hover:bg-discord-primary-hover"
+            onClick={() => resetE2EESession(serverId, nick)}
+          >
+            <Trans>End encryption</Trans>
+          </button>
+        )}
         <button
           type="button"
           className="px-2 py-1 text-xs text-discord-text-muted hover:text-white"

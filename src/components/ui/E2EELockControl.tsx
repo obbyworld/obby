@@ -1,8 +1,8 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaLock, FaLockOpen, FaShieldAlt } from "react-icons/fa";
-import { e2eeSessionKey } from "../../lib/e2ee/session";
+import { e2eeSessionKey, isWithholding } from "../../lib/e2ee/session";
 import useStore from "../../store";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
@@ -11,7 +11,7 @@ import HeaderOverflowMenu, {
 // The single encryption affordance for a private chat. Driven entirely by the
 // session reducer status (scheme-agnostic), so it serves both the Obby-native
 // and OTR backends. Starting encryption is an explicit choice between the two
-// schemes — a security feature shouldn't hide which guarantees are in force, and
+// schemes: a security feature shouldn't hide which guarantees are in force, and
 // each interoperates with different peers. The dropdown reuses the shared
 // HeaderOverflowMenu so it matches the rest of the header's menus.
 const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
@@ -24,14 +24,33 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
   );
   const status = session?.status ?? "none";
   const verified = session?.status === "established" && session.verified;
+  const connected = useStore(
+    (s) => !!s.servers.find((server) => server.id === serverId)?.isConnected,
+  );
   const startE2EESession = useStore((s) => s.startE2EESession);
   const acceptE2EEOffer = useStore((s) => s.acceptE2EEOffer);
   const rejectE2EEOffer = useStore((s) => s.rejectE2EEOffer);
   const resetE2EESession = useStore((s) => s.resetE2EESession);
   const openE2EEVerify = useStore((s) => s.openE2EEVerify);
+  const resumeE2EEIfKnown = useStore((s) => s.resumeE2EEIfKnown);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
+  // Conversations already offered a resume, so ending a session by hand does
+  // not read as "no session yet" and pull the lock straight back on.
+  const resumedRef = useRef<string | null>(null);
+
+  // Session keys live only in memory, so opening a conversation the user has
+  // already encrypted with finds the lock off after every reload. Offering
+  // again here is what makes the lock stick to the peer rather than to the tab.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    const conversation = e2eeSessionKey(serverId, nick);
+    if (!connected || status !== "none") return;
+    if (resumedRef.current === conversation) return;
+    resumedRef.current = conversation;
+    resumeE2EEIfKnown(serverId, nick);
+  }, [connected, status, serverId, nick]);
 
   // Obby offers gate on explicit consent; OTR auto-establishes (no accept step),
   // so this branch only ever fires for the Obby scheme.
@@ -67,7 +86,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
         className="p-2 text-blue-400 hover:text-discord-text-normal md:p-0"
         onClick={() => resetE2EESession(serverId, nick)}
         aria-label={t`Cancel encryption`}
-        title={t`Encrypting… — click to cancel`}
+        title={t`Encrypting… (click to cancel)`}
       >
         <FaLock className="animate-pulse" />
       </button>
@@ -82,9 +101,16 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
     ? [
         {
           id: "verify",
-          label: <Trans>Verify fingerprint…</Trans>,
+          // Reachable while the key is changed too: that is the state where
+          // comparing fingerprints matters most, and it is the only route to
+          // accepting the new key.
+          label: keyChanged ? (
+            <Trans>Review changed key…</Trans>
+          ) : (
+            <Trans>Verify fingerprint…</Trans>
+          ),
           icon: <FaShieldAlt />,
-          show: established,
+          show: true,
           onClick: () => openE2EEVerify(serverId, nick),
         },
         {
@@ -96,6 +122,16 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
         },
       ]
     : [
+        {
+          // A session that broke after it was live still withholds every send,
+          // and the notice tells the user to end encryption. Without this the
+          // instruction points at a control that only the locked menu carries.
+          id: "end",
+          label: <Trans>End encryption</Trans>,
+          icon: <FaLockOpen />,
+          show: isWithholding(session),
+          onClick: () => resetE2EESession(serverId, nick),
+        },
         {
           id: "obby",
           label: (
@@ -140,7 +176,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
           verified
             ? t`Encrypted & verified`
             : established
-              ? t`Encrypted — not verified`
+              ? t`Encrypted, not verified`
               : keyChanged
                 ? t`Encryption key changed`
                 : t`Encrypt this chat`

@@ -1,5 +1,5 @@
 import type React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const TOOLTIP_MAX_WIDTH = 260;
@@ -9,8 +9,9 @@ const SHOW_DELAY_MS = 200;
 // message affordances so every hover hint reads identically.
 const TooltipPanel: React.FC<{
   anchor: { x: number; y: number };
+  id: string;
   children: React.ReactNode;
-}> = ({ anchor, children }) => {
+}> = ({ anchor, id, children }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<React.CSSProperties>({ visibility: "hidden" });
 
@@ -30,6 +31,8 @@ const TooltipPanel: React.FC<{
   return (
     <div
       ref={ref}
+      id={id}
+      role="tooltip"
       style={{
         position: "fixed",
         zIndex: 9999,
@@ -52,6 +55,7 @@ export const HoverTooltip: React.FC<{
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<HTMLSpanElement>(null);
+  const panelId = useId();
 
   function handleEnter() {
     const rect = ref.current?.getBoundingClientRect();
@@ -64,18 +68,27 @@ export const HoverTooltip: React.FC<{
     setShow(false);
   }
 
+  // Focusable and described, so the hint is not a mouse-only affordance. Some of
+  // these carry the only explanation a row has (an undecryptable message says
+  // nothing else about why it cannot be read).
   return (
     <span
       ref={ref}
+      tabIndex={0}
+      aria-describedby={show ? panelId : undefined}
       className={`relative inline-flex ${className ?? ""}`}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
+      onFocus={handleEnter}
+      onBlur={handleLeave}
     >
       {children}
       {show &&
         anchor &&
         createPortal(
-          <TooltipPanel anchor={anchor}>{content}</TooltipPanel>,
+          <TooltipPanel anchor={anchor} id={panelId}>
+            {content}
+          </TooltipPanel>,
           document.body,
         )}
     </span>

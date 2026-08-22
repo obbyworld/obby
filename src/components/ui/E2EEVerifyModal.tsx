@@ -33,21 +33,32 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
   const obbySelf = useStore((s) => s.e2eeSelfFingerprint);
   const otrSelf = useStore((s) => s.e2eeOtrSelfFingerprint);
   const verifyE2EESession = useStore((s) => s.verifyE2EESession);
+  const trustE2EEChangedKey = useStore((s) => s.trustE2EEChangedKey);
   const [copied, setCopied] = useState(false);
 
-  if (session?.status !== "established") return null;
+  if (session?.status !== "established" && session?.status !== "key-changed")
+    return null;
 
+  const keyChanged = session.status === "key-changed";
   const isOtr = session.scheme === "otr";
   const selfRaw = (isOtr ? otrSelf : obbySelf) ?? "";
-  const peerRaw = session.peerFingerprint;
+  const peerRaw = keyChanged ? session.newFingerprint : session.peerFingerprint;
+  const oldRaw = keyChanged ? session.oldFingerprint : "";
   const selfFp = isOtr ? formatOtrFingerprint(selfRaw) : selfRaw;
   const peerFp = isOtr ? formatOtrFingerprint(peerRaw) : peerRaw;
+  const oldFp = isOtr ? formatOtrFingerprint(oldRaw) : oldRaw;
+  const verified = !keyChanged && session.verified;
 
   const copyPeer = () => {
-    navigator.clipboard.writeText(peerRaw).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard
+      .writeText(peerRaw)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        // Clipboard access can be denied; the fingerprint stays selectable.
+      });
   };
 
   return (
@@ -66,6 +77,23 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
     >
       <ModalBody>
         <div className="space-y-4">
+          {keyChanged && (
+            <div className="rounded-md border border-discord-red bg-discord-red/10 p-3 text-sm text-discord-text-normal">
+              <Trans>
+                {nick}'s key is different from the one you saw before. That
+                happens after a reinstall or a new device, and it is also what a
+                man-in-the-middle looks like. Compare the new fingerprint out of
+                band before you accept it.
+              </Trans>
+              <div className="mt-2 text-xs uppercase tracking-wide text-discord-text-muted">
+                <Trans>Previous fingerprint</Trans>
+              </div>
+              <code className="block break-all font-mono text-xs text-discord-text-muted">
+                {oldFp || "-"}
+              </code>
+            </div>
+          )}
+
           <p className="text-sm text-discord-text-muted">
             {isOtr ? (
               <Trans>
@@ -92,7 +120,11 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
 
           <div>
             <div className="mb-1 text-xs uppercase tracking-wide text-discord-text-muted">
-              <Trans>{nick}'s fingerprint</Trans>
+              {keyChanged ? (
+                <Trans>{nick}'s new fingerprint</Trans>
+              ) : (
+                <Trans>{nick}'s fingerprint</Trans>
+              )}
             </div>
             <div className="flex items-center gap-2 rounded bg-discord-dark-400 p-3">
               <code className="flex-1 break-all font-mono text-sm text-discord-text-normal">
@@ -113,7 +145,7 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
             </div>
           </div>
 
-          {session.verified && (
+          {verified && (
             <div className="flex items-center gap-2 text-sm text-discord-green">
               <FaCheck className="flex-shrink-0" />
               <Trans>You verified this contact.</Trans>
@@ -126,17 +158,30 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
         <Button variant="secondary" onClick={onClose}>
           <Trans>Close</Trans>
         </Button>
-        {!session.verified && (
+        {keyChanged ? (
           <Button
             variant="primary"
             onClick={() => {
-              verifyE2EESession(serverId, nick);
+              trustE2EEChangedKey(serverId, nick);
               onClose();
             }}
           >
             <FaShieldAlt className="mr-2 inline text-sm" />
-            <Trans>Mark as verified</Trans>
+            <Trans>Accept new key</Trans>
           </Button>
+        ) : (
+          !verified && (
+            <Button
+              variant="primary"
+              onClick={() => {
+                verifyE2EESession(serverId, nick);
+                onClose();
+              }}
+            >
+              <FaShieldAlt className="mr-2 inline text-sm" />
+              <Trans>Mark as verified</Trans>
+            </Button>
+          )
         )}
       </ModalFooter>
     </BaseModal>
