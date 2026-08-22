@@ -1,7 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
-import { E2EE_UNPROTECTED_TAG } from "../../lib/e2ee/messageFlags";
-import { e2eeSessionKey } from "../../lib/e2ee/session";
+import {
+  E2EE_UNDECRYPTABLE_TAG,
+  E2EE_UNPROTECTED_TAG,
+} from "../../lib/e2ee/messageFlags";
+import { e2eeSessionKey, expectsProtection } from "../../lib/e2ee/session";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
@@ -756,6 +759,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // rendered but flagged. obbyircd is multi-client, so this is often just the
     // peer replying from another client that isn't encrypting, not a downgrade.
     let unprotectedUnderLock = false;
+    let undecryptableReplay = false;
 
     if (server) {
       // Lazy-fetch sender metadata on first PM, same as CHANMSG path.
@@ -773,9 +777,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       // are swallowed without driving a live session — replayed ciphertext can't
       // decrypt and a replayed handshake would spawn a spurious session. Obby
       // passes the msgid so the decrypted row keeps the real IRC message identity.
-      const skipE2EE =
-        sender.toLowerCase() === ourNick || mtags?.batch !== undefined;
-      if (
+      const isSelfEcho = sender.toLowerCase() === ourNick;
+      const isReplay = mtags?.batch !== undefined;
+      const skipE2EE = isSelfEcho || isReplay;
+      const consumedByE2EE =
         handleInboundObby(
           response.serverId,
           sender,
@@ -783,12 +788,18 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           message,
           mtags?.msgid,
           skipE2EE,
-        )
-      ) {
-        return;
-      }
-      if (handleInboundOtr(response.serverId, sender, message, skipE2EE)) {
-        return;
+        ) || handleInboundOtr(response.serverId, sender, message, skipE2EE);
+      if (consumedByE2EE) {
+        // Replayed ciphertext is undecryptable, but dropping it would make the
+        // history look shorter than it was, so keep a marked placeholder row.
+        // Our own replayed sends count: the local plaintext echo died with the
+        // page, so dropping them too would replay the thread as one-sided. Only
+        // a live self-echo is dropped, since that row was already injected.
+        if (isReplay) {
+          undecryptableReplay = true;
+        } else {
+          return;
+        }
       }
 
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
@@ -852,8 +863,9 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         !channelContext &&
         mtags?.batch === undefined &&
         sender.toLowerCase() !== ourNick &&
-        store.getState().e2eeSessions[e2eeSessionKey(server.id, sender)]
-          ?.status === "established";
+        expectsProtection(
+          store.getState().e2eeSessions[e2eeSessionKey(server.id, sender)],
+        );
 
       if (channelContext) {
         const channel = server.channels.find(
@@ -1019,7 +1031,9 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           mentioned: [],
           tags: unprotectedUnderLock
             ? { ...(mtags ?? {}), [E2EE_UNPROTECTED_TAG]: "1" }
-            : mtags,
+            : undecryptableReplay
+              ? { ...(mtags ?? {}), [E2EE_UNDECRYPTABLE_TAG]: "1" }
+              : mtags,
         };
 
         // If message has bot tag, mark user as bot

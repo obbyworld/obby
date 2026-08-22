@@ -25,9 +25,12 @@ import { registerAllHandlers } from "./handlers";
 import { readyProcessedServers } from "./handlers/connection";
 import {
   acceptE2EEOffer as e2eeAccept,
+  dropE2EESessionForDisconnect as e2eeDrop,
   rejectE2EEOffer as e2eeReject,
   resetE2EESession as e2eeReset,
+  resumeE2EEIfKnown as e2eeResume,
   startE2EESession as e2eeStart,
+  trustE2EEChangedKey as e2eeTrustChangedKey,
   verifyE2EESession as e2eeVerify,
 } from "./handlers/e2ee";
 import { routeOutgoingPM } from "./handlers/e2eeOutbound";
@@ -35,6 +38,7 @@ import {
   endOtrSession as otrEnd,
   startOtrSession as otrStart,
   verifyOtrSession as otrVerify,
+  trustOtrChangedKey,
 } from "./handlers/otr";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
@@ -821,8 +825,13 @@ export interface AppState {
   ) => void;
   acceptE2EEOffer: (serverId: string, nick: string) => void;
   rejectE2EEOffer: (serverId: string, nick: string) => void;
+  resumeE2EEIfKnown: (serverId: string, nick: string) => void;
   resetE2EESession: (serverId: string, nick: string) => void;
+  // The transport went away. Distinct from resetE2EESession because that is the
+  // user ending encryption, which also stops the conversation re-encrypting.
+  dropE2EESessionsForServer: (serverId: string) => void;
   verifyE2EESession: (serverId: string, nick: string) => void;
+  trustE2EEChangedKey: (serverId: string, nick: string) => void;
   openE2EEVerify: (serverId: string, nick: string) => void;
   closeE2EEVerify: () => void;
   redactMessage: (
@@ -1825,17 +1834,35 @@ const useStore = create<AppState>((set, get) => ({
     scheme === "otr" ? otrStart(serverId, nick) : e2eeStart(serverId, nick),
   acceptE2EEOffer: (serverId, nick) => e2eeAccept(serverId, nick),
   rejectE2EEOffer: (serverId, nick) => e2eeReject(serverId, nick),
+  resumeE2EEIfKnown: (serverId, nick) => e2eeResume(serverId, nick),
   resetE2EESession: (serverId, nick) => {
     const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
     if (session && "scheme" in session && session.scheme === "otr")
       otrEnd(serverId, nick);
     else e2eeReset(serverId, nick);
   },
+  dropE2EESessionsForServer: (serverId) => {
+    const prefix = `${serverId}:`;
+    for (const key of Object.keys(get().e2eeSessions)) {
+      if (!key.startsWith(prefix)) continue;
+      const nick = key.slice(prefix.length);
+      const session = get().e2eeSessions[key];
+      if (session && "scheme" in session && session.scheme === "otr")
+        otrEnd(serverId, nick);
+      else e2eeDrop(serverId, nick);
+    }
+  },
   verifyE2EESession: (serverId, nick) => {
     const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
     if (session && "scheme" in session && session.scheme === "otr")
       otrVerify(serverId, nick);
     else e2eeVerify(serverId, nick);
+  },
+  trustE2EEChangedKey: (serverId, nick) => {
+    const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
+    if (session && "scheme" in session && session.scheme === "otr")
+      trustOtrChangedKey(serverId, nick);
+    else e2eeTrustChangedKey(serverId, nick);
   },
   openE2EEVerify: (serverId, nick) =>
     set({ e2eeVerifyTarget: { serverId, nick } }),

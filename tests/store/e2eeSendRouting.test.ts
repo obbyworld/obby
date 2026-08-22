@@ -76,7 +76,7 @@ describe("sendMessage E2EE routing", () => {
   });
 
   test("sends plaintext after a failed handshake (error state falls back)", () => {
-    setSession({ status: "error", reason: "no response from peer" });
+    setSession({ status: "error", reason: "no-response" });
     useStore.getState().sendMessage(SERVER_ID, PM_ID, "hello");
     expect(sendSpy).toHaveBeenCalledWith(SERVER_ID, PM_ID, "hello");
   });

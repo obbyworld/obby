@@ -11,15 +11,18 @@ import { OtrBackend, type OtrPeerRef } from "../../lib/e2ee/otr/backend";
 import { getIdentity, otrPeerTrust } from "../../lib/e2ee/otr/identity";
 import ircClient from "../../lib/ircClient";
 import { loadOtr } from "../../lib/otr/vendor/loader";
+import { isE2EESenderIgnored } from "./e2ee";
 import {
   armNegotiationTimer,
   clearNegotiationTimer,
   convKey,
   dispatch,
+  ensurePrivateChat,
   getStore,
   injectMessage,
   OTR_NEGOTIATION_TIMEOUT_MS,
   reconcilePeerTrust,
+  trustChangedKey,
 } from "./e2eeShared";
 
 let backend: OtrBackend | null = null;
@@ -63,7 +66,7 @@ function buildBackend(): Promise<OtrBackend> {
           }
           dispatch(peer.serverId, peer.nick, {
             type: "error",
-            reason: "peer ended encryption",
+            reason: "peer-ended",
           });
         },
         onError: (peer, error) => {
@@ -83,7 +86,7 @@ function buildBackend(): Promise<OtrBackend> {
           console.warn("[OTR] session error:", error);
           dispatch(peer.serverId, peer.nick, {
             type: "error",
-            reason: "handshake failed",
+            reason: "handshake-failed",
           });
         },
       });
@@ -108,7 +111,7 @@ function withBackend(peer: OtrPeerRef, action: (b: OtrBackend) => void): void {
     .catch(() => {
       dispatch(peer.serverId, peer.nick, {
         type: "error",
-        reason: "encryption unavailable",
+        reason: "encryption-unavailable",
       });
     });
 }
@@ -142,7 +145,9 @@ export function handleInboundOtr(
   skipProcessing = false,
 ): boolean {
   if (classifyInbound({ body }).scheme !== "otr") return false;
-  if (skipProcessing) return true;
+  // Consumed either way: an ignored peer's ciphertext must not fall through and
+  // render as the raw ?OTR: body.
+  if (skipProcessing || isE2EESenderIgnored(sender)) return true;
   const peer: OtrPeerRef = { serverId, nick: sender };
   const status =
     getStore()?.getState().e2eeSessions[convKey(serverId, sender)]?.status;
@@ -153,7 +158,10 @@ export function handleInboundOtr(
     status !== "negotiating" &&
     status !== "established" &&
     status !== "key-changed";
-  if (fresh) dispatch(serverId, sender, { type: "start", scheme: "otr" });
+  if (fresh) {
+    ensurePrivateChat(serverId, sender);
+    dispatch(serverId, sender, { type: "start", scheme: "otr" });
+  }
   withBackend(peer, (b) => {
     b.receive(peer, body);
     if (fresh)
@@ -171,7 +179,7 @@ export function handleInboundOtr(
     if (st === "established" && !b.isEncrypting(peer)) {
       dispatch(serverId, sender, {
         type: "error",
-        reason: "peer ended encryption",
+        reason: "peer-ended",
       });
     }
   });
@@ -195,7 +203,7 @@ export function sendOtrMessage(
     } else {
       dispatch(serverId, nick, {
         type: "error",
-        reason: "encryption lost — message not sent; re-encrypt to continue",
+        reason: "encryption-lost",
       });
     }
   });
@@ -206,6 +214,10 @@ export function endOtrSession(serverId: string, nick: string): void {
   locallyEnded.add(convKey(serverId, nick));
   backend?.end({ serverId, nick });
   dispatch(serverId, nick, { type: "reset" });
+}
+
+export function trustOtrChangedKey(serverId: string, nick: string): void {
+  trustChangedKey(otrPeerTrust, serverId, nick);
 }
 
 // Persist the peer's fingerprint as verified (TOFU) so future sessions show it

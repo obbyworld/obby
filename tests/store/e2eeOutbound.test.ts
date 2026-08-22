@@ -88,7 +88,7 @@ describe("routeOutgoingPM choke point", () => {
   });
 
   test("declines after a failed handshake (error state sends in clear)", () => {
-    setSession({ status: "error", reason: "no response from peer" });
+    setSession({ status: "error", reason: "no-response" });
     expect(routeOutgoingPM(SERVER_ID, NICK, "hello")).toBe("none");
   });
 });
