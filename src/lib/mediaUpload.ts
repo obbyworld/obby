@@ -191,6 +191,13 @@ export function uploadFileTokenless(
   });
 }
 
+/** Byte count at the largest unit that keeps it readable. */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
 /**
  * Best-effort client-side validation against fetchUploadInfo() output.
  * Returns null when the file is OK; otherwise a human-readable reason

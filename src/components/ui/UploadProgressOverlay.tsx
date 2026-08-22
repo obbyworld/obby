@@ -3,8 +3,18 @@
 // by XHR's upload-progress event, and a "done" / "failed" mark when
 // the upload settles.
 
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { FaCheck, FaFile, FaSpinner, FaTimes } from "react-icons/fa";
+import {
+  FaCheck,
+  FaFile,
+  FaLock,
+  FaLockOpen,
+  FaSpinner,
+  FaTimes,
+} from "react-icons/fa";
+import type { PlainUploadReason } from "../../lib/e2ee/media";
+import { formatFileSize } from "../../lib/mediaUpload";
 
 export interface UploadJob {
   id: string;
@@ -14,17 +24,15 @@ export interface UploadJob {
   status: "pending" | "uploading" | "done" | "failed";
   error?: string;
   url?: string;
+  // Set only where encryption was available, so a channel upload stays quiet
+  // and a plain upload inside a locked conversation stands out.
+  encrypted?: boolean;
+  plainReason?: PlainUploadReason;
 }
 
 interface Props {
   jobs: UploadJob[];
   onCancel?: (id: string) => void;
-}
-
-function fmtSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
@@ -59,7 +67,7 @@ export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
                     ? "failed"
                     : job.status === "done"
                       ? "done"
-                      : `${fmtSize(job.loaded)} / ${fmtSize(job.total || job.file.size)}`}
+                      : `${formatFileSize(job.loaded)} / ${formatFileSize(job.total || job.file.size)}`}
                 </span>
                 {onCancel && job.status !== "done" && (
                   <button
@@ -72,6 +80,31 @@ export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
                   </button>
                 )}
               </div>
+              {job.encrypted !== undefined && (
+                <div className="mt-0.5 flex items-center gap-1 pl-6 text-xs">
+                  {job.encrypted ? (
+                    <>
+                      <FaLock className="text-discord-green" />
+                      <span className="text-discord-green">
+                        <Trans>Encrypted</Trans>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <FaLockOpen className="text-amber-400" />
+                      <span className="text-amber-400">
+                        {job.plainReason === "too-large" ? (
+                          <Trans>Too large to encrypt, sent unencrypted</Trans>
+                        ) : job.plainReason === "scheme" ? (
+                          <Trans>OTR does not encrypt files, sent as-is</Trans>
+                        ) : (
+                          <Trans>Not encrypted</Trans>
+                        )}
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
               {job.status !== "done" && (
                 <div className="w-full mt-1 h-1.5 rounded bg-discord-dark-500 overflow-hidden">
                   <div
