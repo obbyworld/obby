@@ -290,6 +290,9 @@ export class VoiceClient {
   // sink container so a single user-gesture chain unlocks autoplay for
   // all of them.
   private memberAudioSinks: Map<string, HTMLAudioElement> = new Map();
+  // One-shot document gesture handler armed when audio autoplay is
+  // blocked; replays the sinks once the user interacts.
+  private audioUnlock?: () => void;
 
   constructor(opts: VoiceClientOptions) {
     this.opts = opts;
@@ -1080,10 +1083,43 @@ export class VoiceClient {
       const stream = new MediaStream([track]);
       sink.srcObject = stream;
       sink.volume = member.volume;
-      sink.play().catch(() => {});
+      this.playMemberSink(nick, sink);
     }
 
     this.pushConnected();
+  }
+
+  /** Play an inbound audio sink, arming a one-shot user-gesture retry if
+   *  the browser blocks autoplay. Audio (unlike muted video) won't start
+   *  until the user has interacted with the page, so a fresh viewer hears
+   *  nothing until the next click/keypress without this. */
+  private playMemberSink(nick: string, sink: HTMLAudioElement): void {
+    sink.play().catch((err) => {
+      console.warn(
+        `voice: audio autoplay blocked for ${nick}; retrying on next user gesture`,
+        err,
+      );
+      this.armAudioUnlock();
+    });
+  }
+
+  private armAudioUnlock(): void {
+    if (this.audioUnlock) return;
+    const retry = () => {
+      document.removeEventListener("pointerdown", retry);
+      document.removeEventListener("keydown", retry);
+      this.audioUnlock = undefined;
+      for (const [nick, sink] of this.memberAudioSinks) {
+        sink
+          .play()
+          .catch((err) =>
+            console.warn(`voice: audio still blocked for ${nick}`, err),
+          );
+      }
+    };
+    this.audioUnlock = retry;
+    document.addEventListener("pointerdown", retry);
+    document.addEventListener("keydown", retry);
   }
 
   private applyPresence(env: SignalEnvelope) {
@@ -1287,6 +1323,11 @@ export class VoiceClient {
       sink.remove();
     }
     this.memberAudioSinks.clear();
+    if (this.audioUnlock) {
+      document.removeEventListener("pointerdown", this.audioUnlock);
+      document.removeEventListener("keydown", this.audioUnlock);
+      this.audioUnlock = undefined;
+    }
     this.members = {};
     this.trackOwners = {};
     this.midOwners = {};

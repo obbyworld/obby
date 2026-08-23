@@ -14,6 +14,7 @@ import {
 import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
 import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
+import { routeOutgoingPM } from "../store/handlers/e2eeOutbound";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
 
 /**
@@ -215,7 +216,9 @@ interface UseMessageSendingOptions {
 }
 
 interface UseMessageSendingReturn {
-  sendMessage: (text: string) => void;
+  // Returns "withheld" when an engaged E2EE lock dropped the message so the
+  // caller can preserve the user's draft; otherwise void.
+  sendMessage: (text: string) => "withheld" | undefined;
 }
 
 interface WhisperContext {
@@ -325,6 +328,8 @@ export function useMessageSending({
       } else if (commandName === "msg") {
         const [target, ...messageParts] = args;
         const message = messageParts.join(" ");
+        if (routeOutgoingPM(selectedServerId, target, message) !== "none")
+          return;
         ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${message}`);
       } else if (commandName === "whisper") {
         const [targetUser, ...messageParts] = args;
@@ -357,6 +362,18 @@ export function useMessageSending({
           );
         } else {
           if (!target) return;
+          const soh = String.fromCharCode(1);
+          const actionContent = `${soh}ACTION ${actionMessage}${soh}`;
+          if (
+            selectedPrivateChat &&
+            routeOutgoingPM(
+              selectedServerId,
+              selectedPrivateChat.username,
+              actionContent,
+            ) !== "none"
+          ) {
+            return;
+          }
           ircClient.sendRaw(
             selectedServerId,
             `${localReplyTo?.msgid ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} ` : ""}PRIVMSG ${target} :\u0001ACTION ${actionMessage}\u0001`,
@@ -700,6 +717,17 @@ export function useMessageSending({
       const target =
         selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
       if (!target) return;
+
+      // Route PMs through E2EE before any plaintext send path.
+      if (selectedPrivateChat) {
+        const routed = routeOutgoingPM(
+          selectedServerId,
+          selectedPrivateChat.username,
+          cleanedText,
+        );
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
+      }
 
       const lines = cleanedText.split("\n");
       const supportsMultiline = serverSupportsMultiline(selectedServerId);

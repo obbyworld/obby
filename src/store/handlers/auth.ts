@@ -261,7 +261,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       // older test fixtures still work.
       if (param !== "+") return;
       const creds = loadCreds(serverId);
-      if (!creds || creds.mech !== "PLAIN") return;
+      if (creds?.mech !== "PLAIN") return;
       ircClient.sendRaw(
         serverId,
         `AUTHENTICATE ${btoa(`${creds.user}\x00${creds.user}\x00${creds.pass}`)}`,
@@ -582,13 +582,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       ircClient.capAck(serverId, capName, capValue ?? null);
     }
 
+    // Names only -- values live in capabilityValues and every consumer of
+    // `capabilities` matches on the bare name.
+    const ackedNames = caps.filter(Boolean).map((cap) => cap.split("=", 1)[0]);
+
     store.setState((state) => {
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {
-          const existing = server.capabilities ?? [];
-          const newCaps = cliCaps.split(" ");
-          const merged = [...existing];
-          for (const cap of newCaps) {
+          const merged = [...(server.capabilities ?? [])];
+          for (const cap of ackedNames) {
             if (!merged.includes(cap)) merged.push(cap);
           }
           return { ...server, capabilities: merged };
@@ -602,7 +604,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     const server = state.servers.find((s) => s.id === serverId);
     let preventCapEnd = false;
 
-    if (caps.some((cap) => cap.startsWith("sasl"))) {
+    // A long CAP REQ is split into batches and the server ACKs in arbitrary
+    // pieces, so ending negotiation before every requested cap is acknowledged
+    // can strand the SASL exchange that a later batch enables.
+    if (ircClient.hasPendingCapReqs(serverId)) {
+      preventCapEnd = true;
+    }
+
+    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
+    if (saslAcknowledged) {
       const servers = storage.servers.load();
       const savedServer = servers.find((s) => s.id === serverId);
       const hasPlain =

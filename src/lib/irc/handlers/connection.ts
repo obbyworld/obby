@@ -88,11 +88,11 @@ export function handleRplWelcome(
 
   ctx.startWebSocketPing(serverId);
 
+  // Registration must complete before these go out: bytes sent while still
+  // unregistered count against the server's handshake-flood limit, which bans
+  // the IP when a client with many channels reconnects.
   const server = ctx.servers.get(serverId);
   if (server && server.channels.length > 0) {
-    console.log(
-      `Rejoining ${server.channels.length} channels after reconnection`,
-    );
     for (const channel of server.channels) {
       ctx.sendRaw(serverId, `JOIN ${channel.name}`);
     }

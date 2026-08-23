@@ -2,6 +2,8 @@ import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
 import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
 import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
+import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
+import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import {
@@ -21,6 +23,23 @@ import type {
 } from "../types";
 import { registerAllHandlers } from "./handlers";
 import { readyProcessedServers } from "./handlers/connection";
+import {
+  acceptE2EEOffer as e2eeAccept,
+  dropE2EESessionForDisconnect as e2eeDrop,
+  rejectE2EEOffer as e2eeReject,
+  resetE2EESession as e2eeReset,
+  resumeE2EEIfKnown as e2eeResume,
+  startE2EESession as e2eeStart,
+  trustE2EEChangedKey as e2eeTrustChangedKey,
+  verifyE2EESession as e2eeVerify,
+} from "./handlers/e2ee";
+import { routeOutgoingPM } from "./handlers/e2eeOutbound";
+import {
+  endOtrSession as otrEnd,
+  startOtrSession as otrStart,
+  verifyOtrSession as otrVerify,
+  trustOtrChangedKey,
+} from "./handlers/otr";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
 import * as storage from "./localStorage";
@@ -607,6 +626,10 @@ export interface AppState {
   selectedServerId: string | null;
   connectionError: string | null;
   messages: Record<string, Message[]>;
+  e2eeSessions: Record<string, E2EESessionState>;
+  e2eeSelfFingerprint: string | null;
+  e2eeOtrSelfFingerprint: string | null;
+  e2eeVerifyTarget: { serverId: string; nick: string } | null;
   typingUsers: Record<string, User[]>;
   typingTimers: Record<string, Record<string, NodeJS.Timeout>>;
   globalNotifications: {
@@ -795,6 +818,22 @@ export interface AppState {
   joinChannel: (serverId: string, channelName: string) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
+  startE2EESession: (
+    serverId: string,
+    nick: string,
+    scheme?: E2EEScheme,
+  ) => void;
+  acceptE2EEOffer: (serverId: string, nick: string) => void;
+  rejectE2EEOffer: (serverId: string, nick: string) => void;
+  resumeE2EEIfKnown: (serverId: string, nick: string) => void;
+  resetE2EESession: (serverId: string, nick: string) => void;
+  // The transport went away. Distinct from resetE2EESession because that is the
+  // user ending encryption, which also stops the conversation re-encrypting.
+  dropE2EESessionsForServer: (serverId: string) => void;
+  verifyE2EESession: (serverId: string, nick: string) => void;
+  trustE2EEChangedKey: (serverId: string, nick: string) => void;
+  openE2EEVerify: (serverId: string, nick: string) => void;
+  closeE2EEVerify: () => void;
   redactMessage: (
     serverId: string,
     target: string,
@@ -1188,6 +1227,10 @@ const useStore = create<AppState>((set, get) => ({
   rawLog: {},
   rawLogViewerServerId: null,
   messages: {},
+  e2eeSessions: {},
+  e2eeSelfFingerprint: null,
+  e2eeOtrSelfFingerprint: null,
+  e2eeVerifyTarget: null,
   typingUsers: {},
   typingTimers: {},
   globalNotifications: [],
@@ -1780,8 +1823,50 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   sendMessage: (serverId, channelId, content) => {
-    const message = ircClient.sendMessage(serverId, channelId, content);
+    const server = get().servers.find((s) => s.id === serverId);
+    const pm = server?.privateChats?.find((p) => p.id === channelId);
+    if (pm && routeOutgoingPM(serverId, pm.username, content) !== "none")
+      return;
+    ircClient.sendMessage(serverId, channelId, content);
   },
+
+  startE2EESession: (serverId, nick, scheme) =>
+    scheme === "otr" ? otrStart(serverId, nick) : e2eeStart(serverId, nick),
+  acceptE2EEOffer: (serverId, nick) => e2eeAccept(serverId, nick),
+  rejectE2EEOffer: (serverId, nick) => e2eeReject(serverId, nick),
+  resumeE2EEIfKnown: (serverId, nick) => e2eeResume(serverId, nick),
+  resetE2EESession: (serverId, nick) => {
+    const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
+    if (session && "scheme" in session && session.scheme === "otr")
+      otrEnd(serverId, nick);
+    else e2eeReset(serverId, nick);
+  },
+  dropE2EESessionsForServer: (serverId) => {
+    const prefix = `${serverId}:`;
+    for (const key of Object.keys(get().e2eeSessions)) {
+      if (!key.startsWith(prefix)) continue;
+      const nick = key.slice(prefix.length);
+      const session = get().e2eeSessions[key];
+      if (session && "scheme" in session && session.scheme === "otr")
+        otrEnd(serverId, nick);
+      else e2eeDrop(serverId, nick);
+    }
+  },
+  verifyE2EESession: (serverId, nick) => {
+    const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
+    if (session && "scheme" in session && session.scheme === "otr")
+      otrVerify(serverId, nick);
+    else e2eeVerify(serverId, nick);
+  },
+  trustE2EEChangedKey: (serverId, nick) => {
+    const session = get().e2eeSessions[e2eeSessionKey(serverId, nick)];
+    if (session && "scheme" in session && session.scheme === "otr")
+      trustOtrChangedKey(serverId, nick);
+    else e2eeTrustChangedKey(serverId, nick);
+  },
+  openE2EEVerify: (serverId, nick) =>
+    set({ e2eeVerifyTarget: { serverId, nick } }),
+  closeE2EEVerify: () => set({ e2eeVerifyTarget: null }),
 
   redactMessage: (
     serverId: string,
@@ -2086,6 +2171,11 @@ const useStore = create<AppState>((set, get) => ({
     );
     const wireTarget = channel?.name ?? privateChat?.username;
     if (!wireTarget) return;
+    if (
+      privateChat &&
+      routeOutgoingPM(msg.serverId, wireTarget, msg.content) !== "none"
+    )
+      return;
 
     const label = makeLabel();
     set((state) => {

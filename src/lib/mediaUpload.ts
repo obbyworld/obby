@@ -14,7 +14,14 @@ export interface UploadInfo {
   scanning_enabled: boolean;
 }
 
-let cachedInfo: { url: string; info: UploadInfo } | null = null;
+let cachedInfo: { url: string; info: UploadInfo; fetchedAt: number } | null =
+  null;
+
+// The policy is a server-side setting that can change under a running tab, and
+// a client that caches it for the tab's lifetime keeps refusing uploads the
+// server would now accept. Short enough that a deployment is picked up on its
+// own, long enough that a batch of files costs one request.
+const INFO_TTL_MS = 5 * 60_000;
 
 /**
  * Fetch the backend's upload policy.  Cached per filehost URL so
@@ -24,15 +31,19 @@ let cachedInfo: { url: string; info: UploadInfo } | null = null;
  */
 export async function fetchUploadInfo(
   filehostUrl: string,
+  options?: { refresh?: boolean },
 ): Promise<UploadInfo | null> {
-  if (cachedInfo && cachedInfo.url === filehostUrl) return cachedInfo.info;
+  const cached =
+    cachedInfo?.url === filehostUrl &&
+    Date.now() - cachedInfo.fetchedAt < INFO_TTL_MS;
+  if (cached && !options?.refresh && cachedInfo) return cachedInfo.info;
   try {
     const res = await fetch(`${filehostUrl}/upload/info`, {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) return null;
     const info = (await res.json()) as UploadInfo;
-    cachedInfo = { url: filehostUrl, info };
+    cachedInfo = { url: filehostUrl, info, fetchedAt: Date.now() };
     return info;
   } catch {
     return null;
@@ -189,6 +200,13 @@ export function uploadFileTokenless(
     form.append("file", file);
     xhr.send(form);
   });
+}
+
+/** Byte count at the largest unit that keeps it readable. */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
 /**
