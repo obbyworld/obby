@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 bg-discord-primary rounded-lg flex items-center justify-center">
               <img
-                src="/images/obsidian.png"
+                src="/images/obby.png"
                 alt={t`Obby`}
                 className="w-full h-full rounded-lg"
               />

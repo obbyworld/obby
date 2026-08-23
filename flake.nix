@@ -35,7 +35,7 @@
             }
           )
         );
-      obsidianPackageArgs = import ./nix/package-args.nix { root = ./.; };
+      obbyPackageArgs = import ./nix/package-args.nix { root = ./.; };
       programsObbyHmModule = import ./nix/hm-module.nix;
     in
     {
@@ -100,7 +100,7 @@
       packages = forLinux (
         pkgs:
         let
-          pkg = pkgs.callPackage ./nix/obby.nix obsidianPackageArgs;
+          pkg = pkgs.callPackage ./nix/obby.nix obbyPackageArgs;
           update-npm-deps-hash = pkgs.callPackage ./nix/update-npm-deps-hash.nix { };
         in
         {

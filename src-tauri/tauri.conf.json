@@ -53,7 +53,7 @@
           "appLink": false
         },
         {
-          "host": "obby.github.io",
+          "host": "obsidianirc.github.io",
           "pathPrefix": [
             "/"
           ],
