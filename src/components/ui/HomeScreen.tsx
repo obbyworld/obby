@@ -97,7 +97,7 @@ const DiscoverGrid = () => {
     <div className="h-full flex flex-col overflow-hidden bg-discord-dark-200 text-white">
       <div className="m-1 rounded z-10 bg-discord-dark-300 border-b border-discord-dark-500 p-4 flex-shrink-0">
         <h1 className="rounded-lg text-2xl font-bold mb-2">
-          <Trans>Discover the world of IRC with ObsidianIRC</Trans>
+          <Trans>Discover the world of IRC with Obby</Trans>
         </h1>
 
         <div className="bg-discord-dark-100 rounded-lg flex items-center px-2 py-2">

@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "ObsidianIRC",
+  "productName": "Obby",
   "version": "../package.json",
   "identifier": "com.obsidianirc.dev",
   "build": {
@@ -13,7 +13,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "ObsidianIRC",
+        "title": "Obby",
         "width": 800,
         "height": 600,
         "resizable": true,
@@ -53,7 +53,7 @@
           "appLink": false
         },
         {
-          "host": "obsidianirc.github.io",
+          "host": "obby.github.io",
           "pathPrefix": [
             "/"
           ],

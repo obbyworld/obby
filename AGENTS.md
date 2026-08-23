@@ -1,4 +1,4 @@
-# ObsidianIRC — Agent Reference
+# Obby — Agent Reference
 
 React + TypeScript + TailwindCSS + DaisyUI + Zustand + Tauri (desktop/mobile).
 WebSocket-only IRC client. Tauri wraps the web app with native bindings for TCP sockets
@@ -29,7 +29,7 @@ npm run format; npm run fix:unsafe; npm run test; npm run build
 ## Nix
 
 - **`nix develop`** — full dev environment (Node 22 + Tauri Linux deps + rustup). Linux only (`x86_64`/`aarch64`).
-- **`nix build .#obsidianirc`** — produces `result/bin/ObsidianIRC`. When `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally; otherwise `update-linux-nix` in [`publish.yaml`](.github/workflows/publish.yaml) syncs the hash to `main` on version tags.
+- **`nix build .#obby`** — produces `result/bin/Obby`. When `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally; otherwise `update-linux-nix` in [`publish.yaml`](.github/workflows/publish.yaml) syncs the hash to `main` on version tags.
 - Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
 
 ---

@@ -1,5 +1,5 @@
 {
-  description = "ObsidianIRC — dev shell and Linux desktop package (Tauri + Vite)";
+  description = "Obby — dev shell and Linux desktop package (Tauri + Vite)";
 
   # devShell + packages: x86_64-linux and aarch64-linux only (see BUILD.md / AGENTS.md).
 
@@ -36,15 +36,15 @@
           )
         );
       obsidianPackageArgs = import ./nix/package-args.nix { root = ./.; };
-      programsObsidianircHmModule = import ./nix/hm-module.nix;
+      programsObbyHmModule = import ./nix/hm-module.nix;
     in
     {
-      # Thin wrapper: injects `pkgs.obsidianirc` on Linux when merged into nixpkgs (see nix/overlay.nix).
+      # Thin wrapper: injects `pkgs.obby` on Linux when merged into nixpkgs (see nix/overlay.nix).
       overlays.default = import ./nix/overlay.nix;
 
       # HM manual + flake-parts use `flake.homeModules`; keep both spellings discoverable for consumers.
-      homeManagerModules.obsidianirc = programsObsidianircHmModule;
-      homeModules.obsidianirc = programsObsidianircHmModule;
+      homeManagerModules.obby = programsObbyHmModule;
+      homeModules.obby = programsObbyHmModule;
 
       devShells = forLinux (
         pkgs:
@@ -91,7 +91,7 @@
                     webkit
                   ]
                 }''${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"
-                echo "(ObsidianIRC) node: $(node --version) • use \`rustup show\` after first compile"
+                echo "(Obby) node: $(node --version) • use \`rustup show\` after first compile"
               '';
           };
         }
@@ -100,11 +100,11 @@
       packages = forLinux (
         pkgs:
         let
-          pkg = pkgs.callPackage ./nix/obsidianirc.nix obsidianPackageArgs;
+          pkg = pkgs.callPackage ./nix/obby.nix obsidianPackageArgs;
           update-npm-deps-hash = pkgs.callPackage ./nix/update-npm-deps-hash.nix { };
         in
         {
-          obsidianirc = pkg;
+          obby = pkg;
           default = pkg;
           inherit update-npm-deps-hash;
         }
@@ -125,7 +125,7 @@
             (home-manager.lib.homeManagerConfiguration {
               inherit pkgs;
               modules = [
-                programsObsidianircHmModule
+                programsObbyHmModule
                 {
                   home = {
                     # Match HM manual examples (`home-manager` flake); only needs to evaluate for flake check.
@@ -133,7 +133,7 @@
                     username = "hm-oirc-check";
                     homeDirectory = "/var/empty";
                   };
-                  programs.obsidianirc = {
+                  programs.obby = {
                     enable = true;
                     package = pkgs.hello;
                   };

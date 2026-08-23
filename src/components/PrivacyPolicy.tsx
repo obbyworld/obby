@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Privacy Policy - ObsidianIRC";
+    document.title = "Privacy Policy - Obby";
   }, []);
 
   return (
@@ -18,13 +18,13 @@ const PrivacyPolicy = () => {
             <div className="w-14 h-14 bg-discord-primary rounded-lg flex items-center justify-center">
               <img
                 src="/images/obsidian.png"
-                alt={t`ObsidianIRC`}
+                alt={t`Obby`}
                 className="w-full h-full rounded-lg"
               />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-discord-channels-active">
-                ObsidianIRC
+                Obby
               </h1>
               <p className="text-discord-text-muted text-lg">Privacy Policy</p>
             </div>
@@ -58,8 +58,8 @@ const PrivacyPolicy = () => {
             </h2>
             <div className="space-y-4 text-discord-text-normal leading-relaxed">
               <p>
-                ObsidianIRC is a modern IRC client that connects you to Internet
-                Relay Chat (IRC) servers of your choice. We are committed to
+                Obby is a modern IRC client that connects you to Internet Relay
+                Chat (IRC) servers of your choice. We are committed to
                 protecting your privacy and being transparent about how we
                 handle your data.
               </p>
@@ -455,10 +455,10 @@ const PrivacyPolicy = () => {
               Children's Privacy
             </h2>
             <p className="text-discord-text-normal leading-relaxed">
-              ObsidianIRC is not directed to children under 13. We do not
-              knowingly collect personal information from children under 13. If
-              we become aware that we have collected such information, we will
-              delete it promptly.
+              Obby is not directed to children under 13. We do not knowingly
+              collect personal information from children under 13. If we become
+              aware that we have collected such information, we will delete it
+              promptly.
             </p>
           </section>
 
@@ -585,7 +585,7 @@ const PrivacyPolicy = () => {
         <footer className="mt-8 pt-8 border-t border-discord-dark-500/30">
           <div className="text-center">
             <p className="text-discord-text-muted text-sm mb-4">
-              &copy; 2025 ObsidianIRC. Open source IRC client.
+              &copy; 2025 Obby. Open source IRC client.
             </p>
             <button
               onClick={() => navigate("/")}

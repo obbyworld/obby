@@ -33,7 +33,7 @@
     (function () {
       var qs = new URLSearchParams(window.location.search);
       var payload = {
-        type: "obsidianirc:oauth-callback",
+        type: "obby:oauth-callback",
         state: qs.get("state") || "",
         code: qs.get("code") || undefined,
         error: qs.get("error") || undefined,

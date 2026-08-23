@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: obsidian-irc
+    container_name: obby
     ports:
       - "3000:80"
     restart: unless-stopped

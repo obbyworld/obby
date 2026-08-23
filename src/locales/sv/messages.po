@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - För IRC in i framtiden"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - För IRC in i framtiden"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— öppna i visaren"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(hanteras av ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(hanteras av Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -1137,8 +1137,8 @@ msgid "Discover"
 msgstr "Utforska"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Utforska IRC-världen med ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Utforska IRC-världen med Obby"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"
@@ -2155,14 +2155,14 @@ msgid "Notifications"
 msgstr "Aviseringar"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - För IRC in i framtiden"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - För IRC in i framtiden"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
