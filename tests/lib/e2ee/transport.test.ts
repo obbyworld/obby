@@ -3,6 +3,7 @@ import {
   decodeE2EEPayload,
   type E2EEFragment,
   type E2EEPayload,
+  PROTOCOL_VERSION,
 } from "../../../src/lib/e2ee/protocol";
 import {
   FRAGMENT_TTL_MS,
@@ -17,7 +18,7 @@ const SLICE = 2800;
 
 describe("frameValues — single value", () => {
   test("a payload within the cap frames as one base64 value", () => {
-    const payload: E2EEPayload = { t: "msg", v: 2, ct: "Q0lQ" };
+    const payload: E2EEPayload = { t: "msg", v: PROTOCOL_VERSION, ct: "Q0lQ" };
     const [value, ...rest] = frameValues(payload, "id1", BIG, SLICE);
     expect(rest).toHaveLength(0);
     expect(decodeE2EEPayload(value)).toEqual(payload);
@@ -25,10 +26,10 @@ describe("frameValues — single value", () => {
 
   test("every kind round-trips", () => {
     const kinds: E2EEPayload[] = [
-      { t: "init", v: 2, bundle: "b" },
-      { t: "accept", v: 2, response: "r" },
-      { t: "reject", v: 2 },
-      { t: "msg", v: 2, ct: "x" },
+      { t: "init", v: PROTOCOL_VERSION, bundle: "b" },
+      { t: "accept", v: PROTOCOL_VERSION, response: "r" },
+      { t: "reject", v: PROTOCOL_VERSION },
+      { t: "msg", v: PROTOCOL_VERSION, ct: "x" },
     ];
     for (const payload of kinds) {
       const [value] = frameValues(payload, "id", BIG, SLICE);
@@ -39,7 +40,11 @@ describe("frameValues — single value", () => {
 
 describe("frameValues — fragmentation round-trip", () => {
   test("a payload over the cap splits into frag values that rebuild the original", () => {
-    const payload: E2EEPayload = { t: "msg", v: 2, ct: "Z".repeat(8000) };
+    const payload: E2EEPayload = {
+      t: "msg",
+      v: PROTOCOL_VERSION,
+      ct: "Z".repeat(8000),
+    };
     const values = frameValues(payload, "msg42", 400, 220);
     expect(values.length).toBeGreaterThan(1);
 
@@ -66,7 +71,7 @@ describe("FragmentReassembler", () => {
     ct: string,
   ): E2EEFragment => ({
     t: "frag",
-    v: 2,
+    v: PROTOCOL_VERSION,
     id,
     i,
     n,

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { ObbyE2EEBackend, type PeerRef } from "../../../src/lib/e2ee/backend";
+import { PROTOCOL_VERSION } from "../../../src/lib/e2ee/protocol";
 import { createIdentity } from "../../../src/lib/e2ee/ratchet";
 
 const alicePeer: PeerRef = { serverId: "s1", nick: "bob" };
@@ -65,14 +66,22 @@ describe("ObbyE2EEBackend robustness", () => {
   test("a malformed offer is rejected, not silently accepted", () => {
     const bob = new ObbyE2EEBackend(createIdentity());
     expect(() =>
-      bob.acceptOffer(bobPeer, { t: "init", v: 2, bundle: "!!!garbage" }),
+      bob.acceptOffer(bobPeer, {
+        t: "init",
+        v: PROTOCOL_VERSION,
+        bundle: "!!!garbage",
+      }),
     ).toThrow();
   });
 
   test("completing without a pending handshake throws", () => {
     const alice = new ObbyE2EEBackend(createIdentity());
     expect(() =>
-      alice.completeSession(alicePeer, { t: "accept", v: 2, response: "x" }),
+      alice.completeSession(alicePeer, {
+        t: "accept",
+        v: PROTOCOL_VERSION,
+        response: "x",
+      }),
     ).toThrow();
   });
 

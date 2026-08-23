@@ -4,6 +4,7 @@ import {
   type E2EEPayload,
   encodeE2EEPayload,
   fragmentValue,
+  PROTOCOL_VERSION,
   readPayloadVersion,
   reassembleFragments,
 } from "../../../src/lib/e2ee/protocol";
@@ -15,12 +16,17 @@ const b64 = (o: unknown): string =>
 
 describe("encode/decode round-trip", () => {
   const cases: E2EEPayload[] = [
-    { t: "init", v: 2, bundle: "BUNDLE-b64", account: "alice" },
-    { t: "accept", v: 2, response: "RESPONSE-b64", account: "bob" },
-    { t: "reject", v: 2, reason: "declined" },
-    { t: "msg", v: 2, ct: "Q0lQSEVS", pre: true },
-    { t: "msg", v: 2, ct: "Q0lQSEVS" },
-    { t: "frag", v: 2, id: "f1", i: 0, n: 2, ct: "AAAA" },
+    { t: "init", v: PROTOCOL_VERSION, bundle: "BUNDLE-b64", account: "alice" },
+    {
+      t: "accept",
+      v: PROTOCOL_VERSION,
+      response: "RESPONSE-b64",
+      account: "bob",
+    },
+    { t: "reject", v: PROTOCOL_VERSION, reason: "declined" },
+    { t: "msg", v: PROTOCOL_VERSION, ct: "Q0lQSEVS", pre: true },
+    { t: "msg", v: PROTOCOL_VERSION, ct: "Q0lQSEVS" },
+    { t: "frag", v: PROTOCOL_VERSION, id: "f1", i: 0, n: 2, ct: "AAAA" },
   ];
   for (const payload of cases) {
     test(`${payload.t}${"pre" in payload && payload.pre ? " (prekey)" : ""}`, () => {
@@ -40,37 +46,49 @@ describe("decodeE2EEPayload rejects malformed input", () => {
     expect(decodeE2EEPayload(b64(42))).toBeNull();
   });
   test("wrong protocol version", () => {
-    expect(decodeE2EEPayload(b64({ t: "msg", v: 1, ct: "x" }))).toBeNull();
+    expect(
+      decodeE2EEPayload(b64({ t: "msg", v: PROTOCOL_VERSION + 1, ct: "x" })),
+    ).toBeNull();
   });
   test("unknown type", () => {
-    expect(decodeE2EEPayload(b64({ t: "bogus", v: 2 }))).toBeNull();
+    expect(
+      decodeE2EEPayload(b64({ t: "bogus", v: PROTOCOL_VERSION })),
+    ).toBeNull();
   });
   test("init missing bundle", () => {
-    expect(decodeE2EEPayload(b64({ t: "init", v: 2 }))).toBeNull();
+    expect(
+      decodeE2EEPayload(b64({ t: "init", v: PROTOCOL_VERSION })),
+    ).toBeNull();
   });
   test("accept missing response", () => {
-    expect(decodeE2EEPayload(b64({ t: "accept", v: 2 }))).toBeNull();
+    expect(
+      decodeE2EEPayload(b64({ t: "accept", v: PROTOCOL_VERSION })),
+    ).toBeNull();
   });
   test("msg missing ciphertext", () => {
-    expect(decodeE2EEPayload(b64({ t: "msg", v: 2 }))).toBeNull();
+    expect(
+      decodeE2EEPayload(b64({ t: "msg", v: PROTOCOL_VERSION })),
+    ).toBeNull();
   });
   test("frag with index out of range", () => {
     expect(
-      decodeE2EEPayload(b64({ t: "frag", v: 2, id: "x", i: 3, n: 2, ct: "a" })),
+      decodeE2EEPayload(
+        b64({ t: "frag", v: PROTOCOL_VERSION, id: "x", i: 3, n: 2, ct: "a" }),
+      ),
     ).toBeNull();
   });
   test("frag with non-integer total", () => {
     expect(
       decodeE2EEPayload(
-        b64({ t: "frag", v: 2, id: "x", i: 0, n: 1.5, ct: "a" }),
+        b64({ t: "frag", v: PROTOCOL_VERSION, id: "x", i: 0, n: 1.5, ct: "a" }),
       ),
     ).toBeNull();
   });
   test("init drops a non-string account rather than trusting it", () => {
     const got = decodeE2EEPayload(
-      b64({ t: "init", v: 2, bundle: "x", account: 7 }),
+      b64({ t: "init", v: PROTOCOL_VERSION, bundle: "x", account: 7 }),
     );
-    expect(got).toEqual({ t: "init", v: 2, bundle: "x" });
+    expect(got).toEqual({ t: "init", v: PROTOCOL_VERSION, bundle: "x" });
   });
 });
 
@@ -101,8 +119,8 @@ describe("fragmentation", () => {
     expect(reassembleFragments([])).toBeNull();
     expect(
       reassembleFragments([
-        { t: "frag", v: 2, id: "x", i: 0, n: 2, ct: "a" },
-        { t: "frag", v: 2, id: "x", i: 1, n: 3, ct: "b" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "x", i: 0, n: 2, ct: "a" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "x", i: 1, n: 3, ct: "b" },
       ]),
     ).toBeNull();
   });
@@ -110,8 +128,8 @@ describe("fragmentation", () => {
   test("rejects fragments spliced from two different ids", () => {
     expect(
       reassembleFragments([
-        { t: "frag", v: 2, id: "A", i: 0, n: 2, ct: "AA" },
-        { t: "frag", v: 2, id: "B", i: 1, n: 2, ct: "BB" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "A", i: 0, n: 2, ct: "AA" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "B", i: 1, n: 2, ct: "BB" },
       ]),
     ).toBeNull();
   });
@@ -119,8 +137,8 @@ describe("fragmentation", () => {
   test("a duplicate index cannot stand in for a missing one", () => {
     expect(
       reassembleFragments([
-        { t: "frag", v: 2, id: "x", i: 0, n: 2, ct: "a" },
-        { t: "frag", v: 2, id: "x", i: 0, n: 2, ct: "a" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "x", i: 0, n: 2, ct: "a" },
+        { t: "frag", v: PROTOCOL_VERSION, id: "x", i: 0, n: 2, ct: "a" },
       ]),
     ).toBeNull();
   });
@@ -134,17 +152,28 @@ describe("fragmentation", () => {
 
 describe("control frames", () => {
   test("close round-trips", () => {
-    const encoded = encodeE2EEPayload({ t: "close", v: 2 });
-    expect(decodeE2EEPayload(encoded)).toEqual({ t: "close", v: 2 });
+    const encoded = encodeE2EEPayload({ t: "close", v: PROTOCOL_VERSION });
+    expect(decodeE2EEPayload(encoded)).toEqual({
+      t: "close",
+      v: PROTOCOL_VERSION,
+    });
   });
 
   test("ack round-trips and requires its ciphertext", () => {
-    const encoded = encodeE2EEPayload({ t: "ack", v: 2, ct: "Q0lQ" });
-    expect(decodeE2EEPayload(encoded)).toEqual({ t: "ack", v: 2, ct: "Q0lQ" });
+    const encoded = encodeE2EEPayload({
+      t: "ack",
+      v: PROTOCOL_VERSION,
+      ct: "Q0lQ",
+    });
+    expect(decodeE2EEPayload(encoded)).toEqual({
+      t: "ack",
+      v: PROTOCOL_VERSION,
+      ct: "Q0lQ",
+    });
     expect(
       decodeE2EEPayload(
         // biome-ignore lint/suspicious/noExplicitAny: deliberately malformed
-        encodeE2EEPayload({ t: "ack", v: 2 } as any),
+        encodeE2EEPayload({ t: "ack", v: PROTOCOL_VERSION } as any),
       ),
     ).toBeNull();
   });

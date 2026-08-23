@@ -27,7 +27,9 @@ export function bodyToRaw(body: string): string | null {
     : null;
 }
 
-export const PROTOCOL_VERSION = 2;
+// Carried on every frame so a peer speaking a version this client cannot read
+// is told so, instead of the mismatch surfacing as a decrypt failure.
+export const PROTOCOL_VERSION = 1;
 
 // A client tag caps near 4094 bytes (message-tags spec); a PRIVMSG body is far
 // tighter (a ~512-byte line). Payloads over the per-carrier cap split into
