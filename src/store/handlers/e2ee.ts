@@ -149,6 +149,21 @@ function dispatchDecoded(
   onPayload(serverId, sender, payload, msgid);
 }
 
+// An accept only completes against an outstanding offer of our own, so two
+// offers crossing must not leave both sides answering: both accepts would be
+// discarded and neither session would ever complete. The lower fingerprint
+// keeps its offer and stays initiator, the other one answers. Fingerprints
+// decide it because both sides hold the same pair, and unlike a nick neither
+// can change mid-handshake. An offer whose fingerprint did not parse is
+// answered rather than held, since holding is what sustains a deadlock.
+export function keepsOwnOffer(
+  selfFingerprint: string,
+  peerFingerprint: string,
+): boolean {
+  if (peerFingerprint === "") return false;
+  return selfFingerprint < peerFingerprint;
+}
+
 function onPayload(
   serverId: string,
   sender: string,
@@ -161,16 +176,9 @@ function onPayload(
       const key = convKey(serverId, sender);
       const fingerprint = safeFingerprint(payload);
 
-      // An accept only completes against an outstanding offer of our own, so
-      // two offers crossing must not leave both sides answering: both accepts
-      // would be discarded and neither session would ever complete. The lower
-      // fingerprint keeps its offer and stays initiator, the other answers.
-      // Fingerprints decide it because each side holds the same pair and
-      // neither can be renamed mid-handshake the way a nick can.
       if (
         backend.hasPending(peer) &&
-        fingerprint !== "" &&
-        backend.selfFingerprint() < fingerprint
+        keepsOwnOffer(backend.selfFingerprint(), fingerprint)
       ) {
         return;
       }

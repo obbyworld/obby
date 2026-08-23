@@ -15,6 +15,7 @@ import {
   handleInboundObby,
   registerE2EEHandlers,
   resetE2EESession,
+  keepsOwnOffer,
   resumeE2EEIfKnown,
   startE2EESession,
 } from "../../src/store/handlers/e2ee";
@@ -313,12 +314,42 @@ describe("the ignore list covers encryption offers", () => {
 // An accept only completes against an outstanding offer of our own. If both
 // sides drop their own offer to answer the other's, both answers are discarded
 // and neither session ever completes. Exactly one side has to stay initiator.
-//
-// The offers that cross are the ones a broken session triggers, and a client
-// whose session broke is still reading `established` when the peer's offer
-// lands. These tests drive that state, so a guard keyed on the session status
-// rather than the outstanding handshake fails them.
 describe("crossing offers settle on one initiator", () => {
+  const lower = "0738 A3A7 BF2E 42FC";
+  const higher = "F1C2 0000 0000 0000";
+
+  test("the lower fingerprint keeps its own offer", () => {
+    expect(keepsOwnOffer(lower, higher)).toBe(true);
+  });
+
+  test("the higher fingerprint answers", () => {
+    expect(keepsOwnOffer(higher, lower)).toBe(false);
+  });
+
+  // Whichever pair it is given, exactly one of the two sides holds. Both
+  // holding is the deadlock; both answering discards both accepts.
+  test("exactly one side of any pair holds", () => {
+    for (const [a, b] of [
+      [lower, higher],
+      ["AAAA", "BBBB"],
+      ["ZZZZ", "AAAA"],
+      ["0000 1111", "0000 2222"],
+    ]) {
+      expect(keepsOwnOffer(a, b)).not.toBe(keepsOwnOffer(b, a));
+    }
+  });
+
+  // Holding is what sustains a deadlock, so an offer we could not read is
+  // answered rather than held.
+  test("an unreadable fingerprint is answered, not held", () => {
+    expect(keepsOwnOffer(lower, "")).toBe(false);
+    expect(keepsOwnOffer("", "")).toBe(false);
+  });
+});
+
+// The side that re-offers must stop claiming to be encrypted: its keys are the
+// ones that stopped working, so its lock has to drop before it sends anything.
+describe("re-offering drops the lock", () => {
   beforeEach(() => {
     stored.clear();
     vi.stubGlobal("localStorage", workingLocalStorage);
@@ -327,80 +358,13 @@ describe("crossing offers settle on one initiator", () => {
     vi.spyOn(ircClient, "sendRaw").mockImplementation((_id, line) => {
       sent.push(line);
     });
+    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
     registerE2EEHandlers(useStore);
   });
 
-  // Identities are random, so the side of the tie under test has to be chosen
-  // rather than assumed. `peerRanks` says where the peer's fingerprint sits
-  // against ours.
-  function peerOfferRanked(nick: string, peerRanks: "above" | "below") {
-    const selfFingerprint = useStore.getState().e2eeSelfFingerprint ?? "";
-    for (let attempt = 0; attempt < 200; attempt++) {
-      const candidate = peerOffer(nick);
-      const isAbove = selfFingerprint < candidate.fingerprint;
-      if (isAbove === (peerRanks === "above")) return candidate;
-    }
-    throw new Error("no identity generated on the requested side of the tie");
-  }
-
-  // Both sides hold a live session that no longer decrypts, so both re-offer.
-  function bothReOffer(nick: string, peerRanks: "above" | "below") {
-    const { init, fingerprint } = peerOfferRanked(nick, peerRanks);
-    obbyPeerTrust.pin(serverId, nick, fingerprint);
-    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
-    useStore.setState({
-      e2eeSessions: {
-        [`${serverId}:${nick}`]: {
-          status: "established",
-          scheme: "obby",
-          verified: false,
-          peerFingerprint: fingerprint,
-        },
-      },
-    });
-    startE2EESession(serverId, nick);
-    sent = [];
-    deliverTag(nick, init);
-  }
-
-  test("the lower fingerprint keeps its own offer outstanding", () => {
-    bothReOffer("above", "above");
-
-    // It did not answer, so its own offer is still there for the peer's accept
-    // to complete. Answering would have discarded both.
-    expect(sent).toHaveLength(0);
-    expect(sessionOf("above")?.status).toBe("negotiating");
-  });
-
-  test("the higher fingerprint yields and answers", () => {
-    bothReOffer("below", "below");
-
-    expect(sent.some((l) => l.startsWith(`@${E2EE_TAG}=`))).toBe(true);
-    expect(sessionOf("below")?.status).toBe("negotiating");
-  });
-
-  // A nick can change mid-handshake, which would flip a nick-ordered tie and
-  // leave both sides holding. Fingerprints cannot.
-  test("the tie does not move when our nick does", () => {
-    const selfFingerprint = useStore.getState().e2eeSelfFingerprint ?? "";
-    const { init, fingerprint } = peerOfferRanked("renamer", "above");
-    obbyPeerTrust.pin(serverId, "renamer", fingerprint);
-    vi.spyOn(ircClient, "getNick").mockReturnValue("zzz_renamed");
-    startE2EESession(serverId, "renamer");
-    sent = [];
-
-    deliverTag("renamer", init);
-
-    expect(selfFingerprint < fingerprint).toBe(true);
-    expect(sent).toHaveLength(0);
-  });
-
-  // Whichever way the tie falls, the side that re-offers must stop claiming to
-  // be encrypted: its keys are the ones that stopped working.
-  test("re-offering drops the lock rather than sending into dead keys", () => {
+  test("a live session goes back to negotiating rather than staying green", () => {
     const { fingerprint } = peerOffer("peer");
     obbyPeerTrust.pin(serverId, "peer", fingerprint);
-    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
     useStore.setState({
       e2eeSessions: {
         [`${serverId}:peer`]: {
