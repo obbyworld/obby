@@ -28,6 +28,7 @@ import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
 import { handleInboundObby } from "./e2ee";
 import { handleInboundOtr } from "./otr";
+import { notePrivateMessageArrived } from "./privateChatArrival";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
   ircClient.on("CHANMSG", (response) => {
@@ -1104,79 +1105,14 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           };
         });
 
-        // Update private chat's last activity and unread count
-        // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
-        const isHistoricalMessage = mtags?.batch !== undefined;
-
-        // Play notification sound if appropriate (but not for historical messages)
-        if (!isHistoricalMessage) {
-          const state = store.getState();
-          const serverCurrentUser = ircClient.getCurrentUser(response.serverId);
-          if (
-            shouldPlayNotificationSound(
-              newMessage,
-              serverCurrentUser,
-              state.globalSettings,
-            )
-          ) {
-            playNotificationSound(state.globalSettings);
-          }
-        }
-
-        store.setState((state) => {
-          const updatedServers = state.servers.map((s) => {
-            if (s.id === response.serverId) {
-              const updatedPrivateChats =
-                s.privateChats?.map((pc) => {
-                  if (pc.id === privateChat.id) {
-                    const isActive =
-                      getCurrentSelection(state).selectedPrivateChatId ===
-                      pc.id;
-                    const reset = isActive || isHistoricalMessage;
-                    return {
-                      ...pc,
-                      lastActivity: new Date(),
-                      unreadCount: reset ? 0 : pc.unreadCount + 1,
-                      mentionCount: reset ? 0 : (pc.mentionCount ?? 0) + 1,
-                      isMentioned: !isHistoricalMessage && true, // All PMs are considered mentions (except historical)
-                    };
-                  }
-                  return pc;
-                }) || [];
-              return { ...s, privateChats: updatedPrivateChats };
-            }
-            return s;
-          });
-          return { servers: updatedServers };
+        notePrivateMessageArrived(store, {
+          serverId: response.serverId,
+          privateChatId: privateChat.id,
+          sender,
+          message: newMessage,
+          body: message,
+          isHistorical: mtags?.batch !== undefined,
         });
-
-        // Show browser notification for private messages
-        const currentState = store.getState();
-        const isActiveChat =
-          getCurrentSelection(currentState).selectedPrivateChatId ===
-          privateChat.id;
-        if (
-          !isActiveChat &&
-          !isHistoricalMessage &&
-          currentState.globalSettings.enableNotifications
-        ) {
-          showMentionNotification(
-            server.id,
-            `DM from ${sender}`,
-            sender,
-            message,
-            (serverId, msg) => {
-              // Fallback: Add a NOTE standard reply notification
-              store.getState().addGlobalNotification({
-                type: "note",
-                command: "PRIVMSG",
-                code: "DM",
-                message: msg,
-                serverId,
-              });
-            },
-          );
-        }
       }
     }
   });
