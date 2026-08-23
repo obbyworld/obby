@@ -1,0 +1,42 @@
+name: Stale Pull Requests
+
+on:
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "List what would be marked or closed without touching anything"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          days-before-pr-stale: 30
+          days-before-pr-close: 60
+          days-before-issue-stale: -1
+          days-before-issue-close: -1
+          stale-pr-label: stale
+          # Dependabot recreates a PR it did not close itself, so closing one
+          # here buys a duplicate on the next run.
+          exempt-pr-labels: "dependencies,pinned"
+          # Oldest first, so the ones nearest closing are handled even if a run
+          # hits the operation budget.
+          ascending: true
+          operations-per-run: 100
+          debug-only: ${{ inputs.dry_run == true }}
+          stale-pr-message: >
+            No activity here for a month. Add the `pinned` label or leave a
+            comment to keep it open, otherwise this closes in 60 days.
+          close-pr-message: >
+            Closing after three months without activity. Reopen it whenever you
+            want to pick it back up.
