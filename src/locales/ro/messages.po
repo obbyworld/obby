@@ -228,8 +228,8 @@ msgid "{seconds} seconds"
 msgstr "{seconds} secunde"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again. Anything you sent just before this did not reach them."
-msgstr "{sender} a configurat din nou criptarea. Ce ai trimis chiar înainte nu a ajuns."
+msgid "{sender} set up encryption again."
+msgstr "{sender} a configurat din nou criptarea."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"

@@ -199,9 +199,9 @@ function onPayload(
 
       // A peer that reloaded offers again while we still hold their old
       // session. Those keys can no longer open anything they send, so the offer
-      // replaces them instead of being refused as a duplicate. Anything sent
-      // through the old session was unreadable at the far end, and the sender
-      // has no other way to learn that.
+      // replaces them instead of being refused as a duplicate. The row says only
+      // that it happened: which messages crossed the gap is not knowable here,
+      // and the ones that did reach the peer are readable again from history.
       const wasLive = backend.hasSession(peer);
       backend.reset(peer);
       dispatch(serverId, sender, { type: "reset" });
@@ -209,7 +209,7 @@ function onPayload(
         injectSystemNotice(
           serverId,
           sender,
-          t`${sender} set up encryption again. Anything you sent just before this did not reach them.`,
+          t`${sender} set up encryption again.`,
         );
       }
       pendingOffers.set(key, payload);

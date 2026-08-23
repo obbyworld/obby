@@ -228,8 +228,8 @@ msgid "{seconds} seconds"
 msgstr "{seconds}초"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again. Anything you sent just before this did not reach them."
-msgstr "{sender}님이 암호화를 다시 설정했습니다. 그 직전에 보낸 내용은 전달되지 않았습니다."
+msgid "{sender} set up encryption again."
+msgstr "{sender}님이 암호화를 다시 설정했습니다."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
