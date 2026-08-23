@@ -25,6 +25,7 @@ import {
 } from "../../lib/customEmojiPicker";
 import {
   buildMediaDescriptor,
+  CIPHERTEXT_EXTENSION,
   canEncryptMedia,
   ciphertextFileName,
   encryptMedia,
@@ -50,11 +51,11 @@ import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
 import { sendEncryptedMedia } from "../../store/handlers/e2ee";
+import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
 import {
   pmEncryptionPosture,
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
-import { injectSystemNotice } from "../../store/handlers/e2eeShared";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
 import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
@@ -1128,16 +1129,6 @@ export const ChatArea: React.FC<{
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
       initialJobs.map(async (job, jobIdx) => {
-        // Cheap client-side validation -- saves a server round-trip
-        // and gives the user immediate feedback.
-        const validationError = validateFileAgainstInfo(job.file, info);
-        if (validationError) {
-          updateJob(job.id, {
-            status: "failed",
-            error: validationError,
-          });
-          return null;
-        }
         const ac = new AbortController();
         uploadAbortsRef.current.set(job.id, ac);
         updateJob(job.id, { status: "uploading" });
@@ -1153,11 +1144,37 @@ export const ChatArea: React.FC<{
               : null;
           const upload = media
             ? new File(
-                [wrapForUpload(media.ciphertext).slice().buffer],
+                // Handed over as the view itself: File copies it once anyway,
+                // and slicing first would hold a second full copy meanwhile.
+                [wrapForUpload(media.ciphertext)],
                 ciphertextFileName(),
                 { type: "application/octet-stream" },
               )
             : job.file;
+          // Checked against what actually goes to the host, which for an
+          // encrypted attachment is the ciphertext under its own extension.
+          // Checking the original would clear a jpeg the host never sees and
+          // then fail on the upload it does.
+          let validationError = validateFileAgainstInfo(upload, info);
+          if (validationError && filehostUrl) {
+            // The policy is a server setting that can change while this tab is
+            // open, so a refusal is re-checked against a fresh copy before it
+            // stops an upload the host would now take.
+            const current = await fetchUploadInfo(filehostUrl, {
+              refresh: true,
+            });
+            validationError = validateFileAgainstInfo(upload, current);
+          }
+          if (validationError) {
+            uploadAbortsRef.current.delete(job.id);
+            updateJob(job.id, {
+              status: "failed",
+              error: media
+                ? t`This host does not accept ${CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is.`
+                : validationError,
+            });
+            return null;
+          }
           const url = tokenlessEndpoint
             ? await uploadFileTokenless(upload, {
                 endpoint: tokenlessEndpoint,

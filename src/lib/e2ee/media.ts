@@ -27,7 +27,9 @@ export function ciphertextFileName(): string {
   return `${crypto.randomUUID()}${CIPHERTEXT_EXTENSION}`;
 }
 
-export function wrapForUpload(ciphertext: Uint8Array): Uint8Array {
+// Returns a freshly allocated buffer, which is what lets the caller hand it
+// straight to File/Blob without a defensive copy.
+export function wrapForUpload(ciphertext: Uint8Array): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(MAGIC.length + ciphertext.length);
   out.set(MAGIC);
   out.set(ciphertext, MAGIC.length);
@@ -45,10 +47,17 @@ export function unwrapDownload(data: Uint8Array): Uint8Array | null {
   return data.slice(MAGIC.length);
 }
 
-// Encrypting is whole-file: the sender holds plaintext and ciphertext at once,
-// and the receiver cannot decrypt until the whole object has been fetched, so
-// there is no streaming or seeking. Past this size that stops being reasonable
-// on a phone, and the file is offered as a normal unencrypted upload instead.
+// The largest attachment every client must be able to open, so it is fixed
+// rather than derived from this device or from the host's own limit. The sender
+// chooses to encrypt; the receiver decrypts on whatever device it happens to
+// hold, with no say in the matter. A ceiling tuned to the sender would let a
+// desktop produce a file a phone cannot open, and the failure would land on the
+// person who did not choose it.
+//
+// Encryption is whole-file, and each side transiently holds several copies (the
+// download, the ciphertext, the plaintext, the blob), so the real cost is a
+// multiple of this. Raising it means checking that multiple still fits on the
+// weakest device expected to receive, not on the one doing the sending.
 export const MAX_ENCRYPTABLE_BYTES = 25 * 1024 * 1024;
 
 export function canEncryptMedia(sizeBytes: number): boolean {
@@ -81,14 +90,18 @@ export function encryptMedia(plaintext: Uint8Array): EncryptedMedia {
 }
 
 // Throws when the bytes were truncated, swapped, or rewritten: the AEAD tag
-// covers the whole object, so a host that modifies uploads fails here instead
-// of producing a plausible file.
+// covers the whole object, so a host that modifies uploads fails here rather
+// than handing back a plausible file. The result is freshly allocated, which is
+// what lets the caller pass it to Blob without a defensive copy; the cipher
+// types its output as backed by any buffer, so the narrowing is asserted here.
 export function decryptMedia(
   ciphertext: Uint8Array,
   key: Uint8Array,
   nonce: Uint8Array,
-): Uint8Array {
-  return xchacha20poly1305(key, nonce).decrypt(ciphertext);
+): Uint8Array<ArrayBuffer> {
+  return xchacha20poly1305(key, nonce).decrypt(
+    ciphertext,
+  ) as Uint8Array<ArrayBuffer>;
 }
 
 // What a `media` frame decrypts to.
@@ -205,9 +218,9 @@ export async function fetchDecryptedMedia(
   if (!ciphertext) throw new Error("media header missing");
   const { key, nonce } = mediaKeyBytes(descriptor);
   const plaintext = decryptMedia(ciphertext, key, nonce);
-  return new Blob([plaintext.slice().buffer], {
-    type: renderableMime(descriptor.mime),
-  });
+  // Handed over as the view itself: Blob copies it once regardless, and taking
+  // a slice first would hold a second full copy of the file while it does.
+  return new Blob([plaintext], { type: renderableMime(descriptor.mime) });
 }
 
 // A blob URL inherits this page's origin, so a peer-chosen type that a browser
