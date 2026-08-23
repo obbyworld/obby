@@ -1,6 +1,6 @@
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-obbyworld%2Fobby-blue?logo=docker&style=flat-square)](https://hub.docker.com/r/obbyworld/obby)
 [![Cloudflare Pages](https://img.shields.io/endpoint?url=https://cloudflare-pages-badges.mattf.workers.dev//?projectName=obsidianirc)](https://obsidianirc.pages.dev/)
-[![pages-build-deployment](https://github.com/ObsidianIRC/obsidianirc.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://obsidianirc.github.io/)
+[![pages-build-deployment](https://github.com/ObsidianIRC/obsidianirc.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://hello.obby.world/)
 [![Google Play](https://img.shields.io/badge/Google_Play-Download-414141?logo=google-play)](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)
 
 ## <img src="https://cdn-icons-png.freepik.com/512/8999/8999462.png" alt="description" width="70"> ObsidianIRC - Next Generation IRC Client
@@ -95,5 +95,5 @@ If you want to contribute to this project, please read the [CONTRIBUTING.md](CON
 
 You can demo the bleeding-edge version of ObsidianIRC, all you need to do is connect to an IRC server which uses websockets!
 
-- [Demo on GitHub Pages](https://obsidianirc.github.io/)
-- [Demo on CloudFlare Pages](https://obsidianirc.pages.dev/)
+- [Live Demo](https://hello.obby.world/)
+- [CloudFlare Pages Demo](https://obsidianirc.pages.dev/)
