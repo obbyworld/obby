@@ -13,9 +13,9 @@ import useStore from "../../src/store";
 import {
   dropE2EESessionForDisconnect,
   handleInboundObby,
+  keepsOwnOffer,
   registerE2EEHandlers,
   resetE2EESession,
-  keepsOwnOffer,
   resumeE2EEIfKnown,
   startE2EESession,
 } from "../../src/store/handlers/e2ee";
