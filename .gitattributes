@@ -1,2 +1,7 @@
 tests/fixtures/sample.mp4 binary
 tests/fixtures/sample.mp3 binary
+
+# Vendored and generated: collapsed in diffs so reviews show hand-written code.
+src/lib/otr/vendor/** linguist-vendored=true
+src/locales/**/messages.mjs linguist-generated=true
+src/locales/**/messages.po linguist-generated=true
