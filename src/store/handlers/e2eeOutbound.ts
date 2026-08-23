@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { e2eeSessionKey, isWithholding } from "../../lib/e2ee/session";
 import { sendEncryptedMessage } from "./e2ee";
-import { getStore, injectSystemNotice } from "./e2eeShared";
+import { getStore, injectSystemNotice } from "./e2eeConversation";
 import { sendOtrMessage } from "./otr";
 
 // Every outgoing-PM path funnels through here. "sent" = encrypted and away;

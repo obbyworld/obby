@@ -1,5 +1,5 @@
 // Obby-native PM E2EE orchestration: owns the Obby crypto backend and reflects
-// each conversation's lifecycle into the shared session reducer (see e2eeShared).
+// each conversation's lifecycle into the session reducer (see e2eeConversation).
 // Handshake/control frames ride an invisible TAGMSG client tag (handled here);
 // message payloads ride the PRIVMSG body and are diverted by handleInboundObby
 // (called by the USERMSG handler, like OTR) so the decrypted row keeps the real
@@ -49,10 +49,11 @@ import {
   injectMessage,
   injectSystemNotice,
   injectUndecryptable,
+  noteSessionEstablished,
   reconcilePeerTrust,
   setStore,
   trustChangedKey,
-} from "./e2eeShared";
+} from "./e2eeConversation";
 
 const backend = new ObbyE2EEBackend(getObbyIdentity());
 const reassembler = new FragmentReassembler();
@@ -158,18 +159,21 @@ function onPayload(
   switch (payload.t) {
     case "init": {
       const key = convKey(serverId, sender);
-      const status = getStore()?.getState().e2eeSessions[key]?.status;
-      // Both sides re-offering at once would leave each holding a session the
-      // other has already replaced. The lower nick's offer wins, so exactly one
-      // handshake survives and the tie-break needs no extra round trip.
-      const self = ircClient.getNick(serverId) ?? "";
+      const fingerprint = safeFingerprint(payload);
+
+      // An accept only completes against an outstanding offer of our own, so
+      // two offers crossing must not leave both sides answering: both accepts
+      // would be discarded and neither session would ever complete. The lower
+      // fingerprint keeps its offer and stays initiator, the other answers.
+      // Fingerprints decide it because each side holds the same pair and
+      // neither can be renamed mid-handshake the way a nick can.
       if (
-        status === "negotiating" &&
-        self.toLowerCase() < sender.toLowerCase()
+        backend.hasPending(peer) &&
+        fingerprint !== "" &&
+        backend.selfFingerprint() < fingerprint
       ) {
         return;
       }
-      const fingerprint = safeFingerprint(payload);
       // Consent is per peer, not per session: once the user has encrypted with
       // this key, a later offer under the same key needs no second prompt.
       const pinned = obbyPeerTrust.get(serverId, sender);
@@ -197,11 +201,10 @@ function onPayload(
         return;
       }
 
-      // A peer that reloaded offers again while we still hold their old
-      // session. Those keys can no longer open anything they send, so the offer
-      // replaces them instead of being refused as a duplicate. The row says only
-      // that it happened: which messages crossed the gap is not knowable here,
-      // and the ones that did reach the peer are readable again from history.
+      // A peer that reloaded offers again while we still hold their old session.
+      // Those keys can no longer open anything they send, so the offer replaces
+      // them. The row reports the peer's action and the state it leaves us in,
+      // both of which are known here; which messages crossed the gap is not.
       const wasLive = backend.hasSession(peer);
       backend.reset(peer);
       dispatch(serverId, sender, { type: "reset" });
@@ -209,7 +212,9 @@ function onPayload(
         injectSystemNotice(
           serverId,
           sender,
-          t`${sender} set up encryption again.`,
+          willAccept
+            ? t`${sender} restarted encryption, so this conversation is being set up again.`
+            : t`${sender} restarted encryption. This conversation stays unencrypted until you accept.`,
         );
       }
       pendingOffers.set(key, payload);
@@ -230,15 +235,18 @@ function onPayload(
       try {
         backend.completeSession(peer, payload);
       } catch {
+        // completeSession throws before consuming the handshake, and one left
+        // outstanding reads as "mid-negotiation" forever, suppressing the
+        // peer's later offers.
+        backend.reset(peer);
         dispatch(serverId, sender, {
           type: "error",
           reason: "handshake-failed",
         });
         return;
       }
-      // The conversation is live again, so the latches guarding against repeated
-      // notices and repeated resume offers start over. Without this the
-      // initiator's own successful resume leaves them set for the page's life.
+      // A new session gets to report its own problems, so the once-only notices
+      // start over.
       forgetConversation(convKey(serverId, sender));
       dispatch(serverId, sender, {
         type: "accepted-remote",
@@ -250,6 +258,7 @@ function onPayload(
         sender,
         backend.peerFingerprint(peer) ?? "",
       );
+      noteSessionEstablished(serverId, sender);
       try {
         send(serverId, sender, backend.encryptAck(peer), true);
       } catch {
@@ -258,6 +267,10 @@ function onPayload(
       return;
     case "reject":
       clearNegotiationTimer(convKey(serverId, sender));
+      // Our offer is dead, so the handshake goes with it. A handshake left
+      // outstanding reads as "mid-negotiation" forever and suppresses the
+      // peer's later offers.
+      backend.reset(peer);
       dispatch(serverId, sender, { type: "rejected-remote" });
       return;
     case "close": {
@@ -267,6 +280,7 @@ function onPayload(
       pendingOffers.delete(key);
       clearNegotiationTimer(key);
       forgetConversation(key);
+      allowResumeAgain(key);
       dispatch(serverId, sender, { type: "error", reason: "peer-ended" });
       return;
     }
@@ -277,7 +291,7 @@ function onPayload(
       } catch {
         return;
       }
-      confirmEstablished(serverId, sender, peer);
+      noteDecryptSucceeded(serverId, sender, peer);
       return;
     case "msg": {
       if (!backend.hasSession(peer)) {
@@ -291,7 +305,7 @@ function onPayload(
         handleUnreadable(serverId, sender, msgid);
         return;
       }
-      confirmEstablished(serverId, sender, peer);
+      noteDecryptSucceeded(serverId, sender, peer);
       injectMessage(serverId, sender, sender, text, msgid);
       return;
     }
@@ -309,11 +323,27 @@ function onPayload(
       }
       const media = decodeMediaDescriptor(descriptor);
       if (!media) return;
-      confirmEstablished(serverId, sender, peer);
+      noteDecryptSucceeded(serverId, sender, peer);
       injectMediaMessage(serverId, sender, sender, media, msgid);
       return;
     }
   }
+}
+
+// Opening a frame is the only evidence encryption actually works, so it is what
+// lets the conversation offer a resume again. A completed handshake is not: the
+// case this guards is a session that establishes and still cannot decrypt.
+function noteDecryptSucceeded(
+  serverId: string,
+  sender: string,
+  peer: PeerRef,
+): void {
+  confirmEstablished(serverId, sender, peer);
+  allowResumeAgain(convKey(serverId, sender));
+}
+
+function allowResumeAgain(key: string): void {
+  resumeOffered.delete(key);
 }
 
 // A decryptable payload proves the peer completed the handshake, so a responder
@@ -334,6 +364,7 @@ function confirmEstablished(
     peerFingerprint: fingerprint,
   });
   reconcilePeerTrust(obbyPeerTrust, serverId, sender, fingerprint);
+  noteSessionEstablished(serverId, sender);
 }
 
 // Ciphertext this client cannot open, either because the session is gone or
@@ -349,28 +380,25 @@ function handleUnreadable(
   injectUndecryptable(serverId, nick, nick, msgid);
   const key = convKey(serverId, nick);
 
-  // Saying it once beats repeating it per message, and it is said whether or
-  // not a resume is still worth attempting: a peer whose offers we have already
-  // exhausted is exactly the case the user needs explained.
-  if (!orphanCiphertextWarned.has(key)) {
-    orphanCiphertextWarned.add(key);
-    injectSystemNotice(
-      serverId,
-      nick,
-      t`${nick} is sending encrypted messages this device cannot read. Start encryption again to read them.`,
-    );
-  }
-
   if (resumeOffered.has(key)) return;
+  resumeOffered.add(key);
+  // Offering again is the answer where consent already exists, and the lock
+  // going amber reports it. Telling the user to act here would ask for the
+  // thing this line just did.
   if (obbyPeerTrust.shouldAutoResume(serverId, nick)) {
-    // startE2EESession clears the conversation's latches, so the guard is set
-    // after it, not before.
     startE2EESession(serverId, nick);
-    resumeOffered.add(key);
     return;
   }
-  resumeOffered.add(key);
+
+  // Nothing further will be attempted, so this is where the user is the remedy.
   send(serverId, nick, { t: "close", v: PROTOCOL_VERSION }, true);
+  if (orphanCiphertextWarned.has(key)) return;
+  orphanCiphertextWarned.add(key);
+  injectSystemNotice(
+    serverId,
+    nick,
+    t`${nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open.`,
+  );
 }
 
 // Re-encrypt a conversation the user has already encrypted with once, when it
@@ -442,19 +470,26 @@ export function handleInboundObby(
 }
 
 // Per-conversation notices that must not carry across sessions: a peer whose
-// next session also breaks has to be reported again.
+// next session also breaks has to be reported again. The resume latch resets on
+// its own trigger (see allowResumeAgain), not on this one.
 function forgetConversation(key: string): void {
   orphanCiphertextWarned.delete(key);
   versionRejected.delete(key);
-  resumeOffered.delete(key);
 }
 
 export function startE2EESession(serverId: string, nick: string): void {
+  const peer: PeerRef = { serverId, nick };
   forgetConversation(convKey(serverId, nick));
   obbyPeerTrust.setAutoResume(serverId, nick, true);
-  send(serverId, nick, backend.startSession({ serverId, nick }), true);
+  // Any session already here is the one that just stopped working, and the
+  // reducer holds `established` through a `start`. Left in place, the lock stays
+  // green and every message goes on encrypting into keys the peer cannot open.
+  // Dropping it first puts the conversation in a state that withholds instead.
+  backend.reset(peer);
+  dispatch(serverId, nick, { type: "reset" });
+  send(serverId, nick, backend.startSession(peer), true);
   dispatch(serverId, nick, { type: "start", scheme: "obby" });
-  armNegotiationTimer(serverId, nick, () => backend.reset({ serverId, nick }));
+  armNegotiationTimer(serverId, nick, () => backend.reset(peer));
 }
 
 export function acceptE2EEOffer(serverId: string, nick: string): void {
@@ -489,6 +524,7 @@ function tearDown(serverId: string, nick: string, tellPeer: boolean): void {
   const key = convKey(serverId, nick);
   const peer: PeerRef = { serverId, nick };
   clearNegotiationTimer(key);
+  allowResumeAgain(key);
   // Tell the peer before dropping our own keys, so their lock falls too rather
   // than leaving them encrypting into a session that no longer decrypts.
   if (tellPeer && (backend.hasSession(peer) || backend.hasPending(peer))) {

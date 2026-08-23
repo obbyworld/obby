@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import useStore from "../../src/store";
+import { setStore } from "../../src/store/handlers/e2eeConversation";
 import { pmEncryptionPosture } from "../../src/store/handlers/e2eeOutbound";
-import { setStore } from "../../src/store/handlers/e2eeShared";
 
 const serverId = "s1";
 const nick = "bob";

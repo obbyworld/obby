@@ -3,7 +3,7 @@
 // scheme, OTR rides in the PRIVMSG body, so inbound frames are diverted from the
 // normal message path (handleInboundOtr, called by the USERMSG handler) and
 // outbound frames are sent as plain PRIVMSGs. Both schemes share the session
-// reducer and the lock/banner UI through e2eeShared. The DSA identity key is
+// reducer and the lock/banner UI through e2eeConversation. The DSA identity key is
 // generated lazily off the main thread, so the crypto calls are async.
 
 import { classifyInbound } from "../../lib/e2ee/classify";
@@ -20,10 +20,11 @@ import {
   ensurePrivateChat,
   getStore,
   injectMessage,
+  noteSessionEstablished,
   OTR_NEGOTIATION_TIMEOUT_MS,
   reconcilePeerTrust,
   trustChangedKey,
-} from "./e2eeShared";
+} from "./e2eeConversation";
 
 let backend: OtrBackend | null = null;
 let backendPromise: Promise<OtrBackend> | null = null;
@@ -54,6 +55,7 @@ function buildBackend(): Promise<OtrBackend> {
             peer.nick,
             fingerprint,
           );
+          noteSessionEstablished(peer.serverId, peer.nick);
         },
         onEnded: (peer) => {
           const key = convKey(peer.serverId, peer.nick);

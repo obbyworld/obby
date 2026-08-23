@@ -1,9 +1,13 @@
-// Orchestration plumbing shared by both E2EE backends (Obby-native over TAGMSG
-// and OTR over the PRIVMSG body): the store handle, the per-conversation session
-// dispatch, chat-row injection for decrypted messages, and the negotiation
-// timeout. Keeping this scheme-agnostic lets the two backends drive the same
-// session reducer and the same lock/banner UI.
+// One encrypted conversation, as the store sees it: its session state, the rows
+// it puts in the thread, its negotiation timer, and its peer's trust pin. Every
+// export here acts on a single (serverId, nick).
+//
+// This is the interface the two backends implement against. Obby (TAGMSG) and
+// OTR (PRIVMSG body) share nothing below this line, and everything above it:
+// one session reducer, one lock, one banner, one set of chat rows. A scheme
+// added later drives the same surface without touching the UI.
 
+import { t } from "@lingui/core/macro";
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import {
@@ -23,7 +27,9 @@ import {
   INITIAL_SESSION,
   reduceSession,
 } from "../../lib/e2ee/session";
+import type { Message } from "../../types";
 import type { AppState } from "../index";
+import { notePrivateMessageArrived } from "./privateChatArrival";
 
 // Give up on an unanswered handshake rather than spinning forever: the peer may
 // be offline, a client without the scheme, or on a server that strips the tags.
@@ -97,7 +103,7 @@ export function injectMessage(
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
-  storeRef?.getState().addMessage({
+  const message = {
     id: uuidv4(),
     msgid,
     content,
@@ -105,13 +111,37 @@ export function injectMessage(
     userId: author,
     channelId: chat.id,
     serverId,
-    type: "message",
+    type: "message" as const,
     reactions: [],
     mentioned: [],
     replyMessage: null,
     // The text was protected in transit, which is not the same as a file it
     // links to having been; the renderer needs to be able to say so.
     tags: { [E2EE_SESSION_TAG]: "1" },
+  };
+  storeRef?.getState().addMessage(message);
+  notePeerMessage(serverId, chat.id, chatNick, author, message, content);
+}
+
+// A decrypted message reaches the thread without passing the inbound PRIVMSG
+// handler, so the unread count, the sound and the browser notification have to
+// be driven from here. The local echo of our own send is not an arrival.
+function notePeerMessage(
+  serverId: string,
+  privateChatId: string,
+  chatNick: string,
+  author: string,
+  message: Message,
+  body: string,
+): void {
+  if (!storeRef || author.toLowerCase() !== chatNick.toLowerCase()) return;
+  notePrivateMessageArrived(storeRef, {
+    serverId,
+    privateChatId,
+    sender: chatNick,
+    message,
+    body,
+    isHistorical: false,
   });
 }
 
@@ -154,7 +184,7 @@ export function injectMediaMessage(
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
-  storeRef?.getState().addMessage({
+  const message = {
     id: uuidv4(),
     msgid,
     content: descriptor.caption ?? "",
@@ -162,12 +192,21 @@ export function injectMediaMessage(
     userId: author,
     channelId: chat.id,
     serverId,
-    type: "message",
+    type: "message" as const,
     reactions: [],
     mentioned: [],
     replyMessage: null,
     tags: { [E2EE_MEDIA_TAG]: encodeMediaDescriptor(descriptor) },
-  });
+  };
+  storeRef?.getState().addMessage(message);
+  notePeerMessage(
+    serverId,
+    chat.id,
+    chatNick,
+    author,
+    message,
+    descriptor.caption ?? descriptor.name,
+  );
 }
 
 // Inject an advisory row into the PM thread, rendered distinctly from chat
@@ -177,6 +216,9 @@ export function injectSystemNotice(
   chatNick: string,
   content: string,
   timestamp: Date = new Date(),
+  // Amber by default: most of these report something the user has to weigh.
+  // Encryption starting is the one that reads as reassurance, not a warning.
+  tone: "warning" | "info" = "warning",
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
@@ -191,8 +233,22 @@ export function injectSystemNotice(
     reactions: [],
     mentioned: [],
     replyMessage: null,
-    tags: { [E2EE_NOTICE_TAG]: "warning" },
+    tags: tone === "warning" ? { [E2EE_NOTICE_TAG]: "warning" } : undefined,
   });
+}
+
+// Both sides reach this, on either scheme, so the thread reads the same for the
+// one who started encryption and the one who answered. The lock and the banner
+// already show the state; this leaves it in the transcript, where it stays
+// after the banner is dismissed.
+export function noteSessionEstablished(serverId: string, nick: string): void {
+  injectSystemNotice(
+    serverId,
+    nick,
+    t`Messages with ${nick} are now encrypted.`,
+    new Date(),
+    "info",
+  );
 }
 
 const negotiationTimers = new Map<string, ReturnType<typeof setTimeout>>();

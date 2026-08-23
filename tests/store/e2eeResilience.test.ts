@@ -16,7 +16,12 @@ import {
   registerE2EEHandlers,
   resetE2EESession,
   resumeE2EEIfKnown,
+  startE2EESession,
 } from "../../src/store/handlers/e2ee";
+import {
+  injectMediaMessage,
+  injectMessage,
+} from "../../src/store/handlers/e2eeConversation";
 
 // Ratchet state lives only in memory, so every reload leaves one side holding
 // keys the other has already thrown away. These cover what happens next: the
@@ -302,5 +307,214 @@ describe("the ignore list covers encryption offers", () => {
 
     expect(privateChatNames()).not.toContain("pest");
     expect(sessionOf("pest")).toBeUndefined();
+  });
+});
+
+// An accept only completes against an outstanding offer of our own. If both
+// sides drop their own offer to answer the other's, both answers are discarded
+// and neither session ever completes. Exactly one side has to stay initiator.
+//
+// The offers that cross are the ones a broken session triggers, and a client
+// whose session broke is still reading `established` when the peer's offer
+// lands. These tests drive that state, so a guard keyed on the session status
+// rather than the outstanding handshake fails them.
+describe("crossing offers settle on one initiator", () => {
+  beforeEach(() => {
+    stored.clear();
+    vi.stubGlobal("localStorage", workingLocalStorage);
+    seedServer();
+    sent = [];
+    vi.spyOn(ircClient, "sendRaw").mockImplementation((_id, line) => {
+      sent.push(line);
+    });
+    registerE2EEHandlers(useStore);
+  });
+
+  // Identities are random, so the side of the tie under test has to be chosen
+  // rather than assumed. `peerRanks` says where the peer's fingerprint sits
+  // against ours.
+  function peerOfferRanked(nick: string, peerRanks: "above" | "below") {
+    const selfFingerprint = useStore.getState().e2eeSelfFingerprint ?? "";
+    for (let attempt = 0; attempt < 200; attempt++) {
+      const candidate = peerOffer(nick);
+      const isAbove = selfFingerprint < candidate.fingerprint;
+      if (isAbove === (peerRanks === "above")) return candidate;
+    }
+    throw new Error("no identity generated on the requested side of the tie");
+  }
+
+  // Both sides hold a live session that no longer decrypts, so both re-offer.
+  function bothReOffer(nick: string, peerRanks: "above" | "below") {
+    const { init, fingerprint } = peerOfferRanked(nick, peerRanks);
+    obbyPeerTrust.pin(serverId, nick, fingerprint);
+    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
+    useStore.setState({
+      e2eeSessions: {
+        [`${serverId}:${nick}`]: {
+          status: "established",
+          scheme: "obby",
+          verified: false,
+          peerFingerprint: fingerprint,
+        },
+      },
+    });
+    startE2EESession(serverId, nick);
+    sent = [];
+    deliverTag(nick, init);
+  }
+
+  test("the lower fingerprint keeps its own offer outstanding", () => {
+    bothReOffer("above", "above");
+
+    // It did not answer, so its own offer is still there for the peer's accept
+    // to complete. Answering would have discarded both.
+    expect(sent).toHaveLength(0);
+    expect(sessionOf("above")?.status).toBe("negotiating");
+  });
+
+  test("the higher fingerprint yields and answers", () => {
+    bothReOffer("below", "below");
+
+    expect(sent.some((l) => l.startsWith(`@${E2EE_TAG}=`))).toBe(true);
+    expect(sessionOf("below")?.status).toBe("negotiating");
+  });
+
+  // A nick can change mid-handshake, which would flip a nick-ordered tie and
+  // leave both sides holding. Fingerprints cannot.
+  test("the tie does not move when our nick does", () => {
+    const selfFingerprint = useStore.getState().e2eeSelfFingerprint ?? "";
+    const { init, fingerprint } = peerOfferRanked("renamer", "above");
+    obbyPeerTrust.pin(serverId, "renamer", fingerprint);
+    vi.spyOn(ircClient, "getNick").mockReturnValue("zzz_renamed");
+    startE2EESession(serverId, "renamer");
+    sent = [];
+
+    deliverTag("renamer", init);
+
+    expect(selfFingerprint < fingerprint).toBe(true);
+    expect(sent).toHaveLength(0);
+  });
+
+  // Whichever way the tie falls, the side that re-offers must stop claiming to
+  // be encrypted: its keys are the ones that stopped working.
+  test("re-offering drops the lock rather than sending into dead keys", () => {
+    const { fingerprint } = peerOffer("peer");
+    obbyPeerTrust.pin(serverId, "peer", fingerprint);
+    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
+    useStore.setState({
+      e2eeSessions: {
+        [`${serverId}:peer`]: {
+          status: "established",
+          scheme: "obby",
+          verified: false,
+          peerFingerprint: fingerprint,
+        },
+      },
+    });
+
+    startE2EESession(serverId, "peer");
+
+    expect(sessionOf("peer")?.status).toBe("negotiating");
+  });
+});
+
+// A handshake completing says nothing about whether it fixed anything. When a
+// session establishes and still cannot decrypt, one re-offer is the budget.
+describe("a session that cannot decrypt re-offers once", () => {
+  beforeEach(() => {
+    stored.clear();
+    vi.stubGlobal("localStorage", workingLocalStorage);
+    seedServer();
+    sent = [];
+    vi.spyOn(ircClient, "sendRaw").mockImplementation((_id, line) => {
+      sent.push(line);
+    });
+    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
+    registerE2EEHandlers(useStore);
+  });
+
+  test("repeated unreadable messages do not each start a handshake", () => {
+    const { fingerprint } = peerOffer("looper");
+    obbyPeerTrust.pin(serverId, "looper", fingerprint);
+
+    const frame = encodeE2EEPayload({
+      t: "msg",
+      v: PROTOCOL_VERSION,
+      ct: "not-openable",
+    });
+    const deliver = (id: string) =>
+      handleInboundObby(
+        serverId,
+        "looper",
+        undefined,
+        `${E2EE_BODY_PREFIX}${frame}`,
+        id,
+      );
+
+    deliver("m1");
+    // One offer, so a regression that stops re-offering altogether fails here
+    // rather than passing the no-growth check below.
+    const offers = () =>
+      sent.filter((l) => l.startsWith(`@${E2EE_TAG}=`)).length;
+    expect(offers()).toBe(1);
+
+    deliver("m2");
+    deliver("m3");
+
+    expect(offers()).toBe(1);
+    // The thread still shows something arrived, so it never looks like the peer
+    // simply went quiet. The exact count is not asserted: addMessage collapses
+    // same-content rows sharing a millisecond, which these do.
+    expect(
+      messagesWith("looper").filter(isUndecryptableMessage).length,
+    ).toBeGreaterThan(0);
+  });
+});
+
+// A decrypted message never passes the inbound PRIVMSG handler, so the unread
+// count, the sound and the browser notification have to be driven from the
+// injection path. Without that an encrypted conversation goes unread and
+// unannounced while a plaintext one does not.
+describe("an encrypted message counts as unread like any other", () => {
+  beforeEach(() => {
+    stored.clear();
+    vi.stubGlobal("localStorage", workingLocalStorage);
+    seedServer();
+    vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    vi.spyOn(ircClient, "getNick").mockReturnValue("self");
+    registerE2EEHandlers(useStore);
+  });
+
+  function chatWith(nick: string) {
+    return useStore
+      .getState()
+      .servers.find((s) => s.id === serverId)
+      ?.privateChats?.find((p) => p.username === nick);
+  }
+
+  test("a message from the peer bumps the conversation's unread count", () => {
+    injectMessage(serverId, "peer", "peer", "you there?");
+
+    expect(chatWith("peer")?.unreadCount).toBe(1);
+    expect(chatWith("peer")?.isMentioned).toBe(true);
+  });
+
+  test("an encrypted attachment counts too", () => {
+    injectMediaMessage(serverId, "sender", "sender", {
+      url: "https://host/x.obb",
+      k: "",
+      n: "",
+      mime: "image/png",
+      name: "x.png",
+      size: 10,
+    });
+
+    expect(chatWith("sender")?.unreadCount).toBe(1);
+  });
+
+  test("our own echo is not an arrival", () => {
+    injectMessage(serverId, "peer2", "self", "sent from here");
+
+    expect(chatWith("peer2")?.unreadCount).toBe(0);
   });
 });
