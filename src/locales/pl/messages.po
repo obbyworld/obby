@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} zakończył(a) szyfrowanie."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} wysyła zaszyfrowane wiadomości, których to urządzenie nie umie odczytać. Uruchom szyfrowanie ponownie, aby je przeczytać."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} wysyła zaszyfrowane wiadomości, których to urządzenie nie umie odczytać. Zanim się otworzą, trzeba ponownie uruchomić szyfrowanie."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} sek."
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} ponownie skonfigurował szyfrowanie."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} ponownie uruchomił szyfrowanie, więc ta rozmowa jest konfigurowana od nowa."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} ponownie uruchomił szyfrowanie. Ta rozmowa pozostaje nieszyfrowana, dopóki jej nie zaakceptujesz."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Wiadomość nie została wysłana: klucz szyfrowania uległ zmianie. Zwe
 msgid "Message shown when you disconnect from the server"
 msgstr "Wiadomość wyświetlana przy rozłączeniu z serwera"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Wiadomości z użytkownikiem {nick} są teraz szyfrowane."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. użytkowników"
@@ -3346,6 +3354,10 @@ msgstr "To pole jest wymagane"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Ten plik nie jest zaszyfrowany. Może go otworzyć każdy, kto ma link."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Ten host nie przyjmuje plików {CIPHERTEXT_EXTENSION}, w których zapisywany jest zaszyfrowany załącznik. Po zakończeniu szyfrowania plik zostanie wysłany bez zmian."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

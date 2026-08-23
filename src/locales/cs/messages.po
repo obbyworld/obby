@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} ukončil(a) šifrování."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} posílá šifrované zprávy, které toto zařízení neumí přečíst. Spusťte šifrování znovu, abyste je četli."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} posílá šifrované zprávy, které toto zařízení neumí přečíst. Než půjdou otevřít, musí se šifrování spustit znovu."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} sekund"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} znovu nastavil šifrování."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} restartoval šifrování, takže se tato konverzace nastavuje znovu."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} restartoval šifrování. Dokud to nepřijmete, zůstává tato konverzace nešifrovaná."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Zpráva nebyla odeslána: šifrovací klíč se změnil. Ověřte nový 
 msgid "Message shown when you disconnect from the server"
 msgstr "Zpráva zobrazená při odpojení od serveru"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Zprávy s uživatelem {nick} jsou nyní šifrované."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. uživatelů"
@@ -3346,6 +3354,10 @@ msgstr "Toto pole je povinné"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Tento soubor není šifrovaný. Otevřít ho může kdokoli, kdo má odkaz."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Tento server nepřijímá soubory {CIPHERTEXT_EXTENSION}, v nichž se šifrovaná příloha ukládá. Po ukončení šifrování se soubor odešle tak, jak je."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

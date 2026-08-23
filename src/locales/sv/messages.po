@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} avslutade krypteringen."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} skickar krypterade meddelanden som den här enheten inte kan läsa. Starta krypteringen igen för att läsa dem."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} skickar krypterade meddelanden som den här enheten inte kan läsa. Krypteringen måste startas om innan de går att öppna."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} sekunder"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} har satt upp krypteringen igen."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} startade om krypteringen, så den här konversationen sätts upp igen."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} startade om krypteringen. Den här konversationen förblir okrypterad tills du godkänner."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Meddelandet skickades inte: krypteringsnyckeln har ändrats. Verifiera d
 msgid "Message shown when you disconnect from the server"
 msgstr "Meddelande som visas när du kopplar från servern"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Meddelanden med {nick} är nu krypterade."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min användare"
@@ -3346,6 +3354,10 @@ msgstr "Det här fältet krävs"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Den här filen är inte krypterad. Alla med länken kan öppna den."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Den här värden tar inte emot {CIPHERTEXT_EXTENSION}-filer, formatet en krypterad bilaga lagras som. Efter att krypteringen avslutats skickas filen som den är."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

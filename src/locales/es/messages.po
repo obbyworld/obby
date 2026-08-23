@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} finalizó el cifrado."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} envía mensajes cifrados que este dispositivo no puede leer. Vuelve a iniciar el cifrado para leerlos."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} envía mensajes cifrados que este dispositivo no puede leer. Hay que iniciar el cifrado otra vez para poder abrirlos."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} segundos"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} volvió a configurar el cifrado."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} reinició el cifrado, así que esta conversación se está configurando otra vez."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} reinició el cifrado. Esta conversación sigue sin cifrar hasta que lo aceptes."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Mensaje no enviado: la clave de cifrado cambió. Verifica la nueva clave
 msgid "Message shown when you disconnect from the server"
 msgstr "Mensaje al desconectarse del servidor"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Los mensajes con {nick} ahora están cifrados."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Mínimo de usuarios"
@@ -3346,6 +3354,10 @@ msgstr "Este campo es obligatorio"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Este archivo no está cifrado. Cualquiera con el enlace puede abrirlo."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Este host no acepta archivos {CIPHERTEXT_EXTENSION}, que es como se guarda un adjunto cifrado. Al finalizar el cifrado, el archivo se envía tal cual."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

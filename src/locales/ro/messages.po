@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} a oprit criptarea."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} trimite mesaje criptate pe care acest dispozitiv nu le poate citi. Pornește criptarea din nou ca să le citești."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} trimite mesaje criptate pe care acest dispozitiv nu le poate citi. Criptarea trebuie pornită din nou ca să se deschidă."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} secunde"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} a configurat din nou criptarea."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} a repornit criptarea, așa că această conversație se configurează din nou."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} a repornit criptarea. Această conversație rămâne necriptată până când accepți."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Mesajul nu a fost trimis: cheia de criptare s-a schimbat. Verifică noua
 msgid "Message shown when you disconnect from the server"
 msgstr "Mesaj afișat la deconectarea de la server"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Mesajele cu {nick} sunt acum criptate."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Utilizatori min."
@@ -3346,6 +3354,10 @@ msgstr "Acest câmp este obligatoriu"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Acest fișier nu este criptat. Oricine are linkul îl poate deschide."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Acest host nu acceptă fișiere {CIPHERTEXT_EXTENSION}, forma în care este stocat un atașament criptat. După încheierea criptării, fișierul pleacă ca atare."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

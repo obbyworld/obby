@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} şifrelemeyi sonlandırdı."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} bu cihazın okuyamadığı şifreli mesajlar gönderiyor. Onları okumak için şifrelemeyi yeniden başlatın."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} bu cihazın okuyamadığı şifreli mesajlar gönderiyor. Açılabilmeleri için şifrelemenin yeniden başlatılması gerekiyor."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} saniye"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} şifrelemeyi yeniden kurdu."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} şifrelemeyi yeniden başlattı, bu yüzden bu sohbet yeniden kuruluyor."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} şifrelemeyi yeniden başlattı. Siz kabul edene kadar bu sohbet şifresiz kalıyor."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Mesaj gönderilmedi: şifreleme anahtarı değişti. Açık metin olarak
 msgid "Message shown when you disconnect from the server"
 msgstr "Sunucudan ayrıldığınızda gösterilen mesaj"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "{nick} ile mesajlar artık şifreli."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. Kullanıcı"
@@ -3346,6 +3354,10 @@ msgstr "Bu alan zorunludur"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Bu dosya şifrelenmemiş. Bağlantıya sahip olan herkes açabilir."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Bu sunucu, şifreli bir ekin saklandığı biçim olan {CIPHERTEXT_EXTENSION} dosyalarını kabul etmiyor. Şifreleme bitirildiğinde dosya olduğu gibi gönderilir."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

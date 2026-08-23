@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} lopetti salauksen."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} lähettää salattuja viestejä, joita tämä laite ei osaa lukea. Aloita salaus uudelleen lukeaksesi ne."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} lähettää salattuja viestejä, joita tämä laite ei osaa lukea. Salaus on aloitettava uudelleen, ennen kuin ne aukeavat."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} sekuntia"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} otti salauksen uudelleen käyttöön."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} käynnisti salauksen uudelleen, joten tätä keskustelua määritetään taas."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} käynnisti salauksen uudelleen. Tämä keskustelu pysyy salaamattomana, kunnes hyväksyt sen."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Viestiä ei lähetetty: salausavain muuttui. Vahvista uusi avain tai lop
 msgid "Message shown when you disconnect from the server"
 msgstr "Viesti, joka näytetään katkaistessasi yhteyden palvelimeen"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Viestit käyttäjän {nick} kanssa ovat nyt salattuja."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Vähimmäiskäyttäjämäärä"
@@ -3346,6 +3354,10 @@ msgstr "Tämä kenttä on pakollinen"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Tätä tiedostoa ei ole salattu. Kuka tahansa linkin haltija voi avata sen."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Tämä palvelin ei hyväksy {CIPHERTEXT_EXTENSION}-tiedostoja, joina salattu liite tallennetaan. Salauksen lopettamisen jälkeen tiedosto lähtee sellaisenaan."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

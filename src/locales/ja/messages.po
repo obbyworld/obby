@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} が暗号化を終了しました。"
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} はこの端末では読めない暗号化メッセージを送信しています。読むには暗号化をやり直してください。"
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} はこの端末では読めない暗号化メッセージを送信しています。開くには暗号化をやり直す必要があります。"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} 秒"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} が暗号化を設定し直しました。"
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} が暗号化を再開したため、この会話を設定し直しています。"
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} が暗号化を再開しました。承認するまで、この会話は暗号化されません。"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "メッセージは送信されませんでした：暗号化キーが変
 msgid "Message shown when you disconnect from the server"
 msgstr "サーバーから切断したときに表示されるメッセージ"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "{nick} とのメッセージは暗号化されました。"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "最小ユーザー数"
@@ -3346,6 +3354,10 @@ msgstr "この項目は必須です"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "このファイルは暗号化されていません。リンクを知っている人は誰でも開けます。"
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "このホストは暗号化された添付ファイルの保存形式である {CIPHERTEXT_EXTENSION} ファイルを受け付けません。暗号化を終了すると、ファイルはそのまま送信されます。"
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"

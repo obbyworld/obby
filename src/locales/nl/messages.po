@@ -188,8 +188,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} heeft de versleuteling beëindigd."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Start encryption again to read them."
-msgstr "{nick} stuurt versleutelde berichten die dit apparaat niet kan lezen. Start de versleuteling opnieuw om ze te lezen."
+msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgstr "{nick} stuurt versleutelde berichten die dit apparaat niet kan lezen. De versleuteling moet opnieuw worden gestart voordat ze opengaan."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -228,8 +228,12 @@ msgid "{seconds} seconds"
 msgstr "{seconds} seconden"
 
 #: src/store/handlers/e2ee.ts
-msgid "{sender} set up encryption again."
-msgstr "{sender} heeft de versleuteling opnieuw ingesteld."
+msgid "{sender} restarted encryption, so this conversation is being set up again."
+msgstr "{sender} heeft de versleuteling opnieuw gestart, dus dit gesprek wordt opnieuw ingesteld."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+msgstr "{sender} heeft de versleuteling opnieuw gestart. Dit gesprek blijft onversleuteld totdat je akkoord gaat."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
@@ -2085,6 +2089,10 @@ msgstr "Bericht niet verzonden: de versleutelingssleutel is gewijzigd. Verifieer
 msgid "Message shown when you disconnect from the server"
 msgstr "Bericht dat wordt weergegeven wanneer je de verbinding met de server verbreekt"
 
+#: src/store/handlers/e2eeConversation.ts
+msgid "Messages with {nick} are now encrypted."
+msgstr "Berichten met {nick} zijn nu versleuteld."
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. gebruikers"
@@ -3346,6 +3354,10 @@ msgstr "Dit veld is vereist"
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Dit bestand is niet versleuteld. Iedereen met de link kan het openen."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
+msgstr "Deze host accepteert geen {CIPHERTEXT_EXTENSION}-bestanden, de vorm waarin een versleutelde bijlage wordt opgeslagen. Na het beëindigen van de versleuteling gaat het bestand ongewijzigd weg."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
