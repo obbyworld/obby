@@ -2357,6 +2357,8 @@ msgstr "Plaintext"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
+#: src/components/message/MediaPreview.tsx
+#: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
