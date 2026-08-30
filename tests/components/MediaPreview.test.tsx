@@ -82,6 +82,21 @@ describe("MediaPreview", () => {
     expect(img).toBeTruthy();
   });
 
+  // A lazy image that is not rendered never loads, so `onLoad` never arrives
+  // and the image stays invisible forever. It must be hidden with opacity
+  // while it loads, never with `display: none`.
+  test("a loading image is lazy but still rendered", () => {
+    const { container } = render(
+      <MediaPreview
+        entry={makeEntry("image", "https://example.com/photo.jpg")}
+      />,
+    );
+    const img = container.querySelector("img");
+    expect(img?.getAttribute("loading")).toBe("lazy");
+    expect(img?.className).not.toContain("hidden");
+    expect(img?.className).toContain("opacity-0");
+  });
+
   test("renders video for video entry", () => {
     const { container } = render(
       <MediaPreview

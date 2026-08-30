@@ -292,12 +292,15 @@ const ImagePreview: React.FC<{
             <FaSpinner className="text-discord-text-muted animate-spin text-lg" />
           </div>
         )}
+        {/* Hidden with opacity rather than `display: none`: a lazy image that
+            is not rendered never loads, so `onLoad` would never arrive to
+            reveal it. */}
         <img
           src={displayUrl}
           loading="lazy"
           decoding="async"
           alt={isFilehostImage ? t`Filehost image` : t`GIF`}
-          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "block" : "hidden"}`}
+          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           onClick={() => openMedia(displayUrl, msgid, serverId, channelId)}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
