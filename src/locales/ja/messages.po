@@ -1901,6 +1901,7 @@ msgstr "最小値は {0} です"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "モーダル"
 
@@ -1957,6 +1958,10 @@ msgstr "ネットワーク"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "soju bouncer 経由で接続されたネットワーク"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "ネットワークログ"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -3443,6 +3448,10 @@ msgstr "{username} によって {channelName} からキックされました ({r
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "チャンネルからキックされました"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "このサーバーの生の IRC 通信を表示します"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

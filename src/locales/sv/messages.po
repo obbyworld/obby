@@ -1901,6 +1901,7 @@ msgstr "Minimalt värde är {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Dialog"
 
@@ -1957,6 +1958,10 @@ msgstr "nätverk"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Nätverk bundet via soju bouncer"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "Nätverkslogg"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -3443,6 +3448,10 @@ msgstr "kastades ut från {channelName} av {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Sparkades ut från kanalen"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "Se den råa IRC-trafiken för den här servern"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

@@ -1901,6 +1901,7 @@ msgstr "Минимальное значение: {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Диалог"
 
@@ -1957,6 +1958,10 @@ msgstr "сеть"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Сеть, привязанная через soju bouncer"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "Сетевой журнал"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -3443,6 +3448,10 @@ msgstr "был кикнут из {channelName} пользователем {usern
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Был исключён из канала"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "Просмотр необработанного трафика IRC этого сервера"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

@@ -14,7 +14,8 @@ export type UIModalAction =
   | "open-topic-modal"
   | "open-user-profile"
   | "open-rename-channel"
-  | "open-server-channels";
+  | "open-server-channels"
+  | "open-raw-log";
 
 export interface UIActionData {
   action: UIToggleAction | UIModalAction;

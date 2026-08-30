@@ -1901,6 +1901,7 @@ msgstr "Minimalna wartość wynosi {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Okno"
 
@@ -1957,6 +1958,10 @@ msgstr "sieć"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Sieć powiązana przez bouncer soju"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "Dziennik sieci"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -3443,6 +3448,10 @@ msgstr "został wyrzucony z {channelName} przez {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Został wyrzucony z kanału"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "Obserwuj surowy ruch IRC tego serwera"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

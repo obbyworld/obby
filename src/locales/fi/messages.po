@@ -1901,6 +1901,7 @@ msgstr "Vähimmäisarvo on {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Ikkuna"
 
@@ -1957,6 +1958,10 @@ msgstr "verkko"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Verkko sidottu soju-bouncerin kautta"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "Verkkoloki"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -3443,6 +3448,10 @@ msgstr "potkittiin kanavalta {channelName} käyttäjän {username} toimesta ({re
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Poistettiin kanavalta"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "Katso tämän palvelimen raakaa IRC-liikennettä"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
