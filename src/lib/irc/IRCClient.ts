@@ -2152,7 +2152,7 @@ export class IRCClient implements IRCClientContext {
     }
   }
 
-  onCapAck(serverId: string, cliCaps: string): void {
+  onCapAck(serverId: string, cliCaps: string, isFinal = true): void {
     // Trigger the original event for compatibility
     this.triggerEvent("CAP ACK", { serverId, cliCaps });
 
@@ -2169,6 +2169,10 @@ export class IRCClient implements IRCClientContext {
         }
       }
     }
+
+    // A continuation line carries capabilities but does not answer the request
+    // yet, so the count stays where it is until the final line arrives.
+    if (!isFinal) return;
 
     // Decrement pending CAP REQ count
     const pendingCount = this.pendingCapReqs.get(serverId) || 0;

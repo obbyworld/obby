@@ -602,7 +602,11 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     const server = state.servers.find((s) => s.id === serverId);
     let preventCapEnd = false;
 
-    if (caps.some((cap) => cap.startsWith("sasl"))) {
+    // Against every capability acknowledged so far, not just this line. A
+    // server splits one CAP REQ answer across lines, and `sasl` lands on the
+    // first of them, so a per-line check ends negotiation on the second while
+    // authentication is still in flight.
+    if (server?.capabilities?.some((cap) => cap.startsWith("sasl"))) {
       const servers = storage.servers.load();
       const savedServer = servers.find((s) => s.id === serverId);
       const hasPlain =
