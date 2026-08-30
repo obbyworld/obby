@@ -1413,6 +1413,10 @@ msgstr "GIF"
 msgid "GitHub:"
 msgstr "GitHub："
 
+#: src/components/message/ChannelLink.tsx
+msgid "Go to {name}"
+msgstr "{name} に移動"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"

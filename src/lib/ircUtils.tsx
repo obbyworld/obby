@@ -1,8 +1,10 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import React from "react";
+import { ChannelLink } from "../components/message/ChannelLink";
 /* eslint-disable no-control-regex */
 import type { Server, User } from "../types";
+import { findChannelMentions } from "./channelMentions";
 import { isTauri } from "./platformUtils";
 
 // highlight.js core + a curated ~25-language subset (see ./hljs) instead of the
@@ -900,6 +902,53 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
   return <>{processedResult}</>;
 }
 
+/** Splits a run of plain text so every channel name in it becomes a link.
+ * Runs inside the URL tokenizer, on the parts left over between URLs, so a
+ * fragment identifier can never be mistaken for a channel. */
+function processChannelsInText(
+  text: string,
+  style: React.CSSProperties | undefined,
+  keyPrefix: string,
+  nextIndex: () => number,
+): React.ReactNode[] {
+  const mentions = findChannelMentions(text);
+  if (mentions.length === 0) {
+    return [
+      <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+        {text}
+      </span>,
+    ];
+  }
+
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  for (const mention of mentions) {
+    if (mention.start > cursor) {
+      parts.push(
+        <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+          {text.slice(cursor, mention.start)}
+        </span>,
+      );
+    }
+    parts.push(
+      <ChannelLink
+        key={`${keyPrefix}chan-${nextIndex()}`}
+        name={mention.name}
+        style={style}
+      />,
+    );
+    cursor = mention.end;
+  }
+  if (cursor < text.length) {
+    parts.push(
+      <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+        {text.slice(cursor)}
+      </span>,
+    );
+  }
+  return parts;
+}
+
 // Helper function to detect and render URLs in text
 function processUrlsInText(
   text: string,
@@ -923,9 +972,12 @@ function processUrlsInText(
     // Add text before the URL
     if (match.index > lastIndex) {
       parts.push(
-        <span key={`${keyPrefix}text-${elementIndex++}`} style={style}>
-          {text.slice(lastIndex, match.index)}
-        </span>,
+        ...processChannelsInText(
+          text.slice(lastIndex, match.index),
+          style,
+          keyPrefix,
+          () => elementIndex++,
+        ),
       );
     }
 
@@ -980,9 +1032,12 @@ function processUrlsInText(
   // Add remaining text
   if (lastIndex < text.length) {
     parts.push(
-      <span key={`${keyPrefix}text-${elementIndex++}`} style={style}>
-        {text.slice(lastIndex)}
-      </span>,
+      ...processChannelsInText(
+        text.slice(lastIndex),
+        style,
+        keyPrefix,
+        () => elementIndex++,
+      ),
     );
   }
 

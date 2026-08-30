@@ -5,6 +5,7 @@ import { useSwipeNavigation } from "../../hooks/useSwipeNavigation";
 import { isTauriAndroid } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
+import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
 import RawLogViewer from "../ui/RawLogViewer";
@@ -344,73 +345,75 @@ export const AppLayout: React.FC = () => {
   }
 
   return (
-    <div
-      className={`flex h-full overflow-hidden bg-discord-dark-300 keyboard-aware-layout ${
-        isDarkMode ? "text-white" : "text-gray-900"
-      }`}
-      style={{
-        paddingTop: "var(--safe-area-inset-top)",
-        paddingRight: "var(--safe-area-inset-right)",
-        paddingBottom: "var(--safe-area-inset-bottom)",
-        paddingLeft: "var(--safe-area-inset-left)",
-      }}
-    >
-      {isNarrowView ? (
-        <div
-          ref={containerRef}
-          className="relative w-full h-full overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          style={{
-            touchAction: "pan-y",
-            willChange: "transform",
-          }}
-        >
+    <ChannelLinkProvider>
+      <div
+        className={`flex h-full overflow-hidden bg-discord-dark-300 keyboard-aware-layout ${
+          isDarkMode ? "text-white" : "text-gray-900"
+        }`}
+        style={{
+          paddingTop: "var(--safe-area-inset-top)",
+          paddingRight: "var(--safe-area-inset-right)",
+          paddingBottom: "var(--safe-area-inset-bottom)",
+          paddingLeft: "var(--safe-area-inset-left)",
+        }}
+      >
+        {isNarrowView ? (
           <div
-            className="flex h-full"
+            ref={containerRef}
+            className="relative w-full h-full overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             style={{
-              transform: `translateX(calc(-${currentPageIndex * 100}vw + ${offset}px))`,
-              transition: isTransitioning
-                ? "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-                : "none",
+              touchAction: "pan-y",
+              willChange: "transform",
             }}
           >
-            {PAGE_ORDER.filter(
-              (col) => col !== "memberList" || hasMemberPage,
-            ).map((column) => (
-              <div
-                key={column}
-                className="h-full flex-shrink-0"
-                style={{ width: "100vw" }}
-                data-swipe-page={column}
-              >
-                {getLayoutColumnElement(column)}
-              </div>
-            ))}
+            <div
+              className="flex h-full"
+              style={{
+                transform: `translateX(calc(-${currentPageIndex * 100}vw + ${offset}px))`,
+                transition: isTransitioning
+                  ? "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                  : "none",
+              }}
+            >
+              {PAGE_ORDER.filter(
+                (col) => col !== "memberList" || hasMemberPage,
+              ).map((column) => (
+                <div
+                  key={column}
+                  className="h-full flex-shrink-0"
+                  style={{ width: "100vw" }}
+                  data-swipe-page={column}
+                >
+                  {getLayoutColumnElement(column)}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <>
-          {getLayoutColumn("serverList")}
-          {getLayoutColumn("chatView")}
-          {selectedServerId && getLayoutColumn("memberList")}
-        </>
-      )}
-      <GlobalNotifications />
-      {/* Rendered here so window resizes never unmount it */}
-      <MediaViewerModal
-        isOpen={!!ui.openedMedia}
-        url={ui.openedMedia?.url ?? ""}
-        sourceMsgId={ui.openedMedia?.sourceMsgId}
-        onClose={closeMedia}
-        serverId={ui.openedMedia?.serverId}
-        channelId={ui.openedMedia?.channelId}
-        preferTopicEntry={ui.openedMedia?.preferTopicEntry}
-        preferLastEntry={ui.openedMedia?.preferLastEntry}
-      />
-      <RawLogViewer />
-    </div>
+        ) : (
+          <>
+            {getLayoutColumn("serverList")}
+            {getLayoutColumn("chatView")}
+            {selectedServerId && getLayoutColumn("memberList")}
+          </>
+        )}
+        <GlobalNotifications />
+        {/* Rendered here so window resizes never unmount it */}
+        <MediaViewerModal
+          isOpen={!!ui.openedMedia}
+          url={ui.openedMedia?.url ?? ""}
+          sourceMsgId={ui.openedMedia?.sourceMsgId}
+          onClose={closeMedia}
+          serverId={ui.openedMedia?.serverId}
+          channelId={ui.openedMedia?.channelId}
+          preferTopicEntry={ui.openedMedia?.preferTopicEntry}
+          preferLastEntry={ui.openedMedia?.preferLastEntry}
+        />
+        <RawLogViewer />
+      </div>
+    </ChannelLinkProvider>
   );
 };
 
