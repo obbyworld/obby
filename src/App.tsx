@@ -160,6 +160,18 @@ const App: React.FC = () => {
     username: string;
   } | null>(null);
 
+  // The composer is the only drop target. Anywhere else the webview follows the
+  // file and replaces the app, which a native window offers no way back from.
+  useEffect(() => {
+    const cancel = (e: DragEvent) => e.preventDefault();
+    window.addEventListener("dragover", cancel);
+    window.addEventListener("drop", cancel);
+    return () => {
+      window.removeEventListener("dragover", cancel);
+      window.removeEventListener("drop", cancel);
+    };
+  }, []);
+
   // Watch for profile view requests
   useEffect(() => {
     if (profileViewRequest) {

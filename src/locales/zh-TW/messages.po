@@ -677,11 +677,11 @@ msgstr "浏览服务器上的所有频道"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "端口"
 msgid "Preferences"
 msgstr "偏好设置"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "预览"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "預覽（尚未上傳）"
@@ -3530,7 +3526,7 @@ msgstr "取消置顶此私信对话"
 msgid "Unsuspend"
 msgstr "取消停用"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "上傳"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "上傳頭像"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "上傳檔案"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "上传图片"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "上傳到檔案伺服器並傳送到 {target}。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

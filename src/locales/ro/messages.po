@@ -677,11 +677,11 @@ msgstr "Răsfoiește toate canalele de pe server"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "Port"
 msgid "Preferences"
 msgstr "Preferințe"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "Previzualizare"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Previzualizare (neîncărcat încă)"
@@ -3530,7 +3526,7 @@ msgstr "Anulează fixarea acestei conversații private"
 msgid "Unsuspend"
 msgstr "Anulează suspendarea"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "Încărcați"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "Încarcă avatar"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Încărcați fișiere"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "Încarcă imagine"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "Încarcă pe serverul de fișiere și trimite către {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

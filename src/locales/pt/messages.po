@@ -677,11 +677,11 @@ msgstr "Navegar por todos os canais do servidor"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "Porta"
 msgid "Preferences"
 msgstr "Preferências"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "Visualização"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Prévia (ainda não enviado)"
@@ -3530,7 +3526,7 @@ msgstr "Desafixar esta conversa de mensagem privada"
 msgid "Unsuspend"
 msgstr "Reativar"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "Carregar"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "Fazer upload do avatar"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Enviar ficheiros"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "Enviar Imagem"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "Carregar para o servidor de ficheiros e enviar para {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

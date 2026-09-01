@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ObbyE2EEBackend } from "../../src/lib/e2ee/backend";
 import {
   decodeE2EEPayload,
-  E2EE_BODY_PREFIX,
+  E2EE_BODY_MARKER,
   E2EE_TAG,
   type E2EEInit,
   encodeE2EEPayload,
@@ -128,7 +128,7 @@ describe("the echo of our own encrypted send", () => {
       serverId,
       sender: "self",
       target: nick,
-      message: `${E2EE_BODY_PREFIX}AAAA`,
+      message: E2EE_BODY_MARKER,
       timestamp: new Date(),
       mtags: { batch: "b1", msgid, ...(label ? { label } : {}) },
     } as never);
@@ -188,11 +188,11 @@ describe("a fragmented message keeps one identity", () => {
   }
 
   function carrierLines() {
-    return sent.filter((line) => line.includes(E2EE_BODY_PREFIX));
+    return sent.filter((line) => line.includes(E2EE_BODY_MARKER));
   }
 
   test("only the completing frame names the message", () => {
-    sendEncryptedMessage(serverId, nick, "x".repeat(400), "m1");
+    sendEncryptedMessage(serverId, nick, "x".repeat(2000), "m1");
 
     const lines = carrierLines();
     expect(lines.length).toBeGreaterThan(1);
@@ -200,6 +200,25 @@ describe("a fragmented message keeps one identity", () => {
     expect(lines.slice(0, -1).some((l) => l.includes("label="))).toBe(false);
     expect(lines[lines.length - 1]).toContain("+reply=m1");
     expect(lines[lines.length - 1]).toContain("label=");
+  });
+
+  // The server takes ~15 commands before it paces one per second, and the
+  // receiver can open nothing until the last frame lands, so frame count is
+  // what a long message's latency is made of.
+  test("a long message stays inside the flood allowance", () => {
+    sendEncryptedMessage(serverId, nick, "x".repeat(3000));
+
+    expect(carrierLines().length).toBeLessThan(8);
+  });
+
+  // obbyircd relays a 2000-byte tag value and drops a 3000-byte one outright, so
+  // a frame over the ceiling is lost with no error and the peer waits on a
+  // reassembly that never completes.
+  test("no frame exceeds what a relay carries", () => {
+    sendEncryptedMessage(serverId, nick, "x".repeat(6000));
+
+    const longest = Math.max(...carrierLines().map((l) => l.length));
+    expect(longest).toBeLessThan(2000);
   });
 
   test("no frame carries the plaintext", () => {

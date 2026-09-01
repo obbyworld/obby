@@ -18,19 +18,15 @@ import {
 } from "../../lib/e2ee/media";
 import { getObbyIdentity, obbyPeerTrust } from "../../lib/e2ee/obbyIdentity";
 import {
-  bodyToRaw,
   decodeE2EEPayload,
-  E2EE_BODY_PREFIX,
+  E2EE_BODY_MARKER,
   E2EE_TAG,
   type E2EEAccept,
   type E2EEInit,
   type E2EEPayload,
-  MAX_BODY_FRAGMENT_SLICE,
-  MAX_BODY_VALUE_BYTES,
   MAX_TAG_FRAGMENT_SLICE,
   MAX_TAG_VALUE_BYTES,
   PROTOCOL_VERSION,
-  privmsgTagValue,
   readPayloadVersion,
 } from "../../lib/e2ee/protocol";
 import { expectsProtection } from "../../lib/e2ee/session";
@@ -78,30 +74,29 @@ const versionRejected = new Set<string>();
 // latch stops a peer that keeps failing from turning into a handshake loop.
 const resumeOffered = new Set<string>();
 
-// Control frames (init/accept/reject/ack/close) ride the tag on a bodiless
-// TAGMSG, so the payload is the tag value. Message payloads ride the PRIVMSG
-// body behind the marker, keeping a real msgid, and carry the tag as a hint for
-// anything inspecting the wire. The tag value is the protocol version: a tag
-// relay may require a non-empty value (ours does), so a valueless flag is
-// dropped before it reaches the peer.
+// The payload always rides the tag. A message rides a PRIVMSG so it keeps a
+// msgid to reply to, react to and redact; its body is the marker, which is all
+// a client without the tag can be told. Everything else is control traffic with
+// nothing to thread onto, so it rides a bodiless TAGMSG and stays invisible.
 function send(
   serverId: string,
   target: string,
   payload: E2EEPayload,
-  viaTag: boolean,
   carrier: CarriedMessageRef = {},
 ): void {
-  const id = uuidv4();
-  const values = viaTag
-    ? frameValues(payload, id, MAX_TAG_VALUE_BYTES, MAX_TAG_FRAGMENT_SLICE)
-    : frameValues(payload, id, MAX_BODY_VALUE_BYTES, MAX_BODY_FRAGMENT_SLICE);
-  const bodyTag = privmsgTagValue(payload.t === "media" ? "media" : "msg");
+  const asMessage = payload.t === "msg" || payload.t === "media";
+  const values = frameValues(
+    payload,
+    uuidv4(),
+    MAX_TAG_VALUE_BYTES,
+    MAX_TAG_FRAGMENT_SLICE,
+  );
   values.forEach((value, index) => {
-    if (viaTag) {
-      ircClient.sendRaw(serverId, `@${E2EE_TAG}=${value} TAGMSG ${target}`);
+    const tags = [`${E2EE_TAG}=${value}`];
+    if (!asMessage) {
+      ircClient.sendRaw(serverId, `@${tags.join(";")} TAGMSG ${target}`);
       return;
     }
-    const tags = [`${E2EE_TAG}=${bodyTag}`];
     // The receiver reads a fragmented payload on the frame that completes it,
     // so the message's identity is the last frame's. Naming it on an earlier
     // one would leave the two sides replying to different msgids.
@@ -116,7 +111,7 @@ function send(
     }
     ircClient.sendRaw(
       serverId,
-      `@${tags.join(";")} PRIVMSG ${target} :${E2EE_BODY_PREFIX}${value}`,
+      `@${tags.join(";")} PRIVMSG ${target} :${E2EE_BODY_MARKER}`,
     );
   });
 }
@@ -161,7 +156,7 @@ function dispatchDecoded(
       const key = convKey(serverId, sender);
       if (!versionRejected.has(key)) {
         versionRejected.add(key);
-        send(serverId, sender, { t: "reject", v: PROTOCOL_VERSION }, true);
+        send(serverId, sender, { t: "reject", v: PROTOCOL_VERSION });
       }
       if (getStore()?.getState().e2eeSessions[key]?.status === "negotiating") {
         clearNegotiationTimer(key);
@@ -303,7 +298,7 @@ function onPayload(
       );
       noteSessionEstablished(serverId, sender);
       try {
-        send(serverId, sender, backend.encryptAck(peer), true);
+        send(serverId, sender, backend.encryptAck(peer));
       } catch {
         // Session is live; a failed ack only delays the peer's confirmation.
       }
@@ -434,7 +429,7 @@ function handleUnreadable(
   }
 
   // Nothing further will be attempted, so this is where the user is the remedy.
-  send(serverId, nick, { t: "close", v: PROTOCOL_VERSION }, true);
+  send(serverId, nick, { t: "close", v: PROTOCOL_VERSION });
   if (orphanCiphertextWarned.has(key)) return;
   orphanCiphertextWarned.add(key);
   injectSystemNotice(
@@ -506,13 +501,16 @@ export function handleInboundObby(
   skipProcessing = false,
 ): boolean {
   if (classifyInbound({ mtags, body }).scheme !== "obby") return false;
-  if (skipProcessing) return true;
-  const raw = bodyToRaw(body);
-  if (raw !== null)
-    dispatchDecoded(serverId, sender, raw, {
-      msgid,
-      replyTo: replyTagOf(mtags),
-    });
+  if (skipProcessing || isE2EESenderIgnored(sender)) return true;
+  // The marker is a plain message body, so anyone can send one. Without the tag
+  // there is no payload to act on, and acting anyway would let a stranger open a
+  // conversation, or tear a live one down, with a line of chat text.
+  const raw = mtags?.[E2EE_TAG];
+  if (raw === undefined) return true;
+  dispatchDecoded(serverId, sender, raw, {
+    msgid,
+    replyTo: replyTagOf(mtags),
+  });
   return true;
 }
 
@@ -534,7 +532,7 @@ export function startE2EESession(serverId: string, nick: string): void {
   // Dropping it first puts the conversation in a state that withholds instead.
   backend.reset(peer);
   dispatch(serverId, nick, { type: "reset" });
-  send(serverId, nick, backend.startSession(peer), true);
+  send(serverId, nick, backend.startSession(peer));
   dispatch(serverId, nick, { type: "start", scheme: "obby" });
   armNegotiationTimer(serverId, nick, () => backend.reset(peer));
 }
@@ -553,7 +551,7 @@ export function acceptE2EEOffer(serverId: string, nick: string): void {
     dispatch(serverId, nick, { type: "error", reason: "handshake-failed" });
     return;
   }
-  send(serverId, nick, accept, true);
+  send(serverId, nick, accept);
   // Stay negotiating until the initiator's first encrypted payload confirms it
   // received the accept; establishing here would show a false green if it didn't.
   dispatch(serverId, nick, { type: "accept-local" });
@@ -563,7 +561,7 @@ export function acceptE2EEOffer(serverId: string, nick: string): void {
 export function rejectE2EEOffer(serverId: string, nick: string): void {
   pendingOffers.delete(convKey(serverId, nick));
   obbyPeerTrust.setAutoResume(serverId, nick, false);
-  send(serverId, nick, { t: "reject", v: PROTOCOL_VERSION }, true);
+  send(serverId, nick, { t: "reject", v: PROTOCOL_VERSION });
   dispatch(serverId, nick, { type: "reject-local" });
 }
 
@@ -575,7 +573,7 @@ function tearDown(serverId: string, nick: string, tellPeer: boolean): void {
   // Tell the peer before dropping our own keys, so their lock falls too rather
   // than leaving them encrypting into a session that no longer decrypts.
   if (tellPeer && (backend.hasSession(peer) || backend.hasPending(peer))) {
-    send(serverId, nick, { t: "close", v: PROTOCOL_VERSION }, true);
+    send(serverId, nick, { t: "close", v: PROTOCOL_VERSION });
   }
   backend.reset(peer);
   pendingOffers.delete(key);
@@ -625,7 +623,6 @@ export function sendEncryptedMedia(
     serverId,
     nick,
     backend.encryptMediaFrame(peer, encodeMediaDescriptor(descriptor)),
-    false,
     carrier,
   );
   const self = getStore()?.getState().currentUser?.username ?? "";
@@ -644,7 +641,7 @@ export function sendEncryptedMessage(
   const peer: PeerRef = { serverId, nick };
   if (!backend.hasSession(peer)) return;
   const carrier = carrierRef(serverId, replyTo);
-  send(serverId, nick, backend.encrypt(peer, content), false, carrier);
+  send(serverId, nick, backend.encrypt(peer, content), carrier);
   const store = getStore();
   if (!store) return;
   const self = store.getState().currentUser?.username ?? "";

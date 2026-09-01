@@ -15,9 +15,15 @@ import type {
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
 import { isChannelTarget, parseMessageTags } from "../ircUtils";
+import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
 import type { IRCClientContext } from "./IRCClientContext";
+import {
+  chunkForMultiline,
+  type MultilineLimits,
+  parseMultilineLimits,
+} from "./multiline";
 
 // Namespace UUID for generating deterministic channel/chat IDs
 const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -584,6 +590,15 @@ export interface EventMap {
 
 type EventKey = keyof EventMap;
 type EventCallback<K extends EventKey> = (data: EventMap[K]) => void;
+
+// A capability value carries its own `=` (`draft/multiline=max-bytes=5250,max-lines=15`),
+// so the name ends at the first one and the rest is the value.
+function splitCapToken(token: string): { cap: string; value?: string } {
+  const eq = token.indexOf("=");
+  return eq === -1
+    ? { cap: token }
+    : { cap: token.slice(0, eq), value: token.slice(eq + 1) };
+}
 
 export class IRCClient implements IRCClientContext {
   private sockets: Map<string, ISocket> = new Map();
@@ -1433,54 +1448,40 @@ export class IRCClient implements IRCClientContext {
     target: string,
     lines: string[],
   ): void {
-    const batchId = `ml_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    // Start multiline batch
-    this.sendRaw(serverId, `BATCH +${batchId} draft/multiline ${target}`);
-
-    // Send each line as a separate PRIVMSG with batch tag
-    // Handle long lines by splitting them if needed
-    for (const line of lines) {
-      const splitLines = this.splitLongLine(line);
-      for (const splitLine of splitLines) {
-        this.sendRaw(
-          serverId,
-          `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-        );
-      }
-    }
-
-    // End batch
-    this.sendRaw(serverId, `BATCH -${batchId}`);
+    this.sendMultiline(
+      serverId,
+      target,
+      // preserveBoundarySpace, or concat rejoins "AAA BBB CCC" as "AAA BBBCCC".
+      lines.map((line) => splitLongMessage(line, target, true)),
+    );
   }
 
-  // Split long lines to respect IRC message length limits (512 bytes)
-  private splitLongLine(text: string, maxLength = 450): string[] {
-    if (!text) return [""];
-
-    // Account for IRC overhead (PRIVMSG + target + formatting)
-    // Conservative limit to account for formatting codes and IRC overhead
-    const lines: string[] = [];
-    let remaining = text;
-
-    while (remaining.length > maxLength) {
-      // Try to split at word boundaries
-      let splitIndex = maxLength;
-      const lastSpace = remaining.lastIndexOf(" ", maxLength);
-      if (lastSpace > maxLength * 0.7) {
-        // Don't split too early
-        splitIndex = lastSpace;
+  sendMultiline(
+    serverId: string,
+    target: string,
+    lines: readonly (readonly string[])[],
+    openTags = "",
+  ): void {
+    for (const batch of chunkForMultiline(
+      lines,
+      this.multilineLimits(serverId),
+    )) {
+      const batchId = createBatchId();
+      this.sendRaw(
+        serverId,
+        `${openTags}BATCH +${batchId} draft/multiline ${target}`,
+      );
+      for (const parts of batch) {
+        parts.forEach((part, index) => {
+          const concat = index > 0 ? ";draft/multiline-concat" : "";
+          this.sendRaw(
+            serverId,
+            `@batch=${batchId}${concat} PRIVMSG ${target} :${part}`,
+          );
+        });
       }
-
-      lines.push(remaining.substring(0, splitIndex));
-      remaining = remaining.substring(splitIndex).trim();
+      this.sendRaw(serverId, `BATCH -${batchId}`);
     }
-
-    if (remaining) {
-      lines.push(remaining);
-    }
-
-    return lines.length > 0 ? lines : [""];
   }
 
   sendTyping(serverId: string, target: string, isActive: boolean): void {
@@ -2010,8 +2011,17 @@ export class IRCClient implements IRCClientContext {
 
     const caps = cliCaps.split(" ");
     for (const c of caps) {
-      const [cap, value] = c.split("=", 2);
+      const { cap, value } = splitCapToken(c);
       accumulated.add(cap);
+      if (value) {
+        const server = this.servers.get(serverId);
+        if (server) {
+          server.capabilityValues = {
+            ...(server.capabilityValues ?? {}),
+            [cap]: value,
+          };
+        }
+      }
       if (cap === "sasl" && value) {
         const mechanisms = value.split(",");
         this.saslMechanisms.set(serverId, mechanisms);
@@ -2229,6 +2239,14 @@ export class IRCClient implements IRCClientContext {
   // of the handshake (sasl) may land in a later ACK line.
   hasPendingCapReqs(serverId: string): boolean {
     return (this.pendingCapReqs.get(serverId)?.size ?? 0) > 0;
+  }
+
+  // What the server said a draft/multiline batch may hold. Unstated means
+  // unlimited, which is what the spec implies.
+  multilineLimits(serverId: string): MultilineLimits {
+    return parseMultilineLimits(
+      this.servers.get(serverId)?.capabilityValues?.["draft/multiline"],
+    );
   }
 
   hasCapability(serverId: string, cap: string): boolean {

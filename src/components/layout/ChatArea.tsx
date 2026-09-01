@@ -74,7 +74,6 @@ import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector from "../ui/GifSelector";
 import DiscoverGrid from "../ui/HomeScreen";
-import { ImagePreviewModal } from "../ui/ImagePreviewModal";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
@@ -92,6 +91,7 @@ import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
+import { UploadPreviewModal } from "../ui/UploadPreviewModal";
 import {
   type UploadJob,
   UploadProgressOverlay,
@@ -187,13 +187,13 @@ export const ChatArea: React.FC<{
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState<{
+  const [pendingUpload, setPendingUpload] = useState<{
     isOpen: boolean;
-    file: File | null;
+    files: File[];
     previewUrl: string | null;
   }>({
     isOpen: false,
-    file: null,
+    files: [],
     previewUrl: null,
   });
   // True while a file is being dragged over the input area, so we can
@@ -1275,23 +1275,26 @@ export const ChatArea: React.FC<{
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
-  // Shared by the file picker and drag-and-drop: a single image keeps the
-  // confirm-then-send preview so the user can eyeball it first; anything
-  // else goes straight to the parallel uploader.
+  // An upload is sent the moment it finishes and IRC has no unsend, so every
+  // path that picks a file confirms first.
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
-    if (files.length === 1 && files[0].type.startsWith("image/")) {
-      const previewUrl = URL.createObjectURL(files[0]);
-      setImagePreview({ isOpen: true, file: files[0], previewUrl });
-      return;
-    }
-    handleFilesUpload(files);
+    const previewUrl =
+      files.length === 1 && files[0].type.startsWith("image/")
+        ? URL.createObjectURL(files[0])
+        : null;
+    setPendingUpload({ isOpen: true, files, previewUrl });
+  };
+
+  const closePendingUpload = () => {
+    if (pendingUpload.previewUrl) URL.revokeObjectURL(pendingUpload.previewUrl);
+    setPendingUpload({ isOpen: false, files: [], previewUrl: null });
   };
 
   // Dropping a file onto the textarea otherwise triggers the browser
   // default, which pastes the local file path as text. Intercept it on the
-  // input container, mirror the file picker, and ignore non-file drags
-  // (e.g. dragging selected text) so normal text DnD still works.
+  // input container and ignore non-file drags (e.g. dragging selected text)
+  // so normal text DnD still works.
   const dragHasFiles = (e: React.DragEvent) =>
     Array.from(e.dataTransfer.types).includes("Files");
 
@@ -1303,9 +1306,9 @@ export const ChatArea: React.FC<{
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
+    if (!dragHasFiles(e)) return;
     e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
+    e.dataTransfer.dropEffect = canUpload ? "copy" : "none";
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -1315,11 +1318,21 @@ export const ChatArea: React.FC<{
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
+    if (!dragHasFiles(e)) return;
     e.preventDefault();
     dragDepthRef.current = 0;
     setIsDraggingFile(false);
+    if (!canUpload) return;
     handleSelectedFiles(Array.from(e.dataTransfer.files));
+  };
+
+  // A file on the clipboard is the same gesture as dropping one. A copy from a
+  // file manager carries the name as text too, so the files decide.
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = Array.from(e.clipboardData.files);
+    if (!canUpload || files.length === 0) return;
+    e.preventDefault();
+    handleSelectedFiles(files);
   };
 
   const handleGifSend = (gifUrl: string) => {
@@ -2380,6 +2393,7 @@ export const ChatArea: React.FC<{
                   onClick={handleInputClick}
                   onKeyUp={handleInputKeyUp}
                   onKeyDown={handleKeyDown}
+                  onPaste={handlePaste}
                   onBeforeInput={onBeforeInputGuard}
                   autoCorrect={isMobileInput ? "on" : "off"}
                   autoCapitalize={isMobileInput ? "sentences" : "off"}
@@ -2899,37 +2913,15 @@ export const ChatArea: React.FC<{
           username={selectedProfileUsername}
         />
       )}
-      {/* Image Preview Dialog */}
-      <ImagePreviewModal
-        isOpen={imagePreview.isOpen}
-        file={imagePreview.file}
-        previewUrl={imagePreview.previewUrl}
-        onCancel={() => {
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
-        }}
+      <UploadPreviewModal
+        isOpen={pendingUpload.isOpen}
+        files={pendingUpload.files}
+        previewUrl={pendingUpload.previewUrl}
+        target={selectedChannel?.name ?? selectedPrivateChat?.username ?? ""}
+        onCancel={() => closePendingUpload()}
         onUpload={() => {
-          if (imagePreview.file) {
-            // Route through the new progress-aware path so single-file
-            // uploads also get the "uploading…" overlay.
-            handleFilesUpload([imagePreview.file]);
-          }
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
+          void handleFilesUpload(pendingUpload.files);
+          closePendingUpload();
         }}
       />
       {/* Popped out server notices window */}

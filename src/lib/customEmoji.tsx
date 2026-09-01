@@ -132,16 +132,20 @@ export function useEmojiResolver(packUrls: ReadonlyArray<string | undefined>): {
   resolve: (shortcode: string) => EmojiEntry | null;
   shortcodes: ResolvedShortcode[];
 } {
-  // Stable string key so React only re-runs the effect when the *set* of
-  // URLs changes, not when their array identity does.
+  // Callers build the URL list inline, so the joined string is the only stable
+  // identity to key off. A resolver with a new identity each render re-runs the
+  // markdown pass for every visible message.
   const key = packUrls.filter(Boolean).join("|");
-  const [_, force] = React.useReducer((x: number) => x + 1, 0);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the joined key is what makes the same set of URLs one identity
+  const urls = React.useMemo(
+    () => packUrls.filter((u): u is string => !!u),
+    [key],
+  );
+  const [revision, force] = React.useReducer((x: number) => x + 1, 0);
 
   React.useEffect(() => {
     let cancelled = false;
-    Promise.all(
-      packUrls.filter(Boolean).map((u) => fetchEmojiPacks(u as string)),
-    )
+    Promise.all(urls.map((u) => fetchEmojiPacks(u)))
       .then(() => {
         if (!cancelled) force();
       })
@@ -151,12 +155,12 @@ export function useEmojiResolver(packUrls: ReadonlyArray<string | undefined>): {
     return () => {
       cancelled = true;
     };
-  }, [packUrls.filter]);
+  }, [urls]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a pack finishing its load changes what the same URLs resolve to
   const resolve = React.useCallback(
     (shortcode: string) => {
-      for (const url of packUrls) {
-        if (!url) continue;
+      for (const url of urls) {
         const entry = CACHE.get(url);
         if (!entry || entry.state !== "ok") continue;
         for (const pack of entry.packs) {
@@ -166,12 +170,13 @@ export function useEmojiResolver(packUrls: ReadonlyArray<string | undefined>): {
       }
       return null;
     },
-    [packUrls],
+    [urls, revision],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a pack finishing its load changes which shortcodes exist
   const shortcodes = React.useMemo(
-    () => collectShortcodesUnsafe(packUrls),
-    [packUrls],
+    () => collectShortcodesUnsafe(urls),
+    [urls, revision],
   );
 
   return { resolve, shortcodes };

@@ -10,35 +10,32 @@ import { base64DecodeUtf8, base64EncodeUtf8 } from "../base64";
 
 export const E2EE_CAP = "obby.world/e2ee";
 
-// Control frames ride this tag on a bodiless TAGMSG, so the tag value is the
-// payload. Message frames ride a PRIVMSG to keep a real msgid for reply, react
-// and redaction. A relay may drop a client tag with an empty value, so the
-// value is always set.
+// Every payload rides this tag. A control frame rides a bodiless TAGMSG; a
+// message rides a PRIVMSG, whose body is the marker below, so it keeps a real
+// msgid for reply, react and redaction. A relay may drop a client tag with an
+// empty value, so the value is always set.
 export const E2EE_TAG = "+obby.world/e2ee";
 
-// Ciphertext in a PRIVMSG body identifies itself, so a replay that arrives
-// without its client tags (a bouncer serving its own buffer) can still be told
-// apart from chat rather than rendered as base64.
-export const E2EE_BODY_PREFIX = "?obe2ee:";
-
-export function bodyToRaw(body: string): string | null {
-  return body.startsWith(E2EE_BODY_PREFIX)
-    ? body.slice(E2EE_BODY_PREFIX.length)
-    : null;
-}
+// The whole body of a message carrier. It says what the row is to anything that
+// cannot read the tag, and it is what identifies a replay that arrives with its
+// client tags stripped (a bouncer serving its own buffer).
+export const E2EE_BODY_MARKER = "?obe2ee:";
 
 // Carried on every frame so a peer speaking a version this client cannot read
 // is told so, instead of the mismatch surfacing as a decrypt failure.
 export const PROTOCOL_VERSION = 1;
 
-// A client tag caps near 4094 bytes (message-tags spec); a PRIVMSG body is far
-// tighter (a ~512-byte line). Payloads over the per-carrier cap split into
-// `frag` frames, each sliced to stay under the cap once wrapped in its own
-// base64+JSON envelope.
-export const MAX_TAG_VALUE_BYTES = 3500;
-export const MAX_TAG_FRAGMENT_SLICE = 2800;
-export const MAX_BODY_VALUE_BYTES = 400;
-export const MAX_BODY_FRAGMENT_SLICE = 220;
+// obbyircd carries a 2000-byte tag value and drops 3000 outright, so the cap is
+// what a relay carries, with room left for the tag name and the reply and label
+// tags beside it. Every extra frame spends flood allowance (~15 commands before
+// the server paces one per second), so the slice is as large as the cap allows.
+export const MAX_TAG_VALUE_BYTES = 1700;
+
+// A slice leaves the wire wrapped in a `frag` envelope and base64ed again, so
+// it is derived from the cap rather than guessed alongside it.
+const FRAGMENT_ENVELOPE_BYTES = 96;
+export const MAX_TAG_FRAGMENT_SLICE =
+  Math.floor((MAX_TAG_VALUE_BYTES * 3) / 4) - FRAGMENT_ENVELOPE_BYTES;
 
 // Handshake offer. `bundle` is the initiator's opaque X3DH pre-key bundle
 // (serialized by the crypto layer, so this module stays crypto-agnostic and the
@@ -117,15 +114,6 @@ export type E2EEPayload =
   | E2EECipher
   | E2EEMediaFrame
   | E2EEFragment;
-
-// The tag value on a PRIVMSG carrying an Obby payload. A control payload rides
-// the tag value itself on TAGMSG, so the command already tells the two apart;
-// this exists so anything watching the wire can see an attachment without
-// decrypting. The relay accepts alphanumerics plus `+`, `/` and `=` only, which
-// is why the separator is a slash.
-export function privmsgTagValue(kind: "msg" | "media"): string {
-  return kind === "media" ? `${PROTOCOL_VERSION}/m` : `${PROTOCOL_VERSION}`;
-}
 
 export function encodeE2EEPayload(payload: E2EEPayload): string {
   return base64EncodeUtf8(JSON.stringify(payload));
@@ -230,7 +218,7 @@ export function decodeE2EEPayload(raw: string): E2EEPayload | null {
 export function fragmentValue(
   id: string,
   value: string,
-  sliceSize: number = MAX_BODY_FRAGMENT_SLICE,
+  sliceSize: number = MAX_TAG_FRAGMENT_SLICE,
 ): E2EEFragment[] {
   const slices: string[] = [];
   for (let i = 0; i < value.length; i += sliceSize) {

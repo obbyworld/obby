@@ -109,6 +109,21 @@ describe("IRCClient.onCapAck — completion tracking", () => {
     expect(sent).toContain("CAP END");
   });
 
+  // A capability value carries its own `=`, so a split that stops at the first
+  // one keeps `max-bytes` and loses the limits, leaving every batch unbounded.
+  test("keeps the whole value of a capability that contains =", () => {
+    const { client } = makeClient();
+    // biome-ignore lint/suspicious/noExplicitAny: minimal server stub
+    (client as any).servers.set("s1", { id: "s1", capabilities: [] } as any);
+
+    client.onCapLs("s1", "draft/multiline=max-bytes=5250,max-lines=15", false);
+
+    expect(client.multilineLimits("s1")).toEqual({
+      maxBytes: 5250,
+      maxLines: 15,
+    });
+  });
+
   test("stores bare capability names when the server echoes values", () => {
     const { client } = makeClient();
     // biome-ignore lint/suspicious/noExplicitAny: minimal server stub

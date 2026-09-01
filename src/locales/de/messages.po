@@ -677,11 +677,11 @@ msgstr "Alle Kanäle auf dem Server durchsuchen"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "Port"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "Vorschau"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Vorschau (noch nicht hochgeladen)"
@@ -3530,7 +3526,7 @@ msgstr "Dieses Privatgespräch loslösen"
 msgid "Unsuspend"
 msgstr "Entsperren"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "Hochladen"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "Avatar hochladen"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Dateien hochladen"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "Bild hochladen"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "Auf den Dateiserver hochladen und an {target} senden."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

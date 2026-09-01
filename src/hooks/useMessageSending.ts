@@ -15,7 +15,7 @@ import {
   type FormattingType,
   formatMessageForIrc,
 } from "../lib/messageFormatter";
-import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
+import { splitLongMessage } from "../lib/messageProtocol";
 import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
 import { routeOutgoingPM } from "../store/handlers/e2eeOutbound";
@@ -454,78 +454,29 @@ export function useMessageSending({
         return;
       }
 
-      const batchId = createBatchId();
       const replyPrefix = localReplyTo?.msgid
         ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} `
         : "";
 
-      ircClient.sendRaw(
-        selectedServerId,
-        `${replyPrefix}BATCH +${batchId} draft/multiline ${target}`,
-      );
-
-      const hasMultipleLines = lines.length > 1;
-
-      if (hasMultipleLines) {
-        lines.forEach((line) => {
-          const formattedLine = formatMessageForIrc(line, {
+      // preserveBoundarySpace=true so concat reconstructs the original
+      // spacing. Without it the receiver sees "AAA BBBCCC" instead of
+      // "AAA BBB CCC".
+      const format = (line: string) =>
+        splitLongMessage(
+          formatMessageForIrc(line, {
             color: selectedColor || "inherit",
             formatting: selectedFormatting,
-          });
+          }),
+          target,
+          true,
+        );
 
-          const maxLineLengthForTarget =
-            512 -
-            (1 + 20 + 1 + 20 + 1 + 63 + 1 + 7 + 1 + target.length + 2 + 2) -
-            10;
-
-          if (formattedLine.length > maxLineLengthForTarget) {
-            // preserveBoundarySpace=true so concat reconstructs the
-            // original spacing.  Without it the receiver sees
-            // "AAA BBBCCC" instead of "AAA BBB CCC".
-            const splitLines = splitLongMessage(formattedLine, target, true);
-            splitLines.forEach((splitLine: string, index: number) => {
-              if (index === 0) {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-                );
-              } else {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-                );
-              }
-            });
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${formattedLine}`,
-            );
-          }
-        });
-      } else {
-        const formattedText = formatMessageForIrc(cleanedText, {
-          color: selectedColor || "inherit",
-          formatting: selectedFormatting,
-        });
-
-        const splitLines = splitLongMessage(formattedText, target, true);
-        splitLines.forEach((splitLine: string, index: number) => {
-          if (index === 0) {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-            );
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-            );
-          }
-        });
-      }
-
-      ircClient.sendRaw(selectedServerId, `BATCH -${batchId}`);
+      ircClient.sendMultiline(
+        selectedServerId,
+        target,
+        (lines.length > 1 ? lines : [cleanedText]).map(format),
+        replyPrefix,
+      );
     },
     [
       selectedServerId,

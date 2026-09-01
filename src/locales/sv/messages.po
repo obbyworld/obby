@@ -677,11 +677,11 @@ msgstr "Bläddra bland alla kanaler på servern"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "Port"
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "Förhandsvisning"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Förhandsvisning (ej uppladdad ännu)"
@@ -3530,7 +3526,7 @@ msgstr "Lossa den här privata meddelandekonversationen"
 msgid "Unsuspend"
 msgstr "Återaktivera"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "Ladda upp"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "Ladda upp avatar"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Ladda upp filer"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "Ladda upp bild"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "Ladda upp till filvärden och skicka till {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

@@ -16,8 +16,14 @@ describe("classifyInbound — Obby by tag", () => {
   });
 
   test("routes a message by its body marker even when the tag was stripped", () => {
-    expect(classifyInbound({ body: "?obe2ee:eyJ0Ijoi" })).toEqual({
+    expect(classifyInbound({ body: "?obe2ee:" })).toEqual({
       scheme: "obby",
+    });
+  });
+
+  test("a chat line that merely opens with the marker stays chat", () => {
+    expect(classifyInbound({ body: "?obe2ee: look what I can type" })).toEqual({
+      scheme: "plaintext",
     });
   });
 

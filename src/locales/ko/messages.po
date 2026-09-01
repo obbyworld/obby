@@ -677,11 +677,11 @@ msgstr "서버의 모든 채널 검색"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "포트"
 msgid "Preferences"
 msgstr "환경설정"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "미리보기"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "미리보기 (아직 업로드되지 않음)"
@@ -3530,7 +3526,7 @@ msgstr "이 비공개 메시지 대화 고정 해제"
 msgid "Unsuspend"
 msgstr "정지 해제"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "업로드"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "아바타 업로드"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "파일 업로드"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "이미지 업로드"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "파일 호스트에 업로드하고 {target} 에 보냅니다."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

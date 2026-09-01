@@ -3,7 +3,7 @@ import { ObbyE2EEBackend } from "../../src/lib/e2ee/backend";
 import { isUndecryptableMessage } from "../../src/lib/e2ee/messageFlags";
 import { obbyPeerTrust } from "../../src/lib/e2ee/obbyIdentity";
 import {
-  E2EE_BODY_PREFIX,
+  E2EE_BODY_MARKER,
   E2EE_TAG,
   encodeE2EEPayload,
   PROTOCOL_VERSION,
@@ -156,8 +156,8 @@ describe("encryption survives a peer reload", () => {
     handleInboundObby(
       serverId,
       "resumer",
-      undefined,
-      `${E2EE_BODY_PREFIX}${frame}`,
+      { [E2EE_TAG]: frame },
+      E2EE_BODY_MARKER,
       "msgid-1",
     );
 
@@ -397,6 +397,15 @@ describe("a session that cannot decrypt re-offers once", () => {
     registerE2EEHandlers(useStore);
   });
 
+  // The marker is ordinary message text, so any nick can send one. Acting on it
+  // would let a stranger open a conversation, or a lost tag tear a live one down.
+  test("a marker with no payload is not treated as an encrypted message", () => {
+    handleInboundObby(serverId, "stranger", undefined, E2EE_BODY_MARKER, "m1");
+
+    expect(privateChatNames()).not.toContain("stranger");
+    expect(sent).toHaveLength(0);
+  });
+
   test("repeated unreadable messages do not each start a handshake", () => {
     const { fingerprint } = peerOffer("looper");
     obbyPeerTrust.pin(serverId, "looper", fingerprint);
@@ -410,8 +419,8 @@ describe("a session that cannot decrypt re-offers once", () => {
       handleInboundObby(
         serverId,
         "looper",
-        undefined,
-        `${E2EE_BODY_PREFIX}${frame}`,
+        { [E2EE_TAG]: frame },
+        E2EE_BODY_MARKER,
         id,
       );
 

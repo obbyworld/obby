@@ -677,11 +677,11 @@ msgstr "Selaa kaikkia palvelimen kanavia"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "Portti"
 msgid "Preferences"
 msgstr "Asetukset"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "Esikatselu"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Esikatselu (ei vielä lähetetty)"
@@ -3530,7 +3526,7 @@ msgstr "Irrota tämä yksityisviestiketju"
 msgid "Unsuspend"
 msgstr "Poista jäädytys"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "Lähetä"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "Lataa avatar"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "Lataa kuva"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "Lähetä tiedostopalvelimelle ja edelleen kohteeseen {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

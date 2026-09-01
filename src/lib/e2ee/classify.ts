@@ -3,7 +3,7 @@
 // stripped of its client tags and any client may attach one. The tag classifies
 // a bodiless TAGMSG, where the tag value itself is the payload.
 
-import { E2EE_BODY_PREFIX, E2EE_TAG } from "./protocol";
+import { E2EE_BODY_MARKER, E2EE_TAG } from "./protocol";
 
 export type OtrKind = "data" | "query" | "fragment" | "error";
 
@@ -29,7 +29,7 @@ export function classifyInbound(input: {
   body?: string;
 }): InboundScheme {
   if (input.body) {
-    if (input.body.startsWith(E2EE_BODY_PREFIX)) return { scheme: "obby" };
+    if (input.body === E2EE_BODY_MARKER) return { scheme: "obby" };
     for (const [prefix, kind] of OTR_PREFIXES) {
       if (input.body.startsWith(prefix)) return { scheme: "otr", kind };
     }

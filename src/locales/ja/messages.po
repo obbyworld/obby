@@ -677,11 +677,11 @@ msgstr "サーバー上のすべてのチャンネルを一覧表示"
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/ImagePreviewModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -2628,10 +2628,6 @@ msgstr "ポート"
 msgid "Preferences"
 msgstr "設定"
 
-#: src/components/ui/ImagePreviewModal.tsx
-msgid "Preview"
-msgstr "プレビュー"
-
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "プレビュー（未アップロード）"
@@ -3530,7 +3526,7 @@ msgstr "このプライベートメッセージの会話のピン留めを解除
 msgid "Unsuspend"
 msgstr "停止を解除"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload"
 msgstr "アップロード"
 
@@ -3543,12 +3539,17 @@ msgid "Upload Avatar"
 msgstr "アバターをアップロード"
 
 #: src/components/layout/ChatArea.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "ファイルをアップロード"
 
-#: src/components/ui/ImagePreviewModal.tsx
+#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Image"
 msgstr "画像をアップロード"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Upload to the file host and send to {target}."
+msgstr "ファイルホストにアップロードして {target} に送信します。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
