@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, one {yhdisti uudelleen} other {yhdisti uudelleen {reconnectCount} kertaa}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "Tiedoston {safeName} salausta ei voitu purkaa. Tiedosto on voinut vanhentua tai sitä on muutettu palvelimella."
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} ei ole enää saatavilla palvelimella."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} muuttui palvelimella, joten sen salausta ei voi enää purkaa."
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "Avaa kanavan asetukset"
 msgid "Open in browser"
 msgstr "Avaa selaimessa"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

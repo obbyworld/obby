@@ -38,6 +38,7 @@ export function routeOutgoingPM(
   serverId: string,
   nick: string,
   content: string,
+  replyTo?: string,
 ): PMRouteResult {
   const session =
     getStore()?.getState().e2eeSessions[e2eeSessionKey(serverId, nick)];
@@ -45,7 +46,7 @@ export function routeOutgoingPM(
 
   if (session.status === "established") {
     if (session.scheme === "otr") sendOtrMessage(serverId, nick, content);
-    else sendEncryptedMessage(serverId, nick, content);
+    else sendEncryptedMessage(serverId, nick, content, replyTo);
     return "sent";
   }
 

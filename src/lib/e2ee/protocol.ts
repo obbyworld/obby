@@ -93,14 +93,10 @@ export interface E2EEMediaFrame {
   ct: string;
 }
 
-// `pre` flags a session-establishing ciphertext (an Olm pre-key message) so the
-// receiving backend knows to create the session rather than decrypt on an
-// existing one.
 export interface E2EECipher {
   t: "msg";
   v: typeof PROTOCOL_VERSION;
   ct: string;
-  pre?: boolean;
 }
 
 export interface E2EEFragment {
@@ -200,9 +196,7 @@ export function decodeE2EEPayload(raw: string): E2EEPayload | null {
     }
     case "msg": {
       if (typeof o.ct !== "string") return null;
-      const m: E2EECipher = { t: "msg", v: PROTOCOL_VERSION, ct: o.ct };
-      if (typeof o.pre === "boolean") m.pre = o.pre;
-      return m;
+      return { t: "msg", v: PROTOCOL_VERSION, ct: o.ct };
     }
     case "frag": {
       if (

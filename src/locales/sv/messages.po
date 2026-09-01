@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, one {återanslöt} other {återanslöt {reconnectCount} gånger}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "{safeName} kunde inte dekrypteras. Filen kan ha upphört att gälla eller ha ändrats på servern."
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} är inte längre tillgänglig på servern."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} ändrades på servern och går inte längre att dekryptera."
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "Öppna kanalens konfigurationsinställningar"
 msgid "Open in browser"
 msgstr "Öppna i webbläsare"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

@@ -9,4 +9,3 @@ src-tauri/gen/**
 .serena/**
 .playwright-mcp/**
 .husky/**
-claudedocs/**

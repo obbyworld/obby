@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, other {已重新連線 {reconnectCount} 次}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "{safeName} 解密失敗。該檔案可能已過期，或在伺服器上遭到變更。"
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} 在伺服器上已不存在。"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} 在伺服器上被更動過，已無法解密。"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "打开频道配置设置"
 msgid "Open in browser"
 msgstr "在浏览器中打开"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

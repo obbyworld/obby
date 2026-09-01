@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, other {{reconnectCount}번 재연결됨}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "{safeName}을(를) 복호화하지 못했습니다. 파일이 만료되었거나 서버에서 변경되었을 수 있습니다."
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} 파일이 서버에 더 이상 없습니다."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} 파일이 서버에서 변경되어 더 이상 복호화되지 않습니다."
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "채널 구성 설정 열기"
 msgid "Open in browser"
 msgstr "브라우저에서 열기"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

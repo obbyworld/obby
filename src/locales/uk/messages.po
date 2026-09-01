@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, one {перепідключився} few {перепідключився {reconnectCount} рази} many {перепідключився {reconnectCount} разів} other {перепідключився {reconnectCount} рази}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "Не вдалося розшифрувати {safeName}. Термін дії файлу міг завершитися або файл було змінено на сервері."
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} більше недоступний на сервері."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} було змінено на сервері, тому він більше не розшифровується."
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "Відкрити налаштування конфігурації ка�
 msgid "Open in browser"
 msgstr "Відкрити в браузері"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

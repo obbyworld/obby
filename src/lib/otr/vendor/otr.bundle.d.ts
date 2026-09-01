@@ -1,6 +1,6 @@
 // Types for the vendored otr.js v0.2.16 bundle (otr.bundle.js). Hand-written —
 // the upstream library ships no types. Only the surface ObbyIRCd uses is typed;
-// the library exposes more. See claudedocs/otr-interop-design.md.
+// the library exposes more.
 
 export interface DSAKey {
   /** 40-hex SHA-1 fingerprint of the public key (the string Pidgin/irssi show). */

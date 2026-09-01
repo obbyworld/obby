@@ -27,6 +27,7 @@ import {
 import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
 import { handleInboundObby } from "./e2ee";
+import { confirmEncryptedEcho } from "./e2eeConversation";
 import { handleInboundOtr } from "./otr";
 import { notePrivateMessageArrived } from "./privateChatArrival";
 
@@ -779,7 +780,11 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       // decrypt and a replayed handshake would spawn a spurious session. Obby
       // passes the msgid so the decrypted row keeps the real IRC message identity.
       const isSelfEcho = sender.toLowerCase() === ourNick;
-      const isReplay = mtags?.batch !== undefined;
+      // A labelled echo of our own send arrives inside a batch too, and it is
+      // the live confirmation of a row that already exists, not history.
+      const isReplay =
+        mtags?.batch !== undefined &&
+        !(isSelfEcho && mtags.label !== undefined);
       const skipE2EE = isSelfEcho || isReplay;
       const consumedByE2EE =
         handleInboundObby(
@@ -799,6 +804,15 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         if (isReplay) {
           undecryptableReplay = true;
         } else {
+          // Our own carrier comes back named: the row was rendered from the
+          // plaintext at send time and only now learns its msgid.
+          if (isSelfEcho && target)
+            confirmEncryptedEcho(
+              response.serverId,
+              target,
+              mtags?.label,
+              mtags?.msgid,
+            );
           return;
         }
       }

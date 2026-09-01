@@ -6,7 +6,11 @@ import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { base64EncodeUtf8 } from "../lib/base64";
 import ircClient from "../lib/ircClient";
-import { makeLabel, withLabel } from "../lib/labeledResponse";
+import {
+  makeLabel,
+  shouldUseLabeledResponse,
+  withLabel,
+} from "../lib/labeledResponse";
 import {
   type FormattingType,
   formatMessageForIrc,
@@ -177,19 +181,6 @@ export function sendBotCommand(
   }
 }
 
-/**
- * labeled-response is only useful when the server will also echo our
- * own messages back: without echo-message, no echo arrives, no
- * acknowledgment, and the placeholder would hang forever.
- */
-function shouldUseLabeledResponse(serverId: string): boolean {
-  return (
-    ircClient.hasCapability(serverId, "labeled-response") &&
-    ircClient.hasCapability(serverId, "echo-message") &&
-    ircClient.hasCapability(serverId, "batch")
-  );
-}
-
 /** How long to wait before flipping a pending message to "failed". */
 const PENDING_TIMEOUT_MS = 30_000;
 
@@ -328,8 +319,9 @@ export function useMessageSending({
       } else if (commandName === "msg") {
         const [target, ...messageParts] = args;
         const message = messageParts.join(" ");
-        if (routeOutgoingPM(selectedServerId, target, message) !== "none")
-          return;
+        const routed = routeOutgoingPM(selectedServerId, target, message);
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
         ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${message}`);
       } else if (commandName === "whisper") {
         const [targetUser, ...messageParts] = args;
@@ -364,15 +356,15 @@ export function useMessageSending({
           if (!target) return;
           const soh = String.fromCharCode(1);
           const actionContent = `${soh}ACTION ${actionMessage}${soh}`;
-          if (
-            selectedPrivateChat &&
-            routeOutgoingPM(
+          if (selectedPrivateChat) {
+            const routed = routeOutgoingPM(
               selectedServerId,
               selectedPrivateChat.username,
               actionContent,
-            ) !== "none"
-          ) {
-            return;
+              localReplyTo?.msgid,
+            );
+            if (routed === "withheld") return "withheld" as const;
+            if (routed === "sent") return;
           }
           ircClient.sendRaw(
             selectedServerId,
@@ -709,8 +701,7 @@ export function useMessageSending({
 
       // Handle commands
       if (cleanedText.startsWith("/")) {
-        handleCommand(cleanedText);
-        return;
+        return handleCommand(cleanedText);
       }
 
       // Handle regular messages
@@ -724,6 +715,7 @@ export function useMessageSending({
           selectedServerId,
           selectedPrivateChat.username,
           cleanedText,
+          localReplyTo?.msgid,
         );
         if (routed === "withheld") return "withheld" as const;
         if (routed === "sent") return;

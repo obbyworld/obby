@@ -69,6 +69,19 @@ export function canEncryptMedia(sizeBytes: number): boolean {
 // the upload row and the upload path all label the same two cases.
 export type PlainUploadReason = "too-large" | "scheme";
 
+// Why an attachment did not open. A host that no longer holds the object and a
+// host that handed back different bytes are separate answers: the AEAD tag
+// covers the whole file, so a decrypt failure on bytes that did arrive is
+// tampering, not an expiry.
+export type MediaFailure = "unavailable" | "tampered";
+
+export class MediaFetchError extends Error {
+  constructor(readonly reason: MediaFailure) {
+    super(reason);
+    this.name = "MediaFetchError";
+  }
+}
+
 export interface EncryptedMedia {
   ciphertext: Uint8Array;
   key: Uint8Array;
@@ -200,24 +213,29 @@ export async function fetchDecryptedMedia(
   signal?: AbortSignal,
 ): Promise<Blob> {
   if (descriptor.size > MAX_ENCRYPTABLE_BYTES) {
-    throw new Error("media descriptor exceeds the attachment limit");
+    throw new MediaFetchError("unavailable");
   }
   const response = await fetch(descriptor.url, { signal });
-  if (!response.ok) throw new Error(`media fetch failed: ${response.status}`);
+  if (!response.ok) throw new MediaFetchError("unavailable");
   // A descriptor is peer-authored, so its size is a claim. Buffering the body
   // before checking it would let that claim allocate the tab's memory.
   const declared = Number(response.headers.get("content-length"));
   if (declared > MAX_ENCRYPTABLE_BYTES + MAGIC.length) {
-    throw new Error("media response exceeds the attachment limit");
+    throw new MediaFetchError("tampered");
   }
   const stored = new Uint8Array(await response.arrayBuffer());
   if (stored.length > MAX_ENCRYPTABLE_BYTES + MAGIC.length) {
-    throw new Error("media response exceeds the attachment limit");
+    throw new MediaFetchError("tampered");
   }
   const ciphertext = unwrapDownload(stored);
-  if (!ciphertext) throw new Error("media header missing");
+  if (!ciphertext) throw new MediaFetchError("tampered");
   const { key, nonce } = mediaKeyBytes(descriptor);
-  const plaintext = decryptMedia(ciphertext, key, nonce);
+  let plaintext: Uint8Array<ArrayBuffer>;
+  try {
+    plaintext = decryptMedia(ciphertext, key, nonce);
+  } catch {
+    throw new MediaFetchError("tampered");
+  }
   // Handed over as the view itself: Blob copies it once regardless, and taking
   // a slice first would hold a second full copy of the file while it does.
   return new Blob([plaintext], { type: renderableMime(descriptor.mime) });

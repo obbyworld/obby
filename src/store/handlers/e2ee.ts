@@ -37,9 +37,11 @@ import { expectsProtection } from "../../lib/e2ee/session";
 import { FragmentReassembler, frameValues } from "../../lib/e2ee/transport";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
+import { makeLabel, shouldUseLabeledResponse } from "../../lib/labeledResponse";
 import type { AppState } from "../index";
 import {
   armNegotiationTimer,
+  type CarriedMessageRef,
   clearNegotiationTimer,
   convKey,
   dispatch,
@@ -87,20 +89,53 @@ function send(
   target: string,
   payload: E2EEPayload,
   viaTag: boolean,
+  carrier: CarriedMessageRef = {},
 ): void {
   const id = uuidv4();
   const values = viaTag
     ? frameValues(payload, id, MAX_TAG_VALUE_BYTES, MAX_TAG_FRAGMENT_SLICE)
     : frameValues(payload, id, MAX_BODY_VALUE_BYTES, MAX_BODY_FRAGMENT_SLICE);
   const bodyTag = privmsgTagValue(payload.t === "media" ? "media" : "msg");
-  for (const value of values) {
+  values.forEach((value, index) => {
+    if (viaTag) {
+      ircClient.sendRaw(serverId, `@${E2EE_TAG}=${value} TAGMSG ${target}`);
+      return;
+    }
+    const tags = [`${E2EE_TAG}=${bodyTag}`];
+    // The receiver reads a fragmented payload on the frame that completes it,
+    // so the message's identity is the last frame's. Naming it on an earlier
+    // one would leave the two sides replying to different msgids.
+    if (index === values.length - 1) {
+      if (carrier.replyTo) {
+        tags.push(
+          `+reply=${carrier.replyTo}`,
+          `+draft/reply=${carrier.replyTo}`,
+        );
+      }
+      if (carrier.label) tags.push(`label=${carrier.label}`);
+    }
     ircClient.sendRaw(
       serverId,
-      viaTag
-        ? `@${E2EE_TAG}=${value} TAGMSG ${target}`
-        : `@${E2EE_TAG}=${bodyTag} PRIVMSG ${target} :${E2EE_BODY_PREFIX}${value}`,
+      `@${tags.join(";")} PRIVMSG ${target} :${E2EE_BODY_PREFIX}${value}`,
     );
-  }
+  });
+}
+
+// The threading of an encrypted conversation travels in the clear: which
+// message answers which is a relation the relay can already see between two
+// ciphertexts, and putting it in the carrier's tags is what lets a decrypted
+// row use the same reply plumbing as any other message.
+function carrierRef(serverId: string, replyTo?: string): CarriedMessageRef {
+  return {
+    replyTo,
+    label: shouldUseLabeledResponse(serverId) ? makeLabel() : undefined,
+  };
+}
+
+function replyTagOf(
+  mtags: Record<string, string> | undefined,
+): string | undefined {
+  return (mtags?.["+reply"] ?? mtags?.["+draft/reply"])?.trim() || undefined;
 }
 
 // Decode a raw carrier value (a TAGMSG tag value or a marker-stripped PRIVMSG
@@ -111,7 +146,7 @@ function dispatchDecoded(
   serverId: string,
   sender: string,
   raw: string,
-  msgid?: string,
+  carrier: CarriedMessageRef = {},
 ): void {
   const payload = decodeE2EEPayload(raw);
   if (!payload) {
@@ -143,10 +178,10 @@ function dispatchDecoded(
     if (!value) return;
     const reassembled = decodeE2EEPayload(value);
     if (reassembled && reassembled.t !== "frag")
-      onPayload(serverId, sender, reassembled, msgid);
+      onPayload(serverId, sender, reassembled, carrier);
     return;
   }
-  onPayload(serverId, sender, payload, msgid);
+  onPayload(serverId, sender, payload, carrier);
 }
 
 // An accept only completes against an outstanding offer of our own, so two
@@ -168,7 +203,7 @@ function onPayload(
   serverId: string,
   sender: string,
   payload: E2EEPayload,
-  msgid?: string,
+  carrier: CarriedMessageRef = {},
 ): void {
   const peer: PeerRef = { serverId, nick: sender };
   switch (payload.t) {
@@ -303,36 +338,36 @@ function onPayload(
       return;
     case "msg": {
       if (!backend.hasSession(peer)) {
-        handleUnreadable(serverId, sender, msgid);
+        handleUnreadable(serverId, sender, carrier.msgid);
         return;
       }
       let text: string;
       try {
         text = backend.decrypt(peer, payload);
       } catch {
-        handleUnreadable(serverId, sender, msgid);
+        handleUnreadable(serverId, sender, carrier.msgid);
         return;
       }
       noteDecryptSucceeded(serverId, sender, peer);
-      injectMessage(serverId, sender, sender, text, msgid);
+      injectMessage(serverId, sender, sender, text, carrier);
       return;
     }
     case "media": {
       if (!backend.hasSession(peer)) {
-        handleUnreadable(serverId, sender, msgid);
+        handleUnreadable(serverId, sender, carrier.msgid);
         return;
       }
       let descriptor: string;
       try {
         descriptor = backend.decrypt(peer, payload);
       } catch {
-        handleUnreadable(serverId, sender, msgid);
+        handleUnreadable(serverId, sender, carrier.msgid);
         return;
       }
       const media = decodeMediaDescriptor(descriptor);
       if (!media) return;
       noteDecryptSucceeded(serverId, sender, peer);
-      injectMediaMessage(serverId, sender, sender, media, msgid);
+      injectMediaMessage(serverId, sender, sender, media, carrier);
       return;
     }
   }
@@ -473,7 +508,11 @@ export function handleInboundObby(
   if (classifyInbound({ mtags, body }).scheme !== "obby") return false;
   if (skipProcessing) return true;
   const raw = bodyToRaw(body);
-  if (raw !== null) dispatchDecoded(serverId, sender, raw, msgid);
+  if (raw !== null)
+    dispatchDecoded(serverId, sender, raw, {
+      msgid,
+      replyTo: replyTagOf(mtags),
+    });
   return true;
 }
 
@@ -581,14 +620,16 @@ export function sendEncryptedMedia(
 ): boolean {
   const peer: PeerRef = { serverId, nick };
   if (!backend.hasSession(peer)) return false;
+  const carrier = carrierRef(serverId);
   send(
     serverId,
     nick,
     backend.encryptMediaFrame(peer, encodeMediaDescriptor(descriptor)),
     false,
+    carrier,
   );
   const self = getStore()?.getState().currentUser?.username ?? "";
-  injectMediaMessage(serverId, nick, self, descriptor);
+  injectMediaMessage(serverId, nick, self, descriptor, carrier);
   return true;
 }
 
@@ -598,12 +639,14 @@ export function sendEncryptedMessage(
   serverId: string,
   nick: string,
   content: string,
+  replyTo?: string,
 ): void {
   const peer: PeerRef = { serverId, nick };
   if (!backend.hasSession(peer)) return;
-  send(serverId, nick, backend.encrypt(peer, content), false);
+  const carrier = carrierRef(serverId, replyTo);
+  send(serverId, nick, backend.encrypt(peer, content), false, carrier);
   const store = getStore();
   if (!store) return;
   const self = store.getState().currentUser?.username ?? "";
-  injectMessage(serverId, nick, self, content);
+  injectMessage(serverId, nick, self, content, carrier);
 }

@@ -24,12 +24,11 @@ describe("encode/decode round-trip", () => {
       account: "bob",
     },
     { t: "reject", v: PROTOCOL_VERSION, reason: "declined" },
-    { t: "msg", v: PROTOCOL_VERSION, ct: "Q0lQSEVS", pre: true },
     { t: "msg", v: PROTOCOL_VERSION, ct: "Q0lQSEVS" },
     { t: "frag", v: PROTOCOL_VERSION, id: "f1", i: 0, n: 2, ct: "AAAA" },
   ];
   for (const payload of cases) {
-    test(`${payload.t}${"pre" in payload && payload.pre ? " (prekey)" : ""}`, () => {
+    test(payload.t, () => {
       expect(decodeE2EEPayload(encodeE2EEPayload(payload))).toEqual(payload);
     });
   }

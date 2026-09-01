@@ -6,6 +6,7 @@ import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
+import type { MediaType } from "../lib/mediaUtils";
 import {
   clearServerConnectionTimeout,
   registerAllProtocolHandlers,
@@ -541,6 +542,9 @@ interface UIState {
     channelId?: string;
     preferTopicEntry?: boolean;
     preferLastEntry?: boolean;
+    // Set when `url` is a blob decrypted in this tab, which also says what it
+    // holds: nothing in the thread carries a link the gallery could classify.
+    decryptedType?: MediaType;
   } | null;
   activeMedia: {
     url: string;
@@ -1096,6 +1100,8 @@ export interface AppState {
     serverId?: string,
     channelId?: string,
   ) => void;
+  // Show an attachment that only exists as a blob decrypted in this tab.
+  openDecryptedMedia: (url: string, type: MediaType) => void;
   openTopicMedia: (url: string, serverId: string, channelId: string) => void;
   openMediaExplorer: (serverId: string, channelId: string) => void;
   closeMedia: () => void;
@@ -1964,8 +1970,9 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   warnUser: (serverId, channelName, username, reason) => {
-    // Send a warning message to the user
-    ircClient.sendRaw(serverId, `PRIVMSG ${username} :Warning: ${reason}`);
+    const warning = `Warning: ${reason}`;
+    if (routeOutgoingPM(serverId, username, warning) !== "none") return;
+    ircClient.sendRaw(serverId, `PRIVMSG ${username} :${warning}`);
   },
 
   kickUser: (serverId, channelName, username, reason) => {
@@ -3793,6 +3800,13 @@ const useStore = create<AppState>((set, get) => ({
         ...state.ui,
         openedMedia: { url, sourceMsgId, serverId, channelId },
       },
+    }));
+  },
+
+  openDecryptedMedia: (url, type) => {
+    get().stopActiveMedia();
+    set((state) => ({
+      ui: { ...state.ui, openedMedia: { url, decryptedType: type } },
     }));
   },
 

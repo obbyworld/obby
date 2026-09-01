@@ -1,6 +1,6 @@
 // VENDORED: otr.js v0.2.16 (c) 2015 Arlo Breault — MPL-2.0. Do not edit.
-// Off-the-Record Messaging v2/v3 for cross-client PM interop. See
-// claudedocs/otr-interop-design.md. The four upstream UMD files (CryptoJS 3.1.2,
+// Off-the-Record Messaging v2/v3 for cross-client PM interop. The four
+// upstream UMD files (CryptoJS 3.1.2,
 // EventEmitter, Leemon Baird BigInt, otr.js) are concatenated and run against a
 // single `root` carrying Web Crypto, then OTR/DSA are re-exported as ESM. The
 // shadowed module/define/exports force every file's global-attach branch so the

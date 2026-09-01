@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, one {si è riconnesso} other {si è riconnesso {reconnectCount} volte}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "Non è stato possibile decifrare {safeName}. Il file potrebbe essere scaduto o essere stato modificato sul server."
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} non è più disponibile sul server."
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} è stato modificato sul server, quindi non si decifra più."
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "Apri impostazioni configurazione canale"
 msgid "Open in browser"
 msgstr "Apri nel browser"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

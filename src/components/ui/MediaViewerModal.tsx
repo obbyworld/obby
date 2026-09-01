@@ -392,6 +392,9 @@ interface MediaViewerModalProps {
   preferTopicEntry?: boolean;
   /** When true, open at the last entry in the filmstrip (media explorer mode). */
   preferLastEntry?: boolean;
+  /** Set when `url` is an attachment decrypted in this tab. Those bytes exist
+   *  only as that blob, so it is shown on its own with no gallery around it. */
+  decryptedType?: MediaType;
 }
 
 export function MediaViewerModal({
@@ -403,6 +406,7 @@ export function MediaViewerModal({
   channelId,
   preferTopicEntry,
   preferLastEntry,
+  decryptedType,
 }: MediaViewerModalProps) {
   // zoom drives the slider/buttons UI; the actual image transform is applied
   // directly via imgRef to avoid React re-renders on every gesture event.
@@ -565,6 +569,21 @@ export function MediaViewerModal({
   // Build navigation index when lightbox opens
   useEffect(() => {
     if (!isOpen) return;
+    if (decryptedType) {
+      setMediaEntries([
+        {
+          url,
+          type: decryptedType,
+          msg: null,
+          entryKey: "decrypted",
+          isTopicEntry: false,
+        },
+      ]);
+      setImageList([url]);
+      setCurrentIndex(0);
+      setEntriesBuilt(true);
+      return;
+    }
     if (!serverId || !channelId) {
       setMediaEntries([]);
       setImageList([]);
@@ -715,6 +734,7 @@ export function MediaViewerModal({
     sourceMsgId,
     preferTopicEntry,
     preferLastEntry,
+    decryptedType,
     showSafeMedia,
     showTrustedSourcesMedia,
     showExternalContent,
@@ -1274,7 +1294,7 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  {isTauri() && isDownloadable && (
+                  {isTauri() && isDownloadable && !decryptedType && (
                     <>
                       {isImageEntry && (
                         <div
@@ -1299,15 +1319,17 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => setShowWarning(true)}
-                    title={t`Open in browser`}
-                    aria-label={t`Open in browser`}
-                    className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    <FaExternalLinkAlt className="w-3.5 h-3.5" />
-                  </button>
+                  {!decryptedType && (
+                    <button
+                      type="button"
+                      onClick={() => setShowWarning(true)}
+                      title={t`Open in browser`}
+                      aria-label={t`Open in browser`}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                    >
+                      <FaExternalLinkAlt className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
                   {canShowComments && !currentEntry?.isTopicEntry && (
                     <>

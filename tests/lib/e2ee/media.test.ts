@@ -10,6 +10,7 @@ import {
   encryptMedia,
   fetchDecryptedMedia,
   MAX_ENCRYPTABLE_BYTES,
+  MediaFetchError,
   mediaKeyBytes,
   renderableMime,
   sanitizeFileName,
@@ -269,6 +270,46 @@ describe("inbound size limit", () => {
     await expect(
       fetchDecryptedMedia({ ...descriptor, size: 10 }),
     ).rejects.toThrow();
+    vi.unstubAllGlobals();
+  });
+});
+
+// A file the host lost and a file the host rewrote are different answers to the
+// user: one is routine, the other says the bytes were interfered with.
+describe("why an attachment did not open", () => {
+  function storedDescriptor() {
+    const media = encryptMedia(new TextEncoder().encode("hello"));
+    return {
+      descriptor: buildMediaDescriptor("https://host/x.obb", media, file),
+      stored: wrapForUpload(media.ciphertext),
+    };
+  }
+
+  test("a host that no longer holds the object reports it unavailable", async () => {
+    const { descriptor } = storedDescriptor();
+    vi.stubGlobal("fetch", async () => new Response(null, { status: 404 }));
+    await expect(fetchDecryptedMedia(descriptor)).rejects.toThrow(
+      expect.objectContaining({ reason: "unavailable" }),
+    );
+    vi.unstubAllGlobals();
+  });
+
+  test("bytes the host rewrote report as tampering", async () => {
+    const { descriptor, stored } = storedDescriptor();
+    stored[stored.length - 1] ^= 0xff;
+    vi.stubGlobal("fetch", async () => new Response(stored));
+    const error = await fetchDecryptedMedia(descriptor).catch((e) => e);
+    expect(error).toBeInstanceOf(MediaFetchError);
+    expect(error.reason).toBe("tampered");
+    vi.unstubAllGlobals();
+  });
+
+  test("an object without the header reports as tampering", async () => {
+    const { descriptor } = storedDescriptor();
+    vi.stubGlobal("fetch", async () => new Response(new Uint8Array(32)));
+    await expect(fetchDecryptedMedia(descriptor)).rejects.toThrow(
+      expect.objectContaining({ reason: "tampered" }),
+    );
     vi.unstubAllGlobals();
   });
 });

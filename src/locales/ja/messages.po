@@ -220,8 +220,12 @@ msgid "{reconnectCount, plural, one {reconnected} other {reconnected {reconnectC
 msgstr "{reconnectCount, plural, other {{reconnectCount}回 再接続した}}"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} couldn't be decrypted. The file may have expired or been changed on the server."
-msgstr "{safeName} を復号できませんでした。ファイルの有効期限が切れたか、サーバー上で変更された可能性があります。"
+msgid "{safeName} is no longer available on the server."
+msgstr "{safeName} はサーバー上にもう存在しません。"
+
+#: src/components/message/EncryptedMediaPreview.tsx
+msgid "{safeName} was changed on the server, so it no longer decrypts."
+msgstr "{safeName} はサーバー上で変更されたため、復号できません。"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
@@ -2462,6 +2466,7 @@ msgstr "チャンネル設定を開く"
 msgid "Open in browser"
 msgstr "ブラウザで開く"
 
+#: src/components/message/EncryptedMediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx

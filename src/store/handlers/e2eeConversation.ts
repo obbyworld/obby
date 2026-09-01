@@ -28,6 +28,7 @@ import {
   reduceSession,
 } from "../../lib/e2ee/session";
 import type { Message } from "../../types";
+import { findReplyTarget } from "../helpers";
 import type { AppState } from "../index";
 import { notePrivateMessageArrived } from "./privateChatArrival";
 
@@ -89,23 +90,36 @@ function ensureChat(serverId: string, chatNick: string) {
   return chat;
 }
 
+// How a decrypted row ties back to the PRIVMSG that carried it. `msgid` is the
+// carrier's id, adopted so replies, reactions and redaction reference the real
+// IRC message. `replyTo` is the msgid this message answers. `label` is set on
+// our own sends, where the msgid only arrives with the server's echo.
+export interface CarriedMessageRef {
+  msgid?: string;
+  replyTo?: string;
+  label?: string;
+}
+
+function bufferMessages(serverId: string, chatId: string): Message[] {
+  return storeRef?.getState().messages[`${serverId}-${chatId}`] ?? [];
+}
+
 // Render a message in the PM thread with `chatNick`, authored by `author` (the
 // peer for inbound, ourselves for the local echo of an outgoing message). Used
 // by both backends since the plaintext never touches the chat view directly.
-// `msgid` is the carrying PRIVMSG's id (Obby only), adopted so replies,
-// reactions, and redaction reference the real IRC message.
 export function injectMessage(
   serverId: string,
   chatNick: string,
   author: string,
   content: string,
-  msgid?: string,
+  ref: CarriedMessageRef = {},
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
   const message = {
     id: uuidv4(),
-    msgid,
+    msgid: ref.msgid,
+    pendingLabel: ref.label,
     content,
     timestamp: new Date(),
     userId: author,
@@ -114,13 +128,34 @@ export function injectMessage(
     type: "message" as const,
     reactions: [],
     mentioned: [],
-    replyMessage: null,
+    replyMessage: findReplyTarget(
+      ref.replyTo,
+      bufferMessages(serverId, chat.id),
+    ),
     // The text was protected in transit, which is not the same as a file it
     // links to having been; the renderer needs to be able to say so.
     tags: { [E2EE_SESSION_TAG]: "1" },
   };
   storeRef?.getState().addMessage(message);
   notePeerMessage(serverId, chat.id, chatNick, author, message, content);
+}
+
+// Our own encrypted send is rendered from the plaintext we still hold, so the
+// row exists before the server has named it. The echo of the carrying PRIVMSG
+// brings the msgid, which is what makes the row repliable and reachable with
+// the reply-navigation keys.
+export function confirmEncryptedEcho(
+  serverId: string,
+  chatNick: string,
+  label: string | undefined,
+  msgid: string | undefined,
+): void {
+  if (!label || !msgid || !storeRef) return;
+  const chat = ensureChat(serverId, chatNick);
+  if (!chat) return;
+  storeRef
+    .getState()
+    .confirmPendingMessage(serverId, chat.id, label, { msgid });
 }
 
 // A decrypted message reaches the thread without passing the inbound PRIVMSG
@@ -180,13 +215,14 @@ export function injectMediaMessage(
   chatNick: string,
   author: string,
   descriptor: MediaDescriptor,
-  msgid?: string,
+  ref: CarriedMessageRef = {},
 ): void {
   const chat = ensureChat(serverId, chatNick);
   if (!chat) return;
   const message = {
     id: uuidv4(),
-    msgid,
+    msgid: ref.msgid,
+    pendingLabel: ref.label,
     content: descriptor.caption ?? "",
     timestamp: new Date(),
     userId: author,
@@ -195,7 +231,10 @@ export function injectMediaMessage(
     type: "message" as const,
     reactions: [],
     mentioned: [],
-    replyMessage: null,
+    replyMessage: findReplyTarget(
+      ref.replyTo,
+      bufferMessages(serverId, chat.id),
+    ),
     tags: { [E2EE_MEDIA_TAG]: encodeMediaDescriptor(descriptor) },
   };
   storeRef?.getState().addMessage(message);

@@ -1,13 +1,13 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
+import { useDecryptedMedia } from "../../hooks/useDecryptedMedia";
 import {
-  fetchDecryptedMedia,
   type MediaDescriptor,
   renderableMime,
   sanitizeFileName,
 } from "../../lib/e2ee/media";
+import useStore from "../../store";
 
 // Renders an attachment that exists on the filehost only as ciphertext. The
 // bytes are fetched and decrypted here and handed to the player as a blob, so
@@ -21,37 +21,11 @@ export const EncryptedMediaPreview: React.FC<{
   allowed: boolean;
 }> = ({ descriptor, allowed }) => {
   const { t } = useLingui();
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
-  // The descriptor is rebuilt on every render of the owning row, so the effect
-  // keys off the values it actually reads.
-  const { url, k, n, mime, size } = descriptor;
+  const openDecryptedMedia = useStore((state) => state.openDecryptedMedia);
+  const { objectUrl, failure } = useDecryptedMedia(descriptor, allowed);
   // A peer chooses this name and it is shown as the app's own copy, so control
   // and bidi characters (which can reverse a displayed extension) come out.
   const safeName = sanitizeFileName(descriptor.name);
-
-  useEffect(() => {
-    if (!allowed) return;
-    const abort = new AbortController();
-    let created: string | null = null;
-    setObjectUrl(null);
-    setFailed(false);
-
-    fetchDecryptedMedia({ url, k, n, mime, size, name: "" }, abort.signal)
-      .then((blob) => {
-        if (abort.signal.aborted) return;
-        created = URL.createObjectURL(blob);
-        setObjectUrl(created);
-      })
-      .catch(() => {
-        if (!abort.signal.aborted) setFailed(true);
-      });
-
-    return () => {
-      abort.abort();
-      if (created) URL.revokeObjectURL(created);
-    };
-  }, [allowed, url, k, n, mime, size]);
 
   if (!allowed) {
     return (
@@ -65,17 +39,20 @@ export const EncryptedMediaPreview: React.FC<{
     );
   }
 
-  if (failed) {
+  if (failure) {
     return (
       <div
         role="alert"
         className="mt-1 flex items-center gap-2 rounded border border-discord-dark-500 bg-discord-dark-300 px-3 py-2 text-sm text-discord-text-muted"
       >
         <FaLock className="flex-shrink-0" />
-        <Trans>
-          {safeName} couldn't be decrypted. The file may have expired or been
-          changed on the server.
-        </Trans>
+        {failure === "tampered" ? (
+          <Trans>
+            {safeName} was changed on the server, so it no longer decrypts.
+          </Trans>
+        ) : (
+          <Trans>{safeName} is no longer available on the server.</Trans>
+        )}
       </div>
     );
   }
@@ -99,7 +76,9 @@ export const EncryptedMediaPreview: React.FC<{
     <img
       src={objectUrl}
       alt={safeName}
-      className="max-h-96 rounded-lg object-contain"
+      title={t`Open in viewer`}
+      className="max-h-96 cursor-pointer rounded-lg object-contain transition-opacity hover:opacity-90"
+      onClick={() => openDecryptedMedia(objectUrl, "image")}
     />
   ) : safeMime.startsWith("video/") ? (
     // biome-ignore lint/a11y/useMediaCaption: a peer's attachment has no track
