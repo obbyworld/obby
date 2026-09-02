@@ -103,7 +103,7 @@ const initializeEnvSettings = (
   if (!__DEFAULT_IRC_SERVER_NAME__) {
   }
   toggleAddServerModal(true, {
-    name: __DEFAULT_IRC_SERVER_NAME__ || "Obsidian IRC",
+    name: __DEFAULT_IRC_SERVER_NAME__ || "Obby",
     host,
     port,
     nickname: "",
@@ -159,6 +159,18 @@ const App: React.FC = () => {
     serverId: string;
     username: string;
   } | null>(null);
+
+  // The composer is the only drop target. Anywhere else the webview follows the
+  // file and replaces the app, which a native window offers no way back from.
+  useEffect(() => {
+    const cancel = (e: DragEvent) => e.preventDefault();
+    window.addEventListener("dragover", cancel);
+    window.addEventListener("drop", cancel);
+    return () => {
+      window.removeEventListener("dragover", cancel);
+      window.removeEventListener("drop", cancel);
+    };
+  }, []);
 
   // Watch for profile view requests
   useEffect(() => {

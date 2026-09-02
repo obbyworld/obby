@@ -25,9 +25,9 @@
 		0E2FB7B5A3A8368B52E7E833 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		1E4FB155B6D85A5022BBA317 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3231B65C025A45899CD80EFF /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
-		4725CBFC67C3753792DEFFC2 /* ObsidianIRC_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ObsidianIRC_iOS.entitlements; sourceTree = "<group>"; };
+		4725CBFC67C3753792DEFFC2 /* Obby_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Obby_iOS.entitlements; sourceTree = "<group>"; };
 		4ACE2A90FA4B82CA87825F27 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		4B88DD17ACB6CA9241A9DABE /* ObsidianIRC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObsidianIRC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B88DD17ACB6CA9241A9DABE /* Obby.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Obby.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7317F4E0A5DE393AB54A16ED /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
 		7393EF39C09C1CCCF19CAA48 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		989DE30D5072851BE8870E7D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -64,7 +64,7 @@
 		013B7B111F64B09BA11EBBF1 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				AA291FB5D49DF6840895139E /* ObsidianIRC */,
+				AA291FB5D49DF6840895139E /* Obby */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -79,18 +79,18 @@
 		6433FA3A6A3402B0A03D301B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4B88DD17ACB6CA9241A9DABE /* ObsidianIRC.app */,
+				4B88DD17ACB6CA9241A9DABE /* Obby.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6F9C110931AF1D067D12805F /* ObsidianIRC_iOS */ = {
+		6F9C110931AF1D067D12805F /* Obby_iOS */ = {
 			isa = PBXGroup;
 			children = (
 				D8525437528AD9F603CC6ED6 /* Info.plist */,
-				4725CBFC67C3753792DEFFC2 /* ObsidianIRC_iOS.entitlements */,
+				4725CBFC67C3753792DEFFC2 /* Obby_iOS.entitlements */,
 			);
-			path = ObsidianIRC_iOS;
+			path = Obby_iOS;
 			sourceTree = "<group>";
 		};
 		84580BDDF2FFF9EEE98F09D6 = {
@@ -100,7 +100,7 @@
 				1E4FB155B6D85A5022BBA317 /* Assets.xcassets */,
 				AD938E1C9AADE76E2F468952 /* LaunchScreen.storyboard */,
 				33ED05778B0D292CC4AC3D53 /* Externals */,
-				6F9C110931AF1D067D12805F /* ObsidianIRC_iOS */,
+				6F9C110931AF1D067D12805F /* Obby_iOS */,
 				013B7B111F64B09BA11EBBF1 /* Sources */,
 				D7D1FB6C0AAC85BAB330FA3B /* src */,
 				BD3D1B594F6C8F61E2F4FD62 /* Frameworks */,
@@ -108,13 +108,13 @@
 			);
 			sourceTree = "<group>";
 		};
-		AA291FB5D49DF6840895139E /* ObsidianIRC */ = {
+		AA291FB5D49DF6840895139E /* Obby */ = {
 			isa = PBXGroup;
 			children = (
 				CA132D4C6263C0407FEA4D3B /* main.mm */,
 				F0A162CF30FE6CD5518871F5 /* bindings */,
 			);
-			path = ObsidianIRC;
+			path = Obby;
 			sourceTree = "<group>";
 		};
 		BD3D1B594F6C8F61E2F4FD62 /* Frameworks */ = {
@@ -153,9 +153,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A9A3FA91AC954CB42CCCBB32 /* ObsidianIRC_iOS */ = {
+		A9A3FA91AC954CB42CCCBB32 /* Obby_iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C8B75D1A2D16180C12D78FEC /* Build configuration list for PBXNativeTarget "ObsidianIRC_iOS" */;
+			buildConfigurationList = C8B75D1A2D16180C12D78FEC /* Build configuration list for PBXNativeTarget "Obby_iOS" */;
 			buildPhases = (
 				921B2D39ECB81D0284E5E828 /* Build Rust Code */,
 				A000A89850FCC16C59F867C5 /* Sources */,
@@ -166,9 +166,9 @@
 			);
 			dependencies = (
 			);
-			name = ObsidianIRC_iOS;
-			productName = ObsidianIRC_iOS;
-			productReference = 4B88DD17ACB6CA9241A9DABE /* ObsidianIRC.app */;
+			name = Obby_iOS;
+			productName = Obby_iOS;
+			productReference = 4B88DD17ACB6CA9241A9DABE /* Obby.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -180,7 +180,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 			};
-			buildConfigurationList = 5B635019FCF187438BA703E8 /* Build configuration list for PBXProject "ObsidianIRC" */;
+			buildConfigurationList = 5B635019FCF187438BA703E8 /* Build configuration list for PBXProject "Obby" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -192,7 +192,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A9A3FA91AC954CB42CCCBB32 /* ObsidianIRC_iOS */,
+				A9A3FA91AC954CB42CCCBB32 /* Obby_iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -252,7 +252,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ObsidianIRC_iOS/ObsidianIRC_iOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Obby_iOS/Obby_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = CHX38YQPNM;
 				ENABLE_BITCODE = NO;
@@ -261,7 +261,7 @@
 					"$(inherited)",
 					"\".\"",
 				);
-				INFOPLIST_FILE = ObsidianIRC_iOS/Info.plist;
+				INFOPLIST_FILE = Obby_iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -281,7 +281,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.obsidianirc.dev;
-				PRODUCT_NAME = "ObsidianIRC";
+				PRODUCT_NAME = "Obby";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
@@ -357,7 +357,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = ObsidianIRC_iOS/ObsidianIRC_iOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Obby_iOS/Obby_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = CHX38YQPNM;
 				ENABLE_BITCODE = NO;
@@ -366,7 +366,7 @@
 					"$(inherited)",
 					"\".\"",
 				);
-				INFOPLIST_FILE = ObsidianIRC_iOS/Info.plist;
+				INFOPLIST_FILE = Obby_iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -386,7 +386,7 @@
 					"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.obsidianirc.dev;
-				PRODUCT_NAME = "ObsidianIRC";
+				PRODUCT_NAME = "Obby";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
@@ -452,7 +452,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5B635019FCF187438BA703E8 /* Build configuration list for PBXProject "ObsidianIRC" */ = {
+		5B635019FCF187438BA703E8 /* Build configuration list for PBXProject "Obby" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CE39D78E00250932FD406A3 /* debug */,
@@ -461,7 +461,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = debug;
 		};
-		C8B75D1A2D16180C12D78FEC /* Build configuration list for PBXNativeTarget "ObsidianIRC_iOS" */ = {
+		C8B75D1A2D16180C12D78FEC /* Build configuration list for PBXNativeTarget "Obby_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				113852D980A5AEA76F3FED1C /* debug */,

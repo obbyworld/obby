@@ -56,8 +56,8 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Build obsidianirc
-        run: nix flake check && nix build .#obsidianirc --no-link --print-build-logs
+      - name: Build obby
+        run: nix flake check && nix build .#obby --no-link --print-build-logs
 
   i18n:
     name: i18n Catalog Check

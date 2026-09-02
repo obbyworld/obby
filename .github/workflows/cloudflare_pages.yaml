@@ -27,6 +27,11 @@ jobs:
       - name: Deploy
         id: deploy
         uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        # The action runs wrangler through npx and this repo does not depend on
+        # it, so npx has to fetch it. Without this npm refuses the install on a
+        # non-interactive runner ("npx canceled due to missing packages").
+        env:
+          npm_config_yes: "true"
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -42,6 +47,10 @@ jobs:
 
       - name: maintain-comment
         if: ${{ github.event_name == 'pull_request' }}
+        # The deployment is what this job gates. Posting the preview link reads
+        # every comment on the PR through the GraphQL API, which fails on the
+        # long-lived ones, and the URL is in the job summary either way.
+        continue-on-error: true
         uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         with:
           header: cloudflare-preview
@@ -50,4 +59,3 @@ jobs:
             Preview URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
 
             Automated deployment preview for the PR in the Cloudflare Pages.
-          emojis: "rocket, eyes, +1, -1"

@@ -18,3 +18,19 @@ export function base64DecodeUtf8(b64: string): string {
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return new TextDecoder().decode(bytes);
 }
+
+// Raw-byte variants for binary payloads (e.g. cryptographic key material), where
+// the input is arbitrary bytes rather than UTF-8 text.
+export function bytesToBase64(bytes: Uint8Array): string {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+export function base64ToBytes(b64: string): Uint8Array {
+  const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+  const bin = atob(padded);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}

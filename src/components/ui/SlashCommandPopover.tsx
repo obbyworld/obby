@@ -86,7 +86,7 @@ function badgeStyle(
     case "client":
       return {
         label: t`client`,
-        title: t`Handled by ObsidianIRC before being sent`,
+        title: t`Handled by Obby before being sent`,
         className:
           "bg-discord-dark-200 text-discord-text-muted border border-discord-dark-500",
       };

@@ -29,6 +29,8 @@ import {
 } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
+import type { MediaDescriptor } from "../../lib/e2ee/media";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
@@ -41,6 +43,11 @@ import {
   imageCanHaveTransparency,
   mediaLevelToSettings,
 } from "../../lib/mediaUtils";
+import {
+  describeAttachment,
+  encryptedDescriptor,
+  kindMediaType,
+} from "../../lib/messageAttachments";
 import { openExternalUrl } from "../../lib/openUrl";
 import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
@@ -392,6 +399,9 @@ interface MediaViewerModalProps {
   preferTopicEntry?: boolean;
   /** When true, open at the last entry in the filmstrip (media explorer mode). */
   preferLastEntry?: boolean;
+  /** Set when `url` is an attachment decrypted in this tab. Those bytes exist
+   *  only as that blob, so it is shown on its own with no gallery around it. */
+  decryptedType?: MediaType;
 }
 
 export function MediaViewerModal({
@@ -403,6 +413,7 @@ export function MediaViewerModal({
   channelId,
   preferTopicEntry,
   preferLastEntry,
+  decryptedType,
 }: MediaViewerModalProps) {
   // zoom drives the slider/buttons UI; the actual image transform is applied
   // directly via imgRef to avoid React re-renders on every gesture event.
@@ -417,6 +428,10 @@ export function MediaViewerModal({
       msg: Message | null;
       entryKey: string;
       isTopicEntry: boolean;
+      // Present when the file on the host is ciphertext. Its plaintext blob URL
+      // is resolved lazily, because a gallery must not decrypt every
+      // attachment in the channel just to be opened.
+      descriptor?: MediaDescriptor;
     }[]
   >([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -487,6 +502,9 @@ export function MediaViewerModal({
 
   // Derived values for current entry type — kept in a ref so non-reactive handlers can read it
   const currentEntry = mediaEntries[currentIndex] ?? null;
+  // A blob URL is not something to hand to a downloader or to a browser: there
+  // is no remote file behind it, and the plaintext is not on the host at all.
+  const isDecryptedView = !!decryptedType || !!currentEntry?.descriptor;
   const currentEntryRef = useRef(currentEntry);
   currentEntryRef.current = currentEntry;
 
@@ -565,6 +583,21 @@ export function MediaViewerModal({
   // Build navigation index when lightbox opens
   useEffect(() => {
     if (!isOpen) return;
+    if (decryptedType) {
+      setMediaEntries([
+        {
+          url,
+          type: decryptedType,
+          msg: null,
+          entryKey: "decrypted",
+          isTopicEntry: false,
+        },
+      ]);
+      setImageList([url]);
+      setCurrentIndex(0);
+      setEntriesBuilt(true);
+      return;
+    }
     if (!serverId || !channelId) {
       setMediaEntries([]);
       setImageList([]);
@@ -653,7 +686,31 @@ export function MediaViewerModal({
           canShowMedia(e.url, mediaSettings, filehost),
       );
 
-    const entries = [...topicEntries, ...msgEntries];
+    // Encrypted attachments carry no URL in the body, so a body-only scan
+    // never sees them. They come off the tag instead.
+    const encryptedEntries = messages.flatMap((msg) => {
+      const descriptor = encryptedDescriptor(msg);
+      if (!descriptor) return [];
+      const summary = describeAttachment(msg);
+      const type = summary ? kindMediaType(summary.kind) : null;
+      // The descriptor URL is peer-authored, so it faces the same origin trust
+      // decision the plain path makes.
+      if (!type || !canShowMedia(descriptor.url, mediaSettings, filehost)) {
+        return [];
+      }
+      return [
+        {
+          url: descriptor.url,
+          type,
+          msg,
+          entryKey: `${msg.msgid ?? msg.id}:e2ee`,
+          isTopicEntry: false,
+          descriptor,
+        },
+      ];
+    });
+
+    const entries = [...topicEntries, ...msgEntries, ...encryptedEntries];
     setMediaEntries(entries);
     setImageList(entries.map((e) => e.url));
 
@@ -715,6 +772,7 @@ export function MediaViewerModal({
     sourceMsgId,
     preferTopicEntry,
     preferLastEntry,
+    decryptedType,
     showSafeMedia,
     showTrustedSourcesMedia,
     showExternalContent,
@@ -785,6 +843,37 @@ export function MediaViewerModal({
       cancelled = true;
     };
   }, [isOpen, currentUrl, currentEntry]);
+
+  // Swap a ciphertext URL for its plaintext blob, but only for the entry the
+  // user is actually looking at. Resolving the whole list up front would
+  // download and decrypt every attachment in the channel.
+  useEffect(() => {
+    if (!isOpen) return;
+    const entry = mediaEntries[currentIndex];
+    const descriptor = entry?.descriptor;
+    if (!descriptor) return;
+    // Already swapped: the list holds the blob, not the ciphertext URL.
+    if (imageList[currentIndex] !== descriptor.url) return;
+
+    let live = true;
+    getDecryptedObjectUrl(descriptor)
+      .then((objectUrl) => {
+        if (!live) return;
+        setImageList((prev) => {
+          if (prev[currentIndex] !== descriptor.url) return prev;
+          const next = [...prev];
+          next[currentIndex] = objectUrl;
+          return next;
+        });
+      })
+      .catch(() => {
+        // The row in the conversation reports why; the viewer just shows
+        // nothing rather than a broken image.
+      });
+    return () => {
+      live = false;
+    };
+  }, [isOpen, currentIndex, mediaEntries, imageList]);
 
   // Convert wheel to horizontal scroll over the whole filmstrip pill (desktop).
   // filmstripPillEl comes from a callback ref so this effect runs exactly when the
@@ -1274,7 +1363,7 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  {isTauri() && isDownloadable && (
+                  {isTauri() && isDownloadable && !isDecryptedView && (
                     <>
                       {isImageEntry && (
                         <div
@@ -1299,15 +1388,17 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => setShowWarning(true)}
-                    title={t`Open in browser`}
-                    aria-label={t`Open in browser`}
-                    className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    <FaExternalLinkAlt className="w-3.5 h-3.5" />
-                  </button>
+                  {!isDecryptedView && (
+                    <button
+                      type="button"
+                      onClick={() => setShowWarning(true)}
+                      title={t`Open in browser`}
+                      aria-label={t`Open in browser`}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                    >
+                      <FaExternalLinkAlt className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
                   {canShowComments && !currentEntry?.isTopicEntry && (
                     <>

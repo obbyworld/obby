@@ -1,4 +1,4 @@
-name: ObsidianIRC
+name: Obby
 options:
   bundleIdPrefix: com.obsidianirc.dev
   deploymentTarget:
@@ -10,7 +10,7 @@ configs:
 settingGroups:
   app:
     base:
-      PRODUCT_NAME: ObsidianIRC
+      PRODUCT_NAME: Obby
       PRODUCT_BUNDLE_IDENTIFIER: com.obsidianirc.dev
 targetTemplates:
   app:
@@ -24,20 +24,20 @@ targetTemplates:
     settings:
       groups: [app]
 targets:
-  ObsidianIRC_iOS:
+  Obby_iOS:
     type: application
     platform: iOS
     sources:
       - path: Sources
       - path: Assets.xcassets
       - path: Externals
-      - path: ObsidianIRC_iOS
+      - path: Obby_iOS
       - path: assets
         buildPhase: resources
         type: folder
       - path: LaunchScreen.storyboard
     info:
-      path: ObsidianIRC_iOS/Info.plist
+      path: Obby_iOS/Info.plist
       properties:
         LSRequiresIPhoneOS: true
         UILaunchStoryboardName: LaunchScreen
@@ -59,7 +59,7 @@ targets:
         CFBundleShortVersionString: 0.0.1
         CFBundleVersion: 0.0.1
     entitlements:
-      path: ObsidianIRC_iOS/ObsidianIRC_iOS.entitlements
+      path: Obby_iOS/Obby_iOS.entitlements
     scheme:
       environmentVariables:
         RUST_BACKTRACE: full

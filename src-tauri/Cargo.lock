@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "ObsidianIRC"
+name = "Obby"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",

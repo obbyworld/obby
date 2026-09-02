@@ -33,10 +33,10 @@ import { isTauriMobile } from "../../lib/platformUtils";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
 import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
+import E2EELockControl from "../ui/E2EELockControl";
 import HeaderOverflowMenu, {
   type HeaderOverflowMenuItem,
 } from "../ui/HeaderOverflowMenu";
-import LoadingSpinner from "../ui/LoadingSpinner";
 import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
@@ -320,8 +320,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       label: t`Media`,
       icon: <FaFilm />,
       onClick: () => {
-        if (selectedServerId && selectedChannelId) {
-          openMediaExplorer(selectedServerId, selectedChannelId);
+        const chatId = selectedChannelId ?? selectedPrivateChat?.id ?? null;
+        if (selectedServerId && chatId) {
+          openMediaExplorer(selectedServerId, chatId);
         }
       },
       show: hasMedia,
@@ -342,14 +343,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       label:
         botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
       icon: (
-        <span className="relative inline-flex items-center">
-          <FaRobot />
-          {botsLoadingCount > 0 && (
-            <span className="absolute -top-1.5 -right-2 inline-flex">
-              <LoadingSpinner size="sm" text="" />
-            </span>
-          )}
-        </span>
+        <FaRobot
+          className={
+            botsLoadingCount > 0 ? "text-blue-500 animate-pulse-bright" : ""
+          }
+        />
       ),
       onClick: onOpenBots,
       show: !!selectedServerId,
@@ -621,7 +619,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <FaUserPlus />
               </button>
               <button
-                className="hidden md:block hover:text-discord-text-normal relative"
+                className={`hidden md:block ${
+                  botsLoadingCount > 0
+                    ? "text-blue-500 animate-pulse-bright"
+                    : "hover:text-discord-text-normal"
+                }`}
                 onClick={onOpenBots}
                 title={
                   botsLoadingCount > 0
@@ -631,14 +633,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 aria-label={t`Bots`}
               >
                 <FaRobot />
-                {botsLoadingCount > 0 && (
-                  <span
-                    className="absolute -top-1.5 -right-2 inline-flex"
-                    aria-hidden="true"
-                  >
-                    <LoadingSpinner size="sm" text="" />
-                  </span>
-                )}
               </button>
               <button
                 className="hidden md:block hover:text-discord-text-normal"
@@ -904,8 +898,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   <FaFilm />
                 </button>
               )}
+              {selectedServerId && selectedPrivateChat && (
+                <E2EELockControl
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
+              )}
               <button
-                className="p-2 md:p-0 hover:text-discord-text-normal"
+                className="hidden md:block hover:text-discord-text-normal"
                 onClick={() => {
                   if (selectedServerId && selectedPrivateChat) {
                     useStore
@@ -934,6 +934,16 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 title={t`Search`}
               >
                 <FaSearch />
+              </button>
+              <button
+                ref={overflowButtonRef}
+                className="md:hidden p-2 hover:text-discord-text-normal"
+                onClick={() => setIsOverflowMenuOpen(!isOverflowMenuOpen)}
+                aria-label={t`More actions`}
+                aria-expanded={isOverflowMenuOpen}
+                title={t`More`}
+              >
+                <FaEllipsisV />
               </button>
 
               <div className="hidden md:block relative">

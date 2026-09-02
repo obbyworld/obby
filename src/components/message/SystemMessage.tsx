@@ -1,4 +1,5 @@
 import type React from "react";
+import { isE2EEWarningNotice } from "../../lib/e2ee/messageFlags";
 import { processMarkdownInText } from "../../lib/ircUtils";
 import type { MessageType } from "../../types";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
@@ -26,10 +27,20 @@ export const SystemMessage: React.FC<SystemMessageProps> = ({
     message.id || message.msgid || "system",
   );
 
+  const isWarning = isE2EEWarningNotice(message);
+
   return (
-    <div className="px-4 py-1 text-discord-text-muted text-sm opacity-80">
+    <div
+      className={`px-4 py-1 text-sm ${
+        isWarning
+          ? "text-amber-400 font-medium"
+          : "text-discord-text-muted opacity-80"
+      }`}
+    >
       <div className="flex items-center gap-2">
-        <div className="w-1 h-1 rounded-full bg-discord-text-muted" />
+        <div
+          className={`w-1 h-1 rounded-full ${isWarning ? "bg-amber-400" : "bg-discord-text-muted"}`}
+        />
         <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
           {htmlContent}
         </EnhancedLinkWrapper>

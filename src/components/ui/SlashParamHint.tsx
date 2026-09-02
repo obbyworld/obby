@@ -150,7 +150,7 @@ export const SlashParamHint: React.FC<SlashParamHintProps> = ({
           {entry.source === "bot" ? (
             <Trans>via @{entry.botNick}</Trans>
           ) : (
-            <Trans>(handled by ObsidianIRC)</Trans>
+            <Trans>(handled by Obby)</Trans>
           )}
         </span>
       </div>

@@ -1,5 +1,5 @@
 [package]
-name = "ObsidianIRC"
+name = "Obby"
 version = "0.1.0"
 description = "Fully fledged IRCv3 client and more"
 authors = ["Matheus Fillipe", "Valerie Liu"]

@@ -1,4 +1,4 @@
-# ObsidianIRC — Agent Reference
+# Obby — Agent Reference
 
 React + TypeScript + TailwindCSS + DaisyUI + Zustand + Tauri (desktop/mobile).
 WebSocket-only IRC client. Tauri wraps the web app with native bindings for TCP sockets
@@ -29,7 +29,7 @@ npm run format; npm run fix:unsafe; npm run test; npm run build
 ## Nix
 
 - **`nix develop`** — full dev environment (Node 22 + Tauri Linux deps + rustup). Linux only (`x86_64`/`aarch64`).
-- **`nix build .#obsidianirc`** — produces `result/bin/ObsidianIRC`. When `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally; otherwise `update-linux-nix` in [`publish.yaml`](.github/workflows/publish.yaml) syncs the hash to `main` on version tags.
+- **`nix build .#obby`** — produces `result/bin/Obby`. When `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally; otherwise `update-linux-nix` in [`publish.yaml`](.github/workflows/publish.yaml) syncs the hash to `main` on version tags.
 - Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
 
 ---
@@ -249,6 +249,27 @@ All user-visible text **must** be wrapped with LinguiJS macros so it can be tran
 | Variables/interpolation                                   | `` t`Hello ${name}` ``             | same — placeholders become `{0}` in the PO file                                                   |
 | Non-React `.ts` files (store handlers, event callbacks)   | `` t`…` ``                         | `import { t } from "@lingui/macro"` — safe inside callbacks that fire after `i18n.activate()`     |
 | Module-level constants                                    | **Do not use** `t` at module scope | `t` evaluates before `i18n.activate()` runs. Move the string inside the function body.            |
+| Strings stored in state and rendered later                | **Store a code, not prose**        | Translate at the render site — see below.                                                         |
+
+### Never put English prose in state
+
+A string written into the store and rendered by a component later cannot be
+translated: the macro never sees it, so a non-English user reads a translated
+sentence with an untranslated English clause spliced into it. Store a code and
+translate where it renders.
+
+```ts
+// WRONG — the reason reaches the UI as raw English
+dispatch(serverId, nick, { type: "error", reason: "handshake failed" });
+
+// RIGHT — a code the render site maps to a message
+dispatch(serverId, nick, { type: "error", reason: "handshake-failed" });
+```
+
+The same rule covers any text arriving from the network: never render a
+remote-supplied string as the app's own copy, especially in a security surface
+like the encryption banner. Map it to a local message, and attribute the raw
+text to the peer if it needs showing at all.
 
 ### Correct patterns
 

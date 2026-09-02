@@ -15,7 +15,7 @@ const require = createRequire(import.meta.url);
 // multi-network build is a server-picker and doesn't claim a PWA identity.
 function hostedPwaPlugin(env: Record<string, string>): Plugin {
   const hosted = env.VITE_HIDE_SERVER_LIST === 'true';
-  const networkName = env.VITE_DEFAULT_IRC_SERVER_NAME || 'ObsidianIRC';
+  const networkName = env.VITE_DEFAULT_IRC_SERVER_NAME || 'Obby';
   const shortName = networkName.length > 12 ? networkName.slice(0, 12) : networkName;
   return {
     name: 'hosted-pwa',
@@ -154,7 +154,11 @@ export default defineConfig(({ mode }) => {
       '__DEFAULT_OAUTH_AUTHORIZE_URL__': JSON.stringify(process.env.VITE_DEFAULT_OAUTH_AUTHORIZE_URL),
       '__DEFAULT_OAUTH_TOKEN_URL__': JSON.stringify(process.env.VITE_DEFAULT_OAUTH_TOKEN_URL),
       '__BACKEND_URL__': JSON.stringify(process.env.VITE_BACKEND_URL || 'http://localhost:8080'),
-      '__TRUSTED_MEDIA_URLS__': process.env.VITE_TRUSTED_MEDIA_URLS ? process.env.VITE_TRUSTED_MEDIA_URLS.replace(/^['"]|['"]$/g, '').split(',').map(url => url.trim()) : [],
+      // Tests must never inherit a developer's .env trusted origins, or
+      // media-trust assertions become machine-dependent (green in CI, red
+      // locally). Force an empty list under vitest so the global trust source
+      // is deterministic; tests that need a filehost pass it explicitly.
+      '__TRUSTED_MEDIA_URLS__': (mode === "test" || !!process.env.VITEST) ? [] : process.env.VITE_TRUSTED_MEDIA_URLS ? process.env.VITE_TRUSTED_MEDIA_URLS.replace(/^['"]|['"]$/g, '').split(',').map(url => url.trim()) : [],
     },
     // prevent vite from obscuring rust errors
     clearScreen: false,

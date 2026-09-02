@@ -1,13 +1,13 @@
 [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-obbyworld%2Fobby-blue?logo=docker&style=flat-square)](https://hub.docker.com/r/obbyworld/obby)
-[![Cloudflare Pages](https://img.shields.io/endpoint?url=https://cloudflare-pages-badges.mattf.workers.dev//?projectName=obsidianirc)](https://obsidianirc.pages.dev/)
-[![pages-build-deployment](https://github.com/ObsidianIRC/obsidianirc.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://hello.obby.world/)
+[![Cloudflare Pages](https://img.shields.io/endpoint?url=https://cloudflare-pages-badges.mattf.workers.dev//?projectName=obby)](https://obsidianirc.pages.dev/)
+[![pages-build-deployment](https://github.com/Obby/obby.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://hello.obby.world/)
 [![Google Play](https://img.shields.io/badge/Google_Play-Download-414141?logo=google-play)](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)
 
-## <img src="https://cdn-icons-png.freepik.com/512/8999/8999462.png" alt="description" width="70"> ObsidianIRC - Next Generation IRC Client
+## <img src="https://cdn-icons-png.freepik.com/512/8999/8999462.png" alt="description" width="70"> Obby - Next Generation IRC Client
 
 ### React + TypeScript + TailwindCSS
 
-![ObsidianIRC Screenshot](screenshots/screenshot1.png)
+![Obby Screenshot](screenshots/screenshot1.png)
 
 This IRC client and its related software are designed to be:
 
@@ -18,7 +18,7 @@ This IRC client and its related software are designed to be:
 
 ### Features
 
-ObsidianIRC is a modern IRC client with extensive [IRCv3](https://ircv3.net/) support, implementing cutting-edge features for an enhanced messaging experience:
+Obby is a modern IRC client with extensive [IRCv3](https://ircv3.net/) support, implementing cutting-edge features for an enhanced messaging experience:
 
 #### Core IRCv3 Capabilities
 
@@ -49,7 +49,7 @@ ObsidianIRC is a modern IRC client with extensive [IRCv3](https://ircv3.net/) su
 - **JSON Server Logs** (`unrealircd.org/json-log`) - Professional, expandable server logs in JSON format containing comprehensive information for debugging and monitoring
 - **Link Security** (`unrealircd.org/link-security`) - Informational capability that monitors and reports the encrypted topology of the IRC network's server-to-server links, warning users when server interconnections lack proper SSL/TLS encryption or certificate validation
 
-#### ObsidianIRC Custom Extensions
+#### Obby Custom Extensions
 
 - **Link Previews** (`obsidianirc/link-preview-*`) - Custom message tags for rich link previews including:
   - `obsidianirc/link-preview-title` - Title of the linked content
@@ -79,7 +79,7 @@ For now, all you need to do to get this running is the following:
 ```
 cd ~
 git clone https://github.com/obbyworld/obby
-cd ObsidianIRC
+cd Obby
 npm install
 npm run build
 cp -R dist/* /var/www/html/
@@ -93,7 +93,7 @@ If you want to contribute to this project, please read the [CONTRIBUTING.md](CON
 
 ### Live Demo
 
-You can demo the bleeding-edge version of ObsidianIRC, all you need to do is connect to an IRC server which uses websockets!
+You can demo the bleeding-edge version of Obby, all you need to do is connect to an IRC server which uses websockets!
 
 - [Live Demo](https://hello.obby.world/)
 - [CloudFlare Pages Demo](https://obsidianirc.pages.dev/)

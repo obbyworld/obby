@@ -420,7 +420,7 @@ export const UserSettings: React.FC = React.memo(() => {
 
     const initialAwayMessage = globalSettings.awayMessage || "";
     const initialQuitMessage =
-      globalSettings.quitMessage || t`ObsidianIRC - Bringing IRC to the future`;
+      globalSettings.quitMessage || t`Obby - Bringing IRC to the future`;
     setAwayMessage(initialAwayMessage);
     setQuitMessage(initialQuitMessage);
 
@@ -1362,7 +1362,7 @@ export const UserSettings: React.FC = React.memo(() => {
               placeholder={
                 quitMessageSetting?.placeholder
                   ? i18n._(quitMessageSetting.placeholder)
-                  : t`ObsidianIRC - Bringing IRC to the future`
+                  : t`Obby - Bringing IRC to the future`
               }
               className="w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary"
             />

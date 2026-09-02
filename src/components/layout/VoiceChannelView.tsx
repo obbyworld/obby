@@ -528,34 +528,41 @@ function ParticipantTile({
   };
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`relative bg-discord-dark-300 rounded-lg ${aspect} ${large ? "w-full h-full" : ""} overflow-hidden flex items-center justify-center text-left ${
+    <div
+      className={`relative bg-discord-dark-300 rounded-lg ${aspect} ${large ? "w-full h-full" : ""} overflow-hidden ${
         showSpeakingRing
           ? "ring-2 ring-discord-green"
           : "ring-1 ring-discord-dark-200"
       }`}
     >
-      {member.videoTrack ? (
-        <video
-          ref={videoRef}
-          className={`w-full h-full ${member.screenSharing ? "object-contain" : "object-cover"}`}
-          autoPlay
-          playsInline
-          muted={isSelf}
-        />
-      ) : (
-        <div
-          className={`${large ? "w-32 h-32 text-5xl" : "w-16 h-16 text-2xl"} rounded-full bg-discord-dark-100 flex items-center justify-center text-white font-bold`}
-        >
-          {member.nick[0]?.toUpperCase() ?? "?"}
-        </div>
-      )}
+      {/* The tile face is the click target; the volume/mute controls below sit
+          above it as siblings so they are not interactive descendants of a button. */}
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={member.nick}
+        className="absolute inset-0 flex items-center justify-center cursor-pointer"
+      >
+        {member.videoTrack ? (
+          <video
+            ref={videoRef}
+            className={`w-full h-full ${member.screenSharing ? "object-contain" : "object-cover"}`}
+            autoPlay
+            playsInline
+            muted={isSelf}
+          />
+        ) : (
+          <div
+            className={`${large ? "w-32 h-32 text-5xl" : "w-16 h-16 text-2xl"} rounded-full bg-discord-dark-100 flex items-center justify-center text-white font-bold`}
+          >
+            {member.nick[0]?.toUpperCase() ?? "?"}
+          </div>
+        )}
+      </button>
 
       {/* Hand-raised badge */}
       {member.handRaised && (
-        <div className="absolute top-1 left-1 px-1.5 py-1 rounded bg-yellow-500/90 text-white text-xs flex items-center gap-1">
+        <div className="pointer-events-none absolute top-1 left-1 px-1.5 py-1 rounded bg-yellow-500/90 text-white text-xs flex items-center gap-1">
           <FaHandPaper />
         </div>
       )}
@@ -579,7 +586,7 @@ function ParticipantTile({
       {/* Connection quality dot */}
       {member.quality !== "unknown" && !isSelf && (
         <div
-          className="absolute top-1 right-1"
+          className="pointer-events-none absolute top-1 right-1"
           title={`Connection: ${member.quality}`}
         >
           <FaCircle
@@ -595,7 +602,7 @@ function ParticipantTile({
         </div>
       )}
 
-      <div className="absolute bottom-1 left-1 right-1 px-2 py-0.5 rounded bg-black/50 text-white text-xs flex items-center gap-1.5">
+      <div className="absolute bottom-1 left-1 right-1 z-10 px-2 py-0.5 rounded bg-black/50 text-white text-xs flex items-center gap-1.5">
         <span className="truncate flex-1">{member.nick}</span>
         {!member.micOn && !isSelf && (
           <FaMicrophoneSlash className="text-discord-red flex-shrink-0" />
@@ -631,7 +638,7 @@ function ParticipantTile({
           </button>
         )}
       </div>
-    </button>
+    </div>
   );
 }
 

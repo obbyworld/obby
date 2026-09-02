@@ -5,6 +5,8 @@
 // produce values like `lr-<base36 ms>-<counter>` which are well under
 // 64 bytes and monotonically unique within a process.
 
+import ircClient from "./ircClient";
+
 let counter = 0;
 
 export function makeLabel(): string {
@@ -33,4 +35,14 @@ export function withLabel(
     ? existingPrefix.slice(0, -1)
     : existingPrefix;
   return `${trimmed};label=${label} `;
+}
+
+// A label only pays off when the server echoes our own send back inside a
+// labelled batch; without those caps the placeholder would never be confirmed.
+export function shouldUseLabeledResponse(serverId: string): boolean {
+  return (
+    ircClient.hasCapability(serverId, "labeled-response") &&
+    ircClient.hasCapability(serverId, "echo-message") &&
+    ircClient.hasCapability(serverId, "batch")
+  );
 }

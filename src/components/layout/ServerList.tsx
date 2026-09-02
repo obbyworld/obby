@@ -254,7 +254,7 @@ export const ServerList: React.FC = () => {
         />
         <div className="text-white text-xl">
           <img
-            src="./images/obsidian.png"
+            src="./images/obby.png"
             alt={t`Home`}
             className="w-full h-full rounded-lg"
           />

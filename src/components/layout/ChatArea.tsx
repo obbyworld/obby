@@ -23,6 +23,17 @@ import {
   emojiClickValue,
   packEntriesForPicker,
 } from "../../lib/customEmojiPicker";
+import {
+  buildMediaDescriptor,
+  CIPHERTEXT_EXTENSION,
+  canEncryptMedia,
+  ciphertextFileName,
+  encryptMedia,
+  type PlainUploadReason,
+  readFileBytes,
+  wrapForUpload,
+} from "../../lib/e2ee/media";
+import { e2eeSessionKey } from "../../lib/e2ee/session";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
 import {
@@ -36,8 +47,15 @@ import {
   getPreviewStyles,
   isValidFormattingType,
 } from "../../lib/messageFormatter";
+import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
+import { sendEncryptedMedia } from "../../store/handlers/e2ee";
+import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
+import {
+  pmEncryptionPosture,
+  routeOutgoingPM,
+} from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
 import type { BotCommand, Message as MessageType, User } from "../../types";
 import { MessageItem } from "../message/MessageItem";
@@ -49,12 +67,13 @@ import { BotToolsTray } from "../ui/BotToolsTray";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
+import { E2EERequestBanner } from "../ui/E2EERequestBanner";
+import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector from "../ui/GifSelector";
 import DiscoverGrid from "../ui/HomeScreen";
-import { ImagePreviewModal } from "../ui/ImagePreviewModal";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
@@ -71,6 +90,8 @@ import {
 import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
+import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
+import { UploadPreviewModal } from "../ui/UploadPreviewModal";
 import {
   type UploadJob,
   UploadProgressOverlay,
@@ -166,13 +187,13 @@ export const ChatArea: React.FC<{
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState<{
+  const [pendingUpload, setPendingUpload] = useState<{
     isOpen: boolean;
-    file: File | null;
+    files: File[];
     previewUrl: string | null;
   }>({
     isOpen: false,
-    file: null,
+    files: [],
     previewUrl: null,
   });
   // True while a file is being dragged over the input area, so we can
@@ -185,6 +206,16 @@ export const ChatArea: React.FC<{
   // PRIVMSG with the URLs joined.
   const [uploadJobs, setUploadJobs] = useState<UploadJob[]>([]);
   const uploadAbortsRef = useRef<Map<string, AbortController>>(new Map());
+  // Files held back because sending them would break the lock this
+  // conversation is showing. Released only by an explicit confirmation.
+  const [pendingPlainUpload, setPendingPlainUpload] = useState<{
+    files: File[];
+    reason: PlainUploadReason;
+    // The upload path reads the current selection, so the conversation the
+    // warning was raised about is pinned here. Otherwise a confirmation aimed
+    // at one peer would send to whichever chat is open when it is answered.
+    nick: string;
+  } | null>(null);
   const [isServerNoticesPoppedOut, setIsServerNoticesPoppedOut] =
     useState(false);
   const [serverNoticesPopupPosition, setServerNoticesPopupPosition] = useState({
@@ -326,6 +357,8 @@ export const ChatArea: React.FC<{
   const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
   const globalSettings = useStore((state) => state.globalSettings);
+  const e2eeVerifyTarget = useStore((state) => state.e2eeVerifyTarget);
+  const closeE2EEVerify = useStore((state) => state.closeE2EEVerify);
   const messages = useStore((state) => state.messages);
   const toggleMemberList = useStore((state) => state.toggleMemberList);
   const openPrivateChat = useStore((state) => state.openPrivateChat);
@@ -952,7 +985,9 @@ export const ChatArea: React.FC<{
     }
 
     channelListRefs.current.get(channelKey)?.setAtBottom();
-    sendMessage(messageTextRef.current);
+    // Withheld under an engaged-but-not-ready lock: keep the draft so the user
+    // doesn't lose what they typed when nothing was actually sent.
+    if (sendMessage(messageTextRef.current) === "withheld") return;
 
     applyText("");
     setAutocompleteInputText("");
@@ -974,7 +1009,10 @@ export const ChatArea: React.FC<{
   // uploads), kicks off N uploads in parallel, surfaces per-file
   // progress, and on full success sends a single PRIVMSG containing
   // all the resulting URLs separated by spaces.
-  const handleFilesUpload = async (files: File[]) => {
+  const handleFilesUpload = async (
+    files: File[],
+    confirmedForNick: string | null = null,
+  ): Promise<void> => {
     if (!selectedServerId || files.length === 0) return;
     // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
     // fall back to the vendor token-authenticated obby.world/FILEHOST.
@@ -983,6 +1021,10 @@ export const ChatArea: React.FC<{
     if (!tokenlessEndpoint && !filehostUrl) return;
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
     if (!target) return;
+    // A confirmation names the conversation it was given for. Answering it
+    // after moving to another chat must not redirect the files there.
+    if (confirmedForNick !== null && confirmedForNick !== target) return;
+    const plainUploadConfirmed = confirmedForNick !== null;
 
     // The token path pulls the in-house policy and mints one single-use
     // draft/authtoken Bearer per file (the IRCd burns each on validate, so
@@ -1008,15 +1050,75 @@ export const ChatArea: React.FC<{
       }
     }
 
+    // Attachments encrypt only in a live Obby PM: OTR has no frame for them,
+    // and a channel has no session at all. A conversation whose lock is
+    // engaged but not ready withholds the upload for the same reason it
+    // withholds text, since the bytes reach the host before any message does.
+    const posture = selectedPrivateChat
+      ? pmEncryptionPosture(selectedServerId, selectedPrivateChat.username)
+      : "plain";
+    if (posture === "blocked" && selectedPrivateChat) {
+      // "Blocked" covers three different states and only one of them is worth
+      // waiting out, so the row says which one the conversation is in.
+      const blockedStatus =
+        useStore.getState().e2eeSessions[
+          e2eeSessionKey(selectedServerId, selectedPrivateChat.username)
+        ]?.status;
+      injectSystemNotice(
+        selectedServerId,
+        selectedPrivateChat.username,
+        blockedStatus === "key-changed"
+          ? t`File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted.`
+          : blockedStatus === "error"
+            ? t`File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted.`
+            : t`File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption.`,
+      );
+      return;
+    }
+    const encryptHere = posture === "encrypt" && !!selectedPrivateChat;
+    // Each file decides for itself, so one file past the size ceiling cannot
+    // quietly drag the rest of the batch into the clear.
+    const plainFiles = encryptHere
+      ? files.filter((f) => !canEncryptMedia(f.size))
+      : posture === "unencryptable"
+        ? files
+        : [];
+    if (plainFiles.length > 0 && !plainUploadConfirmed) {
+      setPendingPlainUpload({
+        files,
+        reason: encryptHere ? "too-large" : "scheme",
+        nick: target,
+      });
+      return;
+    }
+    const encryptTarget =
+      encryptHere && selectedPrivateChat
+        ? { nick: selectedPrivateChat.username }
+        : null;
+
     // Build the job list in one go so the progress strip appears
     // immediately, before any network roundtrip.
-    const initialJobs: UploadJob[] = files.map((f) => ({
-      id: uuidv4(),
-      file: f,
-      loaded: 0,
-      total: f.size,
-      status: "pending",
-    }));
+    const initialJobs: UploadJob[] = files.map((f) => {
+      const encrypts = !!encryptTarget && canEncryptMedia(f.size);
+      // The badge is for conversations that show a lock: a channel or an
+      // unencrypted PM has nothing to contradict, so it stays off there.
+      const underLock = encryptHere || posture === "unencryptable";
+      return {
+        id: uuidv4(),
+        file: f,
+        loaded: 0,
+        total: f.size,
+        status: "pending" as const,
+        encrypted: underLock ? encrypts : undefined,
+        plainReason: !underLock
+          ? undefined
+          : posture === "unencryptable"
+            ? ("scheme" as const)
+            : encrypts
+              ? undefined
+              : ("too-large" as const),
+      };
+    });
     setUploadJobs((prev) => [...prev, ...initialJobs]);
 
     const updateJob = (id: string, patch: Partial<UploadJob>) =>
@@ -1027,29 +1129,59 @@ export const ChatArea: React.FC<{
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
       initialJobs.map(async (job, jobIdx) => {
-        // Cheap client-side validation -- saves a server round-trip
-        // and gives the user immediate feedback.
-        const validationError = validateFileAgainstInfo(job.file, info);
-        if (validationError) {
-          updateJob(job.id, {
-            status: "failed",
-            error: validationError,
-          });
-          return null;
-        }
         const ac = new AbortController();
         uploadAbortsRef.current.set(job.id, ac);
         updateJob(job.id, { status: "uploading" });
         try {
           const onProgress = (loaded: number, total: number) =>
             updateJob(job.id, { loaded, total });
+          // Ciphertext uploads under its own extension and header: the real
+          // name and type travel in the descriptor, where the host can't read
+          // them, and nothing on the host tries to re-encode the bytes.
+          const media =
+            encryptTarget && canEncryptMedia(job.file.size)
+              ? encryptMedia(await readFileBytes(job.file))
+              : null;
+          const upload = media
+            ? new File(
+                // Handed over as the view itself: File copies it once anyway,
+                // and slicing first would hold a second full copy meanwhile.
+                [wrapForUpload(media.ciphertext)],
+                ciphertextFileName(),
+                { type: "application/octet-stream" },
+              )
+            : job.file;
+          // Checked against what actually goes to the host, which for an
+          // encrypted attachment is the ciphertext under its own extension.
+          // Checking the original would clear a jpeg the host never sees and
+          // then fail on the upload it does.
+          let validationError = validateFileAgainstInfo(upload, info);
+          if (validationError && filehostUrl) {
+            // The policy is a server setting that can change while this tab is
+            // open, so a refusal is re-checked against a fresh copy before it
+            // stops an upload the host would now take.
+            const current = await fetchUploadInfo(filehostUrl, {
+              refresh: true,
+            });
+            validationError = validateFileAgainstInfo(upload, current);
+          }
+          if (validationError) {
+            uploadAbortsRef.current.delete(job.id);
+            updateJob(job.id, {
+              status: "failed",
+              error: media
+                ? t`This host does not accept ${CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is.`
+                : validationError,
+            });
+            return null;
+          }
           const url = tokenlessEndpoint
-            ? await uploadFileTokenless(job.file, {
+            ? await uploadFileTokenless(upload, {
                 endpoint: tokenlessEndpoint,
                 signal: ac.signal,
                 onProgress,
               })
-            : await uploadFile(job.file, {
+            : await uploadFile(upload, {
                 // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when tokenlessEndpoint isn't (guarded above)
                 filehostUrl: filehostUrl!,
                 bearerToken: tokens[jobIdx],
@@ -1063,7 +1195,7 @@ export const ChatArea: React.FC<{
             url,
           });
           uploadAbortsRef.current.delete(job.id);
-          return url;
+          return media ? buildMediaDescriptor(url, media, job.file) : url;
         } catch (err) {
           uploadAbortsRef.current.delete(job.id);
           const msg = typeof err === "string" ? err : String(err);
@@ -1073,40 +1205,68 @@ export const ChatArea: React.FC<{
       }),
     );
 
-    const urls = results.filter((u): u is string => !!u);
-    if (urls.length === 0) {
-      // All failed: leave the strip up so the user sees error reasons.
-      return;
+    let anyFailed = results.some((r) => r === null);
+
+    // Encrypted attachments each become their own frame, since the descriptor
+    // carries the file key and is never message text.
+    if (encryptTarget) {
+      for (const [index, result] of results.entries()) {
+        if (!result || typeof result === "string") continue;
+        // The descriptor holds the only copy of the file key, so a session that
+        // ended mid-upload leaves unreadable bytes on the host. Say so on the
+        // row rather than reporting a delivery that never happened.
+        if (!sendEncryptedMedia(selectedServerId, encryptTarget.nick, result)) {
+          anyFailed = true;
+          updateJob(initialJobs[index].id, {
+            status: "failed",
+            error: t`Encryption ended before this file was sent. It was not delivered.`,
+          });
+        }
+      }
     }
 
-    // Send a single PRIVMSG carrying all successful URLs space-joined.
-    // Channels echo back; PMs need a local insert so the user sees
-    // their own message immediately.
-    const line = urls.join(" ");
-    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
-    if (selectedPrivateChat && currentUser) {
-      const outgoing = {
-        id: uuidv4(),
-        content: line,
-        timestamp: new Date(),
-        userId: currentUser.username || currentUser.id,
-        channelId: selectedPrivateChat.id,
-        serverId: selectedServerId,
-        type: "message" as const,
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-      };
-      useStore.getState().addMessage(outgoing);
+    // Encrypted attachments have already been delivered as their own frames, so
+    // only plain uploads leave a URL to post.
+    const urls = results.filter((u): u is string => typeof u === "string");
+    if (urls.length > 0) {
+      const line = urls.join(" ");
+      const encrypted =
+        !!selectedPrivateChat &&
+        routeOutgoingPM(
+          selectedServerId,
+          selectedPrivateChat.username,
+          line,
+        ) !== "none";
+      if (!encrypted) {
+        ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
+        if (selectedPrivateChat && currentUser) {
+          const outgoing = {
+            id: uuidv4(),
+            content: line,
+            timestamp: new Date(),
+            userId: currentUser.username || currentUser.id,
+            channelId: selectedPrivateChat.id,
+            serverId: selectedServerId,
+            type: "message" as const,
+            reactions: [],
+            replyMessage: null,
+            mentioned: [],
+          };
+          useStore.getState().addMessage(outgoing);
+        }
+      }
     }
 
-    // Clear the strip after a short pause so the user can see
-    // "done" before it disappears.
-    setTimeout(() => {
-      setUploadJobs((prev) =>
-        prev.filter((j) => !initialJobs.find((i) => i.id === j.id)),
-      );
-    }, 1500);
+    // Clear the strip after a pause so the user can see the outcome first. A
+    // failure is worth reading, so it gets longer than a plain "done".
+    setTimeout(
+      () => {
+        setUploadJobs((prev) =>
+          prev.filter((j) => !initialJobs.some((i) => i.id === j.id)),
+        );
+      },
+      anyFailed ? 8000 : 1500,
+    );
   };
 
   const cancelUploadJob = (id: string) => {
@@ -1115,23 +1275,26 @@ export const ChatArea: React.FC<{
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
-  // Shared by the file picker and drag-and-drop: a single image keeps the
-  // confirm-then-send preview so the user can eyeball it first; anything
-  // else goes straight to the parallel uploader.
+  // An upload is sent the moment it finishes and IRC has no unsend, so every
+  // path that picks a file confirms first.
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
-    if (files.length === 1 && files[0].type.startsWith("image/")) {
-      const previewUrl = URL.createObjectURL(files[0]);
-      setImagePreview({ isOpen: true, file: files[0], previewUrl });
-      return;
-    }
-    handleFilesUpload(files);
+    const previewUrl =
+      files.length === 1 && files[0].type.startsWith("image/")
+        ? URL.createObjectURL(files[0])
+        : null;
+    setPendingUpload({ isOpen: true, files, previewUrl });
+  };
+
+  const closePendingUpload = () => {
+    if (pendingUpload.previewUrl) URL.revokeObjectURL(pendingUpload.previewUrl);
+    setPendingUpload({ isOpen: false, files: [], previewUrl: null });
   };
 
   // Dropping a file onto the textarea otherwise triggers the browser
   // default, which pastes the local file path as text. Intercept it on the
-  // input container, mirror the file picker, and ignore non-file drags
-  // (e.g. dragging selected text) so normal text DnD still works.
+  // input container and ignore non-file drags (e.g. dragging selected text)
+  // so normal text DnD still works.
   const dragHasFiles = (e: React.DragEvent) =>
     Array.from(e.dataTransfer.types).includes("Files");
 
@@ -1143,9 +1306,9 @@ export const ChatArea: React.FC<{
   };
 
   const handleDragOver = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
+    if (!dragHasFiles(e)) return;
     e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
+    e.dataTransfer.dropEffect = canUpload ? "copy" : "none";
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -1155,39 +1318,57 @@ export const ChatArea: React.FC<{
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
+    if (!dragHasFiles(e)) return;
     e.preventDefault();
     dragDepthRef.current = 0;
     setIsDraggingFile(false);
+    if (!canUpload) return;
     handleSelectedFiles(Array.from(e.dataTransfer.files));
+  };
+
+  // A file on the clipboard is the same gesture as dropping one. A copy from a
+  // file manager carries the name as text too, so the files decide.
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = Array.from(e.clipboardData.files);
+    if (!canUpload || files.length === 0) return;
+    e.preventDefault();
+    handleSelectedFiles(files);
   };
 
   const handleGifSend = (gifUrl: string) => {
     // Send the GIF URL directly to the current channel/user
     const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
+    if (!target || !selectedServerId) return;
+    if (
+      selectedPrivateChat &&
+      routeOutgoingPM(
+        selectedServerId,
+        selectedPrivateChat.username,
+        gifUrl,
+      ) !== "none"
+    ) {
+      return;
+    }
 
-    if (target && selectedServerId) {
-      // Send via IRC
-      ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
+    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
 
-      // Add to store for immediate display (only for private chats, channels echo back)
-      if (selectedPrivateChat && currentUser) {
-        const outgoingMessage = {
-          id: uuidv4(),
-          content: gifUrl,
-          timestamp: new Date(),
-          userId: currentUser.username || currentUser.id,
-          channelId: selectedPrivateChat.id,
-          serverId: selectedServerId,
-          type: "message" as const,
-          reactions: [],
-          replyMessage: null,
-          mentioned: [],
-        };
+    // Add to store for immediate display (only for private chats, channels echo back)
+    if (selectedPrivateChat && currentUser) {
+      const outgoingMessage = {
+        id: uuidv4(),
+        content: gifUrl,
+        timestamp: new Date(),
+        userId: currentUser.username || currentUser.id,
+        channelId: selectedPrivateChat.id,
+        serverId: selectedServerId,
+        type: "message" as const,
+        reactions: [],
+        replyMessage: null,
+        mentioned: [],
+      };
 
-        const { addMessage } = useStore.getState();
-        addMessage(outgoingMessage);
-      }
+      const { addMessage } = useStore.getState();
+      addMessage(outgoingMessage);
     }
   };
 
@@ -2159,6 +2340,20 @@ export const ChatArea: React.FC<{
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
+              {selectedPrivateChat && selectedServerId && (
+                <E2EERequestBanner
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
+              )}
+              {e2eeVerifyTarget && (
+                <E2EEVerifyModal
+                  isOpen
+                  serverId={e2eeVerifyTarget.serverId}
+                  nick={e2eeVerifyTarget.nick}
+                  onClose={closeE2EEVerify}
+                />
+              )}
               {isDraggingFile && (
                 <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
                   <span className="text-discord-text-normal font-medium flex items-center">
@@ -2198,6 +2393,7 @@ export const ChatArea: React.FC<{
                   onClick={handleInputClick}
                   onKeyUp={handleInputKeyUp}
                   onKeyDown={handleKeyDown}
+                  onPaste={handlePaste}
                   onBeforeInput={onBeforeInputGuard}
                   autoCorrect={isMobileInput ? "on" : "off"}
                   autoCapitalize={isMobileInput ? "sentences" : "off"}
@@ -2717,37 +2913,15 @@ export const ChatArea: React.FC<{
           username={selectedProfileUsername}
         />
       )}
-      {/* Image Preview Dialog */}
-      <ImagePreviewModal
-        isOpen={imagePreview.isOpen}
-        file={imagePreview.file}
-        previewUrl={imagePreview.previewUrl}
-        onCancel={() => {
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
-        }}
+      <UploadPreviewModal
+        isOpen={pendingUpload.isOpen}
+        files={pendingUpload.files}
+        previewUrl={pendingUpload.previewUrl}
+        target={selectedChannel?.name ?? selectedPrivateChat?.username ?? ""}
+        onCancel={() => closePendingUpload()}
         onUpload={() => {
-          if (imagePreview.file) {
-            // Route through the new progress-aware path so single-file
-            // uploads also get the "uploading…" overlay.
-            handleFilesUpload([imagePreview.file]);
-          }
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
+          void handleFilesUpload(pendingUpload.files);
+          closePendingUpload();
         }}
       />
       {/* Popped out server notices window */}
@@ -2798,7 +2972,7 @@ export const ChatArea: React.FC<{
                       previousMessage.userId !== message.userId ||
                       new Date(message.timestamp).getTime() -
                         new Date(previousMessage.timestamp).getTime() >
-                        5 * 60 * 1000;
+                        GROUP_WINDOW_MS;
 
                     return (
                       <MessageItem
@@ -2844,6 +3018,20 @@ export const ChatArea: React.FC<{
           </div>,
           document.body,
         )}
+      {pendingPlainUpload && (
+        <UnencryptedUploadConfirmModal
+          isOpen={true}
+          files={pendingPlainUpload.files}
+          reason={pendingPlainUpload.reason}
+          nick={pendingPlainUpload.nick}
+          onConfirm={() => {
+            const { files, nick } = pendingPlainUpload;
+            setPendingPlainUpload(null);
+            void handleFilesUpload(files, nick);
+          }}
+          onCancel={() => setPendingPlainUpload(null)}
+        />
+      )}
       {paramModal &&
         selectedServerId &&
         createPortal(

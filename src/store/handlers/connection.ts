@@ -55,6 +55,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
       readyProcessedServers.delete(serverId);
+      // e2ee ratchet keys live only in memory and can't survive a dropped
+      // connection, so tear the sessions down rather than keep showing a lock
+      // that no longer protects anything. Encryption resumes after reconnecting,
+      // which is why this is not the same call the user's End encryption makes.
+      store.getState().dropE2EESessionsForServer(serverId);
     }
 
     store.setState((state) => {

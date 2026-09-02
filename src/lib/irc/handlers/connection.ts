@@ -88,11 +88,11 @@ export function handleRplWelcome(
 
   ctx.startWebSocketPing(serverId);
 
+  // Registration must complete before these go out: bytes sent while still
+  // unregistered count against the server's handshake-flood limit, which bans
+  // the IP when a client with many channels reconnects.
   const server = ctx.servers.get(serverId);
   if (server && server.channels.length > 0) {
-    console.log(
-      `Rejoining ${server.channels.length} channels after reconnection`,
-    );
     for (const channel of server.channels) {
       ctx.sendRaw(serverId, `JOIN ${channel.name}`);
     }
@@ -191,13 +191,8 @@ export function handleCap(
   ) {
     subcommand = parv[i++];
   }
-  // A `*` before the caps means another line of the same reply follows. It
-  // applies to ACK as well as LS: a server splitting one CAP REQ answer across
-  // lines must not read as several answers, or the pending-request count runs
-  // out early and CAP END goes out mid-SASL.
-  const hasMore = parv[i] === "*";
-  const isFinal = subcommand === "LS" && !hasMore;
-  if (hasMore) i++;
+  const isFinal = subcommand === "LS" && parv[i] !== "*";
+  if (parv[i] === "*") i++;
 
   if (trailing) {
     caps = trailing;
@@ -210,7 +205,7 @@ export function handleCap(
 
   if (subcommand === "LS") ctx.onCapLs(serverId, caps, isFinal);
   else if (subcommand === "ACK") {
-    ctx.onCapAck(serverId, caps, !hasMore);
+    ctx.onCapAck(serverId, caps);
   } else if (subcommand === "NAK") {
     ctx.sendCapEnd(serverId);
     ctx.capNegotiationComplete.set(serverId, true);
