@@ -154,7 +154,7 @@ const profileSettings: SettingDefinition[] = [
     description: msg`Message shown when you disconnect from the server`,
     type: "text",
     defaultValue: "",
-    placeholder: msg`ObsidianIRC - Bringing IRC to the future`,
+    placeholder: msg`Obby - Bringing IRC to the future`,
     searchKeywords: ["quit", "disconnect", "message", "leave"],
     priority: 10,
   },

@@ -1073,7 +1073,7 @@ export class VoiceClient {
         sink = document.createElement("audio");
         sink.autoplay = true;
         sink.style.display = "none";
-        sink.setAttribute("data-obsidian-voice-peer", nick);
+        sink.setAttribute("data-obby-voice-peer", nick);
         document.body.appendChild(sink);
         this.memberAudioSinks.set(nick, sink);
       }
@@ -1338,7 +1338,7 @@ function getSharedAudioSink(): HTMLAudioElement {
   const el = document.createElement("audio");
   el.autoplay = true;
   el.style.display = "none";
-  el.setAttribute("data-obsidian-voice", "true");
+  el.setAttribute("data-obby-voice", "true");
   document.body.appendChild(el);
   sharedAudioSink = el;
   return el;

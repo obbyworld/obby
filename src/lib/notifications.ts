@@ -123,7 +123,7 @@ export const showMentionNotification = async (
       {
         body:
           message.length > 100 ? `${message.substring(0, 100)}...` : message,
-        icon: "/images/obsidian.png",
+        icon: "/images/obby.png",
         tag: `mention-${serverId}-${channelName}`,
         requireInteraction: false,
       },

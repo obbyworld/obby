@@ -35,7 +35,7 @@ jobs:
       draft: "false"
       prerelease: ${{ github.ref_type != 'tag' && 'true' || 'false' }}
       release_body: ${{ steps.release-notes.outputs.release_body }}
-      name: ObsidianIRC ${{ steps.package-version.outputs.tag_name }}
+      name: Obby ${{ steps.package-version.outputs.tag_name }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -113,16 +113,16 @@ jobs:
 
           nix run .#update-npm-deps-hash
 
-          if git diff --exit-code --quiet -- nix/obsidianirc.nix; then
+          if git diff --exit-code --quiet -- nix/obby.nix; then
             echo "npmDeps hash on main is already up to date."
             exit 0
           fi
 
-          nix flake check && nix build .#obsidianirc --no-link --print-build-logs
+          nix flake check && nix build .#obby --no-link --print-build-logs
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add nix/obsidianirc.nix
+          git add nix/obby.nix
           git commit -m "build(nix): update npmDeps hash [skip ci]"
           git push origin main
 
@@ -216,7 +216,7 @@ jobs:
                 echo "Embedding update info in $appimage"
                 # Embed update URL at ELF .upd_info offset (33651 bytes) per AppImageUpdate spec.
                 # Format: gh-releases-zsync|ORG|REPO|CHANNEL|FILENAME_GLOB
-                printf 'gh-releases-zsync|ObsidianIRC|ObsidianIRC|latest|ObsidianIRC_*_amd64.AppImage.zsync' | \
+                printf 'gh-releases-zsync|obbyworld|obby|latest|Obby_*_amd64.AppImage.zsync' | \
                   dd of="$appimage" bs=1 seek=33651 count=512 conv=notrunc
               fi
             done
@@ -266,7 +266,7 @@ jobs:
 
       - name: Generate zsync files
         run: |
-          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
+          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
           if [ -f "$APPIMAGE_PATH" ]; then
             echo "Generating zsync for $APPIMAGE_PATH"
             zsyncmake -o "${APPIMAGE_PATH}.zsync" "$APPIMAGE_PATH"
@@ -274,12 +274,12 @@ jobs:
 
       - name: Embed update information in AppImage
         run: |
-          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
+          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
           if [ -f "$APPIMAGE_PATH" ]; then
             echo "Embedding update info in $APPIMAGE_PATH"
             # Embed update URL at ELF .upd_info offset (33651 bytes) per AppImageUpdate spec.
             # Format: gh-releases-zsync|ORG|REPO|CHANNEL|FILENAME_GLOB
-            printf 'gh-releases-zsync|ObsidianIRC|ObsidianIRC|latest|ObsidianIRC_*_aarch64.AppImage.zsync' | \
+            printf 'gh-releases-zsync|obbyworld|obby|latest|Obby_*_aarch64.AppImage.zsync' | \
               dd of="$APPIMAGE_PATH" bs=1 seek=33651 count=512 conv=notrunc
           fi
 
@@ -293,10 +293,10 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./src-tauri/target/release/bundle/deb/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_arm64.deb
-            ./src-tauri/target/release/bundle/rpm/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-1.aarch64.rpm
-            ./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage
-            ./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage.zsync
+            ./src-tauri/target/release/bundle/deb/Obby_${{ needs.collect-version.outputs.current_version}}_arm64.deb
+            ./src-tauri/target/release/bundle/rpm/Obby-${{ needs.collect-version.outputs.current_version}}-1.aarch64.rpm
+            ./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage
+            ./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage.zsync
 
   publish-android:
     runs-on: ubuntu-latest
@@ -372,14 +372,14 @@ jobs:
 
       - name: Rename APK and AAB file
         run: |
-          mv ./src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk ./src-tauri/gen/android/app/build/outputs/apk/universal/release/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.apk
-          mv ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release-signed.aab ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.aab
+          mv ./src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk ./src-tauri/gen/android/app/build/outputs/apk/universal/release/Obby-${{ needs.collect-version.outputs.current_version}}.apk
+          mv ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release-signed.aab ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version}}.aab
 
       - name: Upload signed AAB artifact for Google Play
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: signed-aab
-          path: ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}.aab
+          path: ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version }}.aab
           retention-days: 1
 
       - name: Publish
@@ -392,8 +392,8 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./src-tauri/gen/android/app/build/outputs/apk/universal/release/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.apk
-            ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.aab
+            ./src-tauri/gen/android/app/build/outputs/apk/universal/release/Obby-${{ needs.collect-version.outputs.current_version}}.apk
+            ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version}}.aab
 
   publish-android-google-play-internal:
     runs-on: ubuntu-latest
@@ -553,10 +553,10 @@ jobs:
         with:
           serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.obsidianirc.dev
-          releaseFiles: ./ObsidianIRC-${{ needs.collect-version.outputs.current_version }}.aab
+          releaseFiles: ./Obby-${{ needs.collect-version.outputs.current_version }}.aab
           track: production
           status: completed
-          releaseName: ObsidianIRC v${{ needs.collect-version.outputs.current_version }}
+          releaseName: Obby v${{ needs.collect-version.outputs.current_version }}
 
   publish-ios:
     runs-on: macos-15
@@ -607,12 +607,12 @@ jobs:
       - name: Archive iOS (unsigned)
         run: |
           xcodebuild \
-            -project src-tauri/gen/apple/ObsidianIRC.xcodeproj \
-            -scheme ObsidianIRC_iOS \
+            -project src-tauri/gen/apple/Obby.xcodeproj \
+            -scheme Obby_iOS \
             -sdk iphoneos \
             -configuration release \
             -destination 'generic/platform=iOS' \
-            -archivePath ${{ runner.temp }}/ObsidianIRC.xcarchive \
+            -archivePath ${{ runner.temp }}/Obby.xcarchive \
             clean archive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -620,7 +620,7 @@ jobs:
 
       - name: Package unsigned .ipa
         run: |
-          ARCHIVE_PATH="${{ runner.temp }}/ObsidianIRC.xcarchive"
+          ARCHIVE_PATH="${{ runner.temp }}/Obby.xcarchive"
           WORK_DIR="${{ runner.temp }}/ipa-build"
 
           # Create working directory
@@ -645,15 +645,15 @@ jobs:
 
           # Create IPA
           cd "$WORK_DIR"
-          zip -r -0 -y ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload SwiftSupport 2>/dev/null || \
-            zip -r -0 -y ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload
+          zip -r -0 -y Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload SwiftSupport 2>/dev/null || \
+            zip -r -0 -y Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload
 
           # Move to expected location
-          mv ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa "${{ runner.temp }}/"
+          mv Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa "${{ runner.temp }}/"
 
           # Verify IPA structure
           echo "IPA contents:"
-          unzip -l "${{ runner.temp }}/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa" | head -n 20
+          unzip -l "${{ runner.temp }}/Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa" | head -n 20
 
       - name: Publish
         uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
@@ -665,7 +665,7 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ${{ runner.temp }}/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa
+            ${{ runner.temp }}/Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa
 
   publish-web:
     runs-on: ubuntu-latest
@@ -689,7 +689,7 @@ jobs:
       - name: Build
         run: |
           npm run build
-          zip -r ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-web.zip ./dist
+          zip -r Obby-${{ needs.collect-version.outputs.current_version}}-web.zip ./dist
 
       - name: Publish
         uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
@@ -701,4 +701,4 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-web.zip
+            ./Obby-${{ needs.collect-version.outputs.current_version}}-web.zip
