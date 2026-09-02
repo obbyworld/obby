@@ -8,7 +8,11 @@ export default defineConfig({
     {
       path: "<rootDir>/src/locales/{locale}/messages",
       include: ["<rootDir>/src"],
-      exclude: ["**/node_modules/**", "<rootDir>/src/locales/**"],
+      exclude: [
+        "**/node_modules/**",
+        "<rootDir>/src/locales/**",
+        "<rootDir>/src/lib/otr/vendor/**",
+      ],
     },
   ],
   format: formatter({ lineNumbers: false }),

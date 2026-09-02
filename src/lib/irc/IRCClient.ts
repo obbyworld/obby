@@ -15,9 +15,15 @@ import type {
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
 import { isChannelTarget, parseMessageTags } from "../ircUtils";
+import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
 import type { IRCClientContext } from "./IRCClientContext";
+import {
+  chunkForMultiline,
+  type MultilineLimits,
+  parseMultilineLimits,
+} from "./multiline";
 
 // Namespace UUID for generating deterministic channel/chat IDs
 const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -585,6 +591,15 @@ export interface EventMap {
 type EventKey = keyof EventMap;
 type EventCallback<K extends EventKey> = (data: EventMap[K]) => void;
 
+// A capability value carries its own `=` (`draft/multiline=max-bytes=5250,max-lines=15`),
+// so the name ends at the first one and the rest is the value.
+function splitCapToken(token: string): { cap: string; value?: string } {
+  const eq = token.indexOf("=");
+  return eq === -1
+    ? { cap: token }
+    : { cap: token.slice(0, eq), value: token.slice(eq + 1) };
+}
+
 export class IRCClient implements IRCClientContext {
   private sockets: Map<string, ISocket> = new Map();
   servers: Map<string, Server> = new Map();
@@ -598,7 +613,10 @@ export class IRCClient implements IRCClientContext {
   private saslCredentials: Map<string, { username: string; password: string }> =
     new Map();
   private pendingConnections: Map<string, Promise<Server>> = new Map();
-  private pendingCapReqs: Map<string, number> = new Map(); // Track how many CAP REQ batches are pending ACK
+  // Requested capabilities still awaiting an ACK. A long CAP REQ is split
+  // across batches and the server may ACK in arbitrary pieces, so completion
+  // is tracked by name rather than by counting ACK lines.
+  private pendingCapReqs: Map<string, Set<string>> = new Map();
   // soju.im/bouncer-networks BIND: when a serverId is mapped here, the
   // next CAP END for that server is preceded by a `BOUNCER BIND <netid>`
   // line so the connection lands inside the named upstream network's
@@ -914,15 +932,6 @@ export class IRCClient implements IRCClientContext {
           serverId: server.id,
           connectionState: "connected",
         });
-
-        // Rejoin channels if this is a reconnection
-        if (server.channels.length > 0) {
-          for (const channel of server.channels) {
-            if (serverId) {
-              this.sendRaw(serverId, `JOIN ${channel.name}`);
-            }
-          }
-        }
 
         // Don't start ping timer here - wait for 001 welcome message
         // to ensure connection is fully established before sending PINGs
@@ -1438,54 +1447,40 @@ export class IRCClient implements IRCClientContext {
     target: string,
     lines: string[],
   ): void {
-    const batchId = `ml_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    // Start multiline batch
-    this.sendRaw(serverId, `BATCH +${batchId} draft/multiline ${target}`);
-
-    // Send each line as a separate PRIVMSG with batch tag
-    // Handle long lines by splitting them if needed
-    for (const line of lines) {
-      const splitLines = this.splitLongLine(line);
-      for (const splitLine of splitLines) {
-        this.sendRaw(
-          serverId,
-          `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-        );
-      }
-    }
-
-    // End batch
-    this.sendRaw(serverId, `BATCH -${batchId}`);
+    this.sendMultiline(
+      serverId,
+      target,
+      // preserveBoundarySpace, or concat rejoins "AAA BBB CCC" as "AAA BBBCCC".
+      lines.map((line) => splitLongMessage(line, target, true)),
+    );
   }
 
-  // Split long lines to respect IRC message length limits (512 bytes)
-  private splitLongLine(text: string, maxLength = 450): string[] {
-    if (!text) return [""];
-
-    // Account for IRC overhead (PRIVMSG + target + formatting)
-    // Conservative limit to account for formatting codes and IRC overhead
-    const lines: string[] = [];
-    let remaining = text;
-
-    while (remaining.length > maxLength) {
-      // Try to split at word boundaries
-      let splitIndex = maxLength;
-      const lastSpace = remaining.lastIndexOf(" ", maxLength);
-      if (lastSpace > maxLength * 0.7) {
-        // Don't split too early
-        splitIndex = lastSpace;
+  sendMultiline(
+    serverId: string,
+    target: string,
+    lines: readonly (readonly string[])[],
+    openTags = "",
+  ): void {
+    for (const batch of chunkForMultiline(
+      lines,
+      this.multilineLimits(serverId),
+    )) {
+      const batchId = createBatchId();
+      this.sendRaw(
+        serverId,
+        `${openTags}BATCH +${batchId} draft/multiline ${target}`,
+      );
+      for (const parts of batch) {
+        parts.forEach((part, index) => {
+          const concat = index > 0 ? ";draft/multiline-concat" : "";
+          this.sendRaw(
+            serverId,
+            `@batch=${batchId}${concat} PRIVMSG ${target} :${part}`,
+          );
+        });
       }
-
-      lines.push(remaining.substring(0, splitIndex));
-      remaining = remaining.substring(splitIndex).trim();
+      this.sendRaw(serverId, `BATCH -${batchId}`);
     }
-
-    if (remaining) {
-      lines.push(remaining);
-    }
-
-    return lines.length > 0 ? lines : [""];
   }
 
   sendTyping(serverId: string, target: string, isActive: boolean): void {
@@ -2015,8 +2010,17 @@ export class IRCClient implements IRCClientContext {
 
     const caps = cliCaps.split(" ");
     for (const c of caps) {
-      const [cap, value] = c.split("=", 2);
+      const { cap, value } = splitCapToken(c);
       accumulated.add(cap);
+      if (value) {
+        const server = this.servers.get(serverId);
+        if (server) {
+          server.capabilityValues = {
+            ...(server.capabilityValues ?? {}),
+            [cap]: value,
+          };
+        }
+      }
       if (cap === "sasl" && value) {
         const mechanisms = value.split(",");
         this.saslMechanisms.set(serverId, mechanisms);
@@ -2050,7 +2054,6 @@ export class IRCClient implements IRCClientContext {
         let currentBatch: string[] = [];
         const baseLength = "CAP REQ :".length + 2; // +2 for \r\n
         let currentLength = baseLength;
-        let batchCount = 0;
 
         for (const cap of capsToRequest) {
           const capLength = cap.length + (currentBatch.length > 0 ? 1 : 0); // +1 for space if not first
@@ -2060,7 +2063,6 @@ export class IRCClient implements IRCClientContext {
             // Send current batch
             const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
             this.sendRaw(serverId, reqMessage);
-            batchCount++;
             currentBatch = [];
             currentLength = baseLength;
           }
@@ -2073,11 +2075,9 @@ export class IRCClient implements IRCClientContext {
         if (currentBatch.length > 0) {
           const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
           this.sendRaw(serverId, reqMessage);
-          batchCount++;
         }
 
-        // Track how many CAP REQ batches we sent
-        this.pendingCapReqs.set(serverId, batchCount);
+        this.pendingCapReqs.set(serverId, new Set(capsToRequest));
 
         // Set a timeout to send CAP END if server doesn't respond
         setTimeout(() => {
@@ -2155,55 +2155,47 @@ export class IRCClient implements IRCClientContext {
     // Trigger the original event for compatibility
     this.triggerEvent("CAP ACK", { serverId, cliCaps });
 
-    // Store the acknowledged capabilities
+    // Values are tracked separately (capabilityValues); every consumer of
+    // `capabilities` matches on the bare name, so store names only.
+    const ackedNames = cliCaps
+      .split(" ")
+      .filter(Boolean)
+      .map((cap) => cap.split("=", 1)[0]);
+
     const server = this.servers.get(serverId);
     if (server) {
-      const caps = cliCaps.split(" ");
       if (!server.capabilities) {
         server.capabilities = [];
       }
-      for (const cap of caps) {
+      for (const cap of ackedNames) {
         if (!server.capabilities.includes(cap)) {
           server.capabilities.push(cap);
         }
       }
     }
 
-    // Decrement pending CAP REQ count
-    const pendingCount = this.pendingCapReqs.get(serverId) || 0;
-    if (pendingCount > 0) {
-      const newCount = pendingCount - 1;
+    const pending = this.pendingCapReqs.get(serverId);
+    if (!pending) return;
+    for (const cap of ackedNames) {
+      pending.delete(cap);
+    }
+    // Caps the server never ACKs (or NAKs) leave the set non-empty; the CAP LS
+    // timeout is the backstop that finalises negotiation in that case.
+    if (pending.size > 0) return;
 
-      if (newCount === 0) {
-        // All CAP REQ batches acknowledged
-        this.pendingCapReqs.delete(serverId);
+    this.pendingCapReqs.delete(serverId);
 
-        // Check if SASL is enabled and was acknowledged
-        const saslEnabled = this.saslEnabled.get(serverId) ?? false;
-        const saslAcknowledged =
-          server?.capabilities?.includes("sasl") ?? false;
+    const saslEnabled = this.saslEnabled.get(serverId) ?? false;
+    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
 
-        if (saslEnabled && saslAcknowledged) {
-          // SASL is enabled and was acknowledged - wait for SASL authentication to complete
-          // The SASL completion handlers (903/904-907) will send CAP END
-          console.log(
-            `[CAP ACK] SASL enabled for ${serverId}, waiting for SASL authentication`,
-          );
-        } else if (!this.capNegotiationComplete.get(serverId)) {
-          // No SASL or SASL not acknowledged, and no other path
-          // (auth.ts, SASL completion, link-security modal) has
-          // already finalised CAP negotiation -- complete it now.
-          this.sendCapEnd(serverId);
-          this.capNegotiationComplete.set(serverId, true);
-          this.userOnConnect(serverId);
-        }
-      } else {
-        this.pendingCapReqs.set(serverId, newCount);
-      }
-    } else {
-      console.log(
-        `[CAP ACK] Received unexpected CAP ACK for ${serverId} (no pending requests)`,
-      );
+    // SASL owns the rest of the handshake: its result (903 / 904-907) sends
+    // CAP END, so ending it here would strand the AUTHENTICATE exchange.
+    if (saslEnabled && saslAcknowledged) return;
+
+    if (!this.capNegotiationComplete.get(serverId)) {
+      this.sendCapEnd(serverId);
+      this.capNegotiationComplete.set(serverId, true);
+      this.userOnConnect(serverId);
     }
   }
 
@@ -2239,6 +2231,21 @@ export class IRCClient implements IRCClientContext {
     // If no serverId provided, return null (we need server context now)
     if (!serverId) return null;
     return this.currentUsers.get(serverId) || null;
+  }
+
+  // True while any requested capability is still unacknowledged. Callers that
+  // decide when to end CAP negotiation must wait: the caps that gate the rest
+  // of the handshake (sasl) may land in a later ACK line.
+  hasPendingCapReqs(serverId: string): boolean {
+    return (this.pendingCapReqs.get(serverId)?.size ?? 0) > 0;
+  }
+
+  // What the server said a draft/multiline batch may hold. Unstated means
+  // unlimited, which is what the spec implies.
+  multilineLimits(serverId: string): MultilineLimits {
+    return parseMultilineLimits(
+      this.servers.get(serverId)?.capabilityValues?.["draft/multiline"],
+    );
   }
 
   hasCapability(serverId: string, cap: string): boolean {

@@ -408,6 +408,7 @@ export const AppLayout: React.FC = () => {
         channelId={ui.openedMedia?.channelId}
         preferTopicEntry={ui.openedMedia?.preferTopicEntry}
         preferLastEntry={ui.openedMedia?.preferLastEntry}
+        decryptedType={ui.openedMedia?.decryptedType}
       />
       <RawLogViewer />
     </div>

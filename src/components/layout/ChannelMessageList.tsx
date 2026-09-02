@@ -19,6 +19,7 @@ import {
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import ircClient from "../../lib/ircClient";
+import { shouldShowMessageHeader } from "../../lib/messageGrouping";
 import useStore from "../../store";
 import type { Message as MessageType } from "../../types";
 import { CollapsedEventMessage } from "../message/CollapsedEventMessage";
@@ -533,13 +534,10 @@ export const ChannelMessageList = forwardRef<
                   (m) => m.id === message.id,
                 );
                 const previousMessage = channelMessages[originalIndex - 1];
-                const showHeader =
-                  !previousMessage ||
-                  previousMessage.type !== "message" ||
-                  previousMessage.userId !== message.userId ||
-                  new Date(message.timestamp).getTime() -
-                    new Date(previousMessage.timestamp).getTime() >
-                    5 * 60 * 1000;
+                const showHeader = shouldShowMessageHeader(
+                  previousMessage,
+                  message,
+                );
                 return (
                   <MessageItem
                     key={message.id}

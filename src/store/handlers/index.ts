@@ -6,6 +6,7 @@ import { registerBotToolsHandlers } from "./botTools";
 import { registerBouncerHandlers } from "./bouncer";
 import { registerChannelHandlers } from "./channels";
 import { registerConnectionHandlers } from "./connection";
+import { registerE2EEHandlers } from "./e2ee";
 import { registerInvitelinkHandlers } from "./invitelink";
 import { registerMessageHandlers } from "./messages";
 import { registerMetadataHandlers } from "./metadata";
@@ -36,4 +37,5 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerTicTacToeHandlers(store);
   registerBouncerHandlers(store);
   registerPushBotHandlers(store);
+  registerE2EEHandlers(store);
 }

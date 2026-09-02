@@ -217,8 +217,20 @@ export function resolveReplyMessage(
   channelId: string,
   messages: Message[],
 ): Message | null {
-  const replyId =
-    (mtags?.["+reply"] ?? mtags?.["+draft/reply"])?.trim() || null;
+  return findReplyTarget(
+    (mtags?.["+reply"] ?? mtags?.["+draft/reply"])?.trim() || null,
+    messages,
+  );
+}
+
+/**
+ * Find the message a reply points at, for callers that already hold the id
+ * rather than the tags it arrived in.
+ */
+export function findReplyTarget(
+  replyId: string | null | undefined,
+  messages: Message[],
+): Message | null {
   if (!replyId) {
     return null;
   }

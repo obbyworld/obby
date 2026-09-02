@@ -1,10 +1,18 @@
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { FaLock, FaLockOpen } from "react-icons/fa";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
+import { decodeMediaDescriptor } from "../../lib/e2ee/media";
+import {
+  E2EE_MEDIA_TAG,
+  isFromEncryptedSession,
+  isUndecryptableMessage,
+  isUnprotectedMessage,
+} from "../../lib/e2ee/messageFlags";
 import ircClient from "../../lib/ircClient";
 import {
   isUrlFromFilehost,
@@ -23,11 +31,13 @@ import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
+import HoverTooltip from "../ui/HoverTooltip";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 import { BotInvocationChip } from "./BotInvocationChip";
 import { BotToolsMessagePill } from "./BotToolsMessagePill";
 import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
 import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
+import EncryptedMediaPreview from "./EncryptedMediaPreview";
 import { InviteMessage } from "./InviteMessage";
 import {
   ActionMessage,
@@ -329,6 +339,13 @@ export const MessageItem = memo((props: MessageItemProps) => {
     message.tags?.bot === "";
   const isVerified = isUserVerified(message.userId, message.tags);
   const isIrcOp = messageUser?.isIrcOp || false;
+  const isUnprotected = isUnprotectedMessage(message);
+  const isUndecryptable = isUndecryptableMessage(message);
+  const encryptedMediaTag = message.tags?.[E2EE_MEDIA_TAG];
+  const encryptedMedia = useMemo(
+    () => (encryptedMediaTag ? decodeMediaDescriptor(encryptedMediaTag) : null),
+    [encryptedMediaTag],
+  );
 
   // Check if message redaction is supported and possible
   const server = useStore(
@@ -359,7 +376,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const canReply = !hideReply && message.type === "message";
 
   // message.content is already combined for multiline messages by the IRC client
-  const messageContent = message.content;
+  const messageContent = isUndecryptable
+    ? t`Encrypted message from an earlier session`
+    : message.content;
 
   // Author + time + raw markdown source, surfaced as data attributes so the
   // chat copy handler (chatMarkdownCopy) can rebuild a markdown transcript that
@@ -409,8 +428,24 @@ export const MessageItem = memo((props: MessageItemProps) => {
     resolveEmoji,
   ]);
 
-  // Create collapsible content wrapper
-  const collapsibleContent = (
+  // Ciphertext this device holds no key for keeps its place in the thread: a
+  // dropped row would read as the peer having gone quiet, which is the one
+  // conclusion the user must not draw.
+  const collapsibleContent = isUndecryptable ? (
+    <HoverTooltip
+      content={
+        <Trans>
+          This message could not be decrypted. It was encrypted for a session
+          this device no longer holds the keys to.
+        </Trans>
+      }
+    >
+      <span className="inline-flex items-center gap-1.5 italic text-discord-text-muted">
+        <FaLock className="flex-shrink-0 text-xs" />
+        <Trans>Encrypted message</Trans>
+      </span>
+    </HoverTooltip>
+  ) : (
     <CollapsibleMessage
       ref={collapsibleRef}
       content={htmlContent}
@@ -432,15 +467,21 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const isFilehostUrl = isUrlFromFilehost(strippedContent.trim(), fileHosts);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: strippedContent derived from message.content
+  const allMediaEntries = useMemo(
+    () => extractMediaFromMessage(message),
+    [strippedContent],
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the visibility flags derive from mediaVisibilityLevel, and fileHosts from fileHostsKey
   const mediaEntries = useMemo(() => {
-    return extractMediaFromMessage(message).filter((e) =>
+    return allMediaEntries.filter((e) =>
       canShowMedia(
         e.url,
         { showSafeMedia, showTrustedSourcesMedia, showExternalContent },
         fileHosts,
       ),
     );
-  }, [strippedContent, mediaVisibilityLevel, fileHostsKey]);
+  }, [allMediaEntries, mediaVisibilityLevel, fileHostsKey]);
 
   const [showAllImages, setShowAllImages] = useState(false);
 
@@ -457,6 +498,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
       return next;
     });
   }, []);
+
+  // A file this network hosts, sent inside an encrypted session, still sits on
+  // the host in the clear, so the row says so while keeping the normal preview,
+  // seeking and thumbnails. Counted before the trust filter, so turning
+  // previews off keeps the warning that the file is unprotected.
+  //
+  // Only filehost URLs qualify. Every other link is someone else's page that
+  // the sender merely mentioned, and was never ours to encrypt.
+  const plainMediaInEncryptedChat =
+    isFromEncryptedSession(message) &&
+    !encryptedMedia &&
+    allMediaEntries.some((entry) => isUrlFromFilehost(entry.url, fileHosts));
 
   const firstOpenableMedia = mediaEntries.find(
     (e) => e.type !== null || resolvedProbeTypes.has(e.url),
@@ -578,16 +631,24 @@ export const MessageItem = memo((props: MessageItemProps) => {
         {showDate && (
           <DateSeparator date={new Date(message.timestamp)} theme={theme} />
         )}
-        <ActionMessage
-          message={message}
-          showDate={showDate}
-          messageUser={messageUser}
-          onUsernameContextMenu={onUsernameContextMenu}
-          setReplyTo={setReplyTo}
-          onReactClick={onReactClick}
-          onReactionUnreact={onReactionUnreact}
-          onDirectReaction={onDirectReaction}
-        />
+        <div
+          className={
+            isUnprotected
+              ? "border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
+              : undefined
+          }
+        >
+          <ActionMessage
+            message={message}
+            showDate={showDate}
+            messageUser={messageUser}
+            onUsernameContextMenu={onUsernameContextMenu}
+            setReplyTo={setReplyTo}
+            onReactClick={onReactClick}
+            onReactionUnreact={onReactionUnreact}
+            onDirectReaction={onDirectReaction}
+          />
+        </div>
       </>
     );
   }
@@ -694,6 +755,12 @@ export const MessageItem = memo((props: MessageItemProps) => {
       className={`px-4 hover:bg-discord-message-hover group relative transition-colors duration-150 ${
         showHeader ? "mt-4" : "py-0.5"
       }${isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""}${
+        isUnprotected
+          ? " border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
+          : isUndecryptable
+            ? " border-l-2 border-discord-dark-500"
+            : ""
+      }${
         message.status === "pending"
           ? " opacity-60"
           : message.status === "failed"
@@ -739,6 +806,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
               isBot={isBot}
               isVerified={isVerified}
               isIrcOp={isIrcOp}
+              unprotected={isUnprotected}
             />
           )}
 
@@ -756,6 +824,30 @@ export const MessageItem = memo((props: MessageItemProps) => {
                 onIrcLinkClick={onIrcLinkClick}
                 onReplyClick={handleScrollToReply}
               />
+            )}
+
+            {encryptedMedia && (
+              <EncryptedMediaPreview
+                descriptor={encryptedMedia}
+                allowed={canShowMedia(
+                  encryptedMedia.url,
+                  {
+                    showSafeMedia,
+                    showTrustedSourcesMedia,
+                    showExternalContent,
+                  },
+                  fileHosts,
+                )}
+              />
+            )}
+
+            {plainMediaInEncryptedChat && (
+              <div className="mt-1 flex items-center gap-1.5 text-xs text-amber-400">
+                <FaLockOpen className="flex-shrink-0" />
+                <Trans>
+                  This file isn't encrypted. Anyone with the link can open it.
+                </Trans>
+              </div>
             )}
 
             <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>

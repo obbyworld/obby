@@ -6,14 +6,19 @@ import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { base64EncodeUtf8 } from "../lib/base64";
 import ircClient from "../lib/ircClient";
-import { makeLabel, withLabel } from "../lib/labeledResponse";
+import {
+  makeLabel,
+  shouldUseLabeledResponse,
+  withLabel,
+} from "../lib/labeledResponse";
 import {
   type FormattingType,
   formatMessageForIrc,
 } from "../lib/messageFormatter";
-import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
+import { splitLongMessage } from "../lib/messageProtocol";
 import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
+import { routeOutgoingPM } from "../store/handlers/e2eeOutbound";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
 
 /**
@@ -176,19 +181,6 @@ export function sendBotCommand(
   }
 }
 
-/**
- * labeled-response is only useful when the server will also echo our
- * own messages back: without echo-message, no echo arrives, no
- * acknowledgment, and the placeholder would hang forever.
- */
-function shouldUseLabeledResponse(serverId: string): boolean {
-  return (
-    ircClient.hasCapability(serverId, "labeled-response") &&
-    ircClient.hasCapability(serverId, "echo-message") &&
-    ircClient.hasCapability(serverId, "batch")
-  );
-}
-
 /** How long to wait before flipping a pending message to "failed". */
 const PENDING_TIMEOUT_MS = 30_000;
 
@@ -215,7 +207,9 @@ interface UseMessageSendingOptions {
 }
 
 interface UseMessageSendingReturn {
-  sendMessage: (text: string) => void;
+  // Returns "withheld" when an engaged E2EE lock dropped the message so the
+  // caller can preserve the user's draft; otherwise void.
+  sendMessage: (text: string) => "withheld" | undefined;
 }
 
 interface WhisperContext {
@@ -325,6 +319,9 @@ export function useMessageSending({
       } else if (commandName === "msg") {
         const [target, ...messageParts] = args;
         const message = messageParts.join(" ");
+        const routed = routeOutgoingPM(selectedServerId, target, message);
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
         ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${message}`);
       } else if (commandName === "whisper") {
         const [targetUser, ...messageParts] = args;
@@ -357,6 +354,18 @@ export function useMessageSending({
           );
         } else {
           if (!target) return;
+          const soh = String.fromCharCode(1);
+          const actionContent = `${soh}ACTION ${actionMessage}${soh}`;
+          if (selectedPrivateChat) {
+            const routed = routeOutgoingPM(
+              selectedServerId,
+              selectedPrivateChat.username,
+              actionContent,
+              localReplyTo?.msgid,
+            );
+            if (routed === "withheld") return "withheld" as const;
+            if (routed === "sent") return;
+          }
           ircClient.sendRaw(
             selectedServerId,
             `${localReplyTo?.msgid ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} ` : ""}PRIVMSG ${target} :\u0001ACTION ${actionMessage}\u0001`,
@@ -445,78 +454,29 @@ export function useMessageSending({
         return;
       }
 
-      const batchId = createBatchId();
       const replyPrefix = localReplyTo?.msgid
         ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} `
         : "";
 
-      ircClient.sendRaw(
-        selectedServerId,
-        `${replyPrefix}BATCH +${batchId} draft/multiline ${target}`,
-      );
-
-      const hasMultipleLines = lines.length > 1;
-
-      if (hasMultipleLines) {
-        lines.forEach((line) => {
-          const formattedLine = formatMessageForIrc(line, {
+      // preserveBoundarySpace=true so concat reconstructs the original
+      // spacing. Without it the receiver sees "AAA BBBCCC" instead of
+      // "AAA BBB CCC".
+      const format = (line: string) =>
+        splitLongMessage(
+          formatMessageForIrc(line, {
             color: selectedColor || "inherit",
             formatting: selectedFormatting,
-          });
+          }),
+          target,
+          true,
+        );
 
-          const maxLineLengthForTarget =
-            512 -
-            (1 + 20 + 1 + 20 + 1 + 63 + 1 + 7 + 1 + target.length + 2 + 2) -
-            10;
-
-          if (formattedLine.length > maxLineLengthForTarget) {
-            // preserveBoundarySpace=true so concat reconstructs the
-            // original spacing.  Without it the receiver sees
-            // "AAA BBBCCC" instead of "AAA BBB CCC".
-            const splitLines = splitLongMessage(formattedLine, target, true);
-            splitLines.forEach((splitLine: string, index: number) => {
-              if (index === 0) {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-                );
-              } else {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-                );
-              }
-            });
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${formattedLine}`,
-            );
-          }
-        });
-      } else {
-        const formattedText = formatMessageForIrc(cleanedText, {
-          color: selectedColor || "inherit",
-          formatting: selectedFormatting,
-        });
-
-        const splitLines = splitLongMessage(formattedText, target, true);
-        splitLines.forEach((splitLine: string, index: number) => {
-          if (index === 0) {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-            );
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-            );
-          }
-        });
-      }
-
-      ircClient.sendRaw(selectedServerId, `BATCH -${batchId}`);
+      ircClient.sendMultiline(
+        selectedServerId,
+        target,
+        (lines.length > 1 ? lines : [cleanedText]).map(format),
+        replyPrefix,
+      );
     },
     [
       selectedServerId,
@@ -692,14 +652,25 @@ export function useMessageSending({
 
       // Handle commands
       if (cleanedText.startsWith("/")) {
-        handleCommand(cleanedText);
-        return;
+        return handleCommand(cleanedText);
       }
 
       // Handle regular messages
       const target =
         selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
       if (!target) return;
+
+      // Route PMs through E2EE before any plaintext send path.
+      if (selectedPrivateChat) {
+        const routed = routeOutgoingPM(
+          selectedServerId,
+          selectedPrivateChat.username,
+          cleanedText,
+          localReplyTo?.msgid,
+        );
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
+      }
 
       const lines = cleanedText.split("\n");
       const supportsMultiline = serverSupportsMultiline(selectedServerId);

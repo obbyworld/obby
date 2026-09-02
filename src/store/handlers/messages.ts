@@ -1,5 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import {
+  E2EE_UNDECRYPTABLE_TAG,
+  E2EE_UNPROTECTED_TAG,
+} from "../../lib/e2ee/messageFlags";
+import { e2eeSessionKey, expectsProtection } from "../../lib/e2ee/session";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
@@ -21,6 +26,10 @@ import {
 } from "../helpers";
 import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
+import { handleInboundObby } from "./e2ee";
+import { confirmEncryptedEcho } from "./e2eeConversation";
+import { handleInboundOtr } from "./otr";
+import { notePrivateMessageArrived } from "./privateChatArrival";
 
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
   ircClient.on("CHANMSG", (response) => {
@@ -30,7 +39,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate message with msgid: ${mtags.msgid}`);
         return;
       }
 
@@ -364,18 +372,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         currentState.processedMessageIds.has(id),
       );
       if (hasDuplicate) {
-        console.log(
-          `Skipping duplicate multiline message with messageIds: ${messageIds.join(", ")}`,
-        );
         return;
       }
     } else if (
       mtags?.msgid &&
       currentState.processedMessageIds.has(mtags.msgid)
     ) {
-      console.log(
-        `Skipping duplicate multiline message with batch msgid: ${mtags.msgid}`,
-      );
       return;
     }
 
@@ -746,7 +748,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate USERMSG with msgid: ${mtags.msgid}`);
         return;
       }
     }
@@ -755,6 +756,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     const server = store
       .getState()
       .servers.find((s) => s.id === response.serverId);
+
+    // A plaintext PM arriving while an encrypted session is active: the row is
+    // rendered but flagged. obbyircd is multi-client, so this is often just the
+    // peer replying from another client that isn't encrypting, not a downgrade.
+    let unprotectedUnderLock = false;
+    let undecryptableReplay = false;
 
     if (server) {
       // Lazy-fetch sender metadata on first PM, same as CHANMSG path.
@@ -767,14 +774,52 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         store.getState().metadataList(response.serverId, sender);
       }
 
+      // Both E2EE schemes ride in the PRIVMSG body; divert them before the body
+      // renders as gibberish. Our own echoes and CHATHISTORY replays (mtags.batch)
+      // are swallowed without driving a live session — replayed ciphertext can't
+      // decrypt and a replayed handshake would spawn a spurious session. Obby
+      // passes the msgid so the decrypted row keeps the real IRC message identity.
+      const isSelfEcho = sender.toLowerCase() === ourNick;
+      // A labelled echo of our own send arrives inside a batch too, and it is
+      // the live confirmation of a row that already exists, not history.
+      const isReplay =
+        mtags?.batch !== undefined &&
+        !(isSelfEcho && mtags.label !== undefined);
+      const skipE2EE = isSelfEcho || isReplay;
+      const consumedByE2EE =
+        handleInboundObby(
+          response.serverId,
+          sender,
+          mtags,
+          message,
+          mtags?.msgid,
+          skipE2EE,
+        ) || handleInboundOtr(response.serverId, sender, message, skipE2EE);
+      if (consumedByE2EE) {
+        // Replayed ciphertext is undecryptable, but dropping it would make the
+        // history look shorter than it was, so keep a marked placeholder row.
+        // Our own replayed sends count: the local plaintext echo died with the
+        // page, so dropping them too would replay the thread as one-sided. Only
+        // a live self-echo is dropped, since that row was already injected.
+        if (isReplay) {
+          undecryptableReplay = true;
+        } else {
+          // Our own carrier comes back named: the row was rendered from the
+          // plaintext at send time and only now learns its msgid.
+          if (isSelfEcho && target)
+            confirmEncryptedEcho(
+              response.serverId,
+              target,
+              mtags?.label,
+              mtags?.msgid,
+            );
+          return;
+        }
+      }
+
       // Check if this PRIVMSG is from the server itself (sender contains a ".")
       // Server messages should go to Server Notices, not create PM tabs
       if (sender.includes(".")) {
-        console.log(
-          "[USERMSG] Server message detected, routing to Server Notices:",
-          sender,
-        );
-
         const targetChannelId = "server-notices";
         const newMessage: Message = {
           id: uuidv4(),
@@ -828,6 +873,14 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       // Prefer the ratified +channel-context; fall back to +draft/channel-context.
       const channelContext =
         mtags?.["+channel-context"] ?? mtags?.["+draft/channel-context"];
+
+      unprotectedUnderLock =
+        !channelContext &&
+        mtags?.batch === undefined &&
+        sender.toLowerCase() !== ourNick &&
+        expectsProtection(
+          store.getState().e2eeSessions[e2eeSessionKey(server.id, sender)],
+        );
 
       if (channelContext) {
         const channel = server.channels.find(
@@ -991,7 +1044,11 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             store.getState().messages[privateChatKey] || [],
           ),
           mentioned: [],
-          tags: mtags,
+          tags: unprotectedUnderLock
+            ? { ...(mtags ?? {}), [E2EE_UNPROTECTED_TAG]: "1" }
+            : undecryptableReplay
+              ? { ...(mtags ?? {}), [E2EE_UNDECRYPTABLE_TAG]: "1" }
+              : mtags,
         };
 
         // If message has bot tag, mark user as bot
@@ -1062,79 +1119,14 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           };
         });
 
-        // Update private chat's last activity and unread count
-        // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
-        const isHistoricalMessage = mtags?.batch !== undefined;
-
-        // Play notification sound if appropriate (but not for historical messages)
-        if (!isHistoricalMessage) {
-          const state = store.getState();
-          const serverCurrentUser = ircClient.getCurrentUser(response.serverId);
-          if (
-            shouldPlayNotificationSound(
-              newMessage,
-              serverCurrentUser,
-              state.globalSettings,
-            )
-          ) {
-            playNotificationSound(state.globalSettings);
-          }
-        }
-
-        store.setState((state) => {
-          const updatedServers = state.servers.map((s) => {
-            if (s.id === response.serverId) {
-              const updatedPrivateChats =
-                s.privateChats?.map((pc) => {
-                  if (pc.id === privateChat.id) {
-                    const isActive =
-                      getCurrentSelection(state).selectedPrivateChatId ===
-                      pc.id;
-                    const reset = isActive || isHistoricalMessage;
-                    return {
-                      ...pc,
-                      lastActivity: new Date(),
-                      unreadCount: reset ? 0 : pc.unreadCount + 1,
-                      mentionCount: reset ? 0 : (pc.mentionCount ?? 0) + 1,
-                      isMentioned: !isHistoricalMessage && true, // All PMs are considered mentions (except historical)
-                    };
-                  }
-                  return pc;
-                }) || [];
-              return { ...s, privateChats: updatedPrivateChats };
-            }
-            return s;
-          });
-          return { servers: updatedServers };
+        notePrivateMessageArrived(store, {
+          serverId: response.serverId,
+          privateChatId: privateChat.id,
+          sender,
+          message: newMessage,
+          body: message,
+          isHistorical: mtags?.batch !== undefined,
         });
-
-        // Show browser notification for private messages
-        const currentState = store.getState();
-        const isActiveChat =
-          getCurrentSelection(currentState).selectedPrivateChatId ===
-          privateChat.id;
-        if (
-          !isActiveChat &&
-          !isHistoricalMessage &&
-          currentState.globalSettings.enableNotifications
-        ) {
-          showMentionNotification(
-            server.id,
-            `DM from ${sender}`,
-            sender,
-            message,
-            (serverId, msg) => {
-              // Fallback: Add a NOTE standard reply notification
-              store.getState().addGlobalNotification({
-                type: "note",
-                command: "PRIVMSG",
-                code: "DM",
-                message: msg,
-                serverId,
-              });
-            },
-          );
-        }
       }
     }
   });
@@ -1296,7 +1288,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (mtags?.msgid) {
       const currentState = store.getState();
       if (currentState.processedMessageIds.has(mtags.msgid)) {
-        console.log(`Skipping duplicate USERNOTICE with msgid: ${mtags.msgid}`);
         return;
       }
     }
@@ -1325,11 +1316,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check if this NOTICE is from the server itself (sender contains a ".")
     // Server notices should go to Server Notices, user notices should create PM tabs
     if (response.sender.includes(".")) {
-      console.log(
-        "[USERNOTICE] Server notice detected, routing to Server Notices:",
-        response.sender,
-      );
-
       // Check if this is a JSON log notice
       const isJsonLog = mtags?.["unrealircd.org/json-log"];
       let jsonLogData = null;
