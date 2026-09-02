@@ -499,14 +499,17 @@ export const MessageItem = memo((props: MessageItemProps) => {
     });
   }, []);
 
-  // A link that travelled inside an encrypted session still points at a file
-  // the host stores in the clear, so the row says so while keeping the normal
-  // preview, seeking and thumbnails. Counted before the trust filter, so
-  // turning previews off keeps the warning that the file is unprotected.
+  // A file this network hosts, sent inside an encrypted session, still sits on
+  // the host in the clear, so the row says so while keeping the normal preview,
+  // seeking and thumbnails. Counted before the trust filter, so turning
+  // previews off keeps the warning that the file is unprotected.
+  //
+  // Only filehost URLs qualify. Every other link is someone else's page that
+  // the sender merely mentioned, and was never ours to encrypt.
   const plainMediaInEncryptedChat =
     isFromEncryptedSession(message) &&
     !encryptedMedia &&
-    allMediaEntries.length > 0;
+    allMediaEntries.some((entry) => isUrlFromFilehost(entry.url, fileHosts));
 
   const firstOpenableMedia = mediaEntries.find(
     (e) => e.type !== null || resolvedProbeTypes.has(e.url),
