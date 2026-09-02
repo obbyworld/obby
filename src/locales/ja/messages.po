@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRCを未来へ"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRCを未来へ"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— ビューアで開く"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(ObsidianIRC が処理)"
+msgid "(handled by Obby)"
+msgstr "(Obby が処理)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0} ステップが承認待ちです"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "{0} 件のワークフロー"
+msgstr "{0} 個のワークフロー"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -145,7 +145,7 @@ msgstr "{0}分前"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr "{activeCount} 件アクティブ"
+msgstr "{activeCount} 個がアクティブ"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -637,7 +637,7 @@ msgstr "BOT"
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
-msgstr "ボットコマンド"
+msgstr "Bot コマンド"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
@@ -652,11 +652,11 @@ msgstr "ボット"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "ボット — {botsLoadingCount} 件のコマンドリストを受信中"
+msgstr "Bot — {botsLoadingCount} 件のコマンドリストを受信中"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr "ボット（{botsLoadingCount} 件読み込み中）"
+msgstr "Bot（{botsLoadingCount} 件を読み込み中）"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -759,7 +759,7 @@ msgstr "チャンネルアバタープレビュー"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "チャンネルボット — 参加中のチャンネルのみ"
+msgstr "チャンネル Bot — 参加中のチャンネルのみ"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "探す"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "ObsidianIRCでIRCの世界を探索しよう"
+msgid "Discover the world of IRC with Obby"
+msgstr "ObbyでIRCの世界を探索しよう"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "情報："
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "このコマンドを実行したユーザーに関する情報はボットから提供されたものであり、送信者をサーバーで検証することはできません。"
+msgstr "このコマンドを実行したユーザーに関する情報は bot によって提供されており、送信者をサーバーで検証することはできません。"
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "メッセージ"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "{0} へメッセージ"
+msgstr "{0} にメッセージ"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "{0} へメッセージ（Enterで改行、Shift+Enterで送信）"
+msgstr "{0} にメッセージ（Enter で改行、Shift+Enter で送信）"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "{0} へメッセージ（Shift+Enterで改行）"
+msgstr "{0} にメッセージ（Shift+Enter で改行）"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2208,7 +2208,7 @@ msgstr "次のページ"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "nick"
-msgstr "ニック"
+msgstr "ニックネーム"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "通知"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRCを未来へ"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby — IRCを未来へ"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "サーバー全体"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "サーバー全体のボット — どのチャンネルからでも利用可能"
+msgstr "サーバー全体の bot — 任意のチャンネルから利用可能"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3168,7 +3168,7 @@ msgstr "コメントを表示 ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "ボットメニューに表示 →"
+msgstr "Bot メニューで表示 →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -3294,7 +3294,7 @@ msgstr "停止"
 
 #: src/components/ui/BotsModal.tsx
 msgid "suspended"
-msgstr "停止中"
+msgstr "一時停止中"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -3811,7 +3811,7 @@ msgstr "ワークフロー履歴"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "ワークフロー履歴（{0}、{activeTotal} 件アクティブ）"
+msgstr "ワークフロー履歴（{0}、{activeTotal} 個がアクティブ）"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Перенося IRC в будущее"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Перенося IRC в будущее"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— открыть в просмотрщике"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(обрабатывается ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(обрабатывается Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0} шаг(ов) ожидает подтверждения"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "{0} рабочих процесс(ов)"
+msgstr "{0} рабочих процессов"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -705,7 +705,7 @@ msgstr "Отменить рабочий процесс"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
-msgstr "отменено"
+msgstr "отменён"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -759,7 +759,7 @@ msgstr "Предпросмотр аватара канала"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Бот канала — только в подключённых каналах"
+msgstr "Канальный бот — только в каналах, в которые вы вошли"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -955,7 +955,7 @@ msgstr "Цвет и форматирование"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr "Команды загружаются…"
+msgstr "Загрузка команд…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -969,7 +969,7 @@ msgstr "Комментарии ({commentCount})"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "complete"
-msgstr "завершено"
+msgstr "завершён"
 
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
@@ -1202,7 +1202,7 @@ msgstr "Удалить эту сеть?"
 
 #: src/components/ui/BotsModal.tsx
 msgid "deleted"
-msgstr "удалено"
+msgstr "удалён"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Обзор"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Откройте мир IRC вместе с ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Откройте мир IRC вместе с Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Инфо:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Информация о том, кто вызвал эту команду, предоставлена ботом, и отправитель не может быть проверен сервером."
+msgstr "Сведения о том, кто вызвал эту команду, предоставлены ботом, и отправитель не может быть проверен сервером."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "Сообщение"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "Сообщение в {0}"
+msgstr "Сообщение {0}"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "Сообщение в {0} (Enter — новая строка, Shift+Enter — отправить)"
+msgstr "Сообщение {0} (Enter — новая строка, Shift+Enter — отправить)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "Сообщение в {0} (Shift+Enter — новая строка)"
+msgstr "Сообщение {0} (Shift+Enter — новая строка)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Уведомления"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Перенося IRC в будущее"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby — IRC будущего"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2562,7 +2562,7 @@ msgstr "Предпросмотр PDF"
 
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
-msgstr "ожидание"
+msgstr "в ожидании"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -3101,7 +3101,7 @@ msgstr "По всему серверу"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Бот всего сервера — доступен из любого канала"
+msgstr "Серверный бот — доступен из любого канала"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3294,7 +3294,7 @@ msgstr "Приостановить"
 
 #: src/components/ui/BotsModal.tsx
 msgid "suspended"
-msgstr "приостановлено"
+msgstr "приостановлен"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
@@ -3420,7 +3420,7 @@ msgstr "Временное окно (секунды)"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
-msgstr "истекло время ожидания"
+msgstr "истекло время"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ObbyWhoisModal.tsx

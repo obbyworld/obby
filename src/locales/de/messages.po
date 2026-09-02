@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC in die Zukunft bringen"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC in die Zukunft bringen"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— im Viewer öffnen"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(verarbeitet von ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(verarbeitet von Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -253,7 +253,7 @@ msgstr "*spam*"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "#channel"
-msgstr "#kanal"
+msgstr "#channel"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -656,7 +656,7 @@ msgstr "Bots — empfange {botsLoadingCount} Befehlsliste(n)"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr "Bots (lade {botsLoadingCount})"
+msgstr "Bots (lädt {botsLoadingCount})"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Entdecken"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Entdecke die Welt von IRC mit ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Entdecke die Welt von IRC mit Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Info:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Die Information darüber, wer diesen Befehl ausgeführt hat, stammt vom Bot und der Absender kann vom Server nicht verifiziert werden."
+msgstr "Informationen darüber, wer diesen Befehl ausgelöst hat, werden vom Bot bereitgestellt und der Absender kann vom Server nicht verifiziert werden."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "Nachricht"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "Nachricht an {0}"
+msgstr "Nachricht {0}"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "Nachricht an {0} (Enter für neue Zeile, Umschalt+Enter zum Senden)"
+msgstr "Nachricht {0} (Enter für neue Zeile, Umschalt+Enter zum Senden)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "Nachricht an {0} (Umschalt+Enter für neue Zeile)"
+msgstr "Nachricht {0} (Umschalt+Enter für neue Zeile)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Benachrichtigungen"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC in die Zukunft bringen"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC in die Zukunft bringen"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "Serverweit"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Serverweiter Bot — aus jedem Channel erreichbar"
+msgstr "Serverweiter Bot — von jedem Kanal aus erreichbar"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3464,7 +3464,7 @@ msgstr "Zu groß zum Verschlüsseln, unverschlüsselt gesendet"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
-msgstr "Werkzeug"
+msgstr "Tool"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Levando o IRC para o futuro"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Levando o IRC para o futuro"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— abrir no visualizador"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(gerenciado pelo ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(gerenciado pelo Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0} etapa(s) aguardando aprovação"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "{0} workflow(s)"
+msgstr "{0} fluxo(s) de trabalho"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -145,7 +145,7 @@ msgstr "há {0}min"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr "{activeCount} ativo(s)"
+msgstr "{activeCount} ativos"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -759,7 +759,7 @@ msgstr "Visualização do avatar do canal"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Bot de canal — apenas nos canais em que você entrou"
+msgstr "Bot de canal — apenas em canais que você entrou"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Descobrir"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Descubra o mundo do IRC com o ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Descubra o mundo do IRC com o Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Notificações"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Levando o IRC para o futuro"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Levando o IRC ao futuro"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2605,7 +2605,7 @@ msgstr "Reproduzir sons para menções e mensagens"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr "Jogar Jogo da Velha"
+msgstr "Jogar Tic-Tac-Toe"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -3168,7 +3168,7 @@ msgstr "Mostrar comentários ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "Mostrar no Menu de Bots →"
+msgstr "Mostrar no menu de bots →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -3802,7 +3802,7 @@ msgstr "Será definido como 'sem motivo' se deixado em branco"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
-msgstr "Workflow"
+msgstr "Fluxo de trabalho"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
@@ -3811,7 +3811,7 @@ msgstr "Histórico de workflow"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "Histórico de workflow ({0}, {activeTotal} ativo(s))"
+msgstr "Histórico de fluxos de trabalho ({0}, {activeTotal} ativos)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

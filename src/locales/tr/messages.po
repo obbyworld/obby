@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC'yi geleceğe taşıyor"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC'yi geleceğe taşıyor"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— görüntüleyicide aç"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(ObsidianIRC tarafından işlenir)"
+msgid "(handled by Obby)"
+msgstr "(Obby tarafından işlenir)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -145,7 +145,7 @@ msgstr "{0}dk önce"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr "{activeCount} etkin"
+msgstr "{activeCount} aktif"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -342,7 +342,7 @@ msgstr "İşlem"
 
 #: src/components/ui/BotsModal.tsx
 msgid "active"
-msgstr "etkin"
+msgstr "aktif"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Activity"
@@ -759,7 +759,7 @@ msgstr "Kanal avatarı önizlemesi"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Kanal botu — yalnızca katılınan kanallarda"
+msgstr "Kanal botu — yalnızca katıldığınız kanallarda"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Keşfet"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "ObsidianIRC ile IRC dünyasını keşfedin"
+msgid "Discover the world of IRC with Obby"
+msgstr "Obby ile IRC dünyasını keşfedin"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Bilgi:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Bu komutu kimin çalıştırdığına dair bilgi bot tarafından sağlanır ve gönderen sunucu tarafından doğrulanamaz."
+msgstr "Bu komutu kimin çağırdığına dair bilgi bot tarafından sağlanır ve gönderen sunucu tarafından doğrulanamaz."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "Mesaj"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "{0} kanalına mesaj"
+msgstr "{0} için mesaj"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "{0} kanalına mesaj (yeni satır için Enter, göndermek için Shift+Enter)"
+msgstr "{0} için mesaj (yeni satır için Enter, göndermek için Shift+Enter)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "{0} kanalına mesaj (yeni satır için Shift+Enter)"
+msgstr "{0} için mesaj (yeni satır için Shift+Enter)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Bildirimler"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC'yi geleceğe taşıyor"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC'yi geleceğe taşıyor"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2562,7 +2562,7 @@ msgstr "PDF önizleme"
 
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
-msgstr "bekliyor"
+msgstr "beklemede"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -2605,7 +2605,7 @@ msgstr "Bahisler ve mesajlar için ses çal"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr "XOX Oyna"
+msgstr "Tic-Tac-Toe Oyna"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -3101,7 +3101,7 @@ msgstr "Sunucu genelinde"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Sunucu geneli bot — herhangi bir kanaldan erişilebilir"
+msgstr "Sunucu genelinde bot — herhangi bir kanaldan erişilebilir"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3811,7 +3811,7 @@ msgstr "İş akışı geçmişi"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "İş akışı geçmişi ({0}, {activeTotal} etkin)"
+msgstr "İş akışı geçmişi ({0}, {activeTotal} aktif)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

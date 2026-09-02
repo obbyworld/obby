@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Привносимо IRC у майбутнє"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Привносимо IRC у майбутнє"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— відкрити у переглядачі"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(обробляється ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(обробляється Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0} крок(ів) очікує на затвердження"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "{0} робочий(их) процес(ів)"
+msgstr "{0} робочих процесів"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -253,7 +253,7 @@ msgstr "*спам*"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "#channel"
-msgstr "#канал"
+msgstr "#channel"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -290,7 +290,7 @@ msgstr "<0>Ризик:</0> Конфіденційна інформація (по
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
-msgstr "Про це підтвердження авторства"
+msgstr "Про цю атрибуцію"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Accept"
@@ -652,7 +652,7 @@ msgstr "Боти"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Боти — отримання {botsLoadingCount} списку(ів) команд"
+msgstr "Боти — отримання {botsLoadingCount} списків команд"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
@@ -759,7 +759,7 @@ msgstr "Попередній перегляд аватара каналу"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Бот каналу — лише в каналах, до яких приєднано"
+msgstr "Бот каналу — лише в приєднаних каналах"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Дослідити"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Відкрийте світ IRC з ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Відкрийте світ IRC з Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Інфо:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Інформацію про те, хто викликав цю команду, надає бот, і відправника не може перевірити сервер."
+msgstr "Інформація про те, хто викликав цю команду, надається ботом, і сервер не може перевірити відправника."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Сповіщення"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Привносимо IRC у майбутнє"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Привносимо IRC у майбутнє"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "По всьому серверу"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Бот для всього сервера — доступний з будь-якого каналу"
+msgstr "Бот на весь сервер — доступний з будь-якого каналу"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3420,7 +3420,7 @@ msgstr "Часове вікно (секунди)"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
-msgstr "час вичерпано"
+msgstr "час очікування вичерпано"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ObbyWhoisModal.tsx

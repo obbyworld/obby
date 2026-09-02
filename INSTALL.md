@@ -1,4 +1,4 @@
-# Installing Native Obsidian IRC
+# Installing Native Obby
 
 Grab the latest version for your platform from [https://github.com/obbyworld/obby/releases](https://github.com/obbyworld/obby/releases)
 
@@ -7,32 +7,32 @@ Grab the latest version for your platform from [https://github.com/obbyworld/obb
 ### Linux
 
 - **Intel/AMD 64-bit (x86_64/amd64)**: Most desktop/laptop PCs
-  - `.deb` package: `ObsidianIRC_*_amd64.deb` for Debian/Ubuntu/ZorinOS
-  - `.rpm` package: `ObsidianIRC-*-1.x86_64.rpm` for Fedora/CentOS/RHEL
-  - AppImage: `ObsidianIRC_*_amd64.AppImage` for any Linux distro
+  - `.deb` package: `Obby_*_amd64.deb` for Debian/Ubuntu/ZorinOS
+  - `.rpm` package: `Obby-*-1.x86_64.rpm` for Fedora/CentOS/RHEL
+  - AppImage: `Obby_*_amd64.AppImage` for any Linux distro
 - **ARM 64-bit (aarch64/arm64)**: Raspberry Pi 4/5, ARM servers
-  - `.deb` package: `ObsidianIRC_*_arm64.deb` for Debian/Ubuntu
-  - `.rpm` package: `ObsidianIRC-*-1.aarch64.rpm` for Fedora/CentOS/RHEL
-  - AppImage: `ObsidianIRC_*_aarch64.AppImage` for any Linux distro
+  - `.deb` package: `Obby_*_arm64.deb` for Debian/Ubuntu
+  - `.rpm` package: `Obby-*-1.aarch64.rpm` for Fedora/CentOS/RHEL
+  - AppImage: `Obby_*_aarch64.AppImage` for any Linux distro
 - **NixOS / Nix-with-flakes (`x86_64-linux`, `aarch64-linux`)**: Build from source — see [BUILD.md — Nix (flake)](BUILD.md#nix-flake).
 
 ### macOS
 
-- **Intel Macs**: `ObsidianIRC_*_x64.dmg`
-- **Apple Silicon (M1/M2/M3)**: `ObsidianIRC_*_aarch64.dmg`
+- **Intel Macs**: `Obby_*_x64.dmg`
+- **Apple Silicon (M1/M2/M3)**: `Obby_*_aarch64.dmg`
 
 ### Windows
 
-- `ObsidianIRC_*_x64-setup.exe` or `ObsidianIRC_*_x64_en-US.msi`
+- `Obby_*_x64-setup.exe` or `Obby_*_x64_en-US.msi`
 
 ### Mobile
 
-- **Android**: `ObsidianIRC-*.apk` (unsigned - follow [this guide](https://developer.android.com/studio/run/install-apk))
-- **iOS**: `ObsidianIRC-*-unsigned.ipa` (use [LiveContainer](https://github.com/LiveContainer/LiveContainer) or [AltStore](https://altstore.io/))
+- **Android**: `Obby-*.apk` (unsigned - follow [this guide](https://developer.android.com/studio/run/install-apk))
+- **iOS**: `Obby-*-unsigned.ipa` (use [LiveContainer](https://github.com/LiveContainer/LiveContainer) or [AltStore](https://altstore.io/))
 
 ### Web
 
-- `ObsidianIRC-*-web.zip` - Unzip and open `dist/index.html` in your browser
+- `Obby-*-web.zip` - Unzip and open `dist/index.html` in your browser
 
 ## Debian/Ubuntu/ZorinOS Prerequisites
 
@@ -54,28 +54,28 @@ sudo apt install libwebkit2gtk-4.0-37 libgtk-3-0
 1. **Force install** (not recommended but works):
 
    ```sh
-   sudo dpkg -i --force-depends ObsidianIRC_*.deb
+   sudo dpkg -i --force-depends Obby_*.deb
    ```
 
 2. **Use the AppImage instead** (recommended - no installation needed):
 
    ```sh
-   chmod +x ObsidianIRC-*.AppImage
-   ./ObsidianIRC-*.AppImage
+   chmod +x Obby-*.AppImage
+   ./Obby-*.AppImage
    ```
 
 Standard installation after dependencies are installed:
 
 ```sh
-sudo dpkg -i ObsidianIRC_*.deb
+sudo dpkg -i Obby_*.deb
 sudo apt-get install -f  # Fix any remaining dependency issues
 ```
 
 Alternatively, use the **AppImage** version which includes all dependencies and doesn't require installation:
 
 ```sh
-chmod +x ObsidianIRC-*.AppImage
-./ObsidianIRC-*.AppImage
+chmod +x Obby-*.AppImage
+./Obby-*.AppImage
 ```
 
 ## Troubleshooting
@@ -89,8 +89,8 @@ If you get an error about glibc version or the app doesn't start, your system ha
 The AppImage bundles its own dependencies and should work on older systems:
 
 ```sh
-chmod +x ObsidianIRC_*_amd64.AppImage
-./ObsidianIRC_*_amd64.AppImage
+chmod +x Obby_*_amd64.AppImage
+./Obby_*_amd64.AppImage
 ```
 
 **Solution 2: Build from Source**
@@ -108,10 +108,10 @@ SYSTEM_LIB_PATH="/usr/lib/x86_64-linux-gnu"
 
 "$GLIBC_PATH/ld-linux-x86-64.so.2" \
   --library-path "$GLIBC_PATH:$SYSTEM_LIB_PATH" \
-  /usr/bin/ObsidianIRC
+  /usr/bin/Obby
 ```
 
-Save as `~/bin/obsidianirc` and run `chmod +x ~/bin/obsidianirc`
+Save as `~/bin/obby` and run `chmod +x ~/bin/obby`
 
 **Note for Developers:** To avoid this issue in releases, build on the oldest supported Ubuntu LTS (20.04 or 22.04) to ensure maximum compatibility.
 
@@ -125,10 +125,10 @@ Not available yet.
 
 ## Arch Linux AUR
 
-Use the AUR helper of your choice to install ObsidianIRC. For example, using `yay`:
+Use the AUR helper of your choice to install Obby. For example, using `yay`:
 
 ```sh
-yay -S obsidianirc
+yay -S obby
 ```
 
 ## Docker

@@ -103,7 +103,7 @@ const initializeEnvSettings = (
   if (!__DEFAULT_IRC_SERVER_NAME__) {
   }
   toggleAddServerModal(true, {
-    name: __DEFAULT_IRC_SERVER_NAME__ || "Obsidian IRC",
+    name: __DEFAULT_IRC_SERVER_NAME__ || "Obby",
     host,
     port,
     nickname: "",

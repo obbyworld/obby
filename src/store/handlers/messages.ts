@@ -1541,7 +1541,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     if (parv[0] === "\u0001VERSION\u0001") {
       ircClient.sendRaw(
         server.id,
-        `NOTICE ${response.sender} :\u0001VERSION ObsidianIRC v${ircClient.version}\u0001`,
+        `NOTICE ${response.sender} :\u0001VERSION Obby v${ircClient.version}\u0001`,
       );
     }
     if (parv[0] === "\u0001PING") {

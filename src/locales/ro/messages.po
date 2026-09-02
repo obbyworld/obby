@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Aducem IRC în viitor"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Aducem IRC în viitor"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— deschide în vizualizator"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(gestionat de ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(gestionat de Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -759,7 +759,7 @@ msgstr "Previzualizare avatar canal"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Bot de canal — doar în canalele la care s-a alăturat"
+msgstr "Bot de canal — doar în canalele la care te-ai alăturat"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -955,7 +955,7 @@ msgstr "Culoare și formatare"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr "Comenzile se încarcă…"
+msgstr "Se încarcă comenzile…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Descoperă"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Descoperă lumea IRC cu ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Descoperă lumea IRC cu Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Notificări"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Aducem IRC în viitor"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Aducând IRC în viitor"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2605,7 +2605,7 @@ msgstr "Redați sunete pentru mențiuni și mesaje"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr "Joacă X și O"
+msgstr "Joacă X și 0"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -3168,7 +3168,7 @@ msgstr "Afișați comentariile ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "Arată în meniul Boți →"
+msgstr "Afișează în meniul Boți →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -3811,7 +3811,7 @@ msgstr "Istoric fluxuri de lucru"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "Istoric fluxuri de lucru ({0}, {activeTotal} active)"
+msgstr "Istoric flux de lucru ({0}, {activeTotal} active)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

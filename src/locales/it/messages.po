@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Portare IRC nel futuro"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Portare IRC nel futuro"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— apri nel visualizzatore"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(gestito da ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(gestito da Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -759,7 +759,7 @@ msgstr "Anteprima avatar canale"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Bot di canale — solo nei canali a cui sei unito"
+msgstr "Bot di canale — solo nei canali a cui ti sei unito"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Scopri"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Scopri il mondo di IRC con ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Scopri il mondo di IRC con Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -2050,12 +2050,12 @@ msgstr "Messaggio {0}"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "Messaggio {0} (Invio per nuova riga, Shift+Invio per inviare)"
+msgstr "Messaggio {0} (Invio per andare a capo, Maiusc+Invio per inviare)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "Messaggio {0} (Shift+Invio per nuova riga)"
+msgstr "Messaggio {0} (Maiusc+Invio per andare a capo)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Notifiche"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Portare IRC nel futuro"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Portare IRC nel futuro"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2741,7 +2741,7 @@ msgstr "Ragionamento"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
-msgstr "Ricezione elenco comandi…"
+msgstr "Ricezione dell'elenco dei comandi…"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -3101,7 +3101,7 @@ msgstr "A livello di server"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Bot a livello di server — raggiungibile da qualsiasi canale"
+msgstr "Bot globale del server — raggiungibile da qualsiasi canale"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"

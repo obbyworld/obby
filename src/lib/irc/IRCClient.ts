@@ -1035,8 +1035,7 @@ export class IRCClient implements IRCClientContext {
     const socket = this.sockets.get(serverId);
     if (socket) {
       const message =
-        quitMessage ||
-        i18n._({ id: "ObsidianIRC - Bringing IRC to the future" });
+        quitMessage || i18n._({ id: "Obby - Bringing IRC to the future" });
       socket.send(`QUIT :${message}`);
       socket.close();
       this.sockets.delete(serverId);

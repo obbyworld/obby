@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC naar de toekomst brengen"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC naar de toekomst brengen"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— openen in viewer"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(afgehandeld door ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(afgehandeld door Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -652,7 +652,7 @@ msgstr "Bots"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bots — {botsLoadingCount} opdrachtlijst(en) worden ontvangen"
+msgstr "Bots — {botsLoadingCount} opdrachtenlijst(en) worden ontvangen"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Ontdekken"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Ontdek de wereld van IRC met ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Ontdek de wereld van IRC met Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Info:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Informatie over wie deze opdracht heeft aangeroepen wordt verstrekt door de bot en de afzender kan niet door de server worden geverifieerd."
+msgstr "Informatie over wie deze opdracht heeft aangeroepen, wordt door de bot verstrekt en de afzender kan niet door de server worden geverifieerd."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Meldingen"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC naar de toekomst brengen"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby — IRC de toekomst in"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2605,7 +2605,7 @@ msgstr "Geluiden afspelen voor vermeldingen en berichten"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr "Boter-kaas-en-eieren spelen"
+msgstr "Boter, kaas en eieren spelen"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -2741,7 +2741,7 @@ msgstr "Redenering"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
-msgstr "Opdrachtlijst wordt ontvangen…"
+msgstr "Opdrachtenlijst wordt ontvangen…"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -3101,7 +3101,7 @@ msgstr "Serverbreed"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Serverbrede bot — bereikbaar vanuit elk kanaal"
+msgstr "Serverbrede bot — bereikbaar vanaf elk kanaal"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3168,7 +3168,7 @@ msgstr "Reacties tonen ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "Tonen in botsmenu →"
+msgstr "Weergeven in Bots-menu →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -3464,7 +3464,7 @@ msgstr "Te groot om te versleutelen, onversleuteld verzonden"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "tool"
-msgstr "hulpmiddel"
+msgstr "tool"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Tool"

@@ -127,7 +127,7 @@ export const NAMED_MODE_META: Record<string, NamedModeMeta> = {
     group: "filtering",
   },
 
-  // ---- ObsidianIRC / UnrealIRCd-family chanmodes ----
+  // ---- Obby / UnrealIRCd-family chanmodes ----
   "obsidianirc/floodprot": {
     label: "Flood Protection",
     description:

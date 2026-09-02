@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Amener IRC vers le futur"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Amener IRC vers le futur"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— ouvrir dans le visualiseur"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(géré par ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(géré par Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -145,7 +145,7 @@ msgstr "il y a {0} min"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr "{activeCount} actif(s)"
+msgstr "{activeCount} actives"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -656,7 +656,7 @@ msgstr "Bots — réception de {botsLoadingCount} liste(s) de commandes"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr "Bots (chargement de {botsLoadingCount})"
+msgstr "Bots (chargement {botsLoadingCount})"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -738,7 +738,7 @@ msgstr "a changé le sujet en : {topic}"
 
 #: src/components/ui/BotsModal.tsx
 msgid "channel"
-msgstr "canal"
+msgstr "salon"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/QuickActions.tsx
@@ -759,7 +759,7 @@ msgstr "Aperçu de l'avatar du canal"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Bot de canal — uniquement dans les canaux rejoints"
+msgstr "Bot de salon — uniquement dans les salons rejoints"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Découvrir"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Découvrez le monde de l'IRC avec ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Découvrez le monde de l'IRC avec Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Info :"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Les informations sur l'auteur de cette commande sont fournies par le bot et l'expéditeur ne peut pas être vérifié par le serveur."
+msgstr "Les informations concernant l'auteur de cette commande sont fournies par le bot et l'expéditeur ne peut pas être vérifié par le serveur."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2050,12 +2050,12 @@ msgstr "Message {0}"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "Message {0} (Entrée pour une nouvelle ligne, Maj+Entrée pour envoyer)"
+msgstr "Message {0} (Entrée pour nouvelle ligne, Maj+Entrée pour envoyer)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "Message {0} (Maj+Entrée pour une nouvelle ligne)"
+msgstr "Message {0} (Maj+Entrée pour nouvelle ligne)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Notifications"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Amener IRC vers le futur"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - L'IRC vers le futur"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2605,7 +2605,7 @@ msgstr "Jouer des sons pour les mentions et messages"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
-msgstr "Jouer au morpion"
+msgstr "Jouer au Tic-Tac-Toe"
 
 #: src/components/ui/InviteUserModal.tsx
 msgid "Please enter a username"
@@ -3101,7 +3101,7 @@ msgstr "À l'échelle du serveur"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Bot à l'échelle du serveur — accessible depuis n'importe quel canal"
+msgstr "Bot à l'échelle du serveur — accessible depuis n'importe quel salon"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3811,7 +3811,7 @@ msgstr "Historique des workflows"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "Historique des workflows ({0}, {activeTotal} actif(s))"
+msgstr "Historique des workflows ({0}, {activeTotal} actifs)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

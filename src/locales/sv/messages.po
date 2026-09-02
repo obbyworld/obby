@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - För IRC in i framtiden"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - För IRC in i framtiden"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— öppna i visaren"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(hanteras av ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(hanteras av Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -637,7 +637,7 @@ msgstr "BOT"
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
-msgstr "Botkommandon"
+msgstr "Bot-kommandon"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
@@ -652,11 +652,11 @@ msgstr "Bottar"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bottar — tar emot {botsLoadingCount} kommandolista(or)"
+msgstr "Bots — tar emot {botsLoadingCount} kommandolista(or)"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr "Bottar (laddar {botsLoadingCount})"
+msgstr "Bots (läser in {botsLoadingCount})"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -955,7 +955,7 @@ msgstr "Färg och formatering"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr "Kommandon laddas…"
+msgstr "Kommandon läses in…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -1202,7 +1202,7 @@ msgstr "Ta bort det här nätverket?"
 
 #: src/components/ui/BotsModal.tsx
 msgid "deleted"
-msgstr "borttagen"
+msgstr "raderad"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Utforska"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Utforska IRC-världen med ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Utforska IRC-världen med Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1730,7 +1730,7 @@ msgstr "Info:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "Information om vem som anropade detta kommando tillhandahålls av botten och avsändaren kan inte verifieras av servern."
+msgstr "Information om vem som anropade det här kommandot tillhandahålls av boten och avsändaren kan inte verifieras av servern."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2050,12 +2050,12 @@ msgstr "Meddelande {0}"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "Meddelande {0} (Enter för ny rad, Shift+Enter för att skicka)"
+msgstr "Meddelande {0} (Enter för ny rad, Skift+Enter för att skicka)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "Meddelande {0} (Shift+Enter för ny rad)"
+msgstr "Meddelande {0} (Skift+Enter för ny rad)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Aviseringar"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - För IRC in i framtiden"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - För IRC in i framtiden"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -2562,7 +2562,7 @@ msgstr "PDF-förhandsgranskning"
 
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
-msgstr "väntar"
+msgstr "väntande"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -3101,7 +3101,7 @@ msgstr "Hela servern"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Bot för hela servern — nåbar från valfri kanal"
+msgstr "Serveromfattande bot — nåbar från vilken kanal som helst"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3168,7 +3168,7 @@ msgstr "Visa kommentarer ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "Visa i botmenyn →"
+msgstr "Visa i Bots-menyn →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"

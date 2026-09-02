@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC를 미래로"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC를 미래로"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— 뷰어에서 열기"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(ObsidianIRC가 처리)"
+msgid "(handled by Obby)"
+msgstr "(Obby가 처리)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0}단계가 승인 대기 중"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "워크플로 {0}개"
+msgstr "워크플로우 {0}개"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -290,7 +290,7 @@ msgstr "<0>위험:</0> 민감한 정보(메시지, 비공개 대화, 인증 정�
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
-msgstr "이 출처 표시에 대하여"
+msgstr "이 출처 표시에 관하여"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Accept"
@@ -637,7 +637,7 @@ msgstr "BOT"
 #: src/components/ui/UserContextMenu.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
-msgstr "봇 명령어"
+msgstr "Bot 명령어"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bot hasn't registered any slash commands yet."
@@ -652,11 +652,11 @@ msgstr "봇"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "봇 — 명령어 목록 {botsLoadingCount}개 수신 중"
+msgstr "Bot — 명령어 목록 {botsLoadingCount}개 수신 중"
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
-msgstr "봇 ({botsLoadingCount}개 로딩 중)"
+msgstr "Bot ({botsLoadingCount}개 로딩 중)"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
@@ -759,7 +759,7 @@ msgstr "채널 아바타 미리보기"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "채널 봇 — 참가한 채널에서만 사용 가능"
+msgstr "채널 bot — 참여 중인 채널에서만"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -969,7 +969,7 @@ msgstr "댓글 ({commentCount})"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "complete"
-msgstr "완료됨"
+msgstr "완료"
 
 #: src/components/ui/BotsModal.tsx
 msgid "config-defined"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "채널 탐색"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "ObsidianIRC와 함께 IRC의 세계를 탐험하세요"
+msgid "Discover the world of IRC with Obby"
+msgstr "Obby와 함께 IRC의 세계를 탐험하세요"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1515,7 +1515,7 @@ msgstr "외부 링크 경고"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "failed"
-msgstr "실패함"
+msgstr "실패"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1730,7 +1730,7 @@ msgstr "정보:"
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "이 명령어를 호출한 사람에 대한 정보는 봇이 제공하며, 발신자는 서버에서 검증할 수 없습니다."
+msgstr "이 명령어를 실행한 사람에 관한 정보는 bot이 제공하며, 서버는 발신자를 확인할 수 없습니다."
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "메시지"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "{0}에게 메시지"
+msgstr "{0}에 메시지 보내기"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "{0}에게 메시지 (Enter로 줄 바꿈, Shift+Enter로 전송)"
+msgstr "{0}에 메시지 보내기 (Enter로 줄바꿈, Shift+Enter로 전송)"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "{0}에게 메시지 (Shift+Enter로 줄 바꿈)"
+msgstr "{0}에 메시지 보내기 (Shift+Enter로 줄바꿈)"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "알림"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - IRC를 미래로"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - IRC를 미래로"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "서버 전체"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "서버 전체 봇 — 모든 채널에서 사용 가능"
+msgstr "서버 전역 bot — 모든 채널에서 접근 가능"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3168,7 +3168,7 @@ msgstr "댓글 보기 ({commentCount})"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Show in Bots Menu →"
-msgstr "봇 메뉴에서 보기 →"
+msgstr "Bot 메뉴에 표시 →"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -3420,7 +3420,7 @@ msgstr "시간 창 (초)"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "timed out"
-msgstr "시간 초과됨"
+msgstr "시간 초과"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3802,7 +3802,7 @@ msgstr "비워두면 기본값인 '사유 없음'이 사용됩니다"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
-msgstr "워크플로"
+msgstr "워크플로우"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history"
@@ -3811,7 +3811,7 @@ msgstr "워크플로 기록"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "워크플로 기록 ({0}, {activeTotal}개 활성)"
+msgstr "워크플로우 기록 ({0}, {activeTotal}개 활성)"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

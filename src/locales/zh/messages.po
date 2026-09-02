@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - 将 IRC 带入未来"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - 将 IRC 带入未来"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— 在查看器中打开"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(由 ObsidianIRC 处理)"
+msgid "(handled by Obby)"
+msgstr "(由 Obby 处理)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -145,7 +145,7 @@ msgstr "{0} 分钟前"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{activeCount} active"
-msgstr "{activeCount} 个活动中"
+msgstr "{activeCount} 个活跃"
 
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
@@ -253,7 +253,7 @@ msgstr "*spam*"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "#channel"
-msgstr "#频道"
+msgstr "#channel"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -342,7 +342,7 @@ msgstr "操作"
 
 #: src/components/ui/BotsModal.tsx
 msgid "active"
-msgstr "活动中"
+msgstr "活跃"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Activity"
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "发现"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "使用 ObsidianIRC 探索 IRC 的世界"
+msgid "Discover the world of IRC with Obby"
+msgstr "使用 Obby 探索 IRC 的世界"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -1515,7 +1515,7 @@ msgstr "外部链接警告"
 
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "failed"
-msgstr "已失败"
+msgstr "失败"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1730,7 +1730,7 @@ msgstr "信息："
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
-msgstr "关于谁调用了此命令的信息由机器人提供，服务器无法验证发送者。"
+msgstr "关于是谁调用此命令的信息由 bot 提供，服务器无法验证发送者。"
 
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
@@ -2045,17 +2045,17 @@ msgstr "消息"
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
-msgstr "发消息至 {0}"
+msgstr "给 {0} 发消息"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
-msgstr "发消息至 {0}（Enter 换行，Shift+Enter 发送）"
+msgstr "给 {0} 发消息（Enter 换行，Shift+Enter 发送）"
 
 #. placeholder {0}: selectedChannel.name
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
-msgstr "发消息至 {0}（Shift+Enter 换行）"
+msgstr "给 {0} 发消息（Shift+Enter 换行）"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "通知"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - 将 IRC 带入未来"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - 将 IRC 带入未来"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "服务器范围"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "服务器范围机器人 — 可从任意频道访问"
+msgstr "服务器范围机器人 — 可从任何频道访问"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3811,7 +3811,7 @@ msgstr "工作流历史"
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0}, {activeTotal} active)"
-msgstr "工作流历史（{0}，{activeTotal} 个活动中）"
+msgstr "工作流历史（{0}，{activeTotal} 个活跃）"
 
 #. placeholder {0}: workflows.length
 #: src/components/ui/BotToolsHistoryButton.tsx

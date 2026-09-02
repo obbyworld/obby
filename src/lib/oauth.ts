@@ -137,7 +137,7 @@ const POPUP_W = 480;
 const POPUP_H = 720;
 
 export interface OAuthCallbackMessage {
-  type: "obsidianirc:oauth-callback";
+  type: "obby:oauth-callback";
   state: string;
   code?: string;
   error?: string;
@@ -184,7 +184,7 @@ export async function beginOauthLogin(
   const top = window.screenY + (window.outerHeight - POPUP_H) / 2;
   const popup = window.open(
     url,
-    "obsidianirc-oauth",
+    "obby-oauth",
     `width=${POPUP_W},height=${POPUP_H},left=${left},top=${top},popup=yes`,
   );
   if (!popup) {
@@ -203,7 +203,7 @@ export async function beginOauthLogin(
       // Same-origin only; the callback page is served by the SPA.
       if (event.origin !== window.location.origin) return;
       const data = event.data as OAuthCallbackMessage | undefined;
-      if (!data || data.type !== "obsidianirc:oauth-callback") return;
+      if (!data || data.type !== "obby:oauth-callback") return;
       if (data.state !== state) {
         cleanup();
         reject(new Error("OAuth state mismatch (possible CSRF)"));

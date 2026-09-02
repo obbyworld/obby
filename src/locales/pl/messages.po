@@ -15,16 +15,16 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/irc/IRCClient.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Przenosimy IRC w przyszłość"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby - Przenosimy IRC w przyszłość"
 
 #: src/components/message/MediaPreview.tsx
 msgid "— open in viewer"
 msgstr "— otwórz w przeglądarce"
 
 #: src/components/ui/SlashParamHint.tsx
-msgid "(handled by ObsidianIRC)"
-msgstr "(obsługiwane przez ObsidianIRC)"
+msgid "(handled by Obby)"
+msgstr "(obsługiwane przez Obby)"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -108,7 +108,7 @@ msgstr "{0} kroków oczekuje na zatwierdzenie"
 #. placeholder {0}: list.length
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "{0} workflow(s)"
-msgstr "{0} przepływów pracy"
+msgstr "{0} przepływ(ów) pracy"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -157,7 +157,7 @@ msgstr "{days} dni"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{hours} hours"
-msgstr "{hours} godz."
+msgstr "{hours} godzin"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -173,7 +173,7 @@ msgstr "{joinCount, plural, one {dołączył} few {dołączył {joinCount} razy}
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{minutes} minutes"
-msgstr "{minutes} min"
+msgstr "{minutes} minut"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} declined encryption."
@@ -229,7 +229,7 @@ msgstr "{safeName} został zmieniony na serwerze, więc nie da się go już odsz
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "{seconds} seconds"
-msgstr "{seconds} sek."
+msgstr "{seconds} sekund"
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption, so this conversation is being set up again."
@@ -290,7 +290,7 @@ msgstr "<0>Ryzyko:</0> Poufne informacje (wiadomości, prywatne rozmowy, dane uw
 
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
-msgstr "O tym przypisaniu"
+msgstr "O tej atrybucji"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Accept"
@@ -759,7 +759,7 @@ msgstr "Podgląd awatara kanału"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Channel bot — only in joined channels"
-msgstr "Bot kanału — tylko w dołączonych kanałach"
+msgstr "Bot kanałowy — tylko na dołączonych kanałach"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Channel Display Name"
@@ -955,7 +955,7 @@ msgstr "Kolor i formatowanie"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
-msgstr "Ładowanie poleceń…"
+msgstr "Polecenia się ładują…"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
@@ -1235,8 +1235,8 @@ msgid "Discover"
 msgstr "Odkryj"
 
 #: src/components/ui/HomeScreen.tsx
-msgid "Discover the world of IRC with ObsidianIRC"
-msgstr "Odkryj świat IRC z ObsidianIRC"
+msgid "Discover the world of IRC with Obby"
+msgstr "Odkryj świat IRC z Obby"
 
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
@@ -2382,14 +2382,14 @@ msgid "Notifications"
 msgstr "Powiadomienia"
 
 #: src/components/PrivacyPolicy.tsx
-msgid "ObsidianIRC"
-msgstr "ObsidianIRC"
+msgid "Obby"
+msgstr "Obby"
 
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
-msgid "ObsidianIRC - Bringing IRC to the future"
-msgstr "ObsidianIRC - Przenosimy IRC w przyszłość"
+msgid "Obby - Bringing IRC to the future"
+msgstr "Obby – IRC w nowoczesnym wydaniu"
 
 #. placeholder {0}: session.total
 #: src/components/ui/ObbyWhoisModal.tsx
@@ -3101,7 +3101,7 @@ msgstr "Dla całego serwera"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
-msgstr "Bot dla całego serwera — dostępny z dowolnego kanału"
+msgstr "Bot ogólnoserwerowy — dostępny z dowolnego kanału"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
@@ -3294,7 +3294,7 @@ msgstr "Zawieś"
 
 #: src/components/ui/BotsModal.tsx
 msgid "suspended"
-msgstr "zawieszono"
+msgstr "zawieszony"
 
 #: src/components/message/ActionMessage.tsx
 msgid "System"
