@@ -1,5 +1,9 @@
 import type { Message } from "../types";
-import { decodeMediaDescriptor, sanitizeFileName } from "./e2ee/media";
+import {
+  decodeMediaDescriptor,
+  type MediaDescriptor,
+  sanitizeFileName,
+} from "./e2ee/media";
 import { E2EE_MEDIA_TAG } from "./e2ee/messageFlags";
 import {
   detectMediaType,
@@ -52,6 +56,20 @@ function kindFromMediaType(type: MediaType | null): AttachmentKind | null {
   }
 }
 
+/** The encrypted attachment a message carries, or null. Callers that need the
+ * bytes want this; callers that only describe the file want
+ * `describeAttachment`. */
+export function encryptedDescriptor(message: Message): MediaDescriptor | null {
+  const tag = message.tags?.[E2EE_MEDIA_TAG];
+  return tag ? decodeMediaDescriptor(tag) : null;
+}
+
+/** The media element an attachment kind renders into, or null when the app has
+ * nothing to display it with. */
+export function kindMediaType(kind: AttachmentKind): MediaType | null {
+  return kind === "file" ? null : kind;
+}
+
 /** What a message carries as an attachment, whichever way it got there. The two
  * sources are a plain URL in the body and an encrypted descriptor on a tag, and
  * everything downstream reads this shape rather than either of them, so a
@@ -59,9 +77,8 @@ function kindFromMediaType(type: MediaType | null): AttachmentKind | null {
  *
  * Returns null when the message carries no attachment. */
 export function describeAttachment(message: Message): AttachmentSummary | null {
-  const encryptedTag = message.tags?.[E2EE_MEDIA_TAG];
-  if (encryptedTag) {
-    const descriptor = decodeMediaDescriptor(encryptedTag);
+  {
+    const descriptor = encryptedDescriptor(message);
     if (descriptor) {
       return {
         kind: kindFromMime(descriptor.mime),

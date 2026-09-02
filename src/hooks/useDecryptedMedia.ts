@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { getDecryptedObjectUrl } from "../lib/e2ee/decryptedMediaCache";
 import {
-  fetchDecryptedMedia,
   type MediaDescriptor,
   type MediaFailure,
   MediaFetchError,
 } from "../lib/e2ee/media";
 
-// Fetch an encrypted attachment and hand back a blob URL that lives exactly as
-// long as the component holding it, so the file's own URL stays out of the DOM.
+// Hand back a blob URL for an encrypted attachment, so the file's own URL stays
+// out of the DOM. The URL comes from the shared cache, which means a row that
+// scrolls away and back, or a second view of the same file, costs nothing.
 //
 // `allowed` carries the same origin trust decision the plain media path makes:
 // the descriptor URL is peer-authored, and fetching one the user has not
@@ -24,25 +25,22 @@ export function useDecryptedMedia(
 
   useEffect(() => {
     if (!allowed) return;
-    const abort = new AbortController();
-    let created: string | null = null;
+    let live = true;
     setObjectUrl(null);
     setFailure(null);
 
-    fetchDecryptedMedia({ url, k, n, mime, size, name: "" }, abort.signal)
-      .then((blob) => {
-        if (abort.signal.aborted) return;
-        created = URL.createObjectURL(blob);
-        setObjectUrl(created);
+    getDecryptedObjectUrl({ url, k, n, mime, size, name: "" })
+      .then((cached) => {
+        if (live) setObjectUrl(cached);
       })
       .catch((err: unknown) => {
-        if (abort.signal.aborted) return;
+        if (!live) return;
         setFailure(err instanceof MediaFetchError ? err.reason : "unavailable");
       });
 
+    // The URL belongs to the cache, so it is not revoked here.
     return () => {
-      abort.abort();
-      if (created) URL.revokeObjectURL(created);
+      live = false;
     };
   }, [allowed, url, k, n, mime, size]);
 
