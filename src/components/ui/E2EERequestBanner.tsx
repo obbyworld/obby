@@ -145,13 +145,23 @@ export const E2EERequestBanner: React.FC<{
         <div className="min-w-0 flex-1 text-sm text-discord-text-normal">
           <Trans>
             {nick}'s encryption key changed. That happens on a new device, and
-            it is also what an attacker looks like. End encryption and start
-            again to re-verify.
+            it is also what an attacker looks like. Compare the new fingerprint
+            with {nick} somewhere other than this chat, then accept it.
           </Trans>
         </div>
+        {/* Reviewing is the primary action. Ending encryption and handshaking
+            again pins whichever key answers next with no comparison at all,
+            which is what an attacker standing in the middle wants. */}
         <button
           type="button"
-          className="rounded bg-discord-red px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+          className="flex-shrink-0 rounded bg-discord-red px-3 py-1 text-xs font-medium text-white hover:opacity-90"
+          onClick={() => openE2EEVerify(serverId, nick)}
+        >
+          <Trans>Review key</Trans>
+        </button>
+        <button
+          type="button"
+          className="flex-shrink-0 rounded border border-discord-dark-500 px-3 py-1 text-xs font-medium text-discord-text-muted hover:text-discord-text-normal"
           onClick={() => resetE2EESession(serverId, nick)}
         >
           <Trans>End encryption</Trans>

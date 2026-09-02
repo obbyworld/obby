@@ -200,8 +200,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} chce zahájit šifrovaný chat"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
-msgstr "Šifrovací klíč uživatele {nick} se změnil. To se stává na novém zařízení, ale přesně tak vypadá i útočník. Ukončete šifrování a spusťte je znovu, abyste klíč ověřili."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
+msgstr "Klíč pro šifrování uživatele {nick} se změnil. To se stane na novém zařízení a stejně vypadá i útočník. Porovnejte nový otisk s uživatelem {nick} jinde než v tomto chatu a potom jej přijměte."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -2836,6 +2836,10 @@ msgstr "Zkusit odeslat znovu"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "Zkontrolovat změněný klíč…"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Review key"
+msgstr "Zkontrolovat klíč"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"

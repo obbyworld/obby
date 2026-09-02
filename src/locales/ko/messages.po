@@ -200,8 +200,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick}님이 암호화된 대화를 시작하려고 합니다"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
-msgstr "{nick}님의 암호화 키가 변경되었습니다. 새 기기에서 흔히 일어나지만, 공격자도 이와 똑같이 보입니다. 암호화를 종료한 뒤 다시 시작해 확인하세요."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
+msgstr "{nick}의 암호화 키가 바뀌었습니다. 새 기기에서도 일어나지만, 공격자도 이와 같이 보입니다. 이 대화가 아닌 다른 곳에서 {nick}와 새 지문을 비교한 뒤 승인하세요."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -2836,6 +2836,10 @@ msgstr "다시 보내기"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "변경된 키 검토…"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Review key"
+msgstr "키 확인"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"

@@ -200,8 +200,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} wil een versleutelde chat starten"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
-msgstr "De versleutelingssleutel van {nick} is veranderd. Dat gebeurt bij een nieuw apparaat, en zo ziet een aanvaller er ook uit. Beëindig de versleuteling en start opnieuw om te verifiëren."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
+msgstr "De versleutelingssleutel van {nick} is gewijzigd. Dat gebeurt op een nieuw apparaat, en zo ziet een aanvaller er ook uit. Vergelijk de nieuwe vingerafdruk met {nick} buiten deze chat en accepteer hem daarna."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -2836,6 +2836,10 @@ msgstr "Opnieuw verzenden"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "Gewijzigde sleutel bekijken…"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Review key"
+msgstr "Sleutel bekijken"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"

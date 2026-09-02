@@ -200,8 +200,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} haluaa aloittaa salatun keskustelun"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. End encryption and start again to re-verify."
-msgstr "Käyttäjän {nick} salausavain vaihtui. Näin käy uudella laitteella, ja samalta näyttää myös hyökkääjä. Lopeta salaus ja aloita uudelleen varmistaaksesi avaimen."
+msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
+msgstr "Käyttäjän {nick} salausavain vaihtui. Näin käy uudella laitteella, ja samalta näyttää myös hyökkääjä. Vertaa uutta sormenjälkeä käyttäjän {nick} kanssa muualla kuin tässä keskustelussa ja hyväksy se sitten."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -2836,6 +2836,10 @@ msgstr "Yritä lähettää uudelleen"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "Tarkista muuttunut avain…"
+
+#: src/components/ui/E2EERequestBanner.tsx
+msgid "Review key"
+msgstr "Tarkista avain"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
