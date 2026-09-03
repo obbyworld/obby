@@ -14,6 +14,8 @@ export interface ISocket {
   readyState: number;
 }
 
+export type SocketFactory = (url: string) => ISocket;
+
 export class TCPSocket implements ISocket {
   private clientId: string;
   private isConnected = false;
@@ -161,7 +163,7 @@ export class WebSocketWrapper implements ISocket {
   }
 }
 
-export function createSocket(url: string): ISocket {
+const defaultSocketFactory: SocketFactory = (url: string) => {
   if (url.startsWith("wss://")) {
     return new WebSocketWrapper(url);
   }
@@ -169,4 +171,18 @@ export function createSocket(url: string): ISocket {
     return new TCPSocket(url);
   }
   throw new Error("Unsupported socket protocol");
+};
+
+let socketFactory: SocketFactory = defaultSocketFactory;
+
+export function createSocket(url: string): ISocket {
+  return socketFactory(url);
+}
+
+export function setSocketFactory(factory: SocketFactory): void {
+  socketFactory = factory;
+}
+
+export function resetSocketFactory(): void {
+  socketFactory = defaultSocketFactory;
 }
