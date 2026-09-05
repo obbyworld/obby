@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, other {显示另外 {1} 个项目}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0} 和 {1} 正在输入..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "闲置 {0}"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0} 为必填项。"
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0} 正在输入..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0} 个步骤等待批准"
 msgid "{0} workflow(s)"
 msgstr "{0} 个工作流"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}、{1} 和 {2} 正在输入..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}、{1}、{2} 以及另外 {3} 人正在输入..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS} 人正在直播 · {1} 人观看中"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -271,6 +251,32 @@ msgstr "#overflow"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← 返回"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0> 和 <1>{1}</1> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>、<1>{1}</1> 和 <2>{2}</2> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> 以及另外 {3} 人正在输入..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -940,6 +946,11 @@ msgstr "关闭弹出的服务器通知"
 msgid "Close viewer"
 msgstr "关闭查看器"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Collapse"
+msgstr "收起"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "收起成员列表"
@@ -1012,10 +1023,26 @@ msgstr "连接中"
 msgid "Connecting..."
 msgstr "正在连接..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "正在连接…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "连接"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "连接：一般"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "连接：良好"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "连接：较差"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1128,6 +1155,10 @@ msgstr "自定义您的 IRC 客户端体验"
 msgid "Data Collection"
 msgstr "数据收集"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "屏蔽声音"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
 msgstr "拒绝"
@@ -1204,9 +1235,18 @@ msgstr "删除此网络？"
 msgid "deleted"
 msgstr "已删除"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "降为观众"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "禁用按键说话"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1278,8 @@ msgstr "发现"
 msgid "Discover the world of IRC with Obby"
 msgstr "使用 Obby 探索 IRC 的世界"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1351,6 +1393,10 @@ msgstr "启用通知声音"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "启用通知"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "启用按键说话"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1493,6 +1539,17 @@ msgstr "例外"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "排除频道名称掩码"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "退出聚焦"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Expand"
+msgstr "展开"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1652,6 +1709,7 @@ msgstr "主页"
 msgid "Homepage"
 msgstr "主页"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1815,17 @@ msgstr "值无效"
 msgid "Invitations"
 msgstr "邀请"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "邀请"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "邀请用户加入当前频道"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "邀请加入直播"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1884,6 +1950,11 @@ msgstr "了解更多配置文件 →"
 msgid "Leave a channel"
 msgstr "离开频道"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "离开通话"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "离开频道"
@@ -1921,6 +1992,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "链接预览"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "直播中"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2049,11 @@ msgstr "日志"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "链路安全级别较低（级别 {securityLevel}）"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "放下手"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2144,6 +2224,7 @@ msgstr "模式："
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "更多"
 
@@ -2157,8 +2238,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enter 换行"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "静音"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "仅对我静音"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2361,9 +2449,17 @@ msgstr "没有可用用户"
 msgid "No users found matching your search"
 msgstr "未找到与搜索条件匹配的用户"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "暂无观众。"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "无可用 WHOIS 数据"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "这里还没有人。邀请他人输入 /join {channelName} 加入。"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2673,10 @@ msgstr "待处理"
 msgid "Permanent"
 msgstr "永久"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "画中画"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2729,11 @@ msgstr "请稍候..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "私信用户"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "弹出视频"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2816,17 @@ msgstr "退出消息"
 msgid "Quit the server"
 msgstr "已退出服务器"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "举手"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "执行了"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "添加表情"
 
@@ -2753,6 +2864,10 @@ msgstr "推理"
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
 msgstr "正在接收命令列表…"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "重新连接失败"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -2843,6 +2958,12 @@ msgstr "回复消息已不在视图中"
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "重新发送"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "返回频道"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3282,10 @@ msgstr "未找到设置"
 msgid "Settings"
 msgstr "设置"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "共享屏幕"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "她/她的"
@@ -3266,6 +3391,10 @@ msgstr "来源"
 msgid "Start Private Message"
 msgstr "发起私信"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "开启视频"
+
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "正在启动工作流…"
@@ -3281,11 +3410,27 @@ msgstr "状态"
 msgid "Status Messages"
 msgstr "状态消息"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "退出直播"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "停止"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "停止共享"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "关闭视频"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "主播"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3515,13 +3660,24 @@ msgstr "类型"
 msgid "Type a message..."
 msgstr "输入消息..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "取消屏蔽声音"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "取消忽略用户"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "取消静音"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "仅对我取消静音"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +3881,15 @@ msgstr "查看资料"
 msgid "View user profile information"
 msgstr "查看用户资料信息"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "观众"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "观众 ({0})"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "语音权限"
@@ -3736,6 +3901,11 @@ msgstr "有发言权的用户"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "音量"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "{0} 的音量"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

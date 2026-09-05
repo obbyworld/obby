@@ -59,7 +59,7 @@ export function registerTicTacToeHandlers(store: StoreApi<AppState>) {
     const raw = mtags[TTT_TAG];
     if (!raw) return;
     const value = unescapeTagValue(raw);
-    if (!value || value[0] !== "{") return;
+    if (value?.[0] !== "{") return;
 
     let data: TttMessage | null = null;
     try {

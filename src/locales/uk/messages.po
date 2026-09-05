@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Показати ще 1 елемент} few {Показати ще {1} елементи} many {Показати ще {1} елементів} other {Показати ще {1} елементи}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0} та {1} пишуть..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "{0} без активності"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0} обов'язковий."
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0} пише..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0} крок(ів) очікує на затвердження"
 msgid "{0} workflow(s)"
 msgstr "{0} робочих процесів"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}, {1} та {2} пишуть..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}, {1}, {2} та ще {3} пишуть..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS} в ефірі · {1} дивляться"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -271,6 +251,32 @@ msgstr "#переповнення"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Назад"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0> та <1>{1}</1> пишуть..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0> пише..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1> та <2>{2}</2> пишуть..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> та ще {3} пишуть..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -940,6 +946,11 @@ msgstr "Закрити виспливаючі сповіщення сервер�
 msgid "Close viewer"
 msgstr "Закрити переглядач"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Collapse"
+msgstr "Згорнути"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "Згорнути список учасників"
@@ -1012,10 +1023,26 @@ msgstr "Підключення"
 msgid "Connecting..."
 msgstr "Підключення..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "Підключення…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "З'єднання"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "З'єднання: середнє"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "З'єднання: добре"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "З'єднання: погане"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1128,6 +1155,10 @@ msgstr "Налаштуйте свій IRC-клієнт"
 msgid "Data Collection"
 msgstr "Збір даних"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "Вимкнути звук"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
 msgstr "Відхилити"
@@ -1204,9 +1235,18 @@ msgstr "Видалити цю мережу?"
 msgid "deleted"
 msgstr "видалено"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "Перевести у глядачі"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Опис (необов'язково, напр. \"Бета-тестувальники Q3\")"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "Вимкнути push-to-talk"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1278,8 @@ msgstr "Дослідити"
 msgid "Discover the world of IRC with Obby"
 msgstr "Відкрийте світ IRC з Obby"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1351,6 +1393,10 @@ msgstr "Увімкнути звуки сповіщень"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "Увімкнути сповіщення"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "Увімкнути push-to-talk"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1493,6 +1539,17 @@ msgstr "Винятки"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Маска виключення назви каналу"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "Вийти з режиму виділення"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Expand"
+msgstr "Розгорнути"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1652,6 +1709,7 @@ msgstr "ГОЛОВНА"
 msgid "Homepage"
 msgstr "Головна сторінка"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1815,17 @@ msgstr "Недійсне значення"
 msgid "Invitations"
 msgstr "Запрошення"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "Запросити"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "Запросити користувача до поточного каналу"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "Запросити до трансляції"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1884,6 +1950,11 @@ msgstr "Дізнатися більше про профілі →"
 msgid "Leave a channel"
 msgstr "Покинути канал"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "Покинути дзвінок"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Покинути канал"
@@ -1921,6 +1992,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "Попередній перегляд посилання"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "В ефірі"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2049,11 @@ msgstr "логи"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "Низький рівень безпеки з'єднання (Рівень {securityLevel})"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "Опустити руку"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2144,6 +2224,7 @@ msgstr "Режими:"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "Більше"
 
@@ -2157,8 +2238,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Багаторядковий на Shift+Enter"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "Вимкнути звук"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "Заглушити для мене"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2361,9 +2449,17 @@ msgstr "Користувачів немає"
 msgid "No users found matching your search"
 msgstr "Користувачів за вашим запитом не знайдено"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "Поки що немає глядачів."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "Дані WHOIS недоступні"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "Тут нікого немає. Попросіть когось приєднатися командою /join {channelName}."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2673,10 @@ msgstr "очікує"
 msgid "Permanent"
 msgstr "Постійний"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "Картинка в картинці"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2729,11 @@ msgstr "Будь ласка, зачекайте..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "ПП користувачу"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "Відкрити відео в окремому вікні"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2816,17 @@ msgstr "Повідомлення про вихід"
 msgid "Quit the server"
 msgstr "Вийти з сервера"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "Підняти руку"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "виконав"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "React"
 
@@ -2753,6 +2864,10 @@ msgstr "Міркування"
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
 msgstr "Отримання списку команд…"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "Не вдалося перепідключитися"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -2843,6 +2958,12 @@ msgstr "Повідомлення з відповіддю більше не ві�
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "Повторити надсилання"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "Повернутися до каналу"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3282,10 @@ msgstr "Налаштування не знайдено"
 msgid "Settings"
 msgstr "Налаштування"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "Демонстрація екрана"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "вона/її"
@@ -3266,6 +3391,10 @@ msgstr "Джерело"
 msgid "Start Private Message"
 msgstr "Почати приватне повідомлення"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "Увімкнути відео"
+
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Запуск робочого процесу…"
@@ -3281,11 +3410,27 @@ msgstr "Статус"
 msgid "Status Messages"
 msgstr "Статусні повідомлення"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "Завершити трансляцію"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Зупинити"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "Зупинити демонстрацію"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "Вимкнути відео"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "Стрімер"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3515,13 +3660,24 @@ msgstr "Тип"
 msgid "Type a message..."
 msgstr "Введіть повідомлення..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "Увімкнути звук"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "Скасувати ігнорування"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "Увімкнути звук"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "Увімкнути звук для мене"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +3881,15 @@ msgstr "Переглянути профіль"
 msgid "View user profile information"
 msgstr "Переглянути інформацію профілю користувача"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "Глядач"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "Глядачі ({0})"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Голос"
@@ -3736,6 +3901,11 @@ msgstr "Користувач з голосом"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Гучність"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "Гучність для {0}"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

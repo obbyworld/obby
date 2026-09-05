@@ -7,6 +7,7 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import { releaseServerVoiceClients, releaseVoiceClient } from "../lib/voice";
 import {
   clearServerConnectionTimeout,
   registerAllProtocolHandlers,
@@ -1596,6 +1597,7 @@ const useStore = create<AppState>((set, get) => ({
 
   disconnect: (serverId) => {
     clearServerConnectionTimeout(serverId);
+    releaseServerVoiceClients(serverId);
     const quitMessage = get().globalSettings.quitMessage;
     ircClient.disconnect(serverId, quitMessage);
 
@@ -1749,6 +1751,9 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   leaveChannel: (serverId, channelName) => {
+    // A voice call keeps running after its view unmounts, so leaving the
+    // channel is the only thing left that can end it.
+    releaseVoiceClient(serverId, channelName);
     ircClient.leaveChannel(serverId, channelName); // Send PART command to the IRC server
 
     set((state) => {
@@ -3320,6 +3325,7 @@ const useStore = create<AppState>((set, get) => ({
 
     for (const id of toRemove) {
       clearServerConnectionTimeout(id);
+      releaseServerVoiceClients(id);
       ircClient.removeServer(id);
     }
 
