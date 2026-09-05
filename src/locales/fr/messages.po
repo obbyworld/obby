@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Afficher 1 élément de plus} other {Afficher {1} éléments de plus}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0} et {1} sont en train d'écrire..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "{0} d'inactivité"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0} est obligatoire."
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0} est en train d'écrire..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0} étape(s) en attente d'approbation"
 msgid "{0} workflow(s)"
 msgstr "{0} workflow(s)"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}, {1} et {2} sont en train d'écrire..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}, {1}, {2} et {3} autres sont en train d'écrire..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS} en direct · {1} spectateurs"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -271,6 +251,32 @@ msgstr "#overflow"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Retour"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0> et <1>{1}</1> sont en train d'écrire..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0> est en train d'écrire..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1> et <2>{2}</2> sont en train d'écrire..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> et {3} autres sont en train d'écrire..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -940,6 +946,11 @@ msgstr "Fermer les notifications serveur détachées"
 msgid "Close viewer"
 msgstr "Fermer le visualiseur"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Collapse"
+msgstr "Réduire"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "Réduire la liste des membres"
@@ -1012,10 +1023,26 @@ msgstr "Connexion en cours"
 msgid "Connecting..."
 msgstr "Connexion en cours..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "Connexion…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "Connexion"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "Connexion : moyenne"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "Connexion : bonne"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "Connexion : mauvaise"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1128,6 +1155,10 @@ msgstr "Personnalisez votre expérience du client IRC"
 msgid "Data Collection"
 msgstr "Collecte de données"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "Couper le son"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
 msgstr "Refuser"
@@ -1204,9 +1235,18 @@ msgstr "Supprimer ce réseau ?"
 msgid "deleted"
 msgstr "supprimé"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "Rétrograder en spectateur"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Description (optionnelle, ex. « Bêta-testeurs T3 »)"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "Désactiver l'appui pour parler"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1278,8 @@ msgstr "Découvrir"
 msgid "Discover the world of IRC with Obby"
 msgstr "Découvrez le monde de l'IRC avec Obby"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1351,6 +1393,10 @@ msgstr "Activer les sons de notification"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "Activer les notifications"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "Activer l'appui pour parler"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1493,6 +1539,17 @@ msgstr "Exceptions"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Exclure le masque de nom de salon"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "Quitter le mode vedette"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Expand"
+msgstr "Développer"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1652,6 +1709,7 @@ msgstr "ACCUEIL"
 msgid "Homepage"
 msgstr "Page d'accueil"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1815,17 @@ msgstr "Valeur invalide"
 msgid "Invitations"
 msgstr "Invitations"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "Inviter"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "Inviter un utilisateur dans le canal actuel"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "Inviter à diffuser"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1884,6 +1950,11 @@ msgstr "En savoir plus sur les profils →"
 msgid "Leave a channel"
 msgstr "Quitter un salon"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "Quitter l'appel"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Quitter le canal"
@@ -1921,6 +1992,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "Aperçu du lien"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "En direct"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2049,11 @@ msgstr "journaux"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "Faible sécurité du lien (niveau {securityLevel})"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "Baisser la main"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2144,6 +2224,7 @@ msgstr "Modes :"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "Plus"
 
@@ -2157,8 +2238,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Multiligne avec Shift+Entrée"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "Couper le son"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "Mettre en sourdine pour moi"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2361,9 +2449,17 @@ msgstr "Aucun utilisateur disponible"
 msgid "No users found matching your search"
 msgstr "Aucun utilisateur ne correspond à votre recherche"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "Aucun spectateur pour le moment."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "Aucune donnée WHOIS disponible"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "Personne n'est là. Demandez à quelqu'un de rejoindre {channelName} avec /join."
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2673,10 @@ msgstr "en attente"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "Image dans l'image"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2729,11 @@ msgstr "Veuillez patienter..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "MP à l'utilisateur"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "Détacher la vidéo"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2816,17 @@ msgstr "Message de déconnexion"
 msgid "Quit the server"
 msgstr "A quitté le serveur"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "Lever la main"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "a exécuté"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "Réagir"
 
@@ -2753,6 +2864,10 @@ msgstr "Raisonnement"
 #: src/components/ui/BotsModal.tsx
 msgid "Receiving command list…"
 msgstr "Réception de la liste des commandes…"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "Échec de la reconnexion"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -2843,6 +2958,12 @@ msgstr "Le message de réponse n'est plus visible"
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "Réessayer l'envoi"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "Retourner au canal"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3282,10 @@ msgstr "Paramètre introuvable"
 msgid "Settings"
 msgstr "Paramètres"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "Partager l'écran"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "elle/la"
@@ -3266,6 +3391,10 @@ msgstr "Source"
 msgid "Start Private Message"
 msgstr "Démarrer un message privé"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "Démarrer la vidéo"
+
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
 msgstr "Démarrage du workflow…"
@@ -3281,11 +3410,27 @@ msgstr "Statut"
 msgid "Status Messages"
 msgstr "Messages de statut"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "Quitter la diffusion"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Arrêter"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "Arrêter le partage"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "Arrêter la vidéo"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "Diffuseur"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3515,13 +3660,24 @@ msgstr "Type"
 msgid "Type a message..."
 msgstr "Saisir un message..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "Rétablir le son"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "Ne plus ignorer l'utilisateur"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "Rétablir le son"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "Rétablir le son pour moi"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +3881,15 @@ msgstr "Voir le profil"
 msgid "View user profile information"
 msgstr "Voir les informations du profil utilisateur"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "Spectateur"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "Spectateurs ({0})"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -3736,6 +3901,11 @@ msgstr "Utilisateur avec droit de parole"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Volume"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "Volume de {0}"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

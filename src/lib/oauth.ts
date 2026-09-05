@@ -203,7 +203,7 @@ export async function beginOauthLogin(
       // Same-origin only; the callback page is served by the SPA.
       if (event.origin !== window.location.origin) return;
       const data = event.data as OAuthCallbackMessage | undefined;
-      if (!data || data.type !== "obby:oauth-callback") return;
+      if (data?.type !== "obby:oauth-callback") return;
       if (data.state !== state) {
         cleanup();
         reject(new Error("OAuth state mismatch (possible CSRF)"));

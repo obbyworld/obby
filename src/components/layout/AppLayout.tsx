@@ -9,6 +9,7 @@ import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
 import RawLogViewer from "../ui/RawLogViewer";
+import { VoicePipOverlay } from "../voice/VoicePipOverlay";
 import { ChannelList } from "./ChannelList";
 import { ChatArea } from "./ChatArea";
 import { MemberList } from "./MemberList";
@@ -72,10 +73,7 @@ export const AppLayout: React.FC = () => {
   );
 
   const shouldShowMemberList =
-    isMemberListVisible &&
-    !selectedPrivateChatId &&
-    !isVoiceChannel &&
-    !isBouncerControlSelected;
+    isMemberListVisible && !selectedPrivateChatId && !isBouncerControlSelected;
 
   const handleChannelListWidthChange = useCallback((width: number) => {
     setChannelListWidth(width);
@@ -400,6 +398,7 @@ export const AppLayout: React.FC = () => {
           </>
         )}
         <GlobalNotifications />
+        <VoicePipOverlay />
         {/* Rendered here so window resizes never unmount it */}
         <MediaViewerModal
           isOpen={!!ui.openedMedia}

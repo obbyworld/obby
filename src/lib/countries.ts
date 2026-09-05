@@ -11,7 +11,7 @@ export interface Country {
 /** Render a country code as its flag emoji via Unicode regional
  *  indicator symbols (U+1F1E6 = 'A'). */
 export function flagEmoji(code: string): string {
-  if (!code || code.length !== 2) return "";
+  if (code?.length !== 2) return "";
   const cp = (c: string) => 0x1f1e6 + (c.toUpperCase().charCodeAt(0) - 65);
   return String.fromCodePoint(cp(code[0])) + String.fromCodePoint(cp(code[1]));
 }

@@ -103,7 +103,7 @@ function collectShortcodesUnsafe(
   for (const url of packUrls) {
     if (!url) continue;
     const entry = CACHE.get(url);
-    if (!entry || entry.state !== "ok") continue;
+    if (entry?.state !== "ok") continue;
     for (const pack of entry.packs) {
       for (const [shortcode, e] of Object.entries(pack.emoji ?? {})) {
         if (seen.has(shortcode)) continue;
@@ -162,7 +162,7 @@ export function useEmojiResolver(packUrls: ReadonlyArray<string | undefined>): {
     (shortcode: string) => {
       for (const url of urls) {
         const entry = CACHE.get(url);
-        if (!entry || entry.state !== "ok") continue;
+        if (entry?.state !== "ok") continue;
         for (const pack of entry.packs) {
           const e = pack.emoji?.[shortcode];
           if (e) return e;
