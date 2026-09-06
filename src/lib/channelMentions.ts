@@ -6,7 +6,24 @@ export interface ChannelMention {
 
 // `#` is a normal channel, `^` is voice and `$` is stream. `&` is left out: it
 // is a local channel and reads as an ampersand far more often than as a target.
-const PREFIXES = "#$^";
+export const PREFIXES = "#$^";
+
+export type ChannelKind = "text" | "voice" | "stream";
+
+/** Classifies a channel-like name by its leading sigil, or null if it doesn't
+ * start with one of the channel prefixes. */
+export function classifyChannelName(name: string): ChannelKind | null {
+  switch (name[0]) {
+    case "#":
+      return "text";
+    case "^":
+      return "voice";
+    case "$":
+      return "stream";
+    default:
+      return null;
+  }
+}
 
 // RFC 2812 forbids space, comma and colon inside a channel name. A mention also
 // has to start a word, or every fragment identifier in a URL becomes one.

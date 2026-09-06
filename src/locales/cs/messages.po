@@ -223,6 +223,18 @@ msgstr "{sender} restartoval šifrování. Dokud to nepřijmete, zůstává tato
 msgid "{title} Client"
 msgstr "klient {title}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} v hovoru"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} uživatelů"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} diváků"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*kanál*"
@@ -1886,6 +1898,10 @@ msgstr "Připojit se"
 msgid "Join {0}"
 msgstr "Připojit se k {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "Připojit se k {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "Připojit se k {value}"
@@ -1893,6 +1909,18 @@ msgstr "Připojit se k {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "Připojit se ke kanálu"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "Připojit se ke kanálu na {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "Připojit se k vysílání {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "Připojit se k hlasovému kanálu {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -3386,6 +3414,14 @@ msgstr "Přehrávač SoundCloud"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Zdroj"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "Zahájit vysílání na {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "Spustit hlasový kanál na {serverName}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"

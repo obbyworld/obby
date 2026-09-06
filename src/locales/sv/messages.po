@@ -223,6 +223,18 @@ msgstr "{sender} startade om krypteringen. Den här konversationen förblir okry
 msgid "{title} Client"
 msgstr "{title} klient"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} i samtal"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} användare"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} tittar"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*kanal*"
@@ -1886,6 +1898,10 @@ msgstr "Gå med"
 msgid "Join {0}"
 msgstr "Gå med i {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "Gå med i {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "Gå med i {value}"
@@ -1893,6 +1909,18 @@ msgstr "Gå med i {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "Gå med i en kanal"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "Gå med i en kanal på {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "Gå med i sändningen {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "Gå med i röstkanalen {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -3386,6 +3414,14 @@ msgstr "SoundCloud-spelare"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Källa"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "Starta en sändning på {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "Starta en röstkanal på {serverName}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"

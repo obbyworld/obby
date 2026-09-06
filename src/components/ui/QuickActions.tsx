@@ -18,6 +18,7 @@ import type { SettingSearchResult } from "../../lib/settings/types";
 import useStore from "../../store";
 import type { Channel, PrivateChat } from "../../types";
 import { buildQuickActionContext } from "./QuickActions/context";
+import { getJoinChannelResults } from "./QuickActions/joinChannelResults";
 import type {
   QuickActionResult,
   UIActionData,
@@ -318,53 +319,18 @@ const QuickActions: React.FC = () => {
         }
       });
 
-      if (
-        currentServerId &&
-        server.id === currentServerId &&
-        query.startsWith("#")
-      ) {
-        const channelName = query.trim();
-        const availableChannels = channelList[server.id] || [];
-        const alreadyShown = new Set<string>();
-
-        availableChannels.forEach((availChannel) => {
-          const channelMatch = fuzzyMatch(
-            query.slice(1),
-            availChannel.channel.slice(1),
-          );
-          if (channelMatch.matches) {
-            const alreadyJoined = server.channels.find(
-              (ch) => ch.name === availChannel.channel,
-            );
-            if (!alreadyJoined) {
-              results.push({
-                type: "join-channel",
-                id: `join-channel-${server.id}-${availChannel.channel}`,
-                title: `Join ${availChannel.channel}`,
-                description: `${availChannel.userCount} users - ${server.name}`,
-                serverId: server.id,
-                score: channelMatch.score + 50,
-                data: { channelName: availChannel.channel },
-              });
-              alreadyShown.add(availChannel.channel.toLowerCase());
-            }
-          }
-        });
-
-        if (
-          channelName.length > 1 &&
-          !alreadyShown.has(channelName.toLowerCase())
-        ) {
-          results.push({
-            type: "join-channel",
-            id: `join-channel-${server.id}-${channelName}`,
-            title: `Join ${channelName}`,
-            description: `Join channel on ${server.name}`,
+      if (currentServerId && server.id === currentServerId) {
+        results.push(
+          ...getJoinChannelResults({
+            query,
             serverId: server.id,
-            score: 100,
-            data: { channelName },
-          });
-        }
+            serverName: server.name,
+            joinedChannelNames: server.channels.map((ch) => ch.name),
+            listEntries: channelList[server.id] || [],
+            hasVoiceCapability:
+              !!server.capabilities?.includes("obsidianirc/voice"),
+          }),
+        );
       }
 
       if (currentServerId && server.id === currentServerId) {

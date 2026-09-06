@@ -223,6 +223,18 @@ msgstr "{sender} 重新啟動了加密。在你接受之前，這個對話不會
 msgid "{title} Client"
 msgstr "{title} 客戶端"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} 人通話中"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} 位使用者"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} 人觀看中"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*channel*"
@@ -1886,6 +1898,10 @@ msgstr "加入"
 msgid "Join {0}"
 msgstr "加入 {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "加入 {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "加入 {value}"
@@ -1893,6 +1909,18 @@ msgstr "加入 {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "加入頻道"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "在 {serverName} 上加入頻道"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "加入直播 {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "加入語音頻道 {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -3386,6 +3414,14 @@ msgstr "SoundCloud 播放器"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "來源"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "在 {serverName} 上開啟直播"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "在 {serverName} 上開啟語音頻道"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"
