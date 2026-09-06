@@ -223,6 +223,18 @@ msgstr "{sender} が暗号化を再開しました。承認するまで、この
 msgid "{title} Client"
 msgstr "{title} クライアント"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} 人が通話中"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} 人のユーザー"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} 人が視聴中"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*channel*"
@@ -1886,6 +1898,10 @@ msgstr "参加"
 msgid "Join {0}"
 msgstr "{0} に参加"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "{channelName} に参加"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "{value}に参加"
@@ -1893,6 +1909,18 @@ msgstr "{value}に参加"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "チャンネルに参加する"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "{serverName} でチャンネルに参加"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "{channelName} の配信に参加"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "{channelName} のボイスチャンネルに参加"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -3386,6 +3414,14 @@ msgstr "SoundCloudプレーヤー"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "ソース"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "{serverName} で配信を開始"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "{serverName} でボイスチャンネルを開始"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"

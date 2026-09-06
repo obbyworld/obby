@@ -223,6 +223,18 @@ msgstr "{sender} ha riavviato la cifratura. Questa conversazione resta in chiaro
 msgid "{title} Client"
 msgstr "client {title}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} in chiamata"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} utenti"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} in visione"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*channel*"
@@ -1886,6 +1898,10 @@ msgstr "Entra"
 msgid "Join {0}"
 msgstr "Unisciti a {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "Unisciti a {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "Entra in {value}"
@@ -1893,6 +1909,18 @@ msgstr "Entra in {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "Unisciti a un canale"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "Unisciti a un canale su {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "Unisciti al live {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "Unisciti al canale vocale {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -3386,6 +3414,14 @@ msgstr "Player SoundCloud"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Sorgente"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "Avvia un live su {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "Avvia un canale vocale su {serverName}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"
