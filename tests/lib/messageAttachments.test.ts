@@ -1,7 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { encodeMediaDescriptor } from "../../src/lib/e2ee/media";
 import { E2EE_MEDIA_TAG } from "../../src/lib/e2ee/messageFlags";
-import { describeAttachment } from "../../src/lib/messageAttachments";
+import {
+  bodyWithoutAttachmentLinks,
+  describeAttachment,
+} from "../../src/lib/messageAttachments";
 import type { Message } from "../../src/types";
 
 function message(content: string, tags?: Record<string, string>): Message {
@@ -110,5 +113,40 @@ describe("describeAttachment", () => {
       }),
     );
     expect(found).toMatchObject({ name: "voice.ogg", encrypted: true });
+  });
+});
+
+describe("bodyWithoutAttachmentLinks", () => {
+  // A reply preview names the file and shows its thumbnail, so the raw link
+  // in the body is a wasted line.
+  test("a body that is only a link comes back empty", () => {
+    expect(
+      bodyWithoutAttachmentLinks(
+        message("https://files.example.org/photo.jpg"),
+      ),
+    ).toBe("");
+  });
+
+  test("what the sender actually wrote survives", () => {
+    expect(
+      bodyWithoutAttachmentLinks(
+        message("look at this https://files.example.org/photo.jpg please"),
+      ),
+    ).toBe("look at this please");
+  });
+
+  test("a link that is not an attachment stays", () => {
+    const text = "read https://s.t3ks.com/ first";
+    expect(bodyWithoutAttachmentLinks(message(text))).toBe(text);
+  });
+
+  test("every attachment link goes, not just the first", () => {
+    expect(
+      bodyWithoutAttachmentLinks(
+        message(
+          "https://files.example.org/a.jpg and https://files.example.org/b.png",
+        ),
+      ),
+    ).toBe("and");
   });
 });

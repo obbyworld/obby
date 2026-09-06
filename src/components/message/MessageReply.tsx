@@ -30,6 +30,7 @@ import { serverFilehosts } from "../../lib/ircUtils";
 import { imageCanHaveTransparency } from "../../lib/mediaUtils";
 import {
   type AttachmentKind,
+  bodyWithoutAttachmentLinks,
   describeAttachment,
 } from "../../lib/messageAttachments";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
@@ -80,11 +81,15 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
     onUsernameClick?.(e);
   };
 
-  const plainContent = stripIrcFormatting(replyMessage.content)
+  const attachment = describeAttachment(replyMessage);
+  const plainContent = stripIrcFormatting(
+    attachment
+      ? bodyWithoutAttachmentLinks(replyMessage)
+      : replyMessage.content,
+  )
     .replace(/\n+/g, " ")
     .trim();
 
-  const attachment = describeAttachment(replyMessage);
   const thumbnailUrl =
     attachment?.thumbnailUrl &&
     canShowImageUrl(
