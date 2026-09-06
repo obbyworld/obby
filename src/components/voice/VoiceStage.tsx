@@ -16,6 +16,7 @@ export interface VoiceStageProps {
   isHost: boolean;
   onDemote: (nick: string) => void;
   theater: boolean;
+  onToggleTheater: () => void;
 }
 
 const GRID_COLUMN_BREAKPOINTS: Array<[maxWidth: number, columns: number]> = [
@@ -55,6 +56,7 @@ export function VoiceStage({
   isHost,
   onDemote,
   theater,
+  onToggleTheater,
 }: VoiceStageProps) {
   const [gridEl, setGridEl] = useState<HTMLDivElement | null>(null);
   const [gridColumns, setGridColumns] = useState(4);
@@ -75,7 +77,12 @@ export function VoiceStage({
 
   const renderTile = (
     m: VoiceMember,
-    opts?: { spotlighted?: boolean; compact?: boolean; clickable?: boolean },
+    opts?: {
+      spotlighted?: boolean;
+      compact?: boolean;
+      clickable?: boolean;
+      main?: boolean;
+    },
   ) => (
     <ParticipantTile
       key={m.nick}
@@ -95,6 +102,9 @@ export function VoiceStage({
       canDemote={isHost && m.nick !== selfNick}
       onDemote={onDemote}
       compact={opts?.compact}
+      theater={theater}
+      onToggleTheater={opts?.main ? onToggleTheater : undefined}
+      mainTile={opts?.main}
     />
   );
 
@@ -116,7 +126,7 @@ export function VoiceStage({
               : "aspect-video max-h-[40vh] w-full max-w-4xl mx-auto"
           }
         >
-          {renderTile(ordered[0], { clickable: false })}
+          {renderTile(ordered[0], { clickable: false, main: true })}
         </div>
       </div>
     );
@@ -143,7 +153,7 @@ export function VoiceStage({
             theater ? "flex-1 min-h-0" : "aspect-video max-h-[40vh] w-full"
           }
         >
-          {renderTile(spotlight, { spotlighted: true })}
+          {renderTile(spotlight, { spotlighted: true, main: true })}
         </div>
         {others.length > 0 && (
           <div className="flex gap-2 overflow-x-auto flex-shrink-0 h-24 md:h-28">

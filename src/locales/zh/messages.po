@@ -958,8 +958,8 @@ msgstr "关闭弹出的服务器通知"
 msgid "Close viewer"
 msgstr "关闭查看器"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "收起"
 
@@ -1558,8 +1558,8 @@ msgstr "排除频道名称掩码"
 msgid "Exit spotlight"
 msgstr "退出聚焦"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "展开"
 

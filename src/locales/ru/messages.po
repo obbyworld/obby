@@ -958,8 +958,8 @@ msgstr "Закрыть всплывающие уведомления серве�
 msgid "Close viewer"
 msgstr "Закрыть просмотрщик"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Свернуть"
 
@@ -1558,8 +1558,8 @@ msgstr "Исключить маску имени канала"
 msgid "Exit spotlight"
 msgstr "Выйти из режима выделения"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Развернуть"
 

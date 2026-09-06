@@ -958,8 +958,8 @@ msgstr "팝업 서버 알림 닫기"
 msgid "Close viewer"
 msgstr "뷰어 닫기"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "접기"
 
@@ -1558,8 +1558,8 @@ msgstr "채널 이름 마스크 제외"
 msgid "Exit spotlight"
 msgstr "스포트라이트 종료"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "펼치기"
 

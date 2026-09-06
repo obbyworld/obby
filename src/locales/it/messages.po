@@ -958,8 +958,8 @@ msgstr "Chiudi avvisi server in finestra separata"
 msgid "Close viewer"
 msgstr "Chiudi visualizzatore"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Comprimi"
 
@@ -1558,8 +1558,8 @@ msgstr "Escludi maschera nome canale"
 msgid "Exit spotlight"
 msgstr "Esci da evidenza"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Espandi"
 

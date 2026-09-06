@@ -958,8 +958,8 @@ msgstr "Losgekoppelde serverberichten sluiten"
 msgid "Close viewer"
 msgstr "Viewer sluiten"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Inklappen"
 
@@ -1558,8 +1558,8 @@ msgstr "Kanaalnaammasker uitsluiten"
 msgid "Exit spotlight"
 msgstr "Spotlight verlaten"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Uitvouwen"
 

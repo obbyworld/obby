@@ -958,8 +958,8 @@ msgstr "Закрити виспливаючі сповіщення сервер�
 msgid "Close viewer"
 msgstr "Закрити переглядач"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Згорнути"
 
@@ -1558,8 +1558,8 @@ msgstr "Маска виключення назви каналу"
 msgid "Exit spotlight"
 msgstr "Вийти з режиму виділення"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Розгорнути"
 

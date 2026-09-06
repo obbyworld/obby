@@ -202,6 +202,51 @@ describe("VoicePipOverlay", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("excludes the local viewer's own tile from a stream room's pop-out", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "$movie" },
+    ]);
+    const streamer = member("alice", { videoTrack: {} as MediaStreamTrack });
+    const me = member("me", { videoTrack: {} as MediaStreamTrack });
+    mocks.useVoiceCall.mockReturnValue({
+      client: { setMic: vi.fn() },
+      members: [streamer, me],
+      selfNick: "me",
+      self: me,
+      isStreamRoom: true,
+      streamerMembers: [streamer],
+    });
+    setSelection(null);
+    render(<VoicePipOverlay />);
+
+    expect(screen.getByText("alice")).toBeInTheDocument();
+    expect(screen.queryByText("me")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "me" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("still shows the local user's own tile in a voice call", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "^general" },
+    ]);
+    const alice = member("alice", { videoTrack: {} as MediaStreamTrack });
+    const me = member("me", { videoTrack: {} as MediaStreamTrack });
+    mocks.useVoiceCall.mockReturnValue({
+      client: { setMic: vi.fn() },
+      members: [alice, me],
+      selfNick: "me",
+      self: me,
+      isStreamRoom: false,
+      streamerMembers: [alice, me],
+    });
+    setSelection(null);
+    render(<VoicePipOverlay />);
+
+    expect(screen.getByText("alice")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "me" })).toBeInTheDocument();
+  });
+
   it("renders avatars and no video when nobody in the call has a camera", () => {
     mocks.useLiveVoiceCalls.mockReturnValue([
       { serverId: "s1", channel: "^general" },

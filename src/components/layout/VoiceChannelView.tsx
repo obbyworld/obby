@@ -11,12 +11,13 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { FaCompress, FaExpand, FaTimes } from "react-icons/fa";
+import { createPortal } from "react-dom";
+import { FaTimes } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useVoiceCall } from "../../hooks/useVoiceCall";
 import { releaseVoiceClient, type VoiceMember } from "../../lib/voice";
 import { useSpotlight } from "../../lib/voiceSpotlight";
-import useStore from "../../store";
+import useStore, { resolveCallReturnTarget } from "../../store";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { VoiceDock } from "../voice/VoiceDock";
 import { VoiceStage } from "../voice/VoiceStage";
@@ -52,6 +53,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   } = useVoiceCall(serverId, channelName);
 
   const selectChannel = useStore((s) => s.selectChannel);
+  const selectPrivateChat = useStore((s) => s.selectPrivateChat);
 
   // Nick of the explicitly spotlighted member, or null for the
   // stage's default layout (single tile / auto screen-share spotlight
@@ -113,9 +115,9 @@ export const VoiceChannelView: React.FC<Props> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   const onLeave = useCallback(() => {
     releaseVoiceClient(serverId, channelName);
-    const srv = useStore.getState().servers.find((s) => s.id === serverId);
-    const firstText = srv?.channels.find((c) => c.name.startsWith("#"));
-    if (firstText) selectChannel(firstText.id);
+    const target = resolveCallReturnTarget(useStore.getState(), serverId);
+    if (target?.type === "channel") selectChannel(target.id);
+    else if (target?.type === "privateChat") selectPrivateChat(target.id);
   }, [serverId, channelName]);
 
   const onToggleMic = () => client?.setMic(!(self?.micOn ?? false));
@@ -171,7 +173,12 @@ export const VoiceChannelView: React.FC<Props> = ({
     ? "fixed inset-0 z-[9990] flex flex-col bg-discord-dark-400"
     : "w-full flex flex-col bg-discord-dark-200";
 
-  return (
+  // Theater renders through a portal to document.body so its `fixed`
+  // container is positioned against the real viewport -- nested in place,
+  // an ancestor's transform (e.g. the narrow-view swipe container in
+  // AppLayout) would otherwise become its containing block and confine
+  // it to that ancestor's box instead of the window.
+  const content = (
     <div
       className={rootClass}
       style={
@@ -185,7 +192,10 @@ export const VoiceChannelView: React.FC<Props> = ({
           : undefined
       }
     >
-      <div className="h-9 flex-shrink-0 px-3 flex items-center gap-2 text-xs border-b border-discord-dark-300 bg-discord-dark-300/60 text-discord-text-muted">
+      <div
+        data-testid="voice-status-strip"
+        className="h-9 flex-shrink-0 px-3 flex items-center gap-2 text-xs border-b border-discord-dark-300 bg-discord-dark-300/60 text-discord-text-muted"
+      >
         <span
           className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
           aria-hidden="true"
@@ -219,15 +229,6 @@ export const VoiceChannelView: React.FC<Props> = ({
             <Trans>Exit spotlight</Trans>
           </button>
         )}
-        <button
-          type="button"
-          onClick={() => setTheater((v) => !v)}
-          title={theater ? t`Collapse` : t`Expand`}
-          aria-label={theater ? t`Collapse` : t`Expand`}
-          className="p-1.5 rounded hover:bg-discord-dark-400 text-discord-text-normal flex-shrink-0"
-        >
-          {theater ? <FaCompress /> : <FaExpand />}
-        </button>
       </div>
 
       <div
@@ -262,6 +263,7 @@ export const VoiceChannelView: React.FC<Props> = ({
               isHost={isHost}
               onDemote={onDemote}
               theater={theater}
+              onToggleTheater={() => setTheater((v) => !v)}
             />
           )}
           {state.phase === "connected" &&
@@ -326,6 +328,8 @@ export const VoiceChannelView: React.FC<Props> = ({
       </div>
     </div>
   );
+
+  return theater ? createPortal(content, document.body) : content;
 };
 
 function ViewerList({

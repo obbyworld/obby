@@ -958,8 +958,8 @@ msgstr "Server-Hinweise schließen"
 msgid "Close viewer"
 msgstr "Ansicht schließen"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Einklappen"
 
@@ -1558,8 +1558,8 @@ msgstr "Kanalname-Maske ausschließen"
 msgid "Exit spotlight"
 msgstr "Spotlight beenden"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Ausklappen"
 

@@ -957,8 +957,8 @@ msgstr "Close popped out server notices"
 msgid "Close viewer"
 msgstr "Close viewer"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Collapse"
 
@@ -1557,8 +1557,8 @@ msgstr "Exclude Channel Name Mask"
 msgid "Exit spotlight"
 msgstr "Exit spotlight"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Expand"
 

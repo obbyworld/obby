@@ -958,8 +958,8 @@ msgstr "Închide notificările server detașate"
 msgid "Close viewer"
 msgstr "Închide vizualizatorul"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Restrânge"
 
@@ -1558,8 +1558,8 @@ msgstr "Excludeți masca numelui canalului"
 msgid "Exit spotlight"
 msgstr "Ieși din evidențiere"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Extinde"
 
