@@ -958,8 +958,8 @@ msgstr "Açılır sunucu bildirimlerini kapat"
 msgid "Close viewer"
 msgstr "Görüntüleyiciyi kapat"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Daralt"
 
@@ -1558,8 +1558,8 @@ msgstr "Kanal Adı Maskesini Hariç Tut"
 msgid "Exit spotlight"
 msgstr "Öne çıkarmayı durdur"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Genişlet"
 

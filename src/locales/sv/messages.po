@@ -958,8 +958,8 @@ msgstr "Stäng utfällt servermeddelanden-fönster"
 msgid "Close viewer"
 msgstr "Stäng visaren"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Fäll ihop"
 
@@ -1558,8 +1558,8 @@ msgstr "Uteslut kanalnamns-mask"
 msgid "Exit spotlight"
 msgstr "Lämna spotlight"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Fäll ut"
 

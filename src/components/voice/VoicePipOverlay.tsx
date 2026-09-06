@@ -70,7 +70,13 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
 }) => {
   const { t } = useLingui();
   const isNarrow = useMediaQuery();
-  const { client, members, selfNick, self } = useVoiceCall(serverId, channel);
+  const { client, members, selfNick, self, isStreamRoom, streamerMembers } =
+    useVoiceCall(serverId, channel);
+  // A stream has one streamer and any number of viewers with no media of
+  // their own -- a viewer watching shouldn't see their own tile among the
+  // thumbnails. A voice call has no such distinction, so it keeps showing
+  // everyone including the local user.
+  const pipMembers = isStreamRoom ? streamerMembers : members;
   const selectServer = useStore((s) => s.selectServer);
   const selectChannel = useStore((s) => s.selectChannel);
   const channelId = useStore((s) => {
@@ -89,7 +95,7 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
   } | null>(null);
   const [pos, setPos] = useState<DragPosition | null>(null);
 
-  const ordered = useSpeakingOrder(members);
+  const ordered = useSpeakingOrder(pipMembers);
   const [spotlightNick, setSpotlightNick] = useSpotlight(serverId, channel);
   const primary = pickPipMember(ordered, selfNick, spotlightNick);
   const isSelf = primary?.nick === selfNick;
@@ -192,7 +198,7 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
                 ref={videoRef}
                 track={primary.videoTrack}
                 muted={isSelf}
-                contain={primary.screenSharing}
+                contain
                 className="w-full h-full"
               />
             ) : (

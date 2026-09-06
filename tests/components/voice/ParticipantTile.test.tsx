@@ -1,6 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+// jsdom doesn't implement HTMLMediaElement.play or MediaStream.
+Object.defineProperty(HTMLMediaElement.prototype, "play", {
+  configurable: true,
+  value: vi.fn(() => Promise.resolve()),
+});
+vi.stubGlobal(
+  "MediaStream",
+  class {
+    constructor(public tracks: MediaStreamTrack[] = []) {}
+  },
+);
+
 vi.mock("../../../src/store", () => ({
   default: Object.assign(
     vi.fn((selector: (s: { servers: unknown[] }) => unknown) =>
@@ -124,6 +136,144 @@ describe("ParticipantTile", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /Demote to viewer/i }));
     expect(onDemote).toHaveBeenCalledWith("bob");
+  });
+
+  it("shows the nick without hovering", () => {
+    render(
+      <ParticipantTile
+        member={member("bob")}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+      />,
+    );
+    expect(screen.getByText("bob")).toBeInTheDocument();
+  });
+
+  it("only renders a maximize button when told it is the main tile", () => {
+    const { rerender } = render(
+      <ParticipantTile
+        member={member("bob")}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+      />,
+    );
+    expect(
+      screen.queryByRole("button", { name: /Expand/i }),
+    ).not.toBeInTheDocument();
+
+    const onToggleTheater = vi.fn();
+    rerender(
+      <ParticipantTile
+        member={member("bob")}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        theater={false}
+        onToggleTheater={onToggleTheater}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Expand/i }));
+    expect(onToggleTheater).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <ParticipantTile
+        member={member("bob")}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        theater={true}
+        onToggleTheater={onToggleTheater}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /Collapse/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("hides the volume slider but keeps the mute button when compact", () => {
+    render(
+      <ParticipantTile
+        member={member("bob")}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        compact={true}
+      />,
+    );
+    expect(screen.queryByLabelText("Volume for bob")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Mute for me/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("letterboxes the main tile but crops a plain grid tile", () => {
+    const track = {} as MediaStreamTrack;
+    const { rerender } = render(
+      <ParticipantTile
+        member={member("bob", { videoTrack: track })}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+      />,
+    );
+    expect(document.querySelector("video")).toHaveClass("object-cover");
+
+    rerender(
+      <ParticipantTile
+        member={member("bob", { videoTrack: track })}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        mainTile
+      />,
+    );
+    expect(document.querySelector("video")).toHaveClass("object-contain");
+  });
+
+  it("crops a filmstrip thumbnail even in theater mode, but letterboxes a plain grid tile once theater enlarges it", () => {
+    const track = {} as MediaStreamTrack;
+    const { rerender } = render(
+      <ParticipantTile
+        member={member("bob", { videoTrack: track })}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        compact
+        theater
+      />,
+    );
+    expect(document.querySelector("video")).toHaveClass("object-cover");
+
+    rerender(
+      <ParticipantTile
+        member={member("bob", { videoTrack: track })}
+        isSelf={false}
+        onClick={vi.fn()}
+        onSetMuted={vi.fn()}
+        onSetVolume={vi.fn()}
+        reactions={[]}
+        theater
+      />,
+    );
+    expect(document.querySelector("video")).toHaveClass("object-contain");
   });
 
   it("clicks the tile face without triggering it from the bottom-bar controls", () => {

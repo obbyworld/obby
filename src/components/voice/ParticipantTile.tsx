@@ -2,6 +2,8 @@ import { t } from "@lingui/core/macro";
 import { useRef } from "react";
 import {
   FaCircle,
+  FaCompress,
+  FaExpand,
   FaHandPaper,
   FaMicrophoneSlash,
   FaUserMinus,
@@ -9,6 +11,7 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import { LuPictureInPicture2 } from "react-icons/lu";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useUserColor } from "../../hooks/useUserColor";
 import type { VoiceMember } from "../../lib/voice";
 import { onPipRequest, pipSupported, VideoTrackView } from "./VideoTrackView";
@@ -26,7 +29,17 @@ export interface ParticipantTileProps {
   /** Filmstrip thumbnails are too narrow for the volume slider to stay usable. */
   compact?: boolean;
   serverId?: string;
+  theater?: boolean;
+  /** Only the stage's single or spotlighted tile gets a maximize button. */
+  onToggleTheater?: () => void;
+  /** The tile the user is actually watching (single tile, spotlight),
+   *  as opposed to a small grid or filmstrip thumbnail -- letterboxes
+   *  its video instead of cropping it. */
+  mainTile?: boolean;
 }
+
+const CONTROL_BUTTON =
+  "flex-shrink-0 w-6 h-6 rounded flex items-center justify-center text-white hover:bg-white/10";
 
 /** One tile on the stage or in the pop-out's filmstrip. Fills its
  *  container -- callers control aspect ratio and sizing. */
@@ -41,10 +54,19 @@ export function ParticipantTile({
   onDemote,
   compact,
   serverId,
+  theater,
+  onToggleTheater,
+  mainTile,
 }: ParticipantTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const nickColor = useUserColor(serverId, member.nick);
+  const isTouch = useMediaQuery("(pointer: coarse)");
 
+  // Small grid and filmstrip tiles stay cropped -- a mosaic reads better
+  // that way -- but once theater mode enlarges the grid, every tile is
+  // something the user is watching, not a thumbnail, so it letterboxes too.
+  const contain =
+    member.screenSharing || mainTile || (Boolean(theater) && !compact);
   const speaking = member.speaking && member.micOn;
   const muted = member.volume === 0;
   const showPip = pipSupported() && !!member.videoTrack;
@@ -54,6 +76,16 @@ export function ParticipantTile({
       : member.quality === "ok"
         ? t`Connection: fair`
         : t`Connection: poor`;
+
+  // The bar itself only reveals on interaction; the nick label is a
+  // separate, always-on sibling so you can still tell who a tile is
+  // while the controls are hidden.
+  const barVisibilityClass = isTouch
+    ? ""
+    : "opacity-0 group-hover:opacity-100 focus-within:opacity-100";
+  const sliderWidthClass = isTouch
+    ? "w-20 ml-1"
+    : "w-0 group-hover/vol:w-20 group-hover/vol:ml-1 focus-within:w-20 focus-within:ml-1";
 
   return (
     <div
@@ -74,7 +106,7 @@ export function ParticipantTile({
             ref={videoRef}
             track={member.videoTrack}
             muted={isSelf}
-            contain={member.screenSharing}
+            contain={contain}
             className="w-full h-full"
           />
         ) : (
@@ -100,81 +132,105 @@ export function ParticipantTile({
         ))}
       </div>
 
-      <div className="absolute top-1 right-1 flex items-center gap-1 z-10">
-        {member.quality !== "unknown" && !isSelf && (
-          <span className="pointer-events-none" title={qualityLabel}>
-            <FaCircle
-              className={
-                member.quality === "good"
-                  ? "text-discord-green"
-                  : member.quality === "ok"
-                    ? "text-yellow-400"
-                    : "text-discord-red"
-              }
-              style={{ fontSize: 8 }}
-            />
-          </span>
-        )}
-        {showPip && (
-          <button
-            type="button"
-            onClick={() => void onPipRequest(videoRef.current)}
-            title={t`Pop out video`}
-            aria-label={t`Pop out video`}
-            className="w-6 h-6 rounded bg-black/50 text-white flex items-center justify-center text-xs hover:bg-black/70"
-          >
-            <LuPictureInPicture2 />
-          </button>
-        )}
-      </div>
-
-      <div className="absolute bottom-1 left-1 right-1 z-10 px-2 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white text-xs flex items-center gap-1.5">
+      {member.quality !== "unknown" && !isSelf && (
         <span
-          className="truncate min-w-0 flex-1"
-          style={nickColor ? { color: nickColor } : undefined}
+          className="pointer-events-none absolute top-1 right-1 z-10"
+          title={qualityLabel}
         >
-          {member.nick}
+          <FaCircle
+            className={
+              member.quality === "good"
+                ? "text-discord-green"
+                : member.quality === "ok"
+                  ? "text-yellow-400"
+                  : "text-discord-red"
+            }
+            style={{ fontSize: 8 }}
+          />
         </span>
-        {!member.micOn && (
-          <FaMicrophoneSlash className="text-discord-red flex-shrink-0" />
-        )}
-        {member.deafened && (
-          <FaVolumeMute className="text-discord-red flex-shrink-0" />
-        )}
-        {!isSelf && (
-          <>
-            <button
-              type="button"
-              onClick={() => onSetMuted(member.nick, !muted)}
-              title={muted ? t`Unmute for me` : t`Mute for me`}
-              aria-label={muted ? t`Unmute for me` : t`Mute for me`}
-              className="flex-shrink-0 hover:text-discord-primary"
-            >
-              {muted ? <FaVolumeUp /> : <FaVolumeMute />}
-            </button>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={member.volume}
-              onChange={(e) => onSetVolume(member.nick, Number(e.target.value))}
-              aria-label={t`Volume for ${member.nick}`}
-              className={`accent-discord-primary flex-shrink-0 ${compact ? "hidden" : "w-20"}`}
-            />
-            {canDemote && onDemote && (
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 z-10">
+        <div
+          className={`flex items-center gap-1 px-1.5 py-1.5 bg-gradient-to-t from-black/70 to-transparent transition-opacity ${barVisibilityClass}`}
+        >
+          <span className="flex-1" />
+          {!isSelf && (
+            <span className="group/vol flex items-center flex-shrink-0">
               <button
                 type="button"
-                onClick={() => onDemote(member.nick)}
-                title={t`Demote to viewer`}
-                aria-label={t`Demote to viewer`}
-                className="flex-shrink-0 text-discord-red hover:text-discord-red/70"
+                onClick={() => onSetMuted(member.nick, !muted)}
+                title={muted ? t`Unmute for me` : t`Mute for me`}
+                aria-label={muted ? t`Unmute for me` : t`Mute for me`}
+                className={CONTROL_BUTTON}
               >
-                <FaUserMinus />
+                {muted ? <FaVolumeUp /> : <FaVolumeMute />}
               </button>
-            )}
-          </>
-        )}
+              {!compact && (
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={member.volume}
+                  onChange={(e) =>
+                    onSetVolume(member.nick, Number(e.target.value))
+                  }
+                  aria-label={t`Volume for ${member.nick}`}
+                  className={`h-1 rounded-full accent-white cursor-pointer overflow-hidden transition-[width] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${sliderWidthClass}`}
+                />
+              )}
+            </span>
+          )}
+          {!isSelf && canDemote && onDemote && (
+            <button
+              type="button"
+              onClick={() => onDemote(member.nick)}
+              title={t`Demote to viewer`}
+              aria-label={t`Demote to viewer`}
+              className={`${CONTROL_BUTTON} text-discord-red`}
+            >
+              <FaUserMinus />
+            </button>
+          )}
+          {showPip && (
+            <button
+              type="button"
+              onClick={() => void onPipRequest(videoRef.current)}
+              title={t`Pop out video`}
+              aria-label={t`Pop out video`}
+              className={CONTROL_BUTTON}
+            >
+              <LuPictureInPicture2 />
+            </button>
+          )}
+          {onToggleTheater && (
+            <button
+              type="button"
+              onClick={onToggleTheater}
+              title={theater ? t`Collapse` : t`Expand`}
+              aria-label={theater ? t`Collapse` : t`Expand`}
+              className={CONTROL_BUTTON}
+            >
+              {theater ? <FaCompress /> : <FaExpand />}
+            </button>
+          )}
+        </div>
+
+        <div className="absolute left-1.5 bottom-1.5 max-w-[75%] flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white text-xs">
+          <span
+            className="truncate min-w-0"
+            style={nickColor ? { color: nickColor } : undefined}
+          >
+            {member.nick}
+          </span>
+          {!member.micOn && (
+            <FaMicrophoneSlash className="text-discord-red flex-shrink-0" />
+          )}
+          {member.deafened && (
+            <FaVolumeMute className="text-discord-red flex-shrink-0" />
+          )}
+        </div>
       </div>
     </div>
   );

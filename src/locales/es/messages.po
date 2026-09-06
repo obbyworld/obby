@@ -958,8 +958,8 @@ msgstr "Cerrar avisos del servidor desplegados"
 msgid "Close viewer"
 msgstr "Cerrar visor"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Contraer"
 
@@ -1558,8 +1558,8 @@ msgstr "Excluir máscara de nombre de canal"
 msgid "Exit spotlight"
 msgstr "Salir del modo destacado"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Expandir"
 

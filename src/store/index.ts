@@ -2,6 +2,8 @@ import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
 import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
 import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
+import { getSelectionHistory, recordSelection } from "../lib/channelHistory";
+import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
@@ -1222,6 +1224,33 @@ const getCurrentSelection = (state: AppState) => {
   }
   return getServerSelection(state, state.ui.selectedServerId);
 };
+
+/** Where leaving a call on this server should land: the most recently
+ *  selected ordinary channel or private chat that still exists, otherwise
+ *  the first ordinary channel. Exported as a pure function so the fallback
+ *  is directly testable without going through a component. */
+export function resolveCallReturnTarget(
+  state: AppState,
+  serverId: string,
+): { type: "channel" | "privateChat"; id: string } | null {
+  const server = state.servers.find((s) => s.id === serverId);
+  if (!server) return null;
+
+  for (const id of getSelectionHistory(serverId)) {
+    const channel = server.channels.find((c) => c.id === id);
+    if (channel) {
+      if (classifyChannelName(channel.name) === "text") {
+        return { type: "channel", id: channel.id };
+      }
+      continue;
+    }
+    const privateChat = server.privateChats?.find((pc) => pc.id === id);
+    if (privateChat) return { type: "privateChat", id: privateChat.id };
+  }
+
+  const firstText = server.channels.find((c) => c.name.startsWith("#"));
+  return firstText ? { type: "channel", id: firstText.id } : null;
+}
 
 // Create store with Zustand
 const useStore = create<AppState>((set, get) => ({
@@ -2587,6 +2616,7 @@ const useStore = create<AppState>((set, get) => ({
     const channelObj = selectedServer?.channels.find(
       (c) => c.id === selection?.selectedChannelId,
     );
+
     patchUISelections({
       selectedServerId: newState.ui.selectedServerId,
       perServerSelections: newState.ui.perServerSelections,
@@ -2798,6 +2828,7 @@ const useStore = create<AppState>((set, get) => ({
     const pcObj = selectedServer?.privateChats?.find(
       (pc) => pc.id === selection?.selectedPrivateChatId,
     );
+
     patchUISelections({
       selectedServerId: newState.ui.selectedServerId,
       perServerSelections: newState.ui.perServerSelections,
@@ -4491,6 +4522,26 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.sendRaw(serverId, `@${BOT_TOOLS_TAG}=${value} TAGMSG ${botNick}`);
   },
 }));
+
+// Seed the shared selection history from whatever localStorage restored at
+// startup, then keep it current for every later selection change however it
+// arrives (click, Ctrl+Tab, or another restore) -- this is what makes a
+// call's return target correct even when the active channel was never
+// chosen through selectChannel/selectPrivateChat.
+for (const [serverId, selection] of Object.entries(
+  useStore.getState().ui.perServerSelections,
+)) {
+  const itemId = selection.selectedChannelId ?? selection.selectedPrivateChatId;
+  if (itemId) recordSelection(serverId, itemId);
+}
+useStore.subscribe((state) => {
+  const serverId = state.ui.selectedServerId;
+  if (!serverId) return;
+  const selection = state.ui.perServerSelections[serverId];
+  const itemId =
+    selection?.selectedChannelId ?? selection?.selectedPrivateChatId;
+  if (itemId) recordSelection(serverId, itemId);
+});
 
 // Initialize protocol handlers
 registerAllProtocolHandlers(ircClient, useStore);

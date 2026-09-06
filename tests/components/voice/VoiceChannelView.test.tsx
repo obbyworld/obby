@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
   VoiceMember,
@@ -11,6 +11,8 @@ const mocks = vi.hoisted(() => ({
   useVoiceCall: vi.fn(),
   releaseVoiceClient: vi.fn(),
   selectChannel: vi.fn(),
+  selectPrivateChat: vi.fn(),
+  resolveCallReturnTarget: vi.fn(() => null),
 }));
 
 vi.mock("../../../src/hooks/useVoiceCall", () => ({
@@ -24,14 +26,21 @@ vi.mock("../../../src/lib/voice", () => ({
 import { setSpotlight } from "../../../src/lib/voiceSpotlight";
 
 vi.mock("../../../src/store", () => {
-  const state = { servers: [], selectChannel: mocks.selectChannel };
+  const state = {
+    servers: [],
+    selectChannel: mocks.selectChannel,
+    selectPrivateChat: mocks.selectPrivateChat,
+  };
   const useStore = Object.assign(
     vi.fn((selector: (s: typeof state) => unknown) =>
       typeof selector === "function" ? selector(state) : state,
     ),
     { getState: vi.fn(() => state) },
   );
-  return { default: useStore };
+  return {
+    default: useStore,
+    resolveCallReturnTarget: mocks.resolveCallReturnTarget,
+  };
 });
 
 let isNarrow = false;
@@ -298,6 +307,49 @@ describe("VoiceChannelView", () => {
     ).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.getByRole("button", { name: /Expand/i })).toBeInTheDocument();
+  });
+
+  it("renders the stage under a full-window container portaled to the document body in theater mode", () => {
+    mockCall({
+      state: {
+        phase: "connected",
+        members: {},
+        mode: "voice",
+        role: "streamer",
+        streamers: [],
+      },
+      members: [member("alice")],
+    });
+    const { container } = render(
+      <VoiceChannelView serverId="s1" channelName="^general" />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Expand/i }));
+
+    const theaterRoot = document.body.querySelector(".fixed.inset-0");
+    expect(theaterRoot).toBeInTheDocument();
+    expect(container.contains(theaterRoot)).toBe(false);
+    expect(theaterRoot?.parentElement).toBe(document.body);
+  });
+
+  it("no longer keeps the maximize control in the status strip", () => {
+    mockCall({
+      state: {
+        phase: "connected",
+        members: {},
+        mode: "voice",
+        role: "streamer",
+        streamers: [],
+      },
+      members: [member("alice")],
+    });
+    render(<VoiceChannelView serverId="s1" channelName="^general" />);
+
+    const strip = screen.getByTestId("voice-status-strip");
+    expect(
+      within(strip).queryByRole("button", { name: /Expand/i }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Expand/i })).toBeInTheDocument();
   });
 });

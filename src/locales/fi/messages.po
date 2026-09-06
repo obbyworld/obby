@@ -958,8 +958,8 @@ msgstr "Sulje irrotettu palvelintiedotteet-näkymä"
 msgid "Close viewer"
 msgstr "Sulje katseluohjelma"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Kutista"
 
@@ -1558,8 +1558,8 @@ msgstr "Sulje pois kanavan nimimaski"
 msgid "Exit spotlight"
 msgstr "Poistu spotlight-tilasta"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Laajenna"
 

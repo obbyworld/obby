@@ -958,8 +958,8 @@ msgstr "Zamknij wyskakujące powiadomienia serwera"
 msgid "Close viewer"
 msgstr "Zamknij przeglądarkę"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Zwiń"
 
@@ -1558,8 +1558,8 @@ msgstr "Wyklucz maskę nazwy kanału"
 msgid "Exit spotlight"
 msgstr "Zakończ wyróżnienie"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Rozwiń"
 

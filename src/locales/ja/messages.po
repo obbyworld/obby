@@ -958,8 +958,8 @@ msgstr "ポップアウトしたサーバー通知を閉じる"
 msgid "Close viewer"
 msgstr "ビューアを閉じる"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "折りたたむ"
 
@@ -1558,8 +1558,8 @@ msgstr "チャンネル名マスクを除外"
 msgid "Exit spotlight"
 msgstr "スポットライトを終了"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "展開する"
 

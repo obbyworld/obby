@@ -958,8 +958,8 @@ msgstr "Fermer les notifications serveur détachées"
 msgid "Close viewer"
 msgstr "Fermer le visualiseur"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
 msgstr "Réduire"
 
@@ -1558,8 +1558,8 @@ msgstr "Exclure le masque de nom de salon"
 msgid "Exit spotlight"
 msgstr "Quitter le mode vedette"
 
-#: src/components/layout/VoiceChannelView.tsx
-#: src/components/layout/VoiceChannelView.tsx
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
 msgstr "Développer"
 
