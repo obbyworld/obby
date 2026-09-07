@@ -299,6 +299,11 @@ export class VoiceClient {
   private isSpeakingNow = false;
   private pttMode = false;
   private deafened = false;
+  // Bumped on every teardown. Capturing media is asynchronous, so a
+  // capture that started before the call ended must check this before
+  // keeping what it got, or the microphone stays live with nothing
+  // left to stop it and the OS keeps the device held.
+  private generation = 0;
   private views = new Set<VoiceViewCallbacks>();
   // Per-peer audio playback sinks. Each member with an inbound audio
   // track gets a dedicated hidden <audio> element so its volume can be
@@ -520,6 +525,7 @@ export class VoiceClient {
 
   async setVideo(on: boolean): Promise<void> {
     if (!this.pc || !this.localStream) return;
+    const generation = this.generation;
     const selfNick = this.opts.selfNick;
     const selfMember = this.members[selfNick] ?? blankMember(selfNick);
     if (on) {
@@ -527,6 +533,10 @@ export class VoiceClient {
         const video = await navigator.mediaDevices.getUserMedia({
           video: VIDEO_CONSTRAINTS,
         });
+        if (this.generation !== generation || !this.pc || !this.localStream) {
+          for (const t of video.getTracks()) t.stop();
+          return;
+        }
         const track = video.getVideoTracks()[0];
         this.localStream.addTrack(track);
         this.pc.addTrack(track, this.localStream);
@@ -555,6 +565,7 @@ export class VoiceClient {
 
   async setScreenShare(on: boolean): Promise<void> {
     if (!this.pc) return;
+    const generation = this.generation;
     const selfNick = this.opts.selfNick;
     const selfMember = this.members[selfNick] ?? blankMember(selfNick);
     if (on) {
@@ -575,12 +586,10 @@ export class VoiceClient {
         this.emitError(`screen: ${err}`);
         return;
       }
-      // Re-check pc *after* the await: the screen-picker dialog can
-      // sit open for many seconds, during which the call may have
-      // been torn down (hangup) or never even existed (race with a
-      // failed onJoined). Without this guard we throw "addTrack of
-      // undefined" and leak the captured stream.
-      if (!this.pc) {
+      // The picker can sit open for many seconds, so by now the call may
+      // have ended, or ended and been replaced by a different one. Either
+      // way this capture belongs to nothing and has to be stopped here.
+      if (!this.pc || this.generation !== generation) {
         for (const t of screen.getTracks()) t.stop();
         return;
       }
@@ -875,6 +884,7 @@ export class VoiceClient {
    *  so we addTrack + renegotiate instead of building from scratch. */
   private async captureMicAndRenegotiate(): Promise<void> {
     if (!this.pc || this.localStream) return;
+    const generation = this.generation;
     let local: MediaStream;
     try {
       local = await navigator.mediaDevices.getUserMedia({
@@ -883,6 +893,10 @@ export class VoiceClient {
       });
     } catch (err) {
       this.emitError(`microphone: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc) {
+      for (const t of local.getTracks()) t.stop();
       return;
     }
     this.localStream = local;
@@ -941,6 +955,7 @@ export class VoiceClient {
   }
 
   private async onJoined(env: SignalEnvelope) {
+    const generation = this.generation;
     // Re-entrance guard: a duplicate "joined" envelope (e.g. server
     // re-issued one after a transient failure, or a leaked handler
     // from a previous VoiceClient instance) must not spawn a second
@@ -990,6 +1005,19 @@ export class VoiceClient {
       this.attachInboundTrack(e.track, e.streams[0], e.transceiver?.mid);
     };
 
+    // Seed the member map before anything is awaited. The server sends each
+    // existing member's mic state right after this reply, and capturing the
+    // microphone below can take seconds, so a map built afterwards would
+    // overwrite everything that arrived meanwhile and show people as muted.
+    const members: Record<string, VoiceMember> = {};
+    for (const m of env.members ?? []) {
+      members[m] = this.members[m] ?? blankMember(m);
+    }
+    members[this.opts.selfNick] =
+      this.members[this.opts.selfNick] ?? blankMember(this.opts.selfNick);
+    this.members = members;
+    this.pushConnected();
+
     // Viewers in stream channels never publish: skip getUserMedia,
     // skip addTrack, skip VAD. They get the regular receive-only PC
     // and can chat via the standard IRC channel input. If they're
@@ -1007,6 +1035,10 @@ export class VoiceClient {
         this.teardown();
         return;
       }
+      if (this.generation !== generation) {
+        for (const t of local.getTracks()) t.stop();
+        return;
+      }
       this.localStream = local;
       for (const t of local.getAudioTracks()) {
         pc.addTrack(t, local);
@@ -1014,14 +1046,6 @@ export class VoiceClient {
       this.startVAD(local);
     }
 
-    // Pre-populate the member map from the join reply.
-    const members: Record<string, VoiceMember> = {};
-    for (const m of env.members ?? []) {
-      members[m] = blankMember(m);
-    }
-    members[this.opts.selfNick] = blankMember(this.opts.selfNick);
-    this.members = members;
-    this.pushConnected();
     this.startStatsPump();
 
     // WebKit never implemented the legacy offerToReceive* options, so we ask
@@ -1330,6 +1354,7 @@ export class VoiceClient {
   }
 
   private teardown() {
+    this.generation++;
     if (this.speakingTimer) {
       clearInterval(this.speakingTimer);
       this.speakingTimer = undefined;

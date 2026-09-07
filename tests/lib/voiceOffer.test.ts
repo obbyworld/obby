@@ -214,3 +214,64 @@ describe("VoiceClient initial offer (viewer with no local tracks)", () => {
     expect(pc.createOfferCalls).toEqual([[]]);
   });
 });
+
+describe("VoiceClient microphone release", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    lastPc = undefined;
+    currentClient = undefined;
+  });
+
+  afterEach(() => {
+    currentClient?.leave();
+    getUserMedia.mockImplementation(async () => fakeStream([fakeAudioTrack()]));
+  });
+
+  // Leaving during the capture used to strand a live microphone: the stream
+  // resolved after teardown and was stored with nothing left to stop it, so
+  // the OS kept the device open until the whole app quit.
+  test("a capture that finishes after the call ended is stopped", async () => {
+    const track = fakeAudioTrack();
+    let releaseCapture: (() => void) | undefined;
+    getUserMedia.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          releaseCapture = () => resolve(fakeStream([track]));
+        }),
+    );
+
+    const client = new VoiceClient({
+      serverId: "s1",
+      channel: "^room",
+      selfNick: "me",
+      audioSink: fakeAudioSink(),
+    });
+    currentClient = client;
+    client.attach({ onState: () => {}, onError: () => {} });
+
+    const joinPromise = client.join();
+    mocks.emit("JOIN", { username: "me", channelName: "^room" });
+    await joinPromise;
+
+    mocks.emit("TAGMSG", {
+      serverId: "s1",
+      sender: "sfu",
+      channelName: "^room",
+      mtags: {
+        "+obsidianirc/rtc": JSON.stringify({
+          type: "joined",
+          members: ["me"],
+        }),
+      },
+    });
+    await waitUntil(() => releaseCapture !== undefined);
+
+    client.leave();
+    releaseCapture?.();
+    await waitUntil(
+      () => (track.stop as ReturnType<typeof vi.fn>).mock.calls.length > 0,
+    );
+
+    expect(track.stop).toHaveBeenCalled();
+  });
+});
