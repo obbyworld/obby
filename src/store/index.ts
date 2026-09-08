@@ -9,7 +9,11 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
-import { releaseServerVoiceClients, releaseVoiceClient } from "../lib/voice";
+import {
+  releaseServerVoiceClients,
+  releaseVoiceClient,
+  setVoiceStore,
+} from "../lib/voice";
 import {
   clearServerConnectionTimeout,
   registerAllProtocolHandlers,
@@ -526,6 +530,7 @@ interface UIState {
       | "notifications"
       | "preferences"
       | "media"
+      | "calls"
       | "account";
     highlightedSettingId?: string;
   } | null;
@@ -1058,6 +1063,7 @@ export interface AppState {
       | "notifications"
       | "preferences"
       | "media"
+      | "calls"
       | "account";
     highlightedSettingId?: string;
   }) => void;
@@ -1396,6 +1402,14 @@ const useStore = create<AppState>((set, get) => ({
     // Status messages
     awayMessage: "",
     quitMessage: "",
+    // Call device settings -- null means the system default
+    callAudioInput: null,
+    callVideoInput: null,
+    callAudioOutput: null,
+    callCameraFacing: "user",
+    callEchoCancellation: true,
+    callNoiseSuppression: true,
+    callAutoGainControl: true,
     ...loadSavedGlobalSettings(), // Load saved settings from localStorage
   },
 
@@ -1835,11 +1849,18 @@ const useStore = create<AppState>((set, get) => ({
         leftChannel &&
         currentSelection?.selectedChannelId === leftChannel.id
       ) {
+        // Leaving a call on a narrow layout goes back to the channel list
+        // rather than opening whichever conversation happens to be first.
+        const backToList =
+          state.ui.isNarrowView && classifyChannelName(channelName) !== "text";
         const remainingChannels =
           updatedServers.find((s) => s.id === serverId)?.channels || [];
-        const nextChannel = remainingChannels[0] || null;
+        const nextChannel = backToList ? null : remainingChannels[0] || null;
         updatedUI = {
           ...state.ui,
+          mobileViewActiveColumn: backToList
+            ? "serverList"
+            : state.ui.mobileViewActiveColumn,
           perServerSelections: setServerSelection(state, serverId, {
             selectedChannelId: nextChannel?.id || null,
             selectedChannelName: nextChannel?.name || null,
@@ -4585,3 +4606,4 @@ registerAllProtocolHandlers(ircClient, useStore);
 
 export default useStore;
 registerAllHandlers(useStore);
+setVoiceStore(useStore);

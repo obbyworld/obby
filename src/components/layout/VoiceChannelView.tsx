@@ -54,6 +54,11 @@ export const VoiceChannelView: React.FC<Props> = ({
 
   const selectChannel = useStore((s) => s.selectChannel);
   const selectPrivateChat = useStore((s) => s.selectPrivateChat);
+  const setMobileViewActiveColumn = useStore(
+    (s) => s.setMobileViewActiveColumn,
+  );
+  const setSettingsNavigation = useStore((s) => s.setSettingsNavigation);
+  const toggleSettingsModal = useStore((s) => s.toggleSettingsModal);
 
   // Nick of the explicitly spotlighted member, or null for the
   // stage's default layout (single tile / auto screen-share spotlight
@@ -115,6 +120,16 @@ export const VoiceChannelView: React.FC<Props> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   const onLeave = useCallback(() => {
     releaseVoiceClient(serverId, channelName);
+    const { ui } = useStore.getState();
+    // On a narrow layout the channel list is a page of its own, and dropping
+    // someone into a conversation they were not reading is worse than showing
+    // them where they are. A wide layout already shows the list beside the
+    // chat, so it can land on what they had open before the call.
+    if (ui.isNarrowView) {
+      selectChannel(null);
+      setMobileViewActiveColumn("serverList");
+      return;
+    }
     const target = resolveCallReturnTarget(useStore.getState(), serverId);
     if (target?.type === "channel") selectChannel(target.id);
     else if (target?.type === "privateChat") selectPrivateChat(target.id);
@@ -134,6 +149,10 @@ export const VoiceChannelView: React.FC<Props> = ({
     client?.setPushToTalk(next);
   };
   const onStepOffStream = () => client?.demote();
+  const onOpenDeviceSettings = () => {
+    setSettingsNavigation({ category: "calls" });
+    toggleSettingsModal(true);
+  };
   const onReact = (emoji: string) => client?.sendReaction(emoji);
   const onSetMuted = useCallback(
     (nick: string, muted: boolean) => client?.setMemberMuted(nick, muted),
@@ -322,6 +341,7 @@ export const VoiceChannelView: React.FC<Props> = ({
               onStepOffStream={onStepOffStream}
               onReact={onReact}
               onLeave={onLeave}
+              onOpenDeviceSettings={onOpenDeviceSettings}
             />
           </div>
         </div>

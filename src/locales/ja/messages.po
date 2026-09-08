@@ -323,6 +323,10 @@ msgstr "暗号化チャットを承認"
 msgid "Accept new key"
 msgstr "新しい鍵を受け入れる"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "アクセスが拒否されました。ブラウザまたはシステムの設定でカメラとマイクへのアクセスを許可してから、もう一度お試しください。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "アカウント"
@@ -456,9 +460,17 @@ msgstr "すべて"
 msgid "All Content"
 msgstr "すべてのコンテンツ"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "カメラへのアクセスを許可"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "複数行のテキスト入力を許可する"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "マイクへのアクセスを許可"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "認証済みアカウント"
 msgid "Auto Fallback to Single Line"
 msgstr "自動的に1行入力に切り替え"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "自動ゲインコントロール"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft}秒後に自動的に閉じます"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "マイクの音量を自動調整"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "退席中："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "戻る"
@@ -684,6 +705,24 @@ msgstr "このネットワークのボット"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "サーバー上のすべてのチャンネルを一覧表示"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "ブラウザは、マイクまたはカメラへのアクセスを許可するまでスピーカーを表示しません。何も録音されません。"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "通話"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "カメラ"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "カメラ {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "安全なパスワードを選択してください"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "ファイルを選択"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "マイクとカメラを選択"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "通話で使うマイク、カメラ、スピーカーを選択"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "通話で使うスピーカーを選択"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "カメラを選択して映像を確認"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "マイクを選択して入力レベルを確認"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "リンクをコピー"
 msgid "Copy URL"
 msgstr "URLをコピー"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "デバイスにアクセスできませんでした。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} との暗号化を設定できませんでした。"
@@ -1256,6 +1319,14 @@ msgstr "視聴者に戻す"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "説明（任意、例：「Q3ベータテスター」）"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "カメラへのアクセスを許可するまで、デバイス名は表示されません。"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "マイクへのアクセスを許可するまで、デバイス名は表示されません。"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "プッシュ・トゥ・トークを無効にする"
@@ -1354,6 +1425,10 @@ msgstr "例：<0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "例：100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "エコーキャンセレーション"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "\"{searchQuery}\"に一致するメッセージが1件見つかりまし
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "から"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "フロント"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "サーバーから切断したときに表示されるメッセージ"
 msgid "Messages with {nick} are now encrypted."
 msgstr "{nick} とのメッセージは暗号化されました。"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "マイク"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "マイク {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "マイクレベル"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "最小ユーザー数"
@@ -2376,6 +2469,10 @@ msgstr "BANが見つかりません"
 msgid "No bots registered on this network yet."
 msgstr "このネットワークにはまだボットが登録されていません。"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "カメラが検出されませんでした。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "中央サーバーなし："
@@ -2437,6 +2534,10 @@ msgstr "メディアプレビューは読み込まれません。"
 msgid "no message"
 msgstr "メッセージなし"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "マイクが検出されませんでした。"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "生のIRCトラフィックはまだキャプチャされていません。接続するかメッセージを送信してみてください。"
@@ -2452,6 +2553,10 @@ msgstr "サーバーが選択されていません。まずサイドバーから
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "サーバーが見つかりません。"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "スピーカーが検出されませんでした。"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "WHOISデータがありません"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "誰もいません。/join {channelName} で誰かを誘いましょう。"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "ノイズサプレッション"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "再接続に失敗しました"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "マイクの背景ノイズを軽減"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "マイクが拾うスピーカーからのエコーを軽減"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "キックを表示"
 msgid "Show less"
 msgstr "折りたたむ"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "スピーカーを表示"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "ニックネーム変更を表示"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloudプレーヤー"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "ソース"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "スピーカー"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "スピーカー {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "このブラウザではスピーカーの選択がサポートされていません。"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "一時停止中"
 msgid "System"
 msgstr "システム"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "システムのデフォルト"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "テキスト"
@@ -3499,6 +3638,10 @@ msgstr "テキスト"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "テキストチャンネル"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "このデバイスは現在利用できません。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

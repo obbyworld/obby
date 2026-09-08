@@ -14,6 +14,7 @@ import {
   FaChevronRight,
   FaCog,
   FaImage,
+  FaMicrophone,
   FaServer,
   FaShareSquare,
   FaShieldAlt,
@@ -93,6 +94,7 @@ type SettingsCategory =
   | "notifications"
   | "preferences"
   | "media"
+  | "calls"
   | "account"
   | "invitations"
   | "privacy";
@@ -180,6 +182,12 @@ export const UserSettings: React.FC = React.memo(() => {
       title: t`Media`,
       icon: <FaImage className="w-5 h-5" />,
       description: t`Control media display and external content`,
+    },
+    {
+      id: "calls",
+      title: t`Calls`,
+      icon: <FaMicrophone className="w-5 h-5" />,
+      description: t`Choose the microphone, camera, and speaker calls use`,
     },
     {
       id: "account",

@@ -26,6 +26,19 @@ const mocks = vi.hoisted(() => {
     emit: (event: string, payload: unknown) => {
       for (const h of handlers.get(event) ?? []) h(payload);
     },
+    // Fixed, deterministic constraint objects so tests assert against a
+    // known shape instead of coupling to the real helpers' defaults.
+    // Fixed, deterministic constraint objects so tests assert against a
+    // known shape instead of coupling to the real helpers' defaults. voice.ts
+    // reads settings via a store injected at runtime (setVoiceStore), which
+    // is never called in this test file, so these helpers see the module's
+    // built-in fallback settings regardless -- irrelevant here since the
+    // mocks below ignore their input.
+    audioConstraints: vi.fn(() => ({ echoCancellation: true })),
+    videoConstraints: vi.fn(() => ({ frameRate: { max: 30 } })),
+    listDevices: vi.fn(async () => [] as MediaDeviceInfo[]),
+    resolveDeviceId: vi.fn(() => undefined as string | undefined),
+    speakerSelectionSupported: vi.fn(() => false),
   };
 });
 
@@ -37,6 +50,14 @@ vi.mock("../../src/lib/ircClient", () => ({
   },
 }));
 
+vi.mock("../../src/lib/mediaDevices", () => ({
+  audioConstraints: mocks.audioConstraints,
+  videoConstraints: mocks.videoConstraints,
+  listDevices: mocks.listDevices,
+  resolveDeviceId: mocks.resolveDeviceId,
+  speakerSelectionSupported: mocks.speakerSelectionSupported,
+}));
+
 import { VoiceClient } from "../../src/lib/voice";
 
 interface FakeTransceiver {
@@ -44,9 +65,15 @@ interface FakeTransceiver {
   direction: string;
 }
 
+interface FakeSender {
+  track: MediaStreamTrack | null;
+  replaceTrack: (t: MediaStreamTrack | null) => Promise<void>;
+}
+
 class FakePeerConnection {
   transceivers: FakeTransceiver[] = [];
   tracks: { track: MediaStreamTrack; stream: MediaStream }[] = [];
+  senders: FakeSender[] = [];
   onicecandidate: ((e: { candidate: RTCIceCandidate | null }) => void) | null =
     null;
   ontrack: ((e: RTCTrackEvent) => void) | null = null;
@@ -59,11 +86,18 @@ class FakePeerConnection {
 
   addTrack(track: MediaStreamTrack, stream: MediaStream): RTCRtpSender {
     this.tracks.push({ track, stream });
-    return {} as RTCRtpSender;
+    const sender: FakeSender = {
+      track,
+      replaceTrack: vi.fn(async (t: MediaStreamTrack | null) => {
+        sender.track = t;
+      }),
+    };
+    this.senders.push(sender);
+    return sender as unknown as RTCRtpSender;
   }
 
   getSenders(): RTCRtpSender[] {
-    return [];
+    return this.senders as unknown as RTCRtpSender[];
   }
 
   async createOffer(...args: unknown[]): Promise<RTCSessionDescriptionInit> {
@@ -202,7 +236,10 @@ describe("VoiceClient initial offer (viewer with no local tracks)", () => {
   it("gives a streamer its mic track plus a recvonly video transceiver, with no extra audio transceiver", async () => {
     const { pc } = await joinAs("streamer");
 
-    expect(getUserMedia).toHaveBeenCalledWith({ audio: true, video: false });
+    expect(getUserMedia).toHaveBeenCalledWith({
+      audio: { echoCancellation: true },
+      video: false,
+    });
     expect(pc.tracks).toHaveLength(1);
     expect(pc.tracks[0].track.kind).toBe("audio");
     expect(pc.transceivers).toEqual([{ kind: "video", direction: "recvonly" }]);
@@ -273,5 +310,62 @@ describe("VoiceClient microphone release", () => {
     );
 
     expect(track.stop).toHaveBeenCalled();
+  });
+});
+
+describe("VoiceClient.setAudioInput", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.handlers.clear();
+    lastPc = undefined;
+    currentClient = undefined;
+  });
+
+  afterEach(() => {
+    currentClient?.leave();
+    getUserMedia.mockImplementation(async () => fakeStream([fakeAudioTrack()]));
+  });
+
+  it("replaces the sender's track with a fresh capture and stops the old one", async () => {
+    const { client, pc } = await joinAs("streamer");
+    const oldTrack = pc.tracks[0].track;
+    const sender = pc.senders[0];
+
+    const newTrack = fakeAudioTrack();
+    getUserMedia.mockImplementationOnce(async () => fakeStream([newTrack]));
+
+    await client.setAudioInput("mic-2");
+
+    expect(sender.replaceTrack).toHaveBeenCalledWith(newTrack);
+    expect(oldTrack.stop).toHaveBeenCalled();
+    expect(newTrack.stop).not.toHaveBeenCalled();
+  });
+
+  // Mirrors the "microphone release" guard above but for a swap in
+  // progress: leaving while the new capture is still pending must stop
+  // that capture on arrival rather than land it on a sender that no
+  // longer exists.
+  it("stops the new track instead of keeping it when the swap resolves after leave()", async () => {
+    const { client, pc } = await joinAs("streamer");
+    const sender = pc.senders[0];
+
+    const newTrack = fakeAudioTrack();
+    let releaseSwap: (() => void) | undefined;
+    getUserMedia.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseSwap = () => resolve(fakeStream([newTrack]));
+        }),
+    );
+
+    const swapPromise = client.setAudioInput("mic-2");
+    await waitUntil(() => releaseSwap !== undefined);
+
+    client.leave();
+    releaseSwap?.();
+    await swapPromise;
+
+    expect(newTrack.stop).toHaveBeenCalled();
+    expect(sender.replaceTrack).not.toHaveBeenCalled();
   });
 });

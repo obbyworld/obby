@@ -23,7 +23,45 @@
 // (serverId,channel) join.  The hook in voice/store.ts manages the
 // active instance and exposes state to React.
 
+import type { StoreApi } from "zustand";
+import type { AppState } from "../store";
 import ircClient from "./ircClient";
+import {
+  audioConstraints,
+  type GlobalSettingsSlice,
+  listDevices,
+  resolveDeviceId,
+  type SavedDevice,
+  speakerSelectionSupported,
+  videoConstraints,
+} from "./mediaDevices";
+
+// store/index.ts imports this module (to release calls on disconnect), so a
+// static import of the store back here would cycle. It registers itself via
+// setVoiceStore() once the store exists instead, the same injection pattern
+// store/handlers/e2eeConversation.ts uses for the same reason.
+let storeRef: StoreApi<AppState> | null = null;
+
+export function setVoiceStore(store: StoreApi<AppState>): void {
+  storeRef = store;
+}
+
+const DEFAULT_CALL_SETTINGS: GlobalSettingsSlice = {
+  callAudioInput: null,
+  callVideoInput: null,
+  callCameraFacing: "user",
+  callEchoCancellation: true,
+  callNoiseSuppression: true,
+  callAutoGainControl: true,
+};
+
+function getCallSettings(): GlobalSettingsSlice {
+  return storeRef?.getState().globalSettings ?? DEFAULT_CALL_SETTINGS;
+}
+
+function getSavedOutputDevice(): SavedDevice | null {
+  return storeRef?.getState().globalSettings.callAudioOutput ?? null;
+}
 
 export interface VoiceMember {
   nick: string;
@@ -146,15 +184,13 @@ interface TrackHint {
 
 const RTC_TAG = "+obsidianirc/rtc";
 
-// Left unconstrained a phone publishes whatever its camera likes, up to 1080p,
-// and the SFU then fans that out to everyone in the room. `ideal` and `max`
-// rather than `exact` so a device that cannot match still returns a track.
-const VIDEO_CONSTRAINTS: MediaTrackConstraints = {
-  facingMode: { ideal: "user" },
-  width: { max: 1280 },
-  height: { max: 720 },
-  frameRate: { max: 30 },
-};
+function isTouchDevice(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
 
 // Mirrors UnrealIRCd's `message_tag_escape` (src/modules/message-tags.c)
 // byte-for-byte, which is the canonical IRCv3 message-tag value escape
@@ -523,6 +559,161 @@ export class VoiceClient {
     this.pushConnected();
   }
 
+  /** Resolve the saved microphone against the live device list and build
+   *  getUserMedia constraints from it. Called at capture time (never cached)
+   *  so a setting changed between calls always takes effect on the next
+   *  join / promote / swap. */
+  private async resolveAudioConstraints(
+    deviceId?: string,
+  ): Promise<MediaTrackConstraints> {
+    const settings = getCallSettings();
+    const resolved =
+      deviceId ??
+      resolveDeviceId(settings.callAudioInput, await listDevices("audioinput"));
+    return audioConstraints(settings, resolved);
+  }
+
+  private async resolveVideoConstraints(
+    deviceId?: string,
+  ): Promise<MediaTrackConstraints> {
+    const settings = getCallSettings();
+    const touch = isTouchDevice();
+    const resolved = touch
+      ? undefined
+      : (deviceId ??
+        resolveDeviceId(
+          settings.callVideoInput,
+          await listDevices("videoinput"),
+        ));
+    return videoConstraints(settings, resolved, touch);
+  }
+
+  private async resolveOutputDeviceId(): Promise<string | undefined> {
+    return resolveDeviceId(
+      getSavedOutputDevice(),
+      await listDevices("audiooutput"),
+    );
+  }
+
+  /** Push the saved (or given) output device to every per-peer sink.
+   *  Called whenever a new sink is created and by the settings panel when
+   *  the user changes the speaker while a call is live. No-op where
+   *  setSinkId isn't supported. */
+  async setAudioOutput(deviceId?: string): Promise<void> {
+    if (!speakerSelectionSupported()) return;
+    const generation = this.generation;
+    const id = deviceId ?? (await this.resolveOutputDeviceId());
+    if (this.generation !== generation) return;
+    for (const sink of this.memberAudioSinks.values()) {
+      try {
+        await (
+          sink as HTMLAudioElement & { setSinkId(id: string): Promise<void> }
+        ).setSinkId(id ?? "");
+      } catch (err) {
+        console.warn("voice: setSinkId failed", err);
+      }
+    }
+  }
+
+  /** Stop the second-by-second speaking detector and release its
+   *  AudioContext. Shared by teardown, demotion, and a mic swap that
+   *  needs to rebind the analyser to the new track. */
+  private stopVAD(): void {
+    if (this.speakingTimer) {
+      clearInterval(this.speakingTimer);
+      this.speakingTimer = undefined;
+    }
+    if (this.vadAudioCtx) {
+      void this.vadAudioCtx.close();
+      this.vadAudioCtx = undefined;
+    }
+  }
+
+  /** Swap the published microphone for a freshly captured one from the
+   *  given (or saved) device, without renegotiating -- replaceTrack keeps
+   *  the existing sender/m-line as-is. */
+  async setAudioInput(deviceId?: string): Promise<void> {
+    if (!this.pc || !this.localStream) return;
+    const generation = this.generation;
+    const sender = this.pc.getSenders().find((s) => s.track?.kind === "audio");
+    if (!sender) return;
+    let stream: MediaStream;
+    try {
+      const constraints = await this.resolveAudioConstraints(deviceId);
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: constraints,
+        video: false,
+      });
+    } catch (err) {
+      this.emitError(`microphone: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc || !this.localStream) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const newTrack = stream.getAudioTracks()[0];
+    if (!newTrack) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const oldTrack = sender.track ?? undefined;
+    newTrack.enabled = oldTrack?.enabled ?? true;
+    await sender.replaceTrack(newTrack);
+    if (oldTrack) {
+      this.localStream.removeTrack(oldTrack);
+      oldTrack.stop();
+    }
+    this.localStream.addTrack(newTrack);
+    this.stopVAD();
+    this.startVAD(this.localStream);
+    const selfNick = this.opts.selfNick;
+    const selfMember = this.members[selfNick] ?? blankMember(selfNick);
+    selfMember.micOn = newTrack.enabled;
+    this.members[selfNick] = selfMember;
+    this.pushConnected();
+  }
+
+  /** Swap the published camera for a freshly captured one. No-op when the
+   *  camera isn't currently on -- there's no sender to swap into, and the
+   *  new preference simply takes effect the next time setVideo(true) runs. */
+  async setVideoInput(deviceId?: string): Promise<void> {
+    if (!this.pc || !this.localStream) return;
+    const oldTrack = this.localStream.getVideoTracks()[0];
+    if (!oldTrack) return;
+    const generation = this.generation;
+    const sender = this.pc.getSenders().find((s) => s.track === oldTrack);
+    if (!sender) return;
+    let stream: MediaStream;
+    try {
+      const constraints = await this.resolveVideoConstraints(deviceId);
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: constraints,
+      });
+    } catch (err) {
+      this.emitError(`camera: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc || !this.localStream) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const newTrack = stream.getVideoTracks()[0];
+    if (!newTrack) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    await sender.replaceTrack(newTrack);
+    this.localStream.removeTrack(oldTrack);
+    oldTrack.stop();
+    this.localStream.addTrack(newTrack);
+    const selfNick = this.opts.selfNick;
+    const selfMember = this.members[selfNick] ?? blankMember(selfNick);
+    selfMember.videoTrack = newTrack;
+    this.members[selfNick] = selfMember;
+    this.pushConnected();
+  }
+
   async setVideo(on: boolean): Promise<void> {
     if (!this.pc || !this.localStream) return;
     const generation = this.generation;
@@ -530,8 +721,9 @@ export class VoiceClient {
     const selfMember = this.members[selfNick] ?? blankMember(selfNick);
     if (on) {
       try {
+        const constraints = await this.resolveVideoConstraints();
         const video = await navigator.mediaDevices.getUserMedia({
-          video: VIDEO_CONSTRAINTS,
+          video: constraints,
         });
         if (this.generation !== generation || !this.pc || !this.localStream) {
           for (const t of video.getTracks()) t.stop();
@@ -887,8 +1079,9 @@ export class VoiceClient {
     const generation = this.generation;
     let local: MediaStream;
     try {
+      const constraints = await this.resolveAudioConstraints();
       local = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: constraints,
         video: false,
       });
     } catch (err) {
@@ -917,14 +1110,7 @@ export class VoiceClient {
       for (const t of this.screenStream.getTracks()) t.stop();
       this.screenStream = undefined;
     }
-    if (this.speakingTimer) {
-      clearInterval(this.speakingTimer);
-      this.speakingTimer = undefined;
-    }
-    if (this.vadAudioCtx) {
-      void this.vadAudioCtx.close();
-      this.vadAudioCtx = undefined;
-    }
+    this.stopVAD();
     if (this.pc) {
       // Remove every sender; viewers don't publish anything.
       for (const s of this.pc.getSenders()) {
@@ -1026,8 +1212,9 @@ export class VoiceClient {
     if (this.role === "streamer") {
       let local: MediaStream;
       try {
+        const constraints = await this.resolveAudioConstraints();
         local = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: constraints,
           video: false,
         });
       } catch (err) {
@@ -1151,6 +1338,7 @@ export class VoiceClient {
         sink.setAttribute("data-obby-voice-peer", nick);
         document.body.appendChild(sink);
         this.memberAudioSinks.set(nick, sink);
+        void this.setAudioOutput();
       }
       const stream = new MediaStream([track]);
       sink.srcObject = stream;
@@ -1355,17 +1543,10 @@ export class VoiceClient {
 
   private teardown() {
     this.generation++;
-    if (this.speakingTimer) {
-      clearInterval(this.speakingTimer);
-      this.speakingTimer = undefined;
-    }
+    this.stopVAD();
     if (this.statsTimer) {
       clearInterval(this.statsTimer);
       this.statsTimer = undefined;
-    }
-    if (this.vadAudioCtx) {
-      void this.vadAudioCtx.close();
-      this.vadAudioCtx = undefined;
     }
     if (this.localStream) {
       for (const t of this.localStream.getTracks()) t.stop();
@@ -1510,6 +1691,14 @@ export function acquireVoiceClient(opts: AcquireOptions): {
   const key = clientKey(opts.serverId, opts.channel);
   let client = liveClients.get(key);
   if (!client) {
+    // A person has one microphone and one pair of ears, so joining a call or a
+    // stream ends whichever one was already running rather than leaving it
+    // playing in the pop-out.
+    for (const [otherKey, other] of liveClients) {
+      if (otherKey === key) continue;
+      other.leave();
+      liveClients.delete(otherKey);
+    }
     client = new VoiceClient({
       serverId: opts.serverId,
       channel: opts.channel,

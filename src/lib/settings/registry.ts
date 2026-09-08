@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from "@lingui/core";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import type {
   CategoryMetadata,
@@ -8,6 +10,23 @@ import type {
   SettingSearchResult,
   SettingValue,
 } from "./types";
+
+// Lingui generates a hashed id for every message, so a descriptor's `id` is
+// something like "mVdvNU". Searching that matches nothing a person would type,
+// which is why titles were never findable. We search the source text instead.
+function sourceText(d: MessageDescriptor | undefined): string[] {
+  return d?.message ? [d.message.toLowerCase()] : [];
+}
+
+// So somebody searching in their own language finds a setting too. Kept apart
+// from the source text because the registry is built while this module is
+// imported, which is before i18n.activate runs, and asking for a translation
+// then throws.
+function translatedText(d: MessageDescriptor | undefined): string[] {
+  if (!d || !i18n.locale) return [];
+  const translated = i18n._(d);
+  return translated && translated !== d.id ? [translated.toLowerCase()] : [];
+}
 
 /**
  * Settings Registry - Central management for all settings definitions
@@ -56,6 +75,12 @@ class SettingsRegistry {
         title: "Media",
         description: "Media and file handling",
         order: 5,
+      },
+      {
+        id: "calls",
+        title: "Calls",
+        description: "Microphone, camera, and speaker for voice calls",
+        order: 5.5,
       },
       {
         id: "account",
@@ -185,8 +210,8 @@ class SettingsRegistry {
    */
   private updateSearchIndex(setting: SettingDefinition): void {
     const searchableText = [
-      setting.title.id.toLowerCase(),
-      setting.description?.id.toLowerCase() || "",
+      ...sourceText(setting.title),
+      ...sourceText(setting.description),
       setting.category.toLowerCase(),
       setting.subcategory?.toLowerCase() || "",
       ...(setting.searchKeywords?.map((k) => k.toLowerCase()) || []),
@@ -231,29 +256,38 @@ class SettingsRegistry {
       let score = 0;
       const matches: SettingSearchResult["matches"] = {};
 
+      const titles = [
+        ...sourceText(setting.title),
+        ...translatedText(setting.title),
+      ];
+      const descriptions = [
+        ...sourceText(setting.description),
+        ...translatedText(setting.description),
+      ];
+
       // Exact title match gets highest score
-      if (setting.title.id.toLowerCase() === queryLower) {
+      if (titles.some((v) => v === queryLower)) {
         score += 1.0;
         matches.title = true;
-      } else if (setting.title.id.toLowerCase().includes(queryLower)) {
+      } else if (titles.some((v) => v.includes(queryLower))) {
         score += 0.7;
         matches.title = true;
       }
 
       // Check individual terms
       for (const term of queryTerms) {
-        if (setting.title.id.toLowerCase().includes(term)) {
+        if (titles.some((v) => v.includes(term))) {
           score += 0.3;
           matches.title = true;
         }
-        if (setting.description?.id.toLowerCase().includes(term)) {
+        if (descriptions.some((v) => v.includes(term))) {
           score += 0.2;
           matches.description = true;
         }
         if (
           setting.searchKeywords?.some((k) => k.toLowerCase().includes(term))
         ) {
-          score += 0.25;
+          score += 0.35;
           matches.keywords = true;
         }
         if (setting.category.toLowerCase().includes(term)) {

@@ -193,6 +193,13 @@ describe("Metadata Display Features", () => {
         enableMarkdownRendering: false,
         awayMessage: "",
         quitMessage: "Obby - Bringing IRC to the future",
+        callAudioInput: null,
+        callVideoInput: null,
+        callAudioOutput: null,
+        callCameraFacing: "user",
+        callEchoCancellation: true,
+        callNoiseSuppression: true,
+        callAutoGainControl: true,
       },
     });
 

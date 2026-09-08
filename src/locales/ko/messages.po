@@ -323,6 +323,10 @@ msgstr "암호화된 대화 수락"
 msgid "Accept new key"
 msgstr "새 키 수락"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 카메라와 마이크 액세스를 허용한 후 다시 시도하세요."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "계정"
@@ -456,9 +460,17 @@ msgstr "전체"
 msgid "All Content"
 msgstr "모든 콘텐츠"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "카메라 액세스 허용"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "여러 줄 텍스트 입력 허용"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "마이크 액세스 허용"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "인증된 계정"
 msgid "Auto Fallback to Single Line"
 msgstr "자동으로 한 줄 모드로 전환"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "자동 게인 조절"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft}초 후 자동으로 닫힘"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "마이크 볼륨 자동 조절"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "자리비움:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "뒤로"
@@ -684,6 +705,24 @@ msgstr "이 네트워크의 봇"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "서버의 모든 채널 검색"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "브라우저는 마이크 또는 카메라 액세스를 허용해야 스피커를 표시합니다. 아무것도 녹음되지 않습니다."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "통화"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "카메라"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "카메라 {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "안전한 비밀번호를 선택하세요"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "파일 선택"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "마이크와 카메라 선택"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "통화에 사용할 마이크, 카메라, 스피커 선택"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "통화에 사용할 스피커 선택"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "카메라 선택 및 화면 미리보기"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "마이크 선택 및 입력 레벨 미리보기"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "링크 복사"
 msgid "Copy URL"
 msgstr "URL 복사"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "장치에 액세스할 수 없습니다."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} 님과 암호화를 설정하지 못했습니다."
@@ -1256,6 +1319,14 @@ msgstr "시청자로 전환"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "카메라 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "마이크 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "PTT 사용 안 함"
@@ -1354,6 +1425,10 @@ msgstr "예: <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "예: 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "에코 제거"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "\"{searchQuery}\"와 일치하는 메시지 1개 발견"
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "보낸 사람"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "전면"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "서버 연결 종료 시 표시할 메시지"
 msgid "Messages with {nick} are now encrypted."
 msgstr "{nick}님과의 메시지가 이제 암호화되었습니다."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "마이크"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "마이크 {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "마이크 수준"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "최소 사용자 수"
@@ -2376,6 +2469,10 @@ msgstr "차단된 사용자가 없습니다"
 msgid "No bots registered on this network yet."
 msgstr "아직 이 네트워크에 등록된 봇이 없습니다."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "카메라가 감지되지 않았습니다."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "중앙 서버 없음:"
@@ -2437,6 +2534,10 @@ msgstr "미디어 미리보기가 로드되지 않습니다."
 msgid "no message"
 msgstr "메시지 없음"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "마이크가 감지되지 않았습니다."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "아직 캡처된 원시 IRC 트래픽이 없습니다. 연결하거나 메시지를 보내 보세요."
@@ -2452,6 +2553,10 @@ msgstr "선택된 서버가 없습니다. 먼저 사이드바에서 서버를 �
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "서버를 찾을 수 없습니다."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "스피커가 감지되지 않았습니다."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "WHOIS 데이터를 사용할 수 없습니다"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "아무도 없습니다. /join {channelName}을 입력하도록 요청하세요."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "노이즈 억제"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "재연결 실패"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "마이크의 배경 소음 줄이기"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "마이크에 감지되는 스피커 에코 줄이기"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "추방 표시"
 msgid "Show less"
 msgstr "접기"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "스피커 표시"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "닉네임 변경 표시"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloud 플레이어"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "소스"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "스피커"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "스피커 {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "이 브라우저에서는 스피커 선택을 지원하지 않습니다."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "정지됨"
 msgid "System"
 msgstr "시스템"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "시스템 기본값"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "텍스트"
@@ -3499,6 +3638,10 @@ msgstr "텍스트"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "텍스트 채널"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "이 장치는 현재 사용할 수 없습니다."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

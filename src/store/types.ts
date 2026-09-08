@@ -1,3 +1,4 @@
+import type { SavedDevice } from "../lib/mediaDevices";
 import type { MediaVisibilityLevel } from "../lib/mediaUtils";
 
 export type layoutColumn = "serverList" | "chatView" | "memberList";
@@ -54,6 +55,13 @@ export interface GlobalSettings {
   enableMarkdownRendering: boolean;
   awayMessage: string;
   quitMessage: string;
+  callAudioInput: SavedDevice | null;
+  callVideoInput: SavedDevice | null;
+  callAudioOutput: SavedDevice | null;
+  callCameraFacing: "user" | "environment";
+  callEchoCancellation: boolean;
+  callNoiseSuppression: boolean;
+  callAutoGainControl: boolean;
 }
 
 export interface UISelections {

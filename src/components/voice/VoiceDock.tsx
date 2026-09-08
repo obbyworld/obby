@@ -8,6 +8,7 @@ import {
   FaMicrophone,
   FaMicrophoneSlash,
   FaPhoneSlash,
+  FaSlidersH,
   FaSmile,
   FaVideo,
   FaVideoSlash,
@@ -48,6 +49,7 @@ export interface VoiceDockProps {
   onStepOffStream: () => void;
   onReact: (emoji: string) => void;
   onLeave: () => void;
+  onOpenDeviceSettings: () => void;
 }
 
 /** The floating control pill. Every button reflects state passed in by
@@ -73,6 +75,7 @@ export function VoiceDock({
   onStepOffStream,
   onReact,
   onLeave,
+  onOpenDeviceSettings,
 }: VoiceDockProps) {
   const reactRef = useRef<HTMLSpanElement>(null);
   const moreRef = useRef<HTMLSpanElement>(null);
@@ -84,6 +87,13 @@ export function VoiceDock({
   const handDirect = !isStreamer || !isNarrow;
 
   const moreItems = [
+    {
+      id: "device-settings",
+      show: true,
+      icon: <FaSlidersH />,
+      label: t`Choose microphone and camera`,
+      onClick: onOpenDeviceSettings,
+    },
     {
       id: "hand",
       show: isStreamer && isNarrow,

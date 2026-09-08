@@ -323,6 +323,10 @@ msgstr "Přijmout šifrovaný chat"
 msgid "Accept new key"
 msgstr "Přijmout nový klíč"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Přístup byl odepřen. Povolte přístup ke kameře a mikrofonu v nastavení prohlížeče nebo systému a zkuste to znovu."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Účet"
@@ -456,9 +460,17 @@ msgstr "Vše"
 msgid "All Content"
 msgstr "Veškerý obsah"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Povolit přístup ke kameře"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Povolit zadávání více řádků textu"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Povolit přístup k mikrofonu"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Ověřený účet"
 msgid "Auto Fallback to Single Line"
 msgstr "Automatický návrat na jeden řádek"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Automatické řízení zisku"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Automatické zavření za {secondsLeft} s"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Automaticky upravit hlasitost mikrofonu"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Nepřítomen:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Zpět"
@@ -684,6 +705,24 @@ msgstr "Boti na této síti"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Procházet všechny kanály na serveru"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Prohlížeče zobrazí vaše reproduktory, teprve až povolíte přístup k mikrofonu nebo kameře. Nic se nenahrává."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Hovory"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Kamera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Kamera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Zvolte bezpečné heslo"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Vybrat soubor"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Vybrat mikrofon a kameru"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Vyberte mikrofon, kameru a reproduktor, které hovory používají"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Vyberte reproduktor, přes který se přehrávají hovory"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Vyberte kameru a zobrazte si náhled toho, co vidí"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Vyberte mikrofon a zobrazte si náhled úrovně vstupu"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Kopírovat odkaz"
 msgid "Copy URL"
 msgstr "Kopírovat URL"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Nepodařilo se získat přístup k zařízení."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Nepodařilo se navázat šifrování s {nick}."
@@ -1256,6 +1319,14 @@ msgstr "Degradovat na diváka"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Popis (volitelné, např. \"Beta testeři Q3\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup ke kameře."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup k mikrofonu."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Vypnout funkci Stisknout a mluvit"
@@ -1354,6 +1425,10 @@ msgstr "např. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "např. 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Potlačení ozvěny"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "Nalezena 1 zpráva odpovídající \"{searchQuery}\""
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "od"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Přední"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Zpráva zobrazená při odpojení od serveru"
 msgid "Messages with {nick} are now encrypted."
 msgstr "Zprávy s uživatelem {nick} jsou nyní šifrované."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Mikrofon"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Mikrofon {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Úroveň mikrofonu"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. uživatelů"
@@ -2376,6 +2469,10 @@ msgstr "Nenalezeny žádné zákazy"
 msgid "No bots registered on this network yet."
 msgstr "Na této síti zatím nejsou registrováni žádní boti."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Nebyla zjištěna žádná kamera."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Bez centrálního serveru:"
@@ -2437,6 +2534,10 @@ msgstr "Nejsou načteny žádné náhledy médií."
 msgid "no message"
 msgstr "žádná zpráva"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Nebyl zjištěn žádný mikrofon."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Zatím nebyl zachycen žádný surový IRC provoz. Zkuste se připojit nebo odeslat zprávu."
@@ -2452,6 +2553,10 @@ msgstr "Není vybrán žádný server. Nejprve zvolte server z postranního pane
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Nebyly nalezeny žádné servery."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Nebyl zjištěn žádný reproduktor."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "Data WHOIS nejsou k dispozici"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Nikdo tu není. Požádejte někoho, ať napíše /join {channelName}."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Potlačení šumu"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Opětovné připojení se nezdařilo"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Znovu připojit k serveru"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Snížit šum pozadí na mikrofonu"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Snížit ozvěnu z reproduktorů zachycenou mikrofonem"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Zobrazit vykopnutí"
 msgid "Show less"
 msgstr "Zobrazit méně"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Zobrazit reproduktory"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Zobrazit změny přezdívek"
@@ -3414,6 +3535,20 @@ msgstr "Přehrávač SoundCloud"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Zdroj"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Reproduktor"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Reproduktor {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Výběr reproduktoru není v tomto prohlížeči podporován."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "pozastaveno"
 msgid "System"
 msgstr "Systém"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Výchozí nastavení systému"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
@@ -3499,6 +3638,10 @@ msgstr "Text"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Textové kanály"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Toto zařízení není momentálně dostupné."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
