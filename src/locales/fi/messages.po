@@ -323,6 +323,10 @@ msgstr "Hyväksy salattu keskustelu"
 msgid "Accept new key"
 msgstr "Hyväksy uusi avain"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Käyttöoikeus evättiin. Salli kameran ja mikrofonin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Tili"
@@ -456,9 +460,17 @@ msgstr "Kaikki"
 msgid "All Content"
 msgstr "Kaikki sisältö"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Salli kameran käyttö"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Salli monirivisyöttö"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Salli mikrofonin käyttö"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Tunnistautunut tili"
 msgid "Auto Fallback to Single Line"
 msgstr "Automaattinen palautuminen yksiriviseksi"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Automaattinen vahvistuksensäätö"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Sulkeutuu automaattisesti {secondsLeft} s kuluttua"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Säädä mikrofonisi äänenvoimakkuutta automaattisesti"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Poissa:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Takaisin"
@@ -684,6 +705,24 @@ msgstr "Tämän verkon botit"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Selaa kaikkia palvelimen kanavia"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Selaimet paljastavat kaiuttimesi vasta, kun olet sallinut mikrofonin tai kameran käytön. Mitään ei tallenneta."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Puhelut"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Kamera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Kamera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Valitse turvallinen salasana"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Valitse tiedosto"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Valitse mikrofoni ja kamera"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Valitse puheluissa käytettävä mikrofoni, kamera ja kaiutin"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Valitse kaiutin, jonka kautta puhelujen ääni toistetaan"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Valitse kamerasi ja esikatsele, mitä se näkee"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Valitse mikrofonisi ja esikatsele sen äänitasoa"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Kopioi linkki"
 msgid "Copy URL"
 msgstr "Kopioi URL"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Laitteeseen ei saatu yhteyttä."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Salausta ei voitu muodostaa käyttäjän {nick} kanssa."
@@ -1256,6 +1319,14 @@ msgstr "Alenna katsojaksi"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Laitteiden nimet ovat piilossa, kunnes sallit kameran käytön."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Laitteiden nimet ovat piilossa, kunnes sallit mikrofonin käytön."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Poista puhu painamalla käytöstä"
@@ -1354,6 +1425,10 @@ msgstr "esim. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "esim. 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Kaiunpoisto"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "Löydettiin 1 viesti, joka vastaa \"{searchQuery}\""
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "lähettäjä"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Etukamera"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Viesti, joka näytetään katkaistessasi yhteyden palvelimeen"
 msgid "Messages with {nick} are now encrypted."
 msgstr "Viestit käyttäjän {nick} kanssa ovat nyt salattuja."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Mikrofoni"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Mikrofoni {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Mikrofonin taso"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Vähimmäiskäyttäjämäärä"
@@ -2376,6 +2469,10 @@ msgstr "Estoja ei löydetty"
 msgid "No bots registered on this network yet."
 msgstr "Tähän verkkoon ei ole vielä rekisteröity botteja."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Kameraa ei havaittu."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Ei keskuspalvelinta:"
@@ -2437,6 +2534,10 @@ msgstr "Median esikatseluja ei ladata."
 msgid "no message"
 msgstr "ei viestiä"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Mikrofonia ei havaittu."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Raakaa IRC-liikennettä ei ole vielä tallennettu. Kokeile yhdistämistä tai viestin lähettämistä."
@@ -2452,6 +2553,10 @@ msgstr "Yhtään palvelinta ei ole valittu. Valitse ensin palvelin sivupalkista;
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Palvelimia ei löydetty."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Kaiutinta ei havaittu."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "WHOIS-tietoja ei saatavilla"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Täällä ei ole ketään. Pyydä jotakuta kirjoittamaan /join {channelName}."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Kohinanvaimennus"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Uudelleenyhdistäminen epäonnistui"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Vähennä mikrofonisi taustamelua"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Vähennä kaiuttimista mikrofoniin kantautuvaa kaikua"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Näytä poistamiset"
 msgid "Show less"
 msgstr "Näytä vähemmän"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Näytä kaiuttimeni"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Näytä nimimerkinvaihdot"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloud-soitin"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Lähde"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Kaiutin"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Kaiutin {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Tämä selain ei tue kaiuttimen valintaa."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "jäädytetty"
 msgid "System"
 msgstr "Järjestelmä"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Järjestelmän oletus"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Teksti"
@@ -3499,6 +3638,10 @@ msgstr "Teksti"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Tekstikanavat"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Laite ei ole juuri nyt käytettävissä."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

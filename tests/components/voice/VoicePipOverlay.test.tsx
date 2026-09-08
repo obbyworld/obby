@@ -29,6 +29,9 @@ vi.mock("../../../src/hooks/useVoiceCall", () => ({
 
 vi.mock("../../../src/lib/voice", () => ({
   releaseVoiceClient: mocks.releaseVoiceClient,
+  // The real store module calls this once at import time to hand voice.ts a
+  // way to read call-device settings without a static import cycle back in.
+  setVoiceStore: vi.fn(),
 }));
 
 import { VoicePipOverlay } from "../../../src/components/voice/VoicePipOverlay";

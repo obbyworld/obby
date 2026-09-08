@@ -323,6 +323,10 @@ msgstr "Şifreli sohbeti kabul et"
 msgid "Accept new key"
 msgstr "Yeni anahtarı kabul et"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Erişim reddedildi. Tarayıcı veya sistem ayarlarından kamera ve mikrofon erişimine izin ver, ardından tekrar dene."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Hesap"
@@ -456,9 +460,17 @@ msgstr "Tümü"
 msgid "All Content"
 msgstr "Tüm İçerik"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Kamera erişimine izin ver"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Çok satırlı metin girişine izin ver"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Mikrofon erişimine izin ver"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Doğrulanmış Hesap"
 msgid "Auto Fallback to Single Line"
 msgstr "Otomatik Tek Satıra Dön"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Otomatik Kazanç Kontrolü"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft} sn içinde otomatik kapanır"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Mikrofon seviyeni otomatik olarak ayarla"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Uzakta:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Geri"
@@ -684,6 +705,24 @@ msgstr "Bu ağdaki botlar"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Sunucudaki tüm kanalları görüntüle"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Tarayıcılar, mikrofon veya kameraya erişime izin verene kadar hoparlörlerinizi göstermez. Hiçbir şey kaydedilmez."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Aramalar"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Kamera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Kamera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Güvenli bir şifre seçin"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Dosya seç"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Mikrofon ve kamera seç"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Aramaların kullandığı mikrofonu, kamerayı ve hoparlörü seç"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Aramaların hangi hoparlörden çalacağını seç"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Kameranı seç ve ne gördüğünü önizle"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Mikrofonunu seç ve giriş seviyesini önizle"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Bağlantıyı kopyala"
 msgid "Copy URL"
 msgstr "URL'yi Kopyala"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Cihaza erişilemedi."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} ile şifreleme kurulamadı."
@@ -1256,6 +1319,14 @@ msgstr "İzleyici yap"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Açıklama (isteğe bağlı, örn. \"Beta test ekibi Ç3\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Kamera erişimine izin verene kadar cihaz adları gizlidir."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Mikrofon erişimine izin verene kadar cihaz adları gizlidir."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Bas-Konuş'u devre dışı bırak"
@@ -1354,6 +1425,10 @@ msgstr "örn. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "örn. 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Yankı Giderme"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "\"{searchQuery}\" ile eşleşen 1 mesaj bulundu"
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "kimden"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Ön"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Sunucudan ayrıldığınızda gösterilen mesaj"
 msgid "Messages with {nick} are now encrypted."
 msgstr "{nick} ile mesajlar artık şifreli."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Mikrofon"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Mikrofon {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Mikrofon seviyesi"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. Kullanıcı"
@@ -2376,6 +2469,10 @@ msgstr "Yasak bulunamadı"
 msgid "No bots registered on this network yet."
 msgstr "Bu ağda henüz kayıtlı bot yok."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Kamera bulunamadı."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Merkezi Sunucu Yok:"
@@ -2437,6 +2534,10 @@ msgstr "Medya önizlemesi yüklenmiyor."
 msgid "no message"
 msgstr "mesaj yok"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Mikrofon bulunamadı."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Henüz ham IRC trafiği yakalanmadı. Bağlanmayı veya bir mesaj göndermeyi deneyin."
@@ -2452,6 +2553,10 @@ msgstr "Hiçbir sunucu seçilmedi. Önce kenar çubuğundan bir sunucu seçin; d
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Sunucu bulunamadı."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Hoparlör bulunamadı."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "WHOIS verisi mevcut değil"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Burada kimse yok. Birinden /join {channelName} komutuyla katılmasını isteyin."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Gürültü Engelleme"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Yeniden bağlanma başarısız oldu"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Sunucuya yeniden bağlan"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Mikrofonundaki arka plan gürültüsünü azalt"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Mikrofonun algıladığı hoparlör yankısını azalt"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Atmaları Göster"
 msgid "Show less"
 msgstr "Daha az göster"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Hoparlörlerimi göster"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Takma Ad Değişikliklerini Göster"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloud oynatıcı"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Kaynak"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Hoparlör"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Hoparlör {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Hoparlör seçimi bu tarayıcıda desteklenmiyor."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "askıya alındı"
 msgid "System"
 msgstr "Sistem"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Sistem varsayılanı"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Metin"
@@ -3499,6 +3638,10 @@ msgstr "Metin"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Metin Kanalları"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Bu cihaz şu anda kullanılamıyor."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

@@ -323,6 +323,10 @@ msgstr "Acceptera krypterad chatt"
 msgid "Accept new key"
 msgstr "Acceptera ny nyckel"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Åtkomst nekades. Tillåt åtkomst till kamera och mikrofon i webbläsarens eller systemets inställningar och försök igen."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Konto"
@@ -456,9 +460,17 @@ msgstr "Alla"
 msgid "All Content"
 msgstr "Allt innehåll"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Tillåt kameraåtkomst"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Tillåt att skriva flera rader text"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Tillåt mikrofonåtkomst"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Autentiserat konto"
 msgid "Auto Fallback to Single Line"
 msgstr "Automatisk återgång till enkel rad"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Automatisk förstärkningskontroll"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Stängs automatiskt om {secondsLeft} s"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Justera automatiskt din mikrofons volym"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Frånvarande:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Tillbaka"
@@ -684,6 +705,24 @@ msgstr "Bottar i detta nätverk"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Bläddra bland alla kanaler på servern"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Webbläsare visar dina högtalare först när du har tillåtit åtkomst till en mikrofon eller kamera. Inget spelas in."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Samtal"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Kamera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Kamera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Välj ett säkert lösenord"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Välj fil"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Välj mikrofon och kamera"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Välj mikrofonen, kameran och högtalaren som samtal använder"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Välj vilken högtalare samtal spelas upp genom"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Välj din kamera och förhandsgranska vad den ser"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Välj din mikrofon och förhandsgranska dess ingångsnivå"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Kopiera länk"
 msgid "Copy URL"
 msgstr "Kopiera URL"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Det gick inte att komma åt enheten."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Kunde inte upprätta kryptering med {nick}."
@@ -1256,6 +1319,14 @@ msgstr "Gör om till tittare"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beskrivning (valfri, t.ex. \"Betatestare Q3\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Enhetsnamn döljs tills du tillåter kameraåtkomst."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Enhetsnamn döljs tills du tillåter mikrofonåtkomst."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Inaktivera tryck-och-prata"
@@ -1354,6 +1425,10 @@ msgstr "t.ex. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "t.ex. 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Ekoeliminering"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "Hittade 1 meddelande som matchar \"{searchQuery}\""
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "från"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Fram"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Meddelande som visas när du kopplar från servern"
 msgid "Messages with {nick} are now encrypted."
 msgstr "Meddelanden med {nick} är nu krypterade."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Mikrofon"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Mikrofon {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Mikrofonnivå"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min användare"
@@ -2376,6 +2469,10 @@ msgstr "Inga banningar hittades"
 msgid "No bots registered on this network yet."
 msgstr "Inga bottar registrerade i detta nätverk än."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Ingen kamera hittades."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Ingen central server:"
@@ -2437,6 +2534,10 @@ msgstr "Inga medieförhandsvisningar laddas."
 msgid "no message"
 msgstr "inget meddelande"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Ingen mikrofon hittades."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Ingen rå IRC-trafik har fångats än. Försök att ansluta eller skicka ett meddelande."
@@ -2452,6 +2553,10 @@ msgstr "Ingen server är vald. Välj en server från sidofältet först; inbjudn
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Inga servrar hittades."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Ingen högtalare hittades."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "Ingen WHOIS-data tillgänglig"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Ingen är här. Be någon att skriva /join {channelName}."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Brusreducering"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Återanslutning misslyckades"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Återanslut till server"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Minska bakgrundsljud från din mikrofon"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Minska eko från dina högtalare som fångas upp av mikrofonen"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Visa utsparkningar"
 msgid "Show less"
 msgstr "Visa mindre"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Visa mina högtalare"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Visa nickbyten"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloud-spelare"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Källa"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Högtalare"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Högtalare {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Val av högtalare stöds inte i den här webbläsaren."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "avstängd"
 msgid "System"
 msgstr "System"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Systemstandard"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
@@ -3499,6 +3638,10 @@ msgstr "Text"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Textkanaler"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Den här enheten är inte tillgänglig just nu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

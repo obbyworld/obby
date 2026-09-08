@@ -323,6 +323,10 @@ msgstr "Accetta la chat cifrata"
 msgid "Accept new key"
 msgstr "Accetta la nuova chiave"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Accesso negato. Consenti l'accesso a videocamera e microfono nelle impostazioni del browser o del sistema, poi riprova."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Account"
@@ -456,9 +460,17 @@ msgstr "Tutti"
 msgid "All Content"
 msgstr "Tutto il contenuto"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Consenti l'accesso alla videocamera"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Consenti l'inserimento di più righe di testo"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Consenti l'accesso al microfono"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Account autenticato"
 msgid "Auto Fallback to Single Line"
 msgstr "Ritorno automatico alla singola riga"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Controllo automatico del guadagno"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Chiusura automatica tra {secondsLeft}s"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Regola automaticamente il volume del tuo microfono"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Assente:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Indietro"
@@ -684,6 +705,24 @@ msgstr "Bot su questa rete"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Sfoglia tutti i canali del server"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "I browser rivelano i tuoi altoparlanti solo dopo che hai consentito l'accesso al microfono o alla videocamera. Non viene registrato nulla."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Chiamate"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Videocamera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Videocamera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Scegli una password sicura"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Scegli file"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Scegli microfono e videocamera"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Scegli il microfono, la videocamera e l'altoparlante usati dalle chiamate"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Scegli l'altoparlante usato dalle chiamate"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Scegli la videocamera e visualizza l'anteprima di ciò che vede"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Scegli il microfono e visualizza l'anteprima del livello di ingresso"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Copia link"
 msgid "Copy URL"
 msgstr "Copia URL"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Impossibile accedere al dispositivo."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Non è stato possibile impostare la crittografia con {nick}."
@@ -1256,6 +1319,14 @@ msgstr "Retrocedi a spettatore"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descrizione (opzionale, es. \"Beta tester Q3\")"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "I nomi dei dispositivi sono nascosti finché non consenti l'accesso alla videocamera."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "I nomi dei dispositivi sono nascosti finché non consenti l'accesso al microfono."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Disattiva Push-to-Talk"
@@ -1354,6 +1425,10 @@ msgstr "es. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "es., 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Cancellazione eco"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "Trovato 1 messaggio corrispondente a \"{searchQuery}\""
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "da"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Anteriore"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Messaggio mostrato alla disconnessione dal server"
 msgid "Messages with {nick} are now encrypted."
 msgstr "I messaggi con {nick} ora sono cifrati."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Microfono"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Microfono {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Livello del microfono"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Utenti min."
@@ -2376,6 +2469,10 @@ msgstr "Nessun ban trovato"
 msgid "No bots registered on this network yet."
 msgstr "Nessun bot registrato su questa rete al momento."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Nessuna videocamera rilevata."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Nessun server centrale:"
@@ -2437,6 +2534,10 @@ msgstr "Nessuna anteprima media caricata."
 msgid "no message"
 msgstr "nessun messaggio"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Nessun microfono rilevato."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Nessun traffico IRC grezzo catturato. Prova a connetterti o a inviare un messaggio."
@@ -2452,6 +2553,10 @@ msgstr "Nessun server selezionato. Scegli prima un server dalla barra laterale; 
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Nessun server trovato."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Nessun altoparlante rilevato."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "Nessun dato WHOIS disponibile"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Non c'è nessuno qui. Chiedi a qualcuno di eseguire /join {channelName}."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Soppressione del rumore"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Riconnessione non riuscita"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Riconnetti al server"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Riduci il rumore di fondo del tuo microfono"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Riduci l'eco dei tuoi altoparlanti captato dal microfono"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Mostra espulsioni"
 msgid "Show less"
 msgstr "Mostra meno"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Mostra i miei altoparlanti"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Mostra cambi di soprannome"
@@ -3414,6 +3535,20 @@ msgstr "Player SoundCloud"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Sorgente"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Altoparlante"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Altoparlante {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "La selezione dell'altoparlante non è supportata in questo browser."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "sospeso"
 msgid "System"
 msgstr "Sistema"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Predefinito di sistema"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Testo"
@@ -3499,6 +3638,10 @@ msgstr "Testo"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Canali testuali"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Questo dispositivo non è disponibile al momento."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

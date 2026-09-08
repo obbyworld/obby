@@ -323,6 +323,10 @@ msgstr "Acceptă conversația criptată"
 msgid "Accept new key"
 msgstr "Acceptă cheia nouă"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Accesul a fost refuzat. Permiteți accesul la cameră și microfon din setările browserului sau ale sistemului, apoi încercați din nou."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "Cont"
@@ -456,9 +460,17 @@ msgstr "Toate"
 msgid "All Content"
 msgstr "Tot conținutul"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Permiteți accesul la cameră"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Permite introducerea mai multor rânduri de text"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Permiteți accesul la microfon"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "Cont autentificat"
 msgid "Auto Fallback to Single Line"
 msgstr "Revenire automată la o singură linie"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Control automat al câștigului"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Se închide automat în {secondsLeft}s"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Ajustați automat volumul microfonului dvs."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "Absent:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Înapoi"
@@ -684,6 +705,24 @@ msgstr "Boți pe această rețea"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Răsfoiește toate canalele de pe server"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Browserele afișează difuzoarele doar după ce permiteți accesul la microfon sau cameră. Nimic nu este înregistrat."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Apeluri"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Cameră"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Cameră {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "Alege o parolă sigură"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Alege fișier"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Alegeți microfonul și camera"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Alegeți microfonul, camera și difuzorul folosite de apeluri"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Alegeți difuzorul prin care sunt redate apelurile"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Alegeți camera și previzualizați ce vede"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Alegeți microfonul și previzualizați nivelul de intrare"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "Copiază linkul"
 msgid "Copy URL"
 msgstr "Copiază URL"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Dispozitivul nu a putut fi accesat."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Criptarea cu {nick} nu a putut fi configurată."
@@ -1256,6 +1319,14 @@ msgstr "Retrogradează la spectator"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descriere (opțional, ex. „Testeri beta T3”)"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la cameră."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la microfon."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Dezactivează apăsați pentru a vorbi"
@@ -1354,6 +1425,10 @@ msgstr "ex. <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "ex., 100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Anulare ecou"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "S-a găsit 1 mesaj care corespunde cu \"{searchQuery}\""
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "de la"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Față"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "Mesaj afișat la deconectarea de la server"
 msgid "Messages with {nick} are now encrypted."
 msgstr "Mesajele cu {nick} sunt acum criptate."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Microfon"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Microfon {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Nivel microfon"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Utilizatori min."
@@ -2376,6 +2469,10 @@ msgstr "Nu s-au găsit banuri"
 msgid "No bots registered on this network yet."
 msgstr "Niciun bot înregistrat pe această rețea încă."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Nicio cameră detectată."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Fără server central:"
@@ -2437,6 +2534,10 @@ msgstr "Nu sunt încărcate previzualizări media."
 msgid "no message"
 msgstr "niciun mesaj"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Niciun microfon detectat."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Niciun trafic IRC brut capturat încă. Încearcă să te conectezi sau să trimiți un mesaj."
@@ -2452,6 +2553,10 @@ msgstr "Niciun server nu este selectat. Alege mai întâi un server din bara lat
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Niciun server găsit."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Niciun difuzor detectat."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "Nu există date WHOIS disponibile"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "Nu e nimeni aici. Roagă pe cineva să scrie /join {channelName}."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Reducerea zgomotului"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "Reconectarea a eșuat"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Reconectează-te la server"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Reduceți zgomotul de fond al microfonului dvs."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Reduceți ecoul de la difuzoarele dvs. captat de microfon"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "Afișați expulzările"
 msgid "Show less"
 msgstr "Arată mai puțin"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Afișați difuzoarele mele"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Afișați schimbările de pseudonim"
@@ -3414,6 +3535,20 @@ msgstr "Player SoundCloud"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "Sursă"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Difuzor"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Difuzor {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Selectarea difuzorului nu este acceptată în acest browser."
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "suspendat"
 msgid "System"
 msgstr "Sistem"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Setare implicită a sistemului"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Text"
@@ -3499,6 +3638,10 @@ msgstr "Text"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Canale text"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Acest dispozitiv nu este disponibil momentan."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

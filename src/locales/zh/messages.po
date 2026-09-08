@@ -323,6 +323,10 @@ msgstr "接受加密聊天"
 msgid "Accept new key"
 msgstr "接受新密钥"
 
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "访问被拒绝。请在浏览器或系统设置中允许摄像头和麦克风访问，然后重试。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
 msgstr "账户"
@@ -456,9 +460,17 @@ msgstr "全部"
 msgid "All Content"
 msgstr "所有内容"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "允许摄像头访问"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "允许输入多行文本"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "允许麦克风访问"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -544,9 +556,17 @@ msgstr "已验证账户"
 msgid "Auto Fallback to Single Line"
 msgstr "自动回退到单行"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "自动增益控制"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft} 秒后自动关闭"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "自动调节麦克风音量"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -593,6 +613,7 @@ msgstr "离开："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "返回"
@@ -684,6 +705,24 @@ msgstr "此网络上的机器人"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "浏览服务器上的所有频道"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "浏览器只有在您允许访问麦克风或摄像头后，才会显示您的扬声器。不会录制任何内容。"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "通话"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "摄像头"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "摄像头 {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -864,6 +903,26 @@ msgstr "选择一个安全密码"
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "选择文件"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "选择麦克风和摄像头"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "选择通话使用的麦克风、摄像头和扬声器"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "选择通话声音通过哪个扬声器播放"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "选择摄像头并预览其画面"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "选择麦克风并预览其输入电平"
 
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
@@ -1115,6 +1174,10 @@ msgstr "复制链接"
 msgid "Copy URL"
 msgstr "复制链接"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "无法访问该设备。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "无法与 {nick} 建立加密。"
@@ -1256,6 +1319,14 @@ msgstr "降为观众"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "在您允许摄像头访问之前，设备名称将被隐藏。"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "禁用按键说话"
@@ -1354,6 +1425,10 @@ msgstr "例如 <0>wss://host:port/socket</0>"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "e.g., 100:1440"
 msgstr "例如：100:1440"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "回声消除"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
@@ -1645,6 +1720,10 @@ msgstr "找到 1 条匹配\"{searchQuery}\"的消息"
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "来自"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "前置"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
@@ -2209,6 +2288,20 @@ msgstr "断开服务器时显示的消息"
 msgid "Messages with {nick} are now encrypted."
 msgstr "与 {nick} 的消息现在已加密。"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "麦克风"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "麦克风 {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "麦克风音量"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "最小用户数"
@@ -2376,6 +2469,10 @@ msgstr "未找到封禁"
 msgid "No bots registered on this network yet."
 msgstr "此网络上尚未注册任何机器人。"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "未检测到摄像头。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "无中央服务器："
@@ -2437,6 +2534,10 @@ msgstr "未加载任何媒体预览。"
 msgid "no message"
 msgstr "无消息"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "未检测到麦克风。"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "尚未捕获任何原始 IRC 流量。请尝试连接或发送消息。"
@@ -2452,6 +2553,10 @@ msgstr "未选择服务器。请先从侧边栏选择一个服务器；邀请链
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "未找到服务器。"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "未检测到扬声器。"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2488,6 +2593,10 @@ msgstr "无可用 WHOIS 数据"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
 msgstr "这里还没有人。邀请他人输入 /join {channelName} 加入。"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "噪声抑制"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2901,6 +3010,14 @@ msgstr "重新连接失败"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "降低麦克风的背景噪声"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "降低麦克风拾取的扬声器回声"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -3347,6 +3464,10 @@ msgstr "显示踢出事件"
 msgid "Show less"
 msgstr "收起"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "显示我的扬声器"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "显示昵称变更"
@@ -3414,6 +3535,20 @@ msgstr "SoundCloud 播放器"
 #: src/components/ui/BotsModal.tsx
 msgid "Source"
 msgstr "来源"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "扬声器"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "扬声器 {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "此浏览器不支持扬声器选择。"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3492,6 +3627,10 @@ msgstr "已停用"
 msgid "System"
 msgstr "系统"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "系统默认"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "文本"
@@ -3499,6 +3638,10 @@ msgstr "文本"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "文字频道"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "该设备当前不可用。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"

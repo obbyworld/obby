@@ -47,6 +47,24 @@ describe("live voice call registry", () => {
     expect(getLiveVoiceCalls()).toEqual([]);
   });
 
+  it("keeps only one call, ending whichever was already running", () => {
+    acquire("s1", "^general");
+    acquire("s1", "$stage");
+
+    expect(getLiveVoiceCalls()).toEqual([
+      { serverId: "s1", channel: "$stage" },
+    ]);
+  });
+
+  it("ends a call on another server too", () => {
+    acquire("s1", "^general");
+    acquire("s2", "^other");
+
+    expect(getLiveVoiceCalls()).toEqual([
+      { serverId: "s2", channel: "^other" },
+    ]);
+  });
+
   it("returns a stable reference when nothing changed", () => {
     acquire("s1", "^general");
     const first = getLiveVoiceCalls();
