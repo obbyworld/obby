@@ -178,6 +178,23 @@ describe("EmbedPreview — Now Playing Bar stop behaviour", () => {
     expect(getByLabelText("Play")).toBeTruthy();
   });
 
+  test("pressing the thumbnail starts playback", async () => {
+    mockState.playMedia.mockClear();
+    const { findByTestId, getByLabelText } = render(
+      <MediaPreview entry={embedEntry()} />,
+    );
+    fireEvent.click(getByLabelText("Play"));
+    await findByTestId("react-player");
+    expect(mockState.playMedia).toHaveBeenCalledWith(
+      EMBED_URL,
+      "embed",
+      expect.anything(),
+      undefined,
+      undefined,
+      undefined,
+    );
+  });
+
   // ReactPlayer is lazy-loaded; findByTestId waits for Suspense to resolve.
   test("playing=undefined when no active media — iframe is uncontrolled", async () => {
     const { findByTestId, getByLabelText } = render(

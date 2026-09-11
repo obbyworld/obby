@@ -53,11 +53,12 @@ import {
 } from "../../lib/messageAttachments";
 import { openExternalUrl } from "../../lib/openUrl";
 import { TILE_URL_TEMPLATE } from "../../lib/osmTiles";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
-import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -340,7 +341,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             <div className="w-64 h-96 bg-discord-dark-400/50 animate-pulse rounded" />
           }
         >
-          <PdfErrorBoundary onError={() => setUseNativeViewer(true)}>
+          <MediaErrorBoundary onError={() => setUseNativeViewer(true)}>
             <LazyDocument
               file={url}
               options={PDF_OPTIONS}
@@ -356,7 +357,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
                 width={pageWidth}
               />
             </LazyDocument>
-          </PdfErrorBoundary>
+          </MediaErrorBoundary>
         </Suspense>
       </div>
 
@@ -1647,12 +1648,14 @@ export function MediaViewerModal({
                       <div className="w-full h-64 bg-discord-dark-400/50 animate-pulse rounded" />
                     }
                   >
-                    <ReactPlayer
-                      src={currentUrl}
-                      width="100%"
-                      height="100%"
-                      controls
-                    />
+                    <MediaErrorBoundary>
+                      <ReactPlayer
+                        src={currentUrl}
+                        width="100%"
+                        height="100%"
+                        controls
+                      />
+                    </MediaErrorBoundary>
                   </Suspense>
                 </div>
               )}

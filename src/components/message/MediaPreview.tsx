@@ -23,13 +23,14 @@ import {
   type MediaEntry,
   type MediaType,
 } from "../../lib/mediaUtils";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { useMediaController } from "../../lib/useMediaController";
 import {
   getVideoPosition,
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
-import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
 import { MapPreview } from "./MapPreview";
 
 const ReactPlayer = lazy(() => import("react-player"));
@@ -935,7 +936,7 @@ const EmbedPreview: React.FC<{
   // stays unbuilt until someone asks for playback.
   const [activated, setActivated] = useState(false);
 
-  const { isActive, isPlaying } = useMediaController({
+  const { isActive, isPlaying, play } = useMediaController({
     url,
     type: "embed",
     thumbnailUrl: getEmbedThumbnailUrl(url) ?? undefined,
@@ -961,8 +962,8 @@ const EmbedPreview: React.FC<{
       : 380
     : null;
 
-  // Playback can start from elsewhere (the mini player, another tile handing
-  // over), which has to build the real player.
+  // Every way of starting playback goes through the store, including the mini
+  // player and another tile handing over.
   useEffect(() => {
     if (isActive) setActivated(true);
   }, [isActive]);
@@ -979,7 +980,10 @@ const EmbedPreview: React.FC<{
       <div className="max-w-md relative group">
         <button
           type="button"
-          onClick={() => setActivated(true)}
+          onClick={() => {
+            setActivated(true);
+            play();
+          }}
           aria-label={t`Play`}
           className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
@@ -1016,42 +1020,44 @@ const EmbedPreview: React.FC<{
           className={spotifyHeight ? undefined : "aspect-video"}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
-          <ReactPlayer
-            key={playerKey}
-            src={url}
-            width="100%"
-            height="100%"
-            controls
-            playing={playing}
-            config={{
-              youtube: { disablekb: 1 },
-              vimeo: { keyboard: false },
-            }}
-            style={{ borderRadius: "4px", overflow: "hidden" }}
-            onPlay={() => {
-              // Guard against spurious onPlay events fired by YouTube.
-              // If the user explicitly paused (isPlaying=false in store), ignore the event.
-              const current = useStore.getState().ui.activeMedia;
-              if (current?.url === url && current.isPlaying === false) return;
-              useStore
-                .getState()
-                .playMedia(
-                  url,
-                  "embed",
-                  getEmbedThumbnailUrl(url) ?? undefined,
-                  msgid,
-                  serverId,
-                  channelId,
-                );
-            }}
-            onPause={() => useStore.getState().pauseActiveMedia()}
-            onEnded={() => {
-              // Reset player to beginning and pause — prevents YouTube recommendations screen
-              setPlayerKey((k) => k + 1);
-              useStore.getState().pauseActiveMedia();
-            }}
-            onError={() => setEmbedError(true)}
-          />
+          <MediaErrorBoundary onError={() => setEmbedError(true)}>
+            <ReactPlayer
+              key={playerKey}
+              src={url}
+              width="100%"
+              height="100%"
+              controls
+              playing={playing}
+              config={{
+                youtube: { disablekb: 1 },
+                vimeo: { keyboard: false },
+              }}
+              style={{ borderRadius: "4px", overflow: "hidden" }}
+              onPlay={() => {
+                // Guard against spurious onPlay events fired by YouTube.
+                // If the user explicitly paused (isPlaying=false in store), ignore the event.
+                const current = useStore.getState().ui.activeMedia;
+                if (current?.url === url && current.isPlaying === false) return;
+                useStore
+                  .getState()
+                  .playMedia(
+                    url,
+                    "embed",
+                    getEmbedThumbnailUrl(url) ?? undefined,
+                    msgid,
+                    serverId,
+                    channelId,
+                  );
+              }}
+              onPause={() => useStore.getState().pauseActiveMedia()}
+              onEnded={() => {
+                // Reset player to beginning and pause — prevents YouTube recommendations screen
+                setPlayerKey((k) => k + 1);
+                useStore.getState().pauseActiveMedia();
+              }}
+              onError={() => setEmbedError(true)}
+            />
+          </MediaErrorBoundary>
         </div>
       </Suspense>
     </div>
@@ -1114,7 +1120,7 @@ const PdfPreview: React.FC<{
         />
       }
     >
-      <PdfErrorBoundary onError={() => setPdfError(true)}>
+      <MediaErrorBoundary onError={() => setPdfError(true)}>
         <LazyDocument
           file={url}
           options={PDF_OPTIONS}
@@ -1129,7 +1135,7 @@ const PdfPreview: React.FC<{
             renderAnnotationLayer={false}
           />
         </LazyDocument>
-      </PdfErrorBoundary>
+      </MediaErrorBoundary>
     </Suspense>,
   );
 };

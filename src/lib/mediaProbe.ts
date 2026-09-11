@@ -146,6 +146,15 @@ function classifyContentType(
 export async function probeMediaUrl(url: string): Promise<ProbeResult | null> {
   if (cache.has(url)) return cache.get(url) ?? null;
 
+  // A provider page or a map link is a web page with no file behind it, so the
+  // host answers a content-type request with a CORS failure and nothing else.
+  const pageType = detectMediaType(url);
+  if (pageType === "embed" || pageType === "map") {
+    const result = { type: pageType, streamable: false, skipped: false };
+    cacheSet(url, result);
+    return result;
+  }
+
   // Primary path: HTTP Content-Type is the single source of truth.
   // HEAD is tried first; GET fallback covers servers that reject HEAD (e.g. Icecast).
   const fetched = await fetchContentType(url);
