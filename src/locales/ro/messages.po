@@ -613,10 +613,14 @@ msgstr "Absent:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Înapoi"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Spate"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -1722,8 +1726,9 @@ msgid "from"
 msgstr "de la"
 
 #: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
 msgid "Front"
-msgstr "Față"
+msgstr "Frontală"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"

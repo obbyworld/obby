@@ -613,10 +613,14 @@ msgstr "離開："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "返回"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "後鏡頭"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -1722,8 +1726,9 @@ msgid "from"
 msgstr "来自"
 
 #: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
 msgid "Front"
-msgstr "前置"
+msgstr "前鏡頭"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"

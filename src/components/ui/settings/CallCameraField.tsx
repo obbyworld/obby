@@ -162,7 +162,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
                       : "bg-discord-dark-400 text-discord-text-normal"
                   }`}
                 >
-                  <Trans>Front</Trans>
+                  <Trans context="camera facing">Front</Trans>
                 </button>
                 <button
                   type="button"
@@ -174,7 +174,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
                       : "bg-discord-dark-400 text-discord-text-normal"
                   }`}
                 >
-                  <Trans>Back</Trans>
+                  <Trans context="camera facing">Back</Trans>
                 </button>
               </div>
             ) : (

@@ -613,10 +613,14 @@ msgstr "자리비움:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "뒤로"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "후면"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -1722,6 +1726,7 @@ msgid "from"
 msgstr "보낸 사람"
 
 #: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "전면"
 

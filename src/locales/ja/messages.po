@@ -613,10 +613,14 @@ msgstr "退席中："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "戻る"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "背面"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -1722,8 +1726,9 @@ msgid "from"
 msgstr "から"
 
 #: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
 msgid "Front"
-msgstr "フロント"
+msgstr "前面"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"

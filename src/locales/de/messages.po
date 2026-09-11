@@ -613,10 +613,14 @@ msgstr "Abwesend:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Zurück"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Rückkamera"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -1722,8 +1726,9 @@ msgid "from"
 msgstr "von"
 
 #: src/components/ui/settings/CallCameraField.tsx
+msgctxt "camera facing"
 msgid "Front"
-msgstr "Vorne"
+msgstr "Frontkamera"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
