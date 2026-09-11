@@ -78,6 +78,35 @@ export function speakerSelectionSupported(): boolean {
   );
 }
 
+export function screenCaptureSupported(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    !!navigator.mediaDevices?.getDisplayMedia
+  );
+}
+
+/** The one place we call getDisplayMedia. We ask for system audio, which some
+ *  browsers ignore, and wire the video track's `ended` to onEnded so a share
+ *  stopped from the browser's own control tears down like any other. */
+export async function captureScreen(onEnded: () => void): Promise<MediaStream> {
+  const stream = await navigator.mediaDevices.getDisplayMedia({
+    video: true,
+    audio: true,
+  });
+  const videoTrack = stream.getVideoTracks()[0];
+  if (videoTrack) videoTrack.onended = onEnded;
+  return stream;
+}
+
+/** A self-preview mirrors, except on a back camera, which shows the world
+ *  rather than yourself. */
+export function mirrorsCamera(
+  isTouch: boolean,
+  facing: "user" | "environment",
+): boolean {
+  return isTouch ? facing === "user" : true;
+}
+
 export function audioConstraints(
   s: GlobalSettingsSlice,
   deviceId?: string,

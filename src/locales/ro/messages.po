@@ -460,6 +460,7 @@ msgstr "Toate"
 msgid "All Content"
 msgstr "Tot conținutul"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Permiteți accesul la cameră"
@@ -468,6 +469,7 @@ msgstr "Permiteți accesul la cameră"
 msgid "Allow entering multiple lines of text"
 msgstr "Permite introducerea mai multor rânduri de text"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Permiteți accesul la microfon"
@@ -514,6 +516,10 @@ msgstr "Se aplică..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Aprobă"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Aproximativă"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "Absent:"
 msgid "Back"
 msgstr "Înapoi"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "Spate"
@@ -739,6 +745,7 @@ msgstr "Cameră {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "Copiază URL"
 msgid "Could not access the device."
 msgstr "Dispozitivul nu a putut fi accesat."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Nu s-a putut obține locația la timp. Încercați din nou într-un loc cu vizibilitate mai bună spre cer."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Nu s-a putut obține locația."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Criptarea cu {nick} nu a putut fi configurată."
@@ -1323,10 +1338,12 @@ msgstr "Retrogradează la spectator"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descriere (opțional, ex. „Testeri beta T3”)"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la cameră."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la microfon."
@@ -1334,6 +1351,10 @@ msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la mi
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Dezactivează apăsați pentru a vorbi"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Renunță"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "Introdu motivul (opțional)"
 msgid "Enter username to invite"
 msgstr "Introdu numele de utilizator de invitat"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Exactă"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "ExempluRET"
@@ -1699,6 +1724,10 @@ msgstr "Filtrează canale..."
 msgid "Filter members…"
 msgstr "Filtrează membri…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Se caută locația ta…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Primul mesaj de trimis"
@@ -1725,7 +1754,7 @@ msgstr "S-a găsit 1 mesaj care corespunde cu \"{searchQuery}\""
 msgid "from"
 msgstr "de la"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "Frontală"
@@ -2145,6 +2174,10 @@ msgstr "Se încarcă datele WHOIS..."
 msgid "Local Storage:"
 msgstr "Stocare locală:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Accesul la locație a fost refuzat. Permiteți accesul la locație din setările browserului sau ale sistemului, apoi încercați din nou."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "Microfon"
 msgid "Microphone {0}"
 msgstr "Microfon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Nivel microfon"
 
@@ -2728,6 +2761,10 @@ msgstr "Deschide în vizualizator"
 msgid "Open Link"
 msgstr "Deschide linkul"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Deschide harta"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Nume oper"
@@ -2967,6 +3004,14 @@ msgstr "Ridică mâna"
 msgid "ran"
 msgstr "a executat"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "S-a atins durata maximă de înregistrare. Înregistrarea s-a oprit: trimite-o sau renunță la ea."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "S-a atins limita de dimensiune pentru încărcare. Înregistrarea s-a oprit: trimite-o sau renunță la ea."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "Reconectarea a eșuat"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Reconectează-te la server"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Înregistrează audio"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Înregistrează ecranul"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Înregistrează ecranul"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "Înregistrează video"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Înregistrează mesaj video"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Înregistrează mesaj vocal"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "Verifică cheia schimbată…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Verifică cheia"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "Rotunjită la cartierul tău, aproximativ 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "Selectează sau adaugă un canal pentru a începe."
 msgid "self-registered"
 msgstr "autoînregistrat"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Trimite"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "Trimiteți notificări de tastare"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Trimite necriptat"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "Trimite video"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "Trimite mesaj vocal"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "Setarea nu a fost găsită"
 msgid "Settings"
 msgstr "Setări"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Distribuie"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Distribuie locația"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Distribuie ecranul"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Distribuie locația ta"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Distribuie locația ta cu {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "Renunță la transmisie"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Oprește"
 
@@ -3680,6 +3782,14 @@ msgstr "Fluxul de lucru care a produs acest mesaj nu mai este în stare"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Acest cont este conectat din {sessionCount} sesiuni. Detaliile per sesiune sunt dezvăluite doar titularului contului sau operatorilor IRC."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Acest browser nu poate înregistra audio."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Acest browser nu poate înregistra video."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Această conversație este criptată cu schema nativă Obby. Comparați amprentele pe un canal separat, apoi marcați-o ca verificată."
@@ -3691,6 +3801,10 @@ msgstr "Această conversație este criptată cu OTR, compatibil cu alți clienț
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Această comandă nu acceptă parametri."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Acest dispozitiv nu a putut obține locația chiar acum."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "Mesajele tale cu {nick} sunt criptate. Aceste fișiere sunt prea mari pe
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Site-ul dvs. web personal"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "Poziția ta exactă."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

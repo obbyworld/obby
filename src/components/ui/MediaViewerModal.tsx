@@ -5,6 +5,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import type { Map as LeafletMap } from "leaflet";
 import {
   Fragment,
   lazy,
@@ -20,6 +21,7 @@ import {
   FaDownload,
   FaExternalLinkAlt,
   FaFilm,
+  FaMapMarkerAlt,
   FaMinus,
   FaMusic,
   FaPlus,
@@ -31,6 +33,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
 import type { MediaDescriptor } from "../../lib/e2ee/media";
+import { parseLocationShareUrl } from "../../lib/geolocation";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
@@ -49,6 +52,7 @@ import {
   kindMediaType,
 } from "../../lib/messageAttachments";
 import { openExternalUrl } from "../../lib/openUrl";
+import { TILE_URL_TEMPLATE } from "../../lib/osmTiles";
 import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
@@ -382,6 +386,94 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
           </button>
         </div>
       )}
+    </div>
+  );
+};
+
+// Classic teardrop map pin, matching the marker drawn on the static preview
+// card — kept as a plain SVG string so the Leaflet layer needs no React.
+const MAP_PIN_SVG = `<svg width="28" height="40" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24s12-15 12-24c0-6.627-5.373-12-12-12z" fill="#dc2626"/>
+  <circle cx="12" cy="12" r="5" fill="#fff"/>
+</svg>`;
+
+const MAP_VIEWER_MIN_ZOOM = 2;
+const MAP_VIEWER_MAX_ZOOM = 19;
+
+let leafletPromise: Promise<typeof import("leaflet")> | null = null;
+// Leaflet (and its CSS) is fetched only when a map is actually opened, same
+// as react-pdf and react-player above — nothing map-related ships in the main bundle.
+function loadLeaflet() {
+  if (!leafletPromise) {
+    leafletPromise = Promise.all([
+      import("leaflet"),
+      import("leaflet/dist/leaflet.css"),
+    ]).then(([mod]) => mod);
+  }
+  return leafletPromise;
+}
+
+/** Interactive OpenStreetMap view. Mounted only while its entry is the one
+ *  currently open, so tiles are never fetched for a map nobody opened. */
+const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const location = parseLocationShareUrl(url);
+  const latitude = location?.latitude;
+  const longitude = location?.longitude;
+  const zoom = location?.zoom;
+
+  useEffect(() => {
+    if (
+      latitude === undefined ||
+      longitude === undefined ||
+      zoom === undefined ||
+      !containerRef.current
+    )
+      return;
+    let cancelled = false;
+    let map: LeafletMap | undefined;
+    loadLeaflet().then((L) => {
+      if (cancelled || !containerRef.current) return;
+      const clampedZoom = Math.min(
+        MAP_VIEWER_MAX_ZOOM,
+        Math.max(MAP_VIEWER_MIN_ZOOM, zoom),
+      );
+      map = L.map(containerRef.current, {
+        center: [latitude, longitude],
+        zoom: clampedZoom,
+        minZoom: MAP_VIEWER_MIN_ZOOM,
+        maxZoom: MAP_VIEWER_MAX_ZOOM,
+      });
+      L.tileLayer(TILE_URL_TEMPLATE, {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: MAP_VIEWER_MAX_ZOOM,
+      }).addTo(map);
+      L.marker([latitude, longitude], {
+        icon: L.divIcon({
+          html: MAP_PIN_SVG,
+          className: "",
+          iconSize: [28, 40],
+          iconAnchor: [14, 40],
+        }),
+      }).addTo(map);
+    });
+    return () => {
+      cancelled = true;
+      map?.remove();
+    };
+  }, [latitude, longitude, zoom]);
+
+  if (!location) return null;
+
+  return (
+    <div
+      data-testid="map-viewer"
+      className="pointer-events-auto rounded overflow-hidden shadow-lg"
+      style={{ width: "min(90vw, 900px)", height: "min(80vh, 640px)" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div ref={containerRef} className="w-full h-full" />
     </div>
   );
 };
@@ -967,6 +1059,11 @@ export function MediaViewerModal({
       } else if (e.touches.length === 1) {
         lastPinchDistRef.current = null;
         hasDraggedRef.current = false;
+        // Map panning owns single-finger drag; swipe-to-navigate must not fire under it.
+        if (currentEntryRef.current?.type === "map") {
+          singleTouchRef.current = null;
+          return;
+        }
         singleTouchRef.current = {
           startX: e.touches[0].clientX,
           startY: e.touches[0].clientY,
@@ -1531,6 +1628,10 @@ export function MediaViewerModal({
                   onRequestOpen={() => setShowWarning(true)}
                 />
               )}
+              {/* Map — interactive Leaflet view, lazy-loaded */}
+              {effectiveType === "map" && (
+                <MapModalViewer key={currentUrl} url={currentUrl} />
+              )}
               {/* Embed (YouTube, Vimeo, etc.) */}
               {effectiveType === "embed" && (
                 <div
@@ -1649,6 +1750,11 @@ export function MediaViewerModal({
                           {entry?.type === "pdf" && (
                             <div className="w-full h-full flex items-center justify-center bg-discord-dark-600 text-white/60 text-xs font-bold">
                               PDF
+                            </div>
+                          )}
+                          {entry?.type === "map" && (
+                            <div className="w-full h-full flex items-center justify-center bg-discord-dark-600">
+                              <FaMapMarkerAlt className="text-white/60 text-lg" />
                             </div>
                           )}
                           {entry?.type === "embed" &&

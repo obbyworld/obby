@@ -460,6 +460,7 @@ msgstr "Alle"
 msgid "All Content"
 msgstr "Alle inhoud"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Sta cameratoegang toe"
@@ -468,6 +469,7 @@ msgstr "Sta cameratoegang toe"
 msgid "Allow entering multiple lines of text"
 msgstr "Meerdere tekstregels invoeren toestaan"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Sta microfoontoegang toe"
@@ -514,6 +516,10 @@ msgstr "Toepassen..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Goedkeuren"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Ongeveer"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "Afwezig:"
 msgid "Back"
 msgstr "Terug"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "Achtercamera"
@@ -739,6 +745,7 @@ msgstr "Camera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "URL kopiëren"
 msgid "Could not access the device."
 msgstr "Kan geen toegang krijgen tot het apparaat."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Kon je locatie niet op tijd bepalen. Probeer het opnieuw op een plek met vrij zicht op de hemel."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Kon je locatie niet bepalen."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Kon geen versleuteling met {nick} opzetten."
@@ -1323,10 +1338,12 @@ msgstr "Degraderen naar kijker"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beschrijving (optioneel, bijv. \"Bètatesters K3\")"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Apparaatnamen zijn verborgen totdat je cameratoegang toestaat."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Apparaatnamen zijn verborgen totdat je microfoontoegang toestaat."
@@ -1334,6 +1351,10 @@ msgstr "Apparaatnamen zijn verborgen totdat je microfoontoegang toestaat."
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Push-to-talk uitschakelen"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Verwerpen"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "Reden invoeren (optioneel)"
 msgid "Enter username to invite"
 msgstr "Gebruikersnaam invoeren om uit te nodigen"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Exact"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "VoorbeeldNET"
@@ -1699,6 +1724,10 @@ msgstr "Kanalen filteren..."
 msgid "Filter members…"
 msgstr "Leden filteren…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Je locatie zoeken…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Eerste bericht om te versturen"
@@ -1725,7 +1754,7 @@ msgstr "1 bericht gevonden dat overeenkomt met \"{searchQuery}\""
 msgid "from"
 msgstr "van"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "Voorcamera"
@@ -2145,6 +2174,10 @@ msgstr "WHOIS-gegevens laden..."
 msgid "Local Storage:"
 msgstr "Lokale opslag:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Locatietoegang is geweigerd. Sta locatietoegang toe in je browser- of systeeminstellingen en probeer het opnieuw."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "Microfoon"
 msgid "Microphone {0}"
 msgstr "Microfoon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Microfoonniveau"
 
@@ -2728,6 +2761,10 @@ msgstr "Openen in viewer"
 msgid "Open Link"
 msgstr "Link openen"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Kaart openen"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper-naam"
@@ -2967,6 +3004,14 @@ msgstr "Hand opsteken"
 msgid "ran"
 msgstr "voerde uit"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Maximale opnameduur bereikt. Opname gestopt: verzend of verwerp hem."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Maximale uploadgrootte bereikt. Opname gestopt: verzend of verwerp hem."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "Opnieuw verbinden mislukt"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Opnieuw verbinden met server"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Audio opnemen"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Scherm opnemen"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Scherm opnemen"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "Video opnemen"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Videobericht opnemen"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Spraakbericht opnemen"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "Gewijzigde sleutel bekijken…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Sleutel bekijken"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "Afgerond op je buurt, ongeveer 100m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "Selecteer of voeg een kanaal toe om te beginnen."
 msgid "self-registered"
 msgstr "zelf-geregistreerd"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Verzenden"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "Typemeldingen verzenden"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Onversleuteld verzenden"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "Video verzenden"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "Spraakbericht verzenden"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "Instelling niet gevonden"
 msgid "Settings"
 msgstr "Instellingen"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Delen"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Locatie delen"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Scherm delen"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Je locatie delen"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Deel je locatie met {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "Stream verlaten"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stoppen"
 
@@ -3680,6 +3782,14 @@ msgstr "De workflow die dit bericht heeft gemaakt, bevindt zich niet meer in de 
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Dit account is verbonden vanaf {sessionCount} sessies. Details per sessie worden alleen bekendgemaakt aan de accounthouder of IRC-operators."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Deze browser kan geen audio opnemen."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Deze browser kan geen video opnemen."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Deze chat is versleuteld met het eigen schema van Obby. Vergelijk de vingerafdrukken via een ander kanaal en markeer hem daarna als geverifieerd."
@@ -3691,6 +3801,10 @@ msgstr "Deze chat is versleuteld met OTR, compatibel met andere IRC-clients. Ver
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Deze opdracht heeft geen parameters."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Dit apparaat kon je locatie nu niet bepalen."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "Je berichten met {nick} zijn versleuteld. Deze bestanden zijn te groot o
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Je persoonlijke website"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "Je precieze positie."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

@@ -460,6 +460,7 @@ msgstr "전체"
 msgid "All Content"
 msgstr "모든 콘텐츠"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "카메라 액세스 허용"
@@ -468,6 +469,7 @@ msgstr "카메라 액세스 허용"
 msgid "Allow entering multiple lines of text"
 msgstr "여러 줄 텍스트 입력 허용"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "마이크 액세스 허용"
@@ -514,6 +516,10 @@ msgstr "적용 중..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "승인"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "대략적인 위치"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "자리비움:"
 msgid "Back"
 msgstr "뒤로"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "후면"
@@ -739,6 +745,7 @@ msgstr "카메라 {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "URL 복사"
 msgid "Could not access the device."
 msgstr "장치에 액세스할 수 없습니다."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "제한 시간 내에 위치를 확인하지 못했습니다. 하늘이 잘 보이는 곳에서 다시 시도해 보세요."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "위치를 확인할 수 없습니다."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} 님과 암호화를 설정하지 못했습니다."
@@ -1323,10 +1338,12 @@ msgstr "시청자로 전환"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "카메라 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "마이크 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
@@ -1334,6 +1351,10 @@ msgstr "마이크 액세스를 허용할 때까지 장치 이름이 숨겨집니
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "PTT 사용 안 함"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "삭제"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "사유 입력 (선택 사항)"
 msgid "Enter username to invite"
 msgstr "초대할 사용자 이름 입력"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "정확한 위치"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "예시네트워크"
@@ -1699,6 +1724,10 @@ msgstr "채널 필터링..."
 msgid "Filter members…"
 msgstr "멤버 필터링…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "위치 확인 중..."
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "보낼 첫 메시지"
@@ -1725,7 +1754,7 @@ msgstr "\"{searchQuery}\"와 일치하는 메시지 1개 발견"
 msgid "from"
 msgstr "보낸 사람"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "전면"
@@ -2145,6 +2174,10 @@ msgstr "WHOIS 데이터 불러오는 중..."
 msgid "Local Storage:"
 msgstr "로컬 저장소:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "위치 액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 위치 액세스를 허용한 후 다시 시도하세요."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "마이크"
 msgid "Microphone {0}"
 msgstr "마이크 {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "마이크 수준"
 
@@ -2728,6 +2761,10 @@ msgstr "뷰어에서 열기"
 msgid "Open Link"
 msgstr "링크 열기"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "지도 열기"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper 이름"
@@ -2967,6 +3004,14 @@ msgstr "손 들기"
 msgid "ran"
 msgstr "실행함"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "최대 녹음/녹화 시간에 도달하여 녹음이 중지되었습니다. 보내거나 삭제하세요."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "업로드 용량 제한에 도달하여 녹음이 중지되었습니다. 보내거나 삭제하세요."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "재연결 실패"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "음성 녹음"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "화면 녹화"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "화면 녹화"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "동영상 녹화"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "동영상 메시지 녹화"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "음성 메시지 녹음"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "변경된 키 검토…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "키 확인"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "인근 지역 단위로 반올림됩니다(오차 약 100m)."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "시작하려면 채널을 선택하거나 추가하세요."
 msgid "self-registered"
 msgstr "자가 등록됨"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "보내기"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "입력 중 알림 보내기"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "암호화하지 않고 보내기"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "동영상 보내기"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "음성 메시지 보내기"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "설정을 찾을 수 없습니다"
 msgid "Settings"
 msgstr "설정"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "공유"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "위치 공유"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "화면 공유"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "내 위치 공유"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "{target}에게 내 위치를 공유합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "스트리밍 그만하기"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "정지"
 
@@ -3680,6 +3782,14 @@ msgstr "이 메시지를 생성한 워크플로가 더 이상 상태에 없습�
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "이 계정은 {sessionCount}개 세션에서 연결되어 있습니다. 세션별 세부 정보는 계정 소유자 또는 IRC 운영자에게만 공개됩니다."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "이 브라우저에서는 음성을 녹음할 수 없습니다."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "이 브라우저에서는 동영상을 녹화할 수 없습니다."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "이 대화는 Obby의 자체 방식으로 암호화되어 있습니다. 별도 경로로 지문을 비교한 후 확인됨으로 표시하세요."
@@ -3691,6 +3801,10 @@ msgstr "이 대화는 다른 IRC 클라이언트와 호환되는 OTR로 암호�
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "이 명령어는 매개변수를 받지 않습니다."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "이 기기에서 지금은 위치를 확인할 수 없습니다."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "{nick} 님과의 메시지는 암호화되어 있습니다. 이 파일�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "개인 웹사이트"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "정확한 현재 위치입니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

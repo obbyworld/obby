@@ -460,6 +460,7 @@ msgstr "Kaikki"
 msgid "All Content"
 msgstr "Kaikki sisältö"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Salli kameran käyttö"
@@ -468,6 +469,7 @@ msgstr "Salli kameran käyttö"
 msgid "Allow entering multiple lines of text"
 msgstr "Salli monirivisyöttö"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Salli mikrofonin käyttö"
@@ -514,6 +516,10 @@ msgstr "Käytetään..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Hyväksy"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Likimääräinen"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "Poissa:"
 msgid "Back"
 msgstr "Takaisin"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "Takakamera"
@@ -739,6 +745,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "Kopioi URL"
 msgid "Could not access the device."
 msgstr "Laitteeseen ei saatu yhteyttä."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Sijaintia ei saatu määritettyä ajoissa. Yritä uudelleen paikassa, jossa taivas näkyy paremmin."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Sijaintiasi ei saatu selville."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Salausta ei voitu muodostaa käyttäjän {nick} kanssa."
@@ -1323,10 +1338,12 @@ msgstr "Alenna katsojaksi"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Laitteiden nimet ovat piilossa, kunnes sallit kameran käytön."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Laitteiden nimet ovat piilossa, kunnes sallit mikrofonin käytön."
@@ -1334,6 +1351,10 @@ msgstr "Laitteiden nimet ovat piilossa, kunnes sallit mikrofonin käytön."
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Poista puhu painamalla käytöstä"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Hylkää"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "Syötä syy (valinnainen)"
 msgid "Enter username to invite"
 msgstr "Syötä kutsuttavan käyttäjänimi"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Tarkka"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "EsimerkKi"
@@ -1699,6 +1724,10 @@ msgstr "Suodata kanavia..."
 msgid "Filter members…"
 msgstr "Suodata jäseniä…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Etsitään sijaintiasi..."
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Ensimmäinen lähetettävä viesti"
@@ -1725,7 +1754,7 @@ msgstr "Löydettiin 1 viesti, joka vastaa \"{searchQuery}\""
 msgid "from"
 msgstr "lähettäjä"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "Etukamera"
@@ -2145,6 +2174,10 @@ msgstr "Ladataan WHOIS-tietoja..."
 msgid "Local Storage:"
 msgstr "Paikallinen tallennustila:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Sijainnin käyttöoikeus evättiin. Salli sijainnin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "Mikrofoni"
 msgid "Microphone {0}"
 msgstr "Mikrofoni {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Mikrofonin taso"
 
@@ -2728,6 +2761,10 @@ msgstr "Avaa katseluohjelmassa"
 msgid "Open Link"
 msgstr "Avaa linkki"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Avaa kartta"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper-nimi"
@@ -2967,6 +3004,14 @@ msgstr "Nosta käsi"
 msgid "ran"
 msgstr "suoritti"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Nauhoituksen enimmäispituus saavutettiin. Nauhoitus pysäytettiin: lähetä se tai hylkää se."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Latauksen enimmäiskoko saavutettiin. Nauhoitus pysäytettiin: lähetä se tai hylkää se."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "Uudelleenyhdistäminen epäonnistui"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Nauhoita ääni"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Nauhoita näyttö"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Nauhoita näyttö"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "Nauhoita video"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Nauhoita videoviesti"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Nauhoita ääniviesti"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "Tarkista muuttunut avain…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Tarkista avain"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "Pyöristetty naapurustoosi, noin 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "Valitse kanava tai lisää uusi päästäksesi alkuun."
 msgid "self-registered"
 msgstr "itse rekisteröitynyt"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Lähetä"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "Lähetä kirjoitusilmoituksia"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Lähetä salaamattomana"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "Lähetä video"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "Lähetä ääniviesti"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "Asetusta ei löydetty"
 msgid "Settings"
 msgstr "Asetukset"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Jaa"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Jaa sijainti"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Jaa näyttö"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Jaa sijaintisi"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Jaa sijaintisi kohteeseen {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "Poistu striimistä"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Pysäytä"
 
@@ -3680,6 +3782,14 @@ msgstr "Tämän viestin tuottanut työnkulku ei ole enää tilassa"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Tämä tili on yhdistetty {sessionCount} istunnosta. Istuntokohtaiset tiedot paljastetaan vain tilin omistajalle tai IRC-operaattoreille."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Tämä selain ei voi nauhoittaa ääntä."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Tämä selain ei voi nauhoittaa videota."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Tämä keskustelu on salattu Obbyn omalla menetelmällä. Vertaa sormenjälkiä erillistä kanavaa pitkin ja merkitse keskustelu sitten vahvistetuksi."
@@ -3691,6 +3801,10 @@ msgstr "Tämä keskustelu on salattu OTR:llä, joka on yhteensopiva muiden IRC-a
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tämä komento ei ota parametreja."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Tämä laite ei saanut sijaintia juuri nyt."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. Nämä tiedostot ova
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Henkilökohtainen verkkosivustosi"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "Tarkka sijaintisi."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

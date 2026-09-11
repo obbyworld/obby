@@ -54,6 +54,26 @@ vi.mock("../../src/lib/platformUtils", () => ({
   isTauri: vi.fn(() => false),
 }));
 
+const leafletMocks = vi.hoisted(() => {
+  const mapRemove = vi.fn();
+  const mapSpy = vi.fn((_el: unknown, options: unknown) => ({
+    remove: mapRemove,
+    __options: options,
+  }));
+  const tileLayerSpy = vi.fn(() => ({ addTo: vi.fn() }));
+  const markerSpy = vi.fn(() => ({ addTo: vi.fn() }));
+  const divIconSpy = vi.fn((opts: unknown) => opts);
+  return { mapSpy, mapRemove, tileLayerSpy, markerSpy, divIconSpy };
+});
+
+vi.mock("leaflet", () => ({
+  map: leafletMocks.mapSpy,
+  tileLayer: leafletMocks.tileLayerSpy,
+  marker: leafletMocks.markerSpy,
+  divIcon: leafletMocks.divIconSpy,
+}));
+vi.mock("leaflet/dist/leaflet.css", () => ({}));
+
 const defaultMessage = {
   id: "1",
   content: "https://example.com/image.jpg",
@@ -786,5 +806,138 @@ describe("topic entry filtering", () => {
       });
       expect(thumbs).toHaveLength(2);
     });
+  });
+});
+
+describe("map", () => {
+  const LOCATION_URL =
+    "https://www.openstreetmap.org/?mlat=51.5&mlon=-0.12#map=16/51.5/-0.12";
+  const locationMessage = {
+    id: "1",
+    content: LOCATION_URL,
+    serverId: "s1",
+    channelId: "c1",
+    type: "message",
+    timestamp: new Date(),
+    userId: "user1",
+    reactions: [],
+    msgid: "msg1",
+  };
+
+  test("opening a map mounts the interactive map centred on the URL's coordinates", async () => {
+    vi.mocked(store.getChannelMessages).mockReturnValueOnce([
+      locationMessage,
+    ] as unknown as ReturnType<typeof store.getChannelMessages>);
+
+    render(
+      <MediaViewerModal
+        isOpen={true}
+        url={LOCATION_URL}
+        sourceMsgId="msg1"
+        onClose={vi.fn()}
+        serverId="s1"
+        channelId="c1"
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("map-viewer")).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(leafletMocks.mapSpy).toHaveBeenCalled();
+    });
+    const options = leafletMocks.mapSpy.mock.calls[0][1] as {
+      center: [number, number];
+    };
+    expect(options.center).toEqual([51.5, -0.12]);
+  });
+
+  test("the external-open control routes through the warning modal for a map", async () => {
+    vi.mocked(store.getChannelMessages).mockReturnValueOnce([
+      locationMessage,
+    ] as unknown as ReturnType<typeof store.getChannelMessages>);
+
+    render(
+      <MediaViewerModal
+        isOpen={true}
+        url={LOCATION_URL}
+        sourceMsgId="msg1"
+        onClose={vi.fn()}
+        serverId="s1"
+        channelId="c1"
+      />,
+    );
+
+    await waitFor(() => screen.getByTestId("map-viewer"));
+    // Let the lazy Leaflet load settle within this test's own boundary, or its
+    // pending mount can land on whichever test happens to run next.
+    await waitFor(() => expect(leafletMocks.mapSpy).toHaveBeenCalled());
+
+    fireEvent.click(screen.getByRole("button", { name: /open in browser/i }));
+    expect(screen.getByText("External Link Warning")).toBeInTheDocument();
+  });
+
+  test("a reader with trusted-source media off gets no map entry and no tile request", async () => {
+    leafletMocks.mapSpy.mockClear();
+    // A filehost-hosted image passes gating at "safe" level; the location
+    // link needs "trusted sources" and must be excluded, never reaching the
+    // viewer at all -- so nothing about it can ever mount Leaflet.
+    vi.mocked(store.getChannelMessages).mockReturnValueOnce([
+      {
+        id: "1",
+        content: "https://files.example.com/photo.jpg",
+        serverId: "s1",
+        channelId: "c1",
+        type: "message",
+        timestamp: new Date(),
+        userId: "user1",
+        reactions: [],
+        msgid: "msg1",
+      },
+      locationMessage,
+    ] as unknown as ReturnType<typeof store.getChannelMessages>);
+
+    const getStateFn = (
+      store.default as unknown as { getState: ReturnType<typeof vi.fn> }
+    ).getState;
+    getStateFn.mockReturnValueOnce({
+      messages: {},
+      servers: [
+        {
+          id: "s1",
+          // isUrlFromFilehost expects a full URL, not a bare hostname.
+          filehost: "https://files.example.com",
+          channels: [{ id: "c1", topic: null }],
+        },
+      ],
+    });
+    vi.mocked(store.default).mockImplementation(((
+      selector: (state: unknown) => unknown,
+    ) =>
+      typeof selector === "function"
+        ? selector({
+            messages: {},
+            globalSettings: { mediaVisibilityLevel: 1 },
+          })
+        : null) as typeof store.default);
+
+    render(
+      <MediaViewerModal
+        isOpen={true}
+        url="https://files.example.com/photo.jpg"
+        sourceMsgId="msg1"
+        onClose={vi.fn()}
+        serverId="s1"
+        channelId="c1"
+      />,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("img", { name: "Image preview" }),
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("map-viewer")).not.toBeInTheDocument();
+    expect(leafletMocks.mapSpy).not.toHaveBeenCalled();
   });
 });

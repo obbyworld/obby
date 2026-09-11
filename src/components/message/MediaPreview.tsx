@@ -30,6 +30,7 @@ import {
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
 import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MapPreview } from "./MapPreview";
 
 const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
@@ -143,6 +144,7 @@ const ImagePreview: React.FC<{
   serverId?: string;
   channelId?: string;
   onOpenProfile?: (username: string) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -150,6 +152,7 @@ const ImagePreview: React.FC<{
   serverId,
   channelId,
   onOpenProfile,
+  onRenderFailed,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -263,12 +266,16 @@ const ImagePreview: React.FC<{
 
   const displayUrl = resolvedUrl || url;
 
+  // Filehost images embed a JWT in the URL — expiry is the likely cause, and
+  // that case renders its own "expired" card. Every other image has nothing
+  // to show on error, so the caller falls back to the message's URL text.
+  const showsNothing = imageError && !isFilehostImage;
+
+  useEffect(() => {
+    if (showsNothing) onRenderFailed?.(url);
+  }, [showsNothing, onRenderFailed, url]);
+
   if (imageError) {
-    // Filehost images embed a JWT in the URL — expiry is the likely cause.
-    // For all other images, return null and let the URL text in the message
-    // body serve as the fallback (the probe already confirmed it was an image,
-    // so the server likely returned the image but it failed to render — e.g.
-    // expired CDN token, corrupted file).
     if (!isFilehostImage) return null;
     return (
       <div className="max-w-md">
@@ -807,7 +814,8 @@ const SoundCloudEmbed: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedError, setEmbedError] = useState(false);
   // Same reasoning as the other embeds: no widget until playback is asked for.
@@ -872,6 +880,10 @@ const SoundCloudEmbed: React.FC<{
     return () => window.removeEventListener("message", handleMessage);
   }, [url, msgid, serverId, channelId]);
 
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
+
   if (embedError) return null;
 
   if (!activated) {
@@ -914,7 +926,8 @@ const EmbedPreview: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const mediaViewerOpen = useStore((state) => state.ui.openedMedia !== null);
   const [playerKey, setPlayerKey] = useState(0);
   const [embedError, setEmbedError] = useState(false);
@@ -953,6 +966,10 @@ const EmbedPreview: React.FC<{
   useEffect(() => {
     if (isActive) setActivated(true);
   }, [isActive]);
+
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
 
   if (embedError) return null;
 
@@ -1128,6 +1145,7 @@ const ProbeablePreview: React.FC<{
   channelId?: string;
   onOpenProfile?: (username: string) => void;
   onTypeResolved?: (url: string, type: MediaType) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -1136,6 +1154,7 @@ const ProbeablePreview: React.FC<{
   channelId,
   onOpenProfile,
   onTypeResolved,
+  onRenderFailed,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [resolvedType, setResolvedType] = useState<MediaType | null>(null);
@@ -1177,6 +1196,7 @@ const ProbeablePreview: React.FC<{
         serverId={serverId}
         channelId={channelId}
         onOpenProfile={onOpenProfile}
+        onRenderFailed={onRenderFailed}
       />
     );
   } else if (resolvedType === "video") {
@@ -1213,6 +1233,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     ) : (
       <EmbedPreview
@@ -1220,6 +1241,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1242,6 +1264,7 @@ export const MediaPreview = memo(function MediaPreview({
   channelId,
   onOpenProfile,
   onTypeResolved,
+  onRenderFailed,
 }: {
   entry: MediaEntry;
   msgid?: string;
@@ -1250,6 +1273,8 @@ export const MediaPreview = memo(function MediaPreview({
   channelId?: string;
   onOpenProfile?: (username: string) => void;
   onTypeResolved?: (url: string, type: MediaType) => void;
+  /** Fires once the preview has nothing to show, so the caller can fall back to the URL text. */
+  onRenderFailed?: (url: string) => void;
 }) {
   if (entry.type === null) {
     return (
@@ -1261,6 +1286,7 @@ export const MediaPreview = memo(function MediaPreview({
         channelId={channelId}
         onOpenProfile={onOpenProfile}
         onTypeResolved={onTypeResolved}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1275,6 +1301,7 @@ export const MediaPreview = memo(function MediaPreview({
           serverId={serverId}
           channelId={channelId}
           onOpenProfile={onOpenProfile}
+          onRenderFailed={onRenderFailed}
         />
       );
     case "video":
@@ -1312,6 +1339,7 @@ export const MediaPreview = memo(function MediaPreview({
             msgid={msgid}
             serverId={serverId}
             channelId={channelId}
+            onRenderFailed={onRenderFailed}
           />
         );
       }
@@ -1321,6 +1349,20 @@ export const MediaPreview = memo(function MediaPreview({
           msgid={msgid}
           serverId={serverId}
           channelId={channelId}
+          onRenderFailed={onRenderFailed}
+        />
+      );
+    case "map":
+      // Keyed by url so a changed link remounts fresh instead of carrying over
+      // the previous link's failed-tile state.
+      return (
+        <MapPreview
+          key={entry.url}
+          url={entry.url}
+          msgid={msgid}
+          serverId={serverId}
+          channelId={channelId}
+          onRenderFailed={onRenderFailed}
         />
       );
   }

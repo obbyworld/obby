@@ -212,6 +212,7 @@ pub fn run() {
     #[cfg(any(target_os = "ios", target_os = "android"))]
     {
         builder = builder.plugin(tauri_plugin_haptics::init());
+        builder = builder.plugin(tauri_plugin_geolocation::init());
     }
 
     #[cfg(target_os = "android")]

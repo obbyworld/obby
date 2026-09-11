@@ -499,6 +499,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
     });
   }, []);
 
+  // A preview that ends up with nothing to show reports its URL here, so a
+  // single-URL message falls back to its ordinary text instead of going blank.
+  const [failedPreviewUrl, setFailedPreviewUrl] = useState<string | null>(null);
+  const handleRenderFailed = useCallback((url: string) => {
+    setFailedPreviewUrl(url);
+  }, []);
+
+  const isSingleMediaCandidate =
+    isSingleToken && mediaEntries.length === 1 && mediaEntries[0].type !== null;
+  const isSingleKnownMediaMessage =
+    isSingleMediaCandidate && mediaEntries[0].url !== failedPreviewUrl;
+
   // A file this network hosts, sent inside an encrypted session, still sits on
   // the host in the clear, so the row says so while keeping the normal preview,
   // seeking and thumbnails. Counted before the trust filter, so turning
@@ -851,9 +863,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
             )}
 
             <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
-              {isSingleToken &&
-              mediaEntries.length === 1 &&
-              mediaEntries[0].type !== null ? (
+              {isSingleKnownMediaMessage ? (
                 // Known type: hide URL, show only the preview
                 <MediaPreview
                   entry={mediaEntries[0]}
@@ -865,6 +875,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
                   serverId={message.serverId}
                   channelId={mediaChannelId}
                   onOpenProfile={onOpenProfile}
+                  onRenderFailed={handleRenderFailed}
                 />
               ) : (
                 // The workflow pill is absolutely positioned in the
@@ -914,11 +925,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
             {/* Embedded media below text — first always visible,
                   known-type extras collapsed behind a "show more" toggle to prevent floods.
                   Null-type extras render inline since they show nothing if the probe fails. */}
-            {!(
-              isSingleToken &&
-              mediaEntries.length === 1 &&
-              mediaEntries[0].type !== null
-            ) &&
+            {!isSingleMediaCandidate &&
               mediaEntries.length > 0 &&
               (() => {
                 const {

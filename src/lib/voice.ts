@@ -28,6 +28,7 @@ import type { AppState } from "../store";
 import ircClient from "./ircClient";
 import {
   audioConstraints,
+  captureScreen,
   type GlobalSettingsSlice,
   listDevices,
   resolveDeviceId,
@@ -763,17 +764,7 @@ export class VoiceClient {
     if (on) {
       let screen: MediaStream;
       try {
-        // Request system/desktop audio along with the video. Browsers
-        // that support it (Chrome/Edge desktop with the "Share audio"
-        // checkbox; Edge for tab capture) will return audio tracks
-        // alongside the video; Firefox / Safari ignore the audio
-        // constraint and return video only -- in which case
-        // getAudioTracks() is empty and we simply skip the audio
-        // addTrack below.
-        screen = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        });
+        screen = await captureScreen(() => this.setScreenShare(false));
       } catch (err) {
         this.emitError(`screen: ${err}`);
         return;
@@ -806,11 +797,6 @@ export class VoiceClient {
           console.warn("voice: screen audio addTrack failed", err);
         }
       }
-      // The video track is the one that fires `ended` when the user
-      // hits the browser's "Stop sharing" button -- audio tracks from
-      // getDisplayMedia don't fire ended on their own. Tear the whole
-      // share down on that single signal.
-      videoTrack.onended = () => this.setScreenShare(false);
       // Local self preview: piggy-back onto videoTrack so the
       // existing tile renderer shows what we're sharing. videoOn
       // already covers camera vs. nothing; screenSharing

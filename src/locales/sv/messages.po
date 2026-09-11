@@ -460,6 +460,7 @@ msgstr "Alla"
 msgid "All Content"
 msgstr "Allt innehåll"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Tillåt kameraåtkomst"
@@ -468,6 +469,7 @@ msgstr "Tillåt kameraåtkomst"
 msgid "Allow entering multiple lines of text"
 msgstr "Tillåt att skriva flera rader text"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Tillåt mikrofonåtkomst"
@@ -514,6 +516,10 @@ msgstr "Tillämpar..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Godkänn"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Ungefärlig"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "Frånvarande:"
 msgid "Back"
 msgstr "Tillbaka"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "Bak"
@@ -739,6 +745,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "Kopiera URL"
 msgid "Could not access the device."
 msgstr "Det gick inte att komma åt enheten."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Kunde inte fastställa platsen i tid. Försök igen någonstans med fri sikt mot himlen."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Kunde inte hämta din plats."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Kunde inte upprätta kryptering med {nick}."
@@ -1323,10 +1338,12 @@ msgstr "Gör om till tittare"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beskrivning (valfri, t.ex. \"Betatestare Q3\")"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Enhetsnamn döljs tills du tillåter kameraåtkomst."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Enhetsnamn döljs tills du tillåter mikrofonåtkomst."
@@ -1334,6 +1351,10 @@ msgstr "Enhetsnamn döljs tills du tillåter mikrofonåtkomst."
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Inaktivera tryck-och-prata"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Förkasta"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "Ange anledning (valfritt)"
 msgid "Enter username to invite"
 msgstr "Ange användarnamn att bjuda in"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Exakt"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "ExempelNÄT"
@@ -1699,6 +1724,10 @@ msgstr "Filtrera kanaler..."
 msgid "Filter members…"
 msgstr "Filtrera medlemmar…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Hittar din plats…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Första meddelandet att skicka"
@@ -1725,7 +1754,7 @@ msgstr "Hittade 1 meddelande som matchar \"{searchQuery}\""
 msgid "from"
 msgstr "från"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "Fram"
@@ -2145,6 +2174,10 @@ msgstr "Laddar WHOIS-data..."
 msgid "Local Storage:"
 msgstr "Lokal lagring:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Platsåtkomst nekades. Tillåt platsåtkomst i webbläsarens eller systemets inställningar och försök igen."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "Mikrofon"
 msgid "Microphone {0}"
 msgstr "Mikrofon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Mikrofonnivå"
 
@@ -2728,6 +2761,10 @@ msgstr "Öppna i visaren"
 msgid "Open Link"
 msgstr "Öppna länk"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Öppna kartan"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper-namn"
@@ -2967,6 +3004,14 @@ msgstr "Räck upp handen"
 msgid "ran"
 msgstr "körde"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Maximal inspelningslängd har nåtts. Inspelningen stoppades: skicka den eller förkasta den."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Gränsen för uppladdningsstorlek har nåtts. Inspelningen stoppades: skicka den eller förkasta den."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "Återanslutning misslyckades"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Återanslut till server"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Spela in ljud"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Spela in skärm"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Spela in skärm"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "Spela in video"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Spela in videomeddelande"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Spela in röstmeddelande"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "Granska ändrad nyckel…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Granska nyckeln"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "Avrundad till ditt område, cirka 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "Välj eller lägg till en kanal för att komma igång."
 msgid "self-registered"
 msgstr "självregistrerad"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Skicka"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "Skicka skriv-aviseringar"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Skicka okrypterat"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "Skicka video"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "Skicka röstmeddelande"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "Inställningen hittades inte"
 msgid "Settings"
 msgstr "Inställningar"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Dela"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Dela plats"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Dela skärm"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Dela din plats"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Dela din plats med {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "Kliv ur sändningen"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stoppa"
 
@@ -3680,6 +3782,14 @@ msgstr "Arbetsflödet som skapade detta meddelande finns inte längre i tillstå
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Det här kontot är anslutet från {sessionCount} sessioner. Detaljer per session avslöjas endast för kontoinnehavaren eller IRC-operatörer."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Den här webbläsaren kan inte spela in ljud."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Den här webbläsaren kan inte spela in video."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Den här chatten är krypterad med Obbys inbyggda schema. Jämför fingeravtrycken via en separat kanal och markera den sedan som verifierad."
@@ -3691,6 +3801,10 @@ msgstr "Den här chatten är krypterad med OTR, kompatibel med andra IRC-kliente
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Detta kommando tar inga parametrar."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Den här enheten kunde inte fastställa platsen just nu."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "Dina meddelanden med {nick} är krypterade. De här filerna är för sto
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Din personliga webbplats"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "Din exakta position."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

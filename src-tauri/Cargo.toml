@@ -55,3 +55,4 @@ tauri-plugin-share-sheet = { path = "plugins/share-sheet" }
 
 [target.'cfg(any(target_os = "ios", target_os = "android"))'.dependencies]
 tauri-plugin-haptics = "2"
+tauri-plugin-geolocation = "2"

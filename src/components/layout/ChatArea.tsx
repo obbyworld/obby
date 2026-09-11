@@ -3,7 +3,16 @@ import type { EmojiClickData } from "emoji-picker-react";
 import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaGift, FaList, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaDesktop,
+  FaGift,
+  FaList,
+  FaMapMarkerAlt,
+  FaMicrophone,
+  FaPlus,
+  FaTimes,
+  FaVideo,
+} from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
@@ -16,6 +25,10 @@ import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
+import {
+  pickRecordingFormat,
+  pickVideoRecordingFormat,
+} from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
 import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
@@ -34,10 +47,13 @@ import {
   wrapForUpload,
 } from "../../lib/e2ee/media";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
+import { locationSharingSupported } from "../../lib/geolocation";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
+import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   fetchUploadInfo,
+  type UploadInfo,
   uploadFile,
   uploadFileTokenless,
   validateFileAgainstInfo,
@@ -49,6 +65,7 @@ import {
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
+import { maxRecordingBytes } from "../../lib/recordingLimits";
 import useStore from "../../store";
 import { sendEncryptedMedia } from "../../store/handlers/e2ee";
 import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
@@ -73,14 +90,17 @@ import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector from "../ui/GifSelector";
+import HeaderOverflowMenu from "../ui/HeaderOverflowMenu";
 import DiscoverGrid from "../ui/HomeScreen";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
+import { LocationShareModal } from "../ui/LocationShareModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
+import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
@@ -161,6 +181,18 @@ export const ChatArea: React.FC<{
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [recordingKind, setRecordingKind] = useState<RecordingKind | null>(
+    null,
+  );
+  const plusButtonRef = useRef<HTMLButtonElement>(null);
+  // We check once on mount and again whenever the plus menu opens, so a
+  // device plugged in mid-session is picked up there.
+  const [hasMicrophoneInput, setHasMicrophoneInput] = useState(false);
+  const [hasCameraInput, setHasCameraInput] = useState(false);
+  // We treat null, meaning no queryable policy or a fetch still in flight, as
+  // unrestricted.
+  const [uploadInfo, setUploadInfo] = useState<UploadInfo | null>(null);
   const [pendingUpload, setPendingUpload] = useState<{
     isOpen: boolean;
     files: File[];
@@ -673,6 +705,76 @@ export const ChatArea: React.FC<{
     selectedServer?.filehost || selectedServer?.fileHosts?.length
   );
 
+  const isTouch = useMediaQuery("(pointer: coarse)");
+
+  // MediaRecorder support doesn't change at runtime, so these only need
+  // picking once.
+  const audioRecordingFormat = useMemo(() => pickRecordingFormat(), []);
+  const videoRecordingFormat = useMemo(() => pickVideoRecordingFormat(), []);
+
+  useEffect(() => {
+    void listDevices("audioinput").then((devices) => {
+      setHasMicrophoneInput(devices.length > 0);
+    });
+    void listDevices("videoinput").then((devices) => {
+      setHasCameraInput(devices.length > 0);
+    });
+  }, []);
+
+  // Only the vendor token uploader exposes a queryable policy.
+  useEffect(() => {
+    const filehostUrl = selectedServer?.filehost;
+    if (!filehostUrl) {
+      setUploadInfo(null);
+      return;
+    }
+    let cancelled = false;
+    void fetchUploadInfo(filehostUrl).then((info) => {
+      if (!cancelled) setUploadInfo(info);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedServer?.filehost]);
+
+  const extensionAllowed = (extension: string): boolean =>
+    !uploadInfo ||
+    uploadInfo.allowed_extensions.length === 0 ||
+    uploadInfo.allowed_extensions
+      .map((e) => e.toLowerCase())
+      .includes(`.${extension}`);
+
+  const canRecordAudio =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasMicrophoneInput &&
+    !!audioRecordingFormat &&
+    extensionAllowed(audioRecordingFormat.extension);
+
+  const canRecordVideo =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasCameraInput &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  const canRecordScreen =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    screenCaptureSupported() &&
+    !isTouch &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  // Unlike recording, sharing a location never needs the file host -- a
+  // rounded or exact link works with no attachment at all.
+  const canShareLocation = locationSharingSupported();
+
+  const recordingMaxBytes = useMemo(
+    () => maxRecordingBytes(uploadInfo),
+    [uploadInfo],
+  );
+
   const selectedChannel = useMemo(
     () => selectedServer?.channels.find((c) => c.id === selectedChannelId),
     [selectedServer, selectedChannelId],
@@ -928,18 +1030,6 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     if (ui.activeMedia?.type === "embed") stopActiveMedia();
   }, [channelKey]);
-
-  // Close plus menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showPlusMenu && !(event.target as Element).closest(".plus-menu")) {
-        setShowPlusMenu(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showPlusMenu]);
 
   const handleSendMessage = () => {
     if (!hasTextRef.current) return;
@@ -1254,7 +1344,10 @@ export const ChatArea: React.FC<{
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
     const previewUrl =
-      files.length === 1 && files[0].type.startsWith("image/")
+      files.length === 1 &&
+      (files[0].type.startsWith("image/") ||
+        files[0].type.startsWith("audio/") ||
+        files[0].type.startsWith("video/"))
         ? URL.createObjectURL(files[0])
         : null;
     setPendingUpload({ isOpen: true, files, previewUrl });
@@ -1309,28 +1402,32 @@ export const ChatArea: React.FC<{
     handleSelectedFiles(files);
   };
 
-  const handleGifSend = (gifUrl: string) => {
-    // Send the GIF URL directly to the current channel/user
+  // Shared by anything that sends a plain URL as its whole message -- a GIF
+  // pick or a location link with no image to attach.
+  const sendUrlMessage = (url: string) => {
     const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
     if (!target || !selectedServerId) return;
     if (
       selectedPrivateChat &&
-      routeOutgoingPM(
-        selectedServerId,
-        selectedPrivateChat.username,
-        gifUrl,
-      ) !== "none"
+      routeOutgoingPM(selectedServerId, selectedPrivateChat.username, url) !==
+        "none"
     ) {
       return;
     }
 
-    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
+    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${url}`);
 
-    // Add to store for immediate display (only for private chats, channels echo back)
-    if (selectedPrivateChat && currentUser) {
+    // A channel echoes our own line back, and so does a private message once
+    // the server negotiates echo-message, so we only place a local copy where
+    // nothing is coming back to place it for us.
+    if (
+      selectedPrivateChat &&
+      currentUser &&
+      !ircClient.hasCapability(selectedServerId, "echo-message")
+    ) {
       const outgoingMessage = {
         id: uuidv4(),
-        content: gifUrl,
+        content: url,
         timestamp: new Date(),
         userId: currentUser.username || currentUser.id,
         channelId: selectedPrivateChat.id,
@@ -1344,6 +1441,11 @@ export const ChatArea: React.FC<{
       const { addMessage } = useStore.getState();
       addMessage(outgoingMessage);
     }
+  };
+
+  const handleLocationShare = (url: string) => {
+    sendUrlMessage(url);
+    setIsLocationModalOpen(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -2354,6 +2456,7 @@ export const ChatArea: React.FC<{
                 className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"} flex items-center relative flex-nowrap`}
               >
                 <button
+                  ref={plusButtonRef}
                   className="px-2 sm:px-4 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
                   onClick={() => setShowPlusMenu((prev) => !prev)}
                 >
@@ -2420,55 +2523,76 @@ export const ChatArea: React.FC<{
                 />
               </div>
 
-              {/* Plus menu */}
-              {showPlusMenu && (
-                <div
-                  className="plus-menu absolute bg-discord-dark-200 rounded-lg shadow-lg border border-discord-dark-300 min-w-48 z-50"
-                  style={{
-                    bottom: "calc(100% + 8px)",
-                    left: "16px",
-                  }}
-                >
-                  {canUpload && (
-                    <button
-                      className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                      onClick={() => {
-                        // Multi-file picker: images, videos, audio.
-                        // The backend's allowlist is the source of
-                        // truth, but we hint accept= so the OS file
-                        // dialog filters sensibly.
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.multiple = true;
-                        input.accept = "image/*,video/*,audio/*";
-                        input.onchange = (e) => {
-                          handleSelectedFiles(
-                            Array.from(
-                              (e.target as HTMLInputElement).files ?? [],
-                            ),
-                          );
-                        };
-                        input.click();
-                        setShowPlusMenu(false);
-                      }}
-                    >
-                      <FaPlus className="mr-2" />
-                      <Trans>Upload Files</Trans>
-                    </button>
-                  )}
-                  <button
-                    className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                    onClick={() => {
-                      setIsGifSelectorOpen(true);
-                      setShowPlusMenu(false);
-                    }}
-                  >
-                    <FaGift className="mr-2" />
-                    <Trans>Send a GIF</Trans>
-                  </button>
-                  {/* Add more menu items here if needed */}
-                </div>
-              )}
+              <HeaderOverflowMenu
+                isOpen={showPlusMenu}
+                onClose={() => setShowPlusMenu(false)}
+                anchorElement={plusButtonRef.current}
+                menuItems={[
+                  {
+                    id: "upload",
+                    show: canUpload,
+                    icon: <FaPlus />,
+                    label: <Trans>Upload Files</Trans>,
+                    onClick: () => {
+                      // Multi-file picker: images, videos, audio. The
+                      // backend's allowlist is the source of truth, but we
+                      // hint accept= so the OS file dialog filters sensibly.
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.multiple = true;
+                      input.accept = "image/*,video/*,audio/*";
+                      input.onchange = (e) => {
+                        handleSelectedFiles(
+                          Array.from(
+                            (e.target as HTMLInputElement).files ?? [],
+                          ),
+                        );
+                      };
+                      input.click();
+                    },
+                  },
+                  {
+                    id: "gif",
+                    show: true,
+                    icon: <FaGift />,
+                    label: <Trans>Send a GIF</Trans>,
+                    onClick: () => setIsGifSelectorOpen(true),
+                  },
+                  {
+                    id: "record-audio",
+                    show: canRecordAudio,
+                    divider: canRecordAudio,
+                    icon: <FaMicrophone />,
+                    label: <Trans>Record Audio</Trans>,
+                    onClick: () => setRecordingKind("audio"),
+                  },
+                  {
+                    id: "record-video",
+                    show: canRecordVideo,
+                    divider: !canRecordAudio && canRecordVideo,
+                    icon: <FaVideo />,
+                    label: <Trans>Record Video</Trans>,
+                    onClick: () => setRecordingKind("video"),
+                  },
+                  {
+                    id: "record-screen",
+                    show: canRecordScreen,
+                    divider:
+                      !canRecordAudio && !canRecordVideo && canRecordScreen,
+                    icon: <FaDesktop />,
+                    label: <Trans>Record Screen</Trans>,
+                    onClick: () => setRecordingKind("screen"),
+                  },
+                  {
+                    id: "location",
+                    show: canShareLocation,
+                    divider: true,
+                    icon: <FaMapMarkerAlt />,
+                    label: <Trans>Share Location</Trans>,
+                    onClick: () => setIsLocationModalOpen(true),
+                  },
+                ]}
+              />
 
               {isNarrowView && (
                 <EmojiPickerModal
@@ -2484,8 +2608,7 @@ export const ChatArea: React.FC<{
                 isOpen={isGifSelectorOpen}
                 onClose={() => setIsGifSelectorOpen(false)}
                 onSelectGif={(gifUrl) => {
-                  // Send the GIF URL directly to the channel
-                  handleGifSend(gifUrl);
+                  sendUrlMessage(gifUrl);
                   setIsGifSelectorOpen(false);
                 }}
               />
@@ -2897,6 +3020,20 @@ export const ChatArea: React.FC<{
           void handleFilesUpload(pendingUpload.files);
           closePendingUpload();
         }}
+      />
+      <RecordingPanel
+        kind={recordingKind ?? "audio"}
+        isOpen={recordingKind !== null}
+        anchor={plusButtonRef.current}
+        onClose={() => setRecordingKind(null)}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
+      />
+      <LocationShareModal
+        isOpen={isLocationModalOpen}
+        target={selectedChannel?.name ?? selectedPrivateChat?.username ?? ""}
+        onCancel={() => setIsLocationModalOpen(false)}
+        onShare={handleLocationShare}
       />
       {/* Popped out server notices window */}
       {isServerNoticesPoppedOut &&

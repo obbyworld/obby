@@ -460,6 +460,7 @@ msgstr "すべて"
 msgid "All Content"
 msgstr "すべてのコンテンツ"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "カメラへのアクセスを許可"
@@ -468,6 +469,7 @@ msgstr "カメラへのアクセスを許可"
 msgid "Allow entering multiple lines of text"
 msgstr "複数行のテキスト入力を許可する"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "マイクへのアクセスを許可"
@@ -514,6 +516,10 @@ msgstr "適用中..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "承認"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "おおよその位置"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "退席中："
 msgid "Back"
 msgstr "戻る"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "背面"
@@ -739,6 +745,7 @@ msgstr "カメラ {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "URLをコピー"
 msgid "Could not access the device."
 msgstr "デバイスにアクセスできませんでした。"
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "時間内に位置情報を取得できませんでした。空がよく見える場所でもう一度お試しください。"
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "位置情報を取得できませんでした。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} との暗号化を設定できませんでした。"
@@ -1323,10 +1338,12 @@ msgstr "視聴者に戻す"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "説明（任意、例：「Q3ベータテスター」）"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "カメラへのアクセスを許可するまで、デバイス名は表示されません。"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "マイクへのアクセスを許可するまで、デバイス名は表示されません。"
@@ -1334,6 +1351,10 @@ msgstr "マイクへのアクセスを許可するまで、デバイス名は表
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "プッシュ・トゥ・トークを無効にする"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "破棄"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "理由を入力（任意）"
 msgid "Enter username to invite"
 msgstr "招待するユーザー名を入力"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "正確な位置"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "サンプルNET"
@@ -1699,6 +1724,10 @@ msgstr "チャンネルをフィルター..."
 msgid "Filter members…"
 msgstr "メンバーをフィルター…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "現在地を取得中..."
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "最初に送信するメッセージ"
@@ -1725,7 +1754,7 @@ msgstr "\"{searchQuery}\"に一致するメッセージが1件見つかりまし
 msgid "from"
 msgstr "から"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "前面"
@@ -2145,6 +2174,10 @@ msgstr "WHOISデータを読み込み中..."
 msgid "Local Storage:"
 msgstr "ローカルストレージ："
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "位置情報へのアクセスが拒否されました。ブラウザまたはシステムの設定で位置情報へのアクセスを許可してから、もう一度お試しください。"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "マイク"
 msgid "Microphone {0}"
 msgstr "マイク {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "マイクレベル"
 
@@ -2728,6 +2761,10 @@ msgstr "ビューアで開く"
 msgid "Open Link"
 msgstr "リンクを開く"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "地図を開く"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper名"
@@ -2967,6 +3004,14 @@ msgstr "挙手する"
 msgid "ran"
 msgstr "が実行"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "録音・録画の最大時間に達したため停止しました。送信するか、破棄してください。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "アップロードサイズの上限に達したため停止しました。送信するか、破棄してください。"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "再接続に失敗しました"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "音声を録音"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "画面を録画"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "画面を録画"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "動画を録画"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "動画メッセージを録画"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "音声メッセージを録音"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "変更された鍵を確認…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "鍵を確認"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "近隣エリアまで丸めます（誤差約100m）。"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "チャンネルを選択または追加して始めましょう。"
 msgid "self-registered"
 msgstr "自己登録"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "送信"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "入力中通知を送信する"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "暗号化せずに送信"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "動画を送信"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "音声メッセージを送信"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "設定が見つかりません"
 msgid "Settings"
 msgstr "設定"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "共有"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "位置情報を共有"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "画面を共有"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "現在地を共有"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "現在地を {target} と共有します。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "配信を降りる"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
 
@@ -3680,6 +3782,14 @@ msgstr "このメッセージを生成したワークフローはもう状態に
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "このアカウントは {sessionCount} 個のセッションから接続されています。セッションごとの詳細は、アカウント所有者または IRC オペレーターにのみ開示されます。"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "お使いのブラウザでは音声を録音できません。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "お使いのブラウザでは動画を録画できません。"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "このチャットはObbyのネイティブ方式で暗号化されています。フィンガープリントを別の経路で照合してから、確認済みにしてください。"
@@ -3691,6 +3801,10 @@ msgstr "このチャットはOTRで暗号化されており、他のIRCクライ
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "このコマンドはパラメータを受け取りません。"
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "このデバイスは現在、位置情報を取得できませんでした。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "{nick} とのメッセージは暗号化されています。これら�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "個人ウェブサイト"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "正確な現在地です。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

@@ -460,6 +460,7 @@ msgstr "Wszystkie"
 msgid "All Content"
 msgstr "Wszystkie treści"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Zezwól na dostęp do kamery"
@@ -468,6 +469,7 @@ msgstr "Zezwól na dostęp do kamery"
 msgid "Allow entering multiple lines of text"
 msgstr "Zezwól na wpisywanie wielu linii tekstu"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Zezwól na dostęp do mikrofonu"
@@ -514,6 +516,10 @@ msgstr "Stosowanie..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Zatwierdź"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Przybliżona"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "Nieobecny:"
 msgid "Back"
 msgstr "Wróć"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "Tylny"
@@ -739,6 +745,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "Kopiuj URL"
 msgid "Could not access the device."
 msgstr "Nie udało się uzyskać dostępu do urządzenia."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Nie udało się ustalić lokalizacji na czas. Spróbuj ponownie w miejscu z lepszym widokiem nieba."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Nie udało się ustalić Twojej lokalizacji."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Nie udało się nawiązać szyfrowania z {nick}."
@@ -1323,10 +1338,12 @@ msgstr "Degraduj do widza"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Opis (opcjonalnie, np. \"Testerzy beta Q3\")"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Nazwy urządzeń są ukryte, dopóki nie zezwolisz na dostęp do kamery."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Nazwy urządzeń są ukryte, dopóki nie zezwolisz na dostęp do mikrofonu."
@@ -1334,6 +1351,10 @@ msgstr "Nazwy urządzeń są ukryte, dopóki nie zezwolisz na dostęp do mikrofo
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Wyłącz funkcję Naciśnij, aby mówić"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Odrzuć"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "Wpisz powód (opcjonalnie)"
 msgid "Enter username to invite"
 msgstr "Wpisz nazwę użytkownika do zaproszenia"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Dokładna"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "PrzykładSIEĆ"
@@ -1699,6 +1724,10 @@ msgstr "Filtruj kanały..."
 msgid "Filter members…"
 msgstr "Filtruj członków…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Ustalanie lokalizacji…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Pierwsza wiadomość do wysłania"
@@ -1725,7 +1754,7 @@ msgstr "Znaleziono 1 wiadomość pasującą do \"{searchQuery}\""
 msgid "from"
 msgstr "od"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "Przedni"
@@ -2145,6 +2174,10 @@ msgstr "Wczytywanie danych WHOIS..."
 msgid "Local Storage:"
 msgstr "Pamięć lokalna:"
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Odmówiono dostępu do lokalizacji. Zezwól na dostęp do lokalizacji w ustawieniach przeglądarki lub systemu i spróbuj ponownie."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "Mikrofon"
 msgid "Microphone {0}"
 msgstr "Mikrofon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Poziom mikrofonu"
 
@@ -2728,6 +2761,10 @@ msgstr "Otwórz w przeglądarce mediów"
 msgid "Open Link"
 msgstr "Otwórz link"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Otwórz mapę"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Nazwa operatora"
@@ -2967,6 +3004,14 @@ msgstr "Podnieś rękę"
 msgid "ran"
 msgstr "uruchomił(a)"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Osiągnięto maksymalny czas nagrywania. Nagrywanie zatrzymane: wyślij nagranie lub je odrzuć."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Osiągnięto limit rozmiaru przesyłania. Nagrywanie zatrzymane: wyślij nagranie lub je odrzuć."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "Ponowne połączenie nie powiodło się"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Ponownie połącz z serwerem"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Nagraj audio"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Nagraj ekran"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Nagraj ekran"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "Nagraj wideo"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Nagraj wiadomość wideo"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Nagraj wiadomość głosową"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "Sprawdź zmieniony klucz…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Sprawdź klucz"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "Zaokrąglona do Twojej okolicy, około 100m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "Wybierz lub dodaj kanał, aby zacząć."
 msgid "self-registered"
 msgstr "samodzielnie zarejestrowany"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Wyślij"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "Wysyłaj powiadomienia o pisaniu"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Wyślij bez szyfrowania"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "Wyślij wideo"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "Wyślij wiadomość głosową"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "Nie znaleziono ustawienia"
 msgid "Settings"
 msgstr "Ustawienia"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Udostępnij"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Udostępnij lokalizację"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Udostępnij ekran"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Udostępnij swoją lokalizację"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Udostępnij swoją lokalizację użytkownikowi {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "Zrezygnuj z transmisji"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Zatrzymaj"
 
@@ -3680,6 +3782,14 @@ msgstr "Przepływ pracy, który wygenerował tę wiadomość, nie jest już w st
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "To konto jest połączone z {sessionCount} sesji. Szczegóły poszczególnych sesji są ujawniane tylko właścicielowi konta lub operatorom IRC."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Ta przeglądarka nie może nagrywać audio."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Ta przeglądarka nie może nagrywać wideo."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Ta rozmowa jest szyfrowana natywnym schematem Obby. Porównaj odciski palców innym kanałem, a następnie oznacz ją jako zweryfikowaną."
@@ -3691,6 +3801,10 @@ msgstr "Ta rozmowa jest szyfrowana protokołem OTR, zgodnym z innymi klientami I
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "To polecenie nie przyjmuje parametrów."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "To urządzenie nie mogło teraz ustalić lokalizacji."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "Twoje wiadomości z użytkownikiem {nick} są zaszyfrowane. Te pliki są
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Twoja strona internetowa"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "Twoja dokładna pozycja."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

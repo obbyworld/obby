@@ -460,6 +460,7 @@ msgstr "全部"
 msgid "All Content"
 msgstr "所有内容"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "允许摄像头访问"
@@ -468,6 +469,7 @@ msgstr "允许摄像头访问"
 msgid "Allow entering multiple lines of text"
 msgstr "允许输入多行文本"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "允许麦克风访问"
@@ -514,6 +516,10 @@ msgstr "正在应用..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "批准"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "大致位置"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -617,7 +623,7 @@ msgstr "离开："
 msgid "Back"
 msgstr "返回"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Back"
 msgstr "后置"
@@ -739,6 +745,7 @@ msgstr "摄像头 {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1182,6 +1189,14 @@ msgstr "复制链接"
 msgid "Could not access the device."
 msgstr "无法访问该设备。"
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "无法及时获取定位。请在视野更开阔的地方重试。"
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "无法获取您的位置。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "无法与 {nick} 建立加密。"
@@ -1323,10 +1338,12 @@ msgstr "降为观众"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "在您允许摄像头访问之前，设备名称将被隐藏。"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
@@ -1334,6 +1351,10 @@ msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "禁用按键说话"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "丢弃"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1619,6 +1640,10 @@ msgstr "输入原因（可选）"
 msgid "Enter username to invite"
 msgstr "输入要邀请的用户名"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "精确位置"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "示例网络"
@@ -1699,6 +1724,10 @@ msgstr "筛选频道..."
 msgid "Filter members…"
 msgstr "筛选成员…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "正在获取您的位置…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "要发送的第一条消息"
@@ -1725,7 +1754,7 @@ msgstr "找到 1 条匹配\"{searchQuery}\"的消息"
 msgid "from"
 msgstr "来自"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
 msgid "Front"
 msgstr "前置"
@@ -2145,6 +2174,10 @@ msgstr "正在加载 WHOIS 数据..."
 msgid "Local Storage:"
 msgstr "本地存储："
 
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "位置访问被拒绝。请在浏览器或系统设置中允许位置访问，然后重试。"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2303,7 +2336,7 @@ msgstr "麦克风"
 msgid "Microphone {0}"
 msgstr "麦克风 {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "麦克风音量"
 
@@ -2728,6 +2761,10 @@ msgstr "在查看器中打开"
 msgid "Open Link"
 msgstr "打开链接"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "打开地图"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper 用户名"
@@ -2967,6 +3004,14 @@ msgstr "举手"
 msgid "ran"
 msgstr "执行了"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "已达到最长录制时长，录制已停止：发送或丢弃。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "已达到上传大小限制，录制已停止：发送或丢弃。"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3015,6 +3060,30 @@ msgstr "重新连接失败"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "录音"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "录制屏幕"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "录屏"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Video"
+msgstr "录像"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "录制视频消息"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "录制语音消息"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
@@ -3122,6 +3191,10 @@ msgstr "查看已更改的密钥…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "查看密钥"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Rounded to your neighbourhood, about 100m."
+msgstr "已将位置模糊到您所在的街区，误差约 100 米。"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3272,6 +3345,10 @@ msgstr "选择或添加频道以开始使用。"
 msgid "self-registered"
 msgstr "自助注册"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "发送"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3309,6 +3386,14 @@ msgstr "发送正在输入通知"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "未加密发送"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Video"
+msgstr "发送视频"
+
+#: src/components/ui/UploadPreviewModal.tsx
+msgid "Send Voice Message"
+msgstr "发送语音消息"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3432,9 +3517,25 @@ msgstr "未找到设置"
 msgid "Settings"
 msgstr "设置"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "共享"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "共享位置"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "共享屏幕"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "共享您的位置"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "与 {target} 共享您的位置。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3593,6 +3694,7 @@ msgstr "退出直播"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
 
@@ -3680,6 +3782,14 @@ msgstr "生成此消息的工作流已不在状态中"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "此账户从 {sessionCount} 个会话连接。每个会话的详细信息仅向账户持有者或 IRC 运营商披露。"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "此浏览器无法录音。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "此浏览器无法录像。"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "此聊天使用 Obby 的原生方案加密。请通过其他渠道核对指纹，然后将其标记为已验证。"
@@ -3691,6 +3801,10 @@ msgstr "此聊天使用 OTR 加密，可与其他 IRC 客户端兼容。请通�
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "此命令不需要参数。"
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "此设备目前无法获取定位。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -4291,6 +4405,10 @@ msgstr "您与 {nick} 的消息已加密。这些文件过大无法加密，将�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "您的个人网站"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Your precise position."
+msgstr "您的精确位置。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

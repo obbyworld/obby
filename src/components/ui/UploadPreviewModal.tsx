@@ -24,19 +24,47 @@ export function UploadPreviewModal({
 }: UploadPreviewModalProps) {
   if (files.length === 0) return null;
 
+  const isImage = !!previewUrl && files[0].type.startsWith("image/");
+  const isAudio = !!previewUrl && files[0].type.startsWith("audio/");
+  const isVideo = !!previewUrl && files[0].type.startsWith("video/");
+
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onCancel}
-      title={previewUrl ? t`Upload Image` : t`Upload Files`}
+      title={
+        isImage
+          ? t`Upload Image`
+          : isAudio
+            ? t`Send Voice Message`
+            : isVideo
+              ? t`Send Video`
+              : t`Upload Files`
+      }
       maxWidth="md"
     >
       <ModalBody>
-        {previewUrl && (
+        {isImage && (
           <div className="flex justify-center mb-4">
             <img
               src={previewUrl}
               alt={files[0].name}
+              className="max-w-full max-h-96 rounded-lg"
+            />
+          </div>
+        )}
+        {isAudio && (
+          <div className="flex justify-center mb-4">
+            {/* biome-ignore lint/a11y/useMediaCaption: a voice message has no captions to attach */}
+            <audio controls src={previewUrl} className="w-full" />
+          </div>
+        )}
+        {isVideo && (
+          <div className="flex justify-center mb-4">
+            {/* biome-ignore lint/a11y/useMediaCaption: a recorded clip has no captions to attach */}
+            <video
+              controls
+              src={previewUrl}
               className="max-w-full max-h-96 rounded-lg"
             />
           </div>
