@@ -109,6 +109,65 @@ html, body, #root {
   background-color: #202225;
 }
 
+/* A message that names us, or answers us. The class is doubled so the tint
+   survives the row's own hover, which Tailwind emits later at equal weight. */
+.message-aimed-at-us.message-aimed-at-us {
+  --message-ground: #3f3e3d;
+  --message-ground-hover: #46423c;
+  box-shadow: inset 2px 0 0 0 rgb(250 166 26 / 0.7);
+  background-color: rgb(250 166 26 / 0.045);
+}
+
+.message-aimed-at-us.message-aimed-at-us:hover {
+  background-color: rgb(250 166 26 / 0.08);
+}
+
+/* What a message row is sitting on, so anything that has to blend into it can
+   ask rather than guess. A row that carries a tint answers with the colour it
+   actually ends up. */
+:root {
+  --message-ground: theme('colors.discord.dark-200');
+  --message-ground-hover: theme('colors.discord.message-hover');
+}
+
+/* Hides the rest of a long message behind the row it sits on. */
+.message-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--message-ground)
+  );
+}
+
+.group:hover .message-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--message-ground-hover)
+  );
+}
+
+/* Where our name actually appears, so a long message does not have to be read
+   through to find the word that pulled us in. */
+.addressed-name {
+  background-color: rgb(88 101 242 / 0.3);
+  color: #dee0fc;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-weight: 500;
+}
+
+/* The tint is the row's ground and nothing more, so anything drawn on top of
+   it keeps the colour it has on an ordinary row. These are what black/22 and
+   black/32 come to over the chat background. */
+.message-aimed-at-us [data-reply-quote] {
+  background-color: #2a2d31;
+}
+
+.message-aimed-at-us [data-reply-quote]:hover {
+  background-color: #25272b;
+}
+
 /* The desktop app's screen-region windows are see-through: the page must not
    paint its own background over the desktop showing underneath. */
 html.overlay-window,

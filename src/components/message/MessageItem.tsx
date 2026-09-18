@@ -13,6 +13,7 @@ import {
   isUndecryptableMessage,
   isUnprotectedMessage,
 } from "../../lib/e2ee/messageFlags";
+import { highlightNames } from "../../lib/highlightNames";
 import ircClient from "../../lib/ircClient";
 import {
   isUrlFromFilehost,
@@ -407,7 +408,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
   const htmlContent = useMemo(() => {
     const keyPrefix = message.id || message.msgid || "msg";
-    return renderWithCustomEmoji(
+    const body = renderWithCustomEmoji(
       messageContent,
       resolveEmoji,
       (subtext, key) =>
@@ -419,12 +420,16 @@ export const MessageItem = memo((props: MessageItemProps) => {
         ),
       `${keyPrefix}-em`,
     );
+    // A reply says who it answers on its own, so only a name said out loud in
+    // the text needs pointing at.
+    return highlightNames(body, message.mentioned);
   }, [
     messageContent,
     showExternalContent,
     enableMarkdownRendering,
     message.id,
     message.msgid,
+    message.mentioned,
     resolveEmoji,
   ]);
 
@@ -754,6 +759,14 @@ export const MessageItem = memo((props: MessageItemProps) => {
     }
   };
 
+  // Someone said our name, or answered something we said. Either way the row
+  // is worth finding again while scrolling past everything else.
+  const isAimedAtUs =
+    !isCurrentUser &&
+    (message.mentioned.length > 0 ||
+      (!!ircCurrentUser &&
+        message.replyMessage?.userId === ircCurrentUser.username));
+
   const isClickable =
     message.userId !== "system" && ircCurrentUser?.username !== username;
 
@@ -766,7 +779,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
       data-md-source={messageContent}
       className={`px-4 hover:bg-discord-message-hover group relative transition-colors duration-150 ${
         showHeader ? "mt-4" : "py-0.5"
-      }${isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""}${
+      }${isAimedAtUs ? " message-aimed-at-us" : ""}${
+        isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""
+      }${
         isUnprotected
           ? " border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
           : isUndecryptable
