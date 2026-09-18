@@ -460,6 +460,7 @@ msgstr "すべて"
 msgid "All Content"
 msgstr "すべてのコンテンツ"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "ブラウザは、マイクまたはカメラへのアクセスを許可
 msgid "Calls"
 msgstr "通話"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "ワークフローをキャンセル"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "キャンセル済み"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "現在地を中央に表示"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "視聴者に戻す"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "説明（任意、例：「Q3ベータテスター」）"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "保留中"
 msgid "Permanent"
 msgstr "永続的"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "写真"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "ピクチャーインピクチャー"
@@ -3004,9 +3016,17 @@ msgstr "挙手する"
 msgid "ran"
 msgstr "が実行"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "録画の最大の長さに達したため、ここで録画を停止しました。"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "録音・録画の最大時間に達したため停止しました。送信するか、破棄してください。"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "アップロードのサイズ上限に達したため、ここで録画を停止しました。"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "画面を録画"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "画面を録画"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "動画を録画"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "チャットで応答しました"
 msgid "Response message is no longer in view"
 msgstr "応答メッセージは表示されていません"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "撮り直す"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "変更された鍵を確認…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "鍵を確認"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "近隣エリアまで丸めます（誤差約100m）。"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "チャンネルを選択または追加して始めましょう。"
 msgid "self-registered"
 msgstr "自己登録"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "送信"
@@ -3668,6 +3685,10 @@ msgstr "{serverName} でボイスチャンネルを開始"
 msgid "Start Private Message"
 msgstr "プライベートメッセージを開始"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "録画を開始"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "ビデオを開始"
@@ -3697,6 +3718,10 @@ msgstr "配信を降りる"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "録画を停止"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "停止"
 msgid "suspended"
 msgstr "一時停止中"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "カメラを切り替える"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "システム"
@@ -3737,6 +3766,10 @@ msgstr "システム"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "システムのデフォルト"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "写真を撮る"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRCサーバーは、サーバー間リンクのセキュリティレベ
 msgid "The network split and rejoined. ✅"
 msgstr "ネットワークが分割され、再接続されました。✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "今撮った写真"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "このチャンネルに表示されるトピックです。すべてのユーザーがトピックを閲覧できます。"
@@ -3786,6 +3823,7 @@ msgstr "このアカウントは {sessionCount} 個のセッションから接�
 msgid "This browser cannot record audio."
 msgstr "お使いのブラウザでは音声を録音できません。"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "お使いのブラウザでは動画を録画できません。"
@@ -4148,6 +4186,7 @@ msgstr "とても厳格"
 msgid "via @{0}"
 msgstr "@{0} 経由"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "動画"
@@ -4405,10 +4444,6 @@ msgstr "{nick} とのメッセージは暗号化されています。これら�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "個人ウェブサイト"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "正確な現在地です。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

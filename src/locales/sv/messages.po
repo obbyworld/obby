@@ -460,6 +460,7 @@ msgstr "Alla"
 msgid "All Content"
 msgstr "Allt innehåll"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Webbläsare visar dina högtalare först när du har tillåtit åtkomst 
 msgid "Calls"
 msgstr "Samtal"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "Avbryt arbetsflöde"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "avbruten"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Centrera på din plats"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "Gör om till tittare"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beskrivning (valfri, t.ex. \"Betatestare Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "väntande"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Bild-i-bild"
@@ -3004,9 +3016,17 @@ msgstr "Räck upp handen"
 msgid "ran"
 msgstr "körde"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Den maximala inspelningslängden nåddes, så inspelningen stoppades här."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Maximal inspelningslängd har nåtts. Inspelningen stoppades: skicka den eller förkasta den."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Uppladdningens storleksgräns nåddes, så inspelningen stoppades här."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Spela in skärm"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Spela in skärm"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Spela in video"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "Svarade i chatten"
 msgid "Response message is no longer in view"
 msgstr "Svarsmeddelandet visas inte längre"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Ta om"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Granska ändrad nyckel…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Granska nyckeln"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Avrundad till ditt område, cirka 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Välj eller lägg till en kanal för att komma igång."
 msgid "self-registered"
 msgstr "självregistrerad"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Skicka"
@@ -3668,6 +3685,10 @@ msgstr "Starta en röstkanal på {serverName}"
 msgid "Start Private Message"
 msgstr "Starta privat meddelande"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Starta inspelning"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Starta video"
@@ -3697,6 +3718,10 @@ msgstr "Kliv ur sändningen"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stoppa"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Stoppa inspelning"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Stäng av"
 msgid "suspended"
 msgstr "avstängd"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Byt kamera"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "System"
@@ -3737,6 +3766,10 @@ msgstr "System"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Systemstandard"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Ta foto"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRC-servern har rapporterat att dess server-till-server-länkar har en l
 msgid "The network split and rejoined. ✅"
 msgstr "Nätverket splittrades och återanslöts. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Fotot du just tog"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "Ämnet som visas för den här kanalen. Alla användare kan se ämnet."
@@ -3786,6 +3823,7 @@ msgstr "Det här kontot är anslutet från {sessionCount} sessioner. Detaljer pe
 msgid "This browser cannot record audio."
 msgstr "Den här webbläsaren kan inte spela in ljud."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Den här webbläsaren kan inte spela in video."
@@ -4148,6 +4186,7 @@ msgstr "Mycket strikt"
 msgid "via @{0}"
 msgstr "via @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4405,10 +4444,6 @@ msgstr "Dina meddelanden med {nick} är krypterade. De här filerna är för sto
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Din personliga webbplats"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Din exakta position."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

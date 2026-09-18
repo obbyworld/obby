@@ -37,11 +37,13 @@ export function buildLocationShareUrl(
   latitude: number,
   longitude: number,
   precision: LocationPrecision,
+  zoom?: number,
 ): string {
   const lat = roundCoordinate(latitude, precision);
   const lon = roundCoordinate(longitude, precision);
-  const zoom = precision === "exact" ? EXACT_ZOOM : APPROXIMATE_ZOOM;
-  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
+  const mapZoom =
+    zoom ?? (precision === "exact" ? EXACT_ZOOM : APPROXIMATE_ZOOM);
+  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${mapZoom}/${lat}/${lon}`;
 }
 
 export interface ParsedLocationUrl {

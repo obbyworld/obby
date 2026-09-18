@@ -460,6 +460,7 @@ msgstr "Усі"
 msgid "All Content"
 msgstr "Весь вміст"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Браузери показують ваші динаміки лише �
 msgid "Calls"
 msgstr "Дзвінки"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "Скасувати робочий процес"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "скасовано"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Відцентрувати на вашому місцезнаходженні"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "Перевести у глядачі"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Опис (необов'язково, напр. \"Бета-тестувальники Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "очікує"
 msgid "Permanent"
 msgstr "Постійний"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Фото"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Картинка в картинці"
@@ -3004,9 +3016,17 @@ msgstr "Підняти руку"
 msgid "ran"
 msgstr "виконав"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Досягнуто максимальної тривалості запису, тому запис зупинено."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Досягнуто максимальної тривалості запису. Запис зупинено: надішліть його або видаліть."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Досягнуто ліміту розміру завантаження, тому запис зупинено."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Записати екран"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Записати екран"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Записати відео"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "Відповів у чаті"
 msgid "Response message is no longer in view"
 msgstr "Повідомлення з відповіддю більше не відображається"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Перезняти"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Переглянути змінений ключ…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Перевірити ключ"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Округлено до вашого району, приблизно 100 м."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Виберіть або додайте канал для початку.
 msgid "self-registered"
 msgstr "самостійно зареєстрований"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Надіслати"
@@ -3668,6 +3685,10 @@ msgstr "Розпочати голосовий канал на {serverName}"
 msgid "Start Private Message"
 msgstr "Почати приватне повідомлення"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Почати запис"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Увімкнути відео"
@@ -3697,6 +3718,10 @@ msgstr "Завершити трансляцію"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Зупинити"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Зупинити запис"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Призупинити"
 msgid "suspended"
 msgstr "призупинено"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Перемкнути камеру"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Система"
@@ -3737,6 +3766,10 @@ msgstr "Система"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Типове значення системи"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Зробити фото"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRC-сервер повідомив, що зв'язки між серв�
 msgid "The network split and rejoined. ✅"
 msgstr "Мережа розділилась і возз'єдналась. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Щойно зроблене фото"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "Тема, яка відображатиметься для цього каналу. Усі користувачі можуть бачити тему."
@@ -3786,6 +3823,7 @@ msgstr "Цей обліковий запис підключено з {sessionCou
 msgid "This browser cannot record audio."
 msgstr "Цей браузер не може записувати аудіо."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Цей браузер не може записувати відео."
@@ -4148,6 +4186,7 @@ msgstr "Дуже строгий"
 msgid "via @{0}"
 msgstr "через @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Відео"
@@ -4405,10 +4444,6 @@ msgstr "Ваші повідомлення з {nick} зашифровані. Ці
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Ваш особистий веб-сайт"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Ваше точне місцезнаходження."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

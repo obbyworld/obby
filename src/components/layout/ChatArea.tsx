@@ -4,6 +4,7 @@ import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  FaCamera,
   FaDesktop,
   FaGift,
   FaList,
@@ -11,7 +12,6 @@ import {
   FaMicrophone,
   FaPlus,
   FaTimes,
-  FaVideo,
 } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
@@ -82,6 +82,7 @@ import BlankPage from "../ui/BlankPage";
 import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
+import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
@@ -182,6 +183,7 @@ export const ChatArea: React.FC<{
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [recordingKind, setRecordingKind] = useState<RecordingKind | null>(
     null,
   );
@@ -2567,12 +2569,12 @@ export const ChatArea: React.FC<{
                     onClick: () => setRecordingKind("audio"),
                   },
                   {
-                    id: "record-video",
+                    id: "camera",
                     show: canRecordVideo,
                     divider: !canRecordAudio && canRecordVideo,
-                    icon: <FaVideo />,
-                    label: <Trans>Record Video</Trans>,
-                    onClick: () => setRecordingKind("video"),
+                    icon: <FaCamera />,
+                    label: <Trans>Camera</Trans>,
+                    onClick: () => setIsCameraOpen(true),
                   },
                   {
                     id: "record-screen",
@@ -3020,6 +3022,12 @@ export const ChatArea: React.FC<{
           void handleFilesUpload(pendingUpload.files);
           closePendingUpload();
         }}
+      />
+      <CameraCaptureModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCaptured={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
       />
       <RecordingPanel
         kind={recordingKind ?? "audio"}

@@ -2,6 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import type { ReactNode } from "react";
 import { LoadingSpinner } from "../LoadingSpinner";
+import { SegmentedControl } from "../SegmentedControl";
 
 export const SELECT_CLASSES =
   "min-h-11 w-full rounded bg-discord-dark-400 px-3 py-2 text-discord-text-normal focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50";
@@ -90,30 +91,16 @@ export const CameraFacingToggle: React.FC<CameraFacingToggleProps> = ({
   onChange,
   disabled,
 }) => (
-  <div className="flex gap-2">
-    <button
-      type="button"
-      onClick={() => onChange("user")}
-      disabled={disabled}
-      className={`min-h-11 flex-1 rounded px-3 py-2 text-sm disabled:opacity-50 ${
-        facing === "user"
-          ? "bg-discord-primary text-white"
-          : "bg-discord-dark-400 text-discord-text-normal"
-      }`}
-    >
-      <Trans context="camera facing">Front</Trans>
-    </button>
-    <button
-      type="button"
-      onClick={() => onChange("environment")}
-      disabled={disabled}
-      className={`min-h-11 flex-1 rounded px-3 py-2 text-sm disabled:opacity-50 ${
-        facing === "environment"
-          ? "bg-discord-primary text-white"
-          : "bg-discord-dark-400 text-discord-text-normal"
-      }`}
-    >
-      <Trans context="camera facing">Back</Trans>
-    </button>
-  </div>
+  <SegmentedControl
+    value={facing}
+    onChange={onChange}
+    disabled={disabled}
+    segments={[
+      { value: "user", label: <Trans context="camera facing">Front</Trans> },
+      {
+        value: "environment",
+        label: <Trans context="camera facing">Back</Trans>,
+      },
+    ]}
+  />
 );

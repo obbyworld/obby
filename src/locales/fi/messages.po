@@ -460,6 +460,7 @@ msgstr "Kaikki"
 msgid "All Content"
 msgstr "Kaikki sisältö"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Selaimet paljastavat kaiuttimesi vasta, kun olet sallinut mikrofonin tai
 msgid "Calls"
 msgstr "Puhelut"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "Peruuta työnkulku"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "peruutettu"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Keskitä sijaintiisi"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "Alenna katsojaksi"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "odottaa"
 msgid "Permanent"
 msgstr "Pysyvä"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Kuva"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Kuva kuvassa"
@@ -3004,9 +3016,17 @@ msgstr "Nosta käsi"
 msgid "ran"
 msgstr "suoritti"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Tallennuksen enimmäispituus saavutettiin, joten tallennus pysähtyi tähän."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Nauhoituksen enimmäispituus saavutettiin. Nauhoitus pysäytettiin: lähetä se tai hylkää se."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Latauksen kokoraja saavutettiin, joten tallennus pysähtyi tähän."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Nauhoita näyttö"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Nauhoita näyttö"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Nauhoita video"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "Vastasi keskustelussa"
 msgid "Response message is no longer in view"
 msgstr "Vastausviesti ei ole enää näkyvissä"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Ota uudelleen"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Tarkista muuttunut avain…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Tarkista avain"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Pyöristetty naapurustoosi, noin 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Valitse kanava tai lisää uusi päästäksesi alkuun."
 msgid "self-registered"
 msgstr "itse rekisteröitynyt"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Lähetä"
@@ -3668,6 +3685,10 @@ msgstr "Käynnistä äänikanava palvelimella {serverName}"
 msgid "Start Private Message"
 msgstr "Aloita yksityiskeskustelu"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Aloita tallennus"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Käynnistä video"
@@ -3697,6 +3718,10 @@ msgstr "Poistu striimistä"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Pysäytä"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Lopeta tallennus"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Jäädytä"
 msgid "suspended"
 msgstr "jäädytetty"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Vaihda kameraa"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Järjestelmä"
@@ -3737,6 +3766,10 @@ msgstr "Järjestelmä"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Järjestelmän oletus"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Ota kuva"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRC-palvelin on ilmoittanut, että sen palvelimien väliset linkit ovat 
 msgid "The network split and rejoined. ✅"
 msgstr "Verkko jakautui ja yhdistyi uudelleen. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Juuri ottamasi kuva"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "Aihe, joka näytetään tälle kanavalle. Kaikki käyttäjät voivat nähdä aiheen."
@@ -3786,6 +3823,7 @@ msgstr "Tämä tili on yhdistetty {sessionCount} istunnosta. Istuntokohtaiset ti
 msgid "This browser cannot record audio."
 msgstr "Tämä selain ei voi nauhoittaa ääntä."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Tämä selain ei voi nauhoittaa videota."
@@ -4148,6 +4186,7 @@ msgstr "Hyvin tiukka"
 msgid "via @{0}"
 msgstr "kautta @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4405,10 +4444,6 @@ msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. Nämä tiedostot ova
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Henkilökohtainen verkkosivustosi"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Tarkka sijaintisi."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

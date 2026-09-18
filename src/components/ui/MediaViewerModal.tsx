@@ -35,6 +35,14 @@ import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
 import type { MediaDescriptor } from "../../lib/e2ee/media";
 import { parseLocationShareUrl } from "../../lib/geolocation";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
+import {
+  clampMapZoom,
+  loadLeaflet,
+  MAP_ATTRIBUTION,
+  MAP_MAX_ZOOM,
+  MAP_MIN_ZOOM,
+  MAP_PIN_SVG,
+} from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -391,29 +399,6 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
   );
 };
 
-// Classic teardrop map pin, matching the marker drawn on the static preview
-// card — kept as a plain SVG string so the Leaflet layer needs no React.
-const MAP_PIN_SVG = `<svg width="28" height="40" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
-  <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24s12-15 12-24c0-6.627-5.373-12-12-12z" fill="#dc2626"/>
-  <circle cx="12" cy="12" r="5" fill="#fff"/>
-</svg>`;
-
-const MAP_VIEWER_MIN_ZOOM = 2;
-const MAP_VIEWER_MAX_ZOOM = 19;
-
-let leafletPromise: Promise<typeof import("leaflet")> | null = null;
-// Leaflet (and its CSS) is fetched only when a map is actually opened, same
-// as react-pdf and react-player above — nothing map-related ships in the main bundle.
-function loadLeaflet() {
-  if (!leafletPromise) {
-    leafletPromise = Promise.all([
-      import("leaflet"),
-      import("leaflet/dist/leaflet.css"),
-    ]).then(([mod]) => mod);
-  }
-  return leafletPromise;
-}
-
 /** Interactive OpenStreetMap view. Mounted only while its entry is the one
  *  currently open, so tiles are never fetched for a map nobody opened. */
 const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
@@ -435,20 +420,16 @@ const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
     let map: LeafletMap | undefined;
     loadLeaflet().then((L) => {
       if (cancelled || !containerRef.current) return;
-      const clampedZoom = Math.min(
-        MAP_VIEWER_MAX_ZOOM,
-        Math.max(MAP_VIEWER_MIN_ZOOM, zoom),
-      );
+      const clampedZoom = clampMapZoom(zoom);
       map = L.map(containerRef.current, {
         center: [latitude, longitude],
         zoom: clampedZoom,
-        minZoom: MAP_VIEWER_MIN_ZOOM,
-        maxZoom: MAP_VIEWER_MAX_ZOOM,
+        minZoom: MAP_MIN_ZOOM,
+        maxZoom: MAP_MAX_ZOOM,
       });
       L.tileLayer(TILE_URL_TEMPLATE, {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: MAP_VIEWER_MAX_ZOOM,
+        attribution: MAP_ATTRIBUTION,
+        maxZoom: MAP_MAX_ZOOM,
       }).addTo(map);
       L.marker([latitude, longitude], {
         icon: L.divIcon({
@@ -470,6 +451,7 @@ const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
   return (
     <div
       data-testid="map-viewer"
+      data-no-gesture=""
       className="pointer-events-auto rounded overflow-hidden shadow-lg"
       style={{ width: "min(90vw, 900px)", height: "min(80vh, 640px)" }}
       onClick={(e) => e.stopPropagation()}

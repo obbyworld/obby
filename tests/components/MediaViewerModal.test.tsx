@@ -852,6 +852,33 @@ describe("map", () => {
     expect(options.center).toEqual([51.5, -0.12]);
   });
 
+  // The viewer's own pan and pinch handlers bail on anything inside a
+  // [data-no-gesture] element, which is how Leaflet gets to keep the touches
+  // it needs for dragging and pinch-zooming on a phone.
+  test("touches on the map belong to the map", async () => {
+    vi.mocked(store.getChannelMessages).mockReturnValueOnce([
+      locationMessage,
+    ] as unknown as ReturnType<typeof store.getChannelMessages>);
+
+    render(
+      <MediaViewerModal
+        isOpen={true}
+        url={LOCATION_URL}
+        sourceMsgId="msg1"
+        onClose={vi.fn()}
+        serverId="s1"
+        channelId="c1"
+      />,
+    );
+
+    await waitFor(() => screen.getByTestId("map-viewer"));
+    await waitFor(() => expect(leafletMocks.mapSpy).toHaveBeenCalled());
+
+    expect(
+      screen.getByTestId("map-viewer").closest("[data-no-gesture]"),
+    ).not.toBeNull();
+  });
+
   test("the external-open control routes through the warning modal for a map", async () => {
     vi.mocked(store.getChannelMessages).mockReturnValueOnce([
       locationMessage,

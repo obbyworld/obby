@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -13,6 +14,44 @@ vi.mock("../../src/lib/geolocation", async () => {
   >("../../src/lib/geolocation");
   return { ...actual, getCurrentLocation: vi.fn() };
 });
+
+const leaflet = vi.hoisted(() => {
+  const handlers: Record<string, () => void> = {};
+  const instance = {
+    on: (event: string, callback: () => void) => {
+      handlers[event] = callback;
+    },
+    getCenter: vi.fn(() => ({ lat: 48.8, lng: 2.3 })),
+    getZoom: vi.fn(() => 16),
+    setView: vi.fn(),
+    setZoom: vi.fn(),
+    invalidateSize: vi.fn(),
+    remove: vi.fn(),
+  };
+  return {
+    handlers,
+    instance,
+    mapSpy: vi.fn(
+      (
+        _el: HTMLElement,
+        _options: { center: [number, number]; zoom: number },
+      ) => instance,
+    ),
+    tileLayerSpy: vi.fn(() => ({ addTo: vi.fn() })),
+  };
+});
+
+vi.mock("leaflet", () => ({
+  map: leaflet.mapSpy,
+  tileLayer: leaflet.tileLayerSpy,
+}));
+vi.mock("leaflet/dist/leaflet.css", () => ({}));
+
+/** The map reports its centre only once it settles, so a drag is that event. */
+async function dragMapToCentre() {
+  await waitFor(() => expect(leaflet.mapSpy).toHaveBeenCalled());
+  act(() => leaflet.handlers.moveend?.());
+}
 
 import { LocationShareModal } from "../../src/components/ui/LocationShareModal";
 import {
@@ -83,7 +122,7 @@ describe("LocationShareModal", () => {
     );
   });
 
-  it("previews the map at the position the chosen precision would send", async () => {
+  it("opens the map on the device position", async () => {
     mockGetCurrentLocation.mockResolvedValue({
       latitude: 40.7127837,
       longitude: -74.0059413,
@@ -98,20 +137,106 @@ describe("LocationShareModal", () => {
     );
     await waitForShareEnabled();
 
-    const approximateTile = screen
-      .getAllByRole("presentation", { hidden: true })
-      .find((img) => img.tagName === "IMG");
-    expect(approximateTile).toBeTruthy();
-    expect(approximateTile?.getAttribute("src")).toContain("14/");
+    await waitFor(() => expect(leaflet.mapSpy).toHaveBeenCalled());
+    const options = leaflet.mapSpy.mock.calls[0][1];
+    expect(options.center).toEqual([40.7127837, -74.0059413]);
+    expect(options.zoom).toBe(14);
+  });
+
+  it("shares the place the map was dragged to", async () => {
+    mockGetCurrentLocation.mockResolvedValue({
+      latitude: 40.7127837,
+      longitude: -74.0059413,
+    });
+    const onShare = vi.fn();
+    render(
+      <LocationShareModal
+        isOpen
+        target="alice"
+        onCancel={vi.fn()}
+        onShare={onShare}
+      />,
+    );
+    await waitForShareEnabled();
+    await dragMapToCentre();
+
+    fireEvent.click(screen.getByRole("button", { name: /^share$/i }));
+
+    expect(onShare).toHaveBeenCalledWith(
+      "https://www.openstreetmap.org/?mlat=48.8&mlon=2.3#map=16/48.8/2.3",
+    );
+  });
+
+  it("rounds the dragged pin when the position stays approximate", async () => {
+    mockGetCurrentLocation.mockResolvedValue({ latitude: 1, longitude: 2 });
+    const onShare = vi.fn();
+    leaflet.instance.getCenter.mockReturnValueOnce({
+      lat: 48.85837,
+      lng: 2.29448,
+    });
+    render(
+      <LocationShareModal
+        isOpen
+        target="alice"
+        onCancel={vi.fn()}
+        onShare={onShare}
+      />,
+    );
+    await waitForShareEnabled();
+    await dragMapToCentre();
+
+    fireEvent.click(screen.getByRole("button", { name: /^share$/i }));
+
+    expect(onShare).toHaveBeenCalledWith(
+      "https://www.openstreetmap.org/?mlat=48.858&mlon=2.294#map=16/48.858/2.294",
+    );
+  });
+
+  // Pressing a precision is how someone gets back after wandering off, so it
+  // returns to their own position every time, including the one already on.
+  it("puts the map back on the device position on every precision press", async () => {
+    mockGetCurrentLocation.mockResolvedValue({ latitude: 1, longitude: 2 });
+    render(
+      <LocationShareModal
+        isOpen
+        target="alice"
+        onCancel={vi.fn()}
+        onShare={vi.fn()}
+      />,
+    );
+    await waitForShareEnabled();
+    await dragMapToCentre();
 
     fireEvent.click(screen.getByRole("button", { name: /^exact$/i }));
+    expect(leaflet.instance.setView).toHaveBeenLastCalledWith([1, 2], 17);
 
-    await waitFor(() => {
-      const exactTile = screen
-        .getAllByRole("presentation", { hidden: true })
-        .find((img) => img.tagName === "IMG");
-      expect(exactTile?.getAttribute("src")).toContain("17/");
-    });
+    fireEvent.click(screen.getByRole("button", { name: /^exact$/i }));
+    expect(leaflet.instance.setView).toHaveBeenCalledTimes(2);
+
+    fireEvent.click(screen.getByRole("button", { name: /^approximate$/i }));
+    expect(leaflet.instance.setView).toHaveBeenLastCalledWith([1, 2], 14);
+  });
+
+  it("shares the device position again after a precision press", async () => {
+    mockGetCurrentLocation.mockResolvedValue({ latitude: 1, longitude: 2 });
+    const onShare = vi.fn();
+    render(
+      <LocationShareModal
+        isOpen
+        target="alice"
+        onCancel={vi.fn()}
+        onShare={onShare}
+      />,
+    );
+    await waitForShareEnabled();
+    await dragMapToCentre();
+
+    fireEvent.click(screen.getByRole("button", { name: /^exact$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^share$/i }));
+
+    expect(onShare).toHaveBeenCalledWith(
+      "https://www.openstreetmap.org/?mlat=1&mlon=2#map=17/1/2",
+    );
   });
 
   it("cancelling sends nothing", async () => {

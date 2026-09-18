@@ -460,6 +460,7 @@ msgstr "Toate"
 msgid "All Content"
 msgstr "Tot conținutul"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Browserele afișează difuzoarele doar după ce permiteți accesul la mi
 msgid "Calls"
 msgstr "Apeluri"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "Anulează fluxul de lucru"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "anulat"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Centrează pe locația ta"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "Retrogradează la spectator"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descriere (opțional, ex. „Testeri beta T3”)"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "în așteptare"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Fotografie"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Imagine în imagine"
@@ -3004,9 +3016,17 @@ msgstr "Ridică mâna"
 msgid "ran"
 msgstr "a executat"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "S-a atins durata maximă de înregistrare, așa că înregistrarea s-a oprit aici."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "S-a atins durata maximă de înregistrare. Înregistrarea s-a oprit: trimite-o sau renunță la ea."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "S-a atins limita de mărime pentru încărcare, așa că înregistrarea s-a oprit aici."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Înregistrează ecranul"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Înregistrează ecranul"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Înregistrează video"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "A răspuns în chat"
 msgid "Response message is no longer in view"
 msgstr "Mesajul de răspuns nu mai este vizibil"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Refă"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Verifică cheia schimbată…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Verifică cheia"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Rotunjită la cartierul tău, aproximativ 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Selectează sau adaugă un canal pentru a începe."
 msgid "self-registered"
 msgstr "autoînregistrat"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Trimite"
@@ -3668,6 +3685,10 @@ msgstr "Pornește un canal vocal pe {serverName}"
 msgid "Start Private Message"
 msgstr "Începe un mesaj privat"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Începe înregistrarea"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Pornește camera video"
@@ -3697,6 +3718,10 @@ msgstr "Renunță la transmisie"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Oprește"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Oprește înregistrarea"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Suspendă"
 msgid "suspended"
 msgstr "suspendat"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Schimbă camera"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Sistem"
@@ -3737,6 +3766,10 @@ msgstr "Sistem"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Setare implicită a sistemului"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Fă o fotografie"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "Serverul IRC a raportat că legăturile sale server-la-server au un nive
 msgid "The network split and rejoined. ✅"
 msgstr "Rețeaua s-a împărțit și s-a reconectat. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Fotografia pe care tocmai ai făcut-o"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "Subiectul afișat pentru acest canal. Toți utilizatorii îl pot vedea."
@@ -3786,6 +3823,7 @@ msgstr "Acest cont este conectat din {sessionCount} sesiuni. Detaliile per sesiu
 msgid "This browser cannot record audio."
 msgstr "Acest browser nu poate înregistra audio."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Acest browser nu poate înregistra video."
@@ -4148,6 +4186,7 @@ msgstr "Foarte strict"
 msgid "via @{0}"
 msgstr "prin @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4405,10 +4444,6 @@ msgstr "Mesajele tale cu {nick} sunt criptate. Aceste fișiere sunt prea mari pe
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Site-ul dvs. web personal"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Poziția ta exactă."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

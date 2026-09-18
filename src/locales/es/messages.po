@@ -460,6 +460,7 @@ msgstr "Todos"
 msgid "All Content"
 msgstr "Todo el contenido"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Los navegadores solo muestran tus altavoces cuando has permitido el acce
 msgid "Calls"
 msgstr "Llamadas"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "Cancelar flujo de trabajo"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "cancelado"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Centrar en tu ubicación"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "Degradar a espectador"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descripción (opcional, p. ej. \"Probadores beta T3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "pendiente"
 msgid "Permanent"
 msgstr "Permanente"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Imagen en imagen"
@@ -3004,9 +3016,17 @@ msgstr "Levantar la mano"
 msgid "ran"
 msgstr "ejecutó"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Se alcanzó la duración máxima de grabación, así que la grabación se detuvo aquí."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Se alcanzó la duración máxima de grabación. La grabación se detuvo: envíala o descártala."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Se alcanzó el límite de tamaño de subida, así que la grabación se detuvo aquí."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Grabar pantalla"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Grabar pantalla"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Grabar video"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "Respondió en el chat"
 msgid "Response message is no longer in view"
 msgstr "El mensaje de respuesta ya no está a la vista"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Repetir"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Revisar la clave cambiada…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Revisar la clave"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Redondeada a tu barrio, unos 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Selecciona o agrega un canal para comenzar."
 msgid "self-registered"
 msgstr "autorregistrado"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Enviar"
@@ -3668,6 +3685,10 @@ msgstr "Iniciar un canal de voz en {serverName}"
 msgid "Start Private Message"
 msgstr "Iniciar mensaje privado"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Iniciar grabación"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Iniciar video"
@@ -3697,6 +3718,10 @@ msgstr "Dejar la transmisión"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Detener"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Detener grabación"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Suspender"
 msgid "suspended"
 msgstr "suspendido"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Cambiar de cámara"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Sistema"
@@ -3737,6 +3766,10 @@ msgstr "Sistema"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Predeterminado del sistema"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Hacer foto"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "El servidor IRC ha informado que sus enlaces entre servidores tienen un 
 msgid "The network split and rejoined. ✅"
 msgstr "La red se dividió y se reconectó. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "La foto que acabas de hacer"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "El tema que se mostrará para este canal. Todos los usuarios pueden ver el tema."
@@ -3786,6 +3823,7 @@ msgstr "Esta cuenta está conectada desde {sessionCount} sesiones. Los detalles 
 msgid "This browser cannot record audio."
 msgstr "Este navegador no puede grabar audio."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Este navegador no puede grabar video."
@@ -4148,6 +4186,7 @@ msgstr "Muy estricto"
 msgid "via @{0}"
 msgstr "vía @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4405,10 +4444,6 @@ msgstr "Tus mensajes con {nick} están cifrados. Estos archivos son demasiado gr
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Tu sitio web personal"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Tu posición precisa."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

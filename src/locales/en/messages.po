@@ -459,6 +459,7 @@ msgstr "All"
 msgid "All Content"
 msgstr "All Content"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -723,6 +724,8 @@ msgstr "Browsers only reveal your speakers once you have allowed access to a mic
 msgid "Calls"
 msgstr "Calls"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -773,6 +776,10 @@ msgstr "Cancel workflow"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "cancelled"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Centre on your location"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1337,6 +1344,7 @@ msgstr "Demote to viewer"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Description (optional, e.g. \"Beta testers Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2851,6 +2859,10 @@ msgstr "pending"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Photo"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Picture-in-picture"
@@ -3003,9 +3015,17 @@ msgstr "Raise hand"
 msgid "ran"
 msgstr "ran"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Reached the maximum recording length, so the recording stopped here."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Reached the maximum recording length. Recording stopped: send it, or discard it."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Reached the upload size limit, so the recording stopped here."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3071,10 +3091,6 @@ msgstr "Record screen"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Record Screen"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Record Video"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3172,6 +3188,10 @@ msgstr "Responded in chat"
 msgid "Response message is no longer in view"
 msgstr "Response message is no longer in view"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Retake"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3190,10 +3210,6 @@ msgstr "Review changed key…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Review key"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Rounded to your neighbourhood, about 100m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3344,6 +3360,7 @@ msgstr "Select or add a channel to get started."
 msgid "self-registered"
 msgstr "self-registered"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Send"
@@ -3667,6 +3684,10 @@ msgstr "Start a voice channel on {serverName}"
 msgid "Start Private Message"
 msgstr "Start Private Message"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Start recording"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Start video"
@@ -3696,6 +3717,10 @@ msgstr "Step off stream"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stop"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Stop recording"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3729,6 +3754,10 @@ msgstr "Suspend"
 msgid "suspended"
 msgstr "suspended"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Switch camera"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "System"
@@ -3736,6 +3765,10 @@ msgstr "System"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "System default"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Take photo"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3765,6 +3798,10 @@ msgstr "The IRC server has reported that its server-to-server links have a low s
 msgid "The network split and rejoined. ✅"
 msgstr "The network split and rejoined. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "The photo you just took"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "The topic that will be displayed for this channel. All users can see the topic."
@@ -3785,6 +3822,7 @@ msgstr "This account is connected from {sessionCount} sessions. Per-session deta
 msgid "This browser cannot record audio."
 msgstr "This browser cannot record audio."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "This browser cannot record video."
@@ -4147,6 +4185,7 @@ msgstr "Very Strict"
 msgid "via @{0}"
 msgstr "via @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4404,10 +4443,6 @@ msgstr "Your messages with {nick} are encrypted. These files are too large to en
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Your personal website"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Your precise position."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

@@ -460,6 +460,7 @@ msgstr "Tümü"
 msgid "All Content"
 msgstr "Tüm İçerik"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "Tarayıcılar, mikrofon veya kameraya erişime izin verene kadar hoparl�
 msgid "Calls"
 msgstr "Aramalar"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "İş akışını iptal et"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "iptal edildi"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Konumuna ortala"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "İzleyici yap"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Açıklama (isteğe bağlı, örn. \"Beta test ekibi Ç3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "beklemede"
 msgid "Permanent"
 msgstr "Kalıcı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Fotoğraf"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Resim içinde resim"
@@ -3004,9 +3016,17 @@ msgstr "El kaldır"
 msgid "ran"
 msgstr "çalıştırdı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Maksimum kayıt süresine ulaşıldı, kayıt burada durdu."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "Maksimum kayıt süresine ulaşıldı. Kayıt durduruldu: gönderebilirsin ya da silebilirsin."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Yükleme boyutu sınırına ulaşıldı, kayıt burada durdu."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "Ekran kaydet"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "Ekran kaydet"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "Video kaydet"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "Sohbette yanıtladı"
 msgid "Response message is no longer in view"
 msgstr "Yanıt mesajı artık görünümde değil"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Yeniden çek"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "Değişen anahtarı incele…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Anahtarı incele"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "Mahallene yuvarlanır, yaklaşık 100 m."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "Başlamak için bir kanal seçin veya ekleyin."
 msgid "self-registered"
 msgstr "kendi kaydı"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "Gönder"
@@ -3668,6 +3685,10 @@ msgstr "{serverName} sunucusunda ses kanalı başlat"
 msgid "Start Private Message"
 msgstr "Özel Mesaj Başlat"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Kaydı başlat"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Videoyu başlat"
@@ -3697,6 +3718,10 @@ msgstr "Yayından çık"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Durdur"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Kaydı durdur"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "Askıya al"
 msgid "suspended"
 msgstr "askıya alındı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Kamerayı değiştir"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Sistem"
@@ -3737,6 +3766,10 @@ msgstr "Sistem"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Sistem varsayılanı"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Fotoğraf çek"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRC sunucusu, sunucular arası bağlantılarının düşük güvenlik se
 msgid "The network split and rejoined. ✅"
 msgstr "Ağ bölündü ve yeniden birleşti. ✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Az önce çektiğin fotoğraf"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "Bu kanal için görüntülenecek konu. Tüm kullanıcılar konuyu görebilir."
@@ -3786,6 +3823,7 @@ msgstr "Bu hesap {sessionCount} oturumdan bağlı. Oturum başına ayrıntılar 
 msgid "This browser cannot record audio."
 msgstr "Bu tarayıcı ses kaydedemiyor."
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "Bu tarayıcı video kaydedemiyor."
@@ -4148,6 +4186,7 @@ msgstr "Çok Katı"
 msgid "via @{0}"
 msgstr "@{0} üzerinden"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -4405,10 +4444,6 @@ msgstr "{nick} ile mesajlarınız şifreli. Bu dosyalar şifrelenemeyecek kadar 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "Kişisel web siteniz"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "Tam konumun."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"

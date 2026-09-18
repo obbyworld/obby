@@ -1,17 +1,20 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useEffect, useState } from "react";
 import {
+  APPROXIMATE_ZOOM,
   buildLocationShareUrl,
-  type Coordinates,
   describeGeolocationError,
+  EXACT_ZOOM,
   getCurrentLocation,
   type LocationPrecision,
   roundCoordinate,
 } from "../../lib/geolocation";
 import BaseModal from "../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
-import { MapPreview } from "../message/MapPreview";
+import useStore from "../../store";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { LocationPicker, type PickedLocation } from "./LocationPicker";
+import { SegmentedControl } from "./SegmentedControl";
 
 interface LocationShareModalProps {
   isOpen: boolean;
@@ -22,13 +25,6 @@ interface LocationShareModalProps {
 
 type Status = "loading" | "ready" | "error";
 
-const toggleClasses = (active: boolean) =>
-  `min-h-11 flex-1 rounded px-3 py-2 text-sm disabled:opacity-50 ${
-    active
-      ? "bg-discord-primary text-white"
-      : "bg-discord-dark-400 text-discord-text-normal"
-  }`;
-
 // Every path that shares a location routes here: sending it can't be taken
 // back, and a rounded position must still be reviewed before it goes.
 export function LocationShareModal({
@@ -38,22 +34,33 @@ export function LocationShareModal({
   onShare,
 }: LocationShareModalProps) {
   const { t } = useLingui();
+  const isNarrowView = useStore((state) => state.ui.isNarrowView);
   const [status, setStatus] = useState<Status>("loading");
   const [error, setError] = useState<string | null>(null);
-  const [coords, setCoords] = useState<Coordinates | null>(null);
+  // Where the device says we are, kept apart from the pin so the map can be
+  // dragged away and brought back.
+  const [origin, setOrigin] = useState<PickedLocation | null>(null);
+  const [picked, setPicked] = useState<PickedLocation | null>(null);
   const [precision, setPrecision] = useState<LocationPrecision>("approximate");
+  // Bumped on every press so asking for the same precision twice still puts
+  // the map back where it started.
+  const [focusToken, setFocusToken] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
     setStatus("loading");
     setError(null);
-    setCoords(null);
+    setOrigin(null);
+    setPicked(null);
     setPrecision("approximate");
+    setFocusToken(0);
     let cancelled = false;
     getCurrentLocation()
       .then((c) => {
         if (cancelled) return;
-        setCoords(c);
+        const start = { ...c, zoom: APPROXIMATE_ZOOM };
+        setOrigin(start);
+        setPicked(start);
         setStatus("ready");
       })
       .catch((err) => {
@@ -66,23 +73,30 @@ export function LocationShareModal({
     };
   }, [isOpen]);
 
+  const choosePrecision = (next: LocationPrecision) => {
+    const zoom = next === "exact" ? EXACT_ZOOM : APPROXIMATE_ZOOM;
+    setPrecision(next);
+    setFocusToken((token) => token + 1);
+    if (origin) setPicked({ ...origin, zoom });
+  };
+
   const handleShare = () => {
-    if (!coords) return;
+    if (!picked) return;
     onShare(
-      buildLocationShareUrl(coords.latitude, coords.longitude, precision),
+      buildLocationShareUrl(
+        picked.latitude,
+        picked.longitude,
+        precision,
+        picked.zoom,
+      ),
     );
   };
 
-  const roundedLat = coords
-    ? roundCoordinate(coords.latitude, precision)
+  const roundedLat = picked
+    ? roundCoordinate(picked.latitude, precision)
     : null;
-  const roundedLon = coords
-    ? roundCoordinate(coords.longitude, precision)
-    : null;
-  // Same URL buildLocationShareUrl would send, so the preview always matches
-  // the precision the user is about to share.
-  const previewUrl = coords
-    ? buildLocationShareUrl(coords.latitude, coords.longitude, precision)
+  const roundedLon = picked
+    ? roundCoordinate(picked.longitude, precision)
     : null;
 
   return (
@@ -99,39 +113,33 @@ export function LocationShareModal({
         {status === "error" && error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
-        {status === "ready" && coords && (
-          <div className="space-y-4">
+        {status === "ready" && picked && (
+          <div className="space-y-4 flex-1 min-h-0 flex flex-col">
             <p className="text-sm text-discord-text-normal">
               <Trans>Share your location with {target}.</Trans>
             </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPrecision("approximate")}
-                className={toggleClasses(precision === "approximate")}
-              >
-                <Trans>Approximate</Trans>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPrecision("exact")}
-                className={toggleClasses(precision === "exact")}
-              >
-                <Trans>Exact</Trans>
-              </button>
-            </div>
-            <p className="text-xs text-discord-text-muted">
-              {precision === "approximate" ? (
-                <Trans>Rounded to your neighbourhood, about 100m.</Trans>
-              ) : (
-                <Trans>Your precise position.</Trans>
-              )}
-            </p>
-            {previewUrl && (
-              <div className="flex justify-center">
-                <MapPreview key={previewUrl} url={previewUrl} />
-              </div>
+            {origin && (
+              <LocationPicker
+                initial={origin}
+                onChange={setPicked}
+                focus={{
+                  zoom: precision === "exact" ? EXACT_ZOOM : APPROXIMATE_ZOOM,
+                  token: focusToken,
+                }}
+                className={isNarrowView ? "flex-1 min-h-0" : "h-60"}
+              />
             )}
+            <SegmentedControl
+              value={precision}
+              onChange={choosePrecision}
+              segments={[
+                {
+                  value: "approximate" as const,
+                  label: <Trans>Approximate</Trans>,
+                },
+                { value: "exact" as const, label: <Trans>Exact</Trans> },
+              ]}
+            />
             {roundedLat !== null && roundedLon !== null && (
               <p className="text-center font-mono text-xs text-discord-text-muted">
                 {roundedLat.toFixed(5)}, {roundedLon.toFixed(5)}

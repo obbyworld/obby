@@ -6,8 +6,12 @@ import { useMicLevelMeter } from "../../hooks/useMicLevelMeter";
 import {
   pickRecordingFormat,
   pickVideoRecordingFormat,
-  recordingFileName,
 } from "../../lib/audioRecording";
+import {
+  type AutoStopReason,
+  type LimitedRecording,
+  startLimitedRecording,
+} from "../../lib/limitedRecording";
 import {
   audioConstraints,
   captureScreen,
@@ -17,11 +21,6 @@ import {
   videoConstraints,
 } from "../../lib/mediaDevices";
 import { formatFileSize } from "../../lib/mediaUpload";
-import {
-  AUDIO_BITS_PER_SECOND,
-  MAX_RECORDING_MS,
-  VIDEO_BITS_PER_SECOND,
-} from "../../lib/recordingLimits";
 import useStore from "../../store";
 import { DockButton } from "../voice/DockButton";
 import { VideoTrackView } from "../voice/VideoTrackView";
@@ -54,7 +53,6 @@ function formatElapsed(ms: number): string {
 }
 
 type Status = "starting" | "recording" | "stopped" | "error";
-type AutoStopReason = "size-limit" | "duration-limit" | null;
 
 const FILE_PREFIX: Record<RecordingKind, string> = {
   audio: "voice-message",
@@ -92,7 +90,9 @@ export function RecordingPanel({
     MediaStreamTrack | undefined
   >(undefined);
   const [stoppedFile, setStoppedFile] = useState<File | null>(null);
-  const [autoStopReason, setAutoStopReason] = useState<AutoStopReason>(null);
+  const [autoStopReason, setAutoStopReason] = useState<AutoStopReason | null>(
+    null,
+  );
   const micLevel = useMicLevelMeter(meterStream);
 
   const onCloseRef = useRef(onClose);
@@ -103,30 +103,14 @@ export function RecordingPanel({
   const mountedRef = useRef(true);
   const genRef = useRef(0);
   const streamRef = useRef<MediaStream | null>(null);
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const bytesRef = useRef(0);
-  const startTimeRef = useRef(0);
-  const tickRef = useRef<number | null>(null);
-  const autoStopReasonRef = useRef<AutoStopReason>(null);
+  const recordingRef = useRef<LimitedRecording | null>(null);
 
   // Stops the tick, the recorder (without emitting a file), and every
   // captured track. Safe to call multiple times.
   const release = useCallback(() => {
     genRef.current++;
-    if (tickRef.current !== null) {
-      window.clearInterval(tickRef.current);
-      tickRef.current = null;
-    }
-    const recorder = recorderRef.current;
-    if (recorder) {
-      recorder.ondataavailable = null;
-      recorder.onstop = null;
-      if (recorder.state !== "inactive") recorder.stop();
-      recorderRef.current = null;
-    }
-    chunksRef.current = [];
-    bytesRef.current = 0;
+    recordingRef.current?.release();
+    recordingRef.current = null;
     if (streamRef.current) {
       for (const track of streamRef.current.getTracks()) track.stop();
       streamRef.current = null;
@@ -140,7 +124,6 @@ export function RecordingPanel({
   const start = useCallback(async () => {
     release();
     const generation = genRef.current;
-    autoStopReasonRef.current = null;
     setAutoStopReason(null);
     setStoppedFile(null);
 
@@ -180,9 +163,7 @@ export function RecordingPanel({
       } else {
         stream = await captureScreen(() => {
           if (generation !== genRef.current) return;
-          if (recorderRef.current?.state === "recording") {
-            recorderRef.current.stop();
-          }
+          recordingRef.current?.stop();
         });
       }
     } catch (err) {
@@ -204,67 +185,43 @@ export function RecordingPanel({
       setPreviewTrack(stream.getVideoTracks()[0]);
     }
 
-    const recorderOptions: MediaRecorderOptions = { mimeType: format.mimeType };
-    if (kind !== "audio") {
-      recorderOptions.videoBitsPerSecond = VIDEO_BITS_PER_SECOND;
-      recorderOptions.audioBitsPerSecond = AUDIO_BITS_PER_SECOND;
-    }
-    const recorder = new MediaRecorder(stream, recorderOptions);
-    chunksRef.current = [];
-    bytesRef.current = 0;
-    recorder.ondataavailable = (e) => {
-      if (e.data.size === 0) return;
-      chunksRef.current.push(e.data);
-      bytesRef.current += e.data.size;
-      if (mountedRef.current) setSizeBytes(bytesRef.current);
-      if (bytesRef.current >= maxBytes && recorder.state === "recording") {
-        autoStopReasonRef.current = "size-limit";
-        setAutoStopReason("size-limit");
-        recorder.stop();
-      }
-    };
-    recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: format.mimeType });
-      const file = new File(
-        [blob],
-        recordingFileName(FILE_PREFIX[kind], format.extension),
-        { type: format.mimeType },
-      );
-      release();
-      if (autoStopReasonRef.current) {
-        if (mountedRef.current) {
-          setStoppedFile(file);
-          setStatus("stopped");
-        }
-      } else {
-        onRecordedRef.current(file);
-        onCloseRef.current();
-      }
-    };
-    recorderRef.current = recorder;
-    // We timeslice so the size ceiling is enforced while recording.
-    recorder.start(1000);
+    recordingRef.current = startLimitedRecording(
+      stream,
+      {
+        format,
+        filePrefix: FILE_PREFIX[kind],
+        maxBytes,
+        video: kind !== "audio",
+      },
+      {
+        onProgress: ({ elapsedMs: elapsed, sizeBytes: size }) => {
+          if (!mountedRef.current) return;
+          setElapsedMs(elapsed);
+          setSizeBytes(size);
+        },
+        onFile: (file, reason) => {
+          recordingRef.current = null;
+          release();
+          if (reason) {
+            if (mountedRef.current) {
+              setAutoStopReason(reason);
+              setStoppedFile(file);
+              setStatus("stopped");
+            }
+            return;
+          }
+          onRecordedRef.current(file);
+          onCloseRef.current();
+        },
+      },
+    );
 
-    startTimeRef.current = Date.now();
     if (mountedRef.current) {
       setStatus("recording");
       setError(null);
       setElapsedMs(0);
       setSizeBytes(0);
     }
-    tickRef.current = window.setInterval(() => {
-      if (!mountedRef.current) return;
-      const elapsed = Date.now() - startTimeRef.current;
-      setElapsedMs(elapsed);
-      if (
-        elapsed >= MAX_RECORDING_MS &&
-        recorderRef.current?.state === "recording"
-      ) {
-        autoStopReasonRef.current = "duration-limit";
-        setAutoStopReason("duration-limit");
-        recorderRef.current.stop();
-      }
-    }, 250);
   }, [
     release,
     kind,
@@ -304,7 +261,7 @@ export function RecordingPanel({
       }
       return;
     }
-    recorderRef.current?.stop();
+    recordingRef.current?.stop();
   };
 
   const handleDiscard = () => {

@@ -460,6 +460,7 @@ msgstr "全部"
 msgid "All Content"
 msgstr "所有内容"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
@@ -724,6 +725,8 @@ msgstr "瀏覽器只有在您允許存取麥克風或攝影機後，才會顯示
 msgid "Calls"
 msgstr "通話"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -774,6 +777,10 @@ msgstr "取消工作流程"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "已取消"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "定位到你的位置"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1338,6 +1345,7 @@ msgstr "降為觀眾"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（選填，例如「第三季 Beta 測試者」）"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -2852,6 +2860,10 @@ msgstr "等待中"
 msgid "Permanent"
 msgstr "永久"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "照片"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "子母畫面"
@@ -3004,9 +3016,17 @@ msgstr "舉手"
 msgid "ran"
 msgstr "執行了"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "已達到最長錄製時間，錄製到此停止。"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
 msgstr "已達到最長錄製時間，錄製已停止：傳送或捨棄。"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "已達到上傳大小上限，錄製到此停止。"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
@@ -3072,10 +3092,6 @@ msgstr "錄製螢幕"
 #: src/components/layout/ChatArea.tsx
 msgid "Record Screen"
 msgstr "螢幕錄影"
-
-#: src/components/layout/ChatArea.tsx
-msgid "Record Video"
-msgstr "錄影"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
@@ -3173,6 +3189,10 @@ msgstr "已在聊天中回覆"
 msgid "Response message is no longer in view"
 msgstr "回覆訊息已不在檢視範圍內"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "重拍"
+
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
@@ -3191,10 +3211,6 @@ msgstr "查看已變更的金鑰…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "檢視金鑰"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Rounded to your neighbourhood, about 100m."
-msgstr "已將位置模糊至您所在的街區，誤差約 100 公尺。"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3345,6 +3361,7 @@ msgstr "选择或添加频道以开始使用。"
 msgid "self-registered"
 msgstr "自助註冊"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Send"
 msgstr "傳送"
@@ -3668,6 +3685,10 @@ msgstr "在 {serverName} 上開啟語音頻道"
 msgid "Start Private Message"
 msgstr "发起私信"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "開始錄製"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "開啟視訊"
@@ -3697,6 +3718,10 @@ msgstr "退出直播"
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "停止錄製"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3730,6 +3755,10 @@ msgstr "停用"
 msgid "suspended"
 msgstr "已停權"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "切換鏡頭"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "系统"
@@ -3737,6 +3766,10 @@ msgstr "系统"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "系統預設"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "拍照"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3766,6 +3799,10 @@ msgstr "IRC 服务器报告其服务器间链路的安全级别较低。这意�
 msgid "The network split and rejoined. ✅"
 msgstr "網路已分裂並重新連接。✅"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "你剛拍的照片"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
 msgstr "此頻道顯示的主題，所有使用者均可查看。"
@@ -3786,6 +3823,7 @@ msgstr "此帳號從 {sessionCount} 個工作階段連線。每個工作階段�
 msgid "This browser cannot record audio."
 msgstr "此瀏覽器無法錄音。"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record video."
 msgstr "此瀏覽器無法錄影。"
@@ -4148,6 +4186,7 @@ msgstr "非常严格"
 msgid "via @{0}"
 msgstr "透過 @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "影片"
@@ -4405,10 +4444,6 @@ msgstr "您與 {nick} 的訊息已加密。這些檔案過大無法加密，將�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
 msgstr "您的個人網站"
-
-#: src/components/ui/LocationShareModal.tsx
-msgid "Your precise position."
-msgstr "您的精確位置。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your preferred color code"
