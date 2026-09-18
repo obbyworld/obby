@@ -713,6 +713,10 @@ msgstr "Bots（正在載入 {botsLoadingCount}）"
 msgid "Bots on this network"
 msgstr "此網路上的機器人"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "把這個視窗切換到前景後再試一次。"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "浏览服务器上的所有频道"
@@ -750,6 +754,7 @@ msgstr "攝影機 {0}"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UploadPreviewModal.tsx
@@ -1360,6 +1365,7 @@ msgstr "在您允許麥克風存取之前，裝置名稱將被隱藏。"
 msgid "Disable push-to-talk"
 msgstr "停用按鍵通話"
 
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Discard"
 msgstr "捨棄"
@@ -1446,6 +1452,10 @@ msgstr "不再提醒我此服务器的低链路安全问题"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "下载"
+
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "拖曳選擇要錄製的範圍。按 Escape 取消。"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
@@ -3093,6 +3103,10 @@ msgstr "錄製螢幕"
 msgid "Record Screen"
 msgstr "螢幕錄影"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "錄製螢幕區域"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
 msgstr "錄製視訊訊息"
@@ -3715,6 +3729,7 @@ msgstr "退出直播"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
@@ -3783,6 +3798,10 @@ msgstr "文字頻道"
 msgid "That device is not available right now."
 msgstr "此裝置目前無法使用。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "該螢幕已不存在。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "与 <0>{serverName}</0> 的连接存在以下安全问题："
@@ -3802,6 +3821,10 @@ msgstr "網路已分裂並重新連接。✅"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "The photo you just took"
 msgstr "你剛拍的照片"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "無法完成錄製。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."

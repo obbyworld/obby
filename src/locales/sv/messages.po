@@ -713,6 +713,10 @@ msgstr "Bots (läser in {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Bottar i detta nätverk"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Ta fram det här fönstret och försök igen."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Bläddra bland alla kanaler på servern"
@@ -750,6 +754,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UploadPreviewModal.tsx
@@ -1360,6 +1365,7 @@ msgstr "Enhetsnamn döljs tills du tillåter mikrofonåtkomst."
 msgid "Disable push-to-talk"
 msgstr "Inaktivera tryck-och-prata"
 
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Discard"
 msgstr "Förkasta"
@@ -1446,6 +1452,10 @@ msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Ladda ned"
+
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Dra för att välja vad som spelas in. Tryck Escape för att avbryta."
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
@@ -3093,6 +3103,10 @@ msgstr "Spela in skärm"
 msgid "Record Screen"
 msgstr "Spela in skärm"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Spela in ett skärmområde"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
 msgstr "Spela in videomeddelande"
@@ -3715,6 +3729,7 @@ msgstr "Kliv ur sändningen"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stoppa"
@@ -3783,6 +3798,10 @@ msgstr "Textkanaler"
 msgid "That device is not available right now."
 msgstr "Den här enheten är inte tillgänglig just nu."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Den skärmen finns inte längre."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Anslutningen till <0>{serverName}</0> har följande säkerhetsproblem:"
@@ -3802,6 +3821,10 @@ msgstr "Nätverket splittrades och återanslöts. ✅"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "The photo you just took"
 msgstr "Fotot du just tog"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Inspelningen kunde inte göras."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."

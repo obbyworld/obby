@@ -109,6 +109,14 @@ html, body, #root {
   background-color: #202225;
 }
 
+/* The desktop app's screen-region windows are see-through: the page must not
+   paint its own background over the desktop showing underneath. */
+html.overlay-window,
+html.overlay-window body,
+html.overlay-window #root {
+  background-color: transparent;
+}
+
 /* SPA — document never scrolls; constrains WKWebView's UIScrollView to viewport */
 html {
   overflow: hidden;

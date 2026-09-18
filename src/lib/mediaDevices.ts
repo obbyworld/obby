@@ -68,6 +68,11 @@ export function describeMediaError(err: unknown): string {
   if (name === "NotFoundError" || name === "OverconstrainedError") {
     return t`That device is not available right now.`;
   }
+  // WebKit refuses a screen capture asked for by a window that is not in front
+  // and has not just been clicked.
+  if (name === "InvalidStateError") {
+    return t`Bring this window to the front and try again.`;
+  }
   return t`Could not access the device.`;
 }
 

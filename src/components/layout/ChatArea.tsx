@@ -12,6 +12,7 @@ import {
   FaMicrophone,
   FaPlus,
   FaTimes,
+  FaVectorSquare,
 } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
@@ -66,6 +67,12 @@ import {
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
+import { regionRecordingSupported } from "../../lib/screenRecorder";
+import {
+  focusMainWindow,
+  type SelectedRegion,
+  selectScreenRegion,
+} from "../../lib/screenRegion";
 import useStore from "../../store";
 import { sendEncryptedMedia } from "../../store/handlers/e2ee";
 import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
@@ -102,6 +109,10 @@ import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
+import {
+  type RecordingFailure,
+  RegionRecordingBar,
+} from "../ui/RegionRecordingBar";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
@@ -184,6 +195,10 @@ export const ChatArea: React.FC<{
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [recordingRegion, setRecordingRegion] = useState<SelectedRegion | null>(
+    null,
+  );
+  const [regionRecordingReady, setRegionRecordingReady] = useState(false);
   const [recordingKind, setRecordingKind] = useState<RecordingKind | null>(
     null,
   );
@@ -771,6 +786,28 @@ export const ChatArea: React.FC<{
   // Unlike recording, sharing a location never needs the file host -- a
   // rounded or exact link works with no attachment at all.
   const canShareLocation = locationSharingSupported();
+  // The native recorder always writes MP4, so it needs none of what the
+  // browser's own screen capture is gated on.
+  const canRecordRegion =
+    canUpload && regionRecordingReady && extensionAllowed("mp4");
+
+  useEffect(() => {
+    void regionRecordingSupported().then(setRegionRecordingReady);
+  }, []);
+
+  const describeRecordingFailure = (failure: RecordingFailure): string =>
+    failure === "screen-gone"
+      ? t`That screen is no longer there.`
+      : t`The recording could not be made.`;
+
+  // The rectangle is drawn on the desktop first, then the screen it sits on is
+  // captured and cropped to it.
+  const startRegionRecording = async () => {
+    const selection = await selectScreenRegion();
+    if (!selection) return;
+    await focusMainWindow();
+    setRecordingRegion(selection);
+  };
 
   const recordingMaxBytes = useMemo(
     () => maxRecordingBytes(uploadInfo),
@@ -2577,6 +2614,13 @@ export const ChatArea: React.FC<{
                     onClick: () => setIsCameraOpen(true),
                   },
                   {
+                    id: "record-region",
+                    show: canRecordRegion,
+                    icon: <FaVectorSquare />,
+                    label: <Trans>Record Screen Area</Trans>,
+                    onClick: () => void startRegionRecording(),
+                  },
+                  {
                     id: "record-screen",
                     show: canRecordScreen,
                     divider:
@@ -3028,6 +3072,20 @@ export const ChatArea: React.FC<{
         onClose={() => setIsCameraOpen(false)}
         onCaptured={(file) => handleSelectedFiles([file])}
         maxBytes={recordingMaxBytes}
+      />
+      <RegionRecordingBar
+        selection={recordingRegion}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        onError={(failure) =>
+          useStore.getState().addGlobalNotification({
+            type: "fail",
+            command: "RECORD SCREEN",
+            code: "RECORDING_FAILED",
+            message: describeRecordingFailure(failure),
+            serverId: selectedServerId ?? "",
+          })
+        }
+        onFinished={() => setRecordingRegion(null)}
       />
       <RecordingPanel
         kind={recordingKind ?? "audio"}

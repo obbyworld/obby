@@ -713,6 +713,10 @@ msgstr "Bot（{botsLoadingCount} 件を読み込み中）"
 msgid "Bots on this network"
 msgstr "このネットワークのボット"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "このウィンドウを前面に出してからもう一度お試しください。"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "サーバー上のすべてのチャンネルを一覧表示"
@@ -750,6 +754,7 @@ msgstr "カメラ {0}"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UploadPreviewModal.tsx
@@ -1360,6 +1365,7 @@ msgstr "マイクへのアクセスを許可するまで、デバイス名は表
 msgid "Disable push-to-talk"
 msgstr "プッシュ・トゥ・トークを無効にする"
 
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Discard"
 msgstr "破棄"
@@ -1446,6 +1452,10 @@ msgstr "このサーバーのリンクセキュリティが低い場合に警告
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "ダウンロード"
+
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "ドラッグして録画する範囲を選びます。Escape で取り消します。"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
@@ -3093,6 +3103,10 @@ msgstr "画面を録画"
 msgid "Record Screen"
 msgstr "画面を録画"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "画面の範囲を録画"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
 msgstr "動画メッセージを録画"
@@ -3715,6 +3729,7 @@ msgstr "配信を降りる"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
@@ -3783,6 +3798,10 @@ msgstr "テキストチャンネル"
 msgid "That device is not available right now."
 msgstr "このデバイスは現在利用できません。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "その画面はもうありません。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "<0>{serverName}</0> への接続には次のセキュリティ上の懸念事項があります："
@@ -3802,6 +3821,10 @@ msgstr "ネットワークが分割され、再接続されました。✅"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "The photo you just took"
 msgstr "今撮った写真"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "録画できませんでした。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."

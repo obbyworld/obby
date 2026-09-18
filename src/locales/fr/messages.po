@@ -713,6 +713,10 @@ msgstr "Bots (chargement {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Bots sur ce réseau"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Mettez cette fenêtre au premier plan et réessayez."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Parcourir tous les canaux du serveur"
@@ -750,6 +754,7 @@ msgstr "Caméra {0}"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UploadPreviewModal.tsx
@@ -1360,6 +1365,7 @@ msgstr "Les noms des appareils sont masqués tant que vous n'autorisez pas l'acc
 msgid "Disable push-to-talk"
 msgstr "Désactiver l'appui pour parler"
 
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Discard"
 msgstr "Supprimer"
@@ -1446,6 +1452,10 @@ msgstr "Ne plus m'avertir de la faible sécurité des liens pour ce serveur"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Télécharger"
+
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Faites glisser pour choisir quoi enregistrer. Échap pour annuler."
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
@@ -3093,6 +3103,10 @@ msgstr "Enregistrer l'écran"
 msgid "Record Screen"
 msgstr "Enregistrer l'écran"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Enregistrer une zone de l'écran"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
 msgstr "Enregistrer un message vidéo"
@@ -3715,6 +3729,7 @@ msgstr "Quitter la diffusion"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Arrêter"
@@ -3783,6 +3798,10 @@ msgstr "Salons textuels"
 msgid "That device is not available right now."
 msgstr "Cet appareil n'est pas disponible pour le moment."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Cet écran n'est plus là."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "La connexion à <0>{serverName}</0> présente les problèmes de sécurité suivants :"
@@ -3802,6 +3821,10 @@ msgstr "Le réseau s'est divisé et reconnecté. ✅"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "The photo you just took"
 msgstr "La photo que vous venez de prendre"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "L'enregistrement n'a pas pu être réalisé."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."

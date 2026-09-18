@@ -1,6 +1,10 @@
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::Mutex;
 
+mod overlay;
+mod screen_record;
+#[cfg(target_os = "windows")]
+mod screen_record_windows;
 mod socket;
 
 use socket::{connect, disconnect, listen, send, SocketState};
@@ -244,12 +248,19 @@ pub fn run() {
             Ok(())
         })
         .manage(SocketState(Arc::new(Mutex::new(HashMap::new()))))
+        .manage(screen_record::RecorderState::default())
         .invoke_handler(tauri::generate_handler![
             connect,
             disconnect,
             listen,
             send,
-            download_image
+            download_image,
+            overlay::prepare_region_overlay,
+            screen_record::region_recording_supported,
+            screen_record::start_region_recording,
+            screen_record::stop_region_recording,
+            screen_record::cancel_region_recording,
+            screen_record::take_recording
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

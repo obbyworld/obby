@@ -713,6 +713,10 @@ msgstr "Bot (caricamento {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Bot su questa rete"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Porta questa finestra in primo piano e riprova."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Sfoglia tutti i canali del server"
@@ -750,6 +754,7 @@ msgstr "Videocamera {0}"
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UploadPreviewModal.tsx
@@ -1360,6 +1365,7 @@ msgstr "I nomi dei dispositivi sono nascosti finché non consenti l'accesso al m
 msgid "Disable push-to-talk"
 msgstr "Disattiva Push-to-Talk"
 
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Discard"
 msgstr "Elimina"
@@ -1446,6 +1452,10 @@ msgstr "Non avvisarmi sulla bassa sicurezza del link per questo server"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Scarica"
+
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Trascina per scegliere cosa registrare. Premi Esc per annullare."
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to upload"
@@ -3093,6 +3103,10 @@ msgstr "Registra schermo"
 msgid "Record Screen"
 msgstr "Registra schermo"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Registra un'area dello schermo"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record video message"
 msgstr "Registra messaggio video"
@@ -3715,6 +3729,7 @@ msgstr "Esci dal live"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Stop"
@@ -3783,6 +3798,10 @@ msgstr "Canali testuali"
 msgid "That device is not available right now."
 msgstr "Questo dispositivo non è disponibile al momento."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Quello schermo non c'è più."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "La connessione a <0>{serverName}</0> presenta le seguenti problematiche di sicurezza:"
@@ -3802,6 +3821,10 @@ msgstr "La rete si è divisa e riconnessa. ✅"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "The photo you just took"
 msgstr "La foto che hai appena scattato"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Non è stato possibile effettuare la registrazione."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
