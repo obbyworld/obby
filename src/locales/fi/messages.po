@@ -757,7 +757,6 @@ msgstr "Kamera {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Valitse vetämällä, mitä tallennetaan. Peru Escape-näppäimellä."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Pudota tiedostot ladataksesi"
+msgid "Drop files to attach"
+msgstr "Pudota tiedostot tähän liittääksesi ne"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "Ladataan WHOIS-tietoja..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Paikallinen tallennustila:"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Sijainti"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "Poista"
 msgid "Remove {username} from the channel"
 msgstr "Poista {username} kanavalta"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "poista liite"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "poista kaikki liitteet"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Poista malli"
@@ -3417,14 +3429,6 @@ msgstr "Lähetä kirjoitusilmoituksia"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Lähetä salaamattomana"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "Lähetä video"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "Lähetä ääniviesti"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "Yhteydessä palvelimeen <0>{serverName}</0> on seuraavia tietoturvaongel
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Tiedostopalvelin tallentaa sen luettavana, ja kuka tahansa linkin saanut voi avata sen. Vaihda Obby-salaukseen, jos haluat lähettää tiedostot salattuina."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Tiedostopalvelin ei päästänyt tätä läpi."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC-palvelin on ilmoittanut, että sen palvelimien väliset linkit ovat heikosti suojattuja. Tämä tarkoittaa, että verkossa välitettäviä viestejäsi ei välttämättä salata asianmukaisesti tai SSL/TLS-sertifikaatteja ei tarkisteta oikein."
@@ -3911,6 +3919,10 @@ msgstr "Tämä palvelin ei tue laajennettua profiilimetadataa (IRCv3 METADATA -l
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Tämä palvelin ei tue kutsulinkkejä (<0>obby.world/invitation</0>-kykyä ei ilmoiteta). Voit silti chattailla normaalisti; tämä paneeli on obbyircd-pohjaisia verkkoja varten."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Tällä palvelimella ei ole paikkaa tiedostolle."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "Irrota tämä yksityisviestiketju"
 msgid "Unsuspend"
 msgstr "Poista jäädytys"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Lähetä"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Lataa kuva tai anna URL, jossa voi käyttää valinnaista {size}-muuttujaa dynaamiseen kokoon"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Lataa avatar"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Lataa kuva"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Lähetä tiedostopalvelimelle ja edelleen kohteeseen {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

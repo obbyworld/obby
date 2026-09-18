@@ -757,7 +757,6 @@ msgstr "カメラ {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "ドラッグして録画する範囲を選びます。Escape で取り消します。"
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "アップロードするファイルをドロップ"
+msgid "Drop files to attach"
+msgstr "ファイルをドロップして添付"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "WHOISデータを読み込み中..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "ローカルストレージ："
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "位置情報"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "削除"
 msgid "Remove {username} from the channel"
 msgstr "{username} をチャンネルから削除する"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "添付を削除"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "すべての添付を削除"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "パターンを削除"
@@ -3417,14 +3429,6 @@ msgstr "入力中通知を送信する"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "暗号化せずに送信"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "動画を送信"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "音声メッセージを送信"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "<0>{serverName}</0> への接続には次のセキュリティ上の懸�
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "ファイルホストは読める形で保存し、リンクを入手した人は誰でも開けます。ファイルを暗号化して送るには Obby の暗号化に切り替えてください。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "ファイルホストに拒否されました。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRCサーバーは、サーバー間リンクのセキュリティレベルが低いと報告しています。これは、ネットワーク内のIRCサーバー間でメッセージが中継される際に、適切に暗号化されていないか、SSL/TLS証明書が正しく検証されない可能性があることを意味します。"
@@ -3911,6 +3919,10 @@ msgstr "このサーバーは拡張プロフィールメタデータ（IRCv3 MET
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "このサーバーは招待リンクに対応していません（<0>obby.world/invitation</0>ケイパビリティが告知されていません）。通常通りチャットは利用できます。このパネルはobbyircdベースのネットワーク用です。"
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "このサーバーにはファイルの置き場所がありません。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "このプライベートメッセージの会話のピン留めを解除
 msgid "Unsuspend"
 msgstr "停止を解除"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "アップロード"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "画像をアップロードするか、動的サイズ変換のための {size} 置換を含むURLを入力してください"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "アバターをアップロード"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "ファイルをアップロード"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "画像をアップロード"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "ファイルホストにアップロードして {target} に送信します。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

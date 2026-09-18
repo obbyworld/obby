@@ -757,7 +757,6 @@ msgstr "카메라 {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "드래그해서 녹화할 범위를 고르세요. Escape 키로 취소합니다."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "업로드할 파일을 여기에 놓으세요"
+msgid "Drop files to attach"
+msgstr "파일을 놓아 첨부하기"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "WHOIS 데이터 불러오는 중..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "로컬 저장소:"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "위치"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "제거"
 msgid "Remove {username} from the channel"
 msgstr "채널에서 {username} 제거"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "첨부 제거"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "모든 첨부 제거"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "패턴 제거"
@@ -3417,14 +3429,6 @@ msgstr "입력 중 알림 보내기"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "암호화하지 않고 보내기"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "동영상 보내기"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "음성 메시지 보내기"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "<0>{serverName}</0>에 대한 연결에 다음과 같은 보안 문제�
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "파일 호스트가 읽을 수 있는 상태로 저장하며, 링크를 얻은 사람은 누구나 열 수 있습니다. 파일을 암호화해 보내려면 Obby 암호화로 전환하세요."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "파일 호스트가 거부했습니다."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC 서버에서 서버 간 링크의 보안 수준이 낮다고 보고했습니다. 즉, 메시지가 네트워크의 IRC 서버 간에 전달될 때 적절히 암호화되지 않거나 SSL/TLS 인증서가 올바르게 검증되지 않을 수 있습니다."
@@ -3911,6 +3919,10 @@ msgstr "이 서버는 확장 프로필 메타데이터(IRCv3 METADATA 확장)를
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "이 서버는 초대 링크를 지원하지 않습니다 (<0>obby.world/invitation</0> 기능이 광고되지 않음). 일반 채팅은 계속할 수 있으며, 이 패널은 obbyircd 기반 네트워크용입니다."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "이 서버에는 파일을 둘 곳이 없습니다."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "이 비공개 메시지 대화 고정 해제"
 msgid "Unsuspend"
 msgstr "정지 해제"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "업로드"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "이미지를 업로드하거나 동적 크기 조정을 위해 {size} 대체가 있는 URL을 제공하세요"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "아바타 업로드"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "파일 업로드"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "이미지 업로드"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "파일 호스트에 업로드하고 {target} 에 보냅니다."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

@@ -757,7 +757,6 @@ msgstr "Caméra {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Faites glisser pour choisir quoi enregistrer. Échap pour annuler."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Déposez les fichiers à téléverser"
+msgid "Drop files to attach"
+msgstr "Déposez des fichiers ici pour les joindre"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "Chargement des données WHOIS..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Stockage local :"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Position"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "Supprimer"
 msgid "Remove {username} from the channel"
 msgstr "Retirer {username} du canal"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "retirer la pièce jointe"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "retirer toutes les pièces jointes"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Supprimer le motif"
@@ -3417,14 +3429,6 @@ msgstr "Envoyer des notifications de frappe"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Envoyer sans chiffrement"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "Envoyer la vidéo"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "Envoyer le message vocal"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "La connexion à <0>{serverName}</0> présente les problèmes de sécurit
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "L'hébergeur de fichiers le stocke en clair, et quiconque obtient le lien peut l'ouvrir. Passez au chiffrement Obby pour envoyer des fichiers chiffrés."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "L'hébergeur de fichiers a refusé."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "Le serveur IRC a signalé que ses liens entre serveurs ont un faible niveau de sécurité. Cela signifie que lorsque vos messages sont relayés entre les serveurs IRC du réseau, ils peuvent ne pas être correctement chiffrés ou les certificats SSL/TLS peuvent ne pas être validés correctement."
@@ -3911,6 +3919,10 @@ msgstr "Ce serveur ne supporte pas les métadonnées de profil étendues (extens
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Ce serveur ne prend pas en charge les liens d'invitation (la capacité<0>obby.world/invitation</0>n'est pas annoncée). Vous pouvez toujours discuter normalement ; ce panneau est destiné aux réseaux propulsés par obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Ce serveur n'a nulle part où mettre un fichier."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "Désépingler cette conversation privée"
 msgid "Unsuspend"
 msgstr "Réactiver"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Téléverser"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Téléverser une image ou fournir une URL avec substitution optionnelle {size}"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Téléverser un avatar"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Télécharger des fichiers"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Téléverser une image"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Téléverser vers l'hébergeur de fichiers et envoyer à {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

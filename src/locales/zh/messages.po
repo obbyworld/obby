@@ -757,7 +757,6 @@ msgstr "摄像头 {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "拖动选择要录制的范围。按 Escape 取消。"
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "拖放文件以上传"
+msgid "Drop files to attach"
+msgstr "拖放文件以添加附件"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "正在加载 WHOIS 数据..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "本地存储："
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "位置"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "移除"
 msgid "Remove {username} from the channel"
 msgstr "将 {username} 移出频道"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "移除附件"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "移除所有附件"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "删除规则"
@@ -3417,14 +3429,6 @@ msgstr "发送正在输入通知"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "未加密发送"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "发送视频"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "发送语音消息"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "与 <0>{serverName}</0> 的连接存在以下安全问题："
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "文件主机以可读形式保存它，拿到链接的人都能打开。若要加密发送文件，请改用 Obby 加密。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "文件服务器拒绝了它。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC 服务器报告其服务器间链路的安全级别较低。这意味着当您的消息在网络中的 IRC 服务器之间转发时，可能未经过妥善加密，或者 SSL/TLS 证书未被正确验证。"
@@ -3911,6 +3919,10 @@ msgstr "此服务器不支持扩展个人资料元数据（IRCv3 METADATA 扩展
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "此服务器不支持邀请链接（未声明 <0>obby.world/invitation</0> 能力）。您仍可正常聊天；此面板适用于由 obbyircd 提供支持的网络。"
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "此服务器没有地方存放文件。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "取消置顶此私信对话"
 msgid "Unsuspend"
 msgstr "取消停用"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "上传"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "上传图片或提供带可选 {size} 替换的 URL"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "上传头像"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "上传文件"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "上传图片"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "上传到文件服务器并发送到 {target}。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

@@ -757,7 +757,6 @@ msgstr "Kamera {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Kaydedilecek yeri seçmek için sürükle. İptal için Escape'e bas."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Yüklemek için dosyaları buraya bırakın"
+msgid "Drop files to attach"
+msgstr "Eklemek için dosyaları buraya bırakın"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "WHOIS verisi yükleniyor..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Yerel Depolama:"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Konum"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "Kaldır"
 msgid "Remove {username} from the channel"
 msgstr "{username} kullanıcısını kanaldan kaldır"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "eki kaldır"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "tüm ekleri kaldır"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Deseni kaldır"
@@ -3417,14 +3429,6 @@ msgstr "Yazıyor Bildirimleri Gönder"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Şifresiz gönder"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "Videoyu gönder"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "Sesli mesajı gönder"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "<0>{serverName}</0> bağlantısında aşağıdaki güvenlik endişeleri 
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Dosya sunucusu dosyayı okunabilir biçimde saklar ve bağlantıyı ele geçiren herkes açabilir. Dosyaları şifreli göndermek için Obby şifrelemesine geçin."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Dosya sunucusu buna izin vermedi."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC sunucusu, sunucular arası bağlantılarının düşük güvenlik seviyesine sahip olduğunu bildirdi. Bu, mesajlarınız ağdaki IRC sunucuları arasında iletilirken düzgün şifrelenmeyebileceği veya SSL/TLS sertifikalarının doğru şekilde doğrulanmayabileceği anlamına gelir."
@@ -3911,6 +3919,10 @@ msgstr "Bu sunucu genişletilmiş profil meta verilerini (IRCv3 METADATA uzantı
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Bu sunucu davet bağlantılarını desteklemiyor (<0>obby.world/invitation</0> yeteneği duyurulmuyor). Yine de normal şekilde sohbet edebilirsiniz; bu panel obbyircd tabanlı ağlar içindir."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Bu sunucunun dosya koyacak bir yeri yok."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "Bu özel mesaj konuşmasının sabitlemesini kaldır"
 msgid "Unsuspend"
 msgstr "Askıdan al"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Yükle"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Bir görüntü yükleyin veya dinamik boyutlandırma için isteğe bağlı {size} değişkeni içeren bir URL sağlayın"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Avatar Yükle"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Görüntü Yükle"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Dosya sunucusuna yükle ve {target} hedefine gönder."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

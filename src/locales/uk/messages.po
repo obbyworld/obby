@@ -757,7 +757,6 @@ msgstr "Камера {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Перетягніть, щоб вибрати, що записати. Escape скасовує."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Перетягніть файли для завантаження"
+msgid "Drop files to attach"
+msgstr "Перетягніть файли сюди, щоб прикріпити"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "Завантаження даних WHOIS..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Локальне сховище:"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Місцезнаходження"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "Видалити"
 msgid "Remove {username} from the channel"
 msgstr "Видалити {username} з каналу"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "прибрати вкладення"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "прибрати всі вкладення"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Видалити шаблон"
@@ -3417,14 +3429,6 @@ msgstr "Надсилати сповіщення про введення"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Надіслати без шифрування"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "Надіслати відео"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "Надіслати голосове повідомлення"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "З'єднання з <0>{serverName}</0> має такі проблем�
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Файловий хост зберігає його у відкритому вигляді, і будь-хто, хто отримає посилання, зможе його відкрити. Перейдіть на шифрування Obby, щоб надсилати файли зашифрованими."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Файловий сервер це не пропустив."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC-сервер повідомив, що зв'язки між серверами мають низький рівень безпеки. Це означає, що коли ваші повідомлення передаються між IRC-серверами в мережі, вони можуть бути не належним чином зашифровані або SSL/TLS-сертифікати можуть не перевірятися правильно."
@@ -3911,6 +3919,10 @@ msgstr "Цей сервер не підтримує розширені мета�
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Цей сервер не підтримує запрошувальні посилання (можливість<0>obby.world/invitation</0>не оголошена). Ви все ще можете нормально спілкуватися; ця панель призначена для мереж на основі obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Цьому серверу немає куди покласти файл."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "Відкріпити цю приватну розмову"
 msgid "Unsuspend"
 msgstr "Відновити"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Завантажити"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Завантажте зображення або вкажіть URL з необов'язковою підстановкою {size} для динамічного розміру"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Завантажити аватар"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Завантажити файли"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Завантажити зображення"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Завантажити на файловий хост і надіслати до {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."

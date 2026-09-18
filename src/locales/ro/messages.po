@@ -757,7 +757,6 @@ msgstr "Cameră {0}"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -1458,8 +1457,8 @@ msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Trage pentru a alege ce să înregistrezi. Apasă Escape pentru a anula."
 
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Plasați fișierele pentru a le încărca"
+msgid "Drop files to attach"
+msgstr "Trage fișierele aici pentru a le atașa"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -2191,6 +2190,10 @@ msgstr "Se încarcă datele WHOIS..."
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
 msgstr "Stocare locală:"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Locație"
 
 #: src/lib/geolocation.ts
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
@@ -3157,6 +3160,15 @@ msgstr "Elimină"
 msgid "Remove {username} from the channel"
 msgstr "Elimină {username} din canal"
 
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "elimină atașamentul"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "elimină toate atașamentele"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Elimină șablon"
@@ -3417,14 +3429,6 @@ msgstr "Trimiteți notificări de tastare"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send unencrypted"
 msgstr "Trimite necriptat"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Video"
-msgstr "Trimite video"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Send Voice Message"
-msgstr "Trimite mesaj vocal"
 
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
@@ -3810,6 +3814,10 @@ msgstr "Conexiunea la <0>{serverName}</0> prezintă următoarele probleme de sec
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Serverul de fișiere îl stochează lizibil, iar oricine obține linkul îl poate deschide. Treci la criptarea Obby pentru a trimite fișiere criptate."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Serverul de fișiere nu a permis asta."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "Serverul IRC a raportat că legăturile sale server-la-server au un nivel scăzut de securitate. Aceasta înseamnă că atunci când mesajele tale sunt transmise între serverele IRC din rețea, este posibil ca acestea să nu fie criptate corespunzător sau certificatele SSL/TLS să nu fie validate corect."
@@ -3911,6 +3919,10 @@ msgstr "Acest server nu acceptă metadate extinse de profil (extensia IRCv3 META
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Acest server nu acceptă linkuri de invitație (capabilitatea<0>obby.world/invitation</0>nu este anunțată). Poți discuta în continuare normal; acest panou este pentru rețelele bazate pe obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Acest server nu are unde să pună un fișier."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -4056,10 +4068,6 @@ msgstr "Anulează fixarea acestei conversații private"
 msgid "Unsuspend"
 msgstr "Anulează suspendarea"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Încărcați"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Încărcați o imagine sau furnizați o adresă URL cu înlocuire opțională {size}"
@@ -4069,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Încarcă avatar"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Încărcați fișiere"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Încarcă imagine"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Încarcă pe serverul de fișiere și trimite către {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
