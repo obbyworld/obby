@@ -26,18 +26,18 @@ export function InputToolbar({
   hasText = false,
 }: InputToolbarProps) {
   return (
-    <div className="flex items-center flex-shrink-0">
+    <div className="flex shrink-0 items-center">
       {!hideEmoji && (
         <button
           aria-label={t`Insert emoji`}
-          className="px-1.5 sm:px-2 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
+          className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
           onClick={onEmojiClick}
         >
           <FaGrinAlt />
         </button>
       )}
       <button
-        className="px-1.5 sm:px-2 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
+        className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onColorPickerClick}
       >
         <div
@@ -51,14 +51,14 @@ export function InputToolbar({
         />
       </button>
       <button
-        className="px-1.5 sm:px-2 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
+        className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onAtClick}
       >
         <FaAt />
       </button>
       {showSendButton && (
         <button
-          className={`mx-1.5 w-9 h-9 rounded-full text-white flex items-center justify-center flex-shrink-0
+          className={`ml-1 w-9 h-9 rounded-full text-white flex items-center justify-center shrink-0
             transition-[transform,opacity,box-shadow] duration-200 ease-out active:scale-90 ${
               hasText
                 ? "bg-discord-primary shadow-lg shadow-discord-primary/40 scale-100 opacity-100"

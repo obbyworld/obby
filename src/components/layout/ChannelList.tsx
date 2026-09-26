@@ -1699,7 +1699,7 @@ export const ChannelList: React.FC<{
       </div>
       <div className="mt-auto mb-2 px-2">
         <div
-          className={`py-1 rounded-md flex items-center justify-between group cursor-pointer max-w-full transition-all duration-200 ease-in-out shadow-sm bg-discord-dark-400/50 ${hoverPrimary}`}
+          className={`h-11 rounded-md flex items-center justify-between group cursor-pointer max-w-full transition-all duration-200 ease-in-out shadow-sm bg-discord-dark-400/50 ${hoverPrimary}`}
           onClick={() => toggleSettingsModal(true)}
         >
           <div className="flex items-center gap-2 ml-2 flex-1 min-w-0">

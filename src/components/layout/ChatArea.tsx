@@ -2521,7 +2521,7 @@ export const ChatArea: React.FC<{
           {/* Input area */}
           {(selectedChannel || selectedPrivateChat) && (
             <div
-              className={`${!isNarrowView && "px-4"} pb-4 relative chat-input-area`}
+              className={`${!isNarrowView && "px-4"} pb-2 relative chat-input-area`}
             >
               {selectedPrivateChat && selectedServerId && (
                 <E2EERequestBanner
@@ -2570,10 +2570,11 @@ export const ChatArea: React.FC<{
                   attachments={attachments}
                   onRemove={removeAttachment}
                 />
-                <div className="flex items-center relative flex-nowrap">
+                {/* We align to the bottom so the buttons stay beside the last line while the box grows. */}
+                <div className="relative flex flex-nowrap items-end pr-2">
                   <button
                     ref={plusButtonRef}
-                    className="px-2 sm:px-4 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
                     onClick={() => setShowPlusMenu((prev) => !prev)}
                   >
                     <FaPlus />
@@ -2615,7 +2616,7 @@ export const ChatArea: React.FC<{
                         ? "enter"
                         : "send"
                     }
-                    className="bg-transparent border-none outline-none py-3 flex-grow text-discord-text-normal resize-none min-h-[44px] overflow-y-auto placeholder:truncate"
+                    className="min-w-0 flex-1 resize-none overflow-y-auto border-none bg-transparent py-[11px] leading-[22px] text-discord-text-normal outline-none placeholder:truncate"
                     style={previewStyle}
                     rows={1}
                   />
