@@ -383,6 +383,14 @@ msgstr "添加词语或短语..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "新增封禁遮罩（例如 nick!*@*, *!*@host.com）"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "新增頻道"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "新增頻道"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "新增例外遮罩（例如 nick!*@*, *!*@host.com）"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "头像预览"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "离开"
@@ -671,8 +679,8 @@ msgstr "封禁用户（按昵称）"
 msgid "Bans"
 msgstr "封禁"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "機器人尚未註冊任何斜線命令。"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "機器人"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bots — 正在接收 {botsLoadingCount} 個指令清單"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bots（正在載入 {botsLoadingCount}）"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "此網路上的機器人"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "頻道擁有者"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "頻道主題"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "頻道不會出現在 LIST 或 NAMES 指令中"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "頻道名稱"
 
@@ -999,7 +1000,7 @@ msgstr "客戶端"
 msgid "Client Limit (+l)"
 msgstr "用戶端限制 (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "連線中…"
 msgid "Connection"
 msgstr "連線"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "連線已中斷。重新連線以繼續聊天"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "連線：普通"
@@ -1171,6 +1176,10 @@ msgstr "複製"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "全部複製"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "複製頻道名稱"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "建立新的邀請連結"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "建立並管理您的邀請連結"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "建立資料夾"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "刪除機器人 {0}？  這將軟刪除資料庫記錄；稍後只有在執行 /REHASH 後才能重新使用該暱稱。"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "删除频道"
+msgid "Delete folder"
+msgstr "刪除資料夾"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "捨棄"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "是否在新标签页中打开此链接？"
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "完成"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "下载"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "拖曳把手以移動頻道，或將其放入資料夾"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "拖曳選擇要錄製的範圍。按 Escape 取消。"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "拖曳以移動"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "例如：100:1440"
 msgid "Echo Cancellation"
 msgstr "回音消除"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "编辑"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "編輯 {0}"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "編輯頻道設定"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "編輯連線"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "啟用多行輸入"
 msgid "Enable Notification Sounds"
 msgstr "啟用通知聲音"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "筛选频道..."
 msgid "Filter members…"
 msgstr "筛选成员…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "尋找頻道"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "正在取得您的位置…"
@@ -1756,6 +1800,10 @@ msgstr "洪水設定檔 (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "洪水保護設定"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "資料夾名稱"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "图片预览"
 msgid "IN"
 msgstr "傳入"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "通話中"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "資訊："
@@ -1969,7 +2021,10 @@ msgstr "邀请用户加入当前频道"
 msgid "Invite to stream"
 msgstr "邀請加入直播"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "邀請使用者"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "離開頻道"
 msgid "Leave call"
 msgstr "離開通話"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "离开频道"
 
@@ -2199,6 +2254,10 @@ msgstr "位置"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置存取遭拒。請在瀏覽器或系統設定中允許位置存取，然後再試一次。"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "重新登入"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "管理您的个人资料信息和元数据"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "標記為機器人——通常為 'on' 或空白"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "標記為已讀"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "更多"
 msgid "More actions"
 msgstr "更多操作"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "下移資料夾"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "上移資料夾"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "移動到資料夾"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enter 換行"
@@ -2428,6 +2503,7 @@ msgstr "靜音"
 msgid "Mute for me"
 msgstr "僅對我靜音"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "{0} 上的網路"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "新私訊"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "新資料夾"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "離線"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "离线"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "其中之一："
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "在线"
 
@@ -2762,6 +2843,11 @@ msgstr "開啟與使用者的私訊"
 msgid "Open channel configuration settings"
 msgstr "打开频道配置设置"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "開啟頻道選項"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "打开链接"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "開啟地圖"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "開啟網路選項"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "永久"
 msgid "Photo"
 msgstr "照片"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "選擇頻道類型"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "子母畫面"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "置顶"
 
@@ -2977,8 +3071,8 @@ msgid "Privacy Policy"
 msgstr "隱私權政策"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
-msgstr "私人訊息"
+msgid "Private messages"
+msgstr "私訊"
 
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -3085,6 +3179,10 @@ msgstr "推理"
 msgid "Receiving command list…"
 msgstr "正在接收指令清單…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "重新連線"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "重新連線失敗"
@@ -3093,6 +3191,10 @@ msgstr "重新連線失敗"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "正在重新連線。如果持續失敗，請編輯連線"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "移除規則"
 msgid "Rename Channel"
 msgstr "重命名频道"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "重新命名資料夾"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "重新命名或刪除 {0}"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "重新命名或刪除資料夾"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "在伺服器上重新命名此頻道，所有使用者都會看到新名稱。"
@@ -3196,6 +3311,12 @@ msgstr "在訊息中渲染 Markdown 格式"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "重新開啟產生此訊息的工作流程（{stepCount} 個步驟）"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "重新排序頻道"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "安全性群組"
 msgid "Security Warning"
 msgstr "安全警告"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "檢視機器人"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "檢視頻道資訊"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "傳送中"
 msgid "server"
 msgstr "伺服器"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "伺服器"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "显示所有外部媒体。任何 URL 都可能向未知服务器发送�
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "显示来自服务器受信任文件主机的媒体。不会向外部服务发送任何请求。"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "登入失敗，你目前以訪客身分聊天。請重新登入或修正密碼"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "登入時間"
@@ -3690,6 +3822,11 @@ msgstr "喇叭 {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "此瀏覽器不支援選擇喇叭。"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "開始私訊"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "停止分享"
 msgid "Stop video"
 msgstr "關閉視訊"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "直播"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "直播頻道名稱"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "主播"
@@ -3786,6 +3931,10 @@ msgstr "系统"
 msgid "System default"
 msgstr "系統預設"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "移出資料夾"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "拍照"
@@ -3794,8 +3943,8 @@ msgstr "拍照"
 msgid "Text"
 msgstr "文字"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
 msgstr "文字頻道"
 
 #: src/lib/mediaDevices.ts
@@ -4050,8 +4199,8 @@ msgstr "取消靜音"
 msgid "Unmute for me"
 msgstr "僅對我取消靜音"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "取消置顶"
 
@@ -4176,10 +4325,10 @@ msgstr "用戶："
 msgid "Valid server port is required"
 msgstr "需要有效的服务器端口"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "已验证账户"
 
@@ -4252,6 +4401,14 @@ msgstr "觀眾 ({0})"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "语音权限"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "語音頻道"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "語音頻道"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"

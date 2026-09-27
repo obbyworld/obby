@@ -85,6 +85,8 @@ export interface Server {
   icon?: string;
   isConnected: boolean;
   connectionState?: ConnectionState;
+  // The server refused our SASL credentials on this connection.
+  saslFailed?: boolean;
   isAway?: boolean; // Whether we are marked as away on this server
   awayMessage?: string; // Our away message on this server
   users: User[];

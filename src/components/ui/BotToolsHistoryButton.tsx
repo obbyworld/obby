@@ -144,7 +144,7 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
         }
         bodyClassName="max-h-[60vh] md:max-h-none"
       >
-        <ul className="divide-y divide-discord-dark-400/60">
+        <ul className="surface-list">
           {byBot.map(({ nick, list, activeCount }) => {
             const isExpanded = expandedBot === nick;
             return (
@@ -154,28 +154,26 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                   onClick={() =>
                     setExpandedBot((prev) => (prev === nick ? null : nick))
                   }
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-discord-dark-400/60 transition-colors"
+                  className="row-interactive"
                   aria-expanded={isExpanded}
                 >
-                  <span className="w-4 h-4 flex items-center justify-center shrink-0">
+                  <span className="row-icon">
                     <FaProjectDiagram
-                      className={`text-[10px] ${
+                      className={`text-xs ${
                         activeCount > 0
-                          ? "text-blue-500 animate-pulse-bright"
-                          : "text-discord-text-muted"
+                          ? "text-blue-400 animate-pulse-bright"
+                          : ""
                       }`}
                     />
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-sm font-semibold text-white truncate">
-                        {nick}
-                      </span>
-                      <span className="text-[10px] text-discord-text-muted shrink-0">
+                  <span className="flex-1 min-w-0">
+                    <span className="flex items-baseline gap-1.5">
+                      <span className="truncate">{nick}</span>
+                      <span className="row-meta shrink-0">
                         {fmtAgo(list[0].startedAt)}
                       </span>
-                    </div>
-                    <div className="text-[10px] text-discord-text-muted">
+                    </span>
+                    <span className="row-meta block">
                       <Trans>{list.length} workflow(s)</Trans>
                       {activeCount > 0 && (
                         <span>
@@ -183,17 +181,17 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                           <Trans>{activeCount} active</Trans>
                         </span>
                       )}
-                    </div>
-                  </div>
+                    </span>
+                  </span>
                   <FaChevronRight
-                    className={`text-discord-text-muted text-[10px] transition-transform ${
+                    className={`row-icon text-[10px] transition-transform ${
                       isExpanded ? "rotate-90" : ""
                     }`}
                     aria-hidden="true"
                   />
                 </button>
                 {isExpanded && (
-                  <ul className="bg-discord-dark-200/60 border-t border-discord-dark-400/60">
+                  <ul className="ml-[15px] my-1 pl-2 border-l border-discord-dark-500/60">
                     {list.map((w) => (
                       <li key={w.id}>
                         <button
@@ -202,21 +200,21 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                             reopen(w.serverId, w.id);
                             closeMenu();
                           }}
-                          className="w-full flex items-start gap-2.5 pl-9 pr-3 py-2.5 md:py-2 text-left hover:bg-discord-dark-400/60 transition-colors"
+                          className="row-interactive items-start"
                         >
-                          <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
+                          <span className="row-icon mt-1">
                             {stateGlyph(effectiveWorkflowState(w))}
                           </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-baseline gap-1.5">
-                              <span className="text-xs font-medium text-discord-text-normal truncate">
+                          <span className="flex-1 min-w-0">
+                            <span className="flex items-baseline gap-1.5">
+                              <span className="truncate">
                                 {w.name ?? t`Workflow`}
                               </span>
-                              <span className="text-[10px] text-discord-text-muted shrink-0">
+                              <span className="row-meta shrink-0">
                                 {fmtAgo(w.startedAt)}
                               </span>
-                            </div>
-                            <div className="text-[10px] text-discord-text-muted">
+                            </span>
+                            <span className="row-meta block">
                               <Trans>{countableSteps(w.steps)} step(s)</Trans>
                               {(() => {
                                 const eff = effectiveWorkflowState(w);
@@ -237,8 +235,8 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                                   </span>
                                 );
                               })()}
-                            </div>
-                          </div>
+                            </span>
+                          </span>
                         </button>
                       </li>
                     ))}

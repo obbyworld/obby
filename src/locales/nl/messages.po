@@ -383,6 +383,14 @@ msgstr "Voeg een woord of zin toe..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Banmasker toevoegen (bijv. nick!*@*, *!*@host.com)"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "kanaal toevoegen"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "Kanaal toevoegen"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Uitzonderingsmasker toevoegen (bijv. nick!*@*, *!*@host.com)"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "Avatarvoorbeeldweergave"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Afwezig"
@@ -671,8 +679,8 @@ msgstr "Gebruiker bannen (via nickname)"
 msgid "Bans"
 msgstr "Bannen"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "De bot heeft nog geen slash-opdrachten geregistreerd."
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Bots"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bots — {botsLoadingCount} opdrachtenlijst(en) worden ontvangen"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bots ({botsLoadingCount} worden geladen)"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Bots op dit netwerk"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "Kanaaleigenaar"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "Kanaalonderwerp"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "Kanaal verschijnt niet in LIST- of NAMES-opdrachten"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "kanaalnaam"
 
@@ -999,7 +1000,7 @@ msgstr "Client"
 msgid "Client Limit (+l)"
 msgstr "Clientlimiet (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "Verbinden…"
 msgid "Connection"
 msgstr "Verbinding"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "Verbinding verbroken. Maak opnieuw verbinding om verder te chatten"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "Verbinding: matig"
@@ -1171,6 +1176,10 @@ msgstr "Kopiëren"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "Alles kopiëren"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "Kanaalnaam kopiëren"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "Een nieuwe uitnodigingslink aanmaken"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "Beheer en maak je uitnodigingslinks aan"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "Map maken"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "Bot {0} verwijderen?  Dit verwijdert de databaserij zacht; hergebruik de nick later pas na een /REHASH."
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "Kanaal verwijderen"
+msgid "Delete folder"
+msgstr "Map verwijderen"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "Verwerpen"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "Wil je deze link in een nieuw tabblad openen?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Niet meer waarschuwen over lage verbindingsbeveiliging voor deze server"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "Klaar"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Downloaden"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "Sleep een handvat om een kanaal te verplaatsen, of in een map"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Sleep om te kiezen wat je opneemt. Druk op Escape om te annuleren."
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "Slepen om te verplaatsen"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "bijv. 100:1440"
 msgid "Echo Cancellation"
 msgstr "Echo-onderdrukking"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "Bewerken"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "{0} bewerken"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "Kanaalinstellingen bewerken"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "Verbinding bewerken"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "Meerdere regels invoer inschakelen"
 msgid "Enable Notification Sounds"
 msgstr "Meldingsgeluiden inschakelen"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "Kanalen filteren..."
 msgid "Filter members…"
 msgstr "Leden filteren…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "Kanalen zoeken"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "Je locatie zoeken…"
@@ -1756,6 +1800,10 @@ msgstr "Floodprofiel (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "Floodbeveiligingsinstellingen"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "Mapnaam"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "Afbeeldingsvoorbeeldweergave"
 msgid "IN"
 msgstr "IN"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "in gesprek"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "Info:"
@@ -1969,7 +2021,10 @@ msgstr "Een gebruiker uitnodigen voor het huidige kanaal"
 msgid "Invite to stream"
 msgstr "Uitnodigen om te streamen"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "Gebruiker uitnodigen"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "Een kanaal verlaten"
 msgid "Leave call"
 msgstr "Gesprek verlaten"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "Kanaal verlaten"
 
@@ -2199,6 +2254,10 @@ msgstr "Locatie"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Locatietoegang is geweigerd. Sta locatietoegang toe in je browser- of systeeminstellingen en probeer het opnieuw."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "Opnieuw inloggen"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "Je profielgegevens en metadata beheren"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Markeren als bot — gewoonlijk 'aan' of leeg"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "Markeren als gelezen"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "Meer"
 msgid "More actions"
 msgstr "Meer acties"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "Map omlaag verplaatsen"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "Map omhoog verplaatsen"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "Verplaatsen naar map"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Meerdere regels met Shift+Enter"
@@ -2428,6 +2503,7 @@ msgstr "Dempen"
 msgid "Mute for me"
 msgstr "Dempen voor mij"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "Netwerken op {0}"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "Nieuw DM"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "nieuwe map"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "offline"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "een van:"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2762,6 +2843,11 @@ msgstr "Open een privébericht naar een gebruiker"
 msgid "Open channel configuration settings"
 msgstr "Kanaelconfiguratie-instellingen openen"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "Kanaalopties openen"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "Link openen"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "Kaart openen"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "Netwerkopties openen"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "Permanent"
 msgid "Photo"
 msgstr "Foto"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "Kanaalsoort kiezen"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Beeld-in-beeld"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "Vastmaken"
 
@@ -2977,7 +3071,7 @@ msgid "Privacy Policy"
 msgstr "Privacybeleid"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
+msgid "Private messages"
 msgstr "Privéberichten"
 
 #: src/components/ui/FloodSettingsModal.tsx
@@ -3085,6 +3179,10 @@ msgstr "Redenering"
 msgid "Receiving command list…"
 msgstr "Opdrachtenlijst wordt ontvangen…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "Opnieuw verbinden"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "Opnieuw verbinden mislukt"
@@ -3093,6 +3191,10 @@ msgstr "Opnieuw verbinden mislukt"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Opnieuw verbinden met server"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "Opnieuw verbinden. Bewerk de verbinding als dit blijft mislukken"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "Regel verwijderen"
 msgid "Rename Channel"
 msgstr "Kanaal hernoemen"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "Map hernoemen"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "{0} hernoemen of verwijderen"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "Map hernoemen of verwijderen"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "Dit kanaal op de server hernoemen. Alle gebruikers zien de nieuwe naam."
@@ -3196,6 +3311,12 @@ msgstr "Markdown-opmaak in berichten weergeven"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Heropen de workflow die dit bericht heeft gemaakt ({stepCount} stappen)"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "Kanalen herordenen"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "Beveiligingsgroepen"
 msgid "Security Warning"
 msgstr "Beveiligingswaarschuwing"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "Bots bekijken"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "Kanaalinfo bekijken"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "Bezig met verzenden"
 msgid "server"
 msgstr "server"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "Server"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "Toont alle externe media. Elke URL kan een verzoek naar een onbekende se
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Toont media van de vertrouwde bestandshost van je server. Er worden geen verzoeken gedaan aan externe diensten."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "Inloggen mislukt, je chat als gast. Log opnieuw in of herstel je wachtwoord"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "Aangemeld op"
@@ -3690,6 +3822,11 @@ msgstr "Luidspreker {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "Luidsprekerselectie wordt niet ondersteund in deze browser."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "Privébericht starten"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "Delen stoppen"
 msgid "Stop video"
 msgstr "Video stoppen"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "Stream"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "stream-naam"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "Streamer"
@@ -3786,6 +3931,10 @@ msgstr "Systeem"
 msgid "System default"
 msgstr "Systeemstandaard"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "Uit map halen"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Foto maken"
@@ -3794,9 +3943,9 @@ msgstr "Foto maken"
 msgid "Text"
 msgstr "Tekst"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
-msgstr "Tekstkanalen"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
+msgstr "Tekstkanaal"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4050,8 +4199,8 @@ msgstr "Dempen opheffen"
 msgid "Unmute for me"
 msgstr "Dempen opheffen voor mij"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "Losmaken"
 
@@ -4176,10 +4325,10 @@ msgstr "Gebruikers:"
 msgid "Valid server port is required"
 msgstr "Een geldige serverpoort is vereist"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "Geverifieerd account"
 
@@ -4252,6 +4401,14 @@ msgstr "Kijkers ({0})"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "Spraakkanaal"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "spraakkanaal"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"

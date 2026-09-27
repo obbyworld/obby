@@ -2,6 +2,7 @@ import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
@@ -176,7 +177,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const mediaChannelId = channelId ?? privateChatId;
   const pmUserCache = useRef(new Map<string, User>());
   const isNarrowView = useMediaQuery();
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+  const isTouchDevice = useIsTouchInput();
   const collapsibleRef = useRef<CollapsibleMessageHandle>(null);
   const [messageNeedsCollapsing, setMessageNeedsCollapsing] = useState(false);
   const messageRowRef = useRef<HTMLDivElement>(null);

@@ -4,6 +4,7 @@ import type React from "react";
 import { type ReactNode, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { findTextField } from "../focus";
 
 export interface BaseModalProps {
   isOpen: boolean;
@@ -58,7 +59,9 @@ export const BaseModal: React.FC<BaseModalProps> = ({
     if (isOpen) {
       previousActiveElement.current = document.activeElement as HTMLElement;
       setTimeout(() => {
-        modalRef.current?.focus();
+        const modal = modalRef.current;
+        if (!modal || modal.contains(document.activeElement)) return;
+        (findTextField(modal) ?? modal).focus();
       }, 50);
     } else {
       previousActiveElement.current?.focus();

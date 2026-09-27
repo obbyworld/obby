@@ -207,9 +207,7 @@ export const AppLayout: React.FC = () => {
                 </div>
               )}
               <div className="w-[calc(100vw-72px)] h-full bg-discord-dark-100">
-                <ChannelList
-                  onToggle={() => toggleChannelList(!isChannelListVisible)}
-                />
+                <ChannelList />
               </div>
             </div>
           );
@@ -233,9 +231,7 @@ export const AppLayout: React.FC = () => {
               onWidthChange={handleChannelListWidthChange}
             >
               <div className="channel-list w-full h-full bg-discord-dark-100 md:block z-20">
-                <ChannelList
-                  onToggle={() => toggleChannelList(!isChannelListVisible)}
-                />
+                <ChannelList />
               </div>
             </ResizableSidebar>
           </>

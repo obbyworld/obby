@@ -31,6 +31,15 @@ export type PinnedPrivateChatsMap = Record<
 
 export type ChannelOrderMap = Record<string, string[]>;
 
+export interface ChannelFolder {
+  id: string;
+  name: string;
+  channels: string[];
+  collapsed: boolean;
+}
+
+export type ChannelFoldersMap = Record<string, ChannelFolder[]>;
+
 export interface GlobalSettings {
   enableNotifications: boolean;
   notificationSound: string;

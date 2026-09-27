@@ -383,6 +383,14 @@ msgstr "단어나 문구 추가..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "차단 마스크 추가 (예: nick!*@*, *!*@host.com)"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "채널 추가"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "채널 추가"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "예외 마스크 추가 (예: nick!*@*, *!*@host.com)"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "아바타 미리보기"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "자리 비움"
@@ -671,8 +679,8 @@ msgstr "사용자 차단 (닉네임)"
 msgid "Bans"
 msgstr "차단 목록"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "봇이 아직 슬래시 명령을 등록하지 않았습니다."
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "봇"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bot — 명령어 목록 {botsLoadingCount}개 수신 중"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bot ({botsLoadingCount}개 로딩 중)"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "이 네트워크의 봇"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "채널 소유자"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "채널 주제"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "LIST 또는 NAMES 명령에 채널이 표시되지 않음"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "채널-이름"
 
@@ -999,7 +1000,7 @@ msgstr "클라이언트"
 msgid "Client Limit (+l)"
 msgstr "클라이언트 제한 (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "연결 중…"
 msgid "Connection"
 msgstr "연결"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "연결이 끊겼습니다. 다시 연결하여 채팅을 계속하세요"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "연결: 보통"
@@ -1171,6 +1176,10 @@ msgstr "복사"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "모두 복사"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "채널 이름 복사"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "새 초대 링크 생성"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "초대 링크 생성 및 관리"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "폴더 생성"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "봇 {0}을(를) 삭제하시겠습니까?  데이터베이스 행을 소프트 삭제합니다. 닉네임을 나중에 다시 사용하려면 /REHASH 후에만 가능합니다."
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "채널 삭제"
+msgid "Delete folder"
+msgstr "폴더 삭제"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "삭제"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "이 링크를 새 탭에서 여시겠습니까?"
 msgid "Don't warn me about low link security for this server"
 msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "완료"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "다운로드"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "핸들을 드래그하여 채널을 이동하거나 폴더에 넣으세요"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "드래그해서 녹화할 범위를 고르세요. Escape 키로 취소합니다."
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "드래그하여 이동"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "예: 100:1440"
 msgid "Echo Cancellation"
 msgstr "에코 제거"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "편집"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "{0} 편집"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "채널 설정 편집"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "연결 편집"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "여러 줄 입력 활성화"
 msgid "Enable Notification Sounds"
 msgstr "알림 소리 활성화"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "채널 필터링..."
 msgid "Filter members…"
 msgstr "멤버 필터링…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "채널 찾기"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "위치 확인 중..."
@@ -1756,6 +1800,10 @@ msgstr "플러드 프로필 (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "플러드 방지 설정"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "폴더 이름"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "이미지 미리보기"
 msgid "IN"
 msgstr "수신"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "통화 중"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "정보:"
@@ -1969,7 +2021,10 @@ msgstr "현재 채널에 사용자 초대"
 msgid "Invite to stream"
 msgstr "스트리밍에 초대"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "사용자 초대"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "채널 나가기"
 msgid "Leave call"
 msgstr "통화 나가기"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "채널 나가기"
 
@@ -2199,6 +2254,10 @@ msgstr "위치"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "위치 액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 위치 액세스를 허용한 후 다시 시도하세요."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "다시 로그인"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "프로필 정보 및 메타데이터 관리"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "봇으로 표시 - 보통 'on' 또는 비워두기"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "읽음으로 표시"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "더 보기"
 msgid "More actions"
 msgstr "추가 작업"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "폴더를 아래로 이동"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "폴더를 위로 이동"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "폴더로 이동"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enter로 여러 줄 입력"
@@ -2428,6 +2503,7 @@ msgstr "음소거"
 msgid "Mute for me"
 msgstr "나에게만 음소거"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "{0}의 네트워크"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "새 DM"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "새 폴더"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "오프라인"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "오프라인"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "다음 중 하나:"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "온라인"
 
@@ -2762,6 +2843,11 @@ msgstr "사용자에게 개인 메시지 열기"
 msgid "Open channel configuration settings"
 msgstr "채널 구성 설정 열기"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "채널 옵션 열기"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "링크 열기"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "지도 열기"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "네트워크 옵션 열기"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "영구"
 msgid "Photo"
 msgstr "사진"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "채널 종류 선택"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "화면 속 화면"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "고정"
 
@@ -2977,8 +3071,8 @@ msgid "Privacy Policy"
 msgstr "개인정보 처리방침"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
-msgstr "비공개 메시지"
+msgid "Private messages"
+msgstr "개인 메시지"
 
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/UserSettings.tsx
@@ -3085,6 +3179,10 @@ msgstr "추론"
 msgid "Receiving command list…"
 msgstr "명령어 목록 수신 중…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "다시 연결"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "재연결 실패"
@@ -3093,6 +3191,10 @@ msgstr "재연결 실패"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "다시 연결 중입니다. 계속 실패하면 연결을 편집하세요"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "규칙 제거"
 msgid "Rename Channel"
 msgstr "채널 이름 변경"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "폴더 이름 변경"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "{0} 이름 변경 또는 삭제"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "폴더 이름 변경 또는 삭제"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "서버에서 이 채널의 이름을 변경합니다. 모든 사용자에게 새 이름이 표시됩니다."
@@ -3196,6 +3311,12 @@ msgstr "메시지에서 마크다운 서식 렌더링"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "이 메시지를 생성한 워크플로 다시 열기 ({stepCount}단계)"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "채널 순서 변경"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "보안 그룹"
 msgid "Security Warning"
 msgstr "보안 경고"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "봇 보기"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "채널 정보 보기"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "보내는 중"
 msgid "server"
 msgstr "서버"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "서버"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "모든 외부 미디어를 표시합니다. 모든 URL이 알 수 없는
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "서버의 신뢰할 수 있는 파일 호스트의 미디어를 표시합니다. 외부 서비스에 요청이 전송되지 않습니다."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "로그인에 실패하여 게스트로 채팅 중입니다. 다시 로그인하거나 비밀번호를 수정하세요"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "접속 시각"
@@ -3690,6 +3822,11 @@ msgstr "스피커 {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "이 브라우저에서는 스피커 선택을 지원하지 않습니다."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "개인 메시지 시작"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "공유 중지"
 msgid "Stop video"
 msgstr "비디오 중지"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "스트림"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "스트림-이름"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "스트리머"
@@ -3786,6 +3931,10 @@ msgstr "시스템"
 msgid "System default"
 msgstr "시스템 기본값"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "폴더에서 꺼내기"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "사진 찍기"
@@ -3794,8 +3943,8 @@ msgstr "사진 찍기"
 msgid "Text"
 msgstr "텍스트"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
 msgstr "텍스트 채널"
 
 #: src/lib/mediaDevices.ts
@@ -4050,8 +4199,8 @@ msgstr "음소거 해제"
 msgid "Unmute for me"
 msgstr "나에게만 음소거 해제"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "고정 해제"
 
@@ -4176,10 +4325,10 @@ msgstr "사용자:"
 msgid "Valid server port is required"
 msgstr "올바른 서버 포트가 필요합니다"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "인증된 계정"
 
@@ -4252,6 +4401,14 @@ msgstr "시청자 ({0}명)"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "음성 채널"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "음성-채널"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"

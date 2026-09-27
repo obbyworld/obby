@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useRef } from "react";
+import { findTextField, findTopModalDialog } from "../lib/focus";
 
 function isEditableActive(): boolean {
   const active = document.activeElement;
@@ -34,6 +35,24 @@ function insertText(
   input.setSelectionRange(start + text.length, start + text.length);
 }
 
+// We send stray typing to an open inline editor, such as the add-channel row,
+// and to the chat input otherwise.
+let typingOwner: HTMLInputElement | null = null;
+
+export function useTypingOwner(
+  inputRef: RefObject<HTMLInputElement | null>,
+  isActive: boolean,
+) {
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!isActive || !input) return;
+    typingOwner = input;
+    return () => {
+      if (typingOwner === input) typingOwner = null;
+    };
+  }, [inputRef, isActive]);
+}
+
 export function useAutoFocusTyping(
   inputRef: RefObject<HTMLTextAreaElement | HTMLInputElement | null>,
   isBlocked: () => boolean,
@@ -51,10 +70,17 @@ export function useAutoFocusTyping(
       // Don't steal focus from an already-focused editable element
       if (isEditableActive()) return;
 
+      // We give stray typing to an open dialog's field so the chat behind it never gets it.
+      const dialog = findTopModalDialog();
+      if (dialog) {
+        findTextField(dialog)?.focus();
+        return;
+      }
+
       // Caller says this context shouldn't capture right now
       if (isBlockedRef.current()) return;
 
-      const input = inputRef.current;
+      const input = typingOwner ?? inputRef.current;
       if (!input || document.activeElement === input) return;
 
       input.focus();
@@ -65,9 +91,10 @@ export function useAutoFocusTyping(
     const handlePaste = (e: ClipboardEvent) => {
       // If an editable already has focus, let the browser handle it normally
       if (isEditableActive()) return;
+      if (findTopModalDialog()) return;
       if (isBlockedRef.current()) return;
 
-      const input = inputRef.current;
+      const input = typingOwner ?? inputRef.current;
       if (!input) return;
 
       const text = e.clipboardData?.getData("text");

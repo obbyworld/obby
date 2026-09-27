@@ -42,6 +42,7 @@ export interface EventMap {
     serverId: string;
     connectionState: ConnectionState;
   };
+  saslFailed: BaseIRCEvent;
   NICK: EventWithTags & {
     oldNick: string;
     newNick: string;

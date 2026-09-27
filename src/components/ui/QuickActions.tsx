@@ -13,6 +13,7 @@ import {
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
 import { fuzzyMatch } from "../../lib/fuzzySearch";
 import ircClient from "../../lib/ircClient";
+import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { settingsRegistry } from "../../lib/settings";
 import type { SettingSearchResult } from "../../lib/settings/types";
 import useStore from "../../store";
@@ -49,7 +50,6 @@ const QuickActions: React.FC = () => {
     requestChatInputFocus,
     toggleMemberList,
     toggleChannelList,
-    updateGlobalSettings,
     pinPrivateChat,
     unpinPrivateChat,
     toggleChannelListModal,
@@ -394,11 +394,9 @@ const QuickActions: React.FC = () => {
         case "toggle-channel-list":
           toggleChannelList();
           break;
-        case "toggle-notifications": {
-          const newVolume = globalSettings.notificationVolume > 0 ? 0 : 0.4;
-          updateGlobalSettings({ notificationVolume: newVolume });
+        case "toggle-notifications":
+          toggleNotificationSound();
           break;
-        }
         case "pin-private-chat":
           if (data.serverId && data.privateChatId) {
             pinPrivateChat(data.serverId, data.privateChatId);
@@ -411,14 +409,7 @@ const QuickActions: React.FC = () => {
           break;
       }
     },
-    [
-      toggleMemberList,
-      toggleChannelList,
-      updateGlobalSettings,
-      globalSettings.notificationVolume,
-      pinPrivateChat,
-      unpinPrivateChat,
-    ],
+    [toggleMemberList, toggleChannelList, pinPrivateChat, unpinPrivateChat],
   );
 
   const handleUIModal = useCallback(

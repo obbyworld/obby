@@ -211,6 +211,14 @@ for WKWebView's `IntersectionObserver`.
 
 ---
 
+## Menus, panels and touch
+
+- Dropdown menus go through `Menu` (`src/components/ui/Menu.tsx`); other floating panels go through `Popover`. Style their contents with the shared classes in the `@layer components` block of `src/index.css` (`surface-floating`, `row-interactive`, `row-meta`, …) so every panel stays one look.
+- Touch UI (bottom sheets, long-press, drag handles) follows `useIsTouchInput()`. Window width only decides layout, so a narrow desktop window still gets mouse UI.
+- Stray typing goes to the chat input. An open modal dialog takes it for its own text field, and an inline editor can claim it with `useTypingOwner`.
+
+---
+
 ## Biome — intentional dep omissions
 
 Always add suppression comment on the line **immediately before** the hook — pre-commit

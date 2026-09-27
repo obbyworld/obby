@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shared look for menus and floating panels. */
+@layer components {
+  .surface-floating {
+    @apply bg-discord-dark-300 rounded-lg ring-1 ring-black/40 shadow-[0_8px_24px_rgba(0,0,0,0.45)];
+  }
+  .surface-list {
+    @apply p-1.5;
+  }
+  .row-interactive {
+    @apply w-full px-2 py-1.5 rounded text-left text-sm font-medium flex items-center gap-2.5 text-discord-text-normal transition-colors duration-100 hover:bg-discord-primary hover:text-white;
+  }
+  .row-interactive-active {
+    @apply bg-discord-primary text-white;
+  }
+  .row-interactive-danger {
+    @apply text-red-400 hover:bg-red-600 hover:text-white;
+  }
+  .row-icon {
+    @apply flex-shrink-0 w-4 flex justify-center opacity-70;
+  }
+  .row-meta {
+    @apply text-xs font-normal text-discord-text-muted;
+  }
+  :is(.row-interactive:hover, .row-interactive-active) .row-icon {
+    @apply opacity-100;
+  }
+  :is(.row-interactive:hover, .row-interactive-active) .row-meta {
+    @apply text-white;
+  }
+  .divider-soft {
+    @apply my-1.5 mx-1 h-px border-0 bg-white/[0.06];
+  }
+  .section-label {
+    @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
+  }
+}
+
 /* Collapsible message styles */
 .collapsible-message .line-clamp {
   display: -webkit-box;

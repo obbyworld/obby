@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
 import { useEmojiCompletion } from "../../hooks/useEmojiCompletion";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGuard";
 import { useMessageHistory } from "../../hooks/useMessageHistory";
@@ -66,6 +67,7 @@ import {
   isValidFormattingType,
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
+import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
 import { regionRecordingSupported } from "../../lib/screenRecorder";
@@ -100,11 +102,11 @@ import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector from "../ui/GifSelector";
-import HeaderOverflowMenu from "../ui/HeaderOverflowMenu";
 import DiscoverGrid from "../ui/HomeScreen";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { LocationShareModal } from "../ui/LocationShareModal";
+import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ProfileModalRouter from "../ui/ProfileModalRouter";
@@ -655,30 +657,6 @@ export const ChatArea: React.FC<{
     setLocalReplyTo(message);
   }, []);
 
-  // Toggle notification sound volume
-  const handleToggleNotificationVolume = async () => {
-    const currentVolume = globalSettings.notificationVolume;
-    const newVolume = currentVolume > 0 ? 0 : 0.4; // Toggle between 0 (muted) and 0.4 (40%)
-
-    useStore.getState().updateGlobalSettings({
-      notificationVolume: newVolume,
-    });
-
-    // Play test sound when enabling (not when disabling)
-    if (newVolume > 0) {
-      try {
-        const audio = new Audio();
-        audio.volume = newVolume;
-        audio.src = "/sounds/notif2.mp3";
-        // Wait for the audio to be loaded before playing
-        audio.load();
-        await audio.play();
-      } catch (error) {
-        console.error("Failed to play notification sound:", error);
-      }
-    }
-  };
-
   // Load saved settings from local storage on mount
   useEffect(() => {
     const savedColor = localStorage.getItem("selectedColor");
@@ -738,7 +716,7 @@ export const ChatArea: React.FC<{
     selectedServer?.filehost || selectedServer?.fileHosts?.length
   );
 
-  const isTouch = useMediaQuery("(pointer: coarse)");
+  const isTouch = useIsTouchInput();
 
   // MediaRecorder support doesn't change at runtime, so these only need
   // picking once.
@@ -2412,7 +2390,7 @@ export const ChatArea: React.FC<{
         onToggleChanList={onToggleChanList}
         onToggleMemberList={() => toggleMemberList(!isMemberListVisible)}
         onSearchQueryChange={setSearchQuery}
-        onToggleNotificationVolume={handleToggleNotificationVolume}
+        onToggleNotificationVolume={toggleNotificationSound}
         onOpenChannelSettings={() => setChannelSettingsModalOpen(true)}
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
         onOpenBots={() => setBotsModalOpen(true)}
@@ -2641,7 +2619,7 @@ export const ChatArea: React.FC<{
                 </div>
               </div>
 
-              <HeaderOverflowMenu
+              <Menu
                 isOpen={showPlusMenu}
                 onClose={() => setShowPlusMenu(false)}
                 anchorElement={plusButtonRef.current}

@@ -51,6 +51,14 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
+  ircClient.on("saslFailed", ({ serverId }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, saslFailed: true } : s,
+      ),
+    }));
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
@@ -81,6 +89,8 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          saslFailed:
+            connectionState === "connecting" ? false : server.saslFailed,
         };
       });
 

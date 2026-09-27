@@ -383,6 +383,14 @@ msgstr "単語またはフレーズを追加..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "BANマスクを追加（例：nick!*@*、*!*@host.com）"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "チャンネルを追加"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "チャンネルを追加"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "例外マスクを追加（例：nick!*@*、*!*@host.com）"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "アバタープレビュー"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "離席中"
@@ -671,8 +679,8 @@ msgstr "ユーザーをBAN（ニックネーム）"
 msgid "Bans"
 msgstr "BAN一覧"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "ボットはまだスラッシュコマンドを登録していません。"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "ボット"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Bot — {botsLoadingCount} 件のコマンドリストを受信中"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Bot（{botsLoadingCount} 件を読み込み中）"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "このネットワークのボット"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "チャンネルオーナー"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "チャンネルトピック"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "LIST または NAMES コマンドにチャンネルが表示されません"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "チャンネル名"
 
@@ -999,7 +1000,7 @@ msgstr "クライアント"
 msgid "Client Limit (+l)"
 msgstr "クライアント制限 (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "接続中…"
 msgid "Connection"
 msgstr "接続"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "接続が切れました。再接続してチャットを続けてください"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "接続：普通"
@@ -1171,6 +1176,10 @@ msgstr "コピー"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "すべてコピー"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "チャンネル名をコピー"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "新しい招待リンクを作成"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "招待リンクを作成・管理する"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "フォルダを作成"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "ボット {0} を削除しますか？  これはデータベース行をソフト削除します。ニックは /REHASH の後にのみ再利用してください。"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "チャンネルを削除"
+msgid "Delete folder"
+msgstr "フォルダを削除"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "破棄"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "このリンクを新しいタブで開きますか？"
 msgid "Don't warn me about low link security for this server"
 msgstr "このサーバーのリンクセキュリティが低い場合に警告しない"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "完了"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "ダウンロード"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "ハンドルをドラッグしてチャンネルを移動、またはフォルダに入れます"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "ドラッグして録画する範囲を選びます。Escape で取り消します。"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "ドラッグして移動"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "例：100:1440"
 msgid "Echo Cancellation"
 msgstr "エコーキャンセレーション"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "編集"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "{0} を編集"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "チャンネル設定を編集"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "接続を編集"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "複数行入力を有効にする"
 msgid "Enable Notification Sounds"
 msgstr "通知音を有効にする"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "チャンネルをフィルター..."
 msgid "Filter members…"
 msgstr "メンバーをフィルター…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "チャンネルを検索"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "現在地を取得中..."
@@ -1756,6 +1800,10 @@ msgstr "フラッドプロファイル (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "フラッド保護設定"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "フォルダ名"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "画像プレビュー"
 msgid "IN"
 msgstr "受信"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "通話中"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "情報："
@@ -1969,7 +2021,10 @@ msgstr "現在のチャンネルにユーザーを招待する"
 msgid "Invite to stream"
 msgstr "配信に招待"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "ユーザーを招待"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "チャンネルから退出する"
 msgid "Leave call"
 msgstr "通話から退出"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "チャンネルを退出"
 
@@ -2199,6 +2254,10 @@ msgstr "位置情報"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置情報へのアクセスが拒否されました。ブラウザまたはシステムの設定で位置情報へのアクセスを許可してから、もう一度お試しください。"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "再度ログイン"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "プロフィール情報とメタデータを管理する"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "ボットとしてマーク — 通常は「on」または空欄"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "既読にする"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "詳細"
 msgid "More actions"
 msgstr "その他のアクション"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "フォルダを下に移動"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "フォルダを上に移動"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "フォルダに移動"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enterで複数行入力"
@@ -2428,6 +2503,7 @@ msgstr "ミュート"
 msgid "Mute for me"
 msgstr "自分のみミュート"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "{0} のネットワーク"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "新しいDM"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "新しいフォルダ"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "オフライン"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "オフライン"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "次のいずれか:"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "オンライン"
 
@@ -2762,6 +2843,11 @@ msgstr "ユーザーへのプライベートメッセージを開く"
 msgid "Open channel configuration settings"
 msgstr "チャンネル設定を開く"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "チャンネルオプションを開く"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "リンクを開く"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "地図を開く"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "ネットワークオプションを開く"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "永続的"
 msgid "Photo"
 msgstr "写真"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "チャネルの種類を選択"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "ピクチャーインピクチャー"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "ピン留め"
 
@@ -2977,7 +3071,7 @@ msgid "Privacy Policy"
 msgstr "プライバシーポリシー"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
+msgid "Private messages"
 msgstr "プライベートメッセージ"
 
 #: src/components/ui/FloodSettingsModal.tsx
@@ -3085,6 +3179,10 @@ msgstr "推論"
 msgid "Receiving command list…"
 msgstr "コマンドリストを受信中…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "再接続"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "再接続に失敗しました"
@@ -3093,6 +3191,10 @@ msgstr "再接続に失敗しました"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "サーバーに再接続"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "再接続中です。失敗が続く場合は接続を編集してください"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "ルールを削除"
 msgid "Rename Channel"
 msgstr "チャンネル名を変更"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "フォルダ名を変更"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "{0} の名前を変更または削除"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "フォルダの名前を変更または削除"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "サーバー上でこのチャンネルの名前を変更します。すべてのユーザーに新しい名前が表示されます。"
@@ -3196,6 +3311,12 @@ msgstr "メッセージ内のMarkdown書式を表示する"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "このメッセージを生成したワークフローを再度開く（{stepCount} ステップ）"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "チャンネルを並べ替え"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "セキュリティグループ"
 msgid "Security Warning"
 msgstr "セキュリティ警告"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "ボットを見る"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "チャンネル情報を見る"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "送信中"
 msgid "server"
 msgstr "サーバー"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "サーバー"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "すべての外部メディアを表示します。URLが不明なサー
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "サーバーの信頼済みファイルホストからのメディアを表示します。外部サービスへのリクエストは発生しません。"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "サインインに失敗したため、ゲストとしてチャットしています。再度ログインするかパスワードを修正してください"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "サインオン"
@@ -3690,6 +3822,11 @@ msgstr "スピーカー {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "このブラウザではスピーカーの選択がサポートされていません。"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "プライベートメッセージを開始"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "共有を停止"
 msgid "Stop video"
 msgstr "ビデオを停止"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "ストリーム"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "stream-name"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "配信者"
@@ -3786,6 +3931,10 @@ msgstr "システム"
 msgid "System default"
 msgstr "システムのデフォルト"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "フォルダから出す"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "写真を撮る"
@@ -3794,9 +3943,9 @@ msgstr "写真を撮る"
 msgid "Text"
 msgstr "テキスト"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
-msgstr "テキストチャンネル"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
+msgstr "テキストチャネル"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4050,8 +4199,8 @@ msgstr "ミュート解除"
 msgid "Unmute for me"
 msgstr "自分のみミュート解除"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "ピン留めを解除"
 
@@ -4176,10 +4325,10 @@ msgstr "ユーザー："
 msgid "Valid server port is required"
 msgstr "有効なサーバーポートが必要です"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "認証済みアカウント"
 
@@ -4252,6 +4401,14 @@ msgstr "視聴者 ({0})"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "ボイスチャネル"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "ボイスチャンネル"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"

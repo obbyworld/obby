@@ -42,6 +42,7 @@ import {
   handleRplYoureOper,
   handleRplYourHost,
   handleSaslFailure,
+  handleSaslRejected,
   handleSaslSuccess,
 } from "./connection";
 import { handleInvitelink } from "./invitelink";
@@ -157,9 +158,9 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleSaslSuccess(ctx, serverId, source, parv),
   // SASL failure: 904-907
   "904": (ctx, serverId, source, parv) =>
-    handleSaslFailure(ctx, serverId, source, parv),
+    handleSaslRejected(ctx, serverId, source, parv),
   "905": (ctx, serverId, source, parv) =>
-    handleSaslFailure(ctx, serverId, source, parv),
+    handleSaslRejected(ctx, serverId, source, parv),
   "906": (ctx, serverId, source, parv) =>
     handleSaslFailure(ctx, serverId, source, parv),
   "907": (ctx, serverId, source, parv) =>

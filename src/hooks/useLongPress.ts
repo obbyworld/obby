@@ -22,7 +22,6 @@ export function useLongPress({
       timerRef.current = null;
     }
     startPos.current = null;
-    firedRef.current = false;
     // Restore text selection
     document.body.style.userSelect = "";
     document.body.style.webkitUserSelect = "";

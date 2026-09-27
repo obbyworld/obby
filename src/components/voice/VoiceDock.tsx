@@ -16,7 +16,7 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import { LuEllipsis } from "react-icons/lu";
-import HeaderOverflowMenu from "../ui/HeaderOverflowMenu";
+import Menu from "../ui/Menu";
 import Popover from "../ui/Popover";
 import { DockButton } from "./DockButton";
 
@@ -213,7 +213,7 @@ export function VoiceDock({
         </div>
       </Popover>
 
-      <HeaderOverflowMenu
+      <Menu
         isOpen={moreAnchor !== null}
         onClose={() => setMoreAnchor(null)}
         anchorElement={moreAnchor}

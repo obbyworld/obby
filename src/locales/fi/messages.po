@@ -383,6 +383,14 @@ msgstr "Lisää sana tai lause..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lisää porttikieltomaski (esim. nick!*@*, *!*@host.com)"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "lisää kanava"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "Lisää kanava"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lisää poikkeusmaski (esim. nick!*@*, *!*@host.com)"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "Avatarin esikatselu"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Poissa"
@@ -671,8 +679,8 @@ msgstr "Estä käyttäjä (nimimerkin perusteella)"
 msgid "Bans"
 msgstr "Estot"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "Botti ei ole vielä rekisteröinyt yhtään vinokomentoa."
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Botit"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Botit — vastaanotetaan {botsLoadingCount} komentoluettelo(a)"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Botit (ladataan {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Tämän verkon botit"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "Kanavan omistaja"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "Kanavan aihe"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "Kanava ei näy LIST- tai NAMES-komennoissa"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "kanavan-nimi"
 
@@ -999,7 +1000,7 @@ msgstr "Asiakasohjelma"
 msgid "Client Limit (+l)"
 msgstr "Käyttäjäraja (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "Yhdistetään…"
 msgid "Connection"
 msgstr "Yhteys"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "Yhteys katkesi. Yhdistä uudelleen jatkaaksesi keskustelua"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "Yhteys: kohtalainen"
@@ -1171,6 +1176,10 @@ msgstr "Kopioi"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "Kopioi kaikki"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "Kopioi kanavan nimi"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "Luo uusi kutsulinkki"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "Luo ja hallinnoi kutsulinkkejäsi"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "Luo kansio"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "Poistetaanko botti {0}?  Tämä poistaa tietokantarivin pehmeästi; käytä nimimerkkiä uudelleen vasta /REHASH-komennon jälkeen."
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "Poista kanava"
+msgid "Delete folder"
+msgstr "Poista kansio"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "Hylkää"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "Haluatko avata tämän linkin uudessa välilehdessä?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "Valmis"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Lataa"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "Vedä kahvasta siirtääksesi kanavan tai kansioon"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Valitse vetämällä, mitä tallennetaan. Peru Escape-näppäimellä."
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "Vedä siirtääksesi"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "esim. 100:1440"
 msgid "Echo Cancellation"
 msgstr "Kaiunpoisto"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "Muokkaa"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "Muokkaa {0}"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "Muokkaa kanavan asetuksia"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "Muokkaa yhteyttä"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "Ota monirivisyöttö käyttöön"
 msgid "Enable Notification Sounds"
 msgstr "Ota ilmoitusäänet käyttöön"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "Suodata kanavia..."
 msgid "Filter members…"
 msgstr "Suodata jäseniä…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "Etsi kanavia"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "Etsitään sijaintiasi..."
@@ -1756,6 +1800,10 @@ msgstr "Tulvasuojausprofiili (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "Tulvasuojausasetukset"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "Kansion nimi"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "Kuvan esikatselu"
 msgid "IN"
 msgstr "SISÄÄN"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "puhelussa"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "Tiedot:"
@@ -1969,7 +2021,10 @@ msgstr "Kutsu käyttäjä nykyiselle kanavalle"
 msgid "Invite to stream"
 msgstr "Kutsu striimiin"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "Kutsu käyttäjä"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "Poistu kanavalta"
 msgid "Leave call"
 msgstr "Poistu puhelusta"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "Poistu kanavalta"
 
@@ -2199,6 +2254,10 @@ msgstr "Sijainti"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Sijainnin käyttöoikeus evättiin. Salli sijainnin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "Kirjaudu uudelleen"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "Hallinnoi profiilitietojasi ja metatietoja"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Merkitse botiksi – yleensä 'on' tai tyhjä"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "Merkitse luetuksi"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "Lisää"
 msgid "More actions"
 msgstr "Lisää toimintoja"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "Siirrä kansiota alas"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "Siirrä kansiota ylös"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "Siirrä kansioon"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Monirivinen Shift+Enter-painikkeella"
@@ -2428,6 +2503,7 @@ msgstr "Mykistä"
 msgid "Mute for me"
 msgstr "Mykistä vain minulta"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "Verkot palvelimella {0}"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "Uusi DM"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "uusi kansio"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "ei verkossa"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Poissa verkosta"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "yksi seuraavista:"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "Verkossa"
 
@@ -2762,6 +2843,11 @@ msgstr "Avaa yksityisviesti käyttäjälle"
 msgid "Open channel configuration settings"
 msgstr "Avaa kanavan asetukset"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "Avaa kanavan valinnat"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "Avaa linkki"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "Avaa kartta"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "Avaa verkon asetukset"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "Pysyvä"
 msgid "Photo"
 msgstr "Kuva"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "Valitse kanavan tyyppi"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Kuva kuvassa"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "Kiinnitä"
 
@@ -2977,7 +3071,7 @@ msgid "Privacy Policy"
 msgstr "Tietosuojakäytäntö"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
+msgid "Private messages"
 msgstr "Yksityisviestit"
 
 #: src/components/ui/FloodSettingsModal.tsx
@@ -3085,6 +3179,10 @@ msgstr "Päättely"
 msgid "Receiving command list…"
 msgstr "Vastaanotetaan komentoluetteloa…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "Yhdistä uudelleen"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "Uudelleenyhdistäminen epäonnistui"
@@ -3093,6 +3191,10 @@ msgstr "Uudelleenyhdistäminen epäonnistui"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "Yhdistetään uudelleen. Muokkaa yhteyttä, jos tämä jatkuu"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "Poista sääntö"
 msgid "Rename Channel"
 msgstr "Nimeä kanava uudelleen"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "Nimeä kansio uudelleen"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "Nimeä uudelleen tai poista {0}"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "Nimeä kansio uudelleen tai poista se"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "Nimeä tämä kanava uudelleen palvelimella. Kaikki käyttäjät näkevät uuden nimen."
@@ -3196,6 +3311,12 @@ msgstr "Näytä Markdown-muotoilu viesteissä"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Avaa uudelleen työnkulku, joka tuotti tämän viestin ({stepCount} vaihetta)"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "Järjestä kanavat uudelleen"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "Tietoturvaryhmät"
 msgid "Security Warning"
 msgstr "Tietoturvavaroitus"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "Näytä botit"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "Näytä kanavan tiedot"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "Lähetetään"
 msgid "server"
 msgstr "palvelin"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "Palvelin"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "Näyttää kaiken ulkoisen median. Mikä tahansa URL voi aiheuttaa yhtey
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Näyttää mediaa palvelimesi luotetusta tiedostoisännästä. Ulkoisille palveluille ei lähetetä pyyntöjä."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "Kirjautuminen epäonnistui, joten keskustelet vieraana. Kirjaudu uudelleen tai korjaa salasanasi"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "Kirjautui sisään"
@@ -3690,6 +3822,11 @@ msgstr "Kaiutin {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "Tämä selain ei tue kaiuttimen valintaa."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "Aloita yksityisviesti"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "Lopeta jakaminen"
 msgid "Stop video"
 msgstr "Pysäytä video"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "Striimaus"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "striimin-nimi"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "Striimaaja"
@@ -3786,6 +3931,10 @@ msgstr "Järjestelmä"
 msgid "System default"
 msgstr "Järjestelmän oletus"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "Poista kansiosta"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Ota kuva"
@@ -3794,9 +3943,9 @@ msgstr "Ota kuva"
 msgid "Text"
 msgstr "Teksti"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
-msgstr "Tekstikanavat"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
+msgstr "Tekstikanava"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4050,8 +4199,8 @@ msgstr "Poista mykistys"
 msgid "Unmute for me"
 msgstr "Poista mykistys vain minulta"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "Irrota kiinnitys"
 
@@ -4176,10 +4325,10 @@ msgstr "Käyttäjät:"
 msgid "Valid server port is required"
 msgstr "Kelvollinen palvelinportti on pakollinen"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "Vahvistettu tili"
 
@@ -4252,6 +4401,14 @@ msgstr "Katsojat ({0})"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "Äänikanava"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "puhekanava"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"

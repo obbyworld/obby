@@ -2,7 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { useIsTouchInput } from "../../../hooks/useIsTouchInput";
 import {
   describeMediaError,
   mirrorsCamera,
@@ -28,7 +28,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
   disabled,
 }) => {
   const { t } = useLingui();
-  const isTouch = useMediaQuery("(pointer: coarse)");
+  const isTouch = useIsTouchInput();
   const globalSettings = useStore((s) => s.globalSettings);
   const updateGlobalSettings = useStore((s) => s.updateGlobalSettings);
   const {

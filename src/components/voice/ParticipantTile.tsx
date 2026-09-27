@@ -11,7 +11,7 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import { LuPictureInPicture2 } from "react-icons/lu";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useUserColor } from "../../hooks/useUserColor";
 import type { VoiceMember } from "../../lib/voice";
 import { onPipRequest, pipSupported, VideoTrackView } from "./VideoTrackView";
@@ -60,7 +60,7 @@ export function ParticipantTile({
 }: ParticipantTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const nickColor = useUserColor(serverId, member.nick);
-  const isTouch = useMediaQuery("(pointer: coarse)");
+  const isTouch = useIsTouchInput();
 
   // Small grid and filmstrip tiles stay cropped -- a mosaic reads better
   // that way -- but once theater mode enlarges the grid, every tile is

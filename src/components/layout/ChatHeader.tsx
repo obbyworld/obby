@@ -34,9 +34,7 @@ import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
 import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import E2EELockControl from "../ui/E2EELockControl";
-import HeaderOverflowMenu, {
-  type HeaderOverflowMenuItem,
-} from "../ui/HeaderOverflowMenu";
+import Menu, { type MenuItem } from "../ui/Menu";
 import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
@@ -314,8 +312,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     );
   }
 
+  const memberListToggleLabel = isMemberListVisible
+    ? t`Collapse member list`
+    : t`Expand member list`;
+
   // Define overflow menu items based on context
-  const overflowMenuItems: HeaderOverflowMenuItem[] = [
+  const overflowMenuItems: MenuItem[] = [
     {
       label: t`Media`,
       icon: <FaFilm />,
@@ -506,11 +508,20 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {/* Center: Title and Topic stacked */}
           <div className="flex flex-col justify-center min-w-0 flex-1">
             {/* Title */}
-            <h2 className="font-bold text-white truncate">
-              {getChannelDisplayName(
-                selectedChannel.name,
-                selectedChannel.metadata,
-              )}
+            <h2 className="min-w-0 flex">
+              <button
+                type="button"
+                onClick={onOpenChannelSettings}
+                title={
+                  isOperator ? t`Edit channel settings` : t`See channel info`
+                }
+                className="font-bold text-white truncate text-left hover:underline"
+              >
+                {getChannelDisplayName(
+                  selectedChannel.name,
+                  selectedChannel.metadata,
+                )}
+              </button>
             </h2>
 
             {/* Topic text, or placeholder for ops when topic is empty */}
@@ -543,9 +554,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {/* Right: Action buttons */}
           {selectedServerId && (
             <div className="flex items-center gap-0 md:gap-3 text-discord-text-muted flex-shrink-0">
-              {/* Bell */}
               <button
-                className="p-2 md:p-0 hover:text-discord-text-normal"
+                className="p-2 md:hidden hover:text-discord-text-normal"
                 onClick={onToggleNotificationVolume}
                 aria-label={
                   globalSettings.notificationVolume > 0
@@ -584,11 +594,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                       toggleMemberList(!isMemberListVisible);
                     }
                   }}
-                  aria-label={
-                    isMemberListVisible
-                      ? t`Collapse member list`
-                      : t`Expand member list`
-                  }
+                  aria-label={memberListToggleLabel}
+                  title={memberListToggleLabel}
                   data-testid="toggle-member-list"
                 >
                   {(
@@ -603,44 +610,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 </button>
               )}
 
-              {/* Desktop action buttons */}
-              <button
-                className="hidden md:block hover:text-discord-text-normal"
-                onClick={onOpenChannelSettings}
-                title={t`Channel Settings`}
-              >
-                <FaPenAlt />
-              </button>
-              <button
-                className="hidden md:block hover:text-discord-text-normal"
-                onClick={onOpenInviteUser}
-                title={t`Invite User`}
-              >
-                <FaUserPlus />
-              </button>
-              <button
-                className={`hidden md:block ${
-                  botsLoadingCount > 0
-                    ? "text-blue-500 animate-pulse-bright"
-                    : "hover:text-discord-text-normal"
-                }`}
-                onClick={onOpenBots}
-                title={
-                  botsLoadingCount > 0
-                    ? t`Bots — receiving ${botsLoadingCount} command list(s)`
-                    : t`Bots on this network`
-                }
-                aria-label={t`Bots`}
-              >
-                <FaRobot />
-              </button>
-              <button
-                className="hidden md:block hover:text-discord-text-normal"
-                onClick={() => toggleChannelListModal(true)}
-                title={t`Server Channels`}
-              >
-                <FaList />
-              </button>
               {/* Media explorer — in overflow menu on native mobile, inline button elsewhere */}
               {hasMedia && !nativeMobile && (
                 <button
@@ -991,7 +960,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       )}
 
       {/* Overflow Menu Component */}
-      <HeaderOverflowMenu
+      <Menu
         isOpen={isOverflowMenuOpen}
         onClose={() => setIsOverflowMenuOpen(false)}
         menuItems={overflowMenuItems}

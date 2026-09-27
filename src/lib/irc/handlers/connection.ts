@@ -238,6 +238,17 @@ export function handleSaslSuccess(
   ctx.userOnConnect(serverId);
 }
 
+// 904/905: the server refused our credentials, so we carry on as a guest.
+export function handleSaslRejected(
+  ctx: IRCClientContext,
+  serverId: string,
+  source: string,
+  parv: string[],
+): void {
+  ctx.triggerEvent("saslFailed", { serverId });
+  handleSaslFailure(ctx, serverId, source, parv);
+}
+
 export function handleSaslFailure(
   ctx: IRCClientContext,
   serverId: string,

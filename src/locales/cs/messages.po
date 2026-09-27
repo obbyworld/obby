@@ -383,6 +383,14 @@ msgstr "Přidat slovo nebo frázi..."
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Přidat masku banu (např. nick!*@*, *!*@host.com)"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "add channel"
+msgstr "přidat kanál"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Add channel"
+msgstr "Přidat kanál"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Přidat masku výjimky (např. nick!*@*, *!*@host.com)"
@@ -593,8 +601,8 @@ msgid "Avatar preview"
 msgstr "Náhled avatara"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Nepřítomen"
@@ -671,8 +679,8 @@ msgstr "Zabanovat uživatele (podle přezdívky)"
 msgid "Bans"
 msgstr "Bany"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -694,21 +702,15 @@ msgid "Bot hasn't registered any slash commands yet."
 msgstr "Bot zatím nezaregistroval žádné lomítkové příkazy."
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Boti"
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Bots — receiving {botsLoadingCount} command list(s)"
-msgstr "Boti — přijímání {botsLoadingCount} seznamů příkazů"
-
-#: src/components/layout/ChatHeader.tsx
 msgid "Bots (loading {botsLoadingCount})"
 msgstr "Boti (načítání {botsLoadingCount})"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Boti na této síti"
@@ -878,7 +880,6 @@ msgid "Channel Owner"
 msgstr "Vlastník kanálu"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
@@ -900,7 +901,7 @@ msgstr "Téma kanálu"
 msgid "Channel won't appear in LIST or NAMES commands"
 msgstr "Kanál se nebude zobrazovat v příkazech LIST nebo NAMES"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "název-kanálu"
 
@@ -999,7 +1000,7 @@ msgstr "Klient"
 msgid "Client Limit (+l)"
 msgstr "Limit klientů (+l)"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1125,6 +1126,10 @@ msgstr "Připojování…"
 msgid "Connection"
 msgstr "Připojení"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Connection lost. Reconnect to keep chatting"
+msgstr "Spojení ztraceno. Připojte se znovu a pokračujte v chatu"
+
 #: src/components/voice/ParticipantTile.tsx
 msgid "Connection: fair"
 msgstr "Připojení: průměrné"
@@ -1171,6 +1176,10 @@ msgstr "Kopírovat"
 #: src/components/ui/RawLogViewer.tsx
 msgid "Copy all"
 msgstr "Kopírovat vše"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Copy channel name"
+msgstr "Kopírovat název kanálu"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Copy entire JSON"
@@ -1227,6 +1236,11 @@ msgstr "Vytvořit nový pozvánkový odkaz"
 #: src/components/ui/UserSettings.tsx
 msgid "Create and manage your invite links"
 msgstr "Vytvářejte a spravujte své pozvánkové odkazy"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Create folder"
+msgstr "Vytvořit složku"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
@@ -1309,8 +1323,8 @@ msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later
 msgstr "Smazat bota {0}?  Tím se řádek v databázi měkce odstraní; přezdívku znovu použijte až po /REHASH."
 
 #: src/components/layout/ChannelList.tsx
-msgid "Delete Channel"
-msgstr "Smazat kanál"
+msgid "Delete folder"
+msgstr "Smazat složku"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1370,6 +1384,7 @@ msgid "Discard"
 msgstr "Zahodit"
 
 #: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/NetworkMenu.tsx
 #: src/components/layout/ServerList.tsx
 #: src/components/mobile/ServerBottomSheet.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
@@ -1447,14 +1462,26 @@ msgstr "Chcete otevřít tento odkaz v nové záložce?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Done"
+msgstr "Hotovo"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Download"
 msgstr "Stáhnout"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Drag a handle to move a channel, or into a folder"
+msgstr "Přetáhněte úchyt pro přesun kanálu nebo do složky"
+
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
 msgstr "Tažením vyberte, co nahrát. Zrušíte klávesou Escape."
+
+#: src/components/layout/ChannelList.tsx
+msgid "Drag to move"
+msgstr "Přetažením přesunout"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Drop files to attach"
@@ -1472,6 +1499,7 @@ msgstr "např. 100:1440"
 msgid "Echo Cancellation"
 msgstr "Potlačení ozvěny"
 
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1481,6 +1509,17 @@ msgstr "Upravit"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Edit {0}"
 msgstr "Upravit {0}"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Edit channel settings"
+msgstr "Upravit nastavení kanálu"
+
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Edit connection"
+msgstr "Upravit připojení"
 
 #: src/components/ui/UserProfileModal.tsx
 msgid "Edit Profile"
@@ -1516,6 +1555,7 @@ msgstr "Povolit víceřádkové zadávání"
 msgid "Enable Notification Sounds"
 msgstr "Povolit zvuky upozornění"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1741,6 +1781,10 @@ msgstr "Filtrovat kanály..."
 msgid "Filter members…"
 msgstr "Filtrovat členy…"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "Find channels"
+msgstr "Najít kanály"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
 msgstr "Zjišťuje se vaše poloha…"
@@ -1756,6 +1800,10 @@ msgstr "Profil floodingu (+F)"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Protection Settings"
 msgstr "Nastavení ochrany proti floodingu"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder name"
+msgstr "Název složky"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -1928,6 +1976,10 @@ msgstr "Náhled obrázku"
 msgid "IN"
 msgstr "VSTUP"
 
+#: src/components/layout/ChannelRow.tsx
+msgid "in call"
+msgstr "v hovoru"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Info:"
 msgstr "Info:"
@@ -1969,7 +2021,10 @@ msgstr "Pozvat uživatele do aktuálního kanálu"
 msgid "Invite to stream"
 msgstr "Pozvat k vysílání"
 
-#: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Invite user"
+msgstr "Pozvat uživatele"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite User"
@@ -1991,11 +2046,11 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "IRC Operator"
@@ -2113,7 +2168,7 @@ msgstr "Opustit kanál"
 msgid "Leave call"
 msgstr "Opustit hovor"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelContextMenu.tsx
 msgid "Leave channel"
 msgstr "Opustit kanál"
 
@@ -2199,6 +2254,10 @@ msgstr "Poloha"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Přístup k poloze byl odepřen. Povolte přístup k poloze v nastavení prohlížeče nebo systému a zkuste to znovu."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Log in again"
+msgstr "Přihlásit se znovu"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2236,6 +2295,10 @@ msgstr "Spravujte informace profilu a metadata"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
 msgstr "Označit jako bot - obvykle 'on' nebo prázdné"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Mark as read"
+msgstr "Označit jako přečtené"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Mark as verified"
@@ -2413,6 +2476,18 @@ msgstr "Více"
 msgid "More actions"
 msgstr "Více akcí"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder down"
+msgstr "Přesunout složku dolů"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Move folder up"
+msgstr "Přesunout složku nahoru"
+
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Move to folder"
+msgstr "Přesunout do složky"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Multiline on Shift+Enter"
 msgstr "Víceřádkové na Shift+Enter"
@@ -2428,6 +2503,7 @@ msgstr "Ztlumit"
 msgid "Mute for me"
 msgstr "Ztlumit jen pro mě"
 
+#: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2470,6 +2546,11 @@ msgstr "Sítě na {0}"
 #: src/components/ui/QuickActions.tsx
 msgid "New DM"
 msgstr "Nová DM"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "new folder"
+msgstr "nová složka"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -2706,8 +2787,8 @@ msgid "offline"
 msgstr "offline"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2721,8 +2802,8 @@ msgid "one of:"
 msgstr "jedno z:"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2762,6 +2843,11 @@ msgstr "Otevřít soukromou zprávu uživateli"
 msgid "Open channel configuration settings"
 msgstr "Otevřít nastavení konfigurace kanálu"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Open channel options"
+msgstr "Otevřít možnosti kanálu"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -2785,6 +2871,10 @@ msgstr "Otevřít odkaz"
 #: src/components/message/MapPreview.tsx
 msgid "Open map"
 msgstr "Otevřít mapu"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Open network options"
+msgstr "Otevřít možnosti sítě"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
@@ -2877,12 +2967,16 @@ msgstr "Trvalý"
 msgid "Photo"
 msgstr "Fotka"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Pick channel kind"
+msgstr "Zvolte typ kanálu"
+
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
 msgstr "Obraz v obraze"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Pin"
 msgstr "Připnout"
 
@@ -2977,7 +3071,7 @@ msgid "Privacy Policy"
 msgstr "Zásady ochrany soukromí"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Private Messages"
+msgid "Private messages"
 msgstr "Soukromé zprávy"
 
 #: src/components/ui/FloodSettingsModal.tsx
@@ -3085,6 +3179,10 @@ msgstr "Uvažování"
 msgid "Receiving command list…"
 msgstr "Přijímání seznamu příkazů…"
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnect"
+msgstr "Připojit znovu"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Reconnect failed"
 msgstr "Opětovné připojení se nezdařilo"
@@ -3093,6 +3191,10 @@ msgstr "Opětovné připojení se nezdařilo"
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Znovu připojit k serveru"
+
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Reconnecting. Edit the connection if this keeps failing"
+msgstr "Připojování. Pokud to stále selhává, upravte připojení"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Record Audio"
@@ -3185,6 +3287,19 @@ msgstr "Odebrat pravidlo"
 msgid "Rename Channel"
 msgstr "Přejmenovat kanál"
 
+#: src/components/layout/ChannelList.tsx
+msgid "Rename folder"
+msgstr "Přejmenovat složku"
+
+#. placeholder {0}: folder.name
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete {0}"
+msgstr "Přejmenovat nebo smazat {0}"
+
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Rename or delete folder"
+msgstr "Přejmenovat nebo smazat složku"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Rename this channel on the server. All users will see the new name."
 msgstr "Přejmenovat tento kanál na serveru. Nový název uvidí všichni uživatelé."
@@ -3196,6 +3311,12 @@ msgstr "Zobrazovat Markdown formátování ve zprávách"
 #: src/components/message/BotToolsMessagePill.tsx
 msgid "Reopen the workflow that produced this message ({stepCount} steps)"
 msgstr "Znovu otevřít pracovní postup, který vytvořil tuto zprávu ({stepCount} kroků)"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/NetworkMenu.tsx
+msgid "Reorder channels"
+msgstr "Přeuspořádat kanály"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3358,6 +3479,15 @@ msgstr "Bezpečnostní skupiny"
 msgid "Security Warning"
 msgstr "Bezpečnostní upozornění"
 
+#: src/components/layout/NetworkMenu.tsx
+msgid "See bots"
+msgstr "Zobrazit boty"
+
+#: src/components/layout/ChannelContextMenu.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See channel info"
+msgstr "Zobrazit informace o kanálu"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3438,12 +3568,10 @@ msgstr "Odesílání"
 msgid "server"
 msgstr "server"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Server"
 msgstr "Server"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
@@ -3638,6 +3766,10 @@ msgstr "Zobrazuje veškerá externí média. Libovolná URL může způsobit po�
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Zobrazuje média z důvěryhodného file hostu vašeho serveru. Nejsou prováděny žádné požadavky na externí služby."
 
+#: src/components/layout/ConnectionStrip.tsx
+msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+msgstr "Přihlášení se nezdařilo, chatujete jako host. Přihlaste se znovu nebo opravte heslo"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Signed on"
 msgstr "Přihlášen"
@@ -3690,6 +3822,11 @@ msgstr "Reproduktor {0}"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Speaker selection isn't supported in this browser."
 msgstr "Výběr reproduktoru není v tomto prohlížeči podporován."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+msgid "Start a private message"
+msgstr "Zahájit soukromou zprávu"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
@@ -3750,6 +3887,14 @@ msgstr "Ukončit sdílení"
 msgid "Stop video"
 msgstr "Vypnout video"
 
+#: src/components/layout/AddChannelRow.tsx
+msgid "Stream"
+msgstr "Stream"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "stream-name"
+msgstr "nazev-streamu"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Streamer"
 msgstr "Vysílající"
@@ -3786,6 +3931,10 @@ msgstr "Systém"
 msgid "System default"
 msgstr "Výchozí nastavení systému"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Take out of folder"
+msgstr "Vyjmout ze složky"
+
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Vyfotit"
@@ -3794,9 +3943,9 @@ msgstr "Vyfotit"
 msgid "Text"
 msgstr "Text"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Text Channels"
-msgstr "Textové kanály"
+#: src/components/layout/AddChannelRow.tsx
+msgid "Text channel"
+msgstr "Textový kanál"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4050,8 +4199,8 @@ msgstr "Zrušit ztlumení"
 msgid "Unmute for me"
 msgstr "Zrušit ztlumení jen pro mě"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Unpin"
 msgstr "Odepnout"
 
@@ -4176,10 +4325,10 @@ msgstr "Uživatelé:"
 msgid "Valid server port is required"
 msgstr "Je vyžadován platný port serveru"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
+#: src/components/layout/PrivateChatRow.tsx
 msgid "Verified account"
 msgstr "Ověřený účet"
 
@@ -4252,6 +4401,14 @@ msgstr "Diváci ({0})"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Hlas"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "Voice channel"
+msgstr "Hlasový kanál"
+
+#: src/components/layout/AddChannelRow.tsx
+msgid "voice-channel"
+msgstr "hlasovy-kanal"
 
 #: src/components/layout/MemberList.tsx
 msgid "Voiced User"
