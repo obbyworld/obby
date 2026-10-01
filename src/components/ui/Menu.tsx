@@ -2,13 +2,16 @@ import type React from "react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
-import Popover, { type PopoverPlacement } from "./Popover";
+import { wasLastInputKeyboard } from "../../lib/focus";
+import Popover, { type PopoverAnchor, type PopoverPlacement } from "./Popover";
 
 export interface MenuItem {
   // We need a stable key when `label` is not a plain string.
   id?: string;
   label: ReactNode;
-  icon: ReactNode;
+  icon?: ReactNode;
+  description?: ReactNode;
+  trailing?: ReactNode;
   onClick?: () => void;
   show?: boolean;
   divider?: boolean;
@@ -20,13 +23,13 @@ interface MenuProps {
   isOpen: boolean;
   onClose: () => void;
   menuItems: MenuItem[];
-  anchorElement: HTMLElement | null;
+  anchorElement: PopoverAnchor | null;
   placement?: PopoverPlacement;
+  header?: ReactNode;
+  width?: number | "auto";
   // A submenu closes only itself on dismissal and the whole tree on a pick.
   onItemPicked?: () => void;
 }
-
-const MENU_WIDTH = 232;
 
 const keyOf = (item: MenuItem) =>
   item.id ?? (typeof item.label === "string" ? item.label : "");
@@ -60,18 +63,22 @@ function focusSibling(list: HTMLElement | null, key: string) {
 function useMenuFocus(
   isOpen: boolean,
   isTouch: boolean,
-  anchor: HTMLElement | null,
+  anchor: PopoverAnchor | null,
   listRef: React.RefObject<HTMLDivElement | null>,
 ) {
   useEffect(() => {
     if (!isOpen || isTouch) return;
     const frame = requestAnimationFrame(() =>
-      menuItemsIn(listRef.current)[0]?.focus(),
+      (wasLastInputKeyboard()
+        ? menuItemsIn(listRef.current)[0]
+        : listRef.current
+      )?.focus(),
     );
     return () => {
       cancelAnimationFrame(frame);
-      if (!document.activeElement || document.activeElement === document.body)
-        anchor?.focus();
+      const isFocusLost =
+        !document.activeElement || document.activeElement === document.body;
+      if (isFocusLost && anchor instanceof HTMLElement) anchor.focus();
     };
   }, [isOpen, isTouch, anchor, listRef]);
 }
@@ -83,6 +90,8 @@ export const Menu: React.FC<MenuProps> = ({
   anchorElement,
   placement,
   onItemPicked,
+  header,
+  width = "auto",
 }) => {
   const isTouch = useIsTouchInput();
   const listRef = useRef<HTMLDivElement>(null);
@@ -130,11 +139,17 @@ export const Menu: React.FC<MenuProps> = ({
         isOpen={isOpen}
         onClose={closeAll}
         anchor={anchorElement}
-        width={MENU_WIDTH}
+        width={width}
         role="menu"
         placement={placement}
       >
-        <div ref={listRef} className="surface-list" onKeyDown={handleKeyDown}>
+        <div
+          ref={listRef}
+          tabIndex={-1}
+          className="surface-list outline-none"
+          onKeyDown={handleKeyDown}
+        >
+          {header && <div className="px-2 pt-1 pb-1.5">{header}</div>}
           {visibleItems.map((item) => (
             <div key={keyOf(item)}>
               {item.divider && <hr className="divider-soft" />}
@@ -162,8 +177,18 @@ export const Menu: React.FC<MenuProps> = ({
                   openSubmenu?.id === keyOf(item),
                 )}`}
               >
-                <span className="row-icon">{item.icon}</span>
-                <span className="flex-1 min-w-0 truncate">{item.label}</span>
+                {item.icon && <span className="row-icon">{item.icon}</span>}
+                <span className="flex-1 min-w-0">
+                  <span className="block truncate">{item.label}</span>
+                  {item.description && (
+                    <span className="row-meta block truncate">
+                      {item.description}
+                    </span>
+                  )}
+                </span>
+                {item.trailing && (
+                  <span className="row-meta shrink-0">{item.trailing}</span>
+                )}
                 {item.submenu && (
                   <FaChevronRight className="flex-shrink-0 text-[10px] opacity-70" />
                 )}
@@ -180,6 +205,7 @@ export const Menu: React.FC<MenuProps> = ({
           menuItems={submenuItems}
           anchorElement={openSubmenu.anchor}
           placement="side"
+          width={width}
         />
       )}
     </>

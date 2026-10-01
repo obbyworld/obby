@@ -30,16 +30,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       {/* Sheet */}
       <div
-        className="absolute bottom-0 left-0 right-0 bg-discord-dark-500 rounded-t-2xl"
+        className="absolute bottom-0 left-0 right-0 surface-sheet"
         style={{
           animation: "bottom-sheet-slide-up 200ms ease-out",
           paddingBottom: "calc(0.5rem + var(--safe-area-inset-bottom, 0px))",
         }}
       >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-10 h-1 rounded-full bg-discord-dark-300" />
-        </div>
+        <span className="sheet-handle mb-2" aria-hidden />
         {children}
       </div>
     </div>,

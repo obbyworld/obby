@@ -3,6 +3,28 @@ const TEXT_FIELD_SELECTOR =
 
 const MODAL_SELECTOR = "[aria-modal='true'], .modal-container";
 
+let isKeyboardInput = false;
+if (typeof document !== "undefined") {
+  document.addEventListener(
+    "keydown",
+    () => {
+      isKeyboardInput = true;
+    },
+    true,
+  );
+  document.addEventListener(
+    "pointerdown",
+    () => {
+      isKeyboardInput = false;
+    },
+    true,
+  );
+}
+
+// We move focus into newly opened menus only for keyboard users, so a mouse
+// click never draws a focus ring.
+export const wasLastInputKeyboard = (): boolean => isKeyboardInput;
+
 export function findTextField(root: ParentNode): HTMLElement | null {
   return root.querySelector<HTMLElement>(TEXT_FIELD_SELECTOR);
 }

@@ -1,5 +1,12 @@
 import type React from "react";
-import { type ReactNode, useEffect, useReducer, useRef } from "react";
+import {
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 
@@ -8,11 +15,11 @@ import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 export interface PopoverProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Trigger to anchor against on desktop. Ignored in the mobile sheet. */
-  anchor: HTMLElement | null;
+  /** Trigger or pointer position to anchor against on desktop. Ignored in the mobile sheet. */
+  anchor: PopoverAnchor | null;
   children: ReactNode;
-  /** Panel width on desktop (px). The sheet is always full-width. */
-  width?: number;
+  /** Panel width on desktop (px), or "auto" to fit the content. The sheet is always full-width. */
+  width?: number | "auto";
   /** Optional sticky title bar shown above the scroll body. */
   title?: ReactNode;
   /** Slot on the right of the title bar (e.g. a count). */
@@ -26,9 +33,18 @@ export interface PopoverProps {
 
 export type PopoverPlacement = "below" | "side";
 
+export type PopoverAnchor = HTMLElement | { x: number; y: number };
+
+const rectOf = (anchor: PopoverAnchor): DOMRect =>
+  anchor instanceof HTMLElement
+    ? anchor.getBoundingClientRect()
+    : new DOMRect(anchor.x, anchor.y, 0, 0);
+
 const VIEWPORT_MARGIN = 8;
 const ANCHOR_GAP = 6;
 const MIN_PANEL_HEIGHT = 160;
+const AUTO_MIN_WIDTH = 180;
+const AUTO_MAX_WIDTH = 280;
 // Top layer, level with modals; the sheet scrim sits just under its panel.
 const Z_INDEX = 100000;
 
@@ -92,6 +108,15 @@ export const Popover: React.FC<PopoverProps> = ({
   onCloseRef.current = onClose;
   // Recompute the anchored position when the viewport shifts under the panel.
   const [, reflow] = useReducer((n: number) => n + 1, 0);
+  const [measuredWidth, setMeasuredWidth] = useState(AUTO_MIN_WIDTH);
+
+  // An auto-width panel fits its content, so we measure it before paint and
+  // place it with the real width.
+  useLayoutEffect(() => {
+    if (!isOpen || width !== "auto" || !panelRef.current) return;
+    const actual = Math.round(panelRef.current.getBoundingClientRect().width);
+    if (actual !== measuredWidth) setMeasuredWidth(actual);
+  });
 
   useEffect(() => {
     if (!isOpen) return;
@@ -100,7 +125,8 @@ export const Popover: React.FC<PopoverProps> = ({
       // A submenu is its own portaled panel, so we keep every menu open on a
       // press inside any panel.
       if (target.closest?.("[data-popover-panel]")) return;
-      if (!anchor?.contains(target)) onCloseRef.current();
+      if (!(anchor instanceof HTMLElement && anchor.contains(target)))
+        onCloseRef.current();
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCloseRef.current();
@@ -139,12 +165,10 @@ export const Popover: React.FC<PopoverProps> = ({
           ref={panelRef}
           role={role}
           data-popover-panel
-          className="fixed inset-x-0 bottom-0 flex flex-col bg-discord-dark-300 border-t border-white/5 rounded-t-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-200"
+          className="fixed inset-x-0 bottom-0 surface-sheet animate-in slide-in-from-bottom duration-200"
           style={{ zIndex: Z_INDEX + 1, maxHeight: "85vh" }}
         >
-          <div className="flex justify-center pt-2 pb-1 shrink-0" aria-hidden>
-            <span className="w-9 h-1 rounded-full bg-discord-dark-500" />
-          </div>
+          <span className="sheet-handle" aria-hidden />
           {titleBar}
           <div
             className={`overflow-y-auto overscroll-contain ${bodyClassName}`}
@@ -160,11 +184,19 @@ export const Popover: React.FC<PopoverProps> = ({
 
   if (!anchor) return null;
 
+  const isAutoWidth = width === "auto";
   const { left, maxHeight, verticalStyle } = placePanel(
-    anchor.getBoundingClientRect(),
-    width,
+    rectOf(anchor),
+    isAutoWidth ? measuredWidth : width,
     placement,
   );
+  const widthStyle = isAutoWidth
+    ? {
+        width: "max-content",
+        minWidth: AUTO_MIN_WIDTH,
+        maxWidth: AUTO_MAX_WIDTH,
+      }
+    : { width };
 
   return createPortal(
     <div
@@ -172,7 +204,13 @@ export const Popover: React.FC<PopoverProps> = ({
       role={role}
       data-popover-panel
       className="fixed flex flex-col surface-floating overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-      style={{ left, width, maxHeight, zIndex: Z_INDEX, ...verticalStyle }}
+      style={{
+        left,
+        maxHeight,
+        zIndex: Z_INDEX,
+        ...widthStyle,
+        ...verticalStyle,
+      }}
     >
       {titleBar}
       <div className={`overflow-y-auto overscroll-contain ${bodyClassName}`}>

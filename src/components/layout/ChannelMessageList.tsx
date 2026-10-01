@@ -439,7 +439,8 @@ export const ChannelMessageList = forwardRef<
           ) : (
             <div ref={messagesInnerRef} className="flex flex-col">
               {hasMoreMessages && !searchQuery && (
-                <div className="flex justify-center py-2">
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <span className="flex-1 h-px bg-white/[0.06]" />
                   <button
                     type="button"
                     onClick={() => {
@@ -465,7 +466,7 @@ export const ChannelMessageList = forwardRef<
                       }
                     }}
                     disabled={isFetchingMore}
-                    className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full text-discord-text-muted hover:text-discord-text-normal bg-discord-dark-400 hover:bg-discord-dark-300 border border-white/5 transition-all"
+                    className="chip-action"
                   >
                     {isFetchingMore ? (
                       <LoadingSpinner
@@ -494,6 +495,7 @@ export const ChannelMessageList = forwardRef<
                         ? t`${filteredMessages.length - displayedMessages.length} older messages`
                         : t`Load older messages`}
                   </button>
+                  <span className="flex-1 h-px bg-white/[0.06]" />
                 </div>
               )}
               {searchQuery && (

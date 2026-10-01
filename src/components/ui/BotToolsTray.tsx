@@ -1,6 +1,7 @@
 import type React from "react";
 import { useMemo } from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { createPortal } from "react-dom";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import useStore from "../../store";
 import { BotToolsCard } from "./BotToolsCard";
 
@@ -16,7 +17,7 @@ export const BotToolsTray: React.FC<BotToolsTrayProps> = ({
   serverId,
   channel,
 }) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTouch = useIsTouchInput();
   const serverWorkflows = useStore((s) =>
     serverId ? s.aiWorkflows[serverId] : undefined,
   );
@@ -32,24 +33,25 @@ export const BotToolsTray: React.FC<BotToolsTrayProps> = ({
 
   if (visible.length === 0) return null;
 
+  // Mobile panels slide with a transform, which would pin a fixed sheet to the panel, so we mount it on the body.
+  if (isTouch) {
+    return createPortal(
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex flex-col gap-2 max-h-[85vh] overflow-y-auto">
+        {visible.map((w) => (
+          <div key={w.id} className="pointer-events-auto">
+            <BotToolsCard workflow={w} variant="sheet" />
+          </div>
+        ))}
+      </div>,
+      document.body,
+    );
+  }
+
   const cards = visible.map((w) => (
     <div key={w.id} className="pointer-events-auto">
       <BotToolsCard workflow={w} />
     </div>
   ));
-
-  if (isMobile) {
-    return (
-      <div
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex flex-col gap-2 px-2 pt-2 max-h-[70vh] overflow-y-auto"
-        style={{
-          paddingBottom: "calc(var(--safe-area-inset-bottom, 0px) + 0.5rem)",
-        }}
-      >
-        {cards}
-      </div>
-    );
-  }
 
   return (
     <div className="pointer-events-none absolute top-2 right-2 z-30 flex flex-col gap-2 w-[680px] max-w-[calc(100%-1rem)] max-h-[calc(100%-1rem)] overflow-y-auto">

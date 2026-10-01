@@ -11,13 +11,13 @@
     @apply p-1.5;
   }
   .row-interactive {
-    @apply w-full px-2 py-1.5 rounded text-left text-sm font-medium flex items-center gap-2.5 text-discord-text-normal transition-colors duration-100 hover:bg-discord-primary hover:text-white;
+    @apply w-full px-2 py-1.5 rounded text-left text-sm font-medium flex items-center gap-2.5 text-discord-text-normal transition-colors duration-100 outline-none hover:bg-discord-primary hover:text-white focus-visible:bg-discord-primary focus-visible:text-white;
   }
   .row-interactive-active {
     @apply bg-discord-primary text-white;
   }
   .row-interactive-danger {
-    @apply text-red-400 hover:bg-red-600 hover:text-white;
+    @apply text-red-400 hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white;
   }
   .row-icon {
     @apply flex-shrink-0 w-4 flex justify-center opacity-70;
@@ -25,17 +25,38 @@
   .row-meta {
     @apply text-xs font-normal text-discord-text-muted;
   }
-  :is(.row-interactive:hover, .row-interactive-active) .row-icon {
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-icon {
     @apply opacity-100;
   }
-  :is(.row-interactive:hover, .row-interactive-active) .row-meta {
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-meta {
     @apply text-white;
   }
   .divider-soft {
     @apply my-1.5 mx-1 h-px border-0 bg-white/[0.06];
   }
+  .chip-action {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-discord-dark-300 text-discord-text-normal ring-1 ring-black/40 shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-colors duration-100 hover:bg-discord-primary hover:text-white disabled:opacity-70 disabled:hover:bg-discord-dark-300 disabled:hover:text-discord-text-normal;
+  }
   .section-label {
     @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
+  }
+  .surface-sheet {
+    @apply bg-discord-dark-300 rounded-t-2xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] flex flex-col overflow-hidden;
+  }
+  .sheet-handle {
+    @apply mx-auto mt-2 mb-1 w-9 h-1 shrink-0 rounded-full bg-discord-dark-500;
+  }
+  .icon-button {
+    @apply w-7 h-7 shrink-0 rounded flex items-center justify-center text-discord-text-muted transition-colors duration-100 hover:bg-discord-dark-500/40 hover:text-white focus-visible:outline-none focus-visible:bg-discord-dark-500/40 focus-visible:text-white;
+  }
+  .hairline {
+    @apply h-px shrink-0 bg-white/[0.06];
+  }
+  .code-panel {
+    @apply rounded-md bg-discord-dark-400 overflow-hidden;
+  }
+  .status-badge {
+    @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
   }
 }
 
