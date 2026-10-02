@@ -30,6 +30,29 @@ export function isChannelTarget(name: string | undefined | null): boolean {
   return c === "#" || c === "&" || c === "^" || c === "$";
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  lt: "<",
+  gt: ">",
+  amp: "&",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+};
+
+// We decode in one pass so "&amp;quot;" stays the literal text "&quot;".
+export function decodeHtmlEntities(text: string): string {
+  return text.replace(
+    /&(?:#(\d+)|#x([0-9a-f]+)|([a-z]+));/gi,
+    (entity, decimal?: string, hex?: string, name?: string) => {
+      if (name) return NAMED_ENTITIES[name.toLowerCase()] ?? entity;
+      const codePoint = decimal
+        ? Number.parseInt(decimal, 10)
+        : Number.parseInt(hex ?? "", 16);
+      return codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : entity;
+    },
+  );
+}
+
 /** Split an IRCv3 named-modes mode name into its vendor prefix and a
  * human-readable display label.
  *
@@ -513,13 +536,7 @@ export function renderMarkdown(
   // Custom code renderer for inline code
   renderer.codespan = ({ text }) => {
     // Decode HTML entities back to characters for inline code
-    let decodedText = text
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&apos;/g, "'");
+    let decodedText = decodeHtmlEntities(text);
 
     const hasActualNewlines = decodedText.includes("\n");
     const hasEscapedNewlines = decodedText.includes("\\n");
@@ -573,13 +590,7 @@ export function renderMarkdown(
     const trimmedText = text.trimEnd();
 
     // Decode HTML entities back to characters for code blocks
-    const decodedText = trimmedText
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&apos;/g, "'");
+    const decodedText = decodeHtmlEntities(trimmedText);
 
     let highlightedCode = decodedText;
     let language = lang;

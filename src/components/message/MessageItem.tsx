@@ -1039,7 +1039,6 @@ export const MessageItem = memo((props: MessageItemProps) => {
                 title={message.linkPreviewTitle}
                 snippet={message.linkPreviewSnippet}
                 imageUrl={message.linkPreviewMeta}
-                theme={theme}
                 messageContent={message.content}
                 serverId={serverId}
               />

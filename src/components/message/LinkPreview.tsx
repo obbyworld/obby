@@ -1,18 +1,30 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
-import { isUrlFromTrustedSource, serverFilehosts } from "../../lib/ircUtils";
+import {
+  decodeHtmlEntities,
+  isUrlFromTrustedSource,
+  serverFilehosts,
+} from "../../lib/ircUtils";
 import { mediaLevelToSettings } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
 import ExternalLinkWarningModal from "../ui/ExternalLinkWarningModal";
 
+function hostOf(url: string): string | undefined {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch (error) {
+    if (error instanceof TypeError) return undefined;
+    throw error;
+  }
+}
+
 interface LinkPreviewProps {
   title?: string;
   snippet?: string;
   imageUrl?: string;
-  theme: string;
   messageContent: string;
   serverId?: string;
 }
@@ -21,7 +33,6 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   title,
   snippet,
   imageUrl,
-  theme,
   messageContent,
   serverId,
 }) => {
@@ -46,6 +57,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   const urlRegex = /\b(?:https?):\/\/[^\s<>"']+/i;
   const match = cleanContent.match(urlRegex);
   const firstUrl = match ? match[0] : undefined;
+  const host = firstUrl ? hostOf(firstUrl) : undefined;
 
   // Check if image is from a trusted source (server filehost or globally configured trusted URLs)
   const isTrustedImage =
@@ -80,8 +92,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
         onCancel={handleCancelOpen}
       />
       <div
-        className={`mt-2 rounded-lg border border-${theme}-dark-400 bg-${theme}-dark-200 max-w-lg pl-4 pr-12 py-2 bg-black/20 rounded select-none ${firstUrl ? `cursor-pointer hover:bg-${theme}-dark-300 transition-colors` : ""}`}
-        style={{ height: "100px" }}
+        className={`code-panel mt-2 max-w-lg flex gap-3 p-3 border-l-4 border-discord-dark-500 select-none ${firstUrl ? "cursor-pointer hover:bg-discord-dark-500/40 transition-colors" : ""}`}
         onClick={handleClick}
         role={firstUrl ? "button" : undefined}
         tabIndex={firstUrl ? 0 : undefined}
@@ -92,42 +103,29 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
           }
         }}
       >
-        <div className="flex items-start h-full">
-          {shouldShowImage && (
-            <div
-              className="relative inline-block h-full"
-              style={{ verticalAlign: "top" }}
-            >
-              <img
-                src={imageUrl}
-                alt={title || t`Link preview`}
-                className="h-full object-contain rounded-lg"
-                onError={(e) => {
-                  // Hide image if it fails to load
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            </div>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          {host && <span className="row-meta truncate">{host}</span>}
+          {title && (
+            <span className="text-sm font-semibold text-discord-text-link line-clamp-2">
+              {decodeHtmlEntities(title)}
+            </span>
           )}
-          {(title || snippet) && (
-            <div className="flex-grow pl-[40px] pr-2 pt-2 pb-2 min-w-0">
-              {title && (
-                <div
-                  className={`font-semibold text-${theme}-text mb-1 line-clamp-2 text-xs`}
-                >
-                  {title}
-                </div>
-              )}
-              {snippet && (
-                <div
-                  className={`text-xs text-${theme}-text-muted line-clamp-2`}
-                >
-                  {snippet}
-                </div>
-              )}
-            </div>
+          {snippet && (
+            <span className="row-meta line-clamp-3">
+              {decodeHtmlEntities(snippet)}
+            </span>
           )}
         </div>
+        {shouldShowImage && (
+          <img
+            src={imageUrl}
+            alt={title || t`Link preview`}
+            className="w-20 h-20 shrink-0 object-cover rounded"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        )}
       </div>
     </>
   );
