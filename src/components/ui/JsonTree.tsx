@@ -141,11 +141,7 @@ export const JsonText: React.FC<{ text: string }> = ({ text }) => {
     last = start + token.length;
   }
   parts.push(text.slice(last));
-  return (
-    <pre className="m-0 font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-discord-text-normal">
-      {parts}
-    </pre>
-  );
+  return <pre className="code-text">{parts}</pre>;
 };
 
 export const JsonTree: React.FC<JsonTreeProps> = ({ value, openDepth = 1 }) => (

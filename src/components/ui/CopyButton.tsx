@@ -1,7 +1,8 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { FaCheck, FaRegCopy } from "react-icons/fa";
+import { FaCheck, FaRegCopy, FaTimes } from "react-icons/fa";
+import { copyToClipboard } from "../../lib/clipboard";
 
 interface CopyButtonProps {
   getText: () => string;
@@ -9,7 +10,9 @@ interface CopyButtonProps {
   className?: string;
 }
 
-const COPIED_MS = 1500;
+type CopyStatus = "idle" | "copied" | "failed";
+
+const STATUS_MS = 1500;
 
 export const CopyButton: React.FC<CopyButtonProps> = ({
   getText,
@@ -17,27 +20,46 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
   className = "",
 }) => {
   const { t } = useLingui();
-  const [isCopied, setIsCopied] = useState(false);
+  const [status, setStatus] = useState<CopyStatus>("idle");
 
   useEffect(() => {
-    if (!isCopied) return;
-    const timer = setTimeout(() => setIsCopied(false), COPIED_MS);
+    if (status === "idle") return;
+    const timer = setTimeout(() => setStatus("idle"), STATUS_MS);
     return () => clearTimeout(timer);
-  }, [isCopied]);
+  }, [status]);
 
-  const title = isCopied ? t`Copied` : (label ?? t`Copy`);
+  const title =
+    status === "copied"
+      ? t`Copied`
+      : status === "failed"
+        ? t`Copy failed, select to retry`
+        : (label ?? t`Copy`);
+  const tone =
+    status === "copied"
+      ? "text-discord-green"
+      : status === "failed"
+        ? "text-red-400"
+        : "";
   return (
     <button
       type="button"
-      className={`icon-button ${isCopied ? "text-discord-green" : ""} ${className}`}
+      className={`icon-button ${tone} ${className}`}
       title={title}
       aria-label={title}
       onClick={(e) => {
         e.stopPropagation();
-        navigator.clipboard?.writeText(getText()).then(() => setIsCopied(true));
+        copyToClipboard(getText()).then((isCopied) =>
+          setStatus(isCopied ? "copied" : "failed"),
+        );
       }}
     >
-      {isCopied ? <FaCheck /> : <FaRegCopy />}
+      {status === "copied" ? (
+        <FaCheck />
+      ) : status === "failed" ? (
+        <FaTimes />
+      ) : (
+        <FaRegCopy />
+      )}
     </button>
   );
 };

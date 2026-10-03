@@ -24,12 +24,22 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   if (!isOpen) return null;
 
+  // React bubbles portal events through the component tree, so we stop touches
+  // here or the long-press and swipe handlers around the opener would fire too.
+  const stopTouch = (e: React.TouchEvent) => e.stopPropagation();
+
   return createPortal(
-    <div className="fixed inset-0 z-[9998]">
-      {/* Backdrop */}
+    <div
+      className="fixed inset-0 z-[9998]"
+      data-no-gesture=""
+      onTouchStart={stopTouch}
+      onTouchMove={stopTouch}
+      onTouchEnd={stopTouch}
+    >
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      {/* Sheet */}
       <div
+        role="dialog"
+        aria-modal="true"
         className="absolute bottom-0 left-0 right-0 surface-sheet"
         style={{
           animation: "bottom-sheet-slide-up 200ms ease-out",

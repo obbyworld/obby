@@ -154,6 +154,7 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
                     >
                       <WorkflowStatusBadge
                         state={effectiveWorkflowState(w)}
+                        isTimedOut={isStale(w)}
                         className="w-5 h-5 text-[9px]"
                       />
                       <span className="flex-1 min-w-0">

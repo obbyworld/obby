@@ -2,10 +2,11 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
 import BaseModal from "../../lib/modal/BaseModal";
-import { indentPartialJson, type StepContent } from "../../lib/workflowFormat";
+import type { StepContent } from "../../lib/workflowFormat";
 import CopyButton from "./CopyButton";
 import JsonTree, { JsonText } from "./JsonTree";
 import { SegmentedControl } from "./SegmentedControl";
+import StepContentView from "./StepContentView";
 
 interface WorkflowOutputViewerProps {
   isOpen: boolean;
@@ -45,8 +46,8 @@ export const WorkflowOutputViewer: React.FC<WorkflowOutputViewerProps> = ({
                 value={mode}
                 onChange={setMode}
                 segments={[
-                  { value: "tree", label: <Trans>Tree</Trans> },
-                  { value: "raw", label: <Trans>Raw</Trans> },
+                  { value: "tree", label: <Trans>View tree</Trans> },
+                  { value: "raw", label: <Trans>View raw</Trans> },
                 ]}
               />
               {isTree && (
@@ -73,14 +74,10 @@ export const WorkflowOutputViewer: React.FC<WorkflowOutputViewerProps> = ({
               value={content.value}
               openDepth={isAllOpen ? Number.POSITIVE_INFINITY : 2}
             />
-          ) : content.kind === "json" || content.looksCut ? (
-            <JsonText
-              text={content.kind === "json" ? raw : indentPartialJson(raw)}
-            />
+          ) : content.kind === "json" ? (
+            <JsonText text={raw} />
           ) : (
-            <pre className="m-0 font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-discord-text-normal">
-              {raw}
-            </pre>
+            <StepContentView content={content} />
           )}
         </div>
       </div>

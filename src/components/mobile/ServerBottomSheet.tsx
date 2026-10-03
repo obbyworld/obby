@@ -25,8 +25,8 @@ const ServerBottomSheet: React.FC<ServerBottomSheetProps> = ({
       </div>
       <div className="px-2 pb-2">
         <button
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg active:bg-discord-dark-400 text-left text-white"
-          style={{ minHeight: "48px" }}
+          type="button"
+          className="sheet-row"
           onClick={() => {
             onEdit();
             onClose();
@@ -35,13 +35,13 @@ const ServerBottomSheet: React.FC<ServerBottomSheetProps> = ({
           <span className="text-lg">
             <FaPencilAlt />
           </span>
-          <span className="text-sm font-medium">
+          <span>
             <Trans>Edit Server</Trans>
           </span>
         </button>
         <button
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg active:bg-discord-dark-400 text-left text-red-400"
-          style={{ minHeight: "48px" }}
+          type="button"
+          className="sheet-row text-red-400"
           onClick={() => {
             onDisconnect();
             onClose();
@@ -50,7 +50,7 @@ const ServerBottomSheet: React.FC<ServerBottomSheetProps> = ({
           <span className="text-lg">
             <FaSignOutAlt />
           </span>
-          <span className="text-sm font-medium">
+          <span>
             <Trans>Disconnect</Trans>
           </span>
         </button>

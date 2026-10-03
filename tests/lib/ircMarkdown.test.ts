@@ -228,3 +228,28 @@ describe("processMarkdownInText", () => {
     expect(out).toContain("color:#FFFF00");
   });
 });
+
+describe("processMarkdownInText heading detection", () => {
+  it("keeps a line starting with a channel name out of markdown", () => {
+    const out = html(processMarkdownInText("sure Valware\n#bots", true, true));
+    expect(out).not.toContain("markdown-content");
+  });
+
+  it("still renders a real heading as markdown", () => {
+    const out = html(processMarkdownInText("# Title\nbody", true, true));
+    expect(out).toContain("markdown-content");
+  });
+});
+
+describe("code block escaping", () => {
+  it("renders markup in a fence with an unknown language as text", () => {
+    const out = html(renderMarkdown("```foo\n<img src=http://x>\n```"));
+    expect(out).not.toContain("<img");
+    expect(out).toContain("&lt;img");
+  });
+
+  it("renders numeric-entity markup in a fence as text", () => {
+    const out = html(renderMarkdown("```foo\n&#60;img src=http://x&#62;\n```"));
+    expect(out).not.toContain("<img");
+  });
+});

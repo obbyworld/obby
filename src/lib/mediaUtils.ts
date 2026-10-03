@@ -29,7 +29,7 @@ export const TRUSTED_EMBED_DOMAINS: Record<string, MediaType> = {
 };
 
 /** Extract and normalise the hostname from a URL, stripping a leading www. Returns null on parse failure. */
-function extractHostname(url: string): string | null {
+export function extractHostname(url: string): string | null {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {

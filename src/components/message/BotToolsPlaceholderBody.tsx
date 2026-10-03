@@ -1,14 +1,9 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import {
-  FaCheck,
-  FaExclamationTriangle,
-  FaSpinner,
-  FaTimes,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import type { AiStep } from "../../store";
 import useStore from "../../store";
+import { StepStateGlyph } from "../ui/WorkflowStatusBadge";
 
 interface BotToolsPlaceholderBodyProps {
   serverId: string;
@@ -30,23 +25,6 @@ function truncateValue(v: unknown): string {
 interface ParamPair {
   key: string;
   value: string;
-}
-
-function stepGlyph(state: AiStep["state"]) {
-  switch (state) {
-    case "complete":
-      return <FaCheck className="text-green-400 text-[10px]" />;
-    case "failed":
-      return <FaTimesCircle className="text-red-400 text-[10px]" />;
-    case "cancelled":
-      return <FaTimes className="text-discord-text-muted text-[10px]" />;
-    case "pending-approval":
-      return <FaExclamationTriangle className="text-yellow-400 text-[10px]" />;
-    default:
-      return (
-        <FaSpinner className="text-discord-text-muted text-[10px] animate-spin" />
-      );
-  }
 }
 
 // Render the tool-call's params object as a single truncated string the
@@ -153,7 +131,9 @@ export const BotToolsPlaceholderBody: React.FC<
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-discord-dark-300 border border-discord-dark-400 not-italic max-w-full"
                 title={tooltip}
               >
-                <span className="shrink-0">{stepGlyph(step.state)}</span>
+                <span className="shrink-0 text-[10px]">
+                  <StepStateGlyph state={step.state} />
+                </span>
                 <span className="text-discord-text-normal text-[11px] font-mono shrink-0">
                   {tool}
                 </span>

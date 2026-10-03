@@ -1,25 +1,13 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
-import {
-  decodeHtmlEntities,
-  isUrlFromTrustedSource,
-  serverFilehosts,
-} from "../../lib/ircUtils";
-import { mediaLevelToSettings } from "../../lib/mediaUtils";
+import { decodeHtmlEntities } from "../../lib/htmlEntities";
+import { isUrlFromTrustedSource, serverFilehosts } from "../../lib/ircUtils";
+import { extractHostname, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { openExternalUrl } from "../../lib/openUrl";
 import useStore from "../../store";
 import ExternalLinkWarningModal from "../ui/ExternalLinkWarningModal";
-
-function hostOf(url: string): string | undefined {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch (error) {
-    if (error instanceof TypeError) return undefined;
-    throw error;
-  }
-}
 
 interface LinkPreviewProps {
   title?: string;
@@ -57,7 +45,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   const urlRegex = /\b(?:https?):\/\/[^\s<>"']+/i;
   const match = cleanContent.match(urlRegex);
   const firstUrl = match ? match[0] : undefined;
-  const host = firstUrl ? hostOf(firstUrl) : undefined;
+  const host = firstUrl ? extractHostname(firstUrl) : null;
 
   // Check if image is from a trusted source (server filehost or globally configured trusted URLs)
   const isTrustedImage =
@@ -119,7 +107,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
         {shouldShowImage && (
           <img
             src={imageUrl}
-            alt={title || t`Link preview`}
+            alt=""
             className="w-20 h-20 shrink-0 object-cover rounded"
             onError={(e) => {
               e.currentTarget.style.display = "none";

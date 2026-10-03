@@ -33,12 +33,12 @@ import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
+import MessageReaderSheet from "../mobile/MessageReaderSheet";
 import HoverTooltip from "../ui/HoverTooltip";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 import { BotInvocationChip } from "./BotInvocationChip";
 import { BotToolsMessagePill } from "./BotToolsMessagePill";
 import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
-import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
 import EncryptedMediaPreview from "./EncryptedMediaPreview";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -178,10 +178,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const pmUserCache = useRef(new Map<string, User>());
   const isNarrowView = useMediaQuery();
   const isTouchDevice = useIsTouchInput();
-  const collapsibleRef = useRef<CollapsibleMessageHandle>(null);
-  const [messageNeedsCollapsing, setMessageNeedsCollapsing] = useState(false);
   const messageRowRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [isReaderOpen, setIsReaderOpen] = useState(false);
   const longPress = useLongPress({
     onLongPress: () => setSheetOpen(true),
   });
@@ -453,9 +452,8 @@ export const MessageItem = memo((props: MessageItemProps) => {
     </HoverTooltip>
   ) : (
     <CollapsibleMessage
-      ref={collapsibleRef}
       content={htmlContent}
-      onNeedsCollapsing={setMessageNeedsCollapsing}
+      onRequestRead={() => setIsReaderOpen(true)}
     />
   );
 
@@ -1099,6 +1097,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
           canDelete={canRedact}
           canOpenMedia={canOpenMedia}
         />
+      )}
+      {isReaderOpen && (
+        <MessageReaderSheet
+          isOpen
+          onClose={() => setIsReaderOpen(false)}
+          author={displayName || message.userId}
+          time={copyTime}
+          copyText={stripIrcFormatting(message.content)}
+          onReply={canReply ? () => setReplyTo(message) : undefined}
+        >
+          {htmlContent}
+        </MessageReaderSheet>
       )}
     </div>
   );

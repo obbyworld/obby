@@ -33,25 +33,21 @@ export const BotToolsTray: React.FC<BotToolsTrayProps> = ({
 
   if (visible.length === 0) return null;
 
+  const cards = visible.map((w) => (
+    <div key={w.id} className="pointer-events-auto">
+      <BotToolsCard workflow={w} variant={isTouch ? "sheet" : "floating"} />
+    </div>
+  ));
+
   // Mobile panels slide with a transform, which would pin a fixed sheet to the panel, so we mount it on the body.
   if (isTouch) {
     return createPortal(
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex flex-col gap-2 max-h-[85vh] overflow-y-auto">
-        {visible.map((w) => (
-          <div key={w.id} className="pointer-events-auto">
-            <BotToolsCard workflow={w} variant="sheet" />
-          </div>
-        ))}
+        {cards}
       </div>,
       document.body,
     );
   }
-
-  const cards = visible.map((w) => (
-    <div key={w.id} className="pointer-events-auto">
-      <BotToolsCard workflow={w} />
-    </div>
-  ));
 
   return (
     <div className="pointer-events-none absolute top-2 right-2 z-30 flex flex-col gap-2 w-[680px] max-w-[calc(100%-1rem)] max-h-[calc(100%-1rem)] overflow-y-auto">

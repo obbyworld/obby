@@ -14,6 +14,7 @@ import {
   FaUser,
   FaUserTimes,
 } from "react-icons/fa";
+import { canModerate } from "../../lib/channelStatus";
 import { createIgnorePattern, isUserIgnored } from "../../lib/ignoreUtils";
 import useStore from "../../store";
 import type { BotCommand } from "../../types";
@@ -26,7 +27,6 @@ interface UserContextMenuProps {
   y: number;
   username: string;
   serverId: string;
-  channelId: string;
   onClose: () => void;
   onOpenPM: (username: string) => void;
   onOpenProfile?: (username: string) => void;
@@ -36,18 +36,6 @@ interface UserContextMenuProps {
   /** Opens the slash-command param modal for a bot command picked from the submenu. */
   onPickBotCommand?: (botNick: string, command: BotCommand) => void;
 }
-
-const STATUS_PRIORITY: Record<string, number> = {
-  "~": 6,
-  "&": 5,
-  "@": 4,
-  "%": 3,
-  "+": 2,
-};
-
-// Halfop and above may moderate.
-const canModerateWith = (status?: string) =>
-  Math.max(1, ...[...(status ?? "")].map((c) => STATUS_PRIORITY[c] ?? 1)) >= 3;
 
 export const UserContextMenu: React.FC<UserContextMenuProps> = ({
   isOpen,
@@ -93,7 +81,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
   const isBot = !!user?.isBot || user?.metadata?.bot?.value === "true";
   const isOwnUser = username === currentUsername;
   const isIgnored = isUserIgnored(username, undefined, undefined, ignoreList);
-  const canModerate = canModerateWith(currentUserStatus) && !isOwnUser;
+  const isModerator = canModerate(currentUserStatus) && !isOwnUser;
 
   const moderate = (action: ModerationAction) => () =>
     onOpenModerationModal?.(action);
@@ -156,7 +144,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       id: "warn",
       label: t`Warn User`,
       icon: <FaExclamationTriangle />,
-      show: canModerate,
+      show: isModerator,
       divider: true,
       onClick: moderate("warn"),
     },
@@ -164,14 +152,14 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       id: "kick",
       label: t`Kick User`,
       icon: <FaUserTimes />,
-      show: canModerate,
+      show: isModerator,
       onClick: moderate("kick"),
     },
     {
       id: "ban",
       label: t`Ban User`,
       icon: <FaGavel />,
-      show: canModerate,
+      show: isModerator,
       danger: true,
       submenu: [
         {

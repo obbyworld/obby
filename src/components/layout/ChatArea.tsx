@@ -3033,7 +3033,6 @@ export const ChatArea: React.FC<{
         y={userContextMenu.y}
         username={userContextMenu.username}
         serverId={userContextMenu.serverId}
-        channelId={userContextMenu.channelId}
         onClose={handleCloseUserContextMenu}
         onOpenPM={handleOpenPM}
         onOpenProfile={handleOpenProfile}

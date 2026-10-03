@@ -5,6 +5,21 @@ import {
   CollapsibleMessage,
 } from "../../src/components/message/CollapsibleMessage";
 
+function mockTouchInput() {
+  const touchQuery: Partial<MediaQueryList> = {
+    matches: true,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  };
+  vi.spyOn(window, "matchMedia").mockImplementation(
+    (query: string) =>
+      ({
+        ...touchQuery,
+        matches: query === "(pointer: coarse)",
+      }) as MediaQueryList,
+  );
+}
+
 describe("CollapsibleMessage", () => {
   const LINE_HEIGHT = 20;
   let mockScrollHeight = 0;
@@ -14,6 +29,7 @@ describe("CollapsibleMessage", () => {
       () =>
         ({
           lineHeight: `${LINE_HEIGHT}px`,
+          getPropertyValue: () => "",
         }) as unknown as CSSStyleDeclaration,
     );
 
@@ -36,13 +52,15 @@ describe("CollapsibleMessage", () => {
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
-  it("shows button when content exceeds the line limit", () => {
+  it("offers Show more when content exceeds the line limit", () => {
     mockScrollHeight = LINE_HEIGHT * (COLLAPSIBLE_MAX_LINES + 1); // one line over
     render(<CollapsibleMessage content={<p>Long content</p>} />);
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Show more/ }),
+    ).toBeInTheDocument();
   });
 
-  it("toggles expanded state on button click", () => {
+  it("unfolds in place and offers Show less", () => {
     mockScrollHeight = LINE_HEIGHT * (COLLAPSIBLE_MAX_LINES + 1);
     const { container } = render(
       <CollapsibleMessage content={<p>Long content</p>} />,
@@ -55,10 +73,14 @@ describe("CollapsibleMessage", () => {
       `${LINE_HEIGHT * COLLAPSIBLE_MAX_LINES}px`,
     );
 
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("button", { name: /Show more/ }));
 
     expect(contentDiv.style.maxHeight).toBe(
       `${LINE_HEIGHT * (COLLAPSIBLE_MAX_LINES + 1)}px`,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Show less/ }));
+    expect(contentDiv.style.maxHeight).toBe(
+      `${LINE_HEIGHT * COLLAPSIBLE_MAX_LINES}px`,
     );
   });
 
@@ -71,20 +93,31 @@ describe("CollapsibleMessage", () => {
     const contentDiv = container.querySelector(
       ".overflow-hidden",
     ) as HTMLElement;
-    const maxHeight = contentDiv.style.maxHeight;
-
-    expect(maxHeight).toMatch(/^\d+px$/);
-    expect(maxHeight).not.toContain("em");
+    expect(contentDiv.style.maxHeight).toMatch(/^\d+px$/);
   });
 
-  it("shows correct tooltip before and after toggle", () => {
+  it("asks its owner to open the whole message on touch", () => {
+    mockTouchInput();
+    mockScrollHeight = LINE_HEIGHT * (COLLAPSIBLE_MAX_LINES + 1);
+    const onRequestRead = vi.fn();
+    render(
+      <CollapsibleMessage
+        content={<p>Long content</p>}
+        onRequestRead={onRequestRead}
+      />,
+    );
+
+    expect(screen.queryByRole("button", { name: /Show more/ })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: /Read all/ }));
+    expect(onRequestRead).toHaveBeenCalledOnce();
+  });
+
+  it("unfolds in place on touch when nothing can open it", () => {
+    mockTouchInput();
     mockScrollHeight = LINE_HEIGHT * (COLLAPSIBLE_MAX_LINES + 1);
     render(<CollapsibleMessage content={<p>Long content</p>} />);
-
-    const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("title", "Read more");
-
-    fireEvent.click(button);
-    expect(button).toHaveAttribute("title", "Show less");
+    expect(
+      screen.getByRole("button", { name: /Show more/ }),
+    ).toBeInTheDocument();
   });
 });

@@ -5,6 +5,7 @@ import { ChannelLink } from "../components/message/ChannelLink";
 /* eslint-disable no-control-regex */
 import type { Server, User } from "../types";
 import { findChannelMentions } from "./channelMentions";
+import { decodeHtmlEntities, escapeHtml } from "./htmlEntities";
 import { isTauri } from "./platformUtils";
 
 // highlight.js core + a curated ~25-language subset (see ./hljs) instead of the
@@ -28,29 +29,6 @@ export function isChannelTarget(name: string | undefined | null): boolean {
   if (!name) return false;
   const c = name[0];
   return c === "#" || c === "&" || c === "^" || c === "$";
-}
-
-const NAMED_ENTITIES: Record<string, string> = {
-  lt: "<",
-  gt: ">",
-  amp: "&",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-};
-
-// We decode in one pass so "&amp;quot;" stays the literal text "&quot;".
-export function decodeHtmlEntities(text: string): string {
-  return text.replace(
-    /&(?:#(\d+)|#x([0-9a-f]+)|([a-z]+));/gi,
-    (entity, decimal?: string, hex?: string, name?: string) => {
-      if (name) return NAMED_ENTITIES[name.toLowerCase()] ?? entity;
-      const codePoint = decimal
-        ? Number.parseInt(decimal, 10)
-        : Number.parseInt(hex ?? "", 16);
-      return codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : entity;
-    },
-  );
 }
 
 /** Split an IRCv3 named-modes mode name into its vendor prefix and a
@@ -547,12 +525,7 @@ export function renderMarkdown(
       }
 
       const codeId = `multiline-inline-code-${Math.random().toString(36).substr(2, 9)}`;
-      const escapedForHtml = decodedText
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+      const escapedForHtml = escapeHtml(decodedText);
 
       return `<div class="code-block-container">
         <div class="code-block-header">
@@ -568,12 +541,7 @@ export function renderMarkdown(
       </div>`;
     }
 
-    const escapedForHtml = decodedText
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    const escapedForHtml = escapeHtml(decodedText);
 
     const codeId = `inline-code-${Math.random().toString(36).substr(2, 9)}`;
     return `<span class="inline-code-container"><code id="${codeId}" class="inline-code">${escapedForHtml}</code><button class="inline-copy-button" data-code-id="${codeId}" title="Copy to clipboard">
@@ -592,7 +560,9 @@ export function renderMarkdown(
     // Decode HTML entities back to characters for code blocks
     const decodedText = decodeHtmlEntities(trimmedText);
 
-    let highlightedCode = decodedText;
+    // hljs escapes what it highlights, so every other path must escape too or
+    // a fenced "<img src>" would load a remote image and leak the reader's IP.
+    let highlightedCode = escapeHtml(decodedText);
     let language = lang;
 
     if (hljsModule) {
@@ -607,7 +577,7 @@ export function renderMarkdown(
             highlightedCode = result.value;
             language = result.language;
           } catch (autoErr) {
-            highlightedCode = decodedText;
+            highlightedCode = escapeHtml(decodedText);
           }
         }
       } else if (!lang) {
@@ -616,7 +586,7 @@ export function renderMarkdown(
           highlightedCode = result.value;
           language = result.language;
         } catch (autoErr) {
-          highlightedCode = decodedText;
+          highlightedCode = escapeHtml(decodedText);
         }
       }
     }
@@ -746,7 +716,7 @@ export function processMarkdownInText(
 ): React.ReactNode {
   // Check if text contains markdown syntax patterns
   const markdownPatterns = [
-    /^#{1,6}/m, // Headers (# ## ### etc.)
+    /^#{1,6}\s/m, // Headers need the space, so a line starting with "#channel" stays plain
     /\*\*.*?\*\*/, // Bold (**text**)
     /\*.*?\*/, // Italic (*text*) or (*text*) but not single * at word boundaries
     /_.*?_/, // Italic (_text_)

@@ -60,12 +60,6 @@ export function contentAsText(content: unknown): string {
   return parsed.kind === "json" ? parsed.raw : parsed.text;
 }
 
-export function formatBytes(text: string): string {
-  const bytes = new TextEncoder().encode(text).length;
-  if (bytes < 1024) return `${bytes} B`;
-  return `${(bytes / 1024).toFixed(1)} KB`;
-}
-
 export function formatDuration(ms: number): string {
   if (ms < 1000) return `${(ms / 1000).toFixed(1)}s`;
   const seconds = Math.round(ms / 1000);

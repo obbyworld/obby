@@ -440,7 +440,7 @@ export const ChannelMessageList = forwardRef<
             <div ref={messagesInnerRef} className="flex flex-col">
               {hasMoreMessages && !searchQuery && (
                 <div className="flex items-center gap-3 px-4 py-3">
-                  <span className="flex-1 h-px bg-white/[0.06]" />
+                  <span className="hairline flex-1" />
                   <button
                     type="button"
                     onClick={() => {
@@ -495,7 +495,7 @@ export const ChannelMessageList = forwardRef<
                         ? t`${filteredMessages.length - displayedMessages.length} older messages`
                         : t`Load older messages`}
                   </button>
-                  <span className="flex-1 h-px bg-white/[0.06]" />
+                  <span className="hairline flex-1" />
                 </div>
               )}
               {searchQuery && (

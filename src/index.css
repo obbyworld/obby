@@ -46,11 +46,20 @@
   .sheet-handle {
     @apply mx-auto mt-2 mb-1 w-9 h-1 shrink-0 rounded-full bg-discord-dark-500;
   }
+  .sheet-row {
+    @apply w-full min-h-12 flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-white active:bg-discord-dark-400;
+  }
+  .sheet-action {
+    @apply flex-1 h-11 rounded-lg bg-discord-dark-400 text-discord-text-normal text-sm flex items-center justify-center gap-2 active:bg-discord-dark-500;
+  }
   .icon-button {
     @apply w-7 h-7 shrink-0 rounded flex items-center justify-center text-discord-text-muted transition-colors duration-100 hover:bg-discord-dark-500/40 hover:text-white focus-visible:outline-none focus-visible:bg-discord-dark-500/40 focus-visible:text-white;
   }
   .hairline {
     @apply h-px shrink-0 bg-white/[0.06];
+  }
+  .code-text {
+    @apply m-0 font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-discord-text-normal;
   }
   .code-panel {
     @apply rounded-md bg-discord-dark-400 overflow-hidden;

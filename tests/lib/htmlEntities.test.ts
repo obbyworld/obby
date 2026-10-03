@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeHtmlEntities } from "../../src/lib/ircUtils";
+import { decodeHtmlEntities, escapeHtml } from "../../src/lib/htmlEntities";
 
 describe("decodeHtmlEntities", () => {
   it("decodes named and numeric entities", () => {
@@ -15,6 +15,14 @@ describe("decodeHtmlEntities", () => {
   it("keeps unknown entities as written", () => {
     expect(decodeHtmlEntities("&bogus; &#99999999;")).toBe(
       "&bogus; &#99999999;",
+    );
+  });
+});
+
+describe("escapeHtml", () => {
+  it("escapes every character that can open markup", () => {
+    expect(escapeHtml(`<img src="x" onerror='y'> & co`)).toBe(
+      "&lt;img src=&quot;x&quot; onerror=&#39;y&#39;&gt; &amp; co",
     );
   });
 });
