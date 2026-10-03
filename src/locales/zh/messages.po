@@ -717,6 +717,10 @@ msgstr "机器人命令"
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "机器人尚未注册任何斜杠命令。"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Bot in this channel"
+msgstr "此频道中的机器人"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1004,6 +1008,10 @@ msgstr "点击跳转到消息"
 msgid "Click to set topic"
 msgstr "点击设置主题"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "client"
+msgstr "客户端"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Client"
 msgstr "客户端"
@@ -1077,6 +1085,10 @@ msgstr "颜色"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "颜色与格式"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Command provided by the IRC server"
+msgstr "IRC服务器提供的命令"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
@@ -1587,6 +1599,10 @@ msgstr "邮箱："
 msgid "Embed"
 msgstr "嵌入"
 
+#: src/components/ui/EmojiAutocompleteDropdown.tsx
+msgid "Emojis"
+msgstr "表情符号"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "启用高亮"
@@ -1940,6 +1956,10 @@ msgstr "GZ-Line（全局 Z-Line）"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Halfop"
 msgstr "半管理员"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Handled by Obby before being sent"
+msgstr "在发送前由Obby处理"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2410,6 +2430,10 @@ msgstr "媒体"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "媒体预览"
+
+#: src/components/ui/AutocompleteDropdown.tsx
+msgid "Members"
+msgstr "成员"
 
 #. placeholder {0}: sortedUsers?.length || 0
 #: src/components/layout/MemberList.tsx
@@ -3636,6 +3660,7 @@ msgid "Sending"
 msgstr "发送中"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "服务器"
 
@@ -3703,6 +3728,10 @@ msgstr "服务器范围"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "服务器范围机器人 — 可从任何频道访问"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Server-wide bot, reachable from any channel"
+msgstr "服务器范围的机器人，可从任何频道访问"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"

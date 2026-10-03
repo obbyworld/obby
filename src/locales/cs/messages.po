@@ -717,6 +717,10 @@ msgstr "Příkazy bota"
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "Bot zatím nezaregistroval žádné lomítkové příkazy."
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Bot in this channel"
+msgstr "Bot v tomto kanálu"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1004,6 +1008,10 @@ msgstr "Klikněte pro přechod na zprávu"
 msgid "Click to set topic"
 msgstr "Klikněte pro nastavení tématu"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "client"
+msgstr "klient"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Client"
 msgstr "Klient"
@@ -1077,6 +1085,10 @@ msgstr "Barva"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Barva a formátování"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Command provided by the IRC server"
+msgstr "Příkaz poskytnutý IRC serverem"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
@@ -1587,6 +1599,10 @@ msgstr "E-mail:"
 msgid "Embed"
 msgstr "Vložit"
 
+#: src/components/ui/EmojiAutocompleteDropdown.tsx
+msgid "Emojis"
+msgstr "Emodži"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Povolit zvýraznění"
@@ -1940,6 +1956,10 @@ msgstr "GZ-Line (globální Z-Line)"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Halfop"
 msgstr "Polooperátor"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Handled by Obby before being sent"
+msgstr "Zpracováno Obby než se pošle"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2410,6 +2430,10 @@ msgstr "Média"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "Náhledy médií"
+
+#: src/components/ui/AutocompleteDropdown.tsx
+msgid "Members"
+msgstr "Členové"
 
 #. placeholder {0}: sortedUsers?.length || 0
 #: src/components/layout/MemberList.tsx
@@ -3636,6 +3660,7 @@ msgid "Sending"
 msgstr "Odesílání"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "server"
 
@@ -3703,6 +3728,10 @@ msgstr "Pro celý server"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Bot pro celý server — dostupný z libovolného kanálu"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Server-wide bot, reachable from any channel"
+msgstr "Bot dostupný na celém serveru, dosažitelný z jakéhokoli kanálu"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"

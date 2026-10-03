@@ -717,6 +717,10 @@ msgstr "Bot 명령어"
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "봇이 아직 슬래시 명령을 등록하지 않았습니다."
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Bot in this channel"
+msgstr "이 채널의 봇"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1004,6 +1008,10 @@ msgstr "클릭하여 메시지로 이동"
 msgid "Click to set topic"
 msgstr "클릭하여 주제 설정"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "client"
+msgstr "클라이언트"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Client"
 msgstr "클라이언트"
@@ -1077,6 +1085,10 @@ msgstr "색상"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "색상 및 서식"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Command provided by the IRC server"
+msgstr "IRC 서버에서 제공하는 명령어"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
@@ -1587,6 +1599,10 @@ msgstr "이메일:"
 msgid "Embed"
 msgstr "임베드"
 
+#: src/components/ui/EmojiAutocompleteDropdown.tsx
+msgid "Emojis"
+msgstr "이모지"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "강조 표시 활성화"
@@ -1940,6 +1956,10 @@ msgstr "GZ-Line (글로벌 Z-Line)"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Halfop"
 msgstr "Halfop"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Handled by Obby before being sent"
+msgstr "전송 전에 Obby에서 처리됨"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2410,6 +2430,10 @@ msgstr "미디어"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "미디어 미리보기"
+
+#: src/components/ui/AutocompleteDropdown.tsx
+msgid "Members"
+msgstr "멤버"
 
 #. placeholder {0}: sortedUsers?.length || 0
 #: src/components/layout/MemberList.tsx
@@ -3636,6 +3660,7 @@ msgid "Sending"
 msgstr "보내는 중"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "서버"
 
@@ -3703,6 +3728,10 @@ msgstr "서버 전체"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "서버 전역 bot — 모든 채널에서 접근 가능"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Server-wide bot, reachable from any channel"
+msgstr "모든 채널에서 접근 가능한 서버 전체 봇"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"

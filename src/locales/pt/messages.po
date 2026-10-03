@@ -717,6 +717,10 @@ msgstr "Comandos do bot"
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "O bot ainda não registrou nenhum comando slash."
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Bot in this channel"
+msgstr "Bot neste canal"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1004,6 +1008,10 @@ msgstr "Clique para ir à mensagem"
 msgid "Click to set topic"
 msgstr "Clique para definir o tópico"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "client"
+msgstr "cliente"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Client"
 msgstr "Cliente"
@@ -1077,6 +1085,10 @@ msgstr "Cor"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Cor e Formatação"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Command provided by the IRC server"
+msgstr "Comando fornecido pelo servidor IRC"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
@@ -1587,6 +1599,10 @@ msgstr "E-mail:"
 msgid "Embed"
 msgstr "Incorporar"
 
+#: src/components/ui/EmojiAutocompleteDropdown.tsx
+msgid "Emojis"
+msgstr "Emojis"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Ativar destaques"
@@ -1940,6 +1956,10 @@ msgstr "GZ-Line (Z-Line global)"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Halfop"
 msgstr "Halfop"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Handled by Obby before being sent"
+msgstr "Manipulado pelo Obby antes de ser enviado"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2410,6 +2430,10 @@ msgstr "Mídia"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "Pré-visualizações de mídia"
+
+#: src/components/ui/AutocompleteDropdown.tsx
+msgid "Members"
+msgstr "Membros"
 
 #. placeholder {0}: sortedUsers?.length || 0
 #: src/components/layout/MemberList.tsx
@@ -3636,6 +3660,7 @@ msgid "Sending"
 msgstr "Enviando"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "servidor"
 
@@ -3703,6 +3728,10 @@ msgstr "Em todo o servidor"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Bot de todo o servidor — acessível de qualquer canal"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Server-wide bot, reachable from any channel"
+msgstr "Bot em todo o servidor, acessível de qualquer canal"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"

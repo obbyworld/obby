@@ -717,6 +717,10 @@ msgstr "Bot Komutları"
 msgid "Bot hasn't registered any slash commands yet."
 msgstr "Bot henüz hiçbir eğik çizgi komutu kaydetmedi."
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Bot in this channel"
+msgstr "Bu kanalda bot"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1004,6 +1008,10 @@ msgstr "Mesaja gitmek için tıklayın"
 msgid "Click to set topic"
 msgstr "Konu belirlemek için tıklayın"
 
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "client"
+msgstr "istemci"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Client"
 msgstr "İstemci"
@@ -1077,6 +1085,10 @@ msgstr "Renk"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Renk ve Biçimlendirme"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Command provided by the IRC server"
+msgstr "IRC sunucusu tarafından sağlanan komut"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Commands are loading…"
@@ -1587,6 +1599,10 @@ msgstr "E-posta:"
 msgid "Embed"
 msgstr "Gömülü"
 
+#: src/components/ui/EmojiAutocompleteDropdown.tsx
+msgid "Emojis"
+msgstr "Emojiler"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Vurgulamayı Etkinleştir"
@@ -1940,6 +1956,10 @@ msgstr "GZ-Line (global Z-Line)"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Halfop"
 msgstr "Halfop"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Handled by Obby before being sent"
+msgstr "Gönderilmeden önce Obby tarafından işlenmiş"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2410,6 +2430,10 @@ msgstr "Medya"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "Medya Önizlemeleri"
+
+#: src/components/ui/AutocompleteDropdown.tsx
+msgid "Members"
+msgstr "Üyeler"
 
 #. placeholder {0}: sortedUsers?.length || 0
 #: src/components/layout/MemberList.tsx
@@ -3636,6 +3660,7 @@ msgid "Sending"
 msgstr "Gönderiliyor"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "sunucu"
 
@@ -3703,6 +3728,10 @@ msgstr "Sunucu genelinde"
 #: src/components/ui/BotsModal.tsx
 msgid "Server-wide bot — reachable from any channel"
 msgstr "Sunucu genelinde bot — herhangi bir kanaldan erişilebilir"
+
+#: src/components/ui/SlashCommandPopover.tsx
+msgid "Server-wide bot, reachable from any channel"
+msgstr "Sunucuya geniş bot, herhangi bir kanaldan erişilebilir"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Session"
