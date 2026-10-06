@@ -118,6 +118,36 @@ export function handleRplYourHost(
   }
 }
 
+// Servers prefix each MOTD line with "- " to mark it as a body line.
+const MOTD_LINE_PREFIX = /^- ?/;
+
+export function handleRplMotdStart(
+  ctx: IRCClientContext,
+  serverId: string,
+): void {
+  ctx.motdLines.set(serverId, []);
+}
+
+export function handleRplMotd(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+): void {
+  const line = parv.slice(1).join(" ").replace(MOTD_LINE_PREFIX, "");
+  const lines = ctx.motdLines.get(serverId) ?? [];
+  ctx.motdLines.set(serverId, [...lines, line]);
+}
+
+export function handleRplEndOfMotd(
+  ctx: IRCClientContext,
+  serverId: string,
+): void {
+  const lines = ctx.motdLines.get(serverId);
+  ctx.motdLines.delete(serverId);
+  if (lines && lines.length > 0) ctx.triggerEvent("MOTD", { serverId, lines });
+}
+
 export function handleIsupport(
   ctx: IRCClientContext,
   serverId: string,

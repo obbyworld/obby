@@ -260,6 +260,7 @@ export interface EventMap {
   RPL_YOUREOPER: BaseIRCEvent & {
     message: string;
   };
+  MOTD: BaseIRCEvent & { lines: string[] };
   RPL_YOURHOST: BaseIRCEvent & {
     serverName: string;
     version: string;
@@ -676,6 +677,7 @@ export class IRCClient implements IRCClientContext {
   /** ISUPPORT accumulator for draft/extended-isupport-0.2's `+=`
    *  append form.  See IRCClientContext for the contract. */
   isupportValues: Map<string, Map<string, string>> = new Map();
+  motdLines: Map<string, string[]> = new Map();
 
   private ourCaps: string[] = [
     "multi-prefix",
@@ -945,6 +947,7 @@ export class IRCClient implements IRCClientContext {
           this.stopWebSocketPing(server.id);
           this.sockets.delete(server.id);
           this.isupportValues.delete(server.id);
+          this.motdLines.delete(server.id);
           this.whoisBuilders.delete(server.id);
           server.isConnected = false;
           const wasReconnecting = server.connectionState === "reconnecting";
@@ -1065,6 +1068,7 @@ export class IRCClient implements IRCClientContext {
     // Stop WebSocket ping timers
     this.stopWebSocketPing(serverId);
     this.isupportValues.delete(serverId);
+    this.motdLines.delete(serverId);
     this.whoisBuilders.delete(serverId);
   }
 

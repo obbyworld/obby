@@ -191,6 +191,7 @@ describe("Metadata Display Features", () => {
         autoFallbackToSingleLine: true,
         mediaVisibilityLevel: 3,
         enableMarkdownRendering: false,
+        showMotd: true,
         awayMessage: "",
         quitMessage: "Obby - Bringing IRC to the future",
         callAudioInput: null,

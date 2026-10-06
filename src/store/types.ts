@@ -62,6 +62,7 @@ export interface GlobalSettings {
   autoFallbackToSingleLine: boolean;
   mediaVisibilityLevel: MediaVisibilityLevel;
   enableMarkdownRendering: boolean;
+  showMotd: boolean;
   awayMessage: string;
   quitMessage: string;
   callAudioInput: SavedDevice | null;

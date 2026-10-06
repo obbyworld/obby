@@ -1398,6 +1398,7 @@ const useStore = create<AppState>((set, get) => ({
     mediaVisibilityLevel: 1 as MediaVisibilityLevel,
     // Markdown settings
     enableMarkdownRendering: false,
+    showMotd: true,
     // Status messages
     awayMessage: "",
     quitMessage: "",

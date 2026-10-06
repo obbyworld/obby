@@ -38,6 +38,9 @@ import {
   handleIsupport,
   handlePing,
   handlePong,
+  handleRplEndOfMotd,
+  handleRplMotd,
+  handleRplMotdStart,
   handleRplWelcome,
   handleRplYoureOper,
   handleRplYourHost,
@@ -144,6 +147,10 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleRplYourHost(ctx, serverId, source, parv),
   "005": (ctx, serverId, source, parv, _mtags, trailing) =>
     handleIsupport(ctx, serverId, source, parv, trailing),
+  "375": (ctx, serverId) => handleRplMotdStart(ctx, serverId),
+  "372": (ctx, serverId, source, parv) =>
+    handleRplMotd(ctx, serverId, source, parv),
+  "376": (ctx, serverId) => handleRplEndOfMotd(ctx, serverId),
   CAP: (ctx, serverId, source, parv, mtags, trailing) =>
     handleCap(ctx, serverId, source, parv, mtags, trailing),
   "381": (ctx, serverId, source, parv) =>

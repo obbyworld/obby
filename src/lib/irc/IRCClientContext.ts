@@ -47,6 +47,8 @@ export interface IRCClientContext {
    *  concatenation across calls and emit the cumulative total to
    *  downstream consumers. */
   isupportValues: Map<string, Map<string, string>>;
+  /** MOTD lines received so far, between RPL_MOTDSTART and RPL_ENDOFMOTD. */
+  motdLines: Map<string, string[]>;
   activeBatches: Map<
     string,
     Map<
