@@ -2491,6 +2491,10 @@ msgstr "Повідомлення не надіслано: шифрування �
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Повідомлення не надіслано: ключ шифрування змінився. Перевірте новий ключ або завершіть шифрування, перш ніж надсилати у відкритому вигляді."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Повідомлення дня"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Повідомлення при від'єднанні від сервера"
@@ -3127,6 +3131,10 @@ msgstr "Відкрити відео в окремому вікні"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Порт"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Опубліковувати повідомлення дня кожного сервера у Повідомленнях сервера та його сторінці привітання"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "Показати або приховати бічну панель зі 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Показати виходи"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "Показати MOTD"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

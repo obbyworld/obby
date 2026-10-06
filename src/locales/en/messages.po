@@ -2490,6 +2490,10 @@ msgstr "Message not sent: encryption stopped working. End encryption to send une
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Message of the day"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Message shown when you disconnect from the server"
@@ -3126,6 +3130,10 @@ msgstr "Pop out video"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Port"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Post each server's message of the day to Server Notices and its welcome page"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3859,6 +3867,10 @@ msgstr "Show or hide the member list sidebar"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Show Quits"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "Show the MOTD"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

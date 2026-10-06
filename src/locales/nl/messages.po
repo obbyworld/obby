@@ -2491,6 +2491,10 @@ msgstr "Bericht niet verzonden: versleuteling werkt niet meer. Beëindig de vers
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Bericht niet verzonden: de versleutelingssleutel is gewijzigd. Verifieer de nieuwe sleutel of beëindig de versleuteling voordat je onversleuteld verzendt."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Bericht van de dag"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Bericht dat wordt weergegeven wanneer je de verbinding met de server verbreekt"
@@ -3127,6 +3131,10 @@ msgstr "Video loskoppelen"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Poort"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Het bericht van de dag van elke server in Serverberichten en de welkomstpagina ervan posten"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "Zijbalk met ledenlijst weergeven of verbergen"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Afmeldingen weergeven"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "MOTD weergeven"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

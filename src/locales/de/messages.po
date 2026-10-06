@@ -2491,6 +2491,10 @@ msgstr "Nachricht nicht gesendet: Die Verschlüsselung funktioniert nicht mehr. 
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Nachricht nicht gesendet: Der Verschlüsselungsschlüssel hat sich geändert. Überprüfe den neuen Schlüssel oder beende die Verschlüsselung, bevor du unverschlüsselt sendest."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Nachricht des Tages"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Nachricht beim Trennen vom Server"
@@ -3127,6 +3131,10 @@ msgstr "Video in neuem Fenster öffnen"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Port"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Nachricht des Tages jedes Servers in Server-Hinweisen und seiner Willkommensseite anzeigen"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "Seitenleiste der Mitgliederliste ein- oder ausblenden"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Verbindungstrennungen anzeigen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "MOTD anzeigen"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

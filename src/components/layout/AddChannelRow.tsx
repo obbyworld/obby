@@ -10,7 +10,8 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import { useTypingOwner } from "../../hooks/useAutoFocusTyping";
-import type { ChannelKind } from "../../lib/channelFolders";
+import { type ChannelKind, getChannelKind } from "../../lib/channelFolders";
+import { isChannelTarget } from "../../lib/ircUtils";
 import Menu from "../ui/Menu";
 import { TextInput } from "../ui/TextInput";
 
@@ -20,13 +21,11 @@ const KIND_ICONS: Record<ChannelKind, React.ReactNode> = {
   stream: <FaDesktop />,
 };
 
-// We keep a typed `&` for text channels and add the kind's prefix otherwise.
-export function toChannelName(kind: ChannelKind, typed: string): string {
-  const name = typed.trim();
-  if (kind === "voice") return name.startsWith("^") ? name : `^${name}`;
-  if (kind === "stream") return name.startsWith("$") ? name : `$${name}`;
-  return name.startsWith("#") || name.startsWith("&") ? name : `#${name}`;
-}
+const KIND_PREFIXES: Record<ChannelKind, string> = {
+  text: "#",
+  voice: "^",
+  stream: "$",
+};
 
 interface AddChannelRowProps {
   canAddLive: boolean;
@@ -38,7 +37,9 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
   onAdd,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [kind, setKind] = useState<ChannelKind>("text");
+  const [prefix, setPrefix] = useState(KIND_PREFIXES.text);
+  const kind = getChannelKind(prefix);
+  const [hasTypedPrefix, setHasTypedPrefix] = useState(false);
   const [name, setName] = useState("");
   const [kindMenuAnchor, setKindMenuAnchor] = useState<HTMLElement | null>(
     null,
@@ -49,7 +50,8 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
 
   const close = () => {
     setIsOpen(false);
-    setKind("text");
+    setPrefix(KIND_PREFIXES.text);
+    setHasTypedPrefix(false);
     setName("");
     setKindMenuAnchor(null);
   };
@@ -71,13 +73,31 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
   }, [isOpen]);
 
   const pickKind = (option: ChannelKind) => {
-    setKind(option);
+    setPrefix(KIND_PREFIXES[option]);
     inputRef.current?.focus();
+  };
+
+  // The first channel prefix typed or pasted picks the kind, and every later
+  // one belongs to the name, so "##linux" can be typed key by key.
+  const changeName = (value: string) => {
+    const typedPrefix = value[0];
+    const isUsablePrefix =
+      name === "" &&
+      !hasTypedPrefix &&
+      isChannelTarget(value) &&
+      (canAddLive || getChannelKind(typedPrefix) === "text");
+    if (isUsablePrefix) {
+      setPrefix(typedPrefix);
+      setHasTypedPrefix(true);
+      setName(value.slice(1));
+    } else {
+      setName(value);
+    }
   };
 
   const submit = () => {
     if (!name.trim()) return;
-    onAdd(toChannelName(kind, name));
+    onAdd(prefix + name.trim());
     close();
   };
 
@@ -92,6 +112,12 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
     stream: t`stream-name`,
   };
   const kinds: ChannelKind[] = ["text", "voice", "stream"];
+  const prefixIcon =
+    prefix === "&" ? (
+      <span className="w-3.5 text-center font-semibold">&amp;</span>
+    ) : (
+      KIND_ICONS[kind]
+    );
 
   return (
     <div ref={rowRef} className="mb-2">
@@ -129,12 +155,12 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
               }
               className="self-stretch pl-2 pr-1 flex flex-shrink-0 items-center gap-0.5 text-discord-channels-default hover:text-white hover:bg-discord-dark-300"
             >
-              {KIND_ICONS[kind]}
+              {prefixIcon}
               <FaCaretDown className="text-[10px] opacity-70" />
             </button>
           ) : (
             <span className="pl-2 pr-1 flex-shrink-0 text-discord-channels-default">
-              {KIND_ICONS.text}
+              {prefixIcon}
             </span>
           )}
           <TextInput
@@ -143,9 +169,12 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
             placeholder={placeholders[kind]}
             aria-label={kindLabels[kind]}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => changeName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Backspace" && name === "") {
+                setPrefix(KIND_PREFIXES.text);
+                setHasTypedPrefix(false);
+              } else if (e.key === "Enter") {
                 e.preventDefault();
                 submit();
               } else if (e.key === "Escape") {

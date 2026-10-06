@@ -2491,6 +2491,10 @@ msgstr "訊息未送出：加密已停止運作。請結束加密以未加密方
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "訊息未送出：加密金鑰已變更。請先驗證新金鑰，或結束加密後再以明文傳送。"
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "每日訊息"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "中斷伺服器連線時顯示的訊息"
@@ -3127,6 +3131,10 @@ msgstr "彈出視訊"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "端口"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "在服務器通知和歡迎頁面中發布每個服務器的每日訊息"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "显示或隐藏成员列表侧栏"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "顯示退出事件"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "顯示 MOTD"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

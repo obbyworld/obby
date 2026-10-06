@@ -1,35 +1,18 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import {
-  AddChannelRow,
-  toChannelName,
-} from "../../../src/components/layout/AddChannelRow";
+import { AddChannelRow } from "../../../src/components/layout/AddChannelRow";
 
-describe("toChannelName", () => {
-  it("prefixes a plain name for text channels with #", () => {
-    expect(toChannelName("text", "general")).toBe("#general");
-  });
+function openRow(canAddLive: boolean, onAdd = vi.fn()) {
+  render(<AddChannelRow canAddLive={canAddLive} onAdd={onAdd} />);
+  fireEvent.click(screen.getByRole("button", { name: /add channel/i }));
+  return onAdd;
+}
 
-  it("keeps a typed & for text channels", () => {
-    expect(toChannelName("text", "&general")).toBe("&general");
-  });
-
-  it("keeps a typed # for text channels", () => {
-    expect(toChannelName("text", "#general")).toBe("#general");
-  });
-
-  it("prefixes voice channels with ^", () => {
-    expect(toChannelName("voice", "lobby")).toBe("^lobby");
-  });
-
-  it("keeps an already-prefixed voice name", () => {
-    expect(toChannelName("voice", "^lobby")).toBe("^lobby");
-  });
-
-  it("prefixes stream channels with $", () => {
-    expect(toChannelName("stream", "live")).toBe("$live");
-  });
-});
+function typeAndSubmit(label: string, value: string, secondLabel = label) {
+  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+  const input = screen.getByLabelText(secondLabel);
+  fireEvent.keyDown(input, { key: "Enter" });
+}
 
 describe("AddChannelRow", () => {
   it("only renders the kind picker button when canAddLive is true", () => {
@@ -99,5 +82,74 @@ describe("AddChannelRow", () => {
 
     expect(onAdd).not.toHaveBeenCalled();
     expect(screen.getByLabelText("Text channel")).toBeInTheDocument();
+  });
+
+  it("switches to voice when the name starts with ^ and keeps only the name", () => {
+    openRow(true);
+    fireEvent.change(screen.getByLabelText("Text channel"), {
+      target: { value: "^" },
+    });
+    const input = screen.getByLabelText("Voice channel") as HTMLInputElement;
+    expect(input.value).toBe("");
+  });
+
+  it("adds the prefix that was typed first", () => {
+    const onAdd = openRow(true);
+    typeAndSubmit("Text channel", "$live", "Stream");
+    expect(onAdd).toHaveBeenCalledWith("$live");
+  });
+
+  it("keeps a typed & as the prefix", () => {
+    const onAdd = openRow(true);
+    typeAndSubmit("Text channel", "&local");
+    expect(onAdd).toHaveBeenCalledWith("&local");
+  });
+
+  it("takes only the first # so ##linux stays intact", () => {
+    const onAdd = openRow(true);
+    typeAndSubmit("Text channel", "##linux");
+    expect(onAdd).toHaveBeenCalledWith("##linux");
+  });
+
+  it("adds a plain name as a # channel", () => {
+    const onAdd = openRow(true);
+    typeAndSubmit("Text channel", "general");
+    expect(onAdd).toHaveBeenCalledWith("#general");
+  });
+
+  it("leaves a live prefix in the name where live channels are unavailable", () => {
+    const onAdd = openRow(false);
+    typeAndSubmit("Text channel", "^lobby");
+    expect(onAdd).toHaveBeenCalledWith("#^lobby");
+  });
+
+  it("goes back to # when backspace hits an empty name", () => {
+    openRow(true);
+    fireEvent.change(screen.getByLabelText("Text channel"), {
+      target: { value: "^" },
+    });
+    fireEvent.keyDown(screen.getByLabelText("Voice channel"), {
+      key: "Backspace",
+    });
+    expect(screen.getByLabelText("Text channel")).toBeInTheDocument();
+  });
+
+  it("keeps a second # typed key by key so ##linux works", () => {
+    const onAdd = openRow(true);
+    const input = screen.getByLabelText("Text channel");
+    fireEvent.change(input, { target: { value: "#" } });
+    fireEvent.change(input, { target: { value: "#" } });
+    fireEvent.change(input, { target: { value: "#linux" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onAdd).toHaveBeenCalledWith("##linux");
+  });
+
+  it("keeps a ^ typed after a # prefix as part of the name", () => {
+    const onAdd = openRow(true);
+    const input = screen.getByLabelText("Text channel");
+    fireEvent.change(input, { target: { value: "#" } });
+    fireEvent.change(input, { target: { value: "^" } });
+    fireEvent.keyDown(screen.getByLabelText("Text channel"), { key: "Enter" });
+    expect(onAdd).toHaveBeenCalledWith("#^");
   });
 });

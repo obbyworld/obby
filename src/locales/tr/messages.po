@@ -2491,6 +2491,10 @@ msgstr "Mesaj gönderilmedi: şifreleme çalışmayı durdurdu. Şifrelemeyi son
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Mesaj gönderilmedi: şifreleme anahtarı değişti. Açık metin olarak göndermeden önce yeni anahtarı doğrulayın ya da şifrelemeyi sonlandırın."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Günün Mesajı"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Sunucudan ayrıldığınızda gösterilen mesaj"
@@ -3127,6 +3131,10 @@ msgstr "Videoyu ayrı pencerede aç"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Port"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Her sunucunun günün mesajını Sunucu Bildirimleri'nde ve hoş geldin sayfasında yayınla"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "Üye listesi kenar çubuğunu göster veya gizle"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Ayrılmaları Göster"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "MOTD'yi Göster"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx

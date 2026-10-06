@@ -2491,6 +2491,10 @@ msgstr "Mensagem não enviada: a criptografia parou de funcionar. Encerre a crip
 msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
 msgstr "Mensagem não enviada: a chave de criptografia mudou. Verifique a nova chave ou encerre a criptografia antes de enviar sem proteção."
 
+#: src/components/ui/BlankPage.tsx
+msgid "Message of the day"
+msgstr "Mensagem do dia"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Mensagem exibida ao desconectar do servidor"
@@ -3127,6 +3131,10 @@ msgstr "Abrir vídeo em outra janela"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
 msgstr "Porta"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Post each server's message of the day to Server Notices and its welcome page"
+msgstr "Publicar a mensagem do dia de cada servidor em Avisos do Servidor e sua página de boas-vindas"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Preferences"
@@ -3860,6 +3868,10 @@ msgstr "Mostrar ou ocultar a barra lateral de membros"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Quits"
 msgstr "Mostrar desconexões"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show the MOTD"
+msgstr "Mostrar MOTD"
 
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
