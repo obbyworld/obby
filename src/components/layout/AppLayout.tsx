@@ -7,6 +7,7 @@ import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
 import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
+import LinkHoverLayer from "../ui/LinkHoverLayer";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
 import RawLogViewer from "../ui/RawLogViewer";
 import { VoicePipOverlay } from "../voice/VoicePipOverlay";
@@ -408,6 +409,7 @@ export const AppLayout: React.FC = () => {
           decryptedType={ui.openedMedia?.decryptedType}
         />
         <RawLogViewer />
+        <LinkHoverLayer />
       </div>
     </ChannelLinkProvider>
   );

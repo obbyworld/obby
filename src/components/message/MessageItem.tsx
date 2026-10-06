@@ -15,15 +15,20 @@ import {
   isUnprotectedMessage,
 } from "../../lib/e2ee/messageFlags";
 import { highlightNames } from "../../lib/highlightNames";
+import { decodeHtmlEntities } from "../../lib/htmlEntities";
 import ircClient from "../../lib/ircClient";
 import {
+  findFirstUrl,
   isUrlFromFilehost,
   isUserVerified,
+  type LinkLabels,
+  makeLinkLabels,
   processMarkdownInText,
   serverFilehosts,
 } from "../../lib/ircUtils";
 import {
   canShowMedia,
+  extractHostname,
   extractMediaFromMessage,
   type MediaEntry,
   type MediaType,
@@ -406,6 +411,20 @@ export const MessageItem = memo((props: MessageItemProps) => {
     server?.emojiPackUrl,
   ]);
 
+  // We label only plaintext messages, and lead with the real host because the linked page supplies the title.
+  const isEncrypted = isFromEncryptedSession(message) || !!encryptedMedia;
+  const linkLabels = useMemo<LinkLabels | undefined>(() => {
+    if (!message.linkPreviewTitle || isEncrypted) return undefined;
+    const url = findFirstUrl(stripIrcFormatting(message.content));
+    const host = url && extractHostname(url);
+    return url && host
+      ? makeLinkLabels(
+          url,
+          `${host} · ${decodeHtmlEntities(message.linkPreviewTitle)}`,
+        )
+      : undefined;
+  }, [message.content, message.linkPreviewTitle, isEncrypted]);
+
   const htmlContent = useMemo(() => {
     const keyPrefix = message.id || message.msgid || "msg";
     const body = renderWithCustomEmoji(
@@ -417,6 +436,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
           showExternalContent,
           enableMarkdownRendering,
           key,
+          linkLabels,
         ),
       `${keyPrefix}-em`,
     );
@@ -431,6 +451,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     message.msgid,
     message.mentioned,
     resolveEmoji,
+    linkLabels,
   ]);
 
   // Ciphertext this device holds no key for keeps its place in the thread: a
@@ -1030,17 +1051,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
               })()}
 
             {/* Render link preview if available */}
-            {(message.linkPreviewTitle ||
-              message.linkPreviewSnippet ||
-              message.linkPreviewMeta) && (
-              <LinkPreview
-                title={message.linkPreviewTitle}
-                snippet={message.linkPreviewSnippet}
-                imageUrl={message.linkPreviewMeta}
-                messageContent={message.content}
-                serverId={serverId}
-              />
-            )}
+            {!isEncrypted &&
+              (message.linkPreviewTitle ||
+                message.linkPreviewSnippet ||
+                message.linkPreviewMeta) && (
+                <LinkPreview
+                  title={message.linkPreviewTitle}
+                  snippet={message.linkPreviewSnippet}
+                  imageUrl={message.linkPreviewMeta}
+                  messageContent={message.content}
+                  serverId={serverId}
+                />
+              )}
           </div>
 
           <ReactionsWithActions

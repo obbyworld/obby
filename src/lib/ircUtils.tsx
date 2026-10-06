@@ -444,9 +444,32 @@ function applyIrcColorsToHtml(
   );
 }
 
+/** Link text shown in place of a raw URL, keyed by `linkLabelKey`. */
+export type LinkLabels = ReadonlyMap<string, string>;
+
+const MAX_LINK_LABEL = 80;
+
+// The plain and markdown renderers disagree on trailing punctuation and
+// emphasis around a link, so we key labels by the URL without them.
+export const linkLabelKey = (url: string): string =>
+  url.replace(/[.,;:!?)\]*]+$/, "");
+
+export function makeLinkLabels(url: string, label: string): LinkLabels {
+  const oneLine = label.replace(/\s+/g, " ").trim();
+  const capped =
+    oneLine.length > MAX_LINK_LABEL
+      ? `${oneLine.slice(0, MAX_LINK_LABEL - 1)}…`
+      : oneLine;
+  return new Map([[linkLabelKey(url), capped]]);
+}
+
+const labelFor = (labels: LinkLabels | undefined, url: string) =>
+  labels?.get(linkLabelKey(url));
+
 export function renderMarkdown(
   text: string,
   showExternalContent = true,
+  linkLabels?: LinkLabels,
 ): React.ReactNode {
   // Basic input validation and sanitization
   if (!text || typeof text !== "string") {
@@ -508,7 +531,13 @@ export function renderMarkdown(
       ? "text-blue-500 hover:text-blue-700 underline external-link-security"
       : "text-blue-500 hover:text-blue-700 underline";
 
-    return `<a href="${sanitizedHref}"${titleAttr} target="_blank" rel="noopener noreferrer" class="${linkClass}">${text}</a>`;
+    // We compact only bare links; a link written as [text](url) keeps its text.
+    const isBareLink = isExternalLink && text === href;
+    const linkText = isBareLink
+      ? escapeHtml(labelFor(linkLabels, href) ?? compactUrl(href))
+      : text;
+    const compactClass = isBareLink ? " link-compact" : "";
+    return `<a href="${sanitizedHref}"${titleAttr} target="_blank" rel="noopener noreferrer" class="${linkClass}${compactClass}">${linkText}</a>`;
   };
 
   // Custom code renderer for inline code
@@ -713,6 +742,7 @@ export function processMarkdownInText(
   showExternalContent = true,
   enableMarkdown = false,
   keyPrefix = "",
+  linkLabels?: LinkLabels,
 ): React.ReactNode {
   // Check if text contains markdown syntax patterns
   const markdownPatterns = [
@@ -737,13 +767,17 @@ export function processMarkdownInText(
 
   if (hasMarkdown && enableMarkdown) {
     // If markdown syntax is detected and markdown is enabled, render the entire text as markdown
-    return renderMarkdown(text, showExternalContent);
+    return renderMarkdown(text, showExternalContent, linkLabels);
   }
   // Otherwise, use the existing IRC formatting
-  return mircToHtml(text, keyPrefix);
+  return mircToHtml(text, keyPrefix, linkLabels);
 }
 
-export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
+export function mircToHtml(
+  text: string,
+  keyPrefix = "",
+  linkLabels?: LinkLabels,
+): React.ReactNode {
   const state = {
     bold: false,
     underline: false,
@@ -870,6 +904,7 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
           props.style,
           keyPrefix,
           elementIndexRef,
+          linkLabels,
         );
         processedResult.push(...urlProcessed);
       } else {
@@ -930,19 +965,38 @@ function processChannelsInText(
   return parts;
 }
 
-// Helper function to detect and render URLs in text
+// Matches http(s), irc(s) and bare www. links the way chat makes them clickable.
+// A factory, so every caller gets its own lastIndex on the global regex.
+const makeUrlRegex = () =>
+  /((?:https?|ircs?):\/\/[^\s<>"{}|\\^`[\]]+|www\.[^\s<>"{}|\\^`[\]]+)/gi;
+
+/** A web address as people read it: no scheme, no "www." and no trailing slash. */
+export function compactUrl(url: string): string {
+  return url
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/$/, "");
+}
+
+/** The first web link in `text`, exactly as chat would linkify it. */
+export function findFirstUrl(text: string): string | null {
+  for (const match of text.matchAll(makeUrlRegex())) {
+    if (/^https?:\/\//i.test(match[0])) return match[0];
+  }
+  return null;
+}
+
 function processUrlsInText(
   text: string,
   style?: React.CSSProperties,
   keyPrefix = "",
   elementIndexRef?: { current: number },
+  linkLabels?: LinkLabels,
 ): React.ReactNode[] {
   // Check if running in Tauri native environment
   const isTauriEnv = isTauri();
 
-  // URL regex pattern - matches http://, https://, irc://, ircs://, and www. URLs
-  const urlRegex =
-    /((?:https?|ircs?):\/\/[^\s<>"{}|\\^`[\]]+|www\.[^\s<>"{}|\\^`[\]]+)/gi;
+  const urlRegex = makeUrlRegex();
 
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -986,12 +1040,10 @@ function processUrlsInText(
       const linkClass = isIrcLink
         ? "text-blue-500 hover:text-blue-700 underline irc-link"
         : isExternalLink
-          ? "text-blue-500 hover:text-blue-700 underline external-link-security"
+          ? "text-blue-500 hover:text-blue-700 underline external-link-security link-compact"
           : "text-blue-500 hover:text-blue-700 underline";
 
       parts.push(
-        // inline-block + max-w + truncate: CSS ellipsis so the full URL text is in the
-        // DOM (copy-paste works) while long URLs don't overflow the message bubble.
         <a
           key={`${keyPrefix}url-${elementIndex++}`}
           href={isIrcLink ? url : fullUrl}
@@ -999,9 +1051,11 @@ function processUrlsInText(
           rel="noopener noreferrer"
           className={`${linkClass} inline-block max-w-[40ch] truncate align-bottom`}
           style={style}
-          title={url}
+          title={isExternalLink ? undefined : url}
         >
-          {url}
+          {isExternalLink
+            ? (labelFor(linkLabels, url) ?? compactUrl(url))
+            : url}
         </a>,
       );
     }

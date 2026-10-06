@@ -2,7 +2,11 @@ import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
 import { decodeHtmlEntities } from "../../lib/htmlEntities";
-import { isUrlFromTrustedSource, serverFilehosts } from "../../lib/ircUtils";
+import {
+  findFirstUrl,
+  isUrlFromTrustedSource,
+  serverFilehosts,
+} from "../../lib/ircUtils";
 import { extractHostname, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { openExternalUrl } from "../../lib/openUrl";
@@ -41,10 +45,9 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   // Strip IRC formatting codes and markdown bold markers before URL matching,
   // so URLs wrapped in color codes or **bold** are still detected correctly.
-  const cleanContent = stripIrcFormatting(messageContent).replace(/\*\*/g, "");
-  const urlRegex = /\b(?:https?):\/\/[^\s<>"']+/i;
-  const match = cleanContent.match(urlRegex);
-  const firstUrl = match ? match[0] : undefined;
+  const firstUrl = findFirstUrl(
+    stripIrcFormatting(messageContent).replace(/\*\*/g, ""),
+  );
   const host = firstUrl ? extractHostname(firstUrl) : null;
 
   // Check if image is from a trusted source (server filehost or globally configured trusted URLs)

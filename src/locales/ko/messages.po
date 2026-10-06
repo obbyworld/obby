@@ -1249,6 +1249,7 @@ msgid "Copy JSON"
 msgstr "JSON 복사"
 
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "링크 복사"
 

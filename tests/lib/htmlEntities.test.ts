@@ -8,6 +8,12 @@ describe("decodeHtmlEntities", () => {
     ).toBe('"OwO what\'s this" & it’s');
   });
 
+  it("decodes the typography entities page titles use", () => {
+    expect(
+      decodeHtmlEntities("PR #42 &middot; repo &ndash; it&rsquo;s&hellip;"),
+    ).toBe("PR #42 · repo – it’s…");
+  });
+
   it("decodes each entity once", () => {
     expect(decodeHtmlEntities("&amp;quot;")).toBe("&quot;");
   });
