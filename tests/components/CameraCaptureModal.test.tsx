@@ -55,13 +55,18 @@ class FakeMediaRecorder {
 let recorders: FakeMediaRecorder[];
 let tracks: { stop: ReturnType<typeof vi.fn> }[];
 
-function makeStream() {
-  const track = { stop: vi.fn(), kind: "video" } as unknown as MediaStreamTrack;
+function makeStream(constraints?: MediaStreamConstraints) {
+  const kind = constraints?.video ? "video" : "audio";
+  const track = { stop: vi.fn(), kind } as unknown as MediaStreamTrack;
   tracks.push(track as unknown as { stop: ReturnType<typeof vi.fn> });
+  const streamTracks = [track];
   return {
-    getTracks: () => [track],
-    getVideoTracks: () => [track],
-    getAudioTracks: () => [],
+    getTracks: () => streamTracks,
+    getVideoTracks: () => streamTracks.filter((t) => t.kind === "video"),
+    getAudioTracks: () => streamTracks.filter((t) => t.kind === "audio"),
+    addTrack: (added: MediaStreamTrack) => streamTracks.push(added),
+    removeTrack: (removed: MediaStreamTrack) =>
+      streamTracks.splice(streamTracks.indexOf(removed), 1),
   } as unknown as MediaStream;
 }
 
@@ -103,7 +108,9 @@ beforeEach(() => {
           toJSON: () => ({}),
         },
       ]),
-      getUserMedia: vi.fn(() => Promise.resolve(makeStream())),
+      getUserMedia: vi.fn((constraints?: MediaStreamConstraints) =>
+        Promise.resolve(makeStream(constraints)),
+      ),
     },
     configurable: true,
     writable: true,
@@ -167,13 +174,45 @@ describe("CameraCaptureModal", () => {
     expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledTimes(1);
   });
 
+  it("opens the microphone only for a video recording", async () => {
+    renderModal({});
+    await waitForViewfinder();
+    expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(
+      expect.not.objectContaining({ audio: true }),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /^video$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /start recording/i }));
+    await screen.findByRole("button", { name: /stop recording/i });
+    expect(navigator.mediaDevices.getUserMedia).toHaveBeenLastCalledWith({
+      audio: expect.any(Object),
+    });
+  });
+
+  it("closes the microphone as soon as the recording stops", async () => {
+    renderModal({});
+    await waitForViewfinder();
+
+    fireEvent.click(screen.getByRole("button", { name: /^video$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /start recording/i }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /stop recording/i }),
+    );
+    await screen.findByRole("button", { name: /attach/i });
+
+    const mic = tracks.find(
+      (track) => (track as unknown as MediaStreamTrack).kind === "audio",
+    );
+    expect(mic?.stop).toHaveBeenCalled();
+  });
+
   it("takes a photo without ever starting a recording", async () => {
     const { onCaptured } = renderModal({});
     await waitForViewfinder();
 
     fireEvent.click(screen.getByRole("button", { name: /take photo/i }));
 
-    const send = await screen.findByRole("button", { name: /send/i });
+    const send = await screen.findByRole("button", { name: /attach/i });
     expect(screen.getByAltText(/photo you just took/i)).toBeInTheDocument();
     expect(recorders).toHaveLength(0);
 
@@ -190,13 +229,14 @@ describe("CameraCaptureModal", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /^video$/i }));
     fireEvent.click(screen.getByRole("button", { name: /start recording/i }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /stop recording/i }),
+    );
     expect(recorders).toHaveLength(1);
-
-    fireEvent.click(screen.getByRole("button", { name: /stop recording/i }));
 
     // The take is reviewed before it goes anywhere.
     expect(onCaptured).not.toHaveBeenCalled();
-    const send = await screen.findByRole("button", { name: /send/i });
+    const send = await screen.findByRole("button", { name: /attach/i });
     fireEvent.click(send);
     expect(onCaptured).toHaveBeenCalledTimes(1);
     expect(onCaptured.mock.calls[0][0].name).toMatch(/^video-message-/);
@@ -208,7 +248,9 @@ describe("CameraCaptureModal", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /^video$/i }));
     fireEvent.click(screen.getByRole("button", { name: /start recording/i }));
-    fireEvent.click(screen.getByRole("button", { name: /stop recording/i }));
+    fireEvent.click(
+      await screen.findByRole("button", { name: /stop recording/i }),
+    );
 
     fireEvent.click(await screen.findByRole("button", { name: /retake/i }));
 

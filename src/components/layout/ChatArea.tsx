@@ -55,6 +55,7 @@ import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
+  describeUploadFailure,
   fetchUploadInfo,
   type UploadInfo,
   uploadFile,
@@ -101,7 +102,7 @@ import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
-import GifSelector from "../ui/GifSelector";
+import GifSelector, { gifProviders } from "../ui/GifSelector";
 import DiscoverGrid from "../ui/HomeScreen";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
@@ -1358,8 +1359,10 @@ export const ChatArea: React.FC<{
           return media ? buildMediaDescriptor(url, media, job.file) : url;
         } catch (err) {
           uploadAbortsRef.current.delete(job.id);
-          const msg = typeof err === "string" ? err : String(err);
-          updateJob(job.id, { status: "failed", error: msg });
+          updateJob(job.id, {
+            status: "failed",
+            error: describeUploadFailure(err),
+          });
           return null;
         }
       }),
@@ -2397,7 +2400,7 @@ export const ChatArea: React.FC<{
       />
 
       {topSlot && (
-        <div className="flex-shrink-0 max-h-[60%] overflow-y-auto border-b border-discord-dark-300">
+        <div className="flex-shrink-0 max-h-[60%] flex flex-col overflow-hidden border-b border-discord-dark-300">
           {topSlot}
         </div>
       )}
@@ -2518,7 +2521,7 @@ export const ChatArea: React.FC<{
               {isDraggingFile &&
                 createPortal(
                   <div className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-discord-dark-100/80 p-6">
-                    <div className="flex h-full w-full items-center justify-center rounded-2xl border-2 border-dashed border-discord-blurple">
+                    <div className="flex h-full w-full items-center justify-center rounded-2xl border-2 border-dashed border-discord-primary">
                       <span className="flex items-center text-lg font-medium text-discord-text-normal">
                         <FaPlus className="mr-3" />
                         <Trans>Drop files to attach</Trans>
@@ -2649,7 +2652,7 @@ export const ChatArea: React.FC<{
                   },
                   {
                     id: "gif",
-                    show: true,
+                    show: gifProviders.length > 0,
                     icon: <FaGift />,
                     label: <Trans>Send a GIF</Trans>,
                     onClick: () => setIsGifSelectorOpen(true),
@@ -2667,7 +2670,7 @@ export const ChatArea: React.FC<{
                     show: canRecordVideo,
                     divider: !canRecordAudio && canRecordVideo,
                     icon: <FaCamera />,
-                    label: <Trans>Camera</Trans>,
+                    label: <Trans>Take Photo or Video</Trans>,
                     onClick: () => setIsCameraOpen(true),
                   },
                   {

@@ -9,7 +9,9 @@ import {
   startLimitedRecording,
 } from "../../lib/limitedRecording";
 import {
+  audioConstraints,
   describeMediaError,
+  listDevices,
   mirrorsCamera,
   resolveDeviceId,
   videoConstraints,
@@ -27,7 +29,13 @@ import { useDeviceAccess } from "./settings/useDeviceAccess";
 const VIDEO_FILE_PREFIX = "video-message";
 
 type Mode = "photo" | "video";
-type Status = "starting" | "ready" | "recording" | "review" | "error";
+type Status =
+  | "starting"
+  | "ready"
+  | "arming"
+  | "recording"
+  | "review"
+  | "error";
 
 interface Capture {
   file: File;
@@ -38,6 +46,33 @@ interface Capture {
 function formatElapsed(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, "0")}`;
+}
+
+// We open the microphone only while a video records, so taking a photo never
+// lights the mic indicator. A denied mic records a silent video.
+async function addMicrophone(stream: MediaStream): Promise<boolean> {
+  const settings = useStore.getState().globalSettings;
+  const deviceId = resolveDeviceId(
+    settings.callAudioInput,
+    await listDevices("audioinput"),
+  );
+  try {
+    const mic = await navigator.mediaDevices.getUserMedia({
+      audio: audioConstraints(settings, deviceId),
+    });
+    for (const track of mic.getAudioTracks()) stream.addTrack(track);
+    return true;
+  } catch (err) {
+    if (!(err instanceof DOMException)) throw err;
+    return false;
+  }
+}
+
+function removeMicrophone(stream: MediaStream): void {
+  for (const track of stream.getAudioTracks()) {
+    track.stop();
+    stream.removeTrack(track);
+  }
 }
 
 /** The camera, opened as its own page on a phone: a live viewfinder first,
@@ -59,6 +94,8 @@ export function CameraCaptureModal({
   const globalSettings = useStore((s) => s.globalSettings);
   const updateGlobalSettings = useStore((s) => s.updateGlobalSettings);
   const videoAccess = useDeviceAccess("videoinput");
+  // Touch devices take the default camera, so getUserMedia asks for access itself.
+  const needsDeviceAccess = !isTouch && videoAccess.needsPermission;
 
   const [mode, setMode] = useState<Mode>("photo");
   const [status, setStatus] = useState<Status>("starting");
@@ -69,6 +106,7 @@ export function CameraCaptureModal({
   const [elapsedMs, setElapsedMs] = useState(0);
   const [sizeBytes, setSizeBytes] = useState(0);
   const [stoppedBy, setStoppedBy] = useState<AutoStopReason | null>(null);
+  const [isSilent, setIsSilent] = useState(false);
   const [capture, setCapture] = useState<Capture | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -103,7 +141,6 @@ export function CameraCaptureModal({
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: videoConstraints(settings, deviceId, isTouch),
-        audio: true,
       });
     } catch (err) {
       if (generation === genRef.current && mountedRef.current) {
@@ -132,14 +169,14 @@ export function CameraCaptureModal({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: openCamera and release are stable; reopening on every device-list change would restart the viewfinder under the person using it
   useEffect(() => {
-    if (!isOpen || videoAccess.needsPermission) return;
+    if (!isOpen || needsDeviceAccess) return;
     setMode("photo");
     setCapture(null);
     void openCamera();
     return () => {
       release();
     };
-  }, [isOpen, videoAccess.needsPermission]);
+  }, [isOpen, needsDeviceAccess]);
 
   useEffect(() => {
     if (!capture) return;
@@ -159,7 +196,7 @@ export function CameraCaptureModal({
     keepCapture(file, false);
   };
 
-  const startRecording = () => {
+  const startRecording = async () => {
     const stream = streamRef.current;
     const format = pickVideoRecordingFormat();
     if (!stream || !format) {
@@ -167,6 +204,13 @@ export function CameraCaptureModal({
       setError(t`This browser cannot record video.`);
       return;
     }
+    setStatus("arming");
+    const hasMic = await addMicrophone(stream);
+    if (stream !== streamRef.current || !mountedRef.current) {
+      removeMicrophone(stream);
+      return;
+    }
+    setIsSilent(!hasMic);
     setElapsedMs(0);
     setSizeBytes(0);
     setStoppedBy(null);
@@ -181,6 +225,7 @@ export function CameraCaptureModal({
         },
         onFile: (file, reason) => {
           recordingRef.current = null;
+          removeMicrophone(stream);
           if (!mountedRef.current) return;
           setStoppedBy(reason);
           keepCapture(file, true);
@@ -196,7 +241,7 @@ export function CameraCaptureModal({
       return;
     }
     if (mode === "photo") void takePhoto();
-    else startRecording();
+    else void startRecording();
   };
 
   const handleRetake = () => {
@@ -206,7 +251,7 @@ export function CameraCaptureModal({
     if (!streamRef.current) void openCamera();
   };
 
-  const handleSend = () => {
+  const handleAttach = () => {
     if (!capture) return;
     onCaptured(capture.file);
     release();
@@ -244,16 +289,14 @@ export function CameraCaptureModal({
       maxWidth="lg"
     >
       <ModalBody className="gap-3">
-        {videoAccess.needsPermission ? (
+        {needsDeviceAccess ? (
           <DeviceAccessGate
             needsPermission
             requesting={videoAccess.requesting}
             error={videoAccess.permissionError}
             onRequestAccess={() => void videoAccess.requestAccess()}
             message={
-              <Trans>
-                Device names are hidden until you allow camera access.
-              </Trans>
+              <Trans>Allow camera access to take a photo or video.</Trans>
             }
             buttonLabel={<Trans>Allow camera access</Trans>}
           />
@@ -309,6 +352,11 @@ export function CameraCaptureModal({
                 </div>
               )}
             </div>
+            {recording && isSilent && (
+              <p className="text-center text-xs text-yellow-400">
+                <Trans>Allow microphone access to record sound.</Trans>
+              </p>
+            )}
             {stopReasonMessage && (
               <p className="text-center text-xs text-yellow-400">
                 {stopReasonMessage}
@@ -329,7 +377,7 @@ export function CameraCaptureModal({
                 <button
                   type="button"
                   onClick={handleShutter}
-                  disabled={status === "starting"}
+                  disabled={status === "starting" || status === "arming"}
                   aria-label={
                     recording
                       ? t`Stop recording`
@@ -364,11 +412,11 @@ export function CameraCaptureModal({
           </button>
           <button
             type="button"
-            onClick={handleSend}
-            className="min-h-11 rounded bg-discord-primary px-4 py-2 text-white hover:opacity-90"
+            onClick={handleAttach}
+            className="button-primary min-h-11 rounded px-4 py-2"
           >
             <FaCheck className="mr-2 inline" />
-            <Trans>Send</Trans>
+            <Trans>Attach</Trans>
           </button>
         </ModalFooter>
       )}
