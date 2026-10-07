@@ -1,4 +1,4 @@
-import { listen } from "@tauri-apps/api/event";
+import { addPluginListener } from "@tauri-apps/api/core";
 import { useEffect } from "react";
 import { isTauri, isTauriIOS, isTauriMobile } from "../lib/platformUtils";
 
@@ -29,14 +29,30 @@ export const useKeyboardResize = () => {
     if (!root) return;
 
     let isKeyboardVisible = false;
+    const resetRootStyle = () => {
+      for (const prop of [
+        "position",
+        "top",
+        "left",
+        "right",
+        "bottom",
+        "height",
+        "overflow",
+      ] as const) {
+        root.style[prop] = "";
+      }
+    };
     let baseHeight = window.visualViewport?.height ?? window.innerHeight;
+    let baseWidth = window.visualViewport?.width ?? window.innerWidth;
 
     const setKeyboardVisible = (visible: boolean) => {
       isKeyboardVisible = visible;
       if (visible) {
         document.documentElement.dataset.keyboardVisible = "true";
+        document.documentElement.dataset.keyboardOpen = "true";
       } else {
         delete document.documentElement.dataset.keyboardVisible;
+        delete document.documentElement.dataset.keyboardOpen;
       }
     };
 
@@ -76,16 +92,34 @@ export const useKeyboardResize = () => {
     if (isTauriIOS()) {
       let cleanupIos: (() => void) | undefined;
 
+      // WebKit sometimes shrinks the web view for the keyboard and sometimes
+      // only the visual viewport, so we pin the root to whatever is visible.
+      const fitRootToVisibleArea = () => {
+        const vv = window.visualViewport;
+        if (!isKeyboardVisible || !vv) return;
+        window.scrollTo(0, 0);
+        root.style.top = `${vv.offsetTop}px`;
+        root.style.height = `${vv.height}px`;
+        root.style.bottom = "auto";
+      };
+      window.visualViewport?.addEventListener("resize", fitRootToVisibleArea);
+      window.visualViewport?.addEventListener("scroll", fitRootToVisibleArea);
+
       (async () => {
-        const unlisten = await listen<IosKeyboardPayload>(
+        // The Swift side reports through Plugin.trigger, which only plugin
+        // listeners receive, so we subscribe as one.
+        const listener = await addPluginListener<IosKeyboardPayload>(
+          "ios-keyboard",
           "plugin:keyboard::ios-keyboard-event",
-          ({ payload }) => {
+          (payload) => {
             if (payload.eventType === "will-show") {
               root.style.position = "fixed";
               root.style.top = "0";
               root.style.left = "0";
               root.style.right = "0";
               root.style.bottom = `${payload.keyboardHeight}px`;
+              // #root has a 100dvh height in CSS, which would beat the bottom inset.
+              root.style.height = "auto";
               root.style.overflow = "hidden";
               document.documentElement.style.setProperty(
                 "--keyboard-height",
@@ -102,13 +136,12 @@ export const useKeyboardResize = () => {
               window.scrollTo(0, 0);
               setKeyboardVisible(true);
               window.dispatchEvent(new Event("resize"));
+              requestAnimationFrame(fitRootToVisibleArea);
+            } else if (payload.eventType === "did-show") {
+              fitRootToVisibleArea();
+              window.dispatchEvent(new Event("resize"));
             } else if (payload.eventType === "will-hide") {
-              root.style.position = "";
-              root.style.top = "";
-              root.style.left = "";
-              root.style.right = "";
-              root.style.bottom = "";
-              root.style.overflow = "";
+              resetRootStyle();
               document.documentElement.style.removeProperty(
                 "--keyboard-height",
               );
@@ -121,17 +154,20 @@ export const useKeyboardResize = () => {
             }
           },
         );
-        cleanupIos = unlisten;
+        cleanupIos = () => void listener.unregister();
       })();
 
       return () => {
         cleanupIos?.();
-        root.style.position = "";
-        root.style.top = "";
-        root.style.left = "";
-        root.style.right = "";
-        root.style.bottom = "";
-        root.style.overflow = "";
+        window.visualViewport?.removeEventListener(
+          "resize",
+          fitRootToVisibleArea,
+        );
+        window.visualViewport?.removeEventListener(
+          "scroll",
+          fitRootToVisibleArea,
+        );
+        resetRootStyle();
         document.documentElement.style.removeProperty("--keyboard-height");
         document.documentElement.style.removeProperty(
           "--safe-area-inset-bottom",
@@ -139,6 +175,7 @@ export const useKeyboardResize = () => {
         document.removeEventListener("focusin", handleFocusIn);
         document.removeEventListener("focusout", handleFocusOut);
         delete document.documentElement.dataset.keyboardVisible;
+        delete document.documentElement.dataset.keyboardOpen;
       };
     }
 
@@ -155,12 +192,7 @@ export const useKeyboardResize = () => {
     };
 
     const applyKeyboardClosed = () => {
-      root.style.position = "";
-      root.style.top = "";
-      root.style.left = "";
-      root.style.right = "";
-      root.style.bottom = "";
-      root.style.overflow = "";
+      resetRootStyle();
       window.scrollTo(0, 0);
     };
 
@@ -168,6 +200,14 @@ export const useKeyboardResize = () => {
       if (!window.visualViewport) return;
 
       const currentHeight = window.visualViewport.height;
+      // Android reports a zero height for one frame mid-rotation.
+      if (currentHeight === 0) return;
+      // A keyboard never changes the width, so a new width is a rotation and
+      // we measure the keyboard against the new orientation from here on.
+      if (Math.abs(window.visualViewport.width - baseWidth) > 1) {
+        baseWidth = window.visualViewport.width;
+        baseHeight = currentHeight;
+      }
       const heightDifference = baseHeight - currentHeight;
       const wasVisible = isKeyboardVisible;
       const nowVisible = heightDifference > 150;
@@ -242,6 +282,7 @@ export const useKeyboardResize = () => {
 
       applyKeyboardClosed();
       delete document.documentElement.dataset.keyboardVisible;
+      delete document.documentElement.dataset.keyboardOpen;
     };
   }, []);
 };

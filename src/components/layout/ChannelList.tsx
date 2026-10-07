@@ -709,6 +709,10 @@ export const ChannelList: React.FC = () => {
         }
         status={userStatus}
         awayMessage={selectedServer?.awayMessage}
+        displayName={currentUser?.metadata?.["display-name"]?.value}
+        customStatus={currentUser?.metadata?.status?.value}
+        pronouns={currentUser?.metadata?.pronouns?.value}
+        networkName={selectedServer?.networkName ?? selectedServer?.name}
         isIrcOp={isIrcOp}
         onOpenSettings={() => toggleSettingsModal(true)}
       />

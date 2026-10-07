@@ -203,7 +203,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({
             )}
             <span className="row-meta shrink-0">{statusLine}</span>
           </div>
-          {workflow.prompt && (
+          {workflow.prompt && !isSheet && (
             <span className="row-meta truncate">{workflow.prompt}</span>
           )}
         </div>
@@ -257,6 +257,9 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({
           <FaTimes className="text-xs" />
         </button>
       </div>
+      {workflow.prompt && isSheet && (
+        <p className="row-meta px-3.5 pb-2.5 line-clamp-2">{workflow.prompt}</p>
+      )}
 
       {secondsLeft !== null && (
         <div className="h-0.5 bg-discord-dark-400 overflow-hidden">
@@ -311,14 +314,6 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({
           <div className="hairline mx-3" />
           <div
             className={`flex items-center gap-2.5 px-3.5 ${isSheet ? "py-3" : "py-2.5"}`}
-            style={
-              isSheet
-                ? {
-                    paddingBottom:
-                      "calc(0.75rem + var(--safe-area-inset-bottom, 0px))",
-                  }
-                : undefined
-            }
           >
             <button
               type="button"

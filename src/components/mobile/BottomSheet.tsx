@@ -41,10 +41,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         role="dialog"
         aria-modal="true"
         className="absolute bottom-0 left-0 right-0 surface-sheet"
-        style={{
-          animation: "bottom-sheet-slide-up 200ms ease-out",
-          paddingBottom: "calc(0.5rem + var(--safe-area-inset-bottom, 0px))",
-        }}
+        style={{ animation: "bottom-sheet-slide-up 200ms ease-out" }}
       >
         <span className="sheet-handle mb-2" aria-hidden />
         {children}

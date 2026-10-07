@@ -207,7 +207,7 @@ export const AppLayout: React.FC = () => {
                   <ServerList />
                 </div>
               )}
-              <div className="w-[calc(100vw-72px)] h-full bg-discord-dark-100">
+              <div className="flex-1 min-w-0 h-full bg-discord-dark-100">
                 <ChannelList />
               </div>
             </div>
@@ -365,9 +365,9 @@ export const AppLayout: React.FC = () => {
             }}
           >
             <div
-              className="flex h-full"
+              className="flex w-full h-full"
               style={{
-                transform: `translateX(calc(-${currentPageIndex * 100}vw + ${offset}px))`,
+                transform: `translateX(calc(-${currentPageIndex * 100}% + ${offset}px))`,
                 transition: isTransitioning
                   ? "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                   : "none",
@@ -378,8 +378,7 @@ export const AppLayout: React.FC = () => {
               ).map((column) => (
                 <div
                   key={column}
-                  className="h-full flex-shrink-0"
-                  style={{ width: "100vw" }}
+                  className="w-full h-full flex-shrink-0"
                   data-swipe-page={column}
                 >
                   {getLayoutColumnElement(column)}

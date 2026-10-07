@@ -14,6 +14,10 @@ interface UserPanelProps {
   avatarUrl?: string;
   status: PresenceStatus;
   awayMessage?: string;
+  displayName?: string;
+  customStatus?: string;
+  pronouns?: string;
+  networkName?: string;
   isIrcOp: boolean;
   onOpenSettings: () => void;
 }
@@ -30,6 +34,10 @@ export const UserPanel: React.FC<UserPanelProps> = ({
   avatarUrl,
   status,
   awayMessage,
+  displayName,
+  customStatus,
+  pronouns,
+  networkName,
   isIrcOp,
   onOpenSettings,
 }) => {
@@ -41,12 +49,19 @@ export const UserPanel: React.FC<UserPanelProps> = ({
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const statusLabel =
+  const presenceLabel =
     status === "online"
       ? t`Online`
       : status === "away"
         ? awayMessage || t`Away`
         : t`Offline`;
+  const statusLabel =
+    status === "online" && customStatus ? customStatus : presenceLabel;
+  const name = displayName || username;
+  const wideMeta = [
+    name !== username && username,
+    pronouns || networkName,
+  ].filter((meta): meta is string => !!meta);
 
   const avatar = (
     <span className="relative shrink-0">
@@ -99,7 +114,7 @@ export const UserPanel: React.FC<UserPanelProps> = ({
   ];
 
   return (
-    <div className="mt-auto mb-2 mx-2 h-[52px] shrink-0 flex items-center gap-1 rounded-lg bg-discord-dark-300 p-1 ring-1 ring-black/30">
+    <div className="user-panel mt-auto mb-2 mx-2 h-[52px] shrink-0 flex items-center gap-1 rounded-lg bg-discord-dark-300 p-1 ring-1 ring-black/30">
       <button
         ref={triggerRef}
         type="button"
@@ -113,7 +128,7 @@ export const UserPanel: React.FC<UserPanelProps> = ({
         <span className="flex-1 min-w-0 flex flex-col leading-tight">
           <span className="flex items-center gap-1.5 min-w-0">
             <span className="truncate text-sm font-semibold text-white">
-              {username}
+              {name}
             </span>
             {isIrcOp && (
               <span
@@ -132,6 +147,13 @@ export const UserPanel: React.FC<UserPanelProps> = ({
             {statusLabel}
           </span>
         </span>
+        <span className="user-panel-wide shrink-0 flex-col items-end leading-tight max-w-[45%]">
+          {wideMeta.map((meta) => (
+            <span key={meta} className="row-meta truncate max-w-full">
+              {meta}
+            </span>
+          ))}
+        </span>
       </button>
       <Menu
         isOpen={!!menuAnchor}
@@ -143,7 +165,7 @@ export const UserPanel: React.FC<UserPanelProps> = ({
             {avatar}
             <span className="min-w-0 flex flex-col leading-tight">
               <span className="truncate text-sm font-semibold text-white">
-                {username}
+                {name}
               </span>
               <span className="row-meta truncate">{statusLabel}</span>
             </span>
