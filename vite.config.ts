@@ -166,6 +166,11 @@ export default defineConfig(({ mode }) => {
     server: {
       strictPort: true,
       cors: true,
+      // A mobile webview loads the app from tauri.localhost, so we point its
+      // hot-reload socket at a host the device can reach (e.g. the LAN IP).
+      hmr: process.env.TAURI_DEV_HOST
+        ? { protocol: 'ws', host: process.env.TAURI_DEV_HOST, port: 1421 }
+        : undefined,
     },
     // to access the Tauri environment variables set by the CLI with information about the current target
     envPrefix: ['VITE_', 'TAURI_PLATFORM', 'TAURI_ARCH', 'TAURI_FAMILY', 'TAURI_PLATFORM_VERSION', 'TAURI_PLATFORM_TYPE', 'TAURI_DEBUG'],
