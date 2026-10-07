@@ -65,8 +65,9 @@ pub fn record_command(rect: Rect, path: &str, audio: bool) -> (String, Vec<Strin
         ("screencapture".into(), args)
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(not(target_os = "macos"))]
     {
+        #[cfg(target_os = "linux")]
         if wayland_session() && has_binary("wf-recorder") {
             let mut args = vec![
                 "-g".into(),
@@ -189,6 +190,9 @@ fn wayland_session() -> bool {
 /// system, so there is nothing there that could be missing.
 #[tauri::command]
 pub fn region_recording_supported() -> bool {
+    if cfg!(mobile) {
+        return false;
+    }
     if cfg!(target_os = "windows") {
         return true;
     }

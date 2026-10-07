@@ -305,6 +305,12 @@
           "type": "string",
           "const": "deny-ping",
           "markdownDescription": "Denies the ping command without any pre-configured scope."
+        },
+        {
+          "description": "Lets the app subscribe to keyboard show and hide events.",
+          "type": "string",
+          "const": "allow-listen",
+          "markdownDescription": "Lets the app subscribe to keyboard show and hide events."
         }
       ]
     }

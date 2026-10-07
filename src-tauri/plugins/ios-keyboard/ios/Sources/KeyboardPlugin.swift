@@ -4,6 +4,7 @@ import WebKit
 
 class KeyboardPlugin: Plugin {
   private var keyboardObserver: KeyboardObserver?
+  private var appLifecycleObserver: AppLifecycleObserver?
 
   override public func load(webview: WKWebView) {
     super.load(webview: webview)
@@ -13,6 +14,7 @@ class KeyboardPlugin: Plugin {
     }
 
     keyboardObserver?.startObserving()
+    appLifecycleObserver = AppLifecycleObserver(webview: webview)
   }
 
   deinit {
