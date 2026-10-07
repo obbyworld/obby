@@ -330,7 +330,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: hasMedia,
     },
     {
-      label: t`Channel Settings`,
+      label: t`Edit Channel`,
       icon: <FaPenAlt />,
       onClick: onOpenChannelSettings,
       show: !!selectedChannel,
@@ -343,7 +343,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     },
     {
       label:
-        botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
+        botsLoadingCount > 0
+          ? t`Manage Bots (loading ${botsLoadingCount})`
+          : t`Manage Bots`,
       icon: (
         <FaRobot
           className={
@@ -367,7 +369,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedPrivateChat,
     },
     {
-      label: t`Server Channels`,
+      label: t`Browse Channels`,
       icon: <FaList />,
       onClick: () => toggleChannelListModal(true),
       show: true,
@@ -546,7 +548,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 }}
                 className="text-discord-channels-default/40 text-xs hover:text-discord-channels-default truncate text-left italic"
               >
-                <Trans>Click to set topic</Trans>
+                <Trans>Set a topic…</Trans>
               </button>
             ) : null}
           </div>

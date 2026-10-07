@@ -36,6 +36,7 @@ import {
   mediaLevelToSettings,
 } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
+import { isWhisper } from "../../lib/messageGrouping";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
@@ -571,13 +572,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     return <SystemMessage message={message} onIrcLinkClick={onIrcLinkClick} />;
   }
 
-  // Handle whisper messages (channel-context tag, ratified or draft variant)
-  if (
-    message.tags?.["+channel-context"] ||
-    message.tags?.["channel-context"] ||
-    message.tags?.["+draft/channel-context"] ||
-    message.tags?.["draft/channel-context"]
-  ) {
+  if (isWhisper(message)) {
     return (
       <>
         {showDate && (
@@ -1018,7 +1013,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
                           ))}
                           <button
                             type="button"
-                            className="mt-1 text-xs text-discord-text-muted hover:text-discord-text cursor-pointer underline"
+                            className="mt-1 text-xs text-discord-text-muted hover:text-discord-text-normal cursor-pointer underline"
                             onClick={() => setShowAllImages(false)}
                           >
                             <Trans>Show less</Trans>
@@ -1027,7 +1022,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
                       ) : (
                         <button
                           type="button"
-                          className="mt-1 text-xs text-discord-text-muted hover:text-discord-text cursor-pointer underline"
+                          className="mt-1 text-xs text-discord-text-muted hover:text-discord-text-normal cursor-pointer underline"
                           onClick={() => setShowAllImages(true)}
                         >
                           <Plural
