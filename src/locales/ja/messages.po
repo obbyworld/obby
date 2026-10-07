@@ -767,7 +767,6 @@ msgstr "カメラ"
 msgid "Camera {0}"
 msgstr "カメラ {0}"
 
-#: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -2487,11 +2486,6 @@ msgstr "@{0} へメッセージ（Enterで改行、Shift+Enterで送信）"
 msgid "Message @{0} (Shift+Enter for new line)"
 msgstr "@{0} へメッセージ（Shift+Enterで改行）"
 
-#. placeholder {0}: searchTerm.trim()
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Message <0>{0}</0>"
-msgstr "<0>{0}</0> へメッセージ"
-
 #: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn green, or end encryption to send unencrypted."
 msgstr "メッセージは送信されませんでした：暗号化がまだ有効になっていません。ロックが緑色になるまで待つか、暗号化を終了して暗号化せずに送信してください。"
@@ -2511,6 +2505,10 @@ msgstr "本日のメッセージ"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "サーバーから切断したときに表示されるメッセージ"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "message someone"
+msgstr "誰かにメッセージ"
 
 #: src/store/handlers/e2eeConversation.ts
 msgid "Messages with {nick} are now encrypted."
@@ -2683,6 +2681,10 @@ msgstr "ニックネームの変更に失敗しました: {error} {0}"
 msgid "nick!user@host (e.g., spam*!*@*, *!*@badhost.com)"
 msgstr "nick!user@host（例：spam*!*@*、*!*@badhost.com）"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "nickname"
+msgstr "ニックネーム"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserSettings.tsx
@@ -2698,6 +2700,10 @@ msgstr "ニックネーム '{nick}' は既に使用中です。'{newNick}' で�
 #: src/components/ui/EditServerModal.tsx
 msgid "Nickname is required"
 msgstr "ニックネームは必須です"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Nickname to message"
+msgstr "メッセージを送るニックネーム"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "No additional data"
@@ -2819,14 +2825,6 @@ msgstr "未読のメンションやメッセージはありません"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "No upstream networks yet."
 msgstr "アップストリームネットワークはまだありません。"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users available"
-msgstr "利用可能なユーザーがいません"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users found matching your search"
-msgstr "検索に一致するユーザーが見つかりません"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "No viewers yet."
@@ -2988,6 +2986,10 @@ msgstr "地図を開く"
 msgid "Open network options"
 msgstr "ネットワークオプションを開く"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Open private chat"
+msgstr "プライベートチャットを開く"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "設定を開く"
@@ -3073,6 +3075,10 @@ msgstr "PDFプレビュー"
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
 msgstr "保留中"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "People"
+msgstr "ユーザー"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -3565,10 +3571,6 @@ msgstr "サーバーを検索..."
 msgid "Search settings, channels, servers..."
 msgstr "設定、チャンネル、サーバーを検索..."
 
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Search users..."
-msgstr "ユーザーを検索..."
-
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "検索中..."
@@ -3965,11 +3967,6 @@ msgstr "スピーカー {0}"
 msgid "Speaker selection isn't supported in this browser."
 msgstr "このブラウザではスピーカーの選択がサポートされていません。"
 
-#: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
-msgid "Start a private message"
-msgstr "プライベートメッセージを開始"
-
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
 msgstr "{serverName} で配信を開始"
@@ -3977,10 +3974,6 @@ msgstr "{serverName} で配信を開始"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a voice channel on {serverName}"
 msgstr "{serverName} でボイスチャンネルを開始"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Start Private Message"
-msgstr "プライベートメッセージを開始"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"

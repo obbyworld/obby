@@ -767,7 +767,6 @@ msgstr "Caméra"
 msgid "Camera {0}"
 msgstr "Caméra {0}"
 
-#: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -2487,11 +2486,6 @@ msgstr "Message à @{0} (Entrée pour nouvelle ligne, Maj+Entrée pour envoyer)"
 msgid "Message @{0} (Shift+Enter for new line)"
 msgstr "Message à @{0} (Maj+Entrée pour nouvelle ligne)"
 
-#. placeholder {0}: searchTerm.trim()
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Message <0>{0}</0>"
-msgstr "Message <0>{0}</0>"
-
 #: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn green, or end encryption to send unencrypted."
 msgstr "Message non envoyé : le chiffrement n'est pas encore actif. Attendez que le cadenas passe au vert, ou mettez fin au chiffrement pour envoyer sans chiffrement."
@@ -2511,6 +2505,10 @@ msgstr "Message du jour"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "Message affiché lors de la déconnexion du serveur"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "message someone"
+msgstr "écrire à quelqu’un"
 
 #: src/store/handlers/e2eeConversation.ts
 msgid "Messages with {nick} are now encrypted."
@@ -2683,6 +2681,10 @@ msgstr "Échec du changement de pseudo: {error} {0}"
 msgid "nick!user@host (e.g., spam*!*@*, *!*@badhost.com)"
 msgstr "nick!user@host (ex. : spam*!*@*, *!*@badhost.com)"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "nickname"
+msgstr "pseudo"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserSettings.tsx
@@ -2698,6 +2700,10 @@ msgstr "Le pseudo '{nick}' est déjà utilisé, nouvel essai avec '{newNick}'"
 #: src/components/ui/EditServerModal.tsx
 msgid "Nickname is required"
 msgstr "Le pseudo est requis"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Nickname to message"
+msgstr "Pseudo à qui écrire"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "No additional data"
@@ -2819,14 +2825,6 @@ msgstr "Aucune mention ou message non lu"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "No upstream networks yet."
 msgstr "Aucun réseau en amont pour le moment."
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users available"
-msgstr "Aucun utilisateur disponible"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users found matching your search"
-msgstr "Aucun utilisateur ne correspond à votre recherche"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "No viewers yet."
@@ -2988,6 +2986,10 @@ msgstr "Ouvrir la carte"
 msgid "Open network options"
 msgstr "Ouvrir les options du réseau"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Open private chat"
+msgstr "Ouvrir une discussion privée"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Ouvrir les paramètres"
@@ -3073,6 +3075,10 @@ msgstr "Aperçu PDF"
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
 msgstr "en attente"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "People"
+msgstr "Personnes"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -3565,10 +3571,6 @@ msgstr "Rechercher des serveurs..."
 msgid "Search settings, channels, servers..."
 msgstr "Rechercher des paramètres, canaux, serveurs..."
 
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Search users..."
-msgstr "Rechercher des utilisateurs..."
-
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "Recherche..."
@@ -3965,11 +3967,6 @@ msgstr "Haut-parleur {0}"
 msgid "Speaker selection isn't supported in this browser."
 msgstr "La sélection du haut-parleur n'est pas prise en charge par ce navigateur."
 
-#: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
-msgid "Start a private message"
-msgstr "Démarrer un message privé"
-
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
 msgstr "Démarrer une diffusion sur {serverName}"
@@ -3977,10 +3974,6 @@ msgstr "Démarrer une diffusion sur {serverName}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a voice channel on {serverName}"
 msgstr "Démarrer un salon vocal sur {serverName}"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Start Private Message"
-msgstr "Démarrer un message privé"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"

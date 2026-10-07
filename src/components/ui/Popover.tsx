@@ -48,7 +48,11 @@ const AUTO_MAX_WIDTH = 280;
 // Top layer, level with modals; the sheet scrim sits just under its panel.
 const Z_INDEX = 100000;
 
-function placePanel(rect: DOMRect, width: number, placement: PopoverPlacement) {
+export function placePanel(
+  rect: DOMRect,
+  width: number,
+  placement: PopoverPlacement,
+) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const clampX = (x: number) =>

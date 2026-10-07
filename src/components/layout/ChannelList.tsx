@@ -18,7 +18,6 @@ import {
   FaGripVertical,
   FaPen,
   FaPlug,
-  FaPlus,
   FaThumbtack,
   FaTrash,
 } from "react-icons/fa";
@@ -46,7 +45,6 @@ import useStore from "../../store";
 import { useChannelFolders } from "../../store/channelFolders";
 import type { ChannelFolder } from "../../store/types";
 import type { Channel } from "../../types";
-import AddPrivateChatModal from "../ui/AddPrivateChatModal";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import InviteUserModal from "../ui/InviteUserModal";
 import Menu from "../ui/Menu";
@@ -57,6 +55,7 @@ import ChannelRow, { type DragRowProps } from "./ChannelRow";
 import ConnectionStrip from "./ConnectionStrip";
 import NetworkMenu from "./NetworkMenu";
 import PrivateChatRow from "./PrivateChatRow";
+import StartPrivateChatRow from "./StartPrivateChatRow";
 import UserPanel, { type PresenceStatus } from "./UserPanel";
 
 export const ChannelList: React.FC = () => {
@@ -176,8 +175,6 @@ export const ChannelList: React.FC = () => {
     name: string;
     modal: "settings" | "invite";
   } | null>(null);
-  const [isAddPrivateChatModalOpen, setIsAddPrivateChatModalOpen] =
-    useState(false);
   const [clickedPM, setClickedPM] = useState<string | null>(null);
   const lastSelectedPM = useRef<string | null>(null);
 
@@ -606,7 +603,7 @@ export const ChannelList: React.FC = () => {
 
             {/* Private Messages */}
             <div className="mt-4 pt-1 mb-2 border-t border-discord-dark-500/50">
-              <div className="group flex items-center gap-0.5 mt-2 mb-1 pl-1">
+              <div className="flex items-center mt-2 mb-1 pl-1">
                 <button
                   type="button"
                   aria-expanded={isPrivateChatsOpen}
@@ -622,19 +619,13 @@ export const ChannelList: React.FC = () => {
                     }`}
                   />
                 </button>
-                <button
-                  type="button"
-                  title={t`Start a private message`}
-                  aria-label={t`Start a private message`}
-                  onClick={() => setIsAddPrivateChatModalOpen(true)}
-                  className="w-6 h-6 flex items-center justify-center rounded opacity-0 [@media(hover:none)]:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 hover:text-white hover:bg-discord-dark-500/40"
-                >
-                  <FaPlus className="text-xs" />
-                </button>
               </div>
 
               {isPrivateChatsOpen && (
                 <div>
+                  {selectedServerId && (
+                    <StartPrivateChatRow serverId={selectedServerId} />
+                  )}
                   {sortedPrivateChats.map((privateChat) => (
                     <div
                       key={privateChat.id}
@@ -723,11 +714,6 @@ export const ChannelList: React.FC = () => {
       />
       {selectedServerId && (
         <>
-          <AddPrivateChatModal
-            isOpen={isAddPrivateChatModalOpen}
-            onClose={() => setIsAddPrivateChatModalOpen(false)}
-            serverId={selectedServerId}
-          />
           <Menu
             isOpen={!!menuPrivateChat}
             anchorElement={openMenu?.kind === "pm" ? openMenu.anchor : null}

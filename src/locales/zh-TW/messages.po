@@ -767,7 +767,6 @@ msgstr "攝影機"
 msgid "Camera {0}"
 msgstr "攝影機 {0}"
 
-#: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -2487,11 +2486,6 @@ msgstr "发消息给 @{0}（Enter 换行，Shift+Enter 发送）"
 msgid "Message @{0} (Shift+Enter for new line)"
 msgstr "发消息给 @{0}（Shift+Enter 换行）"
 
-#. placeholder {0}: searchTerm.trim()
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Message <0>{0}</0>"
-msgstr "发消息给 <0>{0}</0>"
-
 #: src/store/handlers/e2eeOutbound.ts
 msgid "Message not sent: encryption isn't active yet. Wait for the lock to turn green, or end encryption to send unencrypted."
 msgstr "訊息未送出：加密尚未啟用。請等待鎖頭變為綠色，或結束加密以未加密方式傳送。"
@@ -2511,6 +2505,10 @@ msgstr "每日訊息"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Message shown when you disconnect from the server"
 msgstr "中斷伺服器連線時顯示的訊息"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "message someone"
+msgstr "傳訊息給某人"
 
 #: src/store/handlers/e2eeConversation.ts
 msgid "Messages with {nick} are now encrypted."
@@ -2683,6 +2681,10 @@ msgstr "暱稱修改失敗: {error} {0}"
 msgid "nick!user@host (e.g., spam*!*@*, *!*@badhost.com)"
 msgstr "nick!user@host（例如：spam*!*@*, *!*@badhost.com）"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "nickname"
+msgstr "暱稱"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserSettings.tsx
@@ -2698,6 +2700,10 @@ msgstr "暱稱 '{nick}' 已被使用，正在用 '{newNick}' 重試"
 #: src/components/ui/EditServerModal.tsx
 msgid "Nickname is required"
 msgstr "昵称为必填项"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Nickname to message"
+msgstr "要傳訊息的暱稱"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "No additional data"
@@ -2819,14 +2825,6 @@ msgstr "沒有未讀提及或訊息"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "No upstream networks yet."
 msgstr "尚無上游網路。"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users available"
-msgstr "没有可用用户"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "No users found matching your search"
-msgstr "未找到与搜索条件匹配的用户"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "No viewers yet."
@@ -2988,6 +2986,10 @@ msgstr "開啟地圖"
 msgid "Open network options"
 msgstr "開啟網路選項"
 
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "Open private chat"
+msgstr "開啟私人聊天"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "開啟設定"
@@ -3073,6 +3075,10 @@ msgstr "PDF 預覽"
 #: src/components/ui/BotsModal.tsx
 msgid "pending"
 msgstr "等待中"
+
+#: src/components/layout/StartPrivateChatRow.tsx
+msgid "People"
+msgstr "使用者"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
@@ -3565,10 +3571,6 @@ msgstr "搜索服务器..."
 msgid "Search settings, channels, servers..."
 msgstr "搜索设置、频道、服务器..."
 
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Search users..."
-msgstr "搜索用户..."
-
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "搜尋中..."
@@ -3965,11 +3967,6 @@ msgstr "喇叭 {0}"
 msgid "Speaker selection isn't supported in this browser."
 msgstr "此瀏覽器不支援選擇喇叭。"
 
-#: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
-msgid "Start a private message"
-msgstr "開始私訊"
-
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a stream on {serverName}"
 msgstr "在 {serverName} 上開啟直播"
@@ -3977,10 +3974,6 @@ msgstr "在 {serverName} 上開啟直播"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a voice channel on {serverName}"
 msgstr "在 {serverName} 上開啟語音頻道"
-
-#: src/components/ui/AddPrivateChatModal.tsx
-msgid "Start Private Message"
-msgstr "发起私信"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
