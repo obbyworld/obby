@@ -111,6 +111,25 @@ describe("IRCClient", () => {
       expect(mockSocket.sentMessages).toContain("CAP LS 302");
     });
 
+    test("leaves a drop on a live connection to the reconnect path", async () => {
+      const mockSocket = new MockWebSocket("ws://irc.example.com:443");
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
+      const connectionPromise = client.connect(
+        "Test Server",
+        "irc.example.com",
+        443,
+        "testuser",
+      );
+      mockSocket.simulateOpen();
+      await connectionPromise;
+      const onServerError = vi.fn();
+      client.on("serverError", onServerError);
+
+      mockSocket.onerror?.(new Event("error"));
+
+      expect(onServerError).not.toHaveBeenCalled();
+    });
+
     test.skip("should handle connection errors", async () => {
       vi.useFakeTimers();
 
