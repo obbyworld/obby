@@ -70,6 +70,16 @@ msgstr "{0, plural, other {# adım}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {1 öğe daha göster} other {{1} öğe daha göster}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "{0} emoji"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0} seni oynamaya davet etti."
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -125,6 +135,10 @@ msgstr "{0}s önce"
 msgid "{0}m ago"
 msgstr "{0}dk önce"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, one {1 dosya yükleniyor} other {# dosya yükleniyor}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 kez} other {{c} kez}}"
@@ -132,6 +146,10 @@ msgstr "{c, plural, one {1 kez} other {{c} kez}}"
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days} gün"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, one {1 yükleme başarısız oldu} other {# yükleme başarısız oldu}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +342,20 @@ msgstr "<0>💡 Öneri:</0> Yalnızca bu sunucuya güveniyorsanız ve risklerin 
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Risk:</0> Hassas bilgiler (mesajlar, özel konuşmalar, kimlik doğrulama bilgileri) ağ yöneticilerine veya IRC sunucuları arasına konumlanmış saldırganlara açık olabilir."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "2FA bu hesapta şu anda zorunlu. Kayıtlı tek kimlik bilgisini kaldırırsanız oturum açamazsınız. Önce başka bir kimlik bilgisi ekleyin veya aşağıdan 2FA'yı devre dışı bırakın."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6 haneli kod"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "Bu atıf hakkında"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "Kabul et"
 
@@ -350,6 +377,7 @@ msgid "Account"
 msgstr "Hesap"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Hesap Adı"
@@ -393,13 +421,29 @@ msgstr "Etkinlik"
 msgid "Add"
 msgstr "Ekle"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "2FA'yı etkinleştirmek için bir kimlik bilgisi ekleyin"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Kelime veya ifade ekle..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "Oturum açarken ikinci bir doğrulama faktörü istemek için bir kimlik doğrulayıcı uygulaması veya biyometrik / güvenlik anahtarı ekleyin."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "Kimlik doğrulayıcı uygulaması ekle"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Yasaklama maskesi ekle (örn. nick!*@*, *!*@host.com)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "Biyometrik / güvenlik anahtarı ekle"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +452,11 @@ msgstr "kanal ekle"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "Kanal ekle"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "Emoji ekle"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +498,11 @@ msgstr "Sunucu Ekle"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "İlk ağınızı ekleyin"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "{0} eklendi"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +546,14 @@ msgstr "Tüm İçerik"
 msgid "Allow camera access"
 msgstr "Kamera erişimine izin ver"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "Video paylaşmak için ayarlardan kamera erişimine izin ver"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "Fotoğraf veya video çekmek için kamera erişimine izin verin."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Çok satırlı metin girişine izin ver"
@@ -501,6 +563,14 @@ msgstr "Çok satırlı metin girişine izin ver"
 msgid "Allow microphone access"
 msgstr "Mikrofon erişimine izin ver"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "Konuşmak için ayarlardan mikrofon erişimine izin ver"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "Ses kaydetmek için mikrofon erişimine izin verin."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +579,10 @@ msgstr "{0} kanalında zaten var"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "YouTube, Vimeo, SoundCloud ve benzeri bilinen hizmetlerden önizlemeler de gösterir."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "Alternatif metin (isteğe bağlı)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +639,11 @@ msgstr "Bu mesajı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "Ekle"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Ek seçenekleri"
@@ -581,6 +660,14 @@ msgstr "Ses konumu"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Yönetici erişimi için IRC Operatörü olarak kimlik doğrula"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "Şimdi kimlik doğrula"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "Bağlanırken kimlik doğrula"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "Kimliği doğrulandı"
@@ -588,6 +675,10 @@ msgstr "Kimliği doğrulandı"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "Doğrulanmış Hesap"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "Kimlik doğrulayıcı uygulaması (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +741,8 @@ msgstr "Uzakta:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Geri"
@@ -699,6 +792,10 @@ msgstr "Kullanıcıyı Yasakla (Takma Adıyla)"
 msgid "Bans"
 msgstr "Yasaklar"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "Biyometrik / güvenlik anahtarı"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +822,32 @@ msgstr "Bot henüz hiçbir eğik çizgi komutu kaydetmedi."
 msgid "Bot in this channel"
 msgstr "Bu kanalda bot"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Botlar"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "Botlar ({botsLoadingCount} yükleniyor)"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Bu ağdaki botlar"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Bu pencereyi öne getirip tekrar dene."
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Sunucudaki tüm kanalları görüntüle"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "Kanallara göz at"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "Tarayıcı WebAuthn sunmuyor"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +857,6 @@ msgstr "Tarayıcılar, mikrofon veya kameraya erişime izin verene kadar hoparl�
 msgid "Calls"
 msgstr "Aramalar"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +868,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +879,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +887,8 @@ msgstr "Kamera {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +907,10 @@ msgstr "Şifrelemeyi iptal et"
 msgid "Cancel reply"
 msgstr "Yanıtı iptal et"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "Yüklemeyi iptal et"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "iptal edildi"
@@ -815,6 +927,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Vurgu rengini değiştir"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "Parolayı değiştir"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1015,7 @@ msgstr "Kanal Operatörü"
 msgid "Channel Owner"
 msgstr "Kanal Sahibi"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Kanal Ayarları"
 
@@ -913,6 +1028,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "Ayrılınacak kanal (varsayılan: geçerli)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Kanal Konusu"
 
@@ -924,6 +1040,10 @@ msgstr "Kanal LIST veya NAMES komutlarında görünmeyecek"
 msgid "channel-name"
 msgstr "kanal-adı"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "Kanala özel"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1054,22 @@ msgstr "Kanallar"
 msgid "Channels on {networkName}"
 msgstr "{networkName} üzerindeki kanallar"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "Farklı bir dosya türü seçin. Dosya sunucusu {ext} dosyalarını kabul etmiyor."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "Farklı bir dosya seçin. Dosya sunucusu bunu reddetti."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "{limit} altında bir dosya seçin, dosya sunucusunun kabul ettiği en yüksek boyut bu."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "Uzantısı olan bir dosya seçin. Dosya sunucusu uzantısız dosyaları kabul etmiyor."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "Önceden tanımlanmış bir flood koruma profili seçin. Bu profiller, farklı kullanım durumları için dengeli koruma ayarları sunar."
@@ -941,6 +1077,10 @@ msgstr "Önceden tanımlanmış bir flood koruma profili seçin. Bu profiller, f
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "Güvenli bir şifre seçin"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "Daha küçük bir dosya seçin. Bu dosya, dosya sunucusu için çok büyük."
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1147,6 @@ msgstr "{channel} kanalına katılmak için tıklayın"
 msgid "Click to jump to message"
 msgstr "Mesaja gitmek için tıklayın"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "Konu belirlemek için tıklayın"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "istemci"
@@ -1034,11 +1170,18 @@ msgstr "İstemci Sınırı (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1127,6 +1270,19 @@ msgstr "Ayrıntılı flood koruma kurallarını yapılandırın. Her kural, hang
 msgid "Configure notification sounds and highlights"
 msgstr "Bildirim seslerini ve vurguları yapılandır"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "Kaydı onayla"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "Yeni parolayı onaylayın"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "Kaldırmayı onayla"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "Onaylıyor musunuz?"
@@ -1135,6 +1291,18 @@ msgstr "Onaylıyor musunuz?"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "Bağlan"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "Video paylaşmak için bir kamera bağla"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "Konuşmak için bir mikrofon bağla"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1453,14 @@ msgstr "Konum zamanında belirlenemedi. Gökyüzünün daha açık göründüğ�
 msgid "Could not get your location."
 msgstr "Konumun alınamadı."
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "GIF'ler yüklenemedi. Yeniden denemek için tekrar arayın."
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "Dosya sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} ile şifreleme kurulamadı."
@@ -1310,6 +1486,11 @@ msgstr "Davet bağlantılarınızı oluşturun ve yönetin"
 msgid "Create folder"
 msgstr "Klasör oluştur"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "Paket oluştur"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "Şu kadar dakika önce sonra oluşturulan"
@@ -1318,9 +1499,18 @@ msgstr "Şu kadar dakika önce sonra oluşturulan"
 msgid "Created Before (min ago)"
 msgstr "Şu kadar dakika önce önce oluşturulan"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "Oluşturuluyor…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "Mevcut avatar"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "Özel emoji paketleri"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1537,7 @@ msgid "Deafen"
 msgstr "Sesi kapat"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "Reddet"
 
@@ -1402,6 +1593,14 @@ msgstr "Mesajı sil"
 msgid "Delete network"
 msgstr "Ağı sil"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "Paketi sil"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "\"{packId}\" paketi silinsin mi? Bu, içindeki tüm emojileri de siler."
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete Private Chat"
 msgstr "Özel Sohbeti Sil"
@@ -1431,7 +1630,10 @@ msgstr "İzleyici yap"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Açıklama (isteğe bağlı, örn. \"Beta test ekibi Ç3\")"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "Açıklama (isteğe bağlı)"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1644,21 @@ msgstr "Kamera erişimine izin verene kadar cihaz adları gizlidir."
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Mikrofon erişimine izin verene kadar cihaz adları gizlidir."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "Devre dışı bırak"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "2FA'yı devre dışı bırakın. Onaylamak için kayıtlı kimlik doğrulayıcı uygulamalarınızdan birinden 6 haneli bir kod girin."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Bas-Konuş'u devre dışı bırak"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "Devre dışı"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1715,7 @@ msgstr "Görünüm"
 msgid "Display all server events in chat"
 msgstr "Tüm sunucu olaylarını sohbette göster"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1745,13 @@ msgstr "Bu bağlantıyı yeni sekmede açmak istiyor musunuz?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "bitti"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "Bitti"
 
@@ -1578,6 +1799,11 @@ msgstr "Düzenle"
 msgid "Edit {0}"
 msgstr "{0} düzenle"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "Kanalı düzenle"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1837,14 @@ msgstr "Gömülü"
 msgid "Emojis"
 msgstr "Emojiler"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "Paket boş. Birkaç emoji ekleyin."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "2FA'yı etkinleştir"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Vurgulamayı Etkinleştir"
@@ -1638,6 +1872,10 @@ msgstr "Bildirimleri etkinleştir"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "Bas-Konuş'u etkinleştir"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "Etkin"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1957,14 @@ msgstr "{nick} ile şifreleme çalışmayı durdurdu, bu yüzden mesaj gönderil
 msgid "End encryption"
 msgstr "Şifrelemeyi sonlandır"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "2FA'yı devre dışı bırakmak için kimlik doğrulayıcı uygulamalarınızdan birinden 6 haneli bir kod girin."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "Kanala özel paketler için bir kanal adı girin."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Hesap adını girin..."
@@ -1765,9 +2011,34 @@ msgstr "Gerçek adı girin"
 msgid "Enter reason (optional)"
 msgstr "Neden girin (isteğe bağlı)"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "{account} olarak oturum açmayı tamamlamak için kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin."
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "Oturum açmayı tamamlamak için kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin."
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "E-postanızdaki 6 haneli kodu girin."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "Kurtarmak istediğiniz hesap adını girin."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Davet edilecek kullanıcı adını girin"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "Hesap adınızı girin. Kayıtlı doğrulanmış adrese 6 haneli bir kurtarma kodu e-postayla göndereceğiz."
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1824,6 +2095,7 @@ msgstr "Genişletilmiş Profil"
 msgid "External Link Warning"
 msgstr "Harici Bağlantı Uyarısı"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "başarısız"
@@ -1889,6 +2161,18 @@ msgstr "Tümünü daralt"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "Klasör adı"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "Güvenlik için bu hesabın tüm mevcut oturumları kapatıldı ve hesaba bağlı sunucu durumu temizlendi. İki adımlı doğrulama etkinse etkin kalır, bu yüzden bir sonraki oturum açmada yine istenecektir."
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "Pes et"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "Parolamı unuttum"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2437,7 @@ msgstr "IRC Operatörü"
 msgid "IRC operator password"
 msgstr "IRC operatör şifresi"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "IRC operatör kullanıcı adı"
@@ -2295,6 +2580,15 @@ msgstr "Yazarken diğerlerini bilgilendir"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "OAuth kimliği bağla"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "{0} ile bağla"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "Canlı"
@@ -2334,6 +2628,11 @@ msgstr "Ağlar bouncer'ınızdan yükleniyor…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "WHOIS verisi yükleniyor..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "Yükleniyor…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2675,26 @@ msgstr "Eli indir"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "Sunucu bağlantılarında ortadaki adam saldırıları mümkün"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "Botları yönet"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "Botları yönet ({botsLoadingCount} yükleniyor)"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "Paketleri yönet"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "Bu sunucunun draft/EMOJI aracılığıyla yayımladığı ağ genelindeki ve kanala özel emoji paketlerini yönetin."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "İki adımlı doğrulamayı yönet"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2938,10 @@ msgstr "Bildirimleri sessize al"
 msgid "Mute or unmute notification sounds"
 msgstr "Bildirim seslerini sessize al veya aç"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "Ad (ör. iPhone)"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2982,11 @@ msgstr "yeni klasör"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Yeni takma ad"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "Yeni parola"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3086,10 @@ msgstr "Dosya seçilmedi"
 msgid "No flood profile"
 msgstr "Flood profili yok"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "GIF bulunamadı. Başka bir arama deneyin."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "sunucu ayarlanmadı"
@@ -2789,6 +3121,10 @@ msgstr "mesaj yok"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "Mikrofon bulunamadı."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "Henüz yapılandırılmış paket yok."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3195,10 @@ msgstr "Normal - Standart koruma"
 msgid "Not encrypted"
 msgstr "Şifrelenmemiş"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "Not: sunucu, hesabın doğrulanmış bir e-postası olsun ya da olmasın aynı yanıtı verir, bu yüzden yazım hatası burada belirtilmez. Birkaç dakika içinde kod gelmezse hesap adını tekrar kontrol edin."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "Bildirim Sesi"
@@ -2866,6 +3206,10 @@ msgstr "Bildirim Sesi"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "Bildirimler"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "OAuth kimliği"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3241,10 @@ msgstr "çevrimdışı"
 msgid "Offline"
 msgstr "Çevrimdışı"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "Tamam"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "açık"
@@ -2920,6 +3268,7 @@ msgid "Only operators can change the channel topic"
 msgstr "Yalnızca operatörler kanal konusunu değiştirebilir"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Yalnızca güvenli websocket'ler desteklenmektedir"
 
@@ -3027,6 +3376,10 @@ msgstr "Operator işlemleri"
 msgid "Optional crash reports to improve the app"
 msgstr "Uygulamayı geliştirmek için isteğe bağlı çökme raporları"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "Bu hesabın diğer açık oturumları değişiklik kapsamında kapatılacak. İki adımlı doğrulama ayarları varsa değiştirilmeden kalır."
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR dosyaları şifrelemez, olduğu gibi gönderildi"
@@ -3039,6 +3392,14 @@ msgstr "Çıktı"
 msgid "Owner"
 msgstr "Sahip"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id (örn. team-mascots)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id ve ad gereklidir."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Şifre"
@@ -3046,6 +3407,15 @@ msgstr "Şifre"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "Kanala katılmak için şifre gerekli. Anahtarı kaldırmak için boş bırakın."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "Parola sıfırlama tamamlandı"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "Parolalar eşleşmiyor."
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3087,6 +3457,15 @@ msgstr "Kalıcı"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Fotoğraf"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "Bir parola seçin (3 karakter veya daha fazla)."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "Tek kelimelik bir ad seçin (boşluksuz)."
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3214,6 +3593,10 @@ msgstr "Zamirler"
 msgid "Protected Topic (+t)"
 msgstr "Korumalı Konu (+t)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "Sağlayıcı bearer belirteci döndürmedi."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "Gizlilik hakkında sorularınız mı var? Bize ulaşın:"
@@ -3315,6 +3698,7 @@ msgstr "Yeniden bağlanma başarısız oldu"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Sunucuya yeniden bağlan"
 
@@ -3367,6 +3751,10 @@ msgstr "WHOIS'i yenile"
 msgid "Register for an account"
 msgstr "Hesap kaydı oluştur"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "Kayıtlı kimlik bilgileri"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Reddet"
@@ -3380,8 +3768,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "Rahat - Daha az agresif koruma"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "Kaldır"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "\"{0}\" kaldırılsın mı? Artık ikinci faktör olarak kullanamayacaksınız."
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3462,7 +3857,6 @@ msgstr "Yeniden gönder"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "Kanala dön"
 
@@ -3473,6 +3867,11 @@ msgstr "Değişen anahtarı incele…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Anahtarı incele"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "90° döndür"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3929,10 @@ msgstr "Kaydedildi"
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "Bu QR kodunu kimlik doğrulayıcı uygulamanızla tarayın, ardından gösterdiği 6 haneli kodla onaylayın."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Sohbeti bu yanıta kaydır"
@@ -3550,6 +3953,10 @@ msgstr "Ara"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "Botları ara"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "Emoji ara..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3641,11 +4048,6 @@ msgstr "Başlamak için bir kanal seçin veya ekleyin."
 msgid "self-registered"
 msgstr "kendi kaydı"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "Gönder"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4073,10 @@ msgstr "Mesaj Gönder"
 msgid "Send private message"
 msgstr "Özel mesaj gönder"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "Kurtarma kodu gönder"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "Bu dosya şifresiz gönderilsin mi?"
@@ -3687,6 +4093,10 @@ msgstr "Şifresiz gönder"
 msgid "Sending"
 msgstr "Gönderiliyor"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "Gönderiliyor…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4106,14 @@ msgstr "sunucu"
 msgid "Server"
 msgstr "Sunucu"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "Sunucu Kanalları"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "Sunucu WebAuthn desteği bildirmiyor"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4157,16 @@ msgstr "Sunucu Şifresi"
 msgid "Server Password (PASS)"
 msgstr "Sunucu Parolası (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "Sunucu geçersiz bir WebAuthn sınaması döndürdü."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Sunucular arası iletişim şifrelenmemiş bağlantılar kullanıyor olabilir"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "Sunucu genelinde"
 
@@ -3774,6 +4191,7 @@ msgstr "Oturum {0}"
 msgid "Sessions"
 msgstr "Oturumlar"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Konu belirle…"
@@ -3791,6 +4209,10 @@ msgstr "{0} tarafından ayarlandı"
 msgid "Set by:"
 msgstr "Ayarlayan:"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "Yeni parola belirle"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Kendini uzakta olarak ayarla"
@@ -3807,6 +4229,11 @@ msgstr "Ayar"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "Ayar bulunamadı"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "Ayarlanıyor…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4259,21 @@ msgstr "Konumunu paylaş"
 msgid "Share your location with {target}."
 msgstr "Konumunu {target} ile paylaş."
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "Yeniden denemek için ekranınızı tekrar paylaşın"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "o/onun"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "kısa kod (örn. partyparrot)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3909,6 +4348,10 @@ msgstr "Tüm harici medyayı gösterir. Herhangi bir URL bilinmeyen bir sunucuya
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Sunucunuzun güvenilir dosya hostundan medya gösterir. Harici hizmetlere istek gönderilmez."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "Sağlayıcıyla oturum açın, ardından ortaya çıkan kimliği hesabınıza bağlayacağız; böylece SASL OAUTHBEARER / IRCV3BEARER sonraki bağlantılarda çalışır."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4441,10 @@ msgstr "Durum"
 msgid "Status Messages"
 msgstr "Durum Mesajları"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "Durum:"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "Yayından çık"
@@ -4023,6 +4470,7 @@ msgid "Stop video"
 msgstr "Videoyu durdur"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Akış"
 
@@ -4074,6 +4522,14 @@ msgstr "Klasörden çıkar"
 msgid "Take photo"
 msgstr "Fotoğraf çek"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "Fotoğraf veya video çek"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "Metin"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Metin kanalı"
@@ -4085,6 +4541,10 @@ msgstr "Bu cihaz şu anda kullanılamıyor."
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "O ekran artık yok."
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "Arama sunucusu bunu reddetti. Birazdan tekrar deneyin."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4192,6 +4652,10 @@ msgstr "Bu, ağı soju bouncer'ınızdan kaldırır. Tekrar kullanmak için yeni
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Bu sunucu genişletilmiş profil meta verilerini (IRCv3 METADATA uzantısı) desteklemiyor. Avatar, görünen ad ve durum gibi ek alanlar mevcut değil."
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "Bu sunucu bir arka uç URL'si bildirmiyor (draft/authtoken veya obby.world/FILEHOST). Yönetici uç noktalarına erişilemiyor."
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Bu sunucu davet bağlantılarını desteklemiyor (<0>obby.world/invitation</0> yeteneği duyurulmuyor). Yine de normal şekilde sohbet edebilirsiniz; bu panel obbyircd tabanlı ağlar içindir."
@@ -4213,6 +4677,11 @@ msgstr "Bu, aşağıdaki {0} bağlı ağı da kapatır."
 msgid "This will also close the bound network below."
 msgstr "Bu, aşağıdaki bağlı ağı da kapatır."
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "{0} ile XOX"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Süre (dk)"
@@ -4229,6 +4698,10 @@ msgstr "zaman aşımı"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "TLS sertifikası parmak izi"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4772,31 @@ msgstr "kısaltılmış"
 msgid "Trusted Sources"
 msgstr "Güvenilir Kaynaklar"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "Yüklemeyi tekrar deneyin."
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "Yüklemeyi tekrar deneyin. Dosya sunucusu okuyamadığımız bir yanıt gönderdi."
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "Yeniden denemek için kamerayı açın"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "Yeniden denemek için mikrofonu açın"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "İki adımlı doğrulama"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "İki adımlı doğrulama gerekli"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "Tür"
@@ -4352,13 +4850,25 @@ msgstr "Bir görüntü yükleyin veya dinamik boyutlandırma için isteğe bağl
 msgid "Upload Avatar"
 msgstr "Avatar Yükle"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "Yükleme iptal edildi."
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "Yüklendi"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "Yükleniyor..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL http(s):// veya data: olmalıdır."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4417,6 +4927,7 @@ msgid "User Profile"
 msgstr "Kullanıcı Profili"
 
 #: src/components/ui/UserSettings.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "Kullanıcı Ayarları"
 
@@ -4459,6 +4970,14 @@ msgstr "Geçerli bir sunucu portu gereklidir"
 msgid "Verified account"
 msgstr "Doğrulanmış hesap"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "Doğrula"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "Kodu doğrula"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "Şifrelemeyi doğrula"
@@ -4470,6 +4989,10 @@ msgstr "Parmak izini doğrula…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "Doğrula…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "Doğrulanıyor…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5055,7 @@ msgstr "İzleyici"
 msgid "Viewers ({0})"
 msgstr "İzleyiciler ({0})"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -4557,9 +5081,22 @@ msgstr "Ses Seviyesi"
 msgid "Volume for {0}"
 msgstr "{0} için ses düzeyi"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "{0} kişisinin kabul etmesi bekleniyor…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "Biyometrik istem bekleniyor…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "İlk adım bekleniyor…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "Oturum açma bekleniyor…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4585,6 +5122,10 @@ msgstr "Bu sunucunun ham IRC trafiğini izleyin"
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "IRC iletişimlerinizi sunucularımızda saklamıyoruz"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "WebAuthn bu ortamda kullanılamıyor."
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5217,14 @@ msgstr "Harici bir bağlantı açmak üzeresiniz:"
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "IRC Operatörüsünüz"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "Yeni bir parola seçmek için birkaç dakikanız var."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "Kayıtlı 2FA kimlik bilgisi yok."
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"

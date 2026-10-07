@@ -70,6 +70,16 @@ msgstr "{0, plural, other {# 단계}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, other {{1}개 더 보기}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "이모지 {0}개"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0}님이 게임에 초대했습니다."
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -125,6 +135,10 @@ msgstr "{0}시간 전"
 msgid "{0}m ago"
 msgstr "{0}분 전"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, one {파일 1개 업로드 중} other {파일 #개 업로드 중}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, other {{c}번}}"
@@ -132,6 +146,10 @@ msgstr "{c, plural, other {{c}번}}"
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days}일"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, one {업로드 1건 실패} other {업로드 #건 실패}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +342,20 @@ msgstr "<0>💡 권장사항:</0> 이 서버를 신뢰하고 위험을 충분히
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>위험:</0> 민감한 정보(메시지, 비공개 대화, 인증 정보)가 네트워크 관리자나 IRC 서버 간에 위치한 공격자에게 노출될 수 있습니다."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "이 계정은 현재 2FA가 필수입니다. 등록된 유일한 인증 수단을 삭제하면 로그인할 수 없게 됩니다. 먼저 다른 인증 수단을 추가하거나 아래에서 2FA를 비활성화하세요."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6자리 코드"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "이 출처 표시에 관하여"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "수락"
 
@@ -350,6 +377,7 @@ msgid "Account"
 msgstr "계정"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "계정 이름"
@@ -393,13 +421,29 @@ msgstr "활동"
 msgid "Add"
 msgstr "추가"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "2FA를 사용하려면 인증 수단을 추가하세요"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "단어나 문구 추가..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "인증 앱 또는 생체 인증 / 보안 키를 추가하면 로그인할 때 두 번째 인증 요소가 필요합니다."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "인증 앱 추가"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "차단 마스크 추가 (예: nick!*@*, *!*@host.com)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "생체 인증 / 보안 키 추가"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +452,11 @@ msgstr "채널 추가"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "채널 추가"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "이모지 추가"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +498,11 @@ msgstr "서버 추가"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "첫 네트워크 추가"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "{0} 추가함"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +546,14 @@ msgstr "모든 콘텐츠"
 msgid "Allow camera access"
 msgstr "카메라 액세스 허용"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "영상을 공유하려면 설정에서 카메라 접근을 허용하세요"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "사진이나 동영상을 촬영하려면 카메라 접근을 허용하세요."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "여러 줄 텍스트 입력 허용"
@@ -501,6 +563,14 @@ msgstr "여러 줄 텍스트 입력 허용"
 msgid "Allow microphone access"
 msgstr "마이크 액세스 허용"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "말하려면 설정에서 마이크 접근을 허용하세요"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "소리를 녹음하려면 마이크 접근을 허용하세요."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +579,10 @@ msgstr "이미 {0}에 있음"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "YouTube, Vimeo, SoundCloud 등 알려진 서비스의 미리보기도 표시합니다."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "대체 텍스트 (선택)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +639,11 @@ msgstr "이 메시지를 삭제하시겠습니까? 이 작업은 취소할 수 �
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "첨부"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "첨부 옵션"
@@ -581,6 +660,14 @@ msgstr "오디오 재생 위치"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "관리 권한을 위해 IRC Operator로 인증"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "지금 인증"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "연결 시 인증"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "인증됨"
@@ -588,6 +675,10 @@ msgstr "인증됨"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "인증된 계정"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "인증 앱 (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +741,8 @@ msgstr "자리비움:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "뒤로"
@@ -699,6 +792,10 @@ msgstr "사용자 차단 (닉네임)"
 msgid "Bans"
 msgstr "차단 목록"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "생체 인증 / 보안 키"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +822,32 @@ msgstr "봇이 아직 슬래시 명령을 등록하지 않았습니다."
 msgid "Bot in this channel"
 msgstr "이 채널의 봇"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "봇"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "Bot ({botsLoadingCount}개 로딩 중)"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "이 네트워크의 봇"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "이 창을 앞으로 가져온 뒤 다시 시도하세요."
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "서버의 모든 채널 검색"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "채널 둘러보기"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "브라우저가 WebAuthn을 제공하지 않습니다"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +857,6 @@ msgstr "브라우저는 마이크 또는 카메라 액세스를 허용해야 스
 msgid "Calls"
 msgstr "통화"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +868,10 @@ msgstr "카메라"
 msgid "Camera {0}"
 msgstr "카메라 {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +879,7 @@ msgstr "카메라 {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +887,8 @@ msgstr "카메라 {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +907,10 @@ msgstr "암호화 취소"
 msgid "Cancel reply"
 msgstr "답장 취소"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "업로드 취소"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "취소됨"
@@ -815,6 +927,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "강조 색상 변경"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "비밀번호 변경"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1015,7 @@ msgstr "채널 Op"
 msgid "Channel Owner"
 msgstr "채널 소유자"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "채널 설정"
 
@@ -913,6 +1028,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "나갈 채널 (기본값: 현재 채널)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "채널 주제"
 
@@ -924,6 +1040,10 @@ msgstr "LIST 또는 NAMES 명령에 채널이 표시되지 않음"
 msgid "channel-name"
 msgstr "채널-이름"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "채널 전용"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1054,22 @@ msgstr "채널"
 msgid "Channels on {networkName}"
 msgstr "{networkName}의 채널"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "다른 파일 형식을 선택하세요. 파일 호스트가 {ext} 파일을 허용하지 않습니다."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "다른 파일을 선택하세요. 파일 호스트가 이 파일을 거부했습니다."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "{limit} 이하의 파일을 선택하세요. 파일 호스트가 허용하는 최대 크기입니다."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "확장자가 있는 파일을 선택하세요. 파일 호스트는 확장자가 없는 파일을 허용하지 않습니다."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "미리 정의된 플러드 방지 프로필을 선택하세요. 각 프로필은 다양한 사용 사례에 맞게 균형 잡힌 보호 설정을 제공합니다."
@@ -941,6 +1077,10 @@ msgstr "미리 정의된 플러드 방지 프로필을 선택하세요. 각 프�
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "안전한 비밀번호를 선택하세요"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "더 작은 파일을 선택하세요. 이 파일은 파일 호스트에 비해 너무 큽니다."
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1147,6 @@ msgstr "{channel}에 참여하려면 클릭"
 msgid "Click to jump to message"
 msgstr "클릭하여 메시지로 이동"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "클릭하여 주제 설정"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "클라이언트"
@@ -1034,11 +1170,18 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1127,6 +1270,19 @@ msgstr "상세한 플러드 방지 규칙을 설정하세요. 각 규칙은 모�
 msgid "Configure notification sounds and highlights"
 msgstr "알림 소리 및 강조 표시 설정"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "등록 확인"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "새 비밀번호 확인"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "삭제 확인"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "확인하시겠습니까?"
@@ -1135,6 +1291,18 @@ msgstr "확인하시겠습니까?"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "연결"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "영상을 공유하려면 카메라를 연결하세요"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "말하려면 마이크를 연결하세요"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "운영자 설정을 관리하려면 서버에 연결하세요."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1453,14 @@ msgstr "제한 시간 내에 위치를 확인하지 못했습니다. 하늘이 �
 msgid "Could not get your location."
 msgstr "위치를 확인할 수 없습니다."
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "GIF를 불러오지 못했습니다. 다시 검색하세요."
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "파일 호스트에 연결할 수 없습니다. 연결을 확인하고 다시 시도하세요."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} 님과 암호화를 설정하지 못했습니다."
@@ -1310,6 +1486,11 @@ msgstr "초대 링크 생성 및 관리"
 msgid "Create folder"
 msgstr "폴더 생성"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "팩 만들기"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "생성 시각 이후 (분 전)"
@@ -1318,9 +1499,18 @@ msgstr "생성 시각 이후 (분 전)"
 msgid "Created Before (min ago)"
 msgstr "생성 시각 이전 (분 전)"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "만드는 중…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "현재 아바타"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "커스텀 이모지 팩"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1537,7 @@ msgid "Deafen"
 msgstr "헤드셋 음소거"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "거절"
 
@@ -1402,6 +1593,14 @@ msgstr "메시지 삭제"
 msgid "Delete network"
 msgstr "네트워크 삭제"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "팩 삭제"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "팩 \"{packId}\"을(를) 삭제할까요? 팩에 있는 모든 이모지도 함께 삭제됩니다."
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete Private Chat"
 msgstr "비공개 채팅 삭제"
@@ -1431,7 +1630,10 @@ msgstr "시청자로 전환"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "설명 (선택)"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1644,21 @@ msgstr "카메라 액세스를 허용할 때까지 장치 이름이 숨겨집니
 msgid "Device names are hidden until you allow microphone access."
 msgstr "마이크 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "비활성화"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "2FA를 비활성화합니다. 확인하려면 등록된 인증 앱 중 하나에서 6자리 코드를 입력하세요."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "PTT 사용 안 함"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "비활성화됨"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1715,7 @@ msgstr "화면 표시"
 msgid "Display all server events in chat"
 msgstr "채팅에 모든 서버 이벤트 표시"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1745,13 @@ msgstr "이 링크를 새 탭에서 여시겠습니까?"
 msgid "Don't warn me about low link security for this server"
 msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "완료"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "완료"
 
@@ -1578,6 +1799,11 @@ msgstr "편집"
 msgid "Edit {0}"
 msgstr "{0} 편집"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "채널 편집"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1837,14 @@ msgstr "임베드"
 msgid "Emojis"
 msgstr "이모지"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "빈 팩입니다. 이모지를 추가하세요."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "2FA 사용"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "강조 표시 활성화"
@@ -1638,6 +1872,10 @@ msgstr "알림 활성화"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "PTT 사용"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "활성화됨"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1957,14 @@ msgstr "{nick} 님과의 암호화가 작동을 멈춰 메시지가 전송되지
 msgid "End encryption"
 msgstr "암호화 종료"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "2FA를 비활성화하려면 인증 앱에서 6자리 코드를 입력하세요."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "채널 전용 팩에는 채널 이름을 입력하세요."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "계정 이름 입력..."
@@ -1765,9 +2011,34 @@ msgstr "실명 입력"
 msgid "Enter reason (optional)"
 msgstr "사유 입력 (선택 사항)"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "{account}(으)로 로그인을 완료하려면 인증 앱의 6자리 코드를 입력하세요."
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "로그인을 완료하려면 인증 앱의 6자리 코드를 입력하세요."
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "인증 앱의 6자리 코드를 입력하세요."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "이메일로 받은 6자리 코드를 입력하세요."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "복구할 계정 이름을 입력하세요."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "초대할 사용자 이름 입력"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "계정 이름을 입력하세요. 등록된 인증 주소로 6자리 복구 코드를 이메일로 보내 드립니다."
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1824,6 +2095,7 @@ msgstr "확장 프로필"
 msgid "External Link Warning"
 msgstr "외부 링크 경고"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "실패"
@@ -1889,6 +2161,18 @@ msgstr "모두 축소"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "폴더 이름"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "보안을 위해 이 계정의 모든 기존 세션이 로그아웃되었고 계정 범위의 서버 상태가 삭제되었습니다. 2단계 인증을 사용 중이었다면 계속 사용 상태이므로 다음 로그인에도 필요합니다."
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "기권"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "비밀번호 찾기"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2437,7 @@ msgstr "IRC Operator"
 msgid "IRC operator password"
 msgstr "IRC operator 비밀번호"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "IRC operator 사용자 이름"
@@ -2295,6 +2580,15 @@ msgstr "입력 중임을 다른 사람에게 알림"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "OAuth ID 연결"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "{0}(으)로 연결"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "라이브"
@@ -2334,6 +2628,11 @@ msgstr "bouncer에서 네트워크를 불러오는 중…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "WHOIS 데이터 불러오는 중..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "불러오는 중…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2675,26 @@ msgstr "손 내리기"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "서버 링크에 대한 중간자 공격이 가능합니다"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "봇 관리"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "봇 관리 (불러오는 중 {botsLoadingCount})"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "팩 관리"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "이 서버가 draft/EMOJI로 게시하는 네트워크 전체 및 채널 전용 이모지 팩을 관리하세요."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "2단계 인증 관리"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2938,10 @@ msgstr "알림 음소거"
 msgid "Mute or unmute notification sounds"
 msgstr "알림 소리 음소거 또는 해제"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "이름 (예: iPhone)"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2982,11 @@ msgstr "새 폴더"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "새 닉네임"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "새 비밀번호"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3086,10 @@ msgstr "파일 선택 안 함"
 msgid "No flood profile"
 msgstr "플러드 프로필 없음"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "GIF를 찾을 수 없습니다. 다른 검색어를 입력하세요."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "호스트가 설정되지 않음"
@@ -2789,6 +3121,10 @@ msgstr "메시지 없음"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "마이크가 감지되지 않았습니다."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "아직 설정된 팩이 없습니다."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3195,10 @@ msgstr "기본 - 표준 보호"
 msgid "Not encrypted"
 msgstr "암호화되지 않음"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "참고: 계정에 인증된 이메일이 있든 없든 서버는 같은 응답을 반환하므로 오타가 있어도 여기서는 알려주지 않습니다. 몇 분 안에 코드가 오지 않으면 계정 이름을 다시 확인하세요."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "알림 소리"
@@ -2866,6 +3206,10 @@ msgstr "알림 소리"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "알림"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "OAuth-identiteit"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3241,10 @@ msgstr "오프라인"
 msgid "Offline"
 msgstr "오프라인"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "확인"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "켜기"
@@ -2920,6 +3268,7 @@ msgid "Only operators can change the channel topic"
 msgstr "운영자만 채널 주제를 변경할 수 있음"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "보안 웹소켓만 지원됩니다"
 
@@ -3027,6 +3376,10 @@ msgstr "운영자 작업"
 msgid "Optional crash reports to improve the app"
 msgstr "앱 개선을 위한 선택적 충돌 보고서"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "이 변경으로 이 계정의 다른 열린 세션은 로그아웃됩니다. 2단계 인증 설정이 있다면 그대로 유지됩니다."
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR는 파일을 암호화하지 않습니다. 그대로 전송됨"
@@ -3039,6 +3392,14 @@ msgstr "출력"
 msgid "Owner"
 msgstr "소유자"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id (예: team-mascots)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id와 이름은 필수입니다."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "비밀번호"
@@ -3046,6 +3407,15 @@ msgstr "비밀번호"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "채널 참여에 필요한 비밀번호입니다. 키를 제거하려면 비워두세요."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "비밀번호 재설정 완료"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "비밀번호가 일치하지 않습니다."
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3087,6 +3457,15 @@ msgstr "영구"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "사진"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "비밀번호를 정하세요 (3자 이상)."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "공백 없는 한 단어 이름을 정하세요."
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3214,6 +3593,10 @@ msgstr "대명사"
 msgid "Protected Topic (+t)"
 msgstr "주제 보호 (+t)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "제공자가 bearer 토큰을 반환하지 않았습니다."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "개인정보 보호에 관한 문의사항이 있으신가요? 문의처:"
@@ -3315,6 +3698,7 @@ msgstr "재연결 실패"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
 
@@ -3367,6 +3751,10 @@ msgstr "WHOIS 새로고침"
 msgid "Register for an account"
 msgstr "계정 등록"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "등록된 인증 수단"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "거부"
@@ -3380,8 +3768,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "완화 - 덜 공격적인 보호"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "제거"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "\"{0}\"을(를) 삭제할까요? 더 이상 두 번째 인증 요소로 사용할 수 없습니다."
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3462,7 +3857,6 @@ msgstr "다시 보내기"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "채널로 돌아가기"
 
@@ -3473,6 +3867,11 @@ msgstr "변경된 키 검토…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "키 확인"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "90° 회전"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3929,10 @@ msgstr "저장됨"
 msgid "Saving..."
 msgstr "저장 중..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "인증 앱으로 이 QR 코드를 스캔한 다음, 앱에 표시되는 6자리 코드로 확인하세요."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "이 응답으로 채팅 스크롤"
@@ -3550,6 +3953,10 @@ msgstr "검색"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "봇 검색"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "이모지 검색..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3641,11 +4048,6 @@ msgstr "시작하려면 채널을 선택하거나 추가하세요."
 msgid "self-registered"
 msgstr "자가 등록됨"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "보내기"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4073,10 @@ msgstr "메시지 보내기"
 msgid "Send private message"
 msgstr "비공개 메시지 보내기"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "복구 코드 보내기"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "이 파일을 암호화하지 않고 보낼까요?"
@@ -3687,6 +4093,10 @@ msgstr "암호화하지 않고 보내기"
 msgid "Sending"
 msgstr "보내는 중"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "보내는 중…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4106,14 @@ msgstr "서버"
 msgid "Server"
 msgstr "서버"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "서버 채널"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "서버가 WebAuthn 지원을 알리지 않습니다"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4157,16 @@ msgstr "서버 비밀번호"
 msgid "Server Password (PASS)"
 msgstr "서버 비밀번호 (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "서버가 유효하지 않은 WebAuthn 챌린지를 반환했습니다."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "서버 간 통신에 암호화되지 않은 연결이 사용될 수 있습니다"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "서버 전체"
 
@@ -3774,6 +4191,7 @@ msgstr "세션 {0}"
 msgid "Sessions"
 msgstr "세션"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "주제 설정…"
@@ -3791,6 +4209,10 @@ msgstr "{0}이(가) 설정"
 msgid "Set by:"
 msgstr "설정자:"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "새 비밀번호 설정"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "자리 비움으로 설정"
@@ -3807,6 +4229,11 @@ msgstr "설정"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "설정을 찾을 수 없습니다"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "설정하는 중…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4259,21 @@ msgstr "내 위치 공유"
 msgid "Share your location with {target}."
 msgstr "{target}에게 내 위치를 공유합니다."
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "다시 시도하려면 화면을 다시 공유하세요"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "그녀/그녀의"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "숏코드 (예: partyparrot)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "숏코드는 [A-Za-z0-9._-]+ 형식이어야 합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3909,6 +4348,10 @@ msgstr "모든 외부 미디어를 표시합니다. 모든 URL이 알 수 없는
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "서버의 신뢰할 수 있는 파일 호스트의 미디어를 표시합니다. 외부 서비스에 요청이 전송되지 않습니다."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "제공자로 로그인하면 얻은 ID를 계정에 연결하여 이후 연결에서 SASL OAUTHBEARER / IRCV3BEARER를 사용할 수 있습니다."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4441,10 @@ msgstr "상태"
 msgid "Status Messages"
 msgstr "상태 메시지"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "상태:"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "스트리밍 그만하기"
@@ -4023,6 +4470,7 @@ msgid "Stop video"
 msgstr "비디오 중지"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "스트림"
 
@@ -4074,6 +4522,14 @@ msgstr "폴더에서 꺼내기"
 msgid "Take photo"
 msgstr "사진 찍기"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "사진 또는 동영상 촬영"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "텍스트"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "텍스트 채널"
@@ -4085,6 +4541,10 @@ msgstr "이 장치는 현재 사용할 수 없습니다."
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "해당 화면이 더 이상 없습니다."
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "통화 서버가 거부했습니다. 잠시 후 다시 시도하세요."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4192,6 +4652,10 @@ msgstr "이 작업은 soju bouncer에서 네트워크를 제거합니다. 다시
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "이 서버는 확장 프로필 메타데이터(IRCv3 METADATA 확장)를 지원하지 않습니다. 아바타, 표시 이름, 상태 등의 추가 필드를 사용할 수 없습니다."
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "이 서버는 백엔드 URL(draft/authtoken 또는 obby.world/FILEHOST)을 알리지 않습니다. 관리자 엔드포인트에 연결할 수 없습니다."
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "이 서버는 초대 링크를 지원하지 않습니다 (<0>obby.world/invitation</0> 기능이 광고되지 않음). 일반 채팅은 계속할 수 있으며, 이 패널은 obbyircd 기반 네트워크용입니다."
@@ -4213,6 +4677,11 @@ msgstr "이 작업은 아래에 연결된 {0}개의 네트워크도 함께 닫�
 msgid "This will also close the bound network below."
 msgstr "이 작업은 아래에 연결된 네트워크도 함께 닫습니다."
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "틱택토 vs {0}"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "시간 (분)"
@@ -4229,6 +4698,10 @@ msgstr "시간 초과"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "TLS 인증서 지문"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4772,31 @@ msgstr "잘린"
 msgid "Trusted Sources"
 msgstr "신뢰할 수 있는 출처"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "업로드를 다시 시도하세요."
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "업로드를 다시 시도하세요. 파일 호스트가 읽을 수 없는 응답을 보냈습니다."
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "다시 시도하려면 카메라를 켜세요"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "다시 시도하려면 마이크를 켜세요"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "2단계 인증"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "2단계 인증이 필요합니다"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "유형"
@@ -4352,13 +4850,25 @@ msgstr "이미지를 업로드하거나 동적 크기 조정을 위해 {size} �
 msgid "Upload Avatar"
 msgstr "아바타 업로드"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "업로드가 취소되었습니다."
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "파일 업로드"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "업로드됨"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "업로드 중..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL은 http(s):// 또는 data:여야 합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4417,6 +4927,7 @@ msgid "User Profile"
 msgstr "사용자 프로필"
 
 #: src/components/ui/UserSettings.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "사용자 설정"
 
@@ -4459,6 +4970,14 @@ msgstr "올바른 서버 포트가 필요합니다"
 msgid "Verified account"
 msgstr "인증된 계정"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "확인"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "코드 확인"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "암호화 확인"
@@ -4470,6 +4989,10 @@ msgstr "지문 확인…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "확인…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "확인하는 중…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5055,7 @@ msgstr "시청자"
 msgid "Viewers ({0})"
 msgstr "시청자 ({0}명)"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -4557,9 +5081,22 @@ msgstr "볼륨"
 msgid "Volume for {0}"
 msgstr "{0}님의 볼륨"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "{0}님의 수락을 기다리는 중…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "생체 인증 요청을 기다리는 중…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "첫 단계 대기 중…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "로그인을 기다리는 중…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4585,6 +5122,10 @@ msgstr "이 서버의 원시 IRC 트래픽을 봅니다"
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "IRC 통신 내용은 서버에 저장되지 않습니다"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "이 환경에서는 WebAuthn을 사용할 수 없습니다."
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5217,14 @@ msgstr "외부 링크를 열려고 합니다:"
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "당신은 IRC Operator입니다"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "새 비밀번호를 정할 수 있는 시간은 몇 분입니다."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "등록된 2FA 인증 수단이 없습니다."
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"

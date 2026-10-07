@@ -70,6 +70,16 @@ msgstr "{0, plural, other {# 步}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, other {显示另外 {1} 个项目}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "{0} 个表情"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0} 邀请你一起玩。"
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -125,6 +135,10 @@ msgstr "{0} 小时前"
 msgid "{0}m ago"
 msgstr "{0} 分钟前"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, other {正在上传 # 个文件}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, other {{c} 次}}"
@@ -132,6 +146,10 @@ msgstr "{c, plural, other {{c} 次}}"
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days} 天"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, other {# 个上传失败}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +342,20 @@ msgstr "<0>💡 建议：</0> 仅在您信任此服务器并了解相关风险�
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>风险：</0> 敏感信息（消息、私人对话、身份验证详情）可能会暴露给网络管理员或位于 IRC 服务器之间的攻击者。"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "此账户目前强制启用 2FA。删除唯一已注册的凭据会导致你无法登录。请先添加另一个凭据，或在下方停用 2FA。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6 位验证码"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "关于此归属"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "接受"
 
@@ -350,6 +377,7 @@ msgid "Account"
 msgstr "账户"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "账户名称"
@@ -393,13 +421,29 @@ msgstr "活动"
 msgid "Add"
 msgstr "添加"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "添加凭据以启用 2FA"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "添加词语或短语..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "添加验证器应用或生物识别 / 安全密钥，以在登录时要求第二重验证。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "添加验证器应用"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "添加封禁掩码（例如 nick!*@*, *!*@host.com）"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "添加生物识别 / 安全密钥"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +452,11 @@ msgstr "添加频道"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "添加频道"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "添加表情"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +498,11 @@ msgstr "添加服务器"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "添加您的第一个网络"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "已添加 {0}"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +546,14 @@ msgstr "所有内容"
 msgid "Allow camera access"
 msgstr "允许摄像头访问"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "在设置中允许访问摄像头以共享视频"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "允许访问相机以拍摄照片或视频。"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "允许输入多行文本"
@@ -501,6 +563,14 @@ msgstr "允许输入多行文本"
 msgid "Allow microphone access"
 msgstr "允许麦克风访问"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "在设置中允许访问麦克风以讲话"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "允许访问麦克风以录制声音。"
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +579,10 @@ msgstr "已在 {0}"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "同时显示来自 YouTube、Vimeo、SoundCloud 及类似知名服务的预览。"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "替代文本（可选）"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +639,11 @@ msgstr "您确定要删除此消息吗？此操作无法撤销。"
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "添加附件"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "附件选项"
@@ -581,6 +660,14 @@ msgstr "音频进度"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "以 IRC 运营商身份进行管理访问认证"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "立即验证"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "连接时验证"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "已认证"
@@ -588,6 +675,10 @@ msgstr "已认证"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "已验证账户"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "验证器应用 (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +741,8 @@ msgstr "离开："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "返回"
@@ -699,6 +792,10 @@ msgstr "封禁用户（按昵称）"
 msgid "Bans"
 msgstr "封禁"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "生物识别 / 安全密钥"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +822,32 @@ msgstr "机器人尚未注册任何斜杠命令。"
 msgid "Bot in this channel"
 msgstr "此频道中的机器人"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "机器人"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "机器人（正在加载 {botsLoadingCount}）"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "此网络上的机器人"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "把这个窗口切换到前台后再试一次。"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "浏览服务器上的所有频道"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "浏览频道"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "浏览器未提供 WebAuthn"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +857,6 @@ msgstr "浏览器只有在您允许访问麦克风或摄像头后，才会显示
 msgid "Calls"
 msgstr "通话"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +868,10 @@ msgstr "摄像头"
 msgid "Camera {0}"
 msgstr "摄像头 {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "无法删除你的最后一个 2FA 凭据"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +879,7 @@ msgstr "摄像头 {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +887,8 @@ msgstr "摄像头 {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +907,10 @@ msgstr "取消加密"
 msgid "Cancel reply"
 msgstr "取消回复"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "取消上传"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "已取消"
@@ -815,6 +927,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "更改强调色"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "更改密码"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1015,7 @@ msgstr "频道操作员"
 msgid "Channel Owner"
 msgstr "频道所有者"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "频道设置"
 
@@ -913,6 +1028,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "要离开的频道（默认为当前频道）"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "频道主题"
 
@@ -924,6 +1040,10 @@ msgstr "频道不会出现在 LIST 或 NAMES 命令中"
 msgid "channel-name"
 msgstr "频道名称"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "频道范围"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1054,22 @@ msgstr "频道"
 msgid "Channels on {networkName}"
 msgstr "{networkName} 上的频道"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "请选择其他文件类型。文件主机不接受 {ext} 文件。"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "请选择其他文件。文件主机拒绝了这个文件。"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "请选择小于 {limit} 的文件，这是文件主机接受的上限。"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "请选择带扩展名的文件。文件主机不接受没有扩展名的文件。"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "选择预定义的洪水保护配置文件。这些配置文件为不同使用场景提供均衡的保护设置。"
@@ -941,6 +1077,10 @@ msgstr "选择预定义的洪水保护配置文件。这些配置文件为不同
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "选择一个安全密码"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "请选择更小的文件。这个文件对文件主机来说太大。"
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1147,6 @@ msgstr "点击加入 {channel}"
 msgid "Click to jump to message"
 msgstr "点击跳转到消息"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "点击设置主题"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "客户端"
@@ -1034,11 +1170,18 @@ msgstr "客户端限制 (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1127,6 +1270,19 @@ msgstr "配置详细的洪水保护规则。每条规则指定要监控的活动
 msgid "Configure notification sounds and highlights"
 msgstr "配置通知声音和高亮提示"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "确认注册"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "确认新密码"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "确认删除"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "确认？"
@@ -1135,6 +1291,18 @@ msgstr "确认？"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "连接"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "连接摄像头以共享视频"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "连接麦克风以讲话"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "连接到服务器以管理操作员设置。"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1453,14 @@ msgstr "无法及时获取定位。请在视野更开阔的地方重试。"
 msgid "Could not get your location."
 msgstr "无法获取您的位置。"
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "无法加载 GIF。请重新搜索。"
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "无法连接文件主机。请检查网络连接后重试。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "无法与 {nick} 建立加密。"
@@ -1310,6 +1486,11 @@ msgstr "创建并管理您的邀请链接"
 msgid "Create folder"
 msgstr "创建文件夹"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "创建表情包"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "创建时间晚于（分钟前）"
@@ -1318,9 +1499,18 @@ msgstr "创建时间晚于（分钟前）"
 msgid "Created Before (min ago)"
 msgstr "创建时间早于（分钟前）"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "正在创建…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "当前头像"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "自定义表情包"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1537,7 @@ msgid "Deafen"
 msgstr "屏蔽声音"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "拒绝"
 
@@ -1402,6 +1593,14 @@ msgstr "删除消息"
 msgid "Delete network"
 msgstr "删除网络"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "删除表情包"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "删除表情包 \"{packId}\"？其中的所有表情也会被删除。"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete Private Chat"
 msgstr "删除私聊"
@@ -1431,7 +1630,10 @@ msgstr "降为观众"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "描述（可选）"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1644,21 @@ msgstr "在您允许摄像头访问之前，设备名称将被隐藏。"
 msgid "Device names are hidden until you allow microphone access."
 msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "停用"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "停用 2FA。输入任一已注册验证器应用中的 6 位验证码以确认。"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "禁用按键说话"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "已停用"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1715,7 @@ msgstr "显示"
 msgid "Display all server events in chat"
 msgstr "在聊天中显示所有服务器事件"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1745,13 @@ msgstr "是否在新标签页中打开此链接？"
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "完成"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "完成"
 
@@ -1578,6 +1799,11 @@ msgstr "编辑"
 msgid "Edit {0}"
 msgstr "编辑 {0}"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "编辑频道"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1837,14 @@ msgstr "嵌入"
 msgid "Emojis"
 msgstr "表情符号"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "表情包为空。请添加一些表情。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "启用 2FA"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "启用高亮"
@@ -1638,6 +1872,10 @@ msgstr "启用通知"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "启用按键说话"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "已启用"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1957,14 @@ msgstr "与 {nick} 的加密已停止工作，因此消息未发送。请重新�
 msgid "End encryption"
 msgstr "结束加密"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "输入任一验证器应用中的 6 位验证码以停用 2FA。"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "请为频道范围的表情包输入频道名称。"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "输入账户名称..."
@@ -1765,9 +2011,34 @@ msgstr "输入真实姓名"
 msgid "Enter reason (optional)"
 msgstr "输入原因（可选）"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "输入验证器应用中的 6 位验证码，以完成以 {account} 登录。"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "输入验证器应用中的 6 位验证码以完成登录。"
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "输入验证器应用中的 6 位验证码。"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "输入邮件中的 6 位验证码。"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "输入你要找回的账户名称。"
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "输入要邀请的用户名"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "输入你的账户名称。我们会将 6 位恢复码发送到已验证的邮箱地址。"
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1824,6 +2095,7 @@ msgstr "扩展资料"
 msgid "External Link Warning"
 msgstr "外部链接警告"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失败"
@@ -1889,6 +2161,18 @@ msgstr "全部折叠"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "文件夹名称"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "出于安全考虑，此账户的所有现有会话已退出，账户范围的服务器状态已清除。如果已启用双重验证，它仍保持启用，下次登录仍需验证。"
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "认输"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "忘记密码"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2437,7 @@ msgstr "IRC Operator"
 msgid "IRC operator password"
 msgstr "IRC 运营商密码"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "IRC 运营商用户名"
@@ -2295,6 +2580,15 @@ msgstr "让其他人知道您正在输入"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "关联 OAuth 身份"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "通过 {0} 关联"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "直播中"
@@ -2334,6 +2628,11 @@ msgstr "正在从您的 bouncer 加载网络…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "正在加载 WHOIS 数据..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "正在加载…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2675,26 @@ msgstr "放下手"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "服务器链路可能遭受中间人攻击"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "管理机器人"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "管理机器人（正在加载 {botsLoadingCount} 个）"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "管理表情包"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "管理此服务器通过 draft/EMOJI 发布的全网络和频道范围的表情包。"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "管理双重验证"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2938,10 @@ msgstr "静音通知"
 msgid "Mute or unmute notification sounds"
 msgstr "开启或关闭通知声音"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "名称（例如 iPhone）"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2982,11 @@ msgstr "新建文件夹"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "新昵称"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "新密码"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3086,10 @@ msgstr "未选择文件"
 msgid "No flood profile"
 msgstr "无洪水防护配置"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "未找到 GIF。请尝试其他搜索。"
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "未设置主机"
@@ -2789,6 +3121,10 @@ msgstr "无消息"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "未检测到麦克风。"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "尚未配置表情包。"
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3195,10 @@ msgstr "普通 – 标准保护"
 msgid "Not encrypted"
 msgstr "未加密"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "注意：无论账户是否有已验证的邮箱，服务器都会返回相同的响应，因此这里不会提示拼写错误。如果几分钟内没有收到验证码，请再次检查账户名称。"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "通知声音"
@@ -2866,6 +3206,10 @@ msgstr "通知声音"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "通知"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "OAuth 身份"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3241,10 @@ msgstr "离线"
 msgid "Offline"
 msgstr "离线"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "确定"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "开启"
@@ -2920,6 +3268,7 @@ msgid "Only operators can change the channel topic"
 msgstr "只有管理员可以更改频道主题"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "仅支持安全的 WebSocket 连接"
 
@@ -3027,6 +3376,10 @@ msgstr "操作员操作"
 msgid "Optional crash reports to improve the app"
 msgstr "可选的崩溃报告以改善应用"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "此次更改会同时退出此账户的其他已打开会话。双重验证设置（如有）保持不变。"
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR 不加密文件，已按原样发送"
@@ -3039,6 +3392,14 @@ msgstr "输出"
 msgid "Owner"
 msgstr "频道所有者"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id（例如 team-mascots）"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id 和名称为必填项。"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "密码"
@@ -3046,6 +3407,15 @@ msgstr "密码"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "加入频道需要密码，留空可移除密钥。"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "密码重置完成"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "两次输入的密码不一致。"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3087,6 +3457,15 @@ msgstr "永久"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "照片"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "请设置密码（至少 3 个字符）。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "请选择单个单词的名称（不含空格）。"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3214,6 +3593,10 @@ msgstr "代词"
 msgid "Protected Topic (+t)"
 msgstr "受保护主题 (+t)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "提供方未返回 bearer 令牌。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "有隐私问题？联系我们："
@@ -3315,6 +3698,7 @@ msgstr "重新连接失败"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
 
@@ -3367,6 +3751,10 @@ msgstr "刷新 WHOIS"
 msgid "Register for an account"
 msgstr "注册账户"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "已注册的凭据"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "拒绝"
@@ -3380,8 +3768,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "宽松 – 较弱的保护"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "移除"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "删除 \"{0}\"？你将无法再将其用作第二重验证。"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3462,7 +3857,6 @@ msgstr "重新发送"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "返回频道"
 
@@ -3473,6 +3867,11 @@ msgstr "查看已更改的密钥…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "查看密钥"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "旋转 90°"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3929,10 @@ msgstr "已保存"
 msgid "Saving..."
 msgstr "正在保存..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "用验证器应用扫描此二维码，然后输入它显示的 6 位验证码确认。"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "将聊天滚动到此回复"
@@ -3550,6 +3953,10 @@ msgstr "搜索"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "搜索机器人"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "搜索表情..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3641,11 +4048,6 @@ msgstr "选择或添加频道以开始使用。"
 msgid "self-registered"
 msgstr "自助注册"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "发送"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4073,10 @@ msgstr "发送消息"
 msgid "Send private message"
 msgstr "发送私信"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "发送恢复码"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "以未加密方式发送此文件？"
@@ -3687,6 +4093,10 @@ msgstr "未加密发送"
 msgid "Sending"
 msgstr "发送中"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "正在发送…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4106,14 @@ msgstr "服务器"
 msgid "Server"
 msgstr "服务器"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "服务器频道"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "服务器未声明支持 WebAuthn"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4157,16 @@ msgstr "服务器密码"
 msgid "Server Password (PASS)"
 msgstr "服务器密码 (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "服务器返回了无效的 WebAuthn 质询。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "服务器之间的通信可能使用未加密的连接"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "服务器范围"
 
@@ -3774,6 +4191,7 @@ msgstr "会话 {0}"
 msgid "Sessions"
 msgstr "会话"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "设置主题…"
@@ -3791,6 +4209,10 @@ msgstr "由 {0} 设置"
 msgid "Set by:"
 msgstr "设置者："
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "设置新密码"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "设为离开"
@@ -3807,6 +4229,11 @@ msgstr "设置"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "未找到设置"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "正在设置…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4259,21 @@ msgstr "共享您的位置"
 msgid "Share your location with {target}."
 msgstr "与 {target} 共享您的位置。"
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "再次共享屏幕以重试"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "她/她的"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "短代码（例如 partyparrot）"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "短代码必须匹配 [A-Za-z0-9._-]+。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3909,6 +4348,10 @@ msgstr "显示所有外部媒体。任何 URL 都可能向未知服务器发送�
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "显示来自服务器受信任文件主机的媒体。不会向外部服务发送任何请求。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "通过提供方登录，我们会将得到的身份绑定到你的账户，使 SASL OAUTHBEARER / IRCV3BEARER 在之后的连接中可用。"
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4441,10 @@ msgstr "状态"
 msgid "Status Messages"
 msgstr "状态消息"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "状态："
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "退出直播"
@@ -4023,6 +4470,7 @@ msgid "Stop video"
 msgstr "关闭视频"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "直播"
 
@@ -4074,6 +4522,14 @@ msgstr "移出文件夹"
 msgid "Take photo"
 msgstr "拍照"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "拍摄照片或视频"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "文本"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "文字频道"
@@ -4085,6 +4541,10 @@ msgstr "该设备当前不可用。"
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "该屏幕已不存在。"
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "通话服务器拒绝了该请求。请稍后重试。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4192,6 +4652,10 @@ msgstr "这将从您的 soju bouncer 中移除该网络。若要再次使用，�
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "此服务器不支持扩展个人资料元数据（IRCv3 METADATA 扩展）。头像、显示名称和状态等字段不可用。"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "此服务器未声明后端 URL（draft/authtoken 或 obby.world/FILEHOST）。无法访问管理端点。"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "此服务器不支持邀请链接（未声明 <0>obby.world/invitation</0> 能力）。您仍可正常聊天；此面板适用于由 obbyircd 提供支持的网络。"
@@ -4213,6 +4677,11 @@ msgstr "这也将关闭下方 {0} 个已绑定的网络。"
 msgid "This will also close the bound network below."
 msgstr "这也将关闭下方已绑定的网络。"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "井字棋对战 {0}"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "时间（分钟）"
@@ -4229,6 +4698,10 @@ msgstr "已超时"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "TLS 证书指纹"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4772,31 @@ msgstr "已截断"
 msgid "Trusted Sources"
 msgstr "受信任来源"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "请重新上传。"
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "请重新上传。文件主机返回了我们无法读取的响应。"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "打开摄像头以重试"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "打开麦克风以重试"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "双重验证"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "需要双重验证"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "类型"
@@ -4352,13 +4850,25 @@ msgstr "上传图片或提供带可选 {size} 替换的 URL"
 msgid "Upload Avatar"
 msgstr "上传头像"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "上传已取消。"
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "上传文件"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "已上传"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "上传中..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL 必须是 http(s):// 或 data:。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4417,6 +4927,7 @@ msgid "User Profile"
 msgstr "用户资料"
 
 #: src/components/ui/UserSettings.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "用户设置"
 
@@ -4459,6 +4970,14 @@ msgstr "需要有效的服务器端口"
 msgid "Verified account"
 msgstr "已验证账户"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "验证"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "验证验证码"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "验证加密"
@@ -4470,6 +4989,10 @@ msgstr "验证指纹…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "验证…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "正在验证…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5055,7 @@ msgstr "观众"
 msgid "Viewers ({0})"
 msgstr "观众 ({0})"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "语音权限"
@@ -4557,9 +5081,22 @@ msgstr "音量"
 msgid "Volume for {0}"
 msgstr "{0} 的音量"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "等待 {0} 接受…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "等待生物识别提示…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "正在等待第一个步骤…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "等待登录…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4585,6 +5122,10 @@ msgstr "查看此服务器的原始 IRC 流量"
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "我们不在服务器上存储您的 IRC 通信"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "此环境不支持 WebAuthn。"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5217,14 @@ msgstr "您即将打开一个外部链接："
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "您是 IRC Operator"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "你有几分钟时间设置新密码。"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "你尚未注册任何 2FA 凭据。"
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"

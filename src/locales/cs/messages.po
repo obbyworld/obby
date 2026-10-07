@@ -70,6 +70,16 @@ msgstr "{0, plural, one {# krok} few {# kroky} other {# kroků}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Zobrazit 1 další položku} few {Zobrazit {1} další položky} many {Zobrazit {1} dalších položek} other {Zobrazit {1} dalších položek}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "{0} emoji"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0} vás pozval(a) ke hře."
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -125,6 +135,10 @@ msgstr "před {0} h"
 msgid "{0}m ago"
 msgstr "před {0} min"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, one {Nahrávání 1 souboru} few {Nahrávání # souborů} other {Nahrávání # souborů}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1×} few {{c}×} many {{c}×} other {{c}×}}"
@@ -132,6 +146,10 @@ msgstr "{c, plural, one {1×} few {{c}×} many {{c}×} other {{c}×}}"
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days} dní"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, one {1 nahrání selhalo} few {# nahrání selhala} other {# nahrání selhalo}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +342,20 @@ msgstr "<0>💡 Doporučení:</0> Pokračujte pouze pokud důvěřujete tomuto s
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Riziko:</0> Citlivé informace (zprávy, soukromé konverzace, přihlašovací údaje) mohou být přístupné správcům sítě nebo útočníkům mezi IRC servery."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "Dvoufázové ověření je na tomto účtu vynuceno. Odebráním posledního registrovaného přihlašovacího údaje byste se zamkli z přihlášení. Nejdřív přidejte další údaj, nebo níže vypněte 2FA."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6místný kód"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "O tomto přiřazení"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "Přijmout"
 
@@ -350,6 +377,7 @@ msgid "Account"
 msgstr "Účet"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Název účtu"
@@ -393,13 +421,29 @@ msgstr "Aktivita"
 msgid "Add"
 msgstr "Přidat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "Přidejte údaj pro zapnutí 2FA"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Přidat slovo nebo frázi..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "Přidejte autentizační aplikaci nebo biometrický klíč / bezpečnostní klíč, aby se při přihlášení vyžadoval druhý faktor."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "Přidat autentizační aplikaci"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Přidat masku banu (např. nick!*@*, *!*@host.com)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "Přidat biometrický klíč / bezpečnostní klíč"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +452,11 @@ msgstr "přidat kanál"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "Přidat kanál"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "Přidat emoji"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +498,11 @@ msgstr "Přidat server"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "Přidejte svou první síť"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "přidáno {0}"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +546,14 @@ msgstr "Veškerý obsah"
 msgid "Allow camera access"
 msgstr "Povolit přístup ke kameře"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "Povolte přístup ke kameře v nastavení, abyste mohli sdílet video"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "Povolte přístup k fotoaparátu, abyste mohli pořídit fotku nebo video."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Povolit zadávání více řádků textu"
@@ -501,6 +563,14 @@ msgstr "Povolit zadávání více řádků textu"
 msgid "Allow microphone access"
 msgstr "Povolit přístup k mikrofonu"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "Povolte přístup k mikrofonu v nastavení, abyste mohli mluvit"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "Povolte přístup k mikrofonu pro nahrávání zvuku."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +579,10 @@ msgstr "Již v {0}"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "Zobrazuje také náhledy z YouTube, Vimeo, SoundCloud a podobných známých služeb."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "Alternativní text (volitelné)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +639,11 @@ msgstr "Opravdu chcete tuto zprávu smazat? Tuto akci nelze vrátit zpět."
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "Připojit"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Možnosti přílohy"
@@ -581,6 +660,14 @@ msgstr "Pozice zvuku"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Ověřit jako IRC operátor pro administrativní přístup"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "Ověřit nyní"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "Ověřit při připojení"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "Ověřeno"
@@ -588,6 +675,10 @@ msgstr "Ověřeno"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "Ověřený účet"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "Autentizační aplikace (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +741,8 @@ msgstr "Nepřítomen:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Zpět"
@@ -699,6 +792,10 @@ msgstr "Zabanovat uživatele (podle přezdívky)"
 msgid "Bans"
 msgstr "Bany"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "Biometrický klíč / bezpečnostní klíč"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +822,32 @@ msgstr "Bot zatím nezaregistroval žádné lomítkové příkazy."
 msgid "Bot in this channel"
 msgstr "Bot v tomto kanálu"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Boti"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "Boti (načítání {botsLoadingCount})"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Boti na této síti"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Přepněte se do tohoto okna a zkuste to znovu."
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Procházet všechny kanály na serveru"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "Procházet kanály"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "Prohlížeč nepodporuje WebAuthn"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +857,6 @@ msgstr "Prohlížeče zobrazí vaše reproduktory, teprve až povolíte přístu
 msgid "Calls"
 msgstr "Hovory"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +868,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "Nelze odebrat poslední údaj 2FA"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +879,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +887,8 @@ msgstr "Kamera {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +907,10 @@ msgstr "Zrušit šifrování"
 msgid "Cancel reply"
 msgstr "Zrušit odpověď"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "Zrušit nahrávání"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "zrušeno"
@@ -815,6 +927,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Změnit barvu zvýraznění"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "Změnit heslo"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1015,7 @@ msgstr "Operátor kanálu"
 msgid "Channel Owner"
 msgstr "Vlastník kanálu"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Nastavení kanálu"
 
@@ -913,6 +1028,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "Kanál k opuštění (výchozí aktuální)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Téma kanálu"
 
@@ -924,6 +1040,10 @@ msgstr "Kanál se nebude zobrazovat v příkazech LIST nebo NAMES"
 msgid "channel-name"
 msgstr "název-kanálu"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "Pouze pro kanál"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1054,22 @@ msgstr "Kanály"
 msgid "Channels on {networkName}"
 msgstr "Kanály na {networkName}"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "Vyberte jiný typ souboru. Úložiště souborů nepřijímá soubory {ext}."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "Vyberte jiný soubor. Úložiště souborů tento soubor odmítlo."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "Vyberte soubor do {limit}, což je maximum, které úložiště souborů přijímá."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "Vyberte soubor s příponou. Úložiště souborů nepřijímá soubory bez přípony."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "Vyberte předdefinovaný profil ochrany před floodem. Tyto profily poskytují vyvážená nastavení ochrany pro různé případy použití."
@@ -941,6 +1077,10 @@ msgstr "Vyberte předdefinovaný profil ochrany před floodem. Tyto profily posk
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "Zvolte bezpečné heslo"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "Vyberte menší soubor. Tento je pro úložiště souborů příliš velký."
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1147,6 @@ msgstr "Klikněte pro připojení k {channel}"
 msgid "Click to jump to message"
 msgstr "Klikněte pro přechod na zprávu"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "Klikněte pro nastavení tématu"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "klient"
@@ -1034,11 +1170,18 @@ msgstr "Limit klientů (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1127,6 +1270,19 @@ msgstr "Nakonfigurujte podrobná pravidla ochrany proti floodingu. Každé pravi
 msgid "Configure notification sounds and highlights"
 msgstr "Konfigurovat zvuky upozornění a zvýraznění"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "Potvrdit registraci"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "Potvrďte nové heslo"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "Potvrdit odebrání"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "Potvrdit?"
@@ -1135,6 +1291,18 @@ msgstr "Potvrdit?"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "Připojit"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "Připojte kameru, abyste mohli sdílet video"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "Připojte mikrofon, abyste mohli mluvit"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "Připojte se k serveru a spravujte nastavení operátora."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1453,14 @@ msgstr "Nepodařilo se včas určit polohu. Zkuste to znovu na místě s volněj
 msgid "Could not get your location."
 msgstr "Nepodařilo se zjistit vaši polohu."
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "Nepodařilo se načíst GIFy. Zkuste hledat znovu."
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "Nepodařilo se spojit se serverem pro soubory. Zkontrolujte připojení a zkuste to znovu."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Nepodařilo se navázat šifrování s {nick}."
@@ -1310,6 +1486,11 @@ msgstr "Vytvářejte a spravujte své pozvánkové odkazy"
 msgid "Create folder"
 msgstr "Vytvořit složku"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "Vytvořit balíček"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "Vytvořeno po (min. zpět)"
@@ -1318,9 +1499,18 @@ msgstr "Vytvořeno po (min. zpět)"
 msgid "Created Before (min ago)"
 msgstr "Vytvořeno před (min. zpět)"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "Vytváření…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "Aktuální avatar"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "Vlastní balíčky emoji"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1537,7 @@ msgid "Deafen"
 msgstr "Vypnout poslech"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "Odmítnout"
 
@@ -1402,6 +1593,14 @@ msgstr "Smazat zprávu"
 msgid "Delete network"
 msgstr "Smazat síť"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "Smazat balíček"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "Smazat balíček \"{packId}\"? Smažou se i všechna emoji v něm."
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete Private Chat"
 msgstr "Smazat soukromý chat"
@@ -1431,7 +1630,10 @@ msgstr "Degradovat na diváka"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Popis (volitelné, např. \"Beta testeři Q3\")"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "Popis (volitelné)"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1644,21 @@ msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup ke kameře.
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup k mikrofonu."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "Vypnout"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "Vypněte 2FA. Pro potvrzení zadejte 6místný kód z libovolné registrované autentizační aplikace."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Vypnout funkci Stisknout a mluvit"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "Vypnuto"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1715,7 @@ msgstr "Zobrazení"
 msgid "Display all server events in chat"
 msgstr "Zobrazit všechny události serveru v chatu"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1745,13 @@ msgstr "Chcete otevřít tento odkaz v nové záložce?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "hotovo"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "Hotovo"
 
@@ -1578,6 +1799,11 @@ msgstr "Upravit"
 msgid "Edit {0}"
 msgstr "Upravit {0}"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "Upravit kanál"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1837,14 @@ msgstr "Vložit"
 msgid "Emojis"
 msgstr "Emodži"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "Prázdný balíček. Přidejte nějaké emoji."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "Zapnout 2FA"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Povolit zvýraznění"
@@ -1638,6 +1872,10 @@ msgstr "Povolit upozornění"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "Zapnout funkci Stisknout a mluvit"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "Zapnuto"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1957,14 @@ msgstr "Šifrování s {nick} přestalo fungovat, takže zpráva nebyla odeslán
 msgid "End encryption"
 msgstr "Ukončit šifrování"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "Pro vypnutí 2FA zadejte 6místný kód z některé ze svých autentizačních aplikací."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "Zadejte název kanálu pro balíčky určené pro kanál."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Zadejte název účtu..."
@@ -1765,9 +2011,34 @@ msgstr "Zadejte skutečné jméno"
 msgid "Enter reason (optional)"
 msgstr "Zadejte důvod (volitelné)"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "Pro dokončení přihlášení jako {account} zadejte 6místný kód ze své autentizační aplikace."
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "Pro dokončení přihlášení zadejte 6místný kód ze své autentizační aplikace."
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Zadejte 6místný kód ze své autentizační aplikace."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "Zadejte 6místný kód z e-mailu."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "Zadejte název účtu, který chcete obnovit."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Zadejte uživatelské jméno pro pozvání"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "Zadejte název svého účtu. Pošleme 6místný kód pro obnovení na ověřenou adresu uloženou u účtu."
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1824,6 +2095,7 @@ msgstr "Rozšířený profil"
 msgid "External Link Warning"
 msgstr "Varování o externím odkazu"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "selhalo"
@@ -1889,6 +2161,18 @@ msgstr "Sbalit vše"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "Název složky"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "Z bezpečnostních důvodů byly všechny stávající relace tohoto účtu odhlášeny a stav serveru vázaný na účet byl vymazán. Pokud bylo zapnuto dvoufázové ověření, zůstává zapnuté, takže ho bude vyžadovat i další přihlášení."
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "Vzdát se"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "Zapomenuté heslo"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2437,7 @@ msgstr "IRC operátor"
 msgid "IRC operator password"
 msgstr "Heslo IRC operátora"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "Uživatelské jméno IRC operátora"
@@ -2295,6 +2580,15 @@ msgstr "Informovat ostatní, když píšete"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "Propojit identitu OAuth"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "Propojit s {0}"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "Živě"
@@ -2334,6 +2628,11 @@ msgstr "Načítám sítě z vašeho bounceru…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "Načítám data WHOIS..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "Načítání…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2675,26 @@ msgstr "Sundat ruku"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "Útoky man-in-the-middle na serverová připojení jsou možné"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "Spravovat boty"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "Spravovat boty (načítání {botsLoadingCount})"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "Spravovat balíčky"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "Spravujte balíčky emoji pro celou síť i pro jednotlivé kanály, které tento server zveřejňuje přes draft/EMOJI."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "Spravovat dvoufázové ověření"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2938,10 @@ msgstr "Ztlumit upozornění"
 msgid "Mute or unmute notification sounds"
 msgstr "Ztlumit nebo zapnout zvuky upozornění"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "Název (např. iPhone)"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2982,11 @@ msgstr "nová složka"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Nová přezdívka"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "Nové heslo"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3086,10 @@ msgstr "Žádný soubor nevybrán"
 msgid "No flood profile"
 msgstr "Žádný profil floodingu"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "Nebyly nalezeny žádné GIFy. Zkuste jiné hledání."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "není nastaven žádný host"
@@ -2789,6 +3121,10 @@ msgstr "žádná zpráva"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "Nebyl zjištěn žádný mikrofon."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "Zatím nejsou nastaveny žádné balíčky."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3195,10 @@ msgstr "Normální - standardní ochrana"
 msgid "Not encrypted"
 msgstr "Nešifrováno"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "Poznámka: server vrací stejnou odpověď bez ohledu na to, zda má účet ověřený e-mail, takže překlep se zde neohlásí. Pokud kód nedorazí do několika minut, zkontrolujte název účtu."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "Zvuk oznámení"
@@ -2866,6 +3206,10 @@ msgstr "Zvuk oznámení"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "Oznámení"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "Identita OAuth"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3241,10 @@ msgstr "offline"
 msgid "Offline"
 msgstr "Offline"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "OK"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "zap"
@@ -2920,6 +3268,7 @@ msgid "Only operators can change the channel topic"
 msgstr "Téma kanálu mohou měnit pouze operátoři"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Jsou podporovány pouze zabezpečené websocket připojení"
 
@@ -3027,6 +3376,10 @@ msgstr "Akce operátora"
 msgid "Optional crash reports to improve the app"
 msgstr "Volitelné zprávy o pádu pro zlepšení aplikace"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "Ostatní otevřené relace tohoto účtu budou v rámci změny odhlášeny. Nastavení dvoufázového ověření, pokud nějaké je, zůstane beze změny."
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR nešifruje soubory, odesláno tak, jak je"
@@ -3039,6 +3392,14 @@ msgstr "Výstup"
 msgid "Owner"
 msgstr "Vlastník"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id (např. team-mascots)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id a název jsou povinné."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Heslo"
@@ -3046,6 +3407,15 @@ msgstr "Heslo"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "Heslo nutné pro vstup do kanálu. Nechte prázdné pro odstranění klíče."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "Obnovení hesla dokončeno"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "Hesla se neshodují."
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3087,6 +3457,15 @@ msgstr "Trvalý"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Fotka"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "Zvolte heslo (3 a více znaků)."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "Zvolte název z jednoho slova (bez mezer)."
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3214,6 +3593,10 @@ msgstr "Zájmena"
 msgid "Protected Topic (+t)"
 msgstr "Chráněné téma (+t)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "Poskytovatel nevrátil žádný bearer token."
+
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "Otázky ohledně soukromí? Kontaktujte nás:"
@@ -3315,6 +3698,7 @@ msgstr "Opětovné připojení se nezdařilo"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Znovu připojit k serveru"
 
@@ -3367,6 +3751,10 @@ msgstr "Obnovit WHOIS"
 msgid "Register for an account"
 msgstr "Zaregistrovat účet"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "Registrované údaje"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Zamítnout"
@@ -3380,8 +3768,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "Uvolněný - méně agresivní ochrana"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "Odebrat"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "Odebrat \"{0}\"? Už ho nebudete moci používat jako druhý faktor."
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3462,7 +3857,6 @@ msgstr "Zkusit odeslat znovu"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "Vrátit se do kanálu"
 
@@ -3473,6 +3867,11 @@ msgstr "Zkontrolovat změněný klíč…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Zkontrolovat klíč"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "Otočit o 90°"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3929,10 @@ msgstr "Uloženo"
 msgid "Saving..."
 msgstr "Ukládám..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "Naskenujte tento QR kód svou autentizační aplikací a potvrďte 6místným kódem, který zobrazí."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Přejít v chatu na tuto odpověď"
@@ -3550,6 +3953,10 @@ msgstr "Hledat"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "Hledat boty"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "Hledat emoji..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3641,11 +4048,6 @@ msgstr "Vyberte nebo přidejte kanál pro začátek."
 msgid "self-registered"
 msgstr "samoregistrovaný"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "Odeslat"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4073,10 @@ msgstr "Odeslat zprávu"
 msgid "Send private message"
 msgstr "Odeslat soukromou zprávu"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "Odeslat kód pro obnovení"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "Odeslat tento soubor nešifrovaně?"
@@ -3687,6 +4093,10 @@ msgstr "Odeslat nešifrovaně"
 msgid "Sending"
 msgstr "Odesílání"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "Odesílání…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4106,14 @@ msgstr "server"
 msgid "Server"
 msgstr "Server"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "Kanály serveru"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "Server nehlásí podporu WebAuthn"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4157,16 @@ msgstr "Heslo serveru"
 msgid "Server Password (PASS)"
 msgstr "Heslo serveru (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "Server vrátil neplatnou výzvu WebAuthn."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Komunikace mezi servery může používat nešifrovaná připojení"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "Pro celý server"
 
@@ -3774,6 +4191,7 @@ msgstr "Relace {0}"
 msgid "Sessions"
 msgstr "Relace"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Nastavit téma…"
@@ -3791,6 +4209,10 @@ msgstr "nastaveno {0}"
 msgid "Set by:"
 msgstr "Nastaveno:"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "Nastavit nové heslo"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Nastavit se jako nepřítomný"
@@ -3807,6 +4229,11 @@ msgstr "Nastavení"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "Nastavení nenalezeno"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "Nastavování…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4259,21 @@ msgstr "Sdílet vaši polohu"
 msgid "Share your location with {target}."
 msgstr "Sdílet polohu s {target}."
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "Znovu sdílejte obrazovku a zkuste to znovu"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "ona/její"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "shortcode (např. partyparrot)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "Shortcode musí odpovídat [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3909,6 +4348,10 @@ msgstr "Zobrazuje veškerá externí média. Libovolná URL může způsobit po�
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Zobrazuje média z důvěryhodného file hostu vašeho serveru. Nejsou prováděny žádné požadavky na externí služby."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "Přihlaste se u poskytovatele a výslednou identitu navážeme na váš účet, aby SASL OAUTHBEARER / IRCV3BEARER fungoval při dalších připojeních."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4441,10 @@ msgstr "Stav"
 msgid "Status Messages"
 msgstr "Stavové zprávy"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "Stav:"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "Odstoupit z vysílání"
@@ -4023,6 +4470,7 @@ msgid "Stop video"
 msgstr "Vypnout video"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Stream"
 
@@ -4074,6 +4522,14 @@ msgstr "Vyjmout ze složky"
 msgid "Take photo"
 msgstr "Vyfotit"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "Pořídit fotku nebo video"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "Text"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Textový kanál"
@@ -4085,6 +4541,10 @@ msgstr "Toto zařízení není momentálně dostupné."
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "Tato obrazovka už tam není."
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "Server hovorů to odmítl. Zkuste to za chvíli znovu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4192,6 +4652,10 @@ msgstr "Tímto se síť odebere z vašeho soju bounceru. Chcete-li ji použít z
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Tento server nepodporuje rozšířená metadata profilu (rozšíření IRCv3 METADATA). Další pole jako avatar, zobrazované jméno a stav nejsou k dispozici."
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "Tento server nehlásí adresu backendu (draft/authtoken nebo obby.world/FILEHOST). Administrátorské koncové body nejsou dostupné."
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Tento server nepodporuje pozvánkové odkazy (capability<0>obby.world/invitation</0>není inzerována). Můžete normálně chatovat; tento panel je určen pro sítě poháněné obbyircd."
@@ -4213,6 +4677,11 @@ msgstr "Tímto se také zavře {0} navázaných sítí níže."
 msgid "This will also close the bound network below."
 msgstr "Tímto se také zavře navázaná síť níže."
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "Piškvorky proti {0}"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Čas (min)"
@@ -4229,6 +4698,10 @@ msgstr "vypršel čas"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "Otisk certifikátu TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4772,31 @@ msgstr "zkráceno"
 msgid "Trusted Sources"
 msgstr "Důvěryhodné zdroje"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "Zkuste nahrání znovu."
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "Zkuste nahrání znovu. Úložiště souborů vrátilo odpověď, které jsme nerozuměli."
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "Zapněte kameru a zkuste to znovu"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "Zapněte mikrofon a zkuste to znovu"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "Dvoufázové ověření"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "Vyžadováno dvoufázové ověření"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "Typ"
@@ -4352,13 +4850,25 @@ msgstr "Nahrajte obrázek nebo zadejte URL s volitelnou substitucí {size} pro d
 msgid "Upload Avatar"
 msgstr "Nahrát avatar"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "Nahrávání zrušeno."
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "Nahrát soubory"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "Nahráno"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "Nahrávám..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL musí být http(s):// nebo data:."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4417,6 +4927,7 @@ msgid "User Profile"
 msgstr "Profil uživatele"
 
 #: src/components/ui/UserSettings.tsx
+#: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "Nastavení uživatele"
 
@@ -4459,6 +4970,14 @@ msgstr "Je vyžadován platný port serveru"
 msgid "Verified account"
 msgstr "Ověřený účet"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "Ověřit"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "Ověřit kód"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "Ověřit šifrování"
@@ -4470,6 +4989,10 @@ msgstr "Ověřit otisk…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "Ověřit…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "Ověřování…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5055,7 @@ msgstr "Divák"
 msgid "Viewers ({0})"
 msgstr "Diváci ({0})"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Hlas"
@@ -4557,9 +5081,22 @@ msgstr "Hlasitost"
 msgid "Volume for {0}"
 msgstr "Hlasitost pro {0}"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "Čekání, až {0} přijme…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "Čekání na biometrický dotaz…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Čekání na první krok…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "Čekání na přihlášení…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4585,6 +5122,10 @@ msgstr "Sledujte nezpracovaný provoz IRC tohoto serveru"
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "Neukládáme vaši IRC komunikaci na našich serverech"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "WebAuthn není v tomto prostředí dostupný."
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5217,14 @@ msgstr "Chystáte se otevřít externí odkaz:"
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Jste IRC operátor"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "Na zvolení nového hesla máte několik minut."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "Nemáte registrované žádné údaje 2FA."
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"
