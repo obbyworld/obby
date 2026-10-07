@@ -229,6 +229,10 @@ msgstr "{sender} перезапустив шифрування, тому цю р
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} перезапустив шифрування. Ця розмова лишається незашифрованою, доки ви не погодитесь."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# крок} few {# кроки} many {# кроків} other {# кроку}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "клієнт {title}"
@@ -2976,6 +2980,10 @@ msgstr "Відкрити карту"
 msgid "Open network options"
 msgstr "Відкрити параметри мережі"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Відкрити процес"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Ім'я оператора"
@@ -3270,6 +3278,7 @@ msgstr "Причина"
 msgid "Reason (optional)"
 msgstr "Причина (необов'язково)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Міркування"
@@ -3405,10 +3414,6 @@ msgstr "Перейменувати цей канал на сервері. Усі
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Відображати Markdown-форматування у повідомленнях"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Знову відкрити робочий процес, який створив це повідомлення ({stepCount} кроків)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Почати запис"
 msgid "Start video"
 msgstr "Увімкнути відео"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Запуск робочого процесу…"
 
@@ -4107,10 +4112,6 @@ msgstr "Тема, яка відображатиметься для цього к
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Користувач отримає запрошення приєднатися до {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Робочий процес, який створив це повідомлення, більше не перебуває у стані"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Перемкнути пошук"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Завеликий для шифрування, надіслано без шифрування"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "інструмент"
@@ -4626,6 +4626,7 @@ msgstr "Широкий - ширша область захисту"
 msgid "Will default to 'no reason' if left empty"
 msgstr "За замовчуванням буде 'без причини', якщо залишити порожнім"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Робочий процес"
@@ -4643,10 +4644,6 @@ msgstr "Історія робочих процесів ({0}, {activeTotal} ак�
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Історія робочих процесів ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Виконується…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

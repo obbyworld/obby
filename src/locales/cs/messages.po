@@ -229,6 +229,10 @@ msgstr "{sender} restartoval šifrování, takže se tato konverzace nastavuje z
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} restartoval šifrování. Dokud to nepřijmete, zůstává tato konverzace nešifrovaná."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# krok} few {# kroky} many {# kroků} other {# kroků}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "klient {title}"
@@ -2976,6 +2980,10 @@ msgstr "Otevřít mapu"
 msgid "Open network options"
 msgstr "Otevřít možnosti sítě"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Otevřít workflow"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Jméno operátora"
@@ -3270,6 +3278,7 @@ msgstr "Důvod"
 msgid "Reason (optional)"
 msgstr "Důvod (volitelné)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Uvažování"
@@ -3405,10 +3414,6 @@ msgstr "Přejmenovat tento kanál na serveru. Nový název uvidí všichni uživ
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Zobrazovat Markdown formátování ve zprávách"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Znovu otevřít pracovní postup, který vytvořil tuto zprávu ({stepCount} kroků)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Spustit nahrávání"
 msgid "Start video"
 msgstr "Zapnout video"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Spouštění pracovního postupu…"
 
@@ -4107,10 +4112,6 @@ msgstr "Téma, které bude zobrazeno pro tento kanál. Téma mohou vidět všich
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Pracovní postup, který vytvořil tuto zprávu, již není ve stavu"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Přepnout hledání"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Příliš velké pro šifrování, odesláno nešifrovaně"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "nástroj"
@@ -4626,6 +4626,7 @@ msgstr "Široký - širší rozsah ochrany"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Výchozí bude 'bez důvodu', pokud ponecháte prázdné"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Pracovní postup"
@@ -4643,10 +4644,6 @@ msgstr "Historie pracovních postupů ({0}, {activeTotal} aktivních)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Historie pracovních postupů ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Pracuji…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

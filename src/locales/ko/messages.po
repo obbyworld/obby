@@ -229,6 +229,10 @@ msgstr "{sender}님이 암호화를 다시 시작해서 이 대화를 다시 설
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender}님이 암호화를 다시 시작했습니다. 수락하기 전까지 이 대화는 암호화되지 않습니다."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, other {# 단계}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} 클라이언트"
@@ -2976,6 +2980,10 @@ msgstr "지도 열기"
 msgid "Open network options"
 msgstr "네트워크 옵션 열기"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "워크플로 열기"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper 이름"
@@ -3270,6 +3278,7 @@ msgstr "사유"
 msgid "Reason (optional)"
 msgstr "사유 (선택 사항)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "추론"
@@ -3405,10 +3414,6 @@ msgstr "서버에서 이 채널의 이름을 변경합니다. 모든 사용자�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "메시지에서 마크다운 서식 렌더링"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "이 메시지를 생성한 워크플로 다시 열기 ({stepCount}단계)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "녹화 시작"
 msgid "Start video"
 msgstr "비디오 시작"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "워크플로 시작 중…"
 
@@ -4107,10 +4112,6 @@ msgstr "이 채널에 표시될 주제입니다. 모든 사용자가 주제를 �
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "사용자가 {channelName} 참여 초대를 받게 됩니다."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "이 메시지를 생성한 워크플로가 더 이상 상태에 없습니다"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "검색 전환"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "암호화하기에 너무 커서 암호화하지 않고 전송됨"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "도구"
@@ -4626,6 +4626,7 @@ msgstr "광역 - 더 넓은 보호 범위"
 msgid "Will default to 'no reason' if left empty"
 msgstr "비워두면 기본값인 '사유 없음'이 사용됩니다"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "워크플로우"
@@ -4643,10 +4644,6 @@ msgstr "워크플로우 기록 ({0}, {activeTotal}개 활성)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "워크플로 기록 ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "작업 중…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

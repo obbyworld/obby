@@ -229,6 +229,10 @@ msgstr "{sender} 重新启动了加密，因此正在重新建立这个对话。
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} 重新启动了加密。在你接受之前，这个对话不会加密。"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, other {# 个步骤}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} 客户端"
@@ -2976,6 +2980,10 @@ msgstr "打开地图"
 msgid "Open network options"
 msgstr "打开网络选项"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "打开工作流"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper 用户名"
@@ -3270,6 +3278,7 @@ msgstr "原因"
 msgid "Reason (optional)"
 msgstr "原因（可选）"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "推理"
@@ -3405,10 +3414,6 @@ msgstr "在服务器上重命名此频道，所有用户都会看到新名称。
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "在消息中渲染 Markdown 格式"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "重新打开生成此消息的工作流（{stepCount} 个步骤）"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "开始录制"
 msgid "Start video"
 msgstr "开启视频"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "正在启动工作流…"
 
@@ -4107,10 +4112,6 @@ msgstr "此频道显示的主题，所有用户均可查看。"
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "用户将收到加入 {channelName} 的邀请。"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "生成此消息的工作流已不在状态中"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "切换搜索"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "文件过大无法加密，已未加密发送"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "工具"
@@ -4626,6 +4626,7 @@ msgstr "宽泛 – 更广的保护范围"
 msgid "Will default to 'no reason' if left empty"
 msgstr "留空将默认显示\"无原因\""
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "工作流"
@@ -4643,10 +4644,6 @@ msgstr "工作流历史（{0}，{activeTotal} 个活跃）"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "工作流历史（{0}）"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "处理中…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

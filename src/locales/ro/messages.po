@@ -229,6 +229,10 @@ msgstr "{sender} a repornit criptarea, așa că această conversație se configu
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} a repornit criptarea. Această conversație rămâne necriptată până când accepți."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# pas} few {# pași} other {# de pași}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "client {title}"
@@ -2976,6 +2980,10 @@ msgstr "Deschide harta"
 msgid "Open network options"
 msgstr "Deschide opțiunile de rețea"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Deschide fluxul de lucru"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Nume oper"
@@ -3270,6 +3278,7 @@ msgstr "Motiv"
 msgid "Reason (optional)"
 msgstr "Motiv (opțional)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Raționament"
@@ -3405,10 +3414,6 @@ msgstr "Redenumiți acest canal pe server. Toți utilizatorii vor vedea noul num
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Afișați formatarea Markdown în mesaje"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Redeschide fluxul de lucru care a produs acest mesaj ({stepCount} pași)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Începe înregistrarea"
 msgid "Start video"
 msgstr "Pornește camera video"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Se pornește fluxul de lucru…"
 
@@ -4107,10 +4112,6 @@ msgstr "Subiectul afișat pentru acest canal. Toți utilizatorii îl pot vedea."
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Fluxul de lucru care a produs acest mesaj nu mai este în stare"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Comută căutarea"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Prea mare pentru criptare, trimis necriptat"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "instrument"
@@ -4626,6 +4626,7 @@ msgstr "Larg – Domeniu de protecție mai amplu"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Va fi implicit „niciun motiv\" dacă este lăsat gol"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Flux de lucru"
@@ -4643,10 +4644,6 @@ msgstr "Istoric flux de lucru ({0}, {activeTotal} active)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Istoric fluxuri de lucru ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Se lucrează…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

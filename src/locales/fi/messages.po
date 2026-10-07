@@ -229,6 +229,10 @@ msgstr "{sender} käynnisti salauksen uudelleen, joten tätä keskustelua määr
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} käynnisti salauksen uudelleen. Tämä keskustelu pysyy salaamattomana, kunnes hyväksyt sen."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# vaihe} other {# vaihetta}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} asiakasohjelma"
@@ -2976,6 +2980,10 @@ msgstr "Avaa kartta"
 msgid "Open network options"
 msgstr "Avaa verkon asetukset"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Avaa työnkulku"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper-nimi"
@@ -3270,6 +3278,7 @@ msgstr "Syy"
 msgid "Reason (optional)"
 msgstr "Syy (valinnainen)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Päättely"
@@ -3405,10 +3414,6 @@ msgstr "Nimeä tämä kanava uudelleen palvelimella. Kaikki käyttäjät näkev�
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Näytä Markdown-muotoilu viesteissä"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Avaa uudelleen työnkulku, joka tuotti tämän viestin ({stepCount} vaihetta)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Aloita tallennus"
 msgid "Start video"
 msgstr "Käynnistä video"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Käynnistetään työnkulkua…"
 
@@ -4107,10 +4112,6 @@ msgstr "Aihe, joka näytetään tälle kanavalle. Kaikki käyttäjät voivat nä
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Tämän viestin tuottanut työnkulku ei ole enää tilassa"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Näytä/piilota haku"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Liian suuri salattavaksi, lähetettiin salaamattomana"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "työkalu"
@@ -4626,6 +4626,7 @@ msgstr "Laaja – laajempi suojauslaajuus"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Oletusarvo on 'ei syytä', jos jätetään tyhjäksi"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Työnkulku"
@@ -4643,10 +4644,6 @@ msgstr "Työnkulkuhistoria ({0}, {activeTotal} aktiivista)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Työnkulkuhistoria ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Työstetään…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

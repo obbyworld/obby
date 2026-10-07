@@ -229,6 +229,10 @@ msgstr "{sender} şifrelemeyi yeniden başlattı, bu yüzden bu sohbet yeniden k
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} şifrelemeyi yeniden başlattı. Siz kabul edene kadar bu sohbet şifresiz kalıyor."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# adım} other {# adım}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} istemcisi"
@@ -2976,6 +2980,10 @@ msgstr "Haritayı aç"
 msgid "Open network options"
 msgstr "Ağ seçeneklerini aç"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "İş akışını aç"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper Adı"
@@ -3270,6 +3278,7 @@ msgstr "Neden"
 msgid "Reason (optional)"
 msgstr "Neden (isteğe bağlı)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Akıl yürütme"
@@ -3405,10 +3414,6 @@ msgstr "Bu kanalı sunucuda yeniden adlandır. Tüm kullanıcılar yeni adı gö
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Mesajlarda markdown biçimlendirmesini işle"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Bu mesajı oluşturan iş akışını yeniden aç ({stepCount} adım)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Kaydı başlat"
 msgid "Start video"
 msgstr "Videoyu başlat"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "İş akışı başlatılıyor…"
 
@@ -4107,10 +4112,6 @@ msgstr "Bu kanal için görüntülenecek konu. Tüm kullanıcılar konuyu göreb
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Bu mesajı oluşturan iş akışı artık durumda değil"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Aramayı aç/kapat"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Şifrelenemeyecek kadar büyük, şifresiz gönderildi"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "araç"
@@ -4626,6 +4626,7 @@ msgstr "Geniş - Daha kapsamlı koruma alanı"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Boş bırakılırsa varsayılan olarak 'neden yok' kullanılır"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "İş akışı"
@@ -4643,10 +4644,6 @@ msgstr "İş akışı geçmişi ({0}, {activeTotal} aktif)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "İş akışı geçmişi ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Çalışıyor…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

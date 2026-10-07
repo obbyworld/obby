@@ -5,6 +5,7 @@ import { FaLock, FaLockOpen } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { workflowIdFromTags } from "../../lib/botTools";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
 import { decodeMediaDescriptor } from "../../lib/e2ee/media";
@@ -42,8 +43,6 @@ import MessageReaderSheet from "../mobile/MessageReaderSheet";
 import HoverTooltip from "../ui/HoverTooltip";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 import { BotInvocationChip } from "./BotInvocationChip";
-import { BotToolsMessagePill } from "./BotToolsMessagePill";
-import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
 import EncryptedMediaPreview from "./EncryptedMediaPreview";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -63,6 +62,7 @@ import {
 } from "./index";
 import { MediaPreview } from "./MediaPreview";
 import { MessageStatusIndicator } from "./MessageStatusIndicator";
+import WorkflowLine from "./WorkflowLine";
 
 interface MessageItemProps {
   message: MessageType;
@@ -413,6 +413,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
   // We label only plaintext messages, and lead with the real host because the linked page supplies the title.
   const isEncrypted = isFromEncryptedSession(message) || !!encryptedMedia;
+  const workflowId = useMemo(
+    () => message.botToolsWorkflowId ?? workflowIdFromTags(message.tags),
+    [message.botToolsWorkflowId, message.tags],
+  );
   const linkLabels = useMemo<LinkLabels | undefined>(() => {
     if (!message.linkPreviewTitle || isEncrypted) return undefined;
     const url = findFirstUrl(stripIrcFormatting(message.content));
@@ -913,10 +917,6 @@ export const MessageItem = memo((props: MessageItemProps) => {
                   onRenderFailed={handleRenderFailed}
                 />
               ) : (
-                // The workflow pill is absolutely positioned in the
-                // avatar gutter to the LEFT of the body, so the body
-                // stays at its natural alignment and isn't pushed
-                // sideways by the pill's width.
                 <div
                   className="relative"
                   style={{
@@ -925,23 +925,14 @@ export const MessageItem = memo((props: MessageItemProps) => {
                     wordBreak: "break-word",
                   }}
                 >
-                  <span
-                    className="absolute top-[5px] z-10"
-                    style={{ right: "100%", marginRight: "4px" }}
-                  >
-                    <BotToolsMessagePill
+                  {workflowId && (
+                    <WorkflowLine
                       serverId={message.serverId}
-                      tags={message.tags}
+                      workflowId={workflowId}
+                      isPending={!!message.botToolsPending}
                     />
-                  </span>
-                  {message.botToolsPending && message.botToolsWorkflowId ? (
-                    <BotToolsPlaceholderBody
-                      serverId={message.serverId}
-                      workflowId={message.botToolsWorkflowId}
-                    />
-                  ) : (
-                    collapsibleContent
                   )}
+                  {!message.botToolsPending && collapsibleContent}
                 </div>
               )}
             </EnhancedLinkWrapper>

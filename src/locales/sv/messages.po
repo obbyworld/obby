@@ -229,6 +229,10 @@ msgstr "{sender} startade om krypteringen, så den här konversationen sätts up
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} startade om krypteringen. Den här konversationen förblir okrypterad tills du godkänner."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# steg} other {# steg}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} klient"
@@ -2976,6 +2980,10 @@ msgstr "Öppna kartan"
 msgid "Open network options"
 msgstr "Öppna nätverksalternativ"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Öppna arbetsflöde"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper-namn"
@@ -3270,6 +3278,7 @@ msgstr "Anledning"
 msgid "Reason (optional)"
 msgstr "Anledning (valfritt)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Resonemang"
@@ -3405,10 +3414,6 @@ msgstr "Byt namn på den här kanalen på servern. Alla användare ser det nya n
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Rendera markdown-formatering i meddelanden"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Öppna arbetsflödet som skapade detta meddelande igen ({stepCount} steg)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3969,7 +3974,7 @@ msgstr "Starta inspelning"
 msgid "Start video"
 msgstr "Starta video"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Startar arbetsflöde…"
 
@@ -4107,10 +4112,6 @@ msgstr "Ämnet som visas för den här kanalen. Alla användare kan se ämnet."
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Användaren får en inbjudan att gå med i {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "Arbetsflödet som skapade detta meddelande finns inte längre i tillståndet"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4255,7 +4256,6 @@ msgstr "Växla sökning"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "För stor för att kryptera, skickad okrypterat"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "verktyg"
@@ -4626,6 +4626,7 @@ msgstr "Brett – bredare skyddsomfång"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Standardvärdet är 'ingen anledning' om det lämnas tomt"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Arbetsflöde"
@@ -4643,10 +4644,6 @@ msgstr "Arbetsflödeshistorik ({0}, {activeTotal} aktiva)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Arbetsflödeshistorik ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Arbetar…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"

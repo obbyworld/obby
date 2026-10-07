@@ -141,6 +141,17 @@ const ACTION_TYPES: ReadonlySet<AiActionType> = new Set([
 // Returns null on any decode/parse failure or schema mismatch rather than
 // throwing, per spec §Security: malformed or oversized payloads are silently
 // discarded.
+/** The workflow a bot message belongs to, read from its bot-tools tag. */
+export function workflowIdFromTags(
+  tags: Record<string, string> | undefined,
+): string | undefined {
+  const raw = tags?.[BOT_TOOLS_TAG];
+  const decoded = raw ? decodeBotToolsValue(raw) : null;
+  if (decoded?.msg === "workflow") return decoded.id;
+  if (decoded?.msg === "step") return decoded.wid;
+  return undefined;
+}
+
 export function decodeBotToolsValue(raw: string): BotToolsMessage | null {
   if (!raw) return null;
   let parsed: unknown;

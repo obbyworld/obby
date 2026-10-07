@@ -228,6 +228,10 @@ msgstr "{sender} restarted encryption, so this conversation is being set up agai
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 
+#: src/components/message/WorkflowLine.tsx
+msgid "{stepCount, plural, one {# step} other {# steps}}"
+msgstr "{stepCount, plural, one {# step} other {# steps}}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} Client"
@@ -2975,6 +2979,10 @@ msgstr "Open map"
 msgid "Open network options"
 msgstr "Open network options"
 
+#: src/components/message/WorkflowLine.tsx
+msgid "Open workflow"
+msgstr "Open workflow"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper Name"
@@ -3269,6 +3277,7 @@ msgstr "Reason"
 msgid "Reason (optional)"
 msgstr "Reason (optional)"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Reasoning"
@@ -3404,10 +3413,6 @@ msgstr "Rename this channel on the server. All users will see the new name."
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
 msgstr "Render markdown formatting in messages"
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "Reopen the workflow that produced this message ({stepCount} steps)"
-msgstr "Reopen the workflow that produced this message ({stepCount} steps)"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -3968,7 +3973,7 @@ msgstr "Start recording"
 msgid "Start video"
 msgstr "Start video"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
+#: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Starting workflow…"
 
@@ -4106,10 +4111,6 @@ msgstr "The topic that will be displayed for this channel. All users can see the
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "The user will receive an invitation to join {channelName}."
-
-#: src/components/message/BotToolsMessagePill.tsx
-msgid "The workflow that produced this message is no longer in state"
-msgstr "The workflow that produced this message is no longer in state"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
@@ -4254,7 +4255,6 @@ msgstr "Toggle search"
 msgid "Too large to encrypt, sent unencrypted"
 msgstr "Too large to encrypt, sent unencrypted"
 
-#: src/components/message/BotToolsPlaceholderBody.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "tool"
@@ -4625,6 +4625,7 @@ msgstr "Wide - Broader protection scope"
 msgid "Will default to 'no reason' if left empty"
 msgstr "Will default to 'no reason' if left empty"
 
+#: src/components/message/WorkflowLine.tsx
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow"
 msgstr "Workflow"
@@ -4642,10 +4643,6 @@ msgstr "Workflow history ({0}, {activeTotal} active)"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "Workflow history ({0})"
 msgstr "Workflow history ({0})"
-
-#: src/components/message/BotToolsPlaceholderBody.tsx
-msgid "Working…"
-msgstr "Working…"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
