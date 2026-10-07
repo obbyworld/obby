@@ -622,9 +622,9 @@ msgstr "Аватар"
 msgid "Avatar preview"
 msgstr "Предпросмотр аватара"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Отсутствую"
@@ -1256,6 +1256,10 @@ msgstr "Копировать JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Копировать ссылку"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Скопировать ник"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Отметить себя как отошедшего"
 msgid "Mark yourself as back"
 msgstr "Отметить себя как вернувшегося"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Отметить себя вернувшимся"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Макс. пользователей"
@@ -2884,9 +2892,9 @@ msgstr "Выкл."
 msgid "offline"
 msgstr "не в сети"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Не в сети"
@@ -2899,9 +2907,9 @@ msgstr "вкл"
 msgid "one of:"
 msgstr "один из:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "В сети"
 
@@ -2979,6 +2987,10 @@ msgstr "Открыть карту"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Открыть параметры сети"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Открыть настройки"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "установил {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Установлено:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Отметить себя отошедшим"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "ты"
 msgid "You are about to open an external link:"
 msgstr "Вы собираетесь открыть внешнюю ссылку:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Вы являетесь IRC-оператором"

@@ -216,8 +216,8 @@ describe("App", () => {
       );
       const user = userEvent.setup();
 
-      // Open settings
-      await user.click(screen.getByTestId("user-settings-button"));
+      await user.click(screen.getByTestId("user-panel-button"));
+      await user.click(screen.getByRole("menuitem", { name: /Open settings/ }));
 
       // Check that toggleSettingsModal was called
       expect(mockStoreState.toggleSettingsModal).toHaveBeenCalledWith(true);

@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Previzualizare avatar"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Absent"
@@ -1256,6 +1256,10 @@ msgstr "Copiați JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Copiază linkul"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Copiază porecla"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Marchează-te ca absent"
 msgid "Mark yourself as back"
 msgstr "Marchează-te ca revenit"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Marchează-te ca revenit"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Utilizatori max."
@@ -2884,9 +2892,9 @@ msgstr "Oprit"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Deconectat"
@@ -2899,9 +2907,9 @@ msgstr "activ"
 msgid "one of:"
 msgstr "unul dintre:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Conectat"
 
@@ -2979,6 +2987,10 @@ msgstr "Deschide harta"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Deschide opțiunile de rețea"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Deschide setările"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "setat de {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Setat de:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Setează-te ca absent"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Tu"
 msgid "You are about to open an external link:"
 msgstr "Ești pe cale să deschizi un link extern:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Ești un Operator IRC"

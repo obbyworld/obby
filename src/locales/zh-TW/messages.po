@@ -622,9 +622,9 @@ msgstr "头像"
 msgid "Avatar preview"
 msgstr "头像预览"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "离开"
@@ -1256,6 +1256,10 @@ msgstr "複製 JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "複製連結"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "複製暱稱"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "將自己標記為離開"
 msgid "Mark yourself as back"
 msgstr "將自己標記為回來"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "標記為已回來"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "最多使用者數"
@@ -2884,9 +2892,9 @@ msgstr "关"
 msgid "offline"
 msgstr "離線"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "离线"
@@ -2899,9 +2907,9 @@ msgstr "開啟"
 msgid "one of:"
 msgstr "其中之一："
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "在线"
 
@@ -2979,6 +2987,10 @@ msgstr "開啟地圖"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "開啟網路選項"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "開啟設定"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "由 {0} 設定"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "設定者："
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "設為離開"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "您"
 msgid "You are about to open an external link:"
 msgstr "您即将打开一个外部链接："
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "您是 IRC Operator"

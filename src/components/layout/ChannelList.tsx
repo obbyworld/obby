@@ -13,7 +13,6 @@ import {
   FaArrowUp,
   FaChevronDown,
   FaChevronRight,
-  FaCog,
   FaCommentDots,
   FaCrown,
   FaGripVertical,
@@ -58,6 +57,7 @@ import ChannelRow, { type DragRowProps } from "./ChannelRow";
 import ConnectionStrip from "./ConnectionStrip";
 import NetworkMenu from "./NetworkMenu";
 import PrivateChatRow from "./PrivateChatRow";
+import UserPanel, { type PresenceStatus } from "./UserPanel";
 
 export const ChannelList: React.FC = () => {
   const {
@@ -178,17 +178,6 @@ export const ChannelList: React.FC = () => {
   } | null>(null);
   const [isAddPrivateChatModalOpen, setIsAddPrivateChatModalOpen] =
     useState(false);
-  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
-  // During-render reset: when user or server changes, the avatar key changes and
-  // any previous load failure is no longer relevant to the new avatar.
-  const prevAvatarKeyRef = useRef(
-    `${currentUser?.username}-${selectedServerId}`,
-  );
-  const currentAvatarKey = `${currentUser?.username}-${selectedServerId}`;
-  if (prevAvatarKeyRef.current !== currentAvatarKey) {
-    prevAvatarKeyRef.current = currentAvatarKey;
-    setAvatarLoadFailed(false);
-  }
   const [clickedPM, setClickedPM] = useState<string | null>(null);
   const lastSelectedPM = useRef<string | null>(null);
 
@@ -210,7 +199,7 @@ export const ChannelList: React.FC = () => {
   });
 
   // Get user status based on server connection and away status
-  const userStatus = useMemo(() => {
+  const userStatus = useMemo((): PresenceStatus => {
     if (!selectedServer?.isConnected) {
       return "offline";
     }
@@ -715,78 +704,23 @@ export const ChannelList: React.FC = () => {
           </>
         )}
       </div>
-      <div className="mt-auto mb-2 px-2">
-        <div
-          className={`h-11 rounded-md flex items-center justify-between group cursor-pointer max-w-full transition-all duration-200 ease-in-out shadow-sm bg-discord-dark-400/50 ${hoverPrimary}`}
-          onClick={() => toggleSettingsModal(true)}
-        >
-          <div className="flex items-center gap-2 ml-2 flex-1 min-w-0">
-            <div className="relative flex-shrink-0">
-              <div className="w-8 h-8 rounded-full bg-discord-dark-100 flex items-center justify-center">
-                {(() => {
-                  const avatarUrl = currentUser?.metadata?.avatar?.value;
-                  const selectedServer = servers.find(
-                    (s) => s.id === selectedServerId,
-                  );
-                  const shouldShowAvatar =
-                    canShowAvatarUrl(
-                      avatarUrl,
-                      serverFilehosts(selectedServer),
-                      mediaSettings,
-                    ) && !avatarLoadFailed;
-
-                  return shouldShowAvatar ? (
-                    <img
-                      src={avatarUrl}
-                      alt={currentUser?.username}
-                      className="w-8 h-8 rounded-full object-cover"
-                      onError={() => {
-                        setAvatarLoadFailed(true);
-                      }}
-                    />
-                  ) : (
-                    <span className="text-white">
-                      {currentUser?.username?.charAt(0)?.toUpperCase()}
-                    </span>
-                  );
-                })()}
-              </div>
-              <div
-                className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-discord-dark-400 ${userStatus === "online" ? "bg-discord-green" : userStatus === "away" ? "bg-discord-yellow" : "bg-discord-dark-500"}`}
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-discord-channels-active font-medium text-sm truncate flex items-center gap-1">
-                <span>{currentUser?.username || "User"}</span>
-                {isIrcOp && (
-                  <span
-                    className="bg-blue-600 text-white px-1 py-0.5 rounded text-xs font-bold flex-shrink-0"
-                    title={t`You are an IRC Operator`}
-                  >
-                    🔑
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-discord-channels-default truncate">
-                {userStatus === "online"
-                  ? t`Online`
-                  : userStatus === "away"
-                    ? selectedServer?.awayMessage || t`Away`
-                    : t`Offline`}
-              </div>
-            </div>
-          </div>
-          <div className="ml-auto flex gap-2 text-discord-dark-500 flex-shrink-0">
-            <button
-              className="hover:text-white"
-              data-testid="user-settings-button"
-              onClick={() => toggleSettingsModal(true)}
-            >
-              <FaCog className="mr-2" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <UserPanel
+        serverId={selectedServerId}
+        username={currentUser?.username || "User"}
+        avatarUrl={
+          canShowAvatarUrl(
+            currentUser?.metadata?.avatar?.value,
+            serverFilehosts(selectedServer),
+            mediaSettings,
+          )
+            ? currentUser?.metadata?.avatar?.value
+            : undefined
+        }
+        status={userStatus}
+        awayMessage={selectedServer?.awayMessage}
+        isIrcOp={isIrcOp}
+        onOpenSettings={() => toggleSettingsModal(true)}
+      />
       {selectedServerId && (
         <>
           <AddPrivateChatModal

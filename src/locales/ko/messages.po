@@ -622,9 +622,9 @@ msgstr "아바타"
 msgid "Avatar preview"
 msgstr "아바타 미리보기"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "자리 비움"
@@ -1256,6 +1256,10 @@ msgstr "JSON 복사"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "링크 복사"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "닉네임 복사"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "자리 비움으로 표시"
 msgid "Mark yourself as back"
 msgstr "돌아옴으로 표시"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "복귀로 표시"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "최대 사용자 수"
@@ -2884,9 +2892,9 @@ msgstr "끄기"
 msgid "offline"
 msgstr "오프라인"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "오프라인"
@@ -2899,9 +2907,9 @@ msgstr "켜기"
 msgid "one of:"
 msgstr "다음 중 하나:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "온라인"
 
@@ -2979,6 +2987,10 @@ msgstr "지도 열기"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "네트워크 옵션 열기"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "설정 열기"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "{0}이(가) 설정"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "설정자:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "자리 비움으로 설정"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "나"
 msgid "You are about to open an external link:"
 msgstr "외부 링크를 열려고 합니다:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "당신은 IRC Operator입니다"

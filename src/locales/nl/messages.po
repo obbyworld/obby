@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Avatarvoorbeeldweergave"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Afwezig"
@@ -1256,6 +1256,10 @@ msgstr "Kopieer JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Link kopiëren"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Bijnaam kopiëren"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Markeer jezelf als afwezig"
 msgid "Mark yourself as back"
 msgstr "Markeer jezelf als terug"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Markeer jezelf als terug"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Max. gebruikers"
@@ -2884,9 +2892,9 @@ msgstr "Uit"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2899,9 +2907,9 @@ msgstr "aan"
 msgid "one of:"
 msgstr "een van:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2979,6 +2987,10 @@ msgstr "Kaart openen"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Netwerkopties openen"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Instellingen openen"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "ingesteld door {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Ingesteld door:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Zet jezelf op afwezig"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Jij"
 msgid "You are about to open an external link:"
 msgstr "Je staat op het punt een externe link te openen:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Je bent een IRC Operator"

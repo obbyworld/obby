@@ -622,9 +622,9 @@ msgstr "Аватар"
 msgid "Avatar preview"
 msgstr "Попередній перегляд аватара"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Відсутній"
@@ -1256,6 +1256,10 @@ msgstr "Скопіювати JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Копіювати посилання"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Скопіювати нік"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Позначити себе як відсутнього"
 msgid "Mark yourself as back"
 msgstr "Позначити себе як повернувся"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Позначити себе як повернувся"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Макс. користувачів"
@@ -2884,9 +2892,9 @@ msgstr "Вимк"
 msgid "offline"
 msgstr "не в мережі"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Офлайн"
@@ -2899,9 +2907,9 @@ msgstr "увімк"
 msgid "one of:"
 msgstr "один з:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Онлайн"
 
@@ -2979,6 +2987,10 @@ msgstr "Відкрити карту"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Відкрити параметри мережі"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Відкрити налаштування"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "встановлено {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Встановлено:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Позначити себе як відсутнього"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Ви"
 msgid "You are about to open an external link:"
 msgstr "Ви збираєтеся відкрити зовнішнє посилання:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Ви є IRC-оператором"

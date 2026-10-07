@@ -2552,7 +2552,7 @@ export const ChatArea: React.FC<{
                 <div className="relative flex flex-nowrap items-end pr-2">
                   <button
                     ref={plusButtonRef}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+                    className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
                     onClick={() => setShowPlusMenu((prev) => !prev)}
                   >
                     <FaPlus />
@@ -2594,7 +2594,7 @@ export const ChatArea: React.FC<{
                         ? "enter"
                         : "send"
                     }
-                    className="min-w-0 flex-1 resize-none overflow-y-auto border-none bg-transparent py-[11px] leading-[22px] text-discord-text-normal outline-none placeholder:truncate"
+                    className="min-w-0 flex-1 resize-none overflow-y-auto border-none bg-transparent py-[15px] leading-[22px] text-discord-text-normal outline-none placeholder:truncate"
                     style={previewStyle}
                     rows={1}
                   />

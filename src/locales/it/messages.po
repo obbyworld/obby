@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Anteprima avatar"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Assente"
@@ -1256,6 +1256,10 @@ msgstr "Copia JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Copia link"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Copia nickname"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Segnati come assente"
 msgid "Mark yourself as back"
 msgstr "Segnati come tornato"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Segnati di nuovo presente"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Utenti max."
@@ -2884,9 +2892,9 @@ msgstr "Disattivato"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Non in linea"
@@ -2899,9 +2907,9 @@ msgstr "attivo"
 msgid "one of:"
 msgstr "uno di:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "In linea"
 
@@ -2979,6 +2987,10 @@ msgstr "Apri mappa"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Apri opzioni di rete"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Apri impostazioni"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "impostato da {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Impostato da:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Segnati come assente"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Tu"
 msgid "You are about to open an external link:"
 msgstr "Stai per aprire un link esterno:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Sei un IRC Operator"

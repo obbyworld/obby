@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Avatarin esikatselu"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Poissa"
@@ -1256,6 +1256,10 @@ msgstr "Kopioi JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Kopioi linkki"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Kopioi nimimerkki"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Merkitse itsesi poissaolevaksi"
 msgid "Mark yourself as back"
 msgstr "Merkitse itsesi palanneeksi"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Merkitse itsesi takaisin"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Enimmäiskäyttäjämäärä"
@@ -2884,9 +2892,9 @@ msgstr "Pois"
 msgid "offline"
 msgstr "ei verkossa"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Poissa verkosta"
@@ -2899,9 +2907,9 @@ msgstr "päälle"
 msgid "one of:"
 msgstr "yksi seuraavista:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Verkossa"
 
@@ -2979,6 +2987,10 @@ msgstr "Avaa kartta"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Avaa verkon asetukset"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Avaa asetukset"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "asettaja: {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Asettanut:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Merkitse itsesi poissaolevaksi"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Sinä"
 msgid "You are about to open an external link:"
 msgstr "Olet avaamassa ulkoista linkkiä:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Olet IRC-operaattori"

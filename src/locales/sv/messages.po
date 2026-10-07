@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Förhandsvisning av avatar"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Borta"
@@ -1256,6 +1256,10 @@ msgstr "Kopiera JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Kopiera länk"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Kopiera smeknamn"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Markera dig själv som borta"
 msgid "Mark yourself as back"
 msgstr "Markera dig själv som tillbaka"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Markera dig som tillbaka"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Max användare"
@@ -2884,9 +2892,9 @@ msgstr "Av"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2899,9 +2907,9 @@ msgstr "på"
 msgid "one of:"
 msgstr "en av:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2979,6 +2987,10 @@ msgstr "Öppna kartan"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Öppna nätverksalternativ"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Öppna inställningar"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "angett av {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Satt av:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Ange dig som borta"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Du"
 msgid "You are about to open an external link:"
 msgstr "Du håller på att öppna en extern länk:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Du är en IRC-operatör"

@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Avatar önizlemesi"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Uzakta"
@@ -1256,6 +1256,10 @@ msgstr "JSON kopyala"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Bağlantıyı kopyala"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Takma adı kopyala"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Kendinizi uzakta olarak işaretleyin"
 msgid "Mark yourself as back"
 msgstr "Kendinizi geri dönmüş olarak işaretleyin"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Döndüğünü işaretle"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Maks. Kullanıcı"
@@ -2884,9 +2892,9 @@ msgstr "Kapalı"
 msgid "offline"
 msgstr "çevrimdışı"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Çevrimdışı"
@@ -2899,9 +2907,9 @@ msgstr "açık"
 msgid "one of:"
 msgstr "şunlardan biri:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Çevrimiçi"
 
@@ -2979,6 +2987,10 @@ msgstr "Haritayı aç"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Ağ seçeneklerini aç"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Ayarları aç"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "{0} tarafından ayarlandı"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Ayarlayan:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Kendini uzakta olarak ayarla"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Siz"
 msgid "You are about to open an external link:"
 msgstr "Harici bir bağlantı açmak üzeresiniz:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "IRC Operatörüsünüz"

@@ -30,14 +30,14 @@ export function InputToolbar({
       {!hideEmoji && (
         <button
           aria-label={t`Insert emoji`}
-          className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+          className="flex h-[52px] w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
           onClick={onEmojiClick}
         >
           <FaGrinAlt />
         </button>
       )}
       <button
-        className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+        className="flex h-[52px] w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onColorPickerClick}
       >
         <div
@@ -51,7 +51,7 @@ export function InputToolbar({
         />
       </button>
       <button
-        className="flex h-11 w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+        className="flex h-[52px] w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onAtClick}
       >
         <FaAt />

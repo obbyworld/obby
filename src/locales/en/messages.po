@@ -621,9 +621,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Avatar preview"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Away"
@@ -1255,6 +1255,10 @@ msgstr "Copy JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Copy link"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Copy nickname"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2401,6 +2405,10 @@ msgstr "Mark yourself as away"
 msgid "Mark yourself as back"
 msgstr "Mark yourself as back"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Mark yourself back"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Max Users"
@@ -2883,9 +2891,9 @@ msgstr "Off"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2898,9 +2906,9 @@ msgstr "on"
 msgid "one of:"
 msgstr "one of:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2978,6 +2986,10 @@ msgstr "Open map"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Open network options"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Open settings"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3775,6 +3787,10 @@ msgstr "set by {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Set by:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Set yourself away"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4661,7 +4677,8 @@ msgstr "You"
 msgid "You are about to open an external link:"
 msgstr "You are about to open an external link:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "You are an IRC Operator"

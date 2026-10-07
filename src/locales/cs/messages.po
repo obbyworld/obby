@@ -622,9 +622,9 @@ msgstr "Avatar"
 msgid "Avatar preview"
 msgstr "Náhled avatara"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Nepřítomen"
@@ -1256,6 +1256,10 @@ msgstr "Kopírovat JSON"
 #: src/components/ui/LinkHoverCard.tsx
 msgid "Copy link"
 msgstr "Kopírovat odkaz"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Copy nickname"
+msgstr "Kopírovat přezdívku"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Copy output"
@@ -2402,6 +2406,10 @@ msgstr "Označit se jako nepřítomný"
 msgid "Mark yourself as back"
 msgstr "Označit se jako zpět"
 
+#: src/components/layout/UserPanel.tsx
+msgid "Mark yourself back"
+msgstr "Označit se jako zpět"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Max Users"
 msgstr "Max. uživatelů"
@@ -2884,9 +2892,9 @@ msgstr "Vypnuto"
 msgid "offline"
 msgstr "offline"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
@@ -2899,9 +2907,9 @@ msgstr "zap"
 msgid "one of:"
 msgstr "jedno z:"
 
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -2979,6 +2987,10 @@ msgstr "Otevřít mapu"
 #: src/components/layout/ChannelList.tsx
 msgid "Open network options"
 msgstr "Otevřít možnosti sítě"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Open settings"
+msgstr "Otevřít nastavení"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "Open workflow"
@@ -3776,6 +3788,10 @@ msgstr "nastaveno {0}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Set by:"
 msgstr "Nastaveno:"
+
+#: src/components/layout/UserPanel.tsx
+msgid "Set yourself away"
+msgstr "Nastavit se jako nepřítomný"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4662,7 +4678,8 @@ msgstr "Vy"
 msgid "You are about to open an external link:"
 msgstr "Chystáte se otevřít externí odkaz:"
 
-#: src/components/layout/ChannelList.tsx
+#: src/components/layout/UserPanel.tsx
+#: src/components/layout/UserPanel.tsx
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Jste IRC operátor"
