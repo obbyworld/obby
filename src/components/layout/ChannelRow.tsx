@@ -59,7 +59,7 @@ const KindIcon: React.FC<{
   if (kind === "stream")
     return (
       <FaDesktop
-        className={`${size} ${isInCall ? "text-discord-green" : isSelected ? "text-discord-blue" : ""}`}
+        className={`${size} ${isInCall ? "text-discord-green" : isSelected ? "text-discord-primary" : ""}`}
       />
     );
   return <FaHashtag className={size} />;

@@ -215,7 +215,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
           <label className={labelClass}>
             Port{" "}
             <FaQuestionCircle
-              title="Only secure websockets are supported"
+              title={t`Only secure websockets are supported`}
               className="inline-block text-discord-text-muted cursor-help text-xs ml-1"
             />
           </label>
@@ -351,7 +351,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
           <TextInput
             value={operName}
             onChange={(e) => setOperName(e.target.value)}
-            placeholder="Operator username"
+            placeholder={t`IRC operator username`}
             className={inputClass}
           />
         </div>
@@ -396,7 +396,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
             id="operOnConnect"
             checked={operOnConnect}
             onChange={() => setOperOnConnect(!operOnConnect)}
-            className="accent-discord-accent rounded"
+            className="accent-discord-primary rounded"
           />
           <label
             htmlFor="operOnConnect"
@@ -492,7 +492,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
               <button
                 onClick={onClose}
                 className="p-1 rounded-lg hover:bg-discord-dark-400 text-discord-text-muted hover:text-white"
-                aria-label="Close"
+                aria-label={t`Close`}
               >
                 <FaTimes />
               </button>
@@ -527,7 +527,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
                 <button
                   onClick={() => setMobileView("categories")}
                   className="p-1 rounded-lg hover:bg-discord-dark-400 text-discord-text-muted hover:text-white"
-                  aria-label="Back"
+                  aria-label={t`Back`}
                 >
                   <FaChevronLeft />
                 </button>
@@ -538,7 +538,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
               <button
                 onClick={onClose}
                 className="p-1 rounded-lg hover:bg-discord-dark-400 text-discord-text-muted hover:text-white"
-                aria-label="Close"
+                aria-label={t`Close`}
               >
                 <FaTimes />
               </button>
@@ -610,7 +610,7 @@ export const EditServerModal: React.FC<EditServerModalProps> = ({
               type="button"
               onClick={onClose}
               className="text-discord-text-muted hover:text-white"
-              aria-label="Close"
+              aria-label={t`Close`}
             >
               <FaTimes />
             </button>

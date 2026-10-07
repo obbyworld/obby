@@ -283,7 +283,7 @@ export const OAuthSection: React.FC<OAuthSectionProps> = ({
             setEnabled(e.target.checked);
             emit({ enabled: e.target.checked });
           }}
-          className="accent-discord-accent rounded"
+          className="accent-discord-primary rounded"
         />
         <label
           htmlFor="oauthEnabled"

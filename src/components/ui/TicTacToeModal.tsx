@@ -1,9 +1,11 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useMemo } from "react";
 import { isLocalTurn, isWinningCell } from "../../lib/games/tictactoe";
 import useStore from "../../store";
 
 export const TicTacToeModal: React.FC = () => {
+  const { t } = useLingui();
   const open = useStore((s) => s.tictactoe?.open ?? null);
   const games = useStore((s) => s.tictactoe?.games ?? {});
   const accept = useStore((s) => s.tictactoeAccept);
@@ -34,13 +36,13 @@ export const TicTacToeModal: React.FC = () => {
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-sm p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-white">
-            Tic-Tac-Toe vs {open.opponent}
+            <Trans>Tic-Tac-Toe vs {open.opponent}</Trans>
           </h2>
           <button
             type="button"
             onClick={() => closeModal()}
             className="text-discord-text-muted hover:text-white"
-            aria-label="Close"
+            aria-label={t`Close`}
           >
             ✕
           </button>
@@ -49,7 +51,7 @@ export const TicTacToeModal: React.FC = () => {
         {game.inviteIncoming && (
           <div className="mb-4 p-3 rounded bg-discord-dark-300">
             <p className="text-sm text-white mb-3">
-              {open.opponent} has invited you to play.
+              <Trans>{open.opponent} has invited you to play.</Trans>
             </p>
             <div className="flex gap-2 justify-end">
               <button
@@ -57,14 +59,14 @@ export const TicTacToeModal: React.FC = () => {
                 onClick={() => decline(open.serverId, open.opponent)}
                 className="px-3 py-2 rounded bg-discord-dark-100 text-white text-sm"
               >
-                Decline
+                <Trans>Decline</Trans>
               </button>
               <button
                 type="button"
                 onClick={() => accept(open.serverId, open.opponent)}
                 className="px-3 py-2 rounded bg-discord-green text-white text-sm"
               >
-                Accept
+                <Trans>Accept</Trans>
               </button>
             </div>
           </div>
@@ -72,7 +74,7 @@ export const TicTacToeModal: React.FC = () => {
 
         {game.invitePending && !game.active && (
           <div className="mb-4 p-3 rounded bg-discord-dark-300 text-sm text-white">
-            Waiting for {open.opponent} to accept…
+            <Trans>Waiting for {open.opponent} to accept…</Trans>
           </div>
         )}
 
@@ -132,9 +134,9 @@ export const TicTacToeModal: React.FC = () => {
             <button
               type="button"
               onClick={() => closeModal()}
-              className="px-4 py-2 rounded bg-discord-blue text-white text-sm"
+              className="button-primary px-4 py-2 rounded text-sm"
             >
-              Close
+              <Trans>Close</Trans>
             </button>
           </div>
         )}
@@ -146,7 +148,7 @@ export const TicTacToeModal: React.FC = () => {
               onClick={onClose}
               className="px-3 py-2 rounded bg-discord-red text-white text-sm"
             >
-              Forfeit
+              <Trans>Forfeit</Trans>
             </button>
           </div>
         )}

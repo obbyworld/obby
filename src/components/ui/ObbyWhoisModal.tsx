@@ -70,7 +70,7 @@ interface ObbyWhoisModalProps {
 const isHexColor = (v: string | undefined): v is string =>
   !!v && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v);
 
-const DEFAULT_ACCENT = "#5865F2"; // discord-blurple fallback
+const DEFAULT_ACCENT = "#5865F2";
 
 /** Render a country code as a flag emoji via regional indicator. */
 const flagFromCC = (cc: string | undefined): string => {

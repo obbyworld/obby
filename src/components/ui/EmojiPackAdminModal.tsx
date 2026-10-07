@@ -7,6 +7,7 @@
 // draft/authtoken bearer per call.  The backend gates admin endpoints
 // on IRCop status (membership in OPER_CHANNEL).
 
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -34,6 +35,7 @@ interface ExpandedPackEmoji {
 }
 
 export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
+  const { t } = useLingui();
   const server = useStore((s) => s.servers.find((srv) => srv.id === serverId));
   const baseUrl = server?.authTokenUrl || server?.filehost || "";
 
@@ -75,11 +77,11 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
     e.preventDefault();
     setErr(null);
     if (!newPackId.trim() || !newPackName.trim()) {
-      setErr("pack_id and name are required.");
+      setErr(t`pack_id and name are required.`);
       return;
     }
     if (newPackScope === "channel" && !newPackChannel.trim()) {
-      setErr("Channel name required for channel-scoped packs.");
+      setErr(t`Enter a channel name for channel-scoped packs.`);
       return;
     }
     setCreating(true);
@@ -109,7 +111,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
   const removePack = async (packId: string) => {
     if (
       !window.confirm(
-        `Delete pack "${packId}"?  This also deletes every emoji in it.`,
+        t`Delete pack "${packId}"? This also deletes every emoji in it.`,
       )
     ) {
       return;
@@ -165,11 +167,11 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
     e.preventDefault();
     setErr(null);
     if (!/^[A-Za-z0-9._-]+$/.test(newShortcode.trim())) {
-      setErr("Shortcode must match [A-Za-z0-9._-]+.");
+      setErr(t`Shortcode must match [A-Za-z0-9._-]+.`);
       return;
     }
     if (!/^(https?:|data:)/.test(newUrl.trim())) {
-      setErr("URL must be http(s):// or data:.");
+      setErr(t`URL must be http(s):// or data:.`);
       return;
     }
     try {
@@ -217,13 +219,13 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-2xl p-5 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-white">
-            Custom emoji packs
+            <Trans>Custom emoji packs</Trans>
           </h2>
           <button
             type="button"
             onClick={onClose}
             className="text-discord-text-muted hover:text-white"
-            aria-label="Close"
+            aria-label={t`Close`}
           >
             <FaTimes />
           </button>
@@ -231,8 +233,10 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
 
         {!baseUrl && (
           <p className="text-discord-yellow text-sm mb-4">
-            This server doesn't advertise a backend URL (draft/authtoken or
-            obby.world/FILEHOST). The admin endpoints can't be reached.
+            <Trans>
+              This server doesn't advertise a backend URL (draft/authtoken or
+              obby.world/FILEHOST). The admin endpoints can't be reached.
+            </Trans>
           </p>
         )}
 
@@ -240,9 +244,9 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
           <button
             type="button"
             onClick={() => setShowCreate(!showCreate)}
-            className="px-3 py-1 rounded bg-discord-blue text-white text-sm font-medium"
+            className="px-3 py-1 rounded bg-discord-primary text-white text-sm font-medium"
           >
-            {showCreate ? "Cancel" : "New pack"}
+            {showCreate ? t`Cancel` : t`Create pack`}
           </button>
         </div>
 
@@ -255,21 +259,21 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
               type="text"
               value={newPackId}
               onChange={(e) => setNewPackId(e.target.value)}
-              placeholder="pack_id (e.g. team-mascots)"
+              placeholder={t`pack_id (e.g. team-mascots)`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white text-sm"
             />
             <input
               type="text"
               value={newPackName}
               onChange={(e) => setNewPackName(e.target.value)}
-              placeholder="Display name"
+              placeholder={t`Display Name`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white text-sm"
             />
             <input
               type="text"
               value={newPackDesc}
               onChange={(e) => setNewPackDesc(e.target.value)}
-              placeholder="Description (optional)"
+              placeholder={t`Description (optional)`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white text-sm"
             />
             <div className="flex gap-2">
@@ -280,8 +284,12 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                 }
                 className="flex-1 px-3 py-2 rounded bg-discord-dark-400 text-white text-sm"
               >
-                <option value="server">Server-wide</option>
-                <option value="channel">Channel-scoped</option>
+                <option value="server">
+                  <Trans>Server-wide</Trans>
+                </option>
+                <option value="channel">
+                  <Trans>Channel-scoped</Trans>
+                </option>
               </select>
               {newPackScope === "channel" && (
                 <input
@@ -298,16 +306,20 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
               disabled={creating}
               className="w-full px-3 py-2 rounded bg-discord-green text-white text-sm font-medium disabled:opacity-50"
             >
-              {creating ? "Creating…" : "Create pack"}
+              {creating ? t`Creating…` : t`Create pack`}
             </button>
           </form>
         )}
 
-        {loading && <p className="text-sm text-discord-text-muted">Loading…</p>}
+        {loading && (
+          <p className="text-sm text-discord-text-muted">
+            <Trans>Loading…</Trans>
+          </p>
+        )}
 
         {!loading && packs.length === 0 && (
           <p className="text-sm text-discord-text-muted">
-            No packs configured yet.
+            <Trans>No packs configured yet.</Trans>
           </p>
         )}
 
@@ -332,7 +344,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                       {pack.scope === "channel" && pack.channel_name
                         ? ` (${pack.channel_name})`
                         : ""}{" "}
-                      · {pack.emoji_count} emoji
+                      · <Trans>{pack.emoji_count} emoji</Trans>
                     </div>
                     {pack.description && (
                       <div className="text-xs text-discord-text-muted italic mt-1">
@@ -350,14 +362,14 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                       }
                       className="text-xs px-2 py-1 rounded bg-discord-dark-100 text-white"
                     >
-                      Add emoji
+                      <Trans>Add emoji</Trans>
                     </button>
                     <button
                       type="button"
                       onClick={() => removePack(pack.pack_id)}
                       className="text-xs px-2 py-1 rounded text-discord-red hover:bg-discord-dark-100"
                     >
-                      Delete pack
+                      <Trans>Delete pack</Trans>
                     </button>
                   </div>
                 </div>
@@ -371,7 +383,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                       type="text"
                       value={newShortcode}
                       onChange={(e) => setNewShortcode(e.target.value)}
-                      placeholder="shortcode (e.g. partyparrot)"
+                      placeholder={t`shortcode (e.g. partyparrot)`}
                       className="w-full px-2 py-1 rounded bg-discord-dark-300 text-white text-sm"
                     />
                     <input
@@ -385,14 +397,14 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                       type="text"
                       value={newAlt}
                       onChange={(e) => setNewAlt(e.target.value)}
-                      placeholder="Alt text (optional)"
+                      placeholder={t`Alt text (optional)`}
                       className="w-full px-2 py-1 rounded bg-discord-dark-300 text-white text-sm"
                     />
                     <button
                       type="submit"
                       className="w-full px-2 py-1 rounded bg-discord-green text-white text-sm font-medium"
                     >
-                      Add emoji
+                      <Trans>Add emoji</Trans>
                     </button>
                   </form>
                 )}
@@ -419,7 +431,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                             removeEmoji(pack.pack_id, entry.shortcode)
                           }
                           className="text-xs text-discord-red hover:text-white"
-                          title="Remove"
+                          title={t`Remove`}
                         >
                           ✕
                         </button>
@@ -429,7 +441,7 @@ export const EmojiPackAdminModal: React.FC<Props> = ({ serverId, onClose }) => {
                 )}
                 {open && entries.length === 0 && (
                   <p className="mt-2 text-xs text-discord-text-muted">
-                    Empty pack — add some emoji.
+                    <Trans>Empty pack. Add some emoji.</Trans>
                   </p>
                 )}
               </div>

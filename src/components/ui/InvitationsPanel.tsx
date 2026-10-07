@@ -165,7 +165,7 @@ const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
           <button
             type="button"
             onClick={handleCreate}
-            className="bg-discord-primary hover:bg-discord-primary/90 text-white rounded px-4 py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5"
+            className="button-primary rounded px-4 py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5"
           >
             <FaPlus size={11} />
             <Trans>Create</Trans>

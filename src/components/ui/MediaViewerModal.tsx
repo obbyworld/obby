@@ -320,7 +320,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             </p>
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-2 bg-discord-brand rounded text-white text-sm hover:opacity-90"
+              className="flex items-center gap-2 px-4 py-2 button-primary rounded text-sm"
               onClick={onRequestOpen}
             >
               <FaExternalLinkAlt className="w-3 h-3" />
@@ -1434,8 +1434,8 @@ export function MediaViewerModal({
                       <button
                         type="button"
                         onClick={rotateImage}
-                        title="Rotate 90°"
-                        aria-label="Rotate 90°"
+                        title={t`Rotate 90°`}
+                        aria-label={t`Rotate 90°`}
                         className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
                       >
                         <FaRedo className="w-3 h-3" />

@@ -356,7 +356,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   />
                 ) : null}
                 <div
-                  className="w-full h-full flex items-center justify-center text-3xl font-bold text-white bg-gradient-to-br from-discord-blurple to-purple-600"
+                  className="w-full h-full flex items-center justify-center text-3xl font-bold text-white bg-gradient-to-br from-discord-primary to-purple-600"
                   style={{ display: canShowAvatar ? "none" : "flex" }}
                 >
                   {displayName[0].toUpperCase()}
@@ -468,7 +468,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
             {/* WHOIS Information */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
-                <FaInfoCircle className="text-discord-blurple" size={18} />
+                <FaInfoCircle className="text-discord-primary" size={18} />
                 <h3 className="text-lg font-semibold text-white">
                   <Trans>User Information</Trans>
                 </h3>
@@ -476,7 +476,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
               {isLoadingWhois && (
                 <div className="flex items-center gap-2 text-discord-text-muted text-sm py-8 justify-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-discord-blurple border-t-transparent" />
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-discord-primary border-t-transparent" />
                   <Trans>Loading WHOIS data...</Trans>
                 </div>
               )}
@@ -616,7 +616,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
                               type="button"
                               key={channel}
                               onClick={() => handleChannelClick(channel)}
-                              className="flex items-center gap-2 bg-discord-dark-100 rounded px-3 py-2 hover:bg-discord-blurple transition-colors cursor-pointer text-left group"
+                              className="flex items-center gap-2 bg-discord-dark-100 rounded px-3 py-2 hover:bg-discord-primary transition-colors cursor-pointer text-left group"
                               title={t`Click to join ${channel}`}
                             >
                               {badge && (
@@ -688,7 +688,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
                               key={msg}
                               className="text-white text-sm flex items-start gap-2"
                             >
-                              <span className="text-discord-blurple mt-1">
+                              <span className="text-discord-primary mt-1">
                                 •
                               </span>
                               <span>{msg}</span>
@@ -773,7 +773,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
               )}
               <button
                 onClick={onBack ?? onClose}
-                className={`px-6 py-2 bg-discord-blurple hover:bg-discord-blurple-hover text-white rounded-lg font-medium transition-all hover:shadow-lg hover:shadow-discord-blurple/20 ${!isOwnProfile ? "ml-auto" : ""}`}
+                className={`px-6 py-2 button-primary rounded-lg font-medium transition-all hover:shadow-lg hover:shadow-discord-primary/20 ${!isOwnProfile ? "ml-auto" : ""}`}
               >
                 {onBack ? <Trans>← Back</Trans> : <Trans>Close</Trans>}
               </button>
