@@ -36,6 +36,9 @@ import {
   speakerSelectionSupported,
   videoConstraints,
 } from "./mediaDevices";
+import { exposeAppLifecycleHooks, setNativeInCall } from "./nativeCallBridge";
+import { deviceErrorCode, type VoiceErrorCode } from "./voiceErrors";
+import { clearCallView } from "./voiceSpotlight";
 
 // store/index.ts imports this module (to release calls on disconnect), so a
 // static import of the store back here would cycle. It registers itself via
@@ -184,6 +187,9 @@ interface TrackHint {
 }
 
 const RTC_TAG = "+obsidianirc/rtc";
+// How long a dropped media path may try to recover by itself before we rejoin.
+const RECONNECT_GRACE_MS = 5000;
+const JOIN_RETRY_MS = 6000;
 
 function isTouchDevice(): boolean {
   return (
@@ -260,7 +266,7 @@ function encodedTagCost(charCode: number): number {
  *  for example the channel stage and the floating picture-in-picture card. */
 export interface VoiceViewCallbacks {
   onState: (s: VoiceState) => void;
-  onError: (e: string) => void;
+  onError: (e: VoiceErrorCode) => void;
   /** Fired when a peer (or the local user, echo) sends an emoji
    *  reaction. The view animates the emoji floating up over that
    *  member's tile. */
@@ -331,10 +337,16 @@ export class VoiceClient {
   // stale JOIN hook into the next session.
   private joinEchoUnsub?: () => void;
   private joinEchoTimeout?: ReturnType<typeof setTimeout>;
+  private reconnectTimer?: ReturnType<typeof setTimeout>;
+  private joinRetryTimer?: ReturnType<typeof setTimeout>;
   private speakingTimer?: ReturnType<typeof setInterval>;
   private vadAudioCtx?: AudioContext;
   private isSpeakingNow = false;
   private pttMode = false;
+  // We re-apply the mic toggle the user last chose to every new mic track, so a
+  // late capture or a rejoin never unmutes someone who muted.
+  private isMicWanted = true;
+  private micCapture: Promise<void> | null = null;
   private deafened = false;
   // Bumped on every teardown. Capturing media is asynchronous, so a
   // capture that started before the call ended must check this before
@@ -370,7 +382,7 @@ export class VoiceClient {
     };
   }
 
-  private emitError(e: string): void {
+  private emitError(e: VoiceErrorCode): void {
     for (const v of this.views) v.onError(e);
   }
 
@@ -428,8 +440,15 @@ export class VoiceClient {
     // server that doesn't echo cleanly doesn't strand the call.
     const channel = this.opts.channel;
     const selfNick = this.opts.selfNick;
+    const generation = this.generation;
+    // A join sent while the media server restarts is lost, so we keep asking
+    // until it answers.
     const sendJoinSignal = () => {
+      if (this.generation !== generation || this.state.phase !== "joining") {
+        return;
+      }
       this.sendSignal({ type: "join", channel });
+      this.joinRetryTimer = setTimeout(sendJoinSignal, JOIN_RETRY_MS);
     };
     let signaled = false;
     const clearJoinEchoWait = () => {
@@ -462,6 +481,31 @@ export class VoiceClient {
     }, 2000);
 
     ircClient.sendRaw(this.opts.serverId, `JOIN ${this.opts.channel}`);
+  }
+
+  // A network change or an app the OS suspended drops the media path without
+  // telling us, so we rejoin the room when the peer connection gives up.
+  private watchConnection(pc: RTCPeerConnection): void {
+    pc.onconnectionstatechange = () => {
+      if (pc !== this.pc) return;
+      clearTimeout(this.reconnectTimer);
+      if (pc.connectionState === "failed") {
+        this.rejoin();
+      } else if (pc.connectionState === "disconnected") {
+        this.reconnectTimer = setTimeout(() => {
+          if (pc === this.pc && pc.connectionState !== "connected") {
+            this.rejoin();
+          }
+        }, RECONNECT_GRACE_MS);
+      }
+    };
+  }
+
+  private rejoin(): void {
+    if (this.state.phase === "idle") return;
+    this.sendSignal({ type: "leave", channel: this.opts.channel });
+    this.teardown();
+    void this.join();
   }
 
   leave(): void {
@@ -550,7 +594,12 @@ export class VoiceClient {
   }
 
   setMic(on: boolean): void {
-    if (!this.localStream) return;
+    this.isMicWanted = on;
+    if (!this.localStream) {
+      // We ask again for a mic that was blocked at join when the user unmutes.
+      if (on && this.role === "streamer") void this.captureMicAndRenegotiate();
+      return;
+    }
     for (const t of this.localStream.getAudioTracks()) t.enabled = on;
     const selfNick = this.opts.selfNick;
     const m = this.members[selfNick] ?? blankMember(selfNick);
@@ -646,7 +695,7 @@ export class VoiceClient {
         video: false,
       });
     } catch (err) {
-      this.emitError(`microphone: ${err}`);
+      this.emitError(deviceErrorCode("mic", err));
       return;
     }
     if (this.generation !== generation || !this.pc || !this.localStream) {
@@ -692,7 +741,7 @@ export class VoiceClient {
         video: constraints,
       });
     } catch (err) {
-      this.emitError(`camera: ${err}`);
+      this.emitError(deviceErrorCode("camera", err));
       return;
     }
     if (this.generation !== generation || !this.pc || !this.localStream) {
@@ -738,7 +787,7 @@ export class VoiceClient {
         this.members[selfNick] = selfMember;
         await this.renegotiate();
       } catch (err) {
-        this.emitError(`camera: ${err}`);
+        this.emitError(deviceErrorCode("camera", err));
         return;
       }
     } else {
@@ -766,7 +815,10 @@ export class VoiceClient {
       try {
         screen = await captureScreen(() => this.setScreenShare(false));
       } catch (err) {
-        this.emitError(`screen: ${err}`);
+        // Dismissing the share picker rejects the same way a denial does.
+        if (deviceErrorCode("screen", err) !== "screen-blocked") {
+          this.emitError(deviceErrorCode("screen", err));
+        }
         return;
       }
       // The picker can sit open for many seconds, so by now the call may
@@ -783,7 +835,7 @@ export class VoiceClient {
       } catch (err) {
         for (const t of screen.getTracks()) t.stop();
         this.screenStream = undefined;
-        this.emitError(`screen: ${err}`);
+        this.emitError(deviceErrorCode("screen", err));
         return;
       }
       // Add any captured desktop-audio tracks. Wrapped in its own
@@ -1025,10 +1077,10 @@ export class VoiceClient {
         // no PC yet, i.e. the join itself errored. Anything else gets
         // logged and surfaced via onError so the UI can toast it.
         if (!this.pc) {
-          this.setState({ phase: "failed", error: signal.error ?? "unknown" });
-          this.teardown();
+          this.teardown({ phase: "failed", error: signal.error ?? "unknown" });
         } else if (signal.error) {
-          this.emitError(signal.error);
+          console.warn("voice: call server error", signal.error);
+          this.emitError("server");
         }
         break;
     }
@@ -1060,7 +1112,14 @@ export class VoiceClient {
   /** First-time mic capture for a freshly-promoted viewer. Mirrors the
    *  initial-join branch in onJoined but runs against an existing PC,
    *  so we addTrack + renegotiate instead of building from scratch. */
-  private async captureMicAndRenegotiate(): Promise<void> {
+  private captureMicAndRenegotiate(): Promise<void> {
+    this.micCapture ??= this.captureMic().finally(() => {
+      this.micCapture = null;
+    });
+    return this.micCapture;
+  }
+
+  private async captureMic(): Promise<void> {
     if (!this.pc || this.localStream) return;
     const generation = this.generation;
     let local: MediaStream;
@@ -1071,7 +1130,7 @@ export class VoiceClient {
         video: false,
       });
     } catch (err) {
-      this.emitError(`microphone: ${err}`);
+      this.emitError(deviceErrorCode("mic", err));
       return;
     }
     if (this.generation !== generation || !this.pc) {
@@ -1081,6 +1140,7 @@ export class VoiceClient {
     this.localStream = local;
     for (const t of local.getAudioTracks()) this.pc.addTrack(t, local);
     this.startVAD(local);
+    this.setMic(this.isMicWanted);
     await this.renegotiate();
   }
 
@@ -1173,6 +1233,7 @@ export class VoiceClient {
         mlineidx: e.candidate.sdpMLineIndex ?? undefined,
       });
     };
+    this.watchConnection(pc);
     pc.ontrack = (e) => {
       this.attachInboundTrack(e.track, e.streams[0], e.transceiver?.mid);
     };
@@ -1196,7 +1257,7 @@ export class VoiceClient {
     // promoted later, promoteToStreamer() captures the mic and
     // renegotiates.
     if (this.role === "streamer") {
-      let local: MediaStream;
+      let local: MediaStream | undefined;
       try {
         const constraints = await this.resolveAudioConstraints();
         local = await navigator.mediaDevices.getUserMedia({
@@ -1204,19 +1265,22 @@ export class VoiceClient {
           video: false,
         });
       } catch (err) {
-        this.setState({ phase: "failed", error: `microphone: ${err}` });
-        this.teardown();
-        return;
+        // A blocked or missing mic still lets us listen in; the dock shows the
+        // mic as off and the view explains why.
+        local = undefined;
+        this.emitError(deviceErrorCode("mic", err));
       }
       if (this.generation !== generation) {
-        for (const t of local.getTracks()) t.stop();
+        for (const t of local?.getTracks() ?? []) t.stop();
         return;
       }
-      this.localStream = local;
-      for (const t of local.getAudioTracks()) {
-        pc.addTrack(t, local);
+      if (local) {
+        this.localStream = local;
+        for (const t of local.getAudioTracks()) {
+          pc.addTrack(t, local);
+        }
+        this.startVAD(local);
       }
-      this.startVAD(local);
     }
 
     this.startStatsPump();
@@ -1225,8 +1289,8 @@ export class VoiceClient {
     // for the inbound directions with transceivers instead. Without them a
     // client that publishes nothing offers zero m-lines and the SFU rejects
     // the whole session with "SetRemoteDescription called with no ice-ufrag".
-    // A streamer already has an audio m-line from its own mic track.
-    if (this.role !== "streamer") {
+    // A member with a captured mic already has an audio m-line from its track.
+    if (!this.localStream) {
       pc.addTransceiver("audio", { direction: "recvonly" });
     }
     pc.addTransceiver("video", { direction: "recvonly" });
@@ -1234,6 +1298,7 @@ export class VoiceClient {
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     this.sendSignal({ type: "offer", sdp: offer.sdp ?? "" });
+    if (this.localStream) this.setMic(this.isMicWanted);
   }
 
   private async renegotiate() {
@@ -1254,7 +1319,7 @@ export class VoiceClient {
     //   2. SFU-supplied trackOwners hint (track.id -> nick).
     //   3. MediaStream.id -- works when the browser honors a=msid
     //      (Firefox doesn't, for tracks added mid-session).
-    //   4. track.id prefix split -- "<nick>-audio" / "<nick>-video".
+    //   4. track.id prefix -- the SFU names it "<nick>-<kind>-<suffix>".
     let nick: string | null = null;
     if (mid && this.midOwners[mid]) {
       nick = this.midOwners[mid];
@@ -1265,9 +1330,10 @@ export class VoiceClient {
       if (sid && this.members[sid]) {
         nick = sid;
       } else if (track.id) {
-        const dash = track.id.lastIndexOf("-");
-        const prefix = dash > 0 ? track.id.slice(0, dash) : track.id;
-        if (this.members[prefix]) nick = prefix;
+        nick =
+          Object.keys(this.members).find((member) =>
+            track.id.startsWith(`${member}-${track.kind}-`),
+          ) ?? null;
       }
     }
     if (!nick) {
@@ -1527,8 +1593,10 @@ export class VoiceClient {
     }, 3000);
   }
 
-  private teardown() {
+  private teardown(finalState: VoiceState = { phase: "idle" }) {
     this.generation++;
+    clearTimeout(this.reconnectTimer);
+    clearTimeout(this.joinRetryTimer);
     this.stopVAD();
     if (this.statsTimer) {
       clearInterval(this.statsTimer);
@@ -1573,7 +1641,7 @@ export class VoiceClient {
     this.midOwners = {};
     this.localMutes.clear();
     this.pendingIce = [];
-    this.setState({ phase: "idle" });
+    this.setState(finalState);
   }
 }
 
@@ -1651,7 +1719,13 @@ function notifyLiveVoiceCalls(): void {
     return { serverId, channel };
   });
   for (const listener of liveVoiceCallListeners) listener();
+  setNativeInCall(liveClients.size > 0);
 }
+
+// A reloaded page starts with no calls, so we disarm a picture-in-picture
+// request the previous page left behind in the shell.
+setNativeInCall(false);
+exposeAppLifecycleHooks();
 
 export function getLiveVoiceCalls(): LiveVoiceCall[] {
   return cachedLiveCalls;
@@ -1703,12 +1777,29 @@ export function acquireVoiceClient(opts: AcquireOptions): {
   return { client, detach };
 }
 
+/** Attaches to a call that is already running and never starts one, so a
+ *  pop-out rendered from a stale call list cannot revive a call that just
+ *  ended. */
+export function attachLiveVoiceClient(
+  opts: AcquireOptions,
+): { client: VoiceClient; detach: () => void } | null {
+  const client = liveClients.get(clientKey(opts.serverId, opts.channel));
+  if (!client) return null;
+  const detach = client.attach({
+    onState: opts.onState,
+    onError: opts.onError,
+    onReaction: opts.onReaction,
+  });
+  return { client, detach };
+}
+
 export function releaseVoiceClient(serverId: string, channel: string): void {
   const key = clientKey(serverId, channel);
   const c = liveClients.get(key);
   if (!c) return;
   c.leave();
   liveClients.delete(key);
+  clearCallView(serverId, channel);
   notifyLiveVoiceCalls();
 }
 
@@ -1729,6 +1820,7 @@ export function releaseServerVoiceClients(serverId: string): void {
     if (!key.startsWith(prefix)) continue;
     client.leave();
     liveClients.delete(key);
+    clearCallView(serverId, key.slice(prefix.length));
     released = true;
   }
   if (released) notifyLiveVoiceCalls();

@@ -4,18 +4,14 @@
 
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
-import {
-  FaExternalLinkAlt,
-  FaMicrophone,
-  FaMicrophoneSlash,
-  FaPhoneSlash,
-} from "react-icons/fa";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FaMicrophone, FaMicrophoneSlash, FaPhoneSlash } from "react-icons/fa";
 import { LuPictureInPicture2 } from "react-icons/lu";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useSpeakingOrder } from "../../hooks/useSpeakingOrder";
 import { useUserColor } from "../../hooks/useUserColor";
 import { useLiveVoiceCalls, useVoiceCall } from "../../hooks/useVoiceCall";
+import { subscribeNativePip } from "../../lib/nativeCallBridge";
 import { releaseVoiceClient } from "../../lib/voice";
 import { useSpotlight } from "../../lib/voiceSpotlight";
 import useStore from "../../store";
@@ -38,6 +34,7 @@ interface DragPosition {
  *  channel currently on screen. */
 export const VoicePipOverlay: React.FC = () => {
   const calls = useLiveVoiceCalls();
+  const isNativePip = useNativePip();
   const selectedServerId = useStore((s) => s.ui.selectedServerId);
   const selectedChannelName = useStore((s) => {
     const sel = s.ui.perServerSelections[s.ui.selectedServerId || ""];
@@ -48,10 +45,31 @@ export const VoicePipOverlay: React.FC = () => {
     );
   });
 
+  // The paged layout keeps a channel selected while its list or member page
+  // is showing, so the call is on screen only on the chat page.
+  const isChatPageShowing = useStore(
+    (s) => !s.ui.isNarrowView || s.ui.mobileViewActiveColumn === "chatView",
+  );
+
   const call = calls.find(
     (c) =>
-      !(c.serverId === selectedServerId && c.channel === selectedChannelName),
+      !(
+        isChatPageShowing &&
+        c.serverId === selectedServerId &&
+        c.channel === selectedChannelName
+      ),
   );
+
+  const nativePipCall = calls[0];
+  if (isNativePip && nativePipCall) {
+    return (
+      <NativePipStage
+        key={`${nativePipCall.serverId}:${nativePipCall.channel}`}
+        serverId={nativePipCall.serverId}
+        channel={nativePipCall.channel}
+      />
+    );
+  }
 
   if (!call) return null;
 
@@ -64,19 +82,61 @@ export const VoicePipOverlay: React.FC = () => {
   );
 };
 
+// The Android shell dispatches this when the OS shrinks the app into its own
+// picture-in-picture window.
+function useNativePip(): boolean {
+  const [isNativePip, setIsNativePip] = useState(false);
+  useEffect(() => subscribeNativePip(setIsNativePip), []);
+  return isNativePip;
+}
+
+/** A floating view of a running call: its members in speaking order and the
+ *  one it shows large. */
+function usePipCall(serverId: string, channel: string) {
+  const call = useVoiceCall(serverId, channel, { isAttachOnly: true });
+  // A stream viewer has no media of their own, so a stream shows only its
+  // streamers; a voice call shows everyone including the local user.
+  const ordered = useSpeakingOrder(
+    call.isStreamRoom ? call.streamerMembers : call.members,
+  );
+  const [spotlightNick, setSpotlightNick] = useSpotlight(serverId, channel);
+  const primary = pickPipMember(ordered, call.selfNick, spotlightNick);
+  return { ...call, ordered, primary, setSpotlightNick };
+}
+
+/** Fills the OS picture-in-picture window with the call's main video. */
+const NativePipStage: React.FC<{ serverId: string; channel: string }> = ({
+  serverId,
+  channel,
+}) => {
+  const { selfNick, primary } = usePipCall(serverId, channel);
+
+  return (
+    <div className="fixed inset-0 z-[100001] bg-black flex items-center justify-center">
+      {primary?.videoTrack ? (
+        <VideoTrackView
+          track={primary.videoTrack}
+          muted={primary.nick === selfNick}
+          contain
+          className="w-full h-full"
+        />
+      ) : (
+        primary && (
+          <VoiceAvatar nick={primary.nick} size="lg" serverId={serverId} />
+        )
+      )}
+    </div>
+  );
+};
+
 const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
   serverId,
   channel,
 }) => {
   const { t } = useLingui();
   const isNarrow = useMediaQuery();
-  const { client, members, selfNick, self, isStreamRoom, streamerMembers } =
-    useVoiceCall(serverId, channel);
-  // A stream has one streamer and any number of viewers with no media of
-  // their own -- a viewer watching shouldn't see their own tile among the
-  // thumbnails. A voice call has no such distinction, so it keeps showing
-  // everyone including the local user.
-  const pipMembers = isStreamRoom ? streamerMembers : members;
+  const { client, selfNick, self, ordered, primary, setSpotlightNick } =
+    usePipCall(serverId, channel);
   const selectServer = useStore((s) => s.selectServer);
   const selectChannel = useStore((s) => s.selectChannel);
   const channelId = useStore((s) => {
@@ -95,9 +155,6 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
   } | null>(null);
   const [pos, setPos] = useState<DragPosition | null>(null);
 
-  const ordered = useSpeakingOrder(pipMembers);
-  const [spotlightNick, setSpotlightNick] = useSpotlight(serverId, channel);
-  const primary = pickPipMember(ordered, selfNick, spotlightNick);
   const isSelf = primary?.nick === selfNick;
   const hasAnyVideo = ordered.some((m) => m.videoTrack);
   const primaryColor = useUserColor(serverId, primary?.nick);
@@ -154,14 +211,14 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      className="fixed z-[9000] w-44 sm:w-64 rounded-xl overflow-hidden bg-discord-dark-400 ring-1 ring-black/40 shadow-2xl select-none touch-none"
+      className="voice-pip-card fixed z-[9000] w-44 sm:w-64 rounded-xl overflow-hidden bg-discord-dark-400 ring-1 ring-black/40 shadow-2xl select-none touch-none"
       style={
         pos
           ? { left: pos.left, top: pos.top }
           : { right: 12, bottom: isNarrow ? 96 : 24 }
       }
     >
-      <div className="flex items-center gap-1 px-2 py-1 bg-discord-dark-300">
+      <div className="flex items-center gap-1 px-2 min-h-7 bg-discord-dark-300">
         <span className="flex-1 min-w-0 truncate text-xs text-discord-text-normal">
           {channel}
         </span>
@@ -173,12 +230,6 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
             onClick={() => onPipRequest(videoRef.current)}
           />
         )}
-        <DockButton
-          icon={<FaExternalLinkAlt />}
-          size="sm"
-          label={t`Return to channel`}
-          onClick={returnToChannel}
-        />
       </div>
 
       {hasAnyVideo ? (
@@ -205,7 +256,7 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
               primary && (
                 <VoiceAvatar
                   nick={primary.nick}
-                  size="lg"
+                  size="md"
                   serverId={serverId}
                 />
               )
@@ -227,7 +278,7 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
                   type="button"
                   onClick={() => setSpotlightNick(m.nick)}
                   aria-label={m.nick}
-                  className={`relative flex-1 min-w-0 aspect-video rounded overflow-hidden bg-black flex items-center justify-center ${
+                  className={`relative w-[30%] flex-shrink-0 aspect-video rounded overflow-hidden bg-black flex items-center justify-center ${
                     m.speaking && m.micOn
                       ? "ring-2 ring-discord-green ring-inset"
                       : ""
@@ -246,7 +297,7 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
                 </button>
               ))}
               {overflowCount > 0 && (
-                <div className="flex-1 min-w-0 aspect-video rounded bg-discord-dark-200 flex items-center justify-center text-xs text-discord-text-muted">
+                <div className="w-[30%] flex-shrink-0 aspect-video rounded bg-discord-dark-200 flex items-center justify-center text-xs text-discord-text-muted">
                   +{overflowCount}
                 </div>
               )}

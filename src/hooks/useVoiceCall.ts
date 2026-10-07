@@ -9,6 +9,7 @@ import {
 import ircClient from "../lib/ircClient";
 import {
   acquireVoiceClient,
+  attachLiveVoiceClient,
   getLiveVoiceCalls,
   type LiveVoiceCall,
   subscribeLiveVoiceCalls,
@@ -18,6 +19,7 @@ import {
   type VoiceRole,
   type VoiceState,
 } from "../lib/voice";
+import type { VoiceErrorCode } from "../lib/voiceErrors";
 
 const REACTION_LIFETIME_MS = 2400;
 
@@ -29,7 +31,7 @@ interface VoiceReaction {
 
 export interface UseVoiceCallResult {
   state: VoiceState;
-  error: string | null;
+  error: VoiceErrorCode | null;
   clearError: () => void;
   reactions: VoiceReaction[];
   client: VoiceClient | null;
@@ -53,9 +55,10 @@ export interface UseVoiceCallResult {
 export function useVoiceCall(
   serverId: string,
   channel: string,
+  { isAttachOnly = false }: { isAttachOnly?: boolean } = {},
 ): UseVoiceCallResult {
   const [state, setState] = useState<VoiceState>({ phase: "idle" });
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<VoiceErrorCode | null>(null);
   const [reactions, setReactions] = useState<VoiceReaction[]>([]);
   const [client, setClient] = useState<VoiceClient | null>(null);
   const reactionIdRef = useRef(0);
@@ -68,7 +71,10 @@ export function useVoiceCall(
   const clearError = useCallback(() => setError(null), []);
 
   useEffect(() => {
-    const { client: c, detach } = acquireVoiceClient({
+    const getVoiceClient = isAttachOnly
+      ? attachLiveVoiceClient
+      : acquireVoiceClient;
+    const attached = getVoiceClient({
       serverId,
       channel,
       selfNick,
@@ -82,12 +88,13 @@ export function useVoiceCall(
         }, REACTION_LIFETIME_MS);
       },
     });
-    setClient(c);
-    setState(c.getState());
+    if (!attached) return;
+    setClient(attached.client);
+    setState(attached.client.getState());
     return () => {
-      detach();
+      attached.detach();
     };
-  }, [serverId, channel, selfNick]);
+  }, [serverId, channel, selfNick, isAttachOnly]);
 
   const members =
     state.phase === "connected" ? Object.values(state.members) : [];

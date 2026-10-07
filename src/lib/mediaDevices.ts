@@ -58,22 +58,33 @@ export function resolveDeviceId(
   return undefined;
 }
 
-/** Shared by every field that opens a capture (microphone, camera), so a
- *  getUserMedia failure reads the same way wherever it happens. */
-export function describeMediaError(err: unknown): string {
+export type MediaErrorKind = "blocked" | "missing" | "not-front" | "failed";
+
+/** Sorts a getUserMedia or getDisplayMedia failure the same way for every
+ *  caller, so a denied device reads the same wherever it happens. */
+export function classifyMediaError(err: unknown): MediaErrorKind {
   const name = err instanceof DOMException ? err.name : "";
-  if (name === "NotAllowedError" || name === "SecurityError") {
-    return t`Access was denied. Allow camera and microphone access in your browser or system settings, then try again.`;
-  }
+  if (name === "NotAllowedError" || name === "SecurityError") return "blocked";
   if (name === "NotFoundError" || name === "OverconstrainedError") {
-    return t`That device is not available right now.`;
+    return "missing";
   }
   // WebKit refuses a screen capture asked for by a window that is not in front
   // and has not just been clicked.
-  if (name === "InvalidStateError") {
-    return t`Bring this window to the front and try again.`;
+  if (name === "InvalidStateError") return "not-front";
+  return "failed";
+}
+
+export function describeMediaError(err: unknown): string {
+  switch (classifyMediaError(err)) {
+    case "blocked":
+      return t`Access was denied. Allow camera and microphone access in your browser or system settings, then try again.`;
+    case "missing":
+      return t`That device is not available right now.`;
+    case "not-front":
+      return t`Bring this window to the front and try again.`;
+    case "failed":
+      return t`Could not access the device.`;
   }
-  return t`Could not access the device.`;
 }
 
 export function speakerSelectionSupported(): boolean {

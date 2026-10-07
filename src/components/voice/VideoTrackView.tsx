@@ -1,5 +1,17 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
+// WebKit's own presentation API, which iOS web views keep when they turn the
+// standard Picture-in-Picture API off.
+type WebkitPresentationMode = "inline" | "picture-in-picture" | "fullscreen";
+
+declare global {
+  interface HTMLVideoElement {
+    webkitSupportsPresentationMode?: (mode: WebkitPresentationMode) => boolean;
+    webkitSetPresentationMode?: (mode: WebkitPresentationMode) => void;
+    webkitPresentationMode?: WebkitPresentationMode;
+  }
+}
+
 interface VideoTrackViewProps {
   track: MediaStreamTrack | undefined;
   muted?: boolean;
@@ -35,6 +47,7 @@ export const VideoTrackView = forwardRef<HTMLVideoElement, VideoTrackViewProps>(
     return (
       <video
         ref={videoRef}
+        data-call-video
         className={`${contain ? "object-contain" : "object-cover"} ${className ?? ""}`}
         autoPlay
         playsInline
@@ -45,12 +58,17 @@ export const VideoTrackView = forwardRef<HTMLVideoElement, VideoTrackViewProps>(
 );
 VideoTrackView.displayName = "VideoTrackView";
 
+function isWebkitPipSupported(): boolean {
+  if (typeof document === "undefined") return false;
+  const probe = document.createElement("video");
+  return probe.webkitSupportsPresentationMode?.("picture-in-picture") ?? false;
+}
+
 export function pipSupported(): boolean {
-  return (
-    typeof document !== "undefined" &&
-    "pictureInPictureEnabled" in document &&
-    document.pictureInPictureEnabled
-  );
+  if (typeof document === "undefined") return false;
+  const isStandardPipEnabled =
+    "pictureInPictureEnabled" in document && document.pictureInPictureEnabled;
+  return isStandardPipEnabled || isWebkitPipSupported();
 }
 
 /** Toggle native picture-in-picture on a tile's video element. Callers
@@ -60,6 +78,14 @@ export async function onPipRequest(
 ): Promise<void> {
   if (!video || !pipSupported()) return;
   try {
+    if (!document.pictureInPictureEnabled && video.webkitSetPresentationMode) {
+      video.webkitSetPresentationMode(
+        video.webkitPresentationMode === "picture-in-picture"
+          ? "inline"
+          : "picture-in-picture",
+      );
+      return;
+    }
     if (document.pictureInPictureElement === video) {
       await document.exitPictureInPicture();
     } else {

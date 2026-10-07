@@ -17,7 +17,8 @@ import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useVoiceCall } from "../../hooks/useVoiceCall";
 import { releaseVoiceClient, type VoiceMember } from "../../lib/voice";
-import { useSpotlight } from "../../lib/voiceSpotlight";
+import { describeVoiceError } from "../../lib/voiceErrors";
+import { useSpotlight, useTheater } from "../../lib/voiceSpotlight";
 import useStore, { resolveCallReturnTarget } from "../../store";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 import { VoiceDock } from "../voice/VoiceDock";
@@ -66,7 +67,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   // / grid -- see VoiceStage). Shared with the pop-out via
   // voiceSpotlight.ts so the pick follows the user across both views.
   const [focusNick, setFocusNick] = useSpotlight(serverId, channelName);
-  const [theater, setTheater] = useState(false);
+  const [theater, setTheater] = useTheater(serverId, channelName);
   // Push-to-talk is purely a client-side toggle (not part of VoiceState),
   // so it's the one control mirrored into local state -- seeded from the
   // client whenever it changes so a remount picks up the real value.
@@ -74,6 +75,15 @@ export const VoiceChannelView: React.FC<Props> = ({
 
   const isNarrow = useMediaQuery();
   const isTouch = useIsTouchInput();
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+  const hasStreamVideo = streamerMembers.some((m) => m.videoTrack);
+
+  // Turning a phone sideways while a stream plays is how people ask to watch
+  // it full screen, and turning it back is how they leave.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we react to orientation changes only
+  useEffect(() => {
+    if (isTouch && isStreamRoom && hasStreamVideo) setTheater(isLandscape);
+  }, [isLandscape]);
 
   useEffect(() => {
     if (client) setPttOn(client.isPushToTalk());
@@ -109,7 +119,7 @@ export const VoiceChannelView: React.FC<Props> = ({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [theater]);
+  }, [theater, setTheater]);
 
   // Auto-clear an explicit spotlight when that member leaves the call.
   useEffect(() => {
@@ -191,7 +201,7 @@ export const VoiceChannelView: React.FC<Props> = ({
 
   const rootClass = theater
     ? "fixed inset-0 z-[9990] flex flex-col bg-discord-dark-400"
-    : "w-full flex flex-col bg-discord-dark-200";
+    : "w-full min-h-0 flex flex-col bg-discord-dark-200";
 
   // Theater renders through a portal to document.body so its `fixed`
   // container is positioned against the real viewport -- nested in place,
@@ -220,10 +230,7 @@ export const VoiceChannelView: React.FC<Props> = ({
           className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
           aria-hidden="true"
         />
-        <span className="truncate">
-          {statusLabel}
-          {state.phase === "failed" && `: ${state.error}`}
-        </span>
+        <span className="truncate">{statusLabel}</span>
         {isStreamRoom && state.phase === "connected" && (
           <>
             <span className="px-1.5 py-0.5 rounded bg-discord-primary text-white flex-shrink-0">
@@ -255,14 +262,14 @@ export const VoiceChannelView: React.FC<Props> = ({
         className={
           theater
             ? "relative flex-1 min-h-0 flex flex-col bg-discord-dark-400"
-            : "relative bg-discord-dark-400 min-h-[16rem]"
+            : "relative min-h-0 flex flex-col bg-discord-dark-400"
         }
       >
         <div
           className={
             theater
               ? "flex-1 min-h-0 overflow-hidden flex flex-col pb-20"
-              : "overflow-y-auto pb-20"
+              : "min-h-[10rem] overflow-y-auto"
           }
         >
           {state.phase !== "connected" && state.phase !== "failed" && (
@@ -283,7 +290,7 @@ export const VoiceChannelView: React.FC<Props> = ({
               isHost={isHost}
               onDemote={onDemote}
               theater={theater}
-              onToggleTheater={() => setTheater((v) => !v)}
+              onToggleTheater={() => setTheater(!theater)}
             />
           )}
           {state.phase === "connected" &&
@@ -295,7 +302,7 @@ export const VoiceChannelView: React.FC<Props> = ({
                 </Trans>
               </p>
             )}
-          {isStreamRoom && state.phase === "connected" && (
+          {isStreamRoom && !theater && state.phase === "connected" && (
             <ViewerList
               viewers={viewerMembers}
               isHost={isHost}
@@ -306,10 +313,18 @@ export const VoiceChannelView: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-2 px-3">
+        <div
+          className={`flex flex-col items-center gap-2 px-3 ${
+            theater
+              ? "pointer-events-none absolute inset-x-0 bottom-4"
+              : "flex-shrink-0 py-2"
+          }`}
+        >
           {error && (
             <div className="pointer-events-auto max-w-md w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-discord-red/90 text-white text-sm shadow-lg">
-              <span className="flex-1 truncate">{error}</span>
+              <span className="flex-1 min-w-0">
+                {describeVoiceError(error)}
+              </span>
               <button
                 type="button"
                 onClick={clearError}

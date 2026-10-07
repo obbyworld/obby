@@ -50,7 +50,10 @@ vi.mock("../../src/lib/ircClient", () => ({
   },
 }));
 
-vi.mock("../../src/lib/mediaDevices", () => ({
+vi.mock("../../src/lib/mediaDevices", async (importOriginal) => ({
+  classifyMediaError: (
+    await importOriginal<typeof import("../../src/lib/mediaDevices")>()
+  ).classifyMediaError,
   audioConstraints: mocks.audioConstraints,
   videoConstraints: mocks.videoConstraints,
   listDevices: mocks.listDevices,
@@ -78,6 +81,8 @@ class FakePeerConnection {
     null;
   ontrack: ((e: RTCTrackEvent) => void) | null = null;
   createOfferCalls: unknown[] = [];
+  connectionState: RTCPeerConnectionState = "new";
+  onconnectionstatechange: (() => void) | null = null;
   localDescription: RTCSessionDescriptionInit | null = null;
 
   addTransceiver(kind: string, init?: { direction?: string }): void {
@@ -173,7 +178,10 @@ async function waitUntil(check: () => boolean, maxTicks = 50): Promise<void> {
 
 let currentClient: VoiceClient | undefined;
 
-async function joinAs(role: "streamer" | "viewer") {
+async function joinAs(
+  role: "streamer" | "viewer",
+  onError: (e: string) => void = () => {},
+) {
   const client = new VoiceClient({
     serverId: "s1",
     channel: "$stage",
@@ -181,7 +189,7 @@ async function joinAs(role: "streamer" | "viewer") {
     audioSink: fakeAudioSink(),
   });
   currentClient = client;
-  client.attach({ onState: () => {}, onError: () => {} });
+  client.attach({ onState: () => {}, onError });
 
   const joinPromise = client.join();
   // The client waits for its own JOIN to echo back before signaling the
@@ -367,5 +375,85 @@ describe("VoiceClient.setAudioInput", () => {
 
     expect(newTrack.stop).toHaveBeenCalled();
     expect(sender.replaceTrack).not.toHaveBeenCalled();
+  });
+
+  it("joins listen-only and reports a blocked mic instead of failing the call", async () => {
+    getUserMedia.mockRejectedValueOnce(
+      new DOMException("denied", "NotAllowedError"),
+    );
+    const onError = vi.fn();
+    const { pc } = await joinAs("streamer", onError);
+
+    expect(onError).toHaveBeenCalledWith("mic-blocked");
+    expect(pc.transceivers).toContainEqual({
+      kind: "audio",
+      direction: "recvonly",
+    });
+  });
+
+  it("rejoins the room when the peer connection fails", async () => {
+    const { pc } = await joinAs("viewer");
+    mocks.sendRaw.mockClear();
+
+    pc.connectionState = "failed";
+    pc.onconnectionstatechange?.();
+
+    const lines = mocks.sendRaw.mock.calls.map((c) => c[1] as string);
+    expect(lines.some((l) => l.includes('"type":"leave"'))).toBe(true);
+    expect(lines).toContain("JOIN $stage");
+  });
+
+  it("keeps a muted mic muted on the track captured after a rejoin", async () => {
+    const { client, pc } = await joinAs("streamer");
+    client.setMic(false);
+    const rejoinTrack = fakeAudioTrack();
+    getUserMedia.mockImplementationOnce(async () => fakeStream([rejoinTrack]));
+
+    pc.connectionState = "failed";
+    pc.onconnectionstatechange?.();
+    mocks.emit("JOIN", { username: "me", channelName: "$stage" });
+    await Promise.resolve();
+    mocks.emit("TAGMSG", {
+      serverId: "s1",
+      sender: "sfu",
+      channelName: "$stage",
+      mtags: {
+        "+obsidianirc/rtc": JSON.stringify({
+          type: "joined",
+          mode: "stream",
+          role: "streamer",
+          members: ["me"],
+          streamers: ["me"],
+        }),
+      },
+    });
+    await waitUntil(() => rejoinTrack.enabled === false);
+
+    expect(rejoinTrack.enabled).toBe(false);
+  });
+
+  it("asks for a blocked mic once however often unmute is tapped, and honors the last toggle", async () => {
+    getUserMedia.mockRejectedValueOnce(
+      new DOMException("denied", "NotAllowedError"),
+    );
+    const { client } = await joinAs("streamer");
+    const track = fakeAudioTrack();
+    let releaseCapture: (() => void) | undefined;
+    getUserMedia.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseCapture = () => resolve(fakeStream([track]));
+        }),
+    );
+
+    client.setMic(true);
+    client.setMic(true);
+    client.setMic(false);
+    await waitUntil(() => releaseCapture !== undefined);
+    releaseCapture?.();
+    await waitUntil(() => track.enabled !== undefined, 500);
+
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    expect(track.enabled).toBe(false);
   });
 });

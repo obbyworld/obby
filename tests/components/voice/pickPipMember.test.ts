@@ -58,4 +58,13 @@ describe("pickPipMember", () => {
   it("returns undefined for an empty call", () => {
     expect(pickPipMember([], "me")).toBeUndefined();
   });
+
+  it("prefers someone with a camera over a speaker without one", () => {
+    const camera = {} as MediaStreamTrack;
+    const ordered = [
+      member("carl", { speaking: true }),
+      member("bob", { videoTrack: camera }),
+    ];
+    expect(pickPipMember(ordered, "me")?.nick).toBe("bob");
+  });
 });

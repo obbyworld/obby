@@ -164,7 +164,11 @@ export function ParticipantTile({
                 aria-label={muted ? t`Unmute for me` : t`Mute for me`}
                 className={CONTROL_BUTTON}
               >
-                {muted ? <FaVolumeUp /> : <FaVolumeMute />}
+                {muted ? (
+                  <FaVolumeMute className="text-discord-red" />
+                ) : (
+                  <FaVolumeUp />
+                )}
               </button>
               {!compact && (
                 <input
