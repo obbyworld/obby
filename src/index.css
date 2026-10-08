@@ -899,16 +899,16 @@ html.window-blurred .group:hover .message-actions-container {
   background-color: #67060c;
 }
 
-/* We drop the bottom inset only once a keyboard really covers it; focus alone
-   sets data-keyboard-visible, and a floating or hardware keyboard covers nothing. */
-html[data-keyboard-open] .chat-input-area {
-  padding-bottom: 0;
+/* Only the last control of a page clears the home indicator, so every page
+   background still reaches the bottom edge. We drop the inset only once a
+   keyboard really covers it; focus alone sets data-keyboard-visible, and a
+   floating or hardware keyboard covers nothing. */
+.chat-input-area,
+.user-panel {
+  margin-bottom: max(0.5rem, var(--safe-area-inset-bottom, 0px));
 }
-
-/* Override AppLayout's inline paddingBottom (safe-area-inset-bottom) when keyboard is visible.
-   Uses !important because inline styles have higher specificity than class rules. */
-html[data-keyboard-open] .keyboard-aware-layout {
-  padding-bottom: 0 !important;
+html[data-keyboard-open] .chat-input-area {
+  margin-bottom: 0.5rem;
 }
 
 .user-panel {

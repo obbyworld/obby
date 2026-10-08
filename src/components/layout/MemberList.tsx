@@ -601,7 +601,10 @@ export const MemberList: React.FC = () => {
 
   const isMobileView = useMediaQuery();
   return (
-    <div ref={scrollContainerRef} className="px-1 py-3 h-full overflow-y-auto">
+    <div
+      ref={scrollContainerRef}
+      className="px-1 pt-3 pb-[max(0.75rem,var(--safe-area-inset-bottom))] h-full overflow-y-auto"
+    >
       {isMobileView && (
         <button
           onClick={() => toggleMemberList(false)}

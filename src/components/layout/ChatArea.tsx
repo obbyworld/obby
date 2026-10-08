@@ -2502,7 +2502,7 @@ export const ChatArea: React.FC<{
           {/* Input area */}
           {(selectedChannel || selectedPrivateChat) && (
             <div
-              className={`${!isNarrowView && "px-4"} pb-2 relative chat-input-area`}
+              className={`${!isNarrowView && "px-4"} relative chat-input-area`}
             >
               {selectedPrivateChat && selectedServerId && (
                 <E2EERequestBanner
@@ -2723,7 +2723,10 @@ export const ChatArea: React.FC<{
                 <ColorPicker
                   isNarrowView={isNarrowView}
                   onSelect={(color) => setSelectedColor(color)}
-                  onClose={() => setIsColorPickerOpen(false)}
+                  onClose={() => {
+                    setIsColorPickerOpen(false);
+                    inputRef.current?.focus();
+                  }}
                   selectedColor={selectedColor} // Pass the selected color
                   selectedFormatting={selectedFormatting}
                   toggleFormatting={toggleFormatting}
@@ -3020,8 +3023,12 @@ export const ChatArea: React.FC<{
                   const suffix = isAtMessageStart ? ": " : " ";
                   applyText(messageTextRef.current + username + suffix);
                   setShowMembersDropdown(false);
+                  inputRef.current?.focus();
                 }}
-                onClose={() => setShowMembersDropdown(false)}
+                onClose={() => {
+                  setShowMembersDropdown(false);
+                  inputRef.current?.focus();
+                }}
                 onNavigate={() => {}}
                 inputElement={inputRef.current}
                 isAtButtonTriggered={true}

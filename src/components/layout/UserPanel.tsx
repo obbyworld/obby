@@ -114,7 +114,7 @@ export const UserPanel: React.FC<UserPanelProps> = ({
   ];
 
   return (
-    <div className="user-panel mt-auto mb-2 mx-2 h-[52px] shrink-0 flex items-center gap-1 rounded-lg bg-discord-dark-300 p-1 ring-1 ring-black/30">
+    <div className="user-panel mt-auto mx-2 h-[52px] shrink-0 flex items-center gap-1 rounded-lg bg-discord-dark-300 p-1 ring-1 ring-black/30">
       <button
         ref={triggerRef}
         type="button"

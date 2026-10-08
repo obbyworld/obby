@@ -245,7 +245,7 @@ export const ServerList: React.FC = () => {
   }, []);
 
   return (
-    <div className="pt-3 pb-6 md:pb-3 flex flex-col items-center h-full overflow-visible relative">
+    <div className="pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full overflow-visible relative">
       {/* Home button */}
       <div
         className={`
