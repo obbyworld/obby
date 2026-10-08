@@ -111,6 +111,11 @@ msgstr "{0} síť{1} — vyberte jednu k připojení"
 msgid "{0} older messages"
 msgstr "{0} starších zpráv"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "Sleduje: {0}"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Klient"
 msgid "Client Limit (+l)"
 msgstr "Limit klientů (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Zavřít"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Zavřít komentáře"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Zavřít konverzaci"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Smazat balíček"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Smazat balíček \"{packId}\"? Smažou se i všechna emoji v něm."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Smazat soukromý chat"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Smazat tuto pozvánku"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Stáhnout"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Přetáhněte úchyt pro přesun kanálu nebo do složky"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Přetažením úchytu přesuňte kanál nebo chat, nebo kanál do složky"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Výjimky"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Maska vyloučení názvu kanálu"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Ukončit celou obrazovku"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Otevřít nastavení konfigurace kanálu"
 msgid "Open channel options"
 msgstr "Otevřít možnosti kanálu"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Otevřít možnosti chatu"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Zvolte typ kanálu"
 msgid "Picture-in-picture"
 msgstr "Obraz v obraze"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Připnout"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Připnout konverzaci"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Připnout soukromou konverzaci"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Přehrávat zvuky pro zmínky a zprávy"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Hrát piškvorky"
 
@@ -3530,6 +3541,8 @@ msgstr "Soukromá zpráva uživateli"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Otevřít video v novém okně"
 
@@ -3830,9 +3843,10 @@ msgstr "Zobrazovat Markdown formátování ve zprávách"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Přeuspořádat kanály"
+msgid "Reorder list"
+msgstr "Přeuspořádat seznam"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Zobrazit boty"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Zobrazit informace o kanálu"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Zobrazit profil"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Zobrazit diváky"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Zobrazit odchody"
 msgid "Show the MOTD"
 msgstr "Zobrazit MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Zobrazit video"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Stavové zprávy"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Stav:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Zůstaňte tady, než se znovu připojíme. Server omezuje, jak často se můžete znovu připojit."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Fotka, kterou jste právě pořídili"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Nahrávku se nepodařilo pořídit."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Server odmítl vaše připojení. Zkontrolujte režimy kanálu a zkuste to znovu."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Zrušit ztlumení"
 msgid "Unmute for me"
 msgstr "Zrušit ztlumení jen pro mě"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Odepnout"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Odepnout konverzaci"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Odepnout soukromou konverzaci"
@@ -4921,7 +4956,6 @@ msgstr "Uživatel je nepřítomen"
 msgid "User modes"
 msgstr "Uživatelské režimy"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Profil uživatele"
@@ -5114,6 +5148,11 @@ msgstr "byl vyhozen z {channelName} uživatelem {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Byl vykopnut z kanálu"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Sledovat na celé obrazovce"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

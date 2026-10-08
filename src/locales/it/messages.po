@@ -111,6 +111,11 @@ msgstr "{0} rete{1} — scegline una a cui unirti"
 msgid "{0} older messages"
 msgstr "{0} messaggi precedenti"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} stanno guardando"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Client"
 msgid "Client Limit (+l)"
 msgstr "Limite client (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Chiudi"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Chiudi commenti"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Chiudi conversazione"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Elimina pacchetto"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Eliminare il pacchetto \"{packId}\"? Verranno eliminate anche tutte le emoji al suo interno."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Elimina chat privata"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Elimina questo invito"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Scarica"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Trascina una maniglia per spostare un canale, o in una cartella"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Trascina una maniglia per spostare un canale o una chat, o un canale in una cartella"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Eccezioni"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Escludi maschera nome canale"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Esci da schermo intero"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Apri impostazioni configurazione canale"
 msgid "Open channel options"
 msgstr "Apri opzioni canale"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Apri opzioni chat"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Scegli il tipo di canale"
 msgid "Picture-in-picture"
 msgstr "Picture-in-picture"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Fissa"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Fissa conversazione"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Fissa chat privata"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Riproduci suoni per menzioni e messaggi"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Gioca a Tris"
 
@@ -3530,6 +3541,8 @@ msgstr "Messaggio privato"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Apri video in una finestra separata"
 
@@ -3830,9 +3843,10 @@ msgstr "Mostra la formattazione Markdown nei messaggi"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Riordina canali"
+msgid "Reorder list"
+msgstr "Riordina elenco"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Vedi bot"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Vedi info canale"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Vedi profilo"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Vedi spettatori"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Mostra disconnessioni"
 msgid "Show the MOTD"
 msgstr "Mostra MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Mostra video"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Messaggi di stato"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Stato:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Resta qui mentre rientriamo. Il server limita la frequenza con cui puoi rientrare."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "La foto che hai appena scattato"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Non è stato possibile effettuare la registrazione."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Il server ha rifiutato il tuo ingresso. Controlla le modalità del canale e riprova."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Attiva audio"
 msgid "Unmute for me"
 msgstr "Riattiva per me"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Rimuovi fissaggio"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Sblocca conversazione"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Rimuovi fissaggio chat privata"
@@ -4921,7 +4956,6 @@ msgstr "L'utente è assente"
 msgid "User modes"
 msgstr "Modalità utente"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Profilo utente"
@@ -5114,6 +5148,11 @@ msgstr "è stato espulso da {channelName} da {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "È stato espulso dal canale"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Guarda a schermo intero"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

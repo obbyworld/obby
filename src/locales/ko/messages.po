@@ -111,6 +111,11 @@ msgstr "{0}개 네트워크{1} — 참여할 네트워크를 선택하세요"
 msgid "{0} older messages"
 msgstr "이전 메시지 {0}개"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0}명 시청 중"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "클라이언트"
 msgid "Client Limit (+l)"
 msgstr "클라이언트 제한 (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "닫기"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "댓글 닫기"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "대화 닫기"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "팩 삭제"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "팩 \"{packId}\"을(를) 삭제할까요? 팩에 있는 모든 이모지도 함께 삭제됩니다."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "비공개 채팅 삭제"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "이 초대 삭제"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "다운로드"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "핸들을 드래그하여 채널을 이동하거나 폴더에 넣으세요"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "핸들을 끌어 채널이나 채팅을 옮기거나 채널을 폴더로 옮기세요"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "예외"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "채널 이름 마스크 제외"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "전체 화면 종료"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "채널 구성 설정 열기"
 msgid "Open channel options"
 msgstr "채널 옵션 열기"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "채팅 옵션 열기"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "채널 종류 선택"
 msgid "Picture-in-picture"
 msgstr "화면 속 화면"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "고정"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "대화 고정"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "비공개 채팅 고정"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "멘션 및 메시지에 소리 재생"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "틱택토 하기"
 
@@ -3530,6 +3541,8 @@ msgstr "사용자에게 PM"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "비디오 새 창으로 열기"
 
@@ -3830,9 +3843,10 @@ msgstr "메시지에서 마크다운 서식 렌더링"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "채널 순서 변경"
+msgid "Reorder list"
+msgstr "목록 순서 바꾸기"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "봇 보기"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "채널 정보 보기"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "프로필 보기"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "시청자 보기"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "QUIT 표시"
 msgid "Show the MOTD"
 msgstr "MOTD 표시"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "영상 보기"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "상태 메시지"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "상태:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "다시 참여하는 동안 이 화면에 머물러 주세요. 서버가 재참여 횟수를 제한합니다."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "방금 찍은 사진"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "녹화를 할 수 없습니다."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "서버가 참여를 거부했습니다. 채널 모드를 확인하고 다시 시도하세요."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "음소거 해제"
 msgid "Unmute for me"
 msgstr "나에게만 음소거 해제"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "고정 해제"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "대화 고정 해제"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "비공개 채팅 고정 해제"
@@ -4921,7 +4956,6 @@ msgstr "자리 비움 중"
 msgid "User modes"
 msgstr "사용자 모드"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "사용자 프로필"
@@ -5114,6 +5148,11 @@ msgstr "{username}에 의해 {channelName}에서 추방당했습니다 ({reason}
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "채널에서 추방되었습니다"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "전체 화면으로 보기"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

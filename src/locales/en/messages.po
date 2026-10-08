@@ -110,6 +110,11 @@ msgstr "{0} network{1} — pick one to join"
 msgid "{0} older messages"
 msgstr "{0} older messages"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} watching"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1158,7 +1163,6 @@ msgstr "Client"
 msgid "Client Limit (+l)"
 msgstr "Client Limit (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1190,6 +1194,10 @@ msgstr "Close"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Close comments"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Close conversation"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1600,10 +1608,6 @@ msgstr "Delete pack"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Delete pack \"{packId}\"? This also deletes every emoji in it."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Delete Private Chat"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Delete this invite"
@@ -1760,8 +1764,8 @@ msgid "Download"
 msgstr "Download"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Drag a handle to move a channel, or into a folder"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Drag a handle to move a channel or chat, or a channel into a folder"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2054,6 +2058,11 @@ msgstr "Exceptions"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Exclude Channel Name Mask"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Exit full screen"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3304,6 +3313,11 @@ msgstr "Open channel configuration settings"
 msgid "Open channel options"
 msgstr "Open channel options"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Open chat options"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3474,12 +3488,11 @@ msgstr "Pick channel kind"
 msgid "Picture-in-picture"
 msgstr "Picture-in-picture"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Pin"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Pin conversation"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Pin Private Chat"
@@ -3510,8 +3523,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Play sounds for mentions and messages"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Play Tic-Tac-Toe"
 
@@ -3529,6 +3540,8 @@ msgstr "PM User"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Pop out video"
 
@@ -3829,9 +3842,10 @@ msgstr "Render markdown formatting in messages"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Reorder channels"
+msgid "Reorder list"
+msgstr "Reorder list"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4017,6 +4031,16 @@ msgstr "See bots"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "See channel info"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "See profile"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "See viewers"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4335,6 +4359,10 @@ msgstr "Show Quits"
 msgid "Show the MOTD"
 msgstr "Show the MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Show video"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4443,6 +4471,10 @@ msgstr "Status Messages"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Status:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Stay here while we rejoin. The server limits how often you can rejoin."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4572,6 +4604,10 @@ msgstr "The photo you just took"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "The recording could not be made."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "The server refused your join. Check the channel modes and try again."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4823,12 +4859,11 @@ msgstr "Unmute"
 msgid "Unmute for me"
 msgstr "Unmute for me"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Unpin"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Unpin conversation"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Unpin Private Chat"
@@ -4920,7 +4955,6 @@ msgstr "User is away"
 msgid "User modes"
 msgstr "User modes"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "User Profile"
@@ -5113,6 +5147,11 @@ msgstr "was kicked from {channelName} by {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Was kicked from the channel"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Watch full screen"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

@@ -111,6 +111,11 @@ msgstr "{0} rețea{1} — alege una pentru a te conecta"
 msgid "{0} older messages"
 msgstr "{0} mesaje mai vechi"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} urmăresc"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Client"
 msgid "Client Limit (+l)"
 msgstr "Limită clienți (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Închide"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Închide comentariile"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Închide conversația"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Șterge pachetul"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Ștergi pachetul \"{packId}\"? Se șterg și toate emoji-urile din el."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Șterge conversația privată"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Șterge această invitație"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Descarcă"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Trage un mâner pentru a muta un canal, sau într-un folder"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Trage de mâner pentru a muta un canal sau un chat, ori un canal într-un dosar"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Excepții"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Excludeți masca numelui canalului"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Ieși din ecran complet"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Deschide setările de configurare ale canalului"
 msgid "Open channel options"
 msgstr "Deschide opțiunile canalului"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Deschide opțiunile chatului"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Alege tipul de canal"
 msgid "Picture-in-picture"
 msgstr "Imagine în imagine"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Fixează"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Fixează conversația"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Fixează conversația privată"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Redați sunete pentru mențiuni și mesaje"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Joacă X și 0"
 
@@ -3530,6 +3541,8 @@ msgstr "Mesaj privat"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Deschide videoclipul într-o fereastră separată"
 
@@ -3830,9 +3843,10 @@ msgstr "Afișați formatarea Markdown în mesaje"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Reordonează canalele"
+msgid "Reorder list"
+msgstr "Reordonează lista"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Vezi boții"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Vezi informațiile canalului"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Vezi profilul"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Vezi spectatorii"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Afișați deconectările"
 msgid "Show the MOTD"
 msgstr "Afișează MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Arată videoclipul"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Mesaje de stare"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Stare:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Rămâi aici cât timp ne reconectăm. Serverul limitează cât de des poți intra din nou."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Fotografia pe care tocmai ai făcut-o"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Înregistrarea nu a putut fi realizată."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Serverul ți-a refuzat intrarea. Verifică modurile canalului și încearcă din nou."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Activare sunet"
 msgid "Unmute for me"
 msgstr "Activează sunetul doar pentru mine"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Anulează fixarea"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Anulează fixarea conversației"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Anulează fixarea conversației private"
@@ -4921,7 +4956,6 @@ msgstr "Utilizatorul este absent"
 msgid "User modes"
 msgstr "Moduri utilizator"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Profil utilizator"
@@ -5114,6 +5148,11 @@ msgstr "a fost dat afară din {channelName} de {username} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "A fost dat afară din canal"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Urmărește pe tot ecranul"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

@@ -111,6 +111,11 @@ msgstr "{0} мереж{1} — виберіть одну, щоб приєднат
 msgid "{0} older messages"
 msgstr "{0} старіших повідомлень"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "Дивляться: {0}"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Клієнт"
 msgid "Client Limit (+l)"
 msgstr "Ліміт клієнтів (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Закрити"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Закрити коментарі"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Закрити розмову"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Видалити пак"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Видалити пак \"{packId}\"? Це також видалить усі емодзі в ньому."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Видалити приватний чат"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Видалити це запрошення"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Завантажити"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Перетягніть за ручку, щоб перемістити канал або покласти в папку"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Перетягніть маркер, щоб перемістити канал чи чат або канал у теку"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Винятки"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Маска виключення назви каналу"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Вийти з повноекранного режиму"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Відкрити налаштування конфігурації ка�
 msgid "Open channel options"
 msgstr "Відкрити параметри каналу"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Відкрити параметри чату"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Виберіть тип каналу"
 msgid "Picture-in-picture"
 msgstr "Картинка в картинці"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Закріпити"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Закріпити розмову"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Закріпити приватну розмову"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Відтворювати звуки для згадок і повідомлень"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Грати в хрестики-нулики"
 
@@ -3530,6 +3541,8 @@ msgstr "ПП користувачу"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Відкрити відео в окремому вікні"
 
@@ -3830,9 +3843,10 @@ msgstr "Відображати Markdown-форматування у повідо
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Змінити порядок каналів"
+msgid "Reorder list"
+msgstr "Змінити порядок списку"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Переглянути ботів"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Переглянути інформацію про канал"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Переглянути профіль"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Переглянути глядачів"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Показати виходи"
 msgid "Show the MOTD"
 msgstr "Показати MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Показати відео"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Статусні повідомлення"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Статус:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Залишайтеся тут, поки ми підключаємося знову. Сервер обмежує частоту повторних входів."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Щойно зроблене фото"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Не вдалося зробити запис."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Сервер відхилив ваш вхід. Перевірте режими каналу й спробуйте ще раз."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Увімкнути звук"
 msgid "Unmute for me"
 msgstr "Увімкнути звук для мене"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Відкріпити"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Відкріпити розмову"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Відкріпити приватну розмову"
@@ -4921,7 +4956,6 @@ msgstr "Користувач відсутній"
 msgid "User modes"
 msgstr "Режими користувача"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Профіль користувача"
@@ -5114,6 +5148,11 @@ msgstr "був кікнутий з {channelName} користувачем {usern
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Виключено з каналу"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Дивитися на весь екран"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

@@ -111,6 +111,11 @@ msgstr "{0} 件のネットワーク{1} — 参加するものを1つ選んで�
 msgid "{0} older messages"
 msgstr "{0} 件の古いメッセージ"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0}人が視聴中"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "クライアント"
 msgid "Client Limit (+l)"
 msgstr "クライアント制限 (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "閉じる"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "コメントを閉じる"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "会話を閉じる"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "パックを削除"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "パック \"{packId}\" を削除しますか? パック内のすべての絵文字も削除されます。"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "プライベートチャットを削除"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "この招待を削除"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "ダウンロード"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "ハンドルをドラッグしてチャンネルを移動、またはフォルダに入れます"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "ハンドルをドラッグしてチャンネルやチャットを移動、またはチャンネルをフォルダーに移動"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "例外"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "チャンネル名マスクを除外"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "全画面表示を終了"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "チャンネル設定を開く"
 msgid "Open channel options"
 msgstr "チャンネルオプションを開く"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "チャットのオプションを開く"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "チャネルの種類を選択"
 msgid "Picture-in-picture"
 msgstr "ピクチャーインピクチャー"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "ピン留め"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "会話を固定"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "プライベートチャットをピン留め"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "メンションやメッセージに対してサウンドを再生する"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "三目並べをプレイ"
 
@@ -3530,6 +3541,8 @@ msgstr "DMを送る"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "動画をポップアウト"
 
@@ -3830,9 +3843,10 @@ msgstr "メッセージ内のMarkdown書式を表示する"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "チャンネルを並べ替え"
+msgid "Reorder list"
+msgstr "リストを並べ替え"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "ボットを見る"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "チャンネル情報を見る"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "プロフィールを見る"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "視聴者を見る"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "退出を表示"
 msgid "Show the MOTD"
 msgstr "MOTDを表示"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "動画を表示"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "ステータスメッセージ"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "ステータス:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "再参加するまでこのままお待ちください。サーバーは再参加の頻度を制限しています。"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "今撮った写真"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "録画できませんでした。"
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "サーバーが参加を拒否しました。チャンネルモードを確認して、もう一度お試しください。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "ミュート解除"
 msgid "Unmute for me"
 msgstr "自分のみミュート解除"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "ピン留めを解除"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "会話の固定を解除"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "プライベートチャットのピン留めを解除"
@@ -4921,7 +4956,6 @@ msgstr "ユーザーは離席中です"
 msgid "User modes"
 msgstr "ユーザーモード"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "ユーザープロフィール"
@@ -5114,6 +5148,11 @@ msgstr "{username} によって {channelName} からキックされました ({r
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "チャンネルからキックされました"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "全画面で見る"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

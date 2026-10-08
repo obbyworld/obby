@@ -111,6 +111,11 @@ msgstr "{0} сеть{1} — выберите одну для подключен�
 msgid "{0} older messages"
 msgstr "{0} старых сообщений"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "Смотрят: {0}"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Клиент"
 msgid "Client Limit (+l)"
 msgstr "Лимит пользователей (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Закрыть"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Закрыть комментарии"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Закрыть беседу"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Удалить набор"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Удалить набор «{packId}»? Это также удалит все эмодзи в нём."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Удалить личную переписку"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Удалить это приглашение"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Скачать"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Перетащите за ручку, чтобы переместить канал или поместить в папку"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Перетащите маркер, чтобы переместить канал или чат либо канал в папку"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Исключения"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Исключить маску имени канала"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Выйти из полноэкранного режима"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Открыть настройки конфигурации канала"
 msgid "Open channel options"
 msgstr "Открыть параметры канала"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Открыть параметры чата"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Выберите тип канала"
 msgid "Picture-in-picture"
 msgstr "Картинка в картинке"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Закрепить"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Закрепить беседу"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Закрепить личный чат"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Воспроизводить звуки для упоминаний и сообщений"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Играть в крестики-нолики"
 
@@ -3530,6 +3541,8 @@ msgstr "Написать в личку"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Открыть видео в отдельном окне"
 
@@ -3830,9 +3843,10 @@ msgstr "Отображать форматирование Markdown в сообщ
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Изменить порядок каналов"
+msgid "Reorder list"
+msgstr "Изменить порядок списка"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Показать ботов"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Показать информацию о канале"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Открыть профиль"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Посмотреть зрителей"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Показывать выходы"
 msgid "Show the MOTD"
 msgstr "Показать MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Показать видео"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Статусные сообщения"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Статус:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Оставайтесь здесь, пока мы подключаемся снова. Сервер ограничивает частоту повторных входов."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Только что сделанное фото"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Не удалось сделать запись."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Сервер отклонил ваш вход. Проверьте режимы канала и попробуйте снова."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Вкл. звук"
 msgid "Unmute for me"
 msgstr "Включить звук для меня"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Открепить"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Открепить беседу"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Открепить личный чат"
@@ -4921,7 +4956,6 @@ msgstr "Пользователь отсутствует"
 msgid "User modes"
 msgstr "Пользовательские режимы"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Профиль пользователя"
@@ -5114,6 +5148,11 @@ msgstr "был кикнут из {channelName} пользователем {usern
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Был исключён из канала"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Смотреть на весь экран"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

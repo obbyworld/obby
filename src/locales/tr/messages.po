@@ -111,6 +111,11 @@ msgstr "{0} ağ{1} — katılmak için birini seçin"
 msgid "{0} older messages"
 msgstr "{0} eski mesaj"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} kişi izliyor"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "İstemci"
 msgid "Client Limit (+l)"
 msgstr "İstemci Sınırı (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Kapat"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Yorumları kapat"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Konuşmayı kapat"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Paketi sil"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "\"{packId}\" paketi silinsin mi? Bu, içindeki tüm emojileri de siler."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Özel Sohbeti Sil"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Bu daveti sil"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "İndir"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Bir kanalı taşımak veya bir klasöre koymak için bir tutamacı sürükle"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Bir kanalı veya sohbeti ya da bir kanalı klasöre taşımak için tutamacı sürükleyin"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "İstisnalar"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Kanal Adı Maskesini Hariç Tut"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Tam ekrandan çık"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Kanal yapılandırma ayarlarını aç"
 msgid "Open channel options"
 msgstr "Kanal seçeneklerini aç"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Sohbet seçeneklerini aç"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Kanal türünü seçin"
 msgid "Picture-in-picture"
 msgstr "Resim içinde resim"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Sabitle"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Konuşmayı sabitle"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Özel Sohbeti Sabitle"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Bahisler ve mesajlar için ses çal"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Tic-Tac-Toe Oyna"
 
@@ -3530,6 +3541,8 @@ msgstr "Kullanıcıya PM Gönder"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Videoyu ayrı pencerede aç"
 
@@ -3830,9 +3843,10 @@ msgstr "Mesajlarda markdown biçimlendirmesini işle"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Kanalları yeniden sırala"
+msgid "Reorder list"
+msgstr "Listeyi yeniden sırala"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Botları gör"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Kanal bilgisini gör"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Profili gör"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "İzleyicileri gör"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Ayrılmaları Göster"
 msgid "Show the MOTD"
 msgstr "MOTD'yi Göster"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Videoyu göster"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Durum Mesajları"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Durum:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Yeniden katılırken burada kalın. Sunucu ne sıklıkla yeniden katılabileceğinizi sınırlıyor."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Az önce çektiğin fotoğraf"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Kayıt yapılamadı."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Sunucu katılımınızı reddetti. Kanal modlarını kontrol edip tekrar deneyin."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Sesi Aç"
 msgid "Unmute for me"
 msgstr "Benim için sesi aç"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Sabitlemeyi Kaldır"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Konuşmanın sabitlemesini kaldır"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Özel Sohbetin Sabitlemesini Kaldır"
@@ -4921,7 +4956,6 @@ msgstr "Kullanıcı uzakta"
 msgid "User modes"
 msgstr "Kullanıcı modları"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Kullanıcı Profili"
@@ -5114,6 +5148,11 @@ msgstr "{channelName} kanalından {username} tarafından atıldı ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Kanaldan atıldı"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Tam ekran izle"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"

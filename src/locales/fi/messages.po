@@ -111,6 +111,11 @@ msgstr "{0} verkko{1} — valitse yksi liittyäksesi"
 msgid "{0} older messages"
 msgstr "{0} vanhempaa viestiä"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} katsoo"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -1159,7 +1164,6 @@ msgstr "Asiakasohjelma"
 msgid "Client Limit (+l)"
 msgstr "Käyttäjäraja (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1191,6 +1195,10 @@ msgstr "Sulje"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Sulje kommentit"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Sulje keskustelu"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1601,10 +1609,6 @@ msgstr "Poista paketti"
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Poistetaanko paketti \"{packId}\"? Samalla poistetaan kaikki sen emojit."
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Poista yksityiskeskustelu"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
 msgstr "Poista tämä kutsu"
@@ -1761,8 +1765,8 @@ msgid "Download"
 msgstr "Lataa"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Vedä kahvasta siirtääksesi kanavan tai kansioon"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Vedä kahvasta siirtääksesi kanavaa tai keskustelua tai kanavan kansioon"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -2055,6 +2059,11 @@ msgstr "Poikkeukset"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Sulje pois kanavan nimimaski"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Poistu koko näytöstä"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -3305,6 +3314,11 @@ msgstr "Avaa kanavan asetukset"
 msgid "Open channel options"
 msgstr "Avaa kanavan valinnat"
 
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Avaa keskustelun asetukset"
+
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Open in browser"
@@ -3475,12 +3489,11 @@ msgstr "Valitse kanavan tyyppi"
 msgid "Picture-in-picture"
 msgstr "Kuva kuvassa"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Kiinnitä"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Kiinnitä keskustelu"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Kiinnitä yksityiskeskustelu"
@@ -3511,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Toista ääniä maininnoista ja viesteistä"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Pelaa ristinollaa"
 
@@ -3530,6 +3541,8 @@ msgstr "Lähetä viesti käyttäjälle"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Avaa video erilliseen ikkunaan"
 
@@ -3830,9 +3843,10 @@ msgstr "Näytä Markdown-muotoilu viesteissä"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Järjestä kanavat uudelleen"
+msgid "Reorder list"
+msgstr "Järjestä lista"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -4018,6 +4032,16 @@ msgstr "Näytä botit"
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
 msgstr "Näytä kanavan tiedot"
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Näytä profiili"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Näytä katsojat"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4336,6 +4360,10 @@ msgstr "Näytä poistumisviestit"
 msgid "Show the MOTD"
 msgstr "Näytä MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Näytä video"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -4444,6 +4472,10 @@ msgstr "Tilaviestit"
 #: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Status:"
 msgstr "Tila:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Pysy tässä, kun liitymme uudelleen. Palvelin rajoittaa, kuinka usein voit liittyä uudelleen."
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
@@ -4573,6 +4605,10 @@ msgstr "Juuri ottamasi kuva"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Tallennusta ei voitu tehdä."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Palvelin hylkäsi liittymisesi. Tarkista kanavan tilat ja yritä uudelleen."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4824,12 +4860,11 @@ msgstr "Poista mykistys"
 msgid "Unmute for me"
 msgstr "Poista mykistys vain minulta"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Irrota kiinnitys"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Irrota keskustelu"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Irrota yksityiskeskustelu"
@@ -4921,7 +4956,6 @@ msgstr "Käyttäjä on poissa"
 msgid "User modes"
 msgstr "Käyttäjätilat"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Käyttäjäprofiili"
@@ -5114,6 +5148,11 @@ msgstr "potkittiin kanavalta {channelName} käyttäjän {username} toimesta ({re
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Poistettiin kanavalta"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Katso koko näytöllä"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"
