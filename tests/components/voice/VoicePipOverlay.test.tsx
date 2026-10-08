@@ -306,4 +306,32 @@ describe("VoicePipOverlay", () => {
     });
     expect(container.firstChild).toBeNull();
   });
+
+  it("hides the floating card while a video is in system picture-in-picture", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "^general" },
+    ]);
+    setSelection(null);
+    const { container } = render(<VoicePipOverlay />);
+    const card = container.querySelector(".voice-pip-card") as HTMLElement;
+    expect(card).not.toHaveClass("opacity-0");
+
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    Object.defineProperty(document, "pictureInPictureElement", {
+      configurable: true,
+      value: video,
+    });
+    act(() => {
+      video.dispatchEvent(new Event("enterpictureinpicture"));
+    });
+    expect(card).toHaveClass("opacity-0", "pointer-events-none");
+    expect(card).toHaveAttribute("inert");
+
+    Object.defineProperty(document, "pictureInPictureElement", {
+      configurable: true,
+      value: null,
+    });
+    video.remove();
+  });
 });

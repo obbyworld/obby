@@ -20,9 +20,12 @@ import { releaseVoiceClient, type VoiceMember } from "../../lib/voice";
 import { describeVoiceError } from "../../lib/voiceErrors";
 import { useSpotlight, useTheater } from "../../lib/voiceSpotlight";
 import useStore, { resolveCallReturnTarget } from "../../store";
+import BottomSheet from "../mobile/BottomSheet";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
+import { VoiceAvatarBar } from "../voice/VoiceAvatarBar";
 import { VoiceDock } from "../voice/VoiceDock";
 import { VoiceStage } from "../voice/VoiceStage";
+import { VoiceVideoBand } from "../voice/VoiceVideoBand";
 
 interface Props {
   serverId: string;
@@ -68,6 +71,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   // voiceSpotlight.ts so the pick follows the user across both views.
   const [focusNick, setFocusNick] = useSpotlight(serverId, channelName);
   const [theater, setTheater] = useTheater(serverId, channelName);
+  const [isViewerSheetOpen, setIsViewerSheetOpen] = useState(false);
   // Push-to-talk is purely a client-side toggle (not part of VoiceState),
   // so it's the one control mirrored into local state -- seeded from the
   // client whenever it changes so a remount picks up the real value.
@@ -199,9 +203,187 @@ export const VoiceChannelView: React.FC<Props> = ({
         ? "bg-discord-red"
         : "bg-yellow-400 animate-pulse";
 
+  // A phone shows a call above its chat, and full screen it shows only the
+  // video, since there is no room left for chat beside it.
+  const isFullscreenVideo =
+    theater && isTouch && hasStreamVideo && state.phase === "connected";
+  const isCompact = isNarrow && isTouch && !isFullscreenVideo;
+
   const rootClass = theater
     ? "fixed inset-0 z-[9990] flex flex-col bg-discord-dark-400"
     : "w-full min-h-0 flex flex-col bg-discord-dark-200";
+  const safeAreaPadding = {
+    paddingTop: "var(--safe-area-inset-top, 0px)",
+    paddingBottom: "var(--safe-area-inset-bottom, 0px)",
+    paddingLeft: "var(--safe-area-inset-left, 0px)",
+    paddingRight: "var(--safe-area-inset-right, 0px)",
+  };
+
+  const dock = (
+    <VoiceDock
+      isNarrow={isNarrow}
+      isTouch={isTouch}
+      isStreamer={isStreamer}
+      micOn={self?.micOn ?? false}
+      videoOn={self?.videoOn ?? false}
+      screenOn={self?.screenSharing ?? false}
+      deafened={deafened}
+      handRaised={self?.handRaised ?? false}
+      pttOn={pttOn}
+      canStepOffStream={canStepOffStream}
+      onToggleMic={onToggleMic}
+      onToggleVideo={onToggleVideo}
+      onToggleScreen={onToggleScreen}
+      onToggleDeafen={onToggleDeafen}
+      onToggleHand={onToggleHand}
+      onTogglePtt={onTogglePtt}
+      onStepOffStream={onStepOffStream}
+      onReact={onReact}
+      onLeave={onLeave}
+      onOpenDeviceSettings={onOpenDeviceSettings}
+    />
+  );
+
+  const errorBanner = error && (
+    <div className="pointer-events-auto max-w-md w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-discord-red/90 text-white text-sm shadow-lg">
+      <span className="flex-1 min-w-0">{describeVoiceError(error)}</span>
+      <button
+        type="button"
+        onClick={clearError}
+        aria-label={t`Dismiss`}
+        title={t`Dismiss`}
+        className="flex-shrink-0 hover:opacity-80"
+      >
+        <FaTimes />
+      </button>
+    </div>
+  );
+
+  const viewerSheet = isStreamRoom && (
+    <BottomSheet
+      isOpen={isViewerSheetOpen}
+      onClose={() => setIsViewerSheetOpen(false)}
+    >
+      <ViewerList
+        viewers={viewerMembers}
+        isHost={isHost}
+        maxStreamers={STREAM_MAX_STREAMERS}
+        streamerCount={streamers.length}
+        onPromote={onPromote}
+      />
+    </BottomSheet>
+  );
+
+  const statusPill = (
+    <span className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/55 text-xs text-white flex-shrink-0">
+      <span
+        className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
+        aria-hidden="true"
+      />
+      {statusLabel}
+    </span>
+  );
+  const viewersButton = isStreamRoom && state.phase === "connected" && (
+    <button
+      type="button"
+      onClick={() => setIsViewerSheetOpen(true)}
+      title={t`See viewers`}
+      aria-label={t`See viewers`}
+      className="flex-shrink-0 px-2 py-1 rounded-full bg-black/55 text-xs text-white"
+    >
+      <Trans>{viewerMembers.length} watching</Trans>
+    </button>
+  );
+  const videoBand = (
+    <VoiceVideoBand
+      members={streamerMembers}
+      serverId={serverId}
+      selfNick={selfNick}
+      focusNick={focusNick}
+      onFocus={setFocusNick}
+      reactions={reactions}
+      onSetMuted={onSetMuted}
+      onSetVolume={onSetVolume}
+      isHost={isHost}
+      onDemote={onDemote}
+      status={statusPill}
+      actions={viewersButton}
+      dock={dock}
+      isFullscreen={isFullscreenVideo}
+      onToggleFullscreen={() => setTheater(!theater)}
+    />
+  );
+
+  if (isFullscreenVideo) {
+    return createPortal(
+      <div
+        className="fixed inset-0 z-[9990] bg-black flex flex-col"
+        style={safeAreaPadding}
+      >
+        {videoBand}
+        {errorBanner && (
+          <div className="absolute inset-x-3 top-14 flex justify-center">
+            {errorBanner}
+          </div>
+        )}
+        {viewerSheet}
+      </div>,
+      document.body,
+    );
+  }
+
+  if (isCompact) {
+    return (
+      <div className="w-full flex flex-col bg-discord-dark-200">
+        {state.phase !== "connected" && state.phase !== "failed" && (
+          <div className="flex items-center justify-center py-6">
+            <LoadingSpinner size="md" text="" />
+          </div>
+        )}
+        {state.phase === "connected" && hasStreamVideo ? (
+          <>
+            <div className="[html[data-keyboard-open]_&]:hidden">
+              {videoBand}
+            </div>
+            <button
+              type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={() => (document.activeElement as HTMLElement)?.blur()}
+              className="hidden [html[data-keyboard-open]_&]:flex items-center gap-2 px-3 py-2 bg-discord-dark-300 text-xs text-discord-text-normal"
+            >
+              <span
+                className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
+                aria-hidden="true"
+              />
+              <span className="flex-1 text-left">{statusLabel}</span>
+              <span className="text-discord-text-link">
+                <Trans>Show video</Trans>
+              </span>
+            </button>
+          </>
+        ) : (
+          (state.phase === "connected" || state.phase === "failed") && (
+            <>
+              {(isStreamRoom || state.phase === "failed") && (
+                <div className="flex items-center gap-2 px-3 pt-2">
+                  {statusPill}
+                  <span className="flex-1" />
+                  {viewersButton}
+                </div>
+              )}
+              <VoiceAvatarBar
+                members={streamerMembers}
+                serverId={serverId}
+                dock={dock}
+              />
+            </>
+          )
+        )}
+        {errorBanner && <div className="px-3 py-2">{errorBanner}</div>}
+        {viewerSheet}
+      </div>
+    );
+  }
 
   // Theater renders through a portal to document.body so its `fixed`
   // container is positioned against the real viewport -- nested in place,
@@ -209,19 +391,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   // AppLayout) would otherwise become its containing block and confine
   // it to that ancestor's box instead of the window.
   const content = (
-    <div
-      className={rootClass}
-      style={
-        theater
-          ? {
-              paddingTop: "var(--safe-area-inset-top, 0px)",
-              paddingBottom: "var(--safe-area-inset-bottom, 0px)",
-              paddingLeft: "var(--safe-area-inset-left, 0px)",
-              paddingRight: "var(--safe-area-inset-right, 0px)",
-            }
-          : undefined
-      }
-    >
+    <div className={rootClass} style={theater ? safeAreaPadding : undefined}>
       <div
         data-testid="voice-status-strip"
         className="h-9 flex-shrink-0 px-3 flex items-center gap-2 text-xs border-b border-discord-dark-300 bg-discord-dark-300/60 text-discord-text-muted"
@@ -320,46 +490,8 @@ export const VoiceChannelView: React.FC<Props> = ({
               : "flex-shrink-0 py-2"
           }`}
         >
-          {error && (
-            <div className="pointer-events-auto max-w-md w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-discord-red/90 text-white text-sm shadow-lg">
-              <span className="flex-1 min-w-0">
-                {describeVoiceError(error)}
-              </span>
-              <button
-                type="button"
-                onClick={clearError}
-                aria-label={t`Dismiss`}
-                title={t`Dismiss`}
-                className="flex-shrink-0 hover:opacity-80"
-              >
-                <FaTimes />
-              </button>
-            </div>
-          )}
-          <div className="pointer-events-auto">
-            <VoiceDock
-              isNarrow={isNarrow}
-              isTouch={isTouch}
-              isStreamer={isStreamer}
-              micOn={self?.micOn ?? false}
-              videoOn={self?.videoOn ?? false}
-              screenOn={self?.screenSharing ?? false}
-              deafened={deafened}
-              handRaised={self?.handRaised ?? false}
-              pttOn={pttOn}
-              canStepOffStream={canStepOffStream}
-              onToggleMic={onToggleMic}
-              onToggleVideo={onToggleVideo}
-              onToggleScreen={onToggleScreen}
-              onToggleDeafen={onToggleDeafen}
-              onToggleHand={onToggleHand}
-              onTogglePtt={onTogglePtt}
-              onStepOffStream={onStepOffStream}
-              onReact={onReact}
-              onLeave={onLeave}
-              onOpenDeviceSettings={onOpenDeviceSettings}
-            />
-          </div>
+          {errorBanner}
+          <div className="pointer-events-auto">{dock}</div>
         </div>
       </div>
     </div>

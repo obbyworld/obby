@@ -17,7 +17,12 @@ import { useSpotlight } from "../../lib/voiceSpotlight";
 import useStore from "../../store";
 import { DockButton } from "./DockButton";
 import { pickPipMember } from "./pickPipMember";
-import { onPipRequest, pipSupported, VideoTrackView } from "./VideoTrackView";
+import {
+  onPipRequest,
+  pipSupported,
+  useIsVideoPipActive,
+  VideoTrackView,
+} from "./VideoTrackView";
 import { VoiceAvatar } from "./voiceAvatar";
 
 const MAX_PIP_THUMBNAILS = 3;
@@ -135,8 +140,15 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
 }) => {
   const { t } = useLingui();
   const isNarrow = useMediaQuery();
-  const { client, selfNick, self, ordered, primary, setSpotlightNick } =
-    usePipCall(serverId, channel);
+  const {
+    client,
+    selfNick,
+    self,
+    isStreamer,
+    ordered,
+    primary,
+    setSpotlightNick,
+  } = usePipCall(serverId, channel);
   const selectServer = useStore((s) => s.selectServer);
   const selectChannel = useStore((s) => s.selectChannel);
   const channelId = useStore((s) => {
@@ -154,6 +166,9 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
     startTop: number;
   } | null>(null);
   const [pos, setPos] = useState<DragPosition | null>(null);
+  // We keep the card mounted while hidden, since its own video may be the
+  // one playing in the picture-in-picture window.
+  const isVideoPipActive = useIsVideoPipActive();
 
   const isSelf = primary?.nick === selfNick;
   const hasAnyVideo = ordered.some((m) => m.videoTrack);
@@ -211,7 +226,10 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      className="voice-pip-card fixed z-[9000] w-44 sm:w-64 rounded-xl overflow-hidden bg-discord-dark-400 ring-1 ring-black/40 shadow-2xl select-none touch-none"
+      inert={isVideoPipActive}
+      className={`voice-pip-card fixed z-[9000] w-44 sm:w-64 rounded-xl overflow-hidden bg-discord-dark-400 ring-1 ring-black/40 shadow-2xl select-none touch-none ${
+        isVideoPipActive ? "opacity-0 pointer-events-none" : ""
+      }`}
       style={
         pos
           ? { left: pos.left, top: pos.top }
@@ -326,13 +344,15 @@ const VoicePipCard: React.FC<{ serverId: string; channel: string }> = ({
       )}
 
       <div className="flex items-center justify-center gap-2 px-2 py-2 bg-discord-dark-300">
-        <DockButton
-          icon={self?.micOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
-          state={self?.micOn ? "neutral" : "off"}
-          size="sm"
-          label={self?.micOn ? t`Mute` : t`Unmute`}
-          onClick={() => client?.setMic(!self?.micOn)}
-        />
+        {isStreamer && (
+          <DockButton
+            icon={self?.micOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
+            state={self?.micOn ? "neutral" : "off"}
+            size="sm"
+            label={self?.micOn ? t`Mute` : t`Unmute`}
+            onClick={() => client?.setMic(!self?.micOn)}
+          />
+        )}
         <DockButton
           icon={<FaPhoneSlash />}
           state="danger"
