@@ -14,6 +14,7 @@ import {
 } from "./auth";
 import { handleBouncer, handleBouncerFail } from "./bouncer";
 import {
+  handleJoinRefused,
   handleListChannel,
   handleListEnd,
   handleMode,
@@ -194,6 +195,16 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleChghost(ctx, serverId, source, parv, mtags),
   JOIN: (ctx, serverId, source, parv, mtags) =>
     handleJoin(ctx, serverId, source, parv, mtags),
+  // UnrealIRCd answers a join over set::anti-flood::join-flood with 500.
+  "500": (ctx, serverId, _source, parv) =>
+    handleJoinRefused(ctx, serverId, parv, true),
+  ...Object.fromEntries(
+    ["405", "471", "473", "474", "475", "477", "489", "520"].map((code) => [
+      code,
+      ((ctx, serverId, _source, parv) =>
+        handleJoinRefused(ctx, serverId, parv, false)) satisfies HandlerFn,
+    ]),
+  ),
   PART: (ctx, serverId, source, parv, mtags) =>
     handlePart(ctx, serverId, source, parv, mtags),
   KICK: (ctx, serverId, source, parv, mtags) =>

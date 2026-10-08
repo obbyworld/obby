@@ -155,6 +155,19 @@ export function handleListEnd(
   ctx.triggerEvent("LIST_END", { serverId });
 }
 
+export function handleJoinRefused(
+  ctx: IRCClientContext,
+  serverId: string,
+  parv: string[],
+  isThrottled: boolean,
+): void {
+  ctx.triggerEvent("JOIN_REFUSED", {
+    serverId,
+    channelName: parv[1],
+    isThrottled,
+  });
+}
+
 export function handleRplChannelModeIs(
   ctx: IRCClientContext,
   serverId: string,

@@ -78,7 +78,12 @@ export function useVoiceCall(
       serverId,
       channel,
       selfNick,
-      onState: setState,
+      onState: (next) => {
+        setState(next);
+        if (next.phase === "connected") {
+          setError((e) => (e === "join-throttled" ? null : e));
+        }
+      },
       onError: setError,
       onReaction: (nick, emoji) => {
         const id = ++reactionIdRef.current;

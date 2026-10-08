@@ -5,7 +5,11 @@ type VoiceDeviceKind = "mic" | "camera" | "screen";
 
 // We pass codes from the voice client to the view so every message is
 // translated, and the call server's own text never reaches the screen.
-export type VoiceErrorCode = `${VoiceDeviceKind}-${MediaErrorKind}` | "server";
+export type VoiceErrorCode =
+  | `${VoiceDeviceKind}-${MediaErrorKind}`
+  | "server"
+  | "join-throttled"
+  | "join-refused";
 
 export function deviceErrorCode(
   kind: VoiceDeviceKind,
@@ -38,5 +42,9 @@ export function describeVoiceError(code: VoiceErrorCode): string {
       return t`Share your screen again to retry`;
     case "server":
       return t`The call server refused that. Try again in a moment.`;
+    case "join-throttled":
+      return t`Stay here while we rejoin. The server limits how often you can rejoin.`;
+    case "join-refused":
+      return t`The server refused your join. Check the channel modes and try again.`;
   }
 }

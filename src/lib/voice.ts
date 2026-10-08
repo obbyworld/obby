@@ -441,46 +441,85 @@ export class VoiceClient {
     const channel = this.opts.channel;
     const selfNick = this.opts.selfNick;
     const generation = this.generation;
-    // A join sent while the media server restarts is lost, so we keep asking
-    // until it answers.
+    const isOurChannel = (p: { channelName: string }) =>
+      p.channelName.toLowerCase() === channel.toLowerCase();
+    // A join sent while the media server restarts is lost, and the ircd
+    // refuses a join over its join-flood limit, so we keep asking until both
+    // answer.
+    let isJoinRefused = false;
     const sendJoinSignal = () => {
       if (this.generation !== generation || this.state.phase !== "joining") {
         return;
       }
-      this.sendSignal({ type: "join", channel });
+      if (isJoinRefused) {
+        ircClient.sendRaw(this.opts.serverId, `JOIN ${channel}`);
+      } else {
+        this.sendSignal({ type: "join", channel });
+      }
       this.joinRetryTimer = setTimeout(sendJoinSignal, JOIN_RETRY_MS);
     };
     let signaled = false;
-    const clearJoinEchoWait = () => {
-      if (this.joinEchoUnsub) {
-        this.joinEchoUnsub();
-        this.joinEchoUnsub = undefined;
-      }
-      if (this.joinEchoTimeout) {
-        clearTimeout(this.joinEchoTimeout);
-        this.joinEchoTimeout = undefined;
-      }
+    const signalJoin = () => {
+      signaled = true;
+      clearTimeout(this.joinEchoTimeout);
+      this.joinEchoTimeout = undefined;
+      clearTimeout(this.joinRetryTimer);
+      sendJoinSignal();
     };
     const joinHandler = (p: { username: string; channelName: string }) => {
-      if (signaled) return;
+      if (signaled && !isJoinRefused) return;
       // IRC nicks are case-insensitive per RFC 1459 -- the server may
       // echo a casing different from this.opts.selfNick.
       if (p.username.toLowerCase() !== selfNick.toLowerCase()) return;
-      if (p.channelName.toLowerCase() !== channel.toLowerCase()) return;
-      signaled = true;
-      clearJoinEchoWait();
-      sendJoinSignal();
+      if (!isOurChannel(p)) return;
+      isJoinRefused = false;
+      signalJoin();
+    };
+    const refusedHandler = (p: {
+      serverId: string;
+      channelName: string;
+      isThrottled: boolean;
+    }) => {
+      if (p.serverId !== this.opts.serverId || !isOurChannel(p)) return;
+      if (this.generation !== generation || this.state.phase !== "joining") {
+        return;
+      }
+      if (!p.isThrottled) {
+        this.teardown({ phase: "failed", error: "join-refused" });
+        this.emitError("join-refused");
+        return;
+      }
+      if (!isJoinRefused) this.emitError("join-throttled");
+      isJoinRefused = true;
     };
     ircClient.on("JOIN", joinHandler);
-    this.joinEchoUnsub = () => ircClient.deleteHook("JOIN", joinHandler);
-    this.joinEchoTimeout = setTimeout(() => {
-      if (signaled) return;
-      signaled = true;
-      clearJoinEchoWait();
-      sendJoinSignal();
-    }, 2000);
-
+    ircClient.on("JOIN_REFUSED", refusedHandler);
+    this.joinEchoUnsub = () => {
+      ircClient.deleteHook("JOIN", joinHandler);
+      ircClient.deleteHook("JOIN_REFUSED", refusedHandler);
+    };
     ircClient.sendRaw(this.opts.serverId, `JOIN ${this.opts.channel}`);
+    // The ircd sends no echo for a JOIN to a channel we already sit in, which
+    // is the usual case since leaving a call keeps us in its channel.
+    if (this.isChannelMember()) {
+      signalJoin();
+    } else {
+      this.joinEchoTimeout = setTimeout(signalJoin, 2000);
+    }
+  }
+
+  private isChannelMember(): boolean {
+    const { serverId, channel, selfNick } = this.opts;
+    const users = storeRef
+      ?.getState()
+      .servers.find((s) => s.id === serverId)
+      ?.channels.find(
+        (c) => c.name.toLowerCase() === channel.toLowerCase(),
+      )?.users;
+    return (
+      users?.some((u) => u.username.toLowerCase() === selfNick.toLowerCase()) ??
+      false
+    );
   }
 
   // A network change or an app the OS suspended drops the media path without
@@ -512,11 +551,12 @@ export class VoiceClient {
     // Even if state is already "idle" we may still have a TAGMSG
     // handler subscribed (e.g. error path called teardown but the
     // owning React effect hadn't unmounted yet, or join was racy).
-    // Always run teardown so the unsub fires; only emit leave / PART
-    // when there's actually an active session to tear down.
+    // Always run teardown so the unsub fires; only signal leave when
+    // there's actually an active session to tear down. We stay in the IRC
+    // channel, so reopening the call never counts against the server's
+    // join limit.
     if (this.state.phase !== "idle") {
       this.sendSignal({ type: "leave", channel: this.opts.channel });
-      ircClient.sendRaw(this.opts.serverId, `PART ${this.opts.channel}`);
     }
     this.teardown();
   }

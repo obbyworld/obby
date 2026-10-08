@@ -60,6 +60,11 @@ export interface EventMap {
     account?: string; // From extended-join
     realname?: string; // From extended-join
   };
+  JOIN_REFUSED: {
+    serverId: string;
+    channelName: string;
+    isThrottled: boolean;
+  };
   PART: BaseUserActionEvent & {
     channelName: string;
     reason?: string;

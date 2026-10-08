@@ -61,7 +61,9 @@ vi.mock("../../src/lib/mediaDevices", async (importOriginal) => ({
   speakerSelectionSupported: mocks.speakerSelectionSupported,
 }));
 
-import { VoiceClient } from "../../src/lib/voice";
+import type { StoreApi } from "zustand";
+import { setVoiceStore, VoiceClient } from "../../src/lib/voice";
+import type { AppState } from "../../src/store";
 
 interface FakeTransceiver {
   kind: string;
@@ -455,5 +457,85 @@ describe("VoiceClient.setAudioInput", () => {
 
     expect(getUserMedia).toHaveBeenCalledTimes(2);
     expect(track.enabled).toBe(false);
+  });
+});
+
+describe("VoiceClient join refusals", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.handlers.clear();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    currentClient?.leave();
+    vi.useRealTimers();
+  });
+
+  function startJoin() {
+    const errors: string[] = [];
+    const states: string[] = [];
+    const client = new VoiceClient({
+      serverId: "s1",
+      channel: "$stage",
+      selfNick: "me",
+      audioSink: fakeAudioSink(),
+    });
+    currentClient = client;
+    client.attach({
+      onState: (s) => states.push(s.phase),
+      onError: (e) => errors.push(e),
+    });
+    void client.join();
+    return { client, errors, states };
+  }
+
+  const sentLines = () => mocks.sendRaw.mock.calls.map((c) => c[1] as string);
+
+  it("retries the IRC join while the server throttles it, then signals the call server once in", () => {
+    const { errors } = startJoin();
+    mocks.emit("JOIN_REFUSED", {
+      serverId: "s1",
+      channelName: "$stage",
+      isThrottled: true,
+    });
+    expect(errors).toEqual(["join-throttled"]);
+
+    mocks.sendRaw.mockClear();
+    vi.advanceTimersByTime(2000);
+    expect(sentLines()).toEqual(["JOIN $stage"]);
+
+    mocks.sendRaw.mockClear();
+    mocks.emit("JOIN", { username: "me", channelName: "$stage" });
+    expect(sentLines()).toHaveLength(1);
+    expect(sentLines()[0]).toContain('"type":"join"');
+  });
+
+  it("fails the call when the server refuses the join outright", () => {
+    const { client, errors } = startJoin();
+    mocks.emit("JOIN_REFUSED", {
+      serverId: "s1",
+      channelName: "$stage",
+      isThrottled: false,
+    });
+    expect(errors).toEqual(["join-refused"]);
+    expect(client.getState().phase).toBe("failed");
+  });
+
+  it("signals the call server at once when we already sit in the channel", () => {
+    setVoiceStore({
+      getState: () => ({
+        servers: [
+          {
+            id: "s1",
+            channels: [{ name: "$stage", users: [{ username: "me" }] }],
+          },
+        ],
+      }),
+    } as unknown as StoreApi<AppState>);
+    startJoin();
+    expect(sentLines()[0]).toBe("JOIN $stage");
+    expect(sentLines()[1]).toContain('"type":"join"');
+    setVoiceStore(null as unknown as StoreApi<AppState>);
   });
 });
