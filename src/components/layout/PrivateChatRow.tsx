@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import type * as React from "react";
-import { FaCheckCircle, FaThumbtack, FaTrash, FaUser } from "react-icons/fa";
+import { useRef } from "react";
+import { FaCheckCircle, FaEllipsisH, FaUser } from "react-icons/fa";
 import { useLongPress } from "../../hooks/useLongPress";
 import { processMarkdownInText, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, type MediaSettings } from "../../lib/mediaUtils";
@@ -101,10 +102,9 @@ interface PrivateChatRowProps {
   isTouch: boolean;
   hoverClass: string;
   drag?: DragRowProps;
+  leading?: React.ReactNode;
   onSelect: () => void;
-  onLongPressSelect: () => void;
-  onPinToggle: () => void;
-  onDelete: () => void;
+  onOpenMenu: (anchor: HTMLElement) => void;
 }
 
 export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
@@ -116,14 +116,13 @@ export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
   isTouch,
   hoverClass,
   drag,
+  leading,
   onSelect,
-  onLongPressSelect,
-  onPinToggle,
-  onDelete,
+  onOpenMenu,
 }) => {
+  const rowRef = useRef<HTMLDivElement>(null);
   const longPress = useLongPress({
-    delay: 300,
-    onLongPress: onLongPressSelect,
+    onLongPress: () => rowRef.current && onOpenMenu(rowRef.current),
   });
 
   const userMetadata = getUserMetadata(server, privateChat.username);
@@ -179,6 +178,7 @@ export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
 
   return (
     <div
+      ref={rowRef}
       {...drag}
       className={`
         group
@@ -213,6 +213,12 @@ export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
       onTouchStart={isTouch ? longPress.onTouchStart : undefined}
       onTouchEnd={isTouch ? longPress.onTouchEnd : undefined}
       onTouchMove={isTouch ? longPress.onTouchMove : undefined}
+      onTouchCancel={isTouch ? longPress.onTouchCancel : undefined}
+      onContextMenu={(e) => {
+        if (isTouch) return;
+        e.preventDefault();
+        onOpenMenu(e.currentTarget);
+      }}
       onClick={() => {
         if (longPress.firedRef.current) {
           longPress.firedRef.current = false;
@@ -221,7 +227,8 @@ export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
         onSelect();
       }}
     >
-      <div className="flex items-center gap-2 truncate">
+      {leading}
+      <div className="flex items-center gap-2 truncate min-w-0 flex-1">
         {/* User avatar with status indicator */}
         <div className="relative flex-shrink-0">
           {shouldShowAvatar ? (
@@ -329,67 +336,22 @@ export const PrivateChatRow: React.FC<PrivateChatRowProps> = ({
           ) : privateChat.unreadCount > 0 ? (
             <span className="w-2 h-2 bg-blue-500 rounded-full" />
           ) : null)}
-        {/* Pin/Unpin and Delete Buttons */}
-        {isSelected && (
-          <>
-            <button
-              className={`${
-                isTouch
-                  ? "block" // Always visible on mobile
-                  : "hidden group-hover:block" // Show on hover on desktop
-              } ${
-                privateChat.isPinned
-                  ? "text-green-500 hover:text-green-400"
-                  : "text-discord-text-muted hover:text-yellow-400"
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                onPinToggle();
-              }}
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-              }}
-              onPointerDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-              }}
-              title={privateChat.isPinned ? t`Unpin` : t`Pin`}
-            >
-              <FaThumbtack
-                className={privateChat.isPinned ? "" : "rotate-[25deg]"}
-                style={
-                  privateChat.isPinned ? {} : { transform: "rotate(25deg)" }
-                }
-              />
-            </button>
-            {!privateChat.isPinned && (
-              <button
-                className={`text-discord-red hover:text-white ${
-                  isTouch
-                    ? "block" // Always visible on mobile
-                    : "hidden group-hover:block" // Show on hover on desktop
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  onDelete();
-                }}
-                onMouseDown={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                title={t`Close`}
-              >
-                <FaTrash />
-              </button>
-            )}
-          </>
+        {!leading && !isTouch && (
+          <button
+            type="button"
+            className={`h-6 flex items-center justify-center overflow-hidden text-discord-text-muted hover:text-white ${
+              isSelected ? "w-6" : "w-0 group-hover:w-6 focus-visible:w-6"
+            }`}
+            title={t`Open chat options`}
+            aria-label={t`Open chat options`}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenMenu(e.currentTarget);
+            }}
+          >
+            <FaEllipsisH className="text-sm flex-shrink-0" />
+          </button>
         )}
       </div>
     </div>

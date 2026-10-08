@@ -3095,7 +3095,7 @@ const useStore = create<AppState>((set, get) => ({
       const maxOrder = Math.max(
         0,
         ...(server.privateChats
-          ?.filter((pc) => pc.isPinned && pc.order !== undefined)
+          ?.filter((pc) => pc.order !== undefined)
           .map((pc) => pc.order as number) || []),
       );
 
@@ -3173,7 +3173,7 @@ const useStore = create<AppState>((set, get) => ({
         if (s.id === serverId) {
           const updatedPrivateChats = s.privateChats?.map((pc) => {
             const newOrder = privateChatIds.indexOf(pc.id);
-            if (newOrder !== -1 && pc.isPinned) {
+            if (newOrder !== -1) {
               return { ...pc, order: newOrder };
             }
             return pc;

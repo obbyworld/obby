@@ -236,7 +236,7 @@ export const ChannelRow: React.FC<ChannelRowProps> = ({
             </span>
           )
         )}
-        {!leading && (!isTouch || isSelected) && (
+        {!leading && !isTouch && (
           <button
             type="button"
             className={`h-6 flex items-center justify-center overflow-hidden text-discord-text-muted hover:text-white [@container(max-width:200px)]:hidden ${
