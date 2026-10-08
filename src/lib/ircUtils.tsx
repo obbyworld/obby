@@ -339,8 +339,9 @@ export const ircColors = [
   "inherit", // 99 - Default (not universally supported)
 ];
 
-// biome-ignore lint/suspicious/noControlCharactersInRegex: IRC formatting codes
-const IRC_FORMAT_RE = /\x03\d{0,2}(,\d{0,2})?|[\x02\x1D\x1F\x1E\x11\x0F]/g;
+const IRC_FORMAT_RE =
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC formatting codes
+  /\x04(?:[0-9A-Fa-f]{6}(?:,[0-9A-Fa-f]{6})?)?|\x03\d{0,2}(,\d{0,2})?|[\x02\x1D\x1F\x1E\x11\x0F]/g;
 
 /**
  * Build a map of line index → IRC color style for the original text.
@@ -353,11 +354,14 @@ function extractIrcColorMap(text: string): {
 } {
   let fg = -1;
   let bg = -1;
+  let hexFg: string | undefined;
+  let hexBg: string | undefined;
   let lineIdx = 0;
   const lineColors = new Map<number, string>();
 
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC control codes
-  const regex = /(\x03(?:\d{1,2}(?:,\d{1,2})?)?|[\x02\x1D\x1F\x1E\x11\x0F])/g;
+  const regex =
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC control codes
+    /(\x04(?:[0-9A-Fa-f]{6}(?:,[0-9A-Fa-f]{6})?)?|\x03(?:\d{1,2}(?:,\d{1,2})?)?|[\x02\x1D\x1F\x1E\x11\x0F])/g;
 
   const parts = text.split(regex);
   let cleaned = "";
@@ -375,7 +379,14 @@ function extractIrcColorMap(text: string): {
     if (part === "\x0F") {
       fg = -1;
       bg = -1;
+      hexFg = hexBg = undefined;
+    } else if (part.startsWith("\x04")) {
+      const [foreground, background] = part.slice(1).split(",");
+      hexFg = foreground ? `#${foreground}` : undefined;
+      hexBg = background ? `#${background}` : undefined;
+      fg = bg = -1;
     } else if (part.startsWith("\x03")) {
+      hexFg = hexBg = undefined;
       const nums = part.slice(1);
       if (nums.length > 0) {
         const [fgStr, bgStr] = nums.split(",");
@@ -387,10 +398,14 @@ function extractIrcColorMap(text: string): {
       }
     }
     // Record color for current line (and future lines until changed)
-    if (fg >= 0 && fg < ircColors.length) {
-      const styles = [`color:${ircColors[fg]}`];
-      if (bg >= 0 && bg < ircColors.length) {
-        styles.push(`background-color:${ircColors[bg]}`);
+    const foreground =
+      hexFg ?? (fg >= 0 && fg < ircColors.length ? ircColors[fg] : undefined);
+    const background =
+      hexBg ?? (bg >= 0 && bg < ircColors.length ? ircColors[bg] : undefined);
+    if (foreground) {
+      const styles = [`color:${foreground}`];
+      if (background) {
+        styles.push(`background-color:${background}`);
       }
       if (!lineColors.has(lineIdx)) {
         lineColors.set(lineIdx, styles.join(";"));
@@ -767,6 +782,8 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
     italic: false,
     strikethrough: false,
     monospace: false,
+    hexFg: undefined as string | undefined,
+    hexBg: undefined as string | undefined,
     fg: ircColors.length, // Default foreground (no color set)
     bg: ircColors.length, // Default background (no color set)
   };
@@ -782,8 +799,11 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
       fontStyle: state.italic ? "italic" : undefined,
       fontFamily: state.monospace ? "monospace" : undefined,
       backgroundColor:
-        state.bg < ircColors.length ? ircColors[state.bg] : undefined,
-      color: state.fg < ircColors.length ? ircColors[state.fg] : undefined,
+        state.hexBg ??
+        (state.bg < ircColors.length ? ircColors[state.bg] : undefined),
+      color:
+        state.hexFg ??
+        (state.fg < ircColors.length ? ircColors[state.fg] : undefined),
     };
   }
 
@@ -801,7 +821,7 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
   ].join("");
 
   const regex = new RegExp(
-    `(\\x03(?:\\d{1,2}(?:,\\d{1,2})?)?|[${controlChars}])`,
+    `(\\x04(?:[0-9A-Fa-f]{6}(?:,[0-9A-Fa-f]{6})?)?|\\x03(?:\\d{1,2}(?:,\\d{1,2})?)?|[${controlChars}])`,
     "gu",
   );
 
@@ -846,11 +866,22 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
             monospace: false,
             fg: ircColors.length,
             bg: ircColors.length,
+            hexFg: undefined,
+            hexBg: undefined,
           });
           break;
         default:
-          if (part.startsWith("\x03")) {
-            const [fg, bg] = part.slice(1).split(",").map(Number);
+          if (part.startsWith("\x04")) {
+            const [foreground, background] = part.slice(1).split(",");
+            state.hexFg = foreground ? `#${foreground}` : undefined;
+            state.hexBg = background ? `#${background}` : undefined;
+            state.fg = state.bg = ircColors.length;
+          } else if (part.startsWith("\x03")) {
+            state.hexFg = state.hexBg = undefined;
+            const [fg, bg] =
+              part.length > 1
+                ? part.slice(1).split(",").map(Number)
+                : [ircColors.length, ircColors.length];
             state.fg = fg >= 0 && fg < ircColors.length ? fg : ircColors.length;
             state.bg = bg >= 0 && bg < ircColors.length ? bg : ircColors.length;
           }

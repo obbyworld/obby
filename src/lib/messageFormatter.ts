@@ -178,8 +178,11 @@ export function isValidFormattingType(
 export function stripIrcFormatting(text: string): string {
   return (
     text
-      // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC color control codes
-      .replace(/\x03\d{0,2}(,\d{0,2})?/g, "")
+      .replace(
+        // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC color control codes
+        /\x04(?:[0-9A-Fa-f]{6}(?:,[0-9A-Fa-f]{6})?)?|\x03\d{0,2}(,\d{0,2})?/g,
+        "",
+      )
       // biome-ignore lint/suspicious/noControlCharactersInRegex: IRC formatting control codes
       .replace(/[\x02\x1D\x1F\x1E\x16\x11\x0F]/g, "")
       // biome-ignore lint/suspicious/noControlCharactersInRegex: CTCP wrapper (\u0001WORD ...\u0001)
