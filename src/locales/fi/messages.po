@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "Puhelut"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "Käyttäjäraja (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "Avaa verkon asetukset"
 msgid "Open private chat"
 msgstr "Avaa yksityiskeskustelu"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "Avaa palvelimen ilmoitukset nähdäksesi, mikä meni vikaan"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Avaa asetukset"
@@ -3468,6 +3476,7 @@ msgstr "Ihmiset"
 msgid "Permanent"
 msgstr "Pysyvä"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Kuva"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "Poista {username} kanavalta"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "poista liite"
 
@@ -3851,6 +3861,7 @@ msgstr "Järjestä lista"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "Vastaa"
@@ -3860,6 +3871,7 @@ msgstr "Vastaa"
 msgid "required"
 msgstr "pakollinen"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Ota uudelleen"
@@ -4037,6 +4049,10 @@ msgstr "Näytä kanavan tiedot"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "Näytä profiili"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "Näytä palvelimen ilmoitukset"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "Käynnistä äänikanava palvelimella {serverName}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "Aloita tallennus"
 
@@ -4489,6 +4506,7 @@ msgstr "Poistu striimistä"
 msgid "Stop"
 msgstr "Pysäytä"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "Lopeta tallennus"
@@ -4550,6 +4568,7 @@ msgstr "Järjestelmän oletus"
 msgid "Take out of folder"
 msgstr "Poista kansiosta"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Ota kuva"
@@ -4917,6 +4936,10 @@ msgstr "URL, jossa valinnainen {size}-muuttuja dynaamista kokoa varten. Esimerkk
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Käytä * jokerimerkkinä. Esimerkkejä: baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "Käytä kuvaa"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "Käytä palvelimen salasanaa"
@@ -4924,6 +4947,10 @@ msgstr "Käytä palvelimen salasanaa"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Käytä Shift+Enter uudelle riville (Enter lähettää)"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "Käytä videota"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "Hyvin tiukka"
 msgid "via @{0}"
 msgstr "kautta @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

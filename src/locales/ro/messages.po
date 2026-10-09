@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "Apeluri"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "Limită clienți (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "Deschide opțiunile de rețea"
 msgid "Open private chat"
 msgstr "Deschide chat privat"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "Deschide Notificările serverului ca să vezi ce nu a mers"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Deschide setările"
@@ -3468,6 +3476,7 @@ msgstr "Persoane"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Fotografie"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "Elimină {username} din canal"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "elimină atașamentul"
 
@@ -3851,6 +3861,7 @@ msgstr "Reordonează lista"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "Răspunde"
@@ -3860,6 +3871,7 @@ msgstr "Răspunde"
 msgid "required"
 msgstr "obligatoriu"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Refă"
@@ -4037,6 +4049,10 @@ msgstr "Vezi informațiile canalului"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "Vezi profilul"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "Vezi notificările serverului"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "Pornește un canal vocal pe {serverName}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "Începe înregistrarea"
 
@@ -4489,6 +4506,7 @@ msgstr "Renunță la transmisie"
 msgid "Stop"
 msgstr "Oprește"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "Oprește înregistrarea"
@@ -4550,6 +4568,7 @@ msgstr "Setare implicită a sistemului"
 msgid "Take out of folder"
 msgstr "Scoate din folder"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Fă o fotografie"
@@ -4917,6 +4936,10 @@ msgstr "URL cu înlocuire opțională {size}. Exemplu: https://example.com/avata
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Folosiți * pentru wildcard. Exemple: baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "Folosește fotografia"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "Folosește parola serverului"
@@ -4924,6 +4947,10 @@ msgstr "Folosește parola serverului"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Shift+Enter pentru rânduri noi (Enter trimite)"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "Folosește videoclipul"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "Foarte strict"
 msgid "via @{0}"
 msgstr "prin @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

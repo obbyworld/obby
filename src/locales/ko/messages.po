@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "통화"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "클라이언트 제한 (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "네트워크 옵션 열기"
 msgid "Open private chat"
 msgstr "개인 채팅 열기"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "서버 알림을 열어 무엇이 잘못됐는지 확인하세요"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "설정 열기"
@@ -3468,6 +3476,7 @@ msgstr "사람"
 msgid "Permanent"
 msgstr "영구"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "사진"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "채널에서 {username} 제거"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "첨부 제거"
 
@@ -3851,6 +3861,7 @@ msgstr "목록 순서 바꾸기"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "답장"
@@ -3860,6 +3871,7 @@ msgstr "답장"
 msgid "required"
 msgstr "필수"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "다시 찍기"
@@ -4037,6 +4049,10 @@ msgstr "채널 정보 보기"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "프로필 보기"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "서버 알림 보기"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "{serverName}에서 음성 채널 시작"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "녹화 시작"
 
@@ -4489,6 +4506,7 @@ msgstr "스트리밍 그만하기"
 msgid "Stop"
 msgstr "정지"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "녹화 중지"
@@ -4550,6 +4568,7 @@ msgstr "시스템 기본값"
 msgid "Take out of folder"
 msgstr "폴더에서 꺼내기"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "사진 찍기"
@@ -4917,6 +4936,10 @@ msgstr "동적 크기 조정을 위한 {size} 대체가 있는 URL. 예: https:/
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "와일드카드로 *를 사용하세요. 예: baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "사진 사용"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "서버 비밀번호 사용"
@@ -4924,6 +4947,10 @@ msgstr "서버 비밀번호 사용"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "줄 바꿈은 Shift+Enter (Enter로 전송)"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "동영상 사용"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "매우 엄격"
 msgid "via @{0}"
 msgstr "@{0} 통해"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

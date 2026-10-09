@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "通話"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "クライアント制限 (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "ネットワークオプションを開く"
 msgid "Open private chat"
 msgstr "プライベートチャットを開く"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "サーバー通知を開いて問題を確認"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "設定を開く"
@@ -3468,6 +3476,7 @@ msgstr "ユーザー"
 msgid "Permanent"
 msgstr "永続的"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "写真"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "{username} をチャンネルから削除する"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "添付を削除"
 
@@ -3851,6 +3861,7 @@ msgstr "リストを並べ替え"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "返信"
@@ -3860,6 +3871,7 @@ msgstr "返信"
 msgid "required"
 msgstr "必須"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "撮り直す"
@@ -4037,6 +4049,10 @@ msgstr "チャンネル情報を見る"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "プロフィールを見る"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "サーバー通知を見る"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "{serverName} でボイスチャンネルを開始"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "録画を開始"
 
@@ -4489,6 +4506,7 @@ msgstr "配信を降りる"
 msgid "Stop"
 msgstr "停止"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "録画を停止"
@@ -4550,6 +4568,7 @@ msgstr "システムのデフォルト"
 msgid "Take out of folder"
 msgstr "フォルダから出す"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "写真を撮る"
@@ -4917,6 +4936,10 @@ msgstr "動的サイズ変換のための {size} 置換を含むURL。例：http
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "ワイルドカードには * を使用してください。例：baduser!*@*、*!*@spammer.com、troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "写真を使用"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "サーバーパスワードを使用する"
@@ -4924,6 +4947,10 @@ msgstr "サーバーパスワードを使用する"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Shift+Enterで改行（Enterで送信）"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "ビデオを使用"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "とても厳格"
 msgid "via @{0}"
 msgstr "@{0} 経由"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

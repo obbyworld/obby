@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "通话"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "客户端限制 (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "打开网络选项"
 msgid "Open private chat"
 msgstr "打开私聊"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "打开服务器通知查看出了什么问题"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "打开设置"
@@ -3468,6 +3476,7 @@ msgstr "用户"
 msgid "Permanent"
 msgstr "永久"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "照片"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "将 {username} 移出频道"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "移除附件"
 
@@ -3851,6 +3861,7 @@ msgstr "重新排序列表"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "回复"
@@ -3860,6 +3871,7 @@ msgstr "回复"
 msgid "required"
 msgstr "必填"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "重拍"
@@ -4037,6 +4049,10 @@ msgstr "查看频道信息"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "查看资料"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "查看服务器通知"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "在 {serverName} 上开启语音频道"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "开始录制"
 
@@ -4489,6 +4506,7 @@ msgstr "退出直播"
 msgid "Stop"
 msgstr "停止"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "停止录制"
@@ -4550,6 +4568,7 @@ msgstr "系统默认"
 msgid "Take out of folder"
 msgstr "移出文件夹"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "拍照"
@@ -4917,6 +4936,10 @@ msgstr "可选 {size} 替换的 URL。示例：https://example.com/avatar/{size}
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "用 * 作通配符。示例：baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "使用照片"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "使用服务器密码"
@@ -4924,6 +4947,10 @@ msgstr "使用服务器密码"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Shift+Enter 换行（Enter 发送）"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "使用视频"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "非常严格"
 msgid "via @{0}"
 msgstr "通过 @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"

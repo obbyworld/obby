@@ -863,6 +863,7 @@ msgid "Calls"
 msgstr "Appels"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -1171,6 +1172,7 @@ msgstr "Limite de clients (+l)"
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
@@ -3353,6 +3355,12 @@ msgstr "Ouvrir les options du réseau"
 msgid "Open private chat"
 msgstr "Ouvrir une discussion privée"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "Ouvrez les Avis du serveur pour voir ce qui a échoué"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Ouvrir les paramètres"
@@ -3468,6 +3476,7 @@ msgstr "Personnes"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Photo"
@@ -3796,6 +3805,7 @@ msgid "Remove {username} from the channel"
 msgstr "Retirer {username} du canal"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "retirer la pièce jointe"
 
@@ -3851,6 +3861,7 @@ msgstr "Réorganiser la liste"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "Répondre"
@@ -3860,6 +3871,7 @@ msgstr "Répondre"
 msgid "required"
 msgstr "requis"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Reprendre"
@@ -4037,6 +4049,10 @@ msgstr "Voir les infos du canal"
 #: src/components/layout/ChatHeader.tsx
 msgid "See profile"
 msgstr "Voir le profil"
+
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "Voir les avis du serveur"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -4447,6 +4463,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "Démarrer un salon vocal sur {serverName}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "Démarrer l'enregistrement"
 
@@ -4489,6 +4506,7 @@ msgstr "Quitter la diffusion"
 msgid "Stop"
 msgstr "Arrêter"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "Arrêter l'enregistrement"
@@ -4550,6 +4568,7 @@ msgstr "Valeur par défaut du système"
 msgid "Take out of folder"
 msgstr "Sortir du dossier"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Prendre une photo"
@@ -4917,6 +4936,10 @@ msgstr "URL avec substitution optionnelle {size}. Exemple : https://example.com/
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Utilisez * comme joker. Exemples : baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "Utiliser la photo"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
 msgstr "Utiliser le mot de passe du serveur"
@@ -4924,6 +4947,10 @@ msgstr "Utiliser le mot de passe du serveur"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Shift+Entrée pour les nouvelles lignes (Entrée envoie)"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "Utiliser la vidéo"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
@@ -5041,6 +5068,7 @@ msgstr "Très strict"
 msgid "via @{0}"
 msgstr "via @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
