@@ -7,8 +7,12 @@ import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
+import { isChannelTarget } from "../lib/ircUtils";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import { recordPlace, recordSearch } from "../lib/search/recents";
+import { serializeSearchQuery } from "../lib/search/searchQuery";
+import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
 import {
   releaseServerVoiceClients,
   releaseVoiceClient,
@@ -59,9 +63,12 @@ import type {
   ChannelOrderMap,
   ConnectionDetails,
   GlobalSettings,
+  HistoryWindow,
   layoutColumn,
   MediaVisibilityLevel,
-  ProfilePane,
+  QuickActionsMode,
+  QuickActionsState,
+  SidePane,
   UISelections,
 } from "./types";
 
@@ -202,7 +209,7 @@ export function getLatestMessageTimestampIso(
 ): string | null {
   const state = useStore.getState();
   const key = `${serverId}-${bufferId}`;
-  const messages = state.messages[key];
+  const messages = state.historyWindows[key]?.present ?? state.messages[key];
   if (!messages || messages.length === 0) return null;
   let latest: number | null = null;
   for (const msg of messages) {
@@ -473,7 +480,7 @@ interface UIState {
   };
   isAddServerModalOpen: boolean | undefined;
   page: AppPage | null;
-  profilePane: ProfilePane | null;
+  sidePane: SidePane | null;
   // Bouncer-network edit hand-off: set by editBouncerNetwork(),
   // consumed by BouncerNetworksPanel on mount to open its inline form
   // on the named netid. Cleared once the panel reads it.
@@ -485,7 +492,9 @@ interface UIState {
     netid: string;
     childServerId: string;
   } | null;
-  isQuickActionsOpen: boolean;
+  quickActions: QuickActionsState | null;
+  // The message list holding this id scrolls to it and flashes it.
+  messageJump?: { messageId: string } | null;
   isDarkMode: boolean;
   isNarrowView: boolean;
   isMobileMenuOpen: boolean;
@@ -622,6 +631,7 @@ export interface AppState {
   selectedServerId: string | null;
   connectionError: string | null;
   messages: Record<string, Message[]>;
+  historyWindows: Record<string, HistoryWindow>;
   e2eeSessions: Record<string, E2EESessionState>;
   e2eeSelfFingerprint: string | null;
   e2eeOtrSelfFingerprint: string | null;
@@ -1035,7 +1045,17 @@ export interface AppState {
   closePage: () => void;
   openProfile: (serverId: string, username: string) => void;
   closeProfile: () => void;
+  // With no argument: closed opens Go to, open flips the mode.
   toggleQuickActions: (isOpen?: boolean) => void;
+  openQuickActions: (mode: QuickActionsMode, scope?: SearchScope) => void;
+  openSearchResults: (query: SearchQuery) => void;
+  closeSearchResults: () => void;
+  setSearchChatShown: (isChatShown: boolean) => void;
+  // Selects the joined channel or the private chat with this nick, opening it
+  // when needed, and returns its id.
+  openChat: (serverId: string, target: string) => string | null;
+  revealMessage: (messageId: string) => void;
+  clearMessageJump: () => void;
   requestChatInputFocus: () => void;
   clearChatInputFocus: () => void;
   setTopicModalRequest: (serverId: string, channelId: string) => void;
@@ -1228,6 +1248,7 @@ const useStore = create<AppState>((set, get) => ({
   connectionError: null,
   rawLog: {},
   messages: {},
+  historyWindows: {},
   e2eeSessions: {},
   e2eeSelfFingerprint: null,
   e2eeOtrSelfFingerprint: null,
@@ -1274,12 +1295,13 @@ const useStore = create<AppState>((set, get) => ({
     },
     isAddServerModalOpen: false,
     page: null,
-    profilePane: null,
+    sidePane: null,
     pendingBouncerEdit: null,
     disconnectConfirmTarget: null,
     removeServerConfirmTarget: null,
     disconnectNetworkConfirmTarget: null,
-    isQuickActionsOpen: false,
+    quickActions: null,
+    messageJump: null,
     isDarkMode: true,
     isNarrowView:
       typeof window !== "undefined"
@@ -3528,7 +3550,7 @@ const useStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         page,
-        isQuickActionsOpen: false,
+        quickActions: null,
         mobileViewActiveColumn: state.ui.isNarrowView
           ? "chatView"
           : state.ui.mobileViewActiveColumn,
@@ -3545,7 +3567,7 @@ const useStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         page: null,
-        profilePane: { serverId, username },
+        sidePane: { kind: "profile", serverId, username },
         mobileViewActiveColumn: state.ui.isNarrowView
           ? "memberList"
           : state.ui.mobileViewActiveColumn,
@@ -3554,17 +3576,128 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   closeProfile: () => {
-    set((state) => ({ ui: { ...state.ui, profilePane: null } }));
+    set((state) =>
+      state.ui.sidePane?.kind === "profile"
+        ? { ui: { ...state.ui, sidePane: null } }
+        : {},
+    );
   },
 
   toggleQuickActions: (isOpen) => {
+    set((state) => {
+      const current = state.ui.quickActions;
+      const next: QuickActionsState | null =
+        isOpen === false
+          ? null
+          : !current
+            ? { mode: "goto" }
+            : isOpen
+              ? current
+              : { mode: current.mode === "goto" ? "messages" : "goto" };
+      return { ui: { ...state.ui, quickActions: next } };
+    });
+  },
+
+  openQuickActions: (mode, scope) => {
+    set((state) => ({ ui: { ...state.ui, quickActions: { mode, scope } } }));
+  },
+
+  openSearchResults: (query) => {
+    if (
+      get().globalSettings.keepHistory !== false &&
+      serializeSearchQuery(query)
+    )
+      recordSearch(query);
     set((state) => ({
       ui: {
         ...state.ui,
-        isQuickActionsOpen:
-          isOpen !== undefined ? isOpen : !state.ui.isQuickActionsOpen,
+        page: null,
+        sidePane: { kind: "search", query },
+        quickActions: null,
+        mobileViewActiveColumn: state.ui.isNarrowView
+          ? "memberList"
+          : state.ui.mobileViewActiveColumn,
       },
     }));
+  },
+
+  closeSearchResults: () => {
+    set((state) =>
+      state.ui.sidePane?.kind === "search"
+        ? {
+            ui: {
+              ...state.ui,
+              sidePane: null,
+              mobileViewActiveColumn: state.ui.isNarrowView
+                ? "chatView"
+                : state.ui.mobileViewActiveColumn,
+            },
+          }
+        : {},
+    );
+  },
+
+  setSearchChatShown: (isChatShown) => {
+    set((state) => {
+      const { sidePane, selectedServerId, perServerSelections, isNarrowView } =
+        state.ui;
+      if (sidePane?.kind !== "search") return {};
+      const selection = selectedServerId
+        ? perServerSelections[selectedServerId]
+        : undefined;
+      const chatId =
+        selection?.selectedChannelId ?? selection?.selectedPrivateChatId;
+      return {
+        ui: {
+          ...state.ui,
+          sidePane: {
+            ...sidePane,
+            isChatShown,
+            hitChatId: isChatShown ? (chatId ?? undefined) : sidePane.hitChatId,
+          },
+          mobileViewActiveColumn: isNarrowView
+            ? isChatShown
+              ? "chatView"
+              : "memberList"
+            : state.ui.mobileViewActiveColumn,
+        },
+      };
+    });
+  },
+
+  openChat: (serverId, target) => {
+    const findServer = () => get().servers.find((s) => s.id === serverId);
+    const server = findServer();
+    if (!server) return null;
+    const lower = target.toLowerCase();
+    get().selectServer(serverId);
+    const channel = server.channels.find((c) => c.name.toLowerCase() === lower);
+    if (channel) {
+      get().selectChannel(channel.id, { navigate: true });
+      return channel.id;
+    }
+    if (isChannelTarget(target)) return null;
+    const findPrivateChat = () =>
+      findServer()?.privateChats?.find(
+        (pc) => pc.username.toLowerCase() === lower,
+      );
+    if (!findPrivateChat()) get().openPrivateChat(serverId, target);
+    const privateChat = findPrivateChat();
+    if (!privateChat) return null;
+    get().selectPrivateChat(privateChat.id, { navigate: true });
+    return privateChat.id;
+  },
+
+  revealMessage: (messageId) => {
+    const isLoaded = Object.values(get().messages).some((list) =>
+      list.some((m) => m.id === messageId),
+    );
+    if (!isLoaded) return;
+    set((state) => ({ ui: { ...state.ui, messageJump: { messageId } } }));
+  },
+
+  clearMessageJump: () => {
+    set((state) => ({ ui: { ...state.ui, messageJump: null } }));
   },
 
   requestChatInputFocus: () => {
@@ -4425,6 +4558,22 @@ const useStore = create<AppState>((set, get) => ({
   },
 }));
 
+let lastRecentPlaceId: string | null = null;
+function recordRecentPlace(state: AppState, serverId: string, itemId: string) {
+  if (itemId === lastRecentPlaceId) return;
+  const server = state.servers.find((s) => s.id === serverId);
+  const channel = server?.channels.find((c) => c.id === itemId);
+  const privateChat = server?.privateChats.find((pc) => pc.id === itemId);
+  if (!channel && !privateChat) return;
+  if (state.globalSettings.keepHistory === false) return;
+  lastRecentPlaceId = itemId;
+  recordPlace(
+    channel
+      ? { serverId, name: channel.name, kind: "channel" }
+      : { serverId, name: privateChat?.username ?? "", kind: "dm" },
+  );
+}
+
 // Seed the shared selection history from whatever localStorage restored at
 // startup, then keep it current for every later selection change however it
 // arrives (click, Ctrl+Tab, or another restore) -- this is what makes a
@@ -4443,6 +4592,7 @@ useStore.subscribe((state) => {
   const itemId =
     selection?.selectedChannelId ?? selection?.selectedPrivateChatId;
   if (itemId) recordSelection(serverId, itemId);
+  if (itemId) recordRecentPlace(state, serverId, itemId);
 });
 
 // Initialize protocol handlers

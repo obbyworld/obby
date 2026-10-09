@@ -107,7 +107,7 @@ describe("AppLayout Swipe Navigation", () => {
         isMemberListVisible: false,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         linkSecurityWarnings: [],

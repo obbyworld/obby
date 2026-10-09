@@ -127,7 +127,7 @@ const App: React.FC = () => {
     ui: {
       isAddServerModalOpen,
       isServerNoticesPopupOpen,
-      isQuickActionsOpen,
+      quickActions,
       linkSecurityWarnings,
       prefillServerDetails,
     },
@@ -313,7 +313,7 @@ const App: React.FC = () => {
     };
   }, [toggleAddServerModal]);
 
-  // Global keyboard shortcut for Quick Actions (Cmd+K / Ctrl+K)
+  // Cmd+K / Ctrl+K opens the palette in Go to and flips its mode once open.
   useEffect(() => {
     // A launcher that hands us focus with its own Cmd+K still held (Raycast)
     // delivers that keydown here, so we ignore the shortcut right after focus.
@@ -371,7 +371,7 @@ const App: React.FC = () => {
               <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
               <TicTacToeModal />
-              {isQuickActionsOpen && <QuickActions />}
+              {quickActions && <QuickActions />}
               <LinkSecurityWarningModal />
               {isServerNoticesPopupOpen && (
                 <ServerNoticesPopup

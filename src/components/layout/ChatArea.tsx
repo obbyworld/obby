@@ -4,6 +4,7 @@ import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  FaArrowLeft,
   FaCamera,
   FaDesktop,
   FaGift,
@@ -17,7 +18,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
-import { useEmojiCompletion } from "../../hooks/useEmojiCompletion";
+import { useCompletion } from "../../hooks/useCompletion";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGuard";
@@ -25,7 +26,6 @@ import { useMessageHistory } from "../../hooks/useMessageHistory";
 import { useMessageSending } from "../../hooks/useMessageSending";
 import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
-import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { useWindowFileCapture } from "../../hooks/useWindowFileCapture";
 import {
@@ -69,7 +69,7 @@ import {
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
-import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
+import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
 import { regionRecordingSupported } from "../../lib/screenRecorder";
 import {
@@ -85,19 +85,28 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType } from "../../types";
+import type { BotCommand, Message as MessageType, User } from "../../types";
+import {
+  type EmojiItem,
+  emojiProvider,
+  getActiveSlashQuery,
+  nickProvider,
+  type SlashSuggestion,
+  slashProvider,
+  slashSuggestions,
+  useEmojiItems,
+} from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
 import { AttachmentTray, type PendingAttachment } from "../ui/AttachmentTray";
-import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import { BotToolsTray } from "../ui/BotToolsTray";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ColorPicker from "../ui/ColorPicker";
+import CompletionList from "../ui/CompletionList";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
 import E2EEVerifyModal from "../ui/E2EEVerifyModal";
-import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector, { gifProviders } from "../ui/GifSelector";
@@ -105,6 +114,7 @@ import DiscoverGrid from "../ui/HomeScreen";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
 import { LocationShareModal } from "../ui/LocationShareModal";
+import MemberPicker from "../ui/MemberPicker";
 import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
@@ -116,11 +126,6 @@ import {
   RegionRecordingBar,
 } from "../ui/RegionRecordingBar";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
-import {
-  getActiveSlashQuery,
-  SlashCommandPopover,
-  type SlashSuggestion,
-} from "../ui/SlashCommandPopover";
 import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
@@ -146,10 +151,6 @@ interface AliveChannel {
   privateChatId: string | null;
 }
 
-const isMac =
-  typeof navigator !== "undefined" &&
-  navigator.platform.toUpperCase().includes("MAC");
-
 /** Whether an upload got as far as the network. "held" waits on a person to
  *  answer the unencrypted-upload warning, which keeps the files itself. */
 type UploadOutcome = "started" | "held" | "failed";
@@ -157,6 +158,9 @@ type UploadOutcome = "started" | "held" | "failed";
 /** A stable empty list, so a conversation with nothing attached does not hand
  *  the tray a new array on every render. */
 const NO_ATTACHMENTS: PendingAttachment[] = [];
+
+const NO_COMPLETION_INPUT = { text: "", caret: 0 };
+const MODIFIER_KEYS = ["Shift", "Control", "Alt", "Meta"];
 
 function previewable(file: File): boolean {
   return (
@@ -192,13 +196,9 @@ export const ChatArea: React.FC<{
   const wasAtBottomBeforeNavRef = useRef(false);
   // messageText is NOT React state — stored in a ref to avoid re-renders on every keystroke.
   // hasText tracks the empty↔non-empty boundary for send-button rendering (rare transitions).
-  // autocompleteInputText is updated only when autocomplete dropdowns are visible.
+  // completionInput mirrors the text only while a completion can be open.
   const [hasText, setHasText] = useState(false);
-  const [autocompleteInputText, setAutocompleteInputText] = useState("");
-  // Slash-command popover state.  Only updated when the input starts
-  // with "/" and we're still completing the command name -- otherwise
-  // typing wouldn't trigger a re-render for this popover at all.
-  const [slashInputValue, setSlashInputValue] = useState("");
+  const [completionInput, setCompletionInput] = useState(NO_COMPLETION_INPUT);
   const [paramModal, setParamModal] = useState<{
     botNick: string;
     command: BotCommand;
@@ -211,8 +211,6 @@ export const ChatArea: React.FC<{
   >([]);
   const [isFormattingInitialized, setIsFormattingInitialized] = useState(false);
   const cursorPositionRef = useRef(0);
-  const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [showEmojiAutocomplete, setShowEmojiAutocomplete] = useState(false);
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
@@ -303,7 +301,6 @@ export const ChatArea: React.FC<{
     username: "",
   });
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Per-channel draft storage. messageTextRef is the source of truth for the input value.
   // It is updated imperatively (never from state), so no re-render occurs on each keystroke.
@@ -416,7 +413,7 @@ export const ChatArea: React.FC<{
     return !!(
       ui.isAddServerModalOpen ||
       ui.page ||
-      ui.profilePane ||
+      ui.sidePane?.kind === "profile" ||
       ui.contextMenu?.isOpen ||
       ui.isServerNoticesPopupOpen ||
       ui.topicModalRequest ||
@@ -454,8 +451,10 @@ export const ChatArea: React.FC<{
     isAddServerModalOpen,
     isServerNoticesPopupOpen,
     page,
-    profilePane,
+    sidePane,
   } = ui;
+  const isProfileOpen = sidePane?.kind === "profile";
+  const searchPane = sidePane?.kind === "search" ? sidePane : null;
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
@@ -548,9 +547,6 @@ export const ChatArea: React.FC<{
     return userInChannel?.status;
   }, [selectedServerId, selectedChannelId, servers, currentUser]);
 
-  // Tab completion hook
-  const tabCompletion = useTabCompletion();
-
   // draft/custom-emoji: gather pack URLs (channel-scoped first so it
   // shadows the network-wide pack on shortcode collisions) and surface
   // the resulting shortcodes to the emoji picker + completion.
@@ -573,8 +569,7 @@ export const ChatArea: React.FC<{
     [customEmojiShortcodes],
   );
 
-  // Emoji completion hook
-  const emojiCompletion = useEmojiCompletion(customEmojiShortcodes);
+  const emojiItems = useEmojiItems(customEmojiShortcodes);
 
   // Typing notification hook
   const typingNotification = useTypingNotification({
@@ -778,17 +773,84 @@ export const ChatArea: React.FC<{
     [selectedServer, selectedPrivateChatId],
   );
 
+  const completionUsers = useMemo<User[]>(
+    () =>
+      selectedChannel?.users ??
+      (selectedPrivateChat
+        ? [
+            ...(currentUser ? [currentUser] : []),
+            {
+              id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
+              username: selectedPrivateChat.username,
+              isOnline: true,
+            },
+          ]
+        : []),
+    [selectedChannel?.users, selectedPrivateChat, currentUser],
+  );
+  const memberProvider = useMemo(
+    () => nickProvider(completionUsers),
+    [completionUsers],
+  );
+  const slashCommandProvider = useMemo(
+    () =>
+      slashProvider(
+        slashSuggestions(selectedServer, selectedChannel),
+        (cmd) => {
+          if (cmd.source.kind !== "bot") return;
+          setParamModal({
+            botNick: cmd.source.botNick,
+            command: {
+              name: cmd.name,
+              description: cmd.description,
+              options: cmd.options,
+            },
+          });
+          applyText("");
+          setCompletionInput(NO_COMPLETION_INPUT);
+        },
+      ),
+    [selectedServer, selectedChannel, applyText],
+  );
+  const completionProviders = useMemo(
+    () => [slashCommandProvider, emojiProvider(emojiItems), memberProvider],
+    [slashCommandProvider, emojiItems, memberProvider],
+  );
+  const completion = useCompletion<SlashSuggestion | EmojiItem | User>({
+    providers: completionProviders,
+    text: completionInput.text,
+    caret: completionInput.caret,
+    onReplace: (text, caret) => {
+      applyText(text);
+      setCompletionInput({ text, caret });
+      cursorPositionRef.current = caret;
+      setTimeout(() => {
+        inputRef.current?.setSelectionRange(caret, caret);
+        inputRef.current?.focus();
+      }, 0);
+    },
+  });
+
   const onBeforeInputGuard = useMentionAutocorrectGuard(
     selectedChannel?.users.map((u) => u.username) ?? [],
   );
 
   // Member list overlay: show when desktop is too narrow for sidebar
-  const isProfileOpen = useStore((state) => !!state.ui.profilePane);
+  const setSearchChatShown = useStore((state) => state.setSearchChatShown);
+  const closeSearchResults = useStore((state) => state.closeSearchResults);
+  const isOverlayMode = !isNarrowView && isTooNarrowForMemberList;
+  const isSearchOverlayHidden = isOverlayMode && !!searchPane?.isChatShown;
   const showMemberListOverlay =
-    !isNarrowView &&
-    isTooNarrowForMemberList &&
+    isOverlayMode &&
     ((isMemberListVisible && !!selectedChannel && !selectedPrivateChat) ||
-      isProfileOpen);
+      isProfileOpen ||
+      !!searchPane);
+  const showMessages = !showMemberListOverlay || isSearchOverlayHidden;
+  const isHitChatOpen =
+    !!searchPane?.hitChatId &&
+    searchPane.hitChatId === (selectedChannelId ?? selectedPrivateChatId);
+  const showSearchReturn =
+    isHitChatOpen && (isNarrowView || isSearchOverlayHidden);
 
   // Track previous width state to detect transitions
   const prevIsTooNarrowRef = useRef(isTooNarrowForMemberList);
@@ -987,13 +1049,6 @@ export const ChatArea: React.FC<{
     }
   }, [channelKey, applyText]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: channelKey intentionally triggers search clear without being used in the body
-  useEffect(() => {
-    setSearchQuery("");
-  }, [channelKey]);
-
-  const handleClearSearch = useCallback(() => setSearchQuery(""), []);
-
   // Keep-alive: maintain last 3 visited channels in an LRU list so their message list
   // DOMs are preserved with display:none (scroll position + media elements stay alive).
   useEffect(() => {
@@ -1094,15 +1149,11 @@ export const ChatArea: React.FC<{
     }
 
     applyText("");
-    setAutocompleteInputText("");
+    setCompletionInput(NO_COMPLETION_INPUT);
     draftMap.current.delete(channelKey);
     setLocalReplyTo(null);
     setNavHighlightedMsgId(null);
-    setShowAutocomplete(false);
     messageHistory.resetHistory();
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
 
     // Keep the textarea focused so the keyboard stays open on mobile.
     inputRef.current?.focus();
@@ -1535,37 +1586,11 @@ export const ChatArea: React.FC<{
 
     if (e.key === "Tab") {
       e.preventDefault();
-
-      // If emoji completion is already active, continue with emoji completion
-      if (emojiCompletion.isActive) {
-        handleEmojiCompletion();
-      } else {
-        // Check if we're starting emoji completion context
-        const textBeforeCursor = messageTextRef.current.substring(
-          0,
-          cursorPositionRef.current,
-        );
-        const emojiMatch = textBeforeCursor.match(/:([a-zA-Z_]*)$/);
-
-        if (emojiMatch) {
-          handleEmojiCompletion();
-        } else {
-          handleTabCompletion();
-        }
-      }
-      return;
-    }
-
-    // Handle keys when autocomplete dropdown is visible
-    if (
-      (showAutocomplete || showEmojiAutocomplete) &&
-      (e.key === "ArrowUp" ||
-        e.key === "ArrowDown" ||
-        e.key === "Escape" ||
-        e.key === "Enter" ||
-        e.key === " ")
-    ) {
-      // Let the dropdown handle these keys, don't interfere
+      completion.cycle(
+        messageTextRef.current,
+        cursorPositionRef.current,
+        e.shiftKey ? -1 : 1,
+      );
       return;
     }
 
@@ -1679,93 +1704,11 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    // Reset tab completion on any other key
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
-    setShowAutocomplete(false);
+    if (!MODIFIER_KEYS.includes(e.key)) completion.stopCycling();
 
     // Any normal keystroke exits nav mode but keeps the reply so the user can type
     if (navHighlightedMsgId !== null) {
       setNavHighlightedMsgId(null);
-    }
-  };
-
-  const handleTabCompletion = () => {
-    if ((!selectedChannel && !selectedPrivateChat) || !inputRef.current) return;
-
-    // For channels, use channel users; for private chats, use both participants
-    const users =
-      selectedChannel?.users ||
-      (selectedPrivateChat
-        ? [
-            ...(currentUser ? [currentUser] : []),
-            {
-              id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-              username: selectedPrivateChat.username,
-              isOnline: true,
-            },
-          ]
-        : []);
-    const result = tabCompletion.handleTabCompletion(
-      messageTextRef.current,
-      cursorPositionRef.current,
-      users,
-    );
-
-    if (result) {
-      applyText(result.newText);
-      setAutocompleteInputText(result.newText);
-      cursorPositionRef.current = result.newCursorPosition;
-
-      // Show dropdown when there are any matches available
-      const shouldShow = tabCompletion.matches.length > 0;
-      setShowAutocomplete(shouldShow);
-
-      // Update input cursor position
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            result.newCursorPosition,
-            result.newCursorPosition,
-          );
-        }
-      }, 0);
-    } else {
-      // No completion result, hide dropdown
-      setShowAutocomplete(false);
-    }
-  };
-
-  const handleEmojiCompletion = () => {
-    if (!inputRef.current) return;
-
-    const result = emojiCompletion.handleEmojiCompletion(
-      messageTextRef.current,
-      cursorPositionRef.current,
-    );
-
-    if (result) {
-      applyText(result.newText);
-      setAutocompleteInputText(result.newText);
-      cursorPositionRef.current = result.newCursorPosition;
-
-      // Show dropdown when there are any matches available
-      const shouldShow = emojiCompletion.matches.length > 0;
-      setShowEmojiAutocomplete(shouldShow);
-
-      // Update input cursor position
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            result.newCursorPosition,
-            result.newCursorPosition,
-          );
-        }
-      }, 0);
-    } else {
-      // No completion result, hide dropdown
-      setShowEmojiAutocomplete(false);
     }
   };
 
@@ -1788,237 +1731,30 @@ export const ChatArea: React.FC<{
     cursorPositionRef.current = newCursorPosition;
     handleUpdatedText(newText);
 
-    // obsidianirc/cmdslist: update slash state only when relevant.
-    // When the input doesn't look like a command (no leading slash,
-    // or already past the command name), re-render only on the
-    // active->inactive transition to clear the popover.
-    const slashActive =
-      getActiveSlashQuery(newText, newCursorPosition) !== null;
-    if (slashActive) {
-      setSlashInputValue(newText);
-      // Lazy bot-cmds discovery: the first time the user starts a
-      // slash command in this channel, query any +B users we don't
-      // already have schemas for so the popover updates as soon as
-      // the response arrives.
-      if (!slashInputValue && selectedServerId && selectedChannel) {
+    // We re-render on keystrokes only while the user types a slash command
+    // name, and once after that to close any open completion.
+    if (getActiveSlashQuery(newText, newCursorPosition) !== null) {
+      // The first slash in this channel asks the +B users we have no schema
+      // for, so their commands join the list as soon as they answer.
+      const wasCompletingSlash =
+        getActiveSlashQuery(completionInput.text, completionInput.caret) !==
+        null;
+      if (!wasCompletingSlash && selectedServerId && selectedChannel) {
         queryUncachedBotsInChannel(selectedServerId, selectedChannel.name);
       }
-    } else if (slashInputValue !== "") {
-      setSlashInputValue("");
+      setCompletionInput({ text: newText, caret: newCursorPosition });
+    } else if (completionInput !== NO_COMPLETION_INPUT) {
+      setCompletionInput(NO_COMPLETION_INPUT);
     }
 
     // Exit history mode if user starts typing
     messageHistory.exitHistory();
-
-    // Reset tab completion if text changed from non-tab input
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
-
-    // Reset emoji completion if text changed from non-tab input
-    if (emojiCompletion.isActive) {
-      emojiCompletion.resetCompletion();
-    }
-
-    // Hide autocomplete when typing (only show on Tab completion)
-    if (showAutocomplete) setShowAutocomplete(false);
-    if (showEmojiAutocomplete) setShowEmojiAutocomplete(false);
   };
 
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     const newCursorPos = target.selectionStart || 0;
     cursorPositionRef.current = newCursorPos;
-  };
-
-  const handleUsernameSelect = (username: string) => {
-    if (tabCompletion.isActive) {
-      // Use tab completion state for accurate replacement
-      const isAtMessageStart =
-        tabCompletion.originalText
-          .substring(0, tabCompletion.completionStart)
-          .trim() === tabCompletion.originalPrefix;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        tabCompletion.originalText.substring(0, tabCompletion.completionStart) +
-        username +
-        suffix +
-        tabCompletion.originalText.substring(
-          tabCompletion.completionStart + tabCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        tabCompletion.completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    } else {
-      // Fallback to current logic when tab completion is not active
-      const textBeforeCursor = messageTextRef.current.substring(
-        0,
-        cursorPositionRef.current,
-      );
-      const words = textBeforeCursor.split(/\s+/);
-      const currentWord = words[words.length - 1];
-      const completionStart = cursorPositionRef.current - currentWord.length;
-
-      const isAtMessageStart = textBeforeCursor.trim() === currentWord;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        messageTextRef.current.substring(0, completionStart) +
-        username +
-        suffix +
-        messageTextRef.current.substring(cursorPositionRef.current);
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-
-    setShowAutocomplete(false);
-    tabCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteSelect = (emoji: string) => {
-    if (emojiCompletion.isActive) {
-      // Use emoji completion state for accurate replacement
-      const newText =
-        emojiCompletion.originalText.substring(
-          0,
-          emojiCompletion.completionStart,
-        ) +
-        emoji +
-        emojiCompletion.originalText.substring(
-          emojiCompletion.completionStart +
-            emojiCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition = emojiCompletion.completionStart + emoji.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-
-    setShowEmojiAutocomplete(false);
-    emojiCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteClose = () => {
-    setShowEmojiAutocomplete(false);
-    emojiCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteNavigate = (emoji: string) => {
-    if (emojiCompletion.isActive) {
-      // Find the index of the selected emoji to sync state
-      const selectedIndex = emojiCompletion.matches.findIndex(
-        (match) => match.emoji === emoji,
-      );
-      if (selectedIndex !== -1) {
-        emojiCompletion.setCurrentIndex(selectedIndex);
-      }
-
-      // Update text in real-time like Tab completion does
-      const newText =
-        emojiCompletion.originalText.substring(
-          0,
-          emojiCompletion.completionStart,
-        ) +
-        emoji +
-        emojiCompletion.originalText.substring(
-          emojiCompletion.completionStart +
-            emojiCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition = emojiCompletion.completionStart + emoji.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      // Update the hook's internal previousTextRef to prevent reset on next tab
-      emojiCompletion.updatePreviousText(newText);
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-  };
-
-  const handleAutocompleteClose = () => {
-    setShowAutocomplete(false);
-    tabCompletion.resetCompletion();
-  };
-
-  const handleAutocompleteNavigate = (username: string) => {
-    if (tabCompletion.isActive) {
-      // Update text in real-time like Tab completion does
-      const isAtMessageStart =
-        tabCompletion.originalText
-          .substring(0, tabCompletion.completionStart)
-          .trim() === tabCompletion.originalPrefix;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        tabCompletion.originalText.substring(0, tabCompletion.completionStart) +
-        username +
-        suffix +
-        tabCompletion.originalText.substring(
-          tabCompletion.completionStart + tabCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        tabCompletion.completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
   };
 
   const handleInputKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -2286,13 +2022,9 @@ export const ChatArea: React.FC<{
       const newValue = !prev;
       // Close other dropdowns when opening members dropdown
       if (newValue) {
-        setAutocompleteInputText(messageTextRef.current);
-        setShowAutocomplete(false);
-        setShowEmojiAutocomplete(false);
         setIsEmojiSelectorOpen(false);
         setIsColorPickerOpen(false);
-        emojiCompletion.resetCompletion();
-        tabCompletion.resetCompletion();
+        completion.stopCycling();
       }
       return newValue;
     });
@@ -2312,13 +2044,13 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     if (isTauriMobile()) return;
     // Don't steal focus if any modal is open
-    if (page || profilePane || isAddServerModalOpen) return;
+    if (page || isProfileOpen || isAddServerModalOpen) return;
     inputRef.current?.focus();
   }, [
     selectedChannelId,
     selectedPrivateChatId,
     page,
-    profilePane,
+    isProfileOpen,
     isAddServerModalOpen,
   ]);
 
@@ -2335,10 +2067,8 @@ export const ChatArea: React.FC<{
         isMemberListVisible={isMemberListVisible}
         isNarrowView={isNarrowView}
         globalSettings={globalSettings}
-        searchQuery={searchQuery}
         onToggleChanList={onToggleChanList}
         onToggleMemberList={() => toggleMemberList(!isMemberListVisible)}
-        onSearchQueryChange={setSearchQuery}
         onToggleNotificationVolume={toggleNotificationSound}
         onOpenChannelSettings={() =>
           selectedServerId &&
@@ -2366,12 +2096,37 @@ export const ChatArea: React.FC<{
       <MiniMediaPlayer />
       {/* Member list overlay replaces messages when desktop is too narrow for sidebar */}
       {showMemberListOverlay && (
-        <div className="flex-grow overflow-hidden bg-discord-dark-100">
+        <div
+          className={`flex-grow overflow-hidden bg-discord-dark-100 ${isSearchOverlayHidden ? "hidden" : ""}`}
+        >
           <SidePane />
         </div>
       )}
+      {showSearchReturn && (
+        <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 bar-divider bg-discord-dark-200">
+          <button
+            type="button"
+            className={`chip-action shadow-none min-w-0 ${isTouch ? "min-h-11 px-4 text-sm" : ""}`}
+            onClick={() => setSearchChatShown(false)}
+          >
+            <FaArrowLeft className="text-[10px] shrink-0" />
+            <span className="truncate">
+              <Trans>Show search results</Trans>
+            </span>
+          </button>
+          <button
+            type="button"
+            className={`icon-button ml-auto rounded-lg ${isTouch ? "w-11 h-11" : "w-8 h-8"}`}
+            onClick={closeSearchResults}
+            aria-label={t`Close search`}
+            title={t`Close search`}
+          >
+            <FaTimes className="text-xs" />
+          </button>
+        </div>
+      )}
       {/* Messages area */}
-      {!showMemberListOverlay && (
+      {showMessages && (
         <>
           {selectedServer &&
             !selectedChannel &&
@@ -2431,7 +2186,6 @@ export const ChatArea: React.FC<{
                       channelId={aChannelId}
                       privateChatId={aPrivateChatId}
                       isActive={isKeyActive}
-                      searchQuery={isKeyActive ? searchQuery : ""}
                       isMemberListVisible={isMemberListVisible}
                       onReply={handleSetReplyTo}
                       highlightedMessageId={
@@ -2448,7 +2202,6 @@ export const ChatArea: React.FC<{
                       onRedactMessage={handleRedactMessage}
                       onOpenProfile={handleOpenProfile}
                       joinChannel={joinChannel}
-                      onClearSearch={handleClearSearch}
                     />
                   </div>
                 );
@@ -2706,175 +2459,18 @@ export const ChatArea: React.FC<{
                 onCancel={cancelUploadJob}
               />
 
-              <AutocompleteDropdown
-                users={
-                  selectedChannel?.users ||
-                  (selectedPrivateChat
-                    ? [
-                        ...(currentUser ? [currentUser] : []),
-                        {
-                          id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-                          username: selectedPrivateChat.username,
-                          isOnline: true,
-                        },
-                      ]
-                    : [])
-                }
-                isVisible={showAutocomplete}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                tabCompletionMatches={tabCompletion.matches}
-                currentMatchIndex={tabCompletion.currentIndex}
-                onSelect={handleUsernameSelect}
-                onClose={handleAutocompleteClose}
-                onNavigate={handleAutocompleteNavigate}
-                inputElement={inputRef.current}
-              />
-
-              <EmojiAutocompleteDropdown
-                isVisible={showEmojiAutocomplete || emojiCompletion.isActive}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                emojiMatches={emojiCompletion.matches}
-                currentMatchIndex={emojiCompletion.currentIndex}
-                onSelect={handleEmojiAutocompleteSelect}
-                onClose={handleEmojiAutocompleteClose}
-                onNavigate={handleEmojiAutocompleteNavigate}
-                inputElement={inputRef.current}
-              />
-
-              {/* obsidianirc/cmdslist + draft/bot-cmds: slash-command suggestion popover */}
-              {(() => {
-                const srv = servers.find((s) => s.id === selectedServerId);
-                const suggestions: SlashSuggestion[] = [];
-                const seen = new Set<string>();
-
-                // 1. Client-side handlers (e.g. /me, /msg, /nick) —
-                // listed first because they own those names and the
-                // server's cmdslist may shadow them.
-                const inChannelView = !!selectedChannel;
-                for (const c of getClientCommands()) {
-                  if (c.scope === "channel-only" && !inChannelView) continue;
-                  suggestions.push({
-                    name: c.name,
-                    description: c.description,
-                    options: c.options,
-                    source: { kind: "client" },
-                  });
-                  seen.add(c.name.toLowerCase());
-                }
-
-                // 2. PushBot schemas — done before the server's
-                // cmdsAvailable so that bot-defined names win the
-                // dedup set.  Channel-scope bots only appear when
-                // they're a member of the active channel; server-
-                // scope bots (helpbot, dicebot) are reachable from
-                // any context and always show.
-                if (srv?.botCommands) {
-                  const chanUsers = new Set<string>(
-                    selectedChannel?.users.map((u) =>
-                      u.username.toLowerCase(),
-                    ) ?? [],
-                  );
-                  for (const [botNick, list] of Object.entries(
-                    srv.botCommands,
-                  )) {
-                    const botScope: "channel" | "server" =
-                      srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick.toLowerCase());
-                    if (
-                      botScope === "channel" &&
-                      (!selectedChannel || !inChannel)
-                    )
-                      continue;
-                    const scope: "channel" | "server" = botScope;
-                    for (const c of list) {
-                      // Cross-bot collisions intentionally NOT dedup'd:
-                      // both /help entries (helpbot + another) should
-                      // show so the user picks which bot to invoke.
-                      // The picker fills `/cmd@botnick` so dispatch
-                      // routes unambiguously.
-                      suggestions.push({
-                        name: c.name,
-                        description: c.description,
-                        options: c.options,
-                        source: { kind: "bot", botNick, scope },
-                      });
-                      // Reserve the bare name so the server's
-                      // cmdsAvailable can't list a duplicate /HELP
-                      // after a bot's /help.
-                      seen.add(c.name.toLowerCase());
-                    }
+              {completion.isOpen && (
+                <CompletionList
+                  completion={completion}
+                  anchor={inputRef.current}
+                  className={
+                    completion.provider === slashCommandProvider
+                      ? "min-w-72"
+                      : ""
                   }
-                }
-
-                // 3. Server-provided permission list (obsidianirc/cmdslist).
-                // No schema -- just names; skip anything the client
-                // or a bot already owns so /help, /report etc. don't
-                // get shadowed by the built-in /HELP.
-                for (const name of srv?.cmdsAvailable ?? []) {
-                  if (seen.has(name.toLowerCase())) continue;
-                  suggestions.push({
-                    name,
-                    source: { kind: "server" },
-                  });
-                  seen.add(name.toLowerCase());
-                }
-                if (suggestions.length === 0) return null;
-                const slashActive =
-                  getActiveSlashQuery(
-                    slashInputValue,
-                    cursorPositionRef.current,
-                  ) !== null;
-                return (
-                  <SlashCommandPopover
-                    isVisible={slashActive}
-                    inputValue={slashInputValue}
-                    commands={suggestions}
-                    inputElement={inputRef.current}
-                    onSelect={(sug) => {
-                      // Bot commands with declared options open the
-                      // param modal so values are entered via typed
-                      // form controls (user/channel pickers, date,
-                      // etc).  Bots without options and non-bot
-                      // sources stay on the freeform inline path.
-                      if (
-                        sug.source.kind === "bot" &&
-                        (sug.options?.length ?? 0) > 0
-                      ) {
-                        const botNick = sug.source.botNick;
-                        setParamModal({
-                          botNick,
-                          command: {
-                            name: sug.name,
-                            description: sug.description,
-                            options: sug.options,
-                          },
-                        });
-                        setSlashInputValue("");
-                        applyText("");
-                        return;
-                      }
-                      const target =
-                        sug.source.kind === "bot"
-                          ? `@${sug.source.botNick}`
-                          : "";
-                      const next = `/${sug.name}${target} `;
-                      applyText(next);
-                      cursorPositionRef.current = next.length;
-                      setSlashInputValue("");
-                      inputRef.current?.focus();
-                      inputRef.current?.setSelectionRange(
-                        next.length,
-                        next.length,
-                      );
-                    }}
-                    onClose={() => {
-                      setSlashInputValue("");
-                    }}
-                  />
-                );
-              })()}
+                  rowClassName={isTouch ? "min-h-12" : ""}
+                />
+              )}
 
               {/* Per-arg hint shown after the cmd name + a space.
                   Pulls schemas from both client-side commands and
@@ -2954,26 +2550,10 @@ export const ChatArea: React.FC<{
               })()}
 
               {/* Members dropdown triggered by @ button */}
-              <AutocompleteDropdown
+              <MemberPicker
                 isNarrowView={isNarrowView}
-                users={
-                  selectedChannel?.users ||
-                  (selectedPrivateChat
-                    ? [
-                        ...(currentUser ? [currentUser] : []),
-                        {
-                          id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-                          username: selectedPrivateChat.username,
-                          isOnline: true,
-                        },
-                      ]
-                    : [])
-                }
-                isVisible={showMembersDropdown}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                tabCompletionMatches={[]}
-                currentMatchIndex={-1}
+                provider={memberProvider}
+                isOpen={showMembersDropdown}
                 onSelect={(username) => {
                   const isAtMessageStart = messageTextRef.current.trim() === "";
                   const suffix = isAtMessageStart ? ": " : " ";
@@ -2985,9 +2565,6 @@ export const ChatArea: React.FC<{
                   setShowMembersDropdown(false);
                   inputRef.current?.focus();
                 }}
-                onNavigate={() => {}}
-                inputElement={inputRef.current}
-                isAtButtonTriggered={true}
               />
             </div>
           )}

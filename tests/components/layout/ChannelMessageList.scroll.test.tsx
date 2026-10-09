@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import { createRef } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -29,7 +29,6 @@ const defaultProps = {
   channelId: null as null,
   privateChatId: "pm1",
   isActive: true,
-  searchQuery: "",
   isMemberListVisible: false,
   onReply: vi.fn(),
   onUsernameContextMenu: vi.fn(),
@@ -41,7 +40,6 @@ const defaultProps = {
   onRedactMessage: vi.fn(),
   onOpenProfile: vi.fn(),
   joinChannel: vi.fn(),
-  onClearSearch: vi.fn(),
 };
 
 const makeMsg = (
@@ -144,5 +142,144 @@ describe("ChannelMessageList highlight", () => {
       const el = container.querySelector(`[data-message-id="${id}"]`);
       expect(el?.className).not.toContain("bg-primary/10");
     }
+  });
+});
+
+describe("ChannelMessageList jump to message", () => {
+  const COUNT = DEFAULT_VISIBLE_MESSAGE_COUNT + 50;
+  const many = Array.from({ length: COUNT }, (_, i) => makeMsg(`msg-${i}`));
+
+  beforeEach(() => {
+    vi.mocked(window.HTMLElement.prototype.scrollIntoView).mockClear();
+    useStore.setState({ messages: { "s1::pm:pm1": many }, servers: [] });
+    useStore.getState().clearMessageJump();
+  });
+
+  it("grows the window to reach an older message, then scrolls to it and flashes it", () => {
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    expect(container.querySelector('[data-message-id="msg-5"]')).toBeNull();
+
+    act(() => useStore.getState().revealMessage("msg-5"));
+
+    const row = container.querySelector('[data-message-id="msg-5"]');
+    expect(row).not.toBeNull();
+    expect(row?.classList).toContain("message-flash");
+    expect(window.HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({
+      behavior: "smooth",
+      block: "center",
+    });
+    expect(useStore.getState().ui.messageJump).toBeNull();
+  });
+
+  it("jumps from a reply quote to the message it answers", () => {
+    const original = many[COUNT - 3];
+    useStore.setState({
+      messages: {
+        "s1::pm:pm1": [
+          ...many,
+          makeMsg("reply", { replyMessage: original, content: "agreed" }),
+        ],
+      },
+    });
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+
+    fireEvent.click(
+      container.querySelector(
+        '[data-message-id="reply"] [data-reply-quote]',
+      ) as Element,
+    );
+
+    expect(
+      container.querySelector(`[data-message-id="${original.id}"]`)?.classList,
+    ).toContain("message-flash");
+  });
+});
+
+describe("ChannelMessageList history window", () => {
+  const KEY = "s1-pm1";
+  const props = { ...defaultProps, channelKey: KEY };
+  const present = [makeMsg("now-1"), makeMsg("now-2")];
+  const past = Array.from({ length: 101 }, (_, i) =>
+    makeMsg(`past-${i}`, { timestamp: new Date(Date.UTC(2023, 0, 1, 0, i)) }),
+  );
+  const server = (isLoadingHistory = false) => ({
+    id: "s1",
+    name: "TestNet",
+    channels: [],
+    privateChats: [
+      {
+        id: "pm1",
+        username: "bob",
+        serverId: "s1",
+        unreadCount: 0,
+        isMentioned: false,
+        isLoadingHistory,
+      },
+    ],
+  });
+  const showPast = () =>
+    act(() => {
+      useStore.setState({
+        messages: { [KEY]: past },
+        historyWindows: {
+          [KEY]: {
+            until: past[100].timestamp.getTime(),
+            present,
+            jumpId: 1,
+          },
+        },
+      });
+      useStore.getState().revealMessage("past-50");
+    });
+
+  beforeEach(() => {
+    vi.mocked(window.HTMLElement.prototype.scrollIntoView).mockClear();
+    useStore.setState({
+      messages: { [KEY]: present },
+      historyWindows: {},
+      globalNotifications: [],
+      servers: [server()] as never,
+    });
+    useStore.getState().clearMessageJump();
+  });
+
+  it("flashes the message in a window that replaced the chat and offers the present", () => {
+    const { container, getByRole } = render(<ChannelMessageList {...props} />);
+
+    showPast();
+
+    expect(
+      container.querySelector('[data-message-id="past-50"]')?.classList,
+    ).toContain("message-flash");
+    fireEvent.click(getByRole("button", { name: "Jump to present" }));
+    expect(useStore.getState().historyWindows[KEY]).toBeUndefined();
+    expect(container.querySelector('[data-message-id="now-2"]')).not.toBeNull();
+  });
+
+  it("still jumps while a history request never finished", () => {
+    useStore.setState({ servers: [server(true)] as never });
+    const { container } = render(<ChannelMessageList {...props} />);
+
+    showPast();
+
+    expect(
+      container.querySelector('[data-message-id="past-50"]')?.classList,
+    ).toContain("message-flash");
+  });
+
+  it("shows a toast when the message has no row to scroll to", () => {
+    const join = (id: string, username: string) =>
+      makeMsg(id, { type: "join", userId: username, content: "" });
+    useStore.setState({
+      messages: { [KEY]: [join("join-1", "carol"), join("join-2", "dave")] },
+    });
+    render(<ChannelMessageList {...props} />);
+
+    act(() => useStore.getState().revealMessage("join-1"));
+
+    expect(useStore.getState().globalNotifications.at(-1)).toMatchObject({
+      command: "SEARCH_JUMP",
+      code: "not-found",
+    });
   });
 });

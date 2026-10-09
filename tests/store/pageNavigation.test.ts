@@ -19,7 +19,8 @@ describe("leaving a page", () => {
   it("closes the page when a profile opens", () => {
     useStore.getState().openProfile("server-1", "alice");
     expect(useStore.getState().ui.page).toBeNull();
-    expect(useStore.getState().ui.profilePane).toEqual({
+    expect(useStore.getState().ui.sidePane).toEqual({
+      kind: "profile",
       serverId: "server-1",
       username: "alice",
     });

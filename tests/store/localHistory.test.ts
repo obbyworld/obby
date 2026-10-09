@@ -1316,6 +1316,21 @@ describe("loading older saved messages", () => {
     );
   });
 
+  it("lists senders from loaded messages while history is off", async () => {
+    const { listSavedSenders } = await import(
+      "../../src/store/handlers/history"
+    );
+    w.useStore.getState().updateGlobalSettings({ keepHistory: false });
+    w.feed(
+      `@time=${at(1)} :Bob!u@h PRIVMSG #chan :hi`,
+      `@time=${at(2)} :alice!u@h PRIVMSG #chan :yo`,
+      `@time=${at(3)} :bob!u@h PRIVMSG #chan :again`,
+    );
+    await vi.waitFor(() => expect(w.channelMessages()).toHaveLength(3));
+
+    expect(await listSavedSenders()).toEqual(["alice", "bob"]);
+  });
+
   it("keeps rows that share a millisecond across a page boundary", async () => {
     const sameMs = [0, 1, 2].map(
       (index) =>

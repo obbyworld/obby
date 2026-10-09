@@ -1,3 +1,23 @@
+import {
+  addBytes,
+  awaitRequest,
+  GAPS,
+  META,
+  ROWS,
+  readBytes,
+  TERMS,
+} from "./idb";
+import {
+  backfillChunk,
+  indexRow,
+  isBackfilling,
+  readSavedSenders,
+  rowBytes,
+  startBackfill,
+  unindexRow,
+  withSearchColumns,
+} from "./searchIndex";
+
 export interface HistoryRow {
   id: number;
   server: string;
@@ -8,7 +28,21 @@ export interface HistoryRow {
   ref?: string;
   raw: string;
   bytes: number;
+  nick?: string;
+  text?: string;
+  hasLink?: true;
+  isOwn?: true;
+  replyTo?: string;
+  replyToOwn?: 1;
 }
+
+type SearchColumn =
+  | "nick"
+  | "text"
+  | "hasLink"
+  | "isOwn"
+  | "replyTo"
+  | "replyToOwn";
 
 export interface HistoryGap {
   id: number;
@@ -19,47 +53,83 @@ export interface HistoryGap {
   lost: boolean;
 }
 
-export type NewHistoryRow = Omit<HistoryRow, "id" | "bytes">;
+export type NewHistoryRow = Omit<HistoryRow, "id" | "bytes" | SearchColumn>;
 
-const ROWS = "rows";
-const GAPS = "gaps";
-const META = "meta";
-const ROW_OVERHEAD = 64;
 const PRUNE_TARGET = 0.9;
 const QUOTA_RETRY_TARGET = 0.8;
 
 let dbPromise: Promise<IDBDatabase> | undefined;
 let chain: Promise<unknown> = Promise.resolve();
 
+function createV1(db: IDBDatabase) {
+  const rows = db.createObjectStore(ROWS, {
+    keyPath: "id",
+    autoIncrement: true,
+  });
+  rows.createIndex("conv", ["server", "target", "time"]);
+  rows.createIndex("dedupe", ["server", "target", "key"], { unique: true });
+  rows.createIndex("time", "time");
+  rows.createIndex("server", "server");
+  rows.createIndex("ref", ["server", "ref"]);
+  rows.createIndex("msgid", ["server", "target", "msgid"]);
+  const gaps = db.createObjectStore(GAPS, {
+    keyPath: "id",
+    autoIncrement: true,
+  });
+  gaps.createIndex("conv", ["server", "target"]);
+  db.createObjectStore(META, { keyPath: "name" });
+}
+
+function upgrade(db: IDBDatabase, tx: IDBTransaction, oldVersion: number) {
+  if (oldVersion < 1) createV1(db);
+  const rows = tx.objectStore(ROWS);
+  rows.createIndex("nick", ["nick", "time"]);
+  rows.createIndex("serverTime", ["server", "time"]);
+  rows.createIndex("reply", ["server", "target", "replyTo"]);
+  rows.createIndex("replyToOwn", ["replyToOwn", "time"]);
+  db.createObjectStore(TERMS, { keyPath: ["term", "time", "rowId"] });
+  if (oldVersion === 1) startBackfill(tx);
+}
+
+// Another tab on an older version blocks our upgrade until it closes, so we
+// fail this call and open again on the next one. We close our connection when
+// a newer tab asks to upgrade, and reopen on the next call.
 function openDb(): Promise<IDBDatabase> {
-  dbPromise ??= new Promise<IDBDatabase>((resolve, reject) => {
-    const open = indexedDB.open("obby-history", 1);
-    open.onupgradeneeded = () => {
-      const db = open.result;
-      const rows = db.createObjectStore(ROWS, {
-        keyPath: "id",
-        autoIncrement: true,
-      });
-      rows.createIndex("conv", ["server", "target", "time"]);
-      rows.createIndex("dedupe", ["server", "target", "key"], { unique: true });
-      rows.createIndex("time", "time");
-      rows.createIndex("server", "server");
-      rows.createIndex("ref", ["server", "ref"]);
-      rows.createIndex("msgid", ["server", "target", "msgid"]);
-      const gaps = db.createObjectStore(GAPS, {
-        keyPath: "id",
-        autoIncrement: true,
-      });
-      gaps.createIndex("conv", ["server", "target"]);
-      db.createObjectStore(META, { keyPath: "name" });
+  if (dbPromise) return dbPromise;
+  const forget = () => {
+    if (dbPromise === opening) dbPromise = undefined;
+  };
+  const opening = new Promise<IDBDatabase>((resolve, reject) => {
+    const open = indexedDB.open("obby-history", 2);
+    let isBlocked = false;
+    open.onupgradeneeded = (event) =>
+      upgrade(
+        open.result,
+        open.transaction as IDBTransaction,
+        event.oldVersion,
+      );
+    open.onblocked = () => {
+      isBlocked = true;
+      reject(new DOMException("history database is blocked", "AbortError"));
     };
-    open.onsuccess = () => resolve(open.result);
+    open.onsuccess = () => {
+      const db = open.result;
+      if (isBlocked) return db.close();
+      db.onversionchange = () => {
+        db.close();
+        forget();
+      };
+      db.onclose = forget;
+      resolve(db);
+      setTimeout(continueBackfill, 0);
+    };
     open.onerror = () => reject(open.error);
   }).catch((error: unknown) => {
-    dbPromise = undefined;
+    forget();
     throw error;
   });
-  return dbPromise;
+  dbPromise = opening;
+  return opening;
 }
 
 function enqueue<T>(
@@ -70,13 +140,6 @@ function enqueue<T>(
   const result = chain.then(openDb).then(op);
   chain = result.catch(() => undefined);
   return result;
-}
-
-function awaitRequest<T>(request: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
 }
 
 function inTx<T>(
@@ -116,18 +179,6 @@ function walk(
   });
 }
 
-async function readBytes(tx: IDBTransaction): Promise<number> {
-  const current = await awaitRequest<{ value: number } | undefined>(
-    tx.objectStore(META).get("bytes"),
-  );
-  return current?.value ?? 0;
-}
-
-async function addBytes(tx: IDBTransaction, delta: number): Promise<void> {
-  const value = (await readBytes(tx)) + delta;
-  await awaitRequest(tx.objectStore(META).put({ name: "bytes", value }));
-}
-
 function convRange(server: string, target: string, from: number, to: number) {
   return IDBKeyRange.bound([server, target, from], [server, target, to]);
 }
@@ -135,68 +186,98 @@ function convRange(server: string, target: string, from: number, to: number) {
 const wholeServer = (server: string) =>
   IDBKeyRange.bound([server], [server, []]);
 
+function addUnlessDuplicate(
+  store: IDBObjectStore,
+  value: unknown,
+): Promise<number | undefined> {
+  return new Promise((resolve, reject) => {
+    const request = store.add(value);
+    request.onsuccess = () => resolve(request.result as number);
+    request.onerror = (event) => {
+      if (request.error?.name !== "ConstraintError")
+        return reject(request.error);
+      event.preventDefault();
+      resolve(undefined);
+    };
+  });
+}
+
 function insertRows(
   db: IDBDatabase,
   rows: NewHistoryRow[],
 ): Promise<boolean[]> {
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction([ROWS, META], "readwrite");
+  return inTx(db, [ROWS, TERMS, META], "readwrite", async (tx) => {
     const store = tx.objectStore(ROWS);
-    const inserted: boolean[] = rows.map(() => false);
+    const inserted: boolean[] = [];
     let added = 0;
-    rows.forEach((row, index) => {
-      const bytes = row.raw.length + ROW_OVERHEAD;
-      const request = store.add({ ...row, bytes });
-      request.onsuccess = () => {
-        inserted[index] = true;
-        added += bytes;
-      };
-      request.onerror = (event) => {
-        if (request.error?.name === "ConstraintError") event.preventDefault();
-      };
-    });
-    // Requests run in order, so this read fires after every add above settled.
-    const meta = tx.objectStore(META);
-    const current = meta.get("bytes");
-    current.onsuccess = () => {
-      const value = (current.result?.value ?? 0) + added;
-      meta.put({ name: "bytes", value });
-    };
-    tx.oncomplete = () => resolve(inserted);
-    tx.onabort = () => reject(tx.error);
+    for (const row of rows) {
+      const { record, terms } = await withSearchColumns(store, row);
+      const bytes = rowBytes(record, terms);
+      const id = await addUnlessDuplicate(store, { ...record, bytes });
+      inserted.push(id !== undefined);
+      if (id === undefined) continue;
+      added += bytes;
+      await indexRow(tx, record, id, terms);
+    }
+    await addBytes(tx, added);
+    return inserted;
   });
 }
 
-function rowsBefore(
+function continueBackfill() {
+  void enqueue(false, (db) =>
+    inTx(db, [ROWS, TERMS, META], "readwrite", backfillChunk),
+  ).then((hasMore) => {
+    if (hasMore) setTimeout(continueBackfill, 0);
+  });
+}
+
+export function readSearchIndex<T>(
+  fallback: T,
+  read: (
+    rows: IDBObjectStore,
+    terms: IDBObjectStore,
+    isIndexing: boolean,
+  ) => Promise<T>,
+): Promise<T> {
+  return enqueue(fallback, (db) =>
+    inTx(db, [ROWS, TERMS, META], "readonly", async (tx) =>
+      read(
+        tx.objectStore(ROWS),
+        tx.objectStore(TERMS),
+        await isBackfilling(tx),
+      ),
+    ),
+  );
+}
+
+function eventRows(
   db: IDBDatabase,
-  server: string,
-  target: string,
-  beforeTime: number,
+  range: IDBKeyRange,
+  direction: IDBCursorDirection,
   limit: number,
+  skip: (row: HistoryRow) => boolean = () => false,
 ): Promise<HistoryRow[]> {
   return inTx(db, [ROWS], "readonly", async (tx) => {
     const found: HistoryRow[] = [];
     if (limit > 0) {
       const index = tx.objectStore(ROWS).index("conv");
-      const range = convRange(
-        server,
-        target,
-        Number.NEGATIVE_INFINITY,
-        beforeTime,
-      );
-      await walk(index, range, "prev", (cursor) => {
+      await walk(index, range, direction, (cursor) => {
         const row = cursor.value as HistoryRow;
-        if (row.ref === undefined) found.push(row);
+        if (row.ref === undefined && !skip(row)) found.push(row);
         return found.length < limit;
       });
     }
-    return found.reverse();
+    return found;
   });
 }
 
 function deleteRows(tx: IDBTransaction, rows: HistoryRow[]): Promise<void> {
   const store = tx.objectStore(ROWS);
-  for (const row of rows) store.delete(row.id);
+  for (const row of rows) {
+    store.delete(row.id);
+    unindexRow(tx, row);
+  }
   return addBytes(tx, -rows.reduce((sum, row) => sum + row.bytes, 0));
 }
 
@@ -205,12 +286,14 @@ function usageDb(db: IDBDatabase): Promise<number> {
 }
 
 function pruneDb(db: IDBDatabase, targetBytes: number): Promise<void> {
-  return inTx(db, [ROWS, GAPS, META], "readwrite", async (tx) => {
+  return inTx(db, [ROWS, GAPS, META, TERMS], "readwrite", async (tx) => {
     let remaining = await readBytes(tx);
     const rows = tx.objectStore(ROWS);
     await walk(rows.index("time"), undefined, "next", (cursor) => {
       if (remaining <= targetBytes) return false;
-      remaining -= (cursor.value as HistoryRow).bytes;
+      const row = cursor.value as HistoryRow;
+      remaining -= row.bytes;
+      unindexRow(tx, row);
       cursor.delete();
       return true;
     });
@@ -258,7 +341,37 @@ export function eventRowsBefore(
   beforeTime: number,
   limit: number,
 ): Promise<HistoryRow[]> {
-  return enqueue([], (db) => rowsBefore(db, server, target, beforeTime, limit));
+  return enqueue([], async (db) =>
+    (
+      await eventRows(
+        db,
+        convRange(server, target, Number.NEGATIVE_INFINITY, beforeTime),
+        "prev",
+        limit,
+      )
+    ).reverse(),
+  );
+}
+
+// Rows from afterTime on, oldest first. Rows sharing a millisecond come in id
+// order, so passing the id of the last row we have resumes right after it.
+export function eventRowsAfter(
+  server: string,
+  target: string,
+  afterTime: number,
+  limit: number,
+  afterId?: number,
+): Promise<HistoryRow[]> {
+  return enqueue([], (db) =>
+    eventRows(
+      db,
+      convRange(server, target, afterTime, Number.POSITIVE_INFINITY),
+      "next",
+      limit,
+      (row) =>
+        afterId !== undefined && row.time === afterTime && row.id <= afterId,
+    ),
+  );
 }
 
 export function newestEventRows(
@@ -295,7 +408,7 @@ export function deleteMessage(
   msgid: string,
 ): Promise<void> {
   return enqueue(undefined, (db) =>
-    inTx(db, [ROWS, META], "readwrite", async (tx) => {
+    inTx(db, [ROWS, META, TERMS], "readwrite", async (tx) => {
       const rows = tx.objectStore(ROWS);
       const events = await awaitRequest<HistoryRow[]>(
         rows.index("msgid").getAll(IDBKeyRange.only([server, target, msgid])),
@@ -361,6 +474,12 @@ export async function pruneToLimit(limitBytes: number): Promise<void> {
   });
 }
 
+export function savedSenders(limit = 2000): Promise<string[]> {
+  return enqueue([], (db) =>
+    inTx(db, [ROWS], "readonly", (tx) => readSavedSenders(tx, limit)),
+  );
+}
+
 export function hasServerHistory(server: string): Promise<boolean> {
   return enqueue(false, (db) =>
     inTx(db, [ROWS], "readonly", async (tx) => {
@@ -374,14 +493,16 @@ export function hasServerHistory(server: string): Promise<boolean> {
 
 export function deleteServerHistory(server: string): Promise<void> {
   return enqueue(undefined, (db) =>
-    inTx(db, [ROWS, GAPS, META], "readwrite", async (tx) => {
+    inTx(db, [ROWS, GAPS, META, TERMS], "readwrite", async (tx) => {
       let freed = 0;
       await walk(
         tx.objectStore(ROWS).index("server"),
         IDBKeyRange.only(server),
         "next",
         (cursor) => {
-          freed += (cursor.value as HistoryRow).bytes;
+          const row = cursor.value as HistoryRow;
+          freed += row.bytes;
+          unindexRow(tx, row);
           cursor.delete();
           return true;
         },
@@ -436,7 +557,7 @@ export function adoptParkedHistory(
   server: string,
 ): Promise<boolean> {
   return enqueue(false, (db) =>
-    inTx(db, [ROWS, GAPS, META], "readwrite", async (tx) => {
+    inTx(db, [ROWS, GAPS, META, TERMS], "readwrite", async (tx) => {
       const meta = tx.objectStore(META);
       const parked = (
         await awaitRequest<ParkedHistory[]>(
@@ -466,7 +587,8 @@ export function adoptParkedHistory(
 }
 
 // Moves every row of one server to another and returns the bytes of the
-// duplicates we dropped on the way.
+// duplicates we dropped on the way. Search terms point at row ids, so only
+// the dropped rows touch them.
 function moveRows(
   tx: IDBTransaction,
   from: string,
@@ -486,6 +608,7 @@ function moveRows(
         if (clash.result === undefined) cursor.update({ ...row, server: to });
         else {
           freed += row.bytes;
+          unindexRow(tx, row);
           cursor.delete();
         }
         cursor.continue();
@@ -498,11 +621,12 @@ function moveRows(
 
 export function clearHistory(): Promise<void> {
   return enqueue(undefined, (db) =>
-    inTx(db, [ROWS, GAPS, META], "readwrite", async (tx) => {
+    inTx(db, [ROWS, GAPS, META, TERMS], "readwrite", async (tx) => {
       await Promise.all([
         awaitRequest(tx.objectStore(ROWS).clear()),
         awaitRequest(tx.objectStore(GAPS).clear()),
         awaitRequest(tx.objectStore(META).clear()),
+        awaitRequest(tx.objectStore(TERMS).clear()),
       ]);
       await Promise.all([
         awaitRequest(tx.objectStore(META).put({ name: "bytes", value: 0 })),

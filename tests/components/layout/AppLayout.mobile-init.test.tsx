@@ -30,7 +30,7 @@ describe("AppLayout - Mobile Initial Load", () => {
         isChannelListVisible: false,
         isMemberListVisible: false,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         isServerMenuOpen: false,

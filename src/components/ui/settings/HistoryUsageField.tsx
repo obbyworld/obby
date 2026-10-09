@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { clearHistory, usageBytes } from "../../../lib/history/historyDb";
 import BaseModal from "../../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../../lib/modal/components";
+import { clearRecents } from "../../../lib/search/recents";
 import type { SettingComponentProps } from "../../../lib/settings/types";
 import useStore from "../../../store";
 import { BYTES_PER_MB } from "../../../store/handlers/history";
@@ -30,6 +31,7 @@ export const HistoryUsageField: React.FC<SettingComponentProps> = ({
 
   const handleClear = async () => {
     setIsConfirming(false);
+    clearRecents();
     await clearHistory();
     setBytes(await usageBytes());
   };

@@ -51,6 +51,27 @@ describe("useSuggestionKeys", () => {
     expect(press("Enter").defaultPrevented).toBe(false);
   });
 
+  it("steps forward on a cycle key and backward with Shift", () => {
+    const onMove = vi.fn();
+    renderHook(() =>
+      useSuggestionKeys({
+        isActive: true,
+        count: 3,
+        selectedIndex: 0,
+        onMove,
+        onAccept: vi.fn(() => true),
+        onClose: vi.fn(),
+        cycleKeys: ["Tab"],
+      }),
+    );
+    press("Tab");
+    expect(onMove).toHaveBeenLastCalledWith(1);
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Tab", shiftKey: true }),
+    );
+    expect(onMove).toHaveBeenLastCalledWith(2);
+  });
+
   it("closes on Escape", () => {
     const { onClose } = setup(0);
     press("Escape");

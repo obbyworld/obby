@@ -95,7 +95,7 @@ describe("LinkSecurityWarningModal", () => {
         selectedPrivateChatId: null,
         isAddServerModalOpen: false,
         page: null,
-        profilePane: null,
+        sidePane: null,
         isDarkMode: false,
         isMobileMenuOpen: false,
         isMemberListVisible: false,

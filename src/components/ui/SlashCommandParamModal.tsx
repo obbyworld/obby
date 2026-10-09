@@ -1,5 +1,5 @@
 // Param-collection modal opened when a user selects a slash command
-// from the SlashCommandPopover and that command declares any
+// from the slash command completion and that command declares any
 // `options[]`.  Renders one form field per option, typed by
 // `option.type`:
 //

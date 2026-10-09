@@ -86,6 +86,29 @@ describe("event rows", () => {
     );
     expect(await db.newestEventRows("s1", "#none", 1)).toEqual([]);
   });
+
+  it("pages newer rows oldest-first and resumes inside a shared millisecond", async () => {
+    await db.appendRows([
+      row({ key: "3c", time: 3, msgid: "m3c" }),
+      row({ key: "3d", time: 3 }),
+    ]);
+
+    const first = await db.eventRowsAfter("s1", "#a", 2, 2);
+    expect(first.map((r) => r.key)).toEqual(["2", "3"]);
+
+    const last = first[first.length - 1];
+    const next = await db.eventRowsAfter("s1", "#a", last.time, 2, last.id);
+    expect(next.map((r) => r.key)).toEqual(["3b", "3c"]);
+
+    const rest = await db.eventRowsAfter(
+      "s1",
+      "#a",
+      next[1].time,
+      10,
+      next[1].id,
+    );
+    expect(rest.map((r) => r.key)).toEqual(["3d", "4"]);
+  });
 });
 
 describe("refRowsFor", () => {
@@ -278,6 +301,54 @@ describe("ordering", () => {
     await expect(
       db.appendRows([{ ...row(), raw: (() => 1) as unknown as string }]),
     ).rejects.toBeDefined();
+    expect(await db.appendRows([row()])).toEqual([true]);
+  });
+});
+
+describe("other tabs", () => {
+  it("closes for a newer tab and reopens on the next call", async () => {
+    await db.appendRows([row({ key: "a" })]);
+
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.deleteDatabase("obby-history");
+      request.onblocked = () => reject(new Error("blocked"));
+      request.onsuccess = () => resolve();
+    });
+
+    expect(await db.appendRows([row({ key: "b" })])).toEqual([true]);
+    expect(
+      (await db.newestEventRows("s1", "#a", 10)).map((r) => r.key),
+    ).toEqual(["b"]);
+  });
+
+  it("fails while an older tab blocks the upgrade, then opens", async () => {
+    const older = await new Promise<IDBDatabase>((resolve, reject) => {
+      const open = indexedDB.open("obby-history", 1);
+      open.onupgradeneeded = () => {
+        const rows = open.result.createObjectStore("rows", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        rows.createIndex("conv", ["server", "target", "time"]);
+        rows.createIndex("dedupe", ["server", "target", "key"], {
+          unique: true,
+        });
+        rows.createIndex("time", "time");
+        rows.createIndex("server", "server");
+        rows.createIndex("ref", ["server", "ref"]);
+        rows.createIndex("msgid", ["server", "target", "msgid"]);
+        open.result
+          .createObjectStore("gaps", { keyPath: "id", autoIncrement: true })
+          .createIndex("conv", ["server", "target"]);
+        open.result.createObjectStore("meta", { keyPath: "name" });
+      };
+      open.onsuccess = () => resolve(open.result);
+      open.onerror = () => reject(open.error);
+    });
+
+    await expect(db.usageBytes()).rejects.toThrow("blocked");
+    older.close();
+
     expect(await db.appendRows([row()])).toEqual([true]);
   });
 });
