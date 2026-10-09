@@ -5403,6 +5403,11 @@ msgstr "tu@correo.com"
 msgid "YourNickname"
 msgstr "TuApodo"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "YouTube video player"
+msgstr "Reproductor de video de YouTube"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"
 msgstr "Acercar"

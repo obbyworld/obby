@@ -5403,6 +5403,11 @@ msgstr "twoj@email.com"
 msgid "YourNickname"
 msgstr "TwójNick"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "YouTube video player"
+msgstr "Odtwarzacz wideo YouTube"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"
 msgstr "Powiększ"

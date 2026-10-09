@@ -6,6 +6,7 @@ import {
   isUrlFromTrustedSource,
 } from "./ircUtils";
 import { stripIrcFormatting } from "./messageFormatter";
+import { isTauri } from "./platformUtils";
 
 export type MediaType = "image" | "video" | "audio" | "pdf" | "embed" | "map";
 
@@ -229,27 +230,39 @@ export function mediaLevelToSettings(
  * Currently supports YouTube (CDN thumbnail, no API key needed).
  */
 export function getEmbedThumbnailUrl(url: string): string | null {
+  const videoId = getYouTubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null;
+}
+
+function getYouTubeVideoId(url: string): string | null {
   try {
     const u = new URL(url);
     const host = u.hostname.replace(/^www\./, "");
-    if (host === "youtube.com" || host === "youtu.be") {
-      let videoId: string | null = null;
-      if (host === "youtu.be") {
-        videoId = u.pathname.slice(1).split("/")[0] || null;
-      } else {
-        videoId = u.searchParams.get("v");
-        if (!videoId) {
-          const parts = u.pathname.split("/").filter(Boolean);
-          if (parts[0] === "embed" || parts[0] === "shorts")
-            videoId = parts[1] ?? null;
-        }
-      }
-      if (videoId) return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-    }
+    if (host === "youtu.be") return u.pathname.slice(1).split("/")[0] || null;
+    if (host !== "youtube.com") return null;
+    const fromQuery = u.searchParams.get("v");
+    if (fromQuery) return fromQuery;
+    const parts = u.pathname.split("/").filter(Boolean);
+    return parts[0] === "embed" || parts[0] === "shorts"
+      ? (parts[1] ?? null)
+      : null;
   } catch {
-    // ignore invalid URLs
+    return null;
   }
-  return null;
+}
+
+// The installed apps load from a custom scheme that sends YouTube no referrer,
+// so we play YouTube there through a page on the web client's https origin.
+const YOUTUBE_EMBED_PAGE = "https://hello.obby.world/youtube-embed.html";
+
+/** The player page for a YouTube link in the installed apps, or null where a
+ *  regular embed works. */
+export function getAppYouTubeEmbedUrl(url: string): string | null {
+  if (!isTauri()) return null;
+  const videoId = getYouTubeVideoId(url);
+  return videoId
+    ? `${YOUTUBE_EMBED_PAGE}?v=${encodeURIComponent(videoId)}`
+    : null;
 }
 
 const SPOTIFY_CONTENT_TYPES: Record<string, string> = {

@@ -5403,6 +5403,11 @@ msgstr "eposta@adresiniz.com"
 msgid "YourNickname"
 msgstr "TakmaAdınız"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "YouTube video player"
+msgstr "YouTube video oynatıcı"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"
 msgstr "Yakınlaştır"

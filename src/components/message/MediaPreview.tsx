@@ -18,6 +18,7 @@ import { probeMediaUrl } from "../../lib/mediaProbe";
 import {
   canPlayVideoUrl,
   filenameFromUrl,
+  getAppYouTubeEmbedUrl,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
   type MediaEntry,
@@ -994,6 +995,8 @@ const EmbedPreview: React.FC<{
 
   if (embedError) return null;
 
+  const appYouTubeEmbedUrl = getAppYouTubeEmbedUrl(url);
+
   if (!activated) {
     const thumbnailUrl = getEmbedThumbnailUrl(url);
     return (
@@ -1002,7 +1005,8 @@ const EmbedPreview: React.FC<{
           type="button"
           onClick={() => {
             setActivated(true);
-            play();
+            // The mini player cannot drive the app's YouTube page, so we leave it out.
+            if (!appYouTubeEmbedUrl) play();
           }}
           aria-label={t`Play`}
           className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
@@ -1040,44 +1044,55 @@ const EmbedPreview: React.FC<{
           className={spotifyHeight ? undefined : "aspect-video"}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
-          <MediaErrorBoundary onError={() => setEmbedError(true)}>
-            <ReactPlayer
-              key={playerKey}
-              src={url}
-              width="100%"
-              height="100%"
-              controls
-              playing={playing}
-              config={{
-                youtube: { disablekb: 1 },
-                vimeo: { keyboard: false },
-              }}
-              style={{ borderRadius: "4px", overflow: "hidden" }}
-              onPlay={() => {
-                // Guard against spurious onPlay events fired by YouTube.
-                // If the user explicitly paused (isPlaying=false in store), ignore the event.
-                const current = useStore.getState().ui.activeMedia;
-                if (current?.url === url && current.isPlaying === false) return;
-                useStore
-                  .getState()
-                  .playMedia(
-                    url,
-                    "embed",
-                    getEmbedThumbnailUrl(url) ?? undefined,
-                    msgid,
-                    serverId,
-                    channelId,
-                  );
-              }}
-              onPause={() => useStore.getState().pauseActiveMedia()}
-              onEnded={() => {
-                // Reset player to beginning and pause — prevents YouTube recommendations screen
-                setPlayerKey((k) => k + 1);
-                useStore.getState().pauseActiveMedia();
-              }}
-              onError={() => setEmbedError(true)}
+          {appYouTubeEmbedUrl ? (
+            <iframe
+              src={appYouTubeEmbedUrl}
+              title={t`YouTube video player`}
+              className="h-full w-full rounded"
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+              allowFullScreen
             />
-          </MediaErrorBoundary>
+          ) : (
+            <MediaErrorBoundary onError={() => setEmbedError(true)}>
+              <ReactPlayer
+                key={playerKey}
+                src={url}
+                width="100%"
+                height="100%"
+                controls
+                playing={playing}
+                config={{
+                  youtube: { disablekb: 1 },
+                  vimeo: { keyboard: false },
+                }}
+                style={{ borderRadius: "4px", overflow: "hidden" }}
+                onPlay={() => {
+                  // Guard against spurious onPlay events fired by YouTube.
+                  // If the user explicitly paused (isPlaying=false in store), ignore the event.
+                  const current = useStore.getState().ui.activeMedia;
+                  if (current?.url === url && current.isPlaying === false)
+                    return;
+                  useStore
+                    .getState()
+                    .playMedia(
+                      url,
+                      "embed",
+                      getEmbedThumbnailUrl(url) ?? undefined,
+                      msgid,
+                      serverId,
+                      channelId,
+                    );
+                }}
+                onPause={() => useStore.getState().pauseActiveMedia()}
+                onEnded={() => {
+                  // Reset player to beginning and pause — prevents YouTube recommendations screen
+                  setPlayerKey((k) => k + 1);
+                  useStore.getState().pauseActiveMedia();
+                }}
+                onError={() => setEmbedError(true)}
+              />
+            </MediaErrorBoundary>
+          )}
         </div>
       </Suspense>
     </div>

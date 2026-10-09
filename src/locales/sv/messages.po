@@ -5403,6 +5403,11 @@ msgstr "din@epost.se"
 msgid "YourNickname"
 msgstr "DittNick"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "YouTube video player"
+msgstr "YouTube-videospelare"
+
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"
 msgstr "Zooma in"

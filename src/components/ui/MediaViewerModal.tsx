@@ -44,14 +44,16 @@ import {
   MAP_PIN_SVG,
 } from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
-import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
   canShowMedia,
   detectMediaType,
   extractMediaFromMessage,
   extractMediaFromText,
+  getAppYouTubeEmbedUrl,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
+  type MediaEntry,
+  type MediaType,
   mediaLevelToSettings,
 } from "../../lib/mediaUtils";
 import {
@@ -574,6 +576,7 @@ export function MediaViewerModal({
   }, []);
 
   const currentUrl = currentIndex >= 0 ? imageList[currentIndex] : url;
+  const appYouTubeEmbedUrl = getAppYouTubeEmbedUrl(currentUrl);
 
   // Derived values for current entry type — kept in a ref so non-reactive handlers can read it
   const currentEntry = mediaEntries[currentIndex] ?? null;
@@ -1630,14 +1633,24 @@ export function MediaViewerModal({
                       <div className="w-full h-64 bg-discord-dark-400/50 animate-pulse rounded" />
                     }
                   >
-                    <MediaErrorBoundary>
-                      <ReactPlayer
-                        src={currentUrl}
-                        width="100%"
-                        height="100%"
-                        controls
+                    {appYouTubeEmbedUrl ? (
+                      <iframe
+                        src={appYouTubeEmbedUrl}
+                        title={t`YouTube video player`}
+                        className="aspect-video w-full rounded"
+                        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                        allowFullScreen
                       />
-                    </MediaErrorBoundary>
+                    ) : (
+                      <MediaErrorBoundary>
+                        <ReactPlayer
+                          src={currentUrl}
+                          width="100%"
+                          height="100%"
+                          controls
+                        />
+                      </MediaErrorBoundary>
+                    )}
                   </Suspense>
                 </div>
               )}
