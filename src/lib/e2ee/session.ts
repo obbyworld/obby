@@ -194,6 +194,14 @@ export function expectsProtection(
 // A session the user engaged that cannot carry a message right now. Both the
 // send path and the upload path refuse in these states so nothing typed under a
 // lock leaves in the clear.
+// Any session past "none" or "rejected" may carry decrypted text, so we keep
+// that conversation off disk.
+export function isEncryptionEngaged(
+  state: E2EESessionState | undefined,
+): boolean {
+  return !!state && state.status !== "none" && state.status !== "rejected";
+}
+
 export function isWithholding(state: E2EESessionState | undefined): boolean {
   if (!state) return false;
   return (

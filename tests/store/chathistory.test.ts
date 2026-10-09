@@ -572,3 +572,72 @@ describe("chathistory batch — reactions and replies", () => {
     expect(reply?.replyMessage?.msgid).toBe("msg-orig");
   });
 });
+
+describe("chathistory for a private chat", () => {
+  const privateChat = () =>
+    useStore
+      .getState()
+      .servers.find((s) => s.id === "srv-1")
+      ?.privateChats?.find((pc) => pc.username === "Bob");
+
+  beforeEach(() => {
+    setupServer();
+    chathistoryBuffers.clear();
+    useStore.setState((state) => ({
+      servers: state.servers.map((server) => ({
+        ...server,
+        privateChats: [
+          {
+            id: "pm-1",
+            username: "Bob",
+            serverId: "srv-1",
+            unreadCount: 0,
+            isMentioned: false,
+          },
+        ],
+      })),
+    }));
+  });
+
+  it("marks the private chat as loading and not loading again", () => {
+    ircClient.triggerEvent("CHATHISTORY_LOADING", {
+      serverId: "srv-1",
+      channelName: "bob",
+      isLoading: true,
+    });
+    expect(privateChat()?.isLoadingHistory).toBe(true);
+
+    ircClient.triggerEvent("CHATHISTORY_LOADING", {
+      serverId: "srv-1",
+      channelName: "bob",
+      isLoading: false,
+    });
+    expect(privateChat()?.isLoadingHistory).toBe(false);
+  });
+
+  it.each([
+    ["has messages", [makeMessage({ id: "f1", msgid: "f1" })], true],
+    ["is empty", [], false],
+  ])("sets hasMoreHistory when the batch %s", (_name, buffered, expected) => {
+    useStore.setState({
+      activeBatches: {
+        "srv-1": {
+          batchPM: {
+            type: "chathistory",
+            parameters: ["bob"],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    });
+    chathistoryBuffers.set("batchPM", buffered);
+
+    ircClient.triggerEvent("BATCH_END", {
+      serverId: "srv-1",
+      batchId: "batchPM",
+    });
+
+    expect(privateChat()?.hasMoreHistory).toBe(expected);
+  });
+});

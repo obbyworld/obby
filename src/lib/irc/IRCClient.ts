@@ -593,6 +593,15 @@ export interface EventMap {
     direction: "tx" | "rx" | "info";
     line: string;
   };
+  parsedLine: ParsedLine & { serverId: string };
+}
+
+export interface ParsedLine {
+  line: string;
+  command: string;
+  source: string;
+  parv: string[];
+  mtags: Record<string, string> | undefined;
 }
 
 type EventKey = keyof EventMap;
@@ -2011,7 +2020,21 @@ export class IRCClient implements IRCClientContext {
       if (handler) {
         handler(this, serverId, source, parv, mtags, trailing);
       }
+      this.triggerEvent("parsedLine", {
+        serverId,
+        line,
+        command,
+        source,
+        parv,
+        mtags,
+      });
     }
+  }
+
+  // Lines from local history go through the same parser and handlers as
+  // lines from the socket.
+  replayLines(serverId: string, lines: string[]): void {
+    this.handleMessage(lines.join("\r\n"), serverId);
   }
 
   onCapLs(serverId: string, cliCaps: string, isFinal: boolean): void {

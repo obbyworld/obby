@@ -1,6 +1,8 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
+import { FaHdd } from "react-icons/fa";
 import { getColorStyle } from "../../lib/ircUtils";
+import { HoverTooltip } from "../ui/HoverTooltip";
 import { E2EEUnprotectedBadge } from "./E2EEUnprotectedBadge";
 
 interface MessageHeaderProps {
@@ -15,6 +17,7 @@ interface MessageHeaderProps {
   isVerified?: boolean;
   isIrcOp?: boolean;
   unprotected?: boolean;
+  isSavedLocally?: boolean;
 }
 
 export const MessageHeader: React.FC<MessageHeaderProps> = ({
@@ -29,6 +32,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
   isVerified = false,
   isIrcOp = false,
   unprotected = false,
+  isSavedLocally = false,
 }) => {
   const { t } = useLingui();
   const username = userId;
@@ -75,6 +79,15 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
       <span className={`ml-2 text-xs text-${theme}-text-muted`}>
         {formatTime(timestamp)}
       </span>
+      {isSavedLocally && (
+        <HoverTooltip content={t`Saved on this device`} className="ml-1">
+          <FaHdd
+            role="img"
+            aria-label={t`Saved on this device`}
+            className={`w-3 h-3 text-${theme}-text-muted`}
+          />
+        </HoverTooltip>
+      )}
       {unprotected && <E2EEUnprotectedBadge />}
     </div>
   );

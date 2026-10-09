@@ -176,6 +176,8 @@ describe("Metadata Display Features", () => {
         showKicks: true,
         customMentions: [],
         ignoreList: ["HistServ!*@*"],
+        keepHistory: true,
+        historyLimitMb: 500,
         nickname: "",
         accountName: "",
         accountPassword: "",
