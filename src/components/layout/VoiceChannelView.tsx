@@ -62,8 +62,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   const setMobileViewActiveColumn = useStore(
     (s) => s.setMobileViewActiveColumn,
   );
-  const setSettingsNavigation = useStore((s) => s.setSettingsNavigation);
-  const toggleSettingsModal = useStore((s) => s.toggleSettingsModal);
+  const openPage = useStore((s) => s.openPage);
 
   // Nick of the explicitly spotlighted member, or null for the
   // stage's default layout (single tile / auto screen-share spotlight
@@ -164,10 +163,8 @@ export const VoiceChannelView: React.FC<Props> = ({
     client?.setPushToTalk(next);
   };
   const onStepOffStream = () => client?.demote();
-  const onOpenDeviceSettings = () => {
-    setSettingsNavigation({ category: "calls" });
-    toggleSettingsModal(true);
-  };
+  const onOpenDeviceSettings = () =>
+    openPage({ kind: "settings", section: "calls" });
   const onReact = (emoji: string) => client?.sendReaction(emoji);
   const onSetMuted = useCallback(
     (nick: string, muted: boolean) => client?.setMemberMuted(nick, muted),

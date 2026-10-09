@@ -18,7 +18,6 @@ import { probeMediaUrl } from "../../lib/mediaProbe";
 import {
   canPlayVideoUrl,
   filenameFromUrl,
-  getAppYouTubeEmbedUrl,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
   type MediaEntry,
@@ -32,9 +31,9 @@ import {
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
 import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "./EmbedPlayer";
 import { MapPreview } from "./MapPreview";
 
-const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
   import("react-pdf").then((m) => {
     // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
@@ -956,6 +955,7 @@ const EmbedPreview: React.FC<{
   // A provider iframe is the most expensive thing a message can mount, so it
   // stays unbuilt until someone asks for playback.
   const [activated, setActivated] = useState(false);
+  const positionRef = useRef(0);
 
   const { isActive, isPlaying, play } = useMediaController({
     url,
@@ -965,8 +965,17 @@ const EmbedPreview: React.FC<{
     serverId,
     channelId,
     // Remount the iframe when this embed goes from active → inactive so YouTube/Vimeo resets.
-    onExternalStop: () => setPlayerKey((k) => k + 1),
-    inlineVisibility: {},
+    onExternalStop: () => {
+      positionRef.current = 0;
+      setPlayerKey((k) => k + 1);
+    },
+    inlineVisibility: {
+      getPosition: () => {
+        const time = positionRef.current;
+        if (time > 0) setVideoPosition(url, time);
+        return time;
+      },
+    },
   });
 
   // undefined when inactive: leave the iframe uncontrolled so the user can
@@ -995,7 +1004,9 @@ const EmbedPreview: React.FC<{
 
   if (embedError) return null;
 
-  const appYouTubeEmbedUrl = getAppYouTubeEmbedUrl(url);
+  // A paused player reports no time, so we seed the position it hands over
+  // with where it starts.
+  positionRef.current = getVideoPosition(url) ?? positionRef.current;
 
   if (!activated) {
     const thumbnailUrl = getEmbedThumbnailUrl(url);
@@ -1005,8 +1016,7 @@ const EmbedPreview: React.FC<{
           type="button"
           onClick={() => {
             setActivated(true);
-            // The mini player cannot drive the app's YouTube page, so we leave it out.
-            if (!appYouTubeEmbedUrl) play();
+            play();
           }}
           aria-label={t`Play`}
           className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
@@ -1044,55 +1054,41 @@ const EmbedPreview: React.FC<{
           className={spotifyHeight ? undefined : "aspect-video"}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
-          {appYouTubeEmbedUrl ? (
-            <iframe
-              src={appYouTubeEmbedUrl}
-              title={t`YouTube video player`}
-              className="h-full w-full rounded"
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-              allowFullScreen
+          <MediaErrorBoundary onError={() => setEmbedError(true)}>
+            <EmbedPlayer
+              key={playerKey}
+              url={url}
+              playing={playing}
+              startAt={positionRef.current}
+              onTime={(time) => {
+                positionRef.current = time;
+              }}
+              onPlay={() => {
+                // Guard against spurious onPlay events fired by YouTube.
+                // If the user explicitly paused (isPlaying=false in store), ignore the event.
+                const current = useStore.getState().ui.activeMedia;
+                if (current?.url === url && current.isPlaying === false) return;
+                useStore
+                  .getState()
+                  .playMedia(
+                    url,
+                    "embed",
+                    getEmbedThumbnailUrl(url) ?? undefined,
+                    msgid,
+                    serverId,
+                    channelId,
+                  );
+              }}
+              onPause={() => useStore.getState().pauseActiveMedia()}
+              onEnded={() => {
+                // Reset player to beginning and pause — prevents YouTube recommendations screen
+                positionRef.current = 0;
+                setPlayerKey((k) => k + 1);
+                useStore.getState().pauseActiveMedia();
+              }}
+              onError={() => setEmbedError(true)}
             />
-          ) : (
-            <MediaErrorBoundary onError={() => setEmbedError(true)}>
-              <ReactPlayer
-                key={playerKey}
-                src={url}
-                width="100%"
-                height="100%"
-                controls
-                playing={playing}
-                config={{
-                  youtube: { disablekb: 1 },
-                  vimeo: { keyboard: false },
-                }}
-                style={{ borderRadius: "4px", overflow: "hidden" }}
-                onPlay={() => {
-                  // Guard against spurious onPlay events fired by YouTube.
-                  // If the user explicitly paused (isPlaying=false in store), ignore the event.
-                  const current = useStore.getState().ui.activeMedia;
-                  if (current?.url === url && current.isPlaying === false)
-                    return;
-                  useStore
-                    .getState()
-                    .playMedia(
-                      url,
-                      "embed",
-                      getEmbedThumbnailUrl(url) ?? undefined,
-                      msgid,
-                      serverId,
-                      channelId,
-                    );
-                }}
-                onPause={() => useStore.getState().pauseActiveMedia()}
-                onEnded={() => {
-                  // Reset player to beginning and pause — prevents YouTube recommendations screen
-                  setPlayerKey((k) => k + 1);
-                  useStore.getState().pauseActiveMedia();
-                }}
-                onError={() => setEmbedError(true)}
-              />
-            </MediaErrorBoundary>
-          )}
+          </MediaErrorBoundary>
         </div>
       </Suspense>
     </div>

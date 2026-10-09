@@ -13,12 +13,15 @@ interface ButtonProps {
 }
 
 const variantStyles = {
-  primary: "bg-discord-primary hover:bg-opacity-80 text-white",
+  primary: "bg-discord-primary hover:bg-discord-primary/85 text-white",
   secondary:
-    "bg-discord-dark-400 hover:bg-discord-dark-500 text-discord-text-normal",
-  danger: "bg-discord-red hover:bg-opacity-80 text-white",
-  success: "bg-discord-green hover:bg-opacity-80 text-white",
+    "bg-discord-button-secondary-default hover:bg-discord-button-secondary-default/80 text-white",
+  danger: "bg-discord-red hover:bg-discord-red/85 text-white",
+  success: "bg-discord-green hover:bg-discord-green/85 text-white",
 };
+
+export const buttonClassName = (variant: ButtonVariant = "primary") =>
+  `inline-flex items-center justify-center gap-2 h-9 px-4 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-discord-primary/60 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]}`;
 
 export const Button: React.FC<ButtonProps> = ({
   variant = "primary",
@@ -34,7 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
     onClick={onClick}
     disabled={disabled}
     aria-label={ariaLabel}
-    className={`px-4 py-2 rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${className}`}
+    className={`${buttonClassName(variant)} ${className}`}
   >
     {children}
   </button>

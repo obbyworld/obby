@@ -1,10 +1,8 @@
 export const defaultUIExtensions = {
   topicModalRequest: null,
-  isUserProfileModalOpen: false,
-  channelSettingsRequest: null,
+  page: null,
+  profilePane: null,
   inviteUserRequest: null,
   openedMedia: null,
   activeMedia: null,
-  isTwoFactorSettingsOpen: false,
-  twoFactorSettingsServerId: null,
 };

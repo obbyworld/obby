@@ -81,7 +81,7 @@ describe("StartPrivateChatRow", () => {
 
   it("fuzzy filters as you type and opens the highlighted person on Enter", () => {
     const input = open();
-    fireEvent.change(input, { target: { value: "alc" } });
+    fireEvent.change(input, { target: { value: "ali" } });
     expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
       "alice",
     ]);

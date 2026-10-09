@@ -49,7 +49,6 @@ import {
   detectMediaType,
   extractMediaFromMessage,
   extractMediaFromText,
-  getAppYouTubeEmbedUrl,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
   type MediaEntry,
@@ -69,6 +68,7 @@ import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
 import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "../message/EmbedPlayer";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -84,7 +84,6 @@ const LazyDocument = lazy(() =>
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
 );
-const ReactPlayer = lazy(() => import("react-player"));
 
 const ZOOM_STEP = 0.25;
 export const ZOOM_MIN = 0.5;
@@ -576,7 +575,6 @@ export function MediaViewerModal({
   }, []);
 
   const currentUrl = currentIndex >= 0 ? imageList[currentIndex] : url;
-  const appYouTubeEmbedUrl = getAppYouTubeEmbedUrl(currentUrl);
 
   // Derived values for current entry type — kept in a ref so non-reactive handlers can read it
   const currentEntry = mediaEntries[currentIndex] ?? null;
@@ -1633,24 +1631,11 @@ export function MediaViewerModal({
                       <div className="w-full h-64 bg-discord-dark-400/50 animate-pulse rounded" />
                     }
                   >
-                    {appYouTubeEmbedUrl ? (
-                      <iframe
-                        src={appYouTubeEmbedUrl}
-                        title={t`YouTube video player`}
-                        className="aspect-video w-full rounded"
-                        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <MediaErrorBoundary>
-                        <ReactPlayer
-                          src={currentUrl}
-                          width="100%"
-                          height="100%"
-                          controls
-                        />
-                      </MediaErrorBoundary>
-                    )}
+                    <MediaErrorBoundary>
+                      <div className="aspect-video w-full">
+                        <EmbedPlayer key={currentUrl} url={currentUrl} />
+                      </div>
+                    </MediaErrorBoundary>
                   </Suspense>
                 </div>
               )}

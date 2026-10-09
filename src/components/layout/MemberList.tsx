@@ -14,7 +14,6 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
-import ProfileModalRouter from "../ui/ProfileModalRouter";
 import UserContextMenu from "../ui/UserContextMenu";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
@@ -309,6 +308,7 @@ export const MemberList: React.FC = () => {
     kickUser,
     banUserByNick,
     banUserByHostmask,
+    openProfile,
   } = useStore();
 
   const selectedServerId = ui.selectedServerId;
@@ -415,9 +415,6 @@ export const MemberList: React.FC = () => {
     action: "warn",
     username: "",
   });
-
-  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
-  const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
 
   const selectedServer = servers.find(
     (server) => server.id === selectedServerId,
@@ -595,8 +592,7 @@ export const MemberList: React.FC = () => {
   };
 
   const handleOpenProfile = (username: string) => {
-    setSelectedProfileUsername(username);
-    setUserProfileModalOpen(true);
+    if (selectedServerId) openProfile(selectedServerId, username);
   };
 
   const isMobileView = useMediaQuery();
@@ -715,18 +711,6 @@ export const MemberList: React.FC = () => {
         username={moderationModal.username}
         action={moderationModal.action}
       />
-
-      {selectedServerId && (
-        <ProfileModalRouter
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
-          onShowInBotsMenu={(botNick) => {
-            useStore.getState().requestBotsModalOpen(selectedServerId, botNick);
-          }}
-        />
-      )}
     </div>
   );
 };

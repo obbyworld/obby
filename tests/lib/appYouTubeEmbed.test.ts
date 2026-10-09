@@ -1,29 +1,36 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
-const platform = vi.hoisted(() => ({ isTauri: vi.fn(() => true) }));
-vi.mock("../../src/lib/platformUtils", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../../src/lib/platformUtils")>()),
-  isTauri: platform.isTauri,
+vi.mock("@tauri-apps/api/core", () => ({
+  invoke: vi.fn(async () => 51234),
 }));
 
-import { getAppYouTubeEmbedUrl } from "../../src/lib/mediaUtils";
+const loadUnder = async (protocol: string) => {
+  vi.resetModules();
+  vi.stubGlobal("location", { ...window.location, protocol });
+  const { getAppYouTubeEmbedUrl } = await import("../../src/lib/mediaUtils");
+  await Promise.resolve();
+  return getAppYouTubeEmbedUrl;
+};
 
-describe("YouTube in the installed apps", () => {
-  test("plays watch, short and youtu.be links through the web origin page", () => {
+describe("YouTube under the tauri: scheme", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  test("plays watch, short and youtu.be links through the loopback player page", async () => {
+    const getAppYouTubeEmbedUrl = await loadUnder("tauri:");
     for (const url of [
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "https://youtu.be/dQw4w9WgXcQ",
       "https://youtube.com/shorts/dQw4w9WgXcQ",
     ]) {
       expect(getAppYouTubeEmbedUrl(url)).toBe(
-        "https://hello.obby.world/youtube-embed.html?v=dQw4w9WgXcQ",
+        "http://127.0.0.1:51234/youtube-embed.html?v=dQw4w9WgXcQ",
       );
     }
+    expect(getAppYouTubeEmbedUrl("https://vimeo.com/1")).toBeNull();
   });
 
-  test("leaves other links and the web build alone", () => {
-    expect(getAppYouTubeEmbedUrl("https://vimeo.com/1")).toBeNull();
-    platform.isTauri.mockReturnValueOnce(false);
+  test("leaves http origins on the regular embed", async () => {
+    const getAppYouTubeEmbedUrl = await loadUnder("http:");
     expect(
       getAppYouTubeEmbedUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ"),
     ).toBeNull();

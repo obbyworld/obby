@@ -1952,7 +1952,9 @@ export class IRCClient implements IRCClientContext {
       const parv: string[] = [];
       let i = 0;
       let l: string[];
-      line = line.trim();
+      // We strip only line endings, since a multiline-concat part keeps its
+      // trailing space and trimming it would glue two words together.
+      line = line.replace(/^[\r\n]+|[\r\n]+$/g, "");
 
       // Skip empty lines
       if (!line) continue;

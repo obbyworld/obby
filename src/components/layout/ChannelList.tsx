@@ -47,7 +47,6 @@ import useStore from "../../store";
 import { useChannelFolders } from "../../store/channelFolders";
 import type { ChannelFolder } from "../../store/types";
 import type { Channel } from "../../types";
-import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import InviteUserModal from "../ui/InviteUserModal";
 import Menu from "../ui/Menu";
 import AddChannelRow from "./AddChannelRow";
@@ -69,11 +68,10 @@ export const ChannelList: React.FC = () => {
     pinPrivateChat,
     unpinPrivateChat,
     reorderPrivateChats,
-    toggleSettingsModal,
+    openPage,
     setMobileViewActiveColumn,
     reorderChannels,
-    setProfileViewRequest,
-    toggleUserProfileModal,
+    openProfile,
   } = useStore();
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
@@ -175,10 +173,7 @@ export const ChannelList: React.FC = () => {
   const closeMenu = () => setOpenMenu(null);
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const [isReordering, setIsReordering] = useState(false);
-  const [modalChannel, setModalChannel] = useState<{
-    name: string;
-    modal: "settings" | "invite";
-  } | null>(null);
+  const [inviteChannel, setInviteChannel] = useState<string | null>(null);
   const [clickedPM, setClickedPM] = useState<string | null>(null);
   const lastSelectedPM = useRef<string | null>(null);
 
@@ -704,7 +699,7 @@ export const ChannelList: React.FC = () => {
         pronouns={currentUser?.metadata?.pronouns?.value}
         networkName={selectedServer?.networkName ?? selectedServer?.name}
         isIrcOp={isIrcOp}
-        onOpenSettings={() => toggleSettingsModal(true)}
+        onOpenSettings={() => openPage({ kind: "settings" })}
       />
       {selectedServerId && (
         <>
@@ -728,13 +723,8 @@ export const ChannelList: React.FC = () => {
                       id: "profile",
                       label: t`See profile`,
                       icon: <FaInfoCircle />,
-                      onClick: () => {
-                        setProfileViewRequest(
-                          selectedServerId,
-                          menuPrivateChat.username,
-                        );
-                        toggleUserProfileModal(true);
-                      },
+                      onClick: () =>
+                        openProfile(selectedServerId, menuPrivateChat.username),
                     },
                     {
                       id: "reorder",
@@ -771,16 +761,12 @@ export const ChannelList: React.FC = () => {
               channel={channelMenu.channel}
               anchor={channelMenu.anchor}
               onClose={closeMenu}
-              onInvite={() =>
-                setModalChannel({
-                  name: channelMenu.channel.name,
-                  modal: "invite",
-                })
-              }
+              onInvite={() => setInviteChannel(channelMenu.channel.name)}
               onOpenSettings={() =>
-                setModalChannel({
-                  name: channelMenu.channel.name,
-                  modal: "settings",
+                openPage({
+                  kind: "channelSettings",
+                  serverId: selectedServerId,
+                  channelName: channelMenu.channel.name,
                 })
               }
               onNewFolder={setRenamingFolderId}
@@ -841,21 +827,13 @@ export const ChannelList: React.FC = () => {
                 : []
             }
           />
-          {modalChannel && (
-            <>
-              <ChannelSettingsModal
-                isOpen={modalChannel.modal === "settings"}
-                onClose={() => setModalChannel(null)}
-                serverId={selectedServerId}
-                channelName={modalChannel.name}
-              />
-              <InviteUserModal
-                isOpen={modalChannel.modal === "invite"}
-                onClose={() => setModalChannel(null)}
-                serverId={selectedServerId}
-                channelName={modalChannel.name}
-              />
-            </>
+          {inviteChannel && (
+            <InviteUserModal
+              isOpen
+              onClose={() => setInviteChannel(null)}
+              serverId={selectedServerId}
+              channelName={inviteChannel}
+            />
           )}
         </>
       )}

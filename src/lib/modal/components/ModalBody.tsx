@@ -16,7 +16,7 @@ export const ModalBody = ({
 }: ModalBodyProps) => (
   <div
     ref={ref}
-    className={`p-6 flex-1 min-h-0 flex flex-col ${scrollable ? "overflow-y-auto" : ""} ${className}`}
+    className={`px-5 py-4 flex-auto min-h-0 flex flex-col ${scrollable ? "overflow-y-auto" : ""} ${className}`}
   >
     {children}
   </div>

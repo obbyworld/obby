@@ -541,6 +541,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter default nickname...`,
     searchKeywords: ["nick", "default", "account"],
     priority: 1,
+    hidden: true,
   },
   {
     id: "account.name",
@@ -554,6 +555,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter account name...`,
     searchKeywords: ["account", "login", "username", "auth"],
     priority: 2,
+    hidden: true,
   },
   {
     id: "account.password",
@@ -567,6 +569,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter password...`,
     searchKeywords: ["password", "auth", "login"],
     priority: 3,
+    hidden: true,
   },
   {
     id: "account.operName",

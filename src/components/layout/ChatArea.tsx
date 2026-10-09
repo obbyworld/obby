@@ -91,11 +91,9 @@ import { MessageReply } from "../message/MessageReply";
 import { AttachmentTray, type PendingAttachment } from "../ui/AttachmentTray";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
-import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import { CameraCaptureModal } from "../ui/CameraCaptureModal";
-import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
 import E2EEVerifyModal from "../ui/E2EEVerifyModal";
@@ -110,7 +108,6 @@ import { LocationShareModal } from "../ui/LocationShareModal";
 import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
-import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
@@ -140,7 +137,7 @@ import {
   DEFAULT_VISIBLE_MESSAGE_COUNT,
 } from "./ChannelMessageList";
 import { ChatHeader } from "./ChatHeader";
-import { MemberList } from "./MemberList";
+import { SidePane } from "./SidePane";
 
 interface AliveChannel {
   key: string;
@@ -305,15 +302,7 @@ export const ChatArea: React.FC<{
     action: "warn",
     username: "",
   });
-  const [channelSettingsModalOpen, setChannelSettingsModalOpen] =
-    useState(false);
-  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
-  const [botsModalOpen, setBotsModalOpen] = useState(false);
-  const [botsModalPreselect, setBotsModalPreselect] = useState<string | null>(
-    null,
-  );
-  const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Per-channel draft storage. messageTextRef is the source of truth for the input value.
@@ -408,7 +397,8 @@ export const ChatArea: React.FC<{
   const connect = useStore((state) => state.connect);
   const joinChannel = useStore((state) => state.joinChannel);
   const toggleAddServerModal = useStore((state) => state.toggleAddServerModal);
-  const stopActiveMedia = useStore((state) => state.stopActiveMedia);
+  const openPage = useStore((state) => state.openPage);
+  const openProfile = useStore((state) => state.openProfile);
   const redactMessage = useStore((state) => state.redactMessage);
   const warnUser = useStore((state) => state.warnUser);
   const kickUser = useStore((state) => state.kickUser);
@@ -418,29 +408,18 @@ export const ChatArea: React.FC<{
   const shouldFocusChatInput = useStore(
     (state) => state.ui.shouldFocusChatInput,
   );
-  const channelSettingsRequest = useStore(
-    (state) => state.ui.channelSettingsRequest,
-  );
   const inviteUserRequest = useStore((state) => state.ui.inviteUserRequest);
-  const setChannelSettingsRequest = useStore(
-    (state) => state.setChannelSettingsRequest,
-  );
   const setInviteUserRequest = useStore((state) => state.setInviteUserRequest);
 
   const isAnyModalOpen = useStore((state) => {
     const { ui } = state;
     return !!(
       ui.isAddServerModalOpen ||
-      ui.isEditServerModalOpen ||
-      ui.isSettingsModalOpen ||
-      ui.isQuickActionsOpen ||
-      ui.isChannelListModalOpen ||
+      ui.page ||
+      ui.profilePane ||
       ui.contextMenu?.isOpen ||
       ui.isServerNoticesPopupOpen ||
-      ui.profileViewRequest ||
       ui.topicModalRequest ||
-      ui.isUserProfileModalOpen ||
-      ui.channelSettingsRequest ||
       ui.inviteUserRequest ||
       ui.openedMedia ||
       (ui.linkSecurityWarnings?.length ?? 0) > 0
@@ -448,13 +427,6 @@ export const ChatArea: React.FC<{
   });
 
   useAutoFocusTyping(inputRef, () => isAnyModalOpen);
-
-  useEffect(() => {
-    if (channelSettingsRequest) {
-      setChannelSettingsModalOpen(true);
-      setChannelSettingsRequest(null, null);
-    }
-  }, [channelSettingsRequest, setChannelSettingsRequest]);
 
   useEffect(() => {
     if (inviteUserRequest) {
@@ -479,37 +451,21 @@ export const ChatArea: React.FC<{
   const { selectedChannelId, selectedPrivateChatId } = currentSelection;
   const {
     isMemberListVisible,
-    isSettingsModalOpen,
     isAddServerModalOpen,
-    isChannelListModalOpen,
     isServerNoticesPopupOpen,
+    page,
+    profilePane,
   } = ui;
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
 
-  const pendingBotsModalOpen = useStore(
-    (state) => state.ui.pendingBotsModalOpen,
-  );
-  const clearBotsModalOpenRequest = useStore(
-    (state) => state.clearBotsModalOpenRequest,
-  );
   const pendingBotCommandPick = useStore(
     (state) => state.ui.pendingBotCommandPick,
   );
   const clearBotCommandPickRequest = useStore(
     (state) => state.clearBotCommandPickRequest,
   );
-  useEffect(() => {
-    if (
-      pendingBotsModalOpen &&
-      pendingBotsModalOpen.serverId === selectedServerId
-    ) {
-      setBotsModalPreselect(pendingBotsModalOpen.botNick);
-      setBotsModalOpen(true);
-      clearBotsModalOpenRequest();
-    }
-  }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
   useEffect(() => {
     if (
       pendingBotCommandPick &&
@@ -827,12 +783,12 @@ export const ChatArea: React.FC<{
   );
 
   // Member list overlay: show when desktop is too narrow for sidebar
+  const isProfileOpen = useStore((state) => !!state.ui.profilePane);
   const showMemberListOverlay =
     !isNarrowView &&
     isTooNarrowForMemberList &&
-    isMemberListVisible &&
-    !!selectedChannel &&
-    !selectedPrivateChat;
+    ((isMemberListVisible && !!selectedChannel && !selectedPrivateChat) ||
+      isProfileOpen);
 
   // Track previous width state to detect transitions
   const prevIsTooNarrowRef = useRef(isTooNarrowForMemberList);
@@ -1056,13 +1012,14 @@ export const ChatArea: React.FC<{
     });
   }, [channelKey, selectedServerId, selectedChannelId, selectedPrivateChatId]);
 
-  // Stop embed media (YouTube, etc.) when switching channels.
-  // HTML5 video/audio keep playing via MiniMediaPlayer's hidden element,
-  // but embedded iframes are suspended by display:none anyway — stopping them
-  // keeps the store consistent and resets the player for the next visit.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: stopActiveMedia is a stable store action
+  // An embed pauses when we switch channels and keeps its position, so the
+  // next visit shows it where it stopped; HTML5 video and audio keep playing
+  // through MiniMediaPlayer's hidden element.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
-    if (ui.activeMedia?.type === "embed") stopActiveMedia();
+    const active = useStore.getState().ui.activeMedia;
+    if (active?.type === "embed" && active.isPlaying)
+      useStore.getState().pauseActiveMedia();
   }, [channelKey]);
 
   const attachments = attachmentsByChannel[channelKey] ?? NO_ATTACHMENTS;
@@ -2173,10 +2130,12 @@ export const ChatArea: React.FC<{
     }
   };
 
-  const handleOpenProfile = useCallback((username: string) => {
-    setSelectedProfileUsername(username);
-    setUserProfileModalOpen(true);
-  }, []);
+  const handleOpenProfile = useCallback(
+    (username: string) => {
+      if (selectedServerId) openProfile(selectedServerId, username);
+    },
+    [selectedServerId, openProfile],
+  );
 
   // Server notices popup drag handlers
   const handleServerNoticesMouseDown = (e: React.MouseEvent) => {
@@ -2322,12 +2281,6 @@ export const ChatArea: React.FC<{
     setIsEmojiSelectorOpen(false);
   };
 
-  const handleEmojiModalBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setIsEmojiSelectorOpen(false);
-    }
-  };
-
   const handleAtButtonClick = () => {
     setShowMembersDropdown((prev) => {
       const newValue = !prev;
@@ -2359,21 +2312,14 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     if (isTauriMobile()) return;
     // Don't steal focus if any modal is open
-    if (
-      isSettingsModalOpen ||
-      userProfileModalOpen ||
-      isAddServerModalOpen ||
-      isChannelListModalOpen
-    )
-      return;
+    if (page || profilePane || isAddServerModalOpen) return;
     inputRef.current?.focus();
   }, [
     selectedChannelId,
     selectedPrivateChatId,
-    isSettingsModalOpen,
-    userProfileModalOpen,
+    page,
+    profilePane,
     isAddServerModalOpen,
-    isChannelListModalOpen,
   ]);
 
   return (
@@ -2394,9 +2340,20 @@ export const ChatArea: React.FC<{
         onToggleMemberList={() => toggleMemberList(!isMemberListVisible)}
         onSearchQueryChange={setSearchQuery}
         onToggleNotificationVolume={toggleNotificationSound}
-        onOpenChannelSettings={() => setChannelSettingsModalOpen(true)}
+        onOpenChannelSettings={() =>
+          selectedServerId &&
+          selectedChannel &&
+          openPage({
+            kind: "channelSettings",
+            serverId: selectedServerId,
+            channelName: selectedChannel.name,
+          })
+        }
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
-        onOpenBots={() => setBotsModalOpen(true)}
+        onOpenBots={() =>
+          selectedServerId &&
+          openPage({ kind: "bots", serverId: selectedServerId })
+        }
       />
 
       {topSlot && (
@@ -2410,7 +2367,7 @@ export const ChatArea: React.FC<{
       {/* Member list overlay replaces messages when desktop is too narrow for sidebar */}
       {showMemberListOverlay && (
         <div className="flex-grow overflow-hidden bg-discord-dark-100">
-          <MemberList />
+          <SidePane />
         </div>
       )}
       {/* Messages area */}
@@ -2705,7 +2662,6 @@ export const ChatArea: React.FC<{
                   isOpen={isEmojiSelectorOpen}
                   onEmojiClick={handleEmojiSelect}
                   onClose={() => setIsEmojiSelectorOpen(false)}
-                  onBackdropClick={handleEmojiModalBackdropClick}
                   customEmojis={pickerCustomEmojis}
                 />
               )}
@@ -3084,42 +3040,12 @@ export const ChatArea: React.FC<{
         username={moderationModal.username}
         action={moderationModal.action}
       />
-      {selectedChannel && (
-        <ChannelSettingsModal
-          isOpen={channelSettingsModalOpen}
-          onClose={() => setChannelSettingsModalOpen(false)}
-          serverId={selectedServerId || ""}
-          channelName={selectedChannel.name}
-        />
-      )}
       {selectedChannel && selectedServerId && (
         <InviteUserModal
           isOpen={inviteUserModalOpen}
           onClose={() => setInviteUserModalOpen(false)}
           serverId={selectedServerId}
           channelName={selectedChannel.name}
-        />
-      )}
-      {selectedServerId && (
-        <BotsModal
-          isOpen={botsModalOpen}
-          onClose={() => {
-            setBotsModalOpen(false);
-            setBotsModalPreselect(null);
-          }}
-          serverId={selectedServerId}
-          preselectNick={botsModalPreselect}
-          onPickCommand={(botNick, command) => {
-            setParamModal({ botNick, command });
-          }}
-        />
-      )}
-      {selectedServerId && (
-        <ProfileModalRouter
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
         />
       )}
       <CameraCaptureModal

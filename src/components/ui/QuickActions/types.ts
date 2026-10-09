@@ -1,4 +1,5 @@
 import type { SettingSearchResult } from "../../../lib/settings/types";
+import type { AppPage } from "../../../store/types";
 import type { Channel, PrivateChat, Server, User } from "../../../types";
 
 export type UIToggleAction =
@@ -9,13 +10,10 @@ export type UIToggleAction =
   | "unpin-private-chat";
 
 export type UIModalAction =
-  | "open-channel-settings"
   | "open-invite-user"
   | "open-topic-modal"
   | "open-user-profile"
-  | "open-rename-channel"
-  | "open-server-channels"
-  | "open-raw-log";
+  | "open-rename-channel";
 
 export interface UIActionData {
   action: UIToggleAction | UIModalAction;
@@ -33,7 +31,8 @@ export type QuickActionResultType =
   | "join-channel"
   | "start-dm"
   | "ui-toggle"
-  | "ui-modal";
+  | "ui-modal"
+  | "page";
 
 export interface JoinChannelData {
   channelName: string;
@@ -52,7 +51,8 @@ export interface QuickActionResult {
     | PrivateChat
     | Server
     | JoinChannelData
-    | UIActionData;
+    | UIActionData
+    | AppPage;
 }
 
 export interface QuickActionContext {

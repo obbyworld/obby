@@ -68,6 +68,31 @@
   .code-panel {
     @apply rounded-md bg-discord-dark-400 overflow-hidden;
   }
+  .modal-sheet .modal-footer {
+    @apply flex-col-reverse items-stretch;
+  }
+  .modal-sheet .modal-footer > button {
+    @apply h-11 w-full;
+  }
+  .setting-highlight {
+    @apply bg-yellow-400/20 ring-2 ring-yellow-400 rounded-lg;
+    animation: blink 0.5s ease-in-out 1;
+  }
+  .surface-dialog {
+    @apply bg-discord-dark-200 rounded-xl ring-1 ring-white/[0.06] shadow-[0_24px_64px_rgba(0,0,0,0.5)];
+  }
+  .bar-divider {
+    @apply shadow-[0_1px_0_rgba(0,0,0,0.25)];
+  }
+  .page-card {
+    @apply flex flex-col gap-1;
+  }
+  .page-card > * {
+    @apply rounded-md bg-discord-dark-400/30;
+  }
+  .field-input {
+    @apply w-full bg-discord-dark-400 text-discord-text-normal rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50;
+  }
   .status-badge {
     @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
   }

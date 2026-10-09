@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import type { Message } from "../types/index";
 import { parseLocationShareUrl } from "./geolocation";
 import {
@@ -6,7 +7,6 @@ import {
   isUrlFromTrustedSource,
 } from "./ircUtils";
 import { stripIrcFormatting } from "./messageFormatter";
-import { isTauri } from "./platformUtils";
 
 export type MediaType = "image" | "video" | "audio" | "pdf" | "embed" | "map";
 
@@ -251,18 +251,23 @@ function getYouTubeVideoId(url: string): string | null {
   }
 }
 
-// The installed apps load from a custom scheme that sends YouTube no referrer,
-// so we play YouTube there through a page on the web client's https origin.
-const YOUTUBE_EMBED_PAGE = "https://hello.obby.world/youtube-embed.html";
+// iOS and macOS load the app from the tauri: scheme, which sends YouTube no
+// referrer, so the app serves the player page from loopback and we embed that.
+let youtubePlayerOrigin: string | null = null;
+if (typeof window !== "undefined" && window.location.protocol === "tauri:") {
+  invoke<number | null>("youtube_player_port").then((port) => {
+    if (port) youtubePlayerOrigin = `http://127.0.0.1:${port}`;
+  });
+}
 
-/** The player page for a YouTube link in the installed apps, or null where a
- *  regular embed works. */
-export function getAppYouTubeEmbedUrl(url: string): string | null {
-  if (!isTauri()) return null;
+/** The loopback player page for a YouTube link under the tauri: scheme, or
+ *  null where a regular embed works. */
+export function getAppYouTubeEmbedUrl(url: string, startAt = 0): string | null {
+  if (!youtubePlayerOrigin) return null;
   const videoId = getYouTubeVideoId(url);
-  return videoId
-    ? `${YOUTUBE_EMBED_PAGE}?v=${encodeURIComponent(videoId)}`
-    : null;
+  if (!videoId) return null;
+  const start = startAt > 0 ? `&start=${Math.floor(startAt)}` : "";
+  return `${youtubePlayerOrigin}/youtube-embed.html?v=${encodeURIComponent(videoId)}${start}`;
 }
 
 const SPOTIFY_CONTENT_TYPES: Record<string, string> = {

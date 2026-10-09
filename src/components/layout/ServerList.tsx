@@ -224,9 +224,8 @@ export const ServerList: React.FC = () => {
     ui: { selectedServerId },
     selectServer,
     toggleAddServerModal,
-    toggleChannelListModal,
     reconnectServer,
-    toggleEditServerModal,
+    openPage,
     editBouncerNetwork,
     requestDeleteServer,
   } = useStore();
@@ -317,7 +316,7 @@ export const ServerList: React.FC = () => {
           const handleEdit = (id: string) => {
             const target = servers.find((s) => s.id === id);
             if (target?.bouncerNetid) editBouncerNetwork(id);
-            else toggleEditServerModal(true, id);
+            else openPage({ kind: "serverSettings", serverId: id });
           };
           const handleDelete = (id: string) => requestDeleteServer(id);
           const handleReconnect = (id: string) => reconnectServer(id);
