@@ -21,6 +21,10 @@ vi.mock("../../src/store", () => ({
   default: (selector: (s: typeof state) => unknown) => selector(state),
 }));
 
+vi.mock("../../src/store/handlers/history", () => ({
+  hasSavedHistory: vi.fn(async () => true),
+}));
+
 describe("RemoveServerConfirmModal", () => {
   let view: RenderResult;
 
@@ -34,8 +38,8 @@ describe("RemoveServerConfirmModal", () => {
     expect(screen.getByText(/TestNet/)).toBeInTheDocument();
   });
 
-  it("leaves the delete-history box unchecked", () => {
-    expect(screen.getByRole("checkbox")).not.toBeChecked();
+  it("leaves the delete-history box unchecked", async () => {
+    expect(await screen.findByRole("checkbox")).not.toBeChecked();
   });
 
   it("disconnects and keeps the history by default", () => {
@@ -44,8 +48,8 @@ describe("RemoveServerConfirmModal", () => {
     expect(confirmRemoveServer).toHaveBeenCalledExactlyOnceWith(false);
   });
 
-  it("disconnects and deletes the history once the box is ticked", () => {
-    fireEvent.click(screen.getByRole("checkbox"));
+  it("disconnects and deletes the history once the box is ticked", async () => {
+    fireEvent.click(await screen.findByRole("checkbox"));
     fireEvent.click(screen.getByRole("button", { name: "Disconnect" }));
 
     expect(confirmRemoveServer).toHaveBeenCalledExactlyOnceWith(true);
@@ -58,8 +62,8 @@ describe("RemoveServerConfirmModal", () => {
     expect(confirmRemoveServer).not.toHaveBeenCalled();
   });
 
-  it("unticks the box when the dialog opens again for a new target", () => {
-    fireEvent.click(screen.getByRole("checkbox"));
+  it("unticks the box when the dialog opens again for a new target", async () => {
+    fireEvent.click(await screen.findByRole("checkbox"));
     expect(screen.getByRole("checkbox")).toBeChecked();
 
     state.ui.removeServerConfirmTarget = null;
@@ -69,6 +73,6 @@ describe("RemoveServerConfirmModal", () => {
     state.ui.removeServerConfirmTarget = "srv";
     view.rerender(<RemoveServerConfirmModal />);
 
-    expect(screen.getByRole("checkbox")).not.toBeChecked();
+    expect(await screen.findByRole("checkbox")).not.toBeChecked();
   });
 });

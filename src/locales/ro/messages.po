@@ -551,7 +551,7 @@ msgstr "Adăugați reguli care stabilesc ce activitate să urmăriți și ce să
 msgid "Add Server"
 msgstr "Adaugă server"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Adaugă din nou această rețea pentru a recupera istoricul conversațiilor salvat."
 
@@ -1715,7 +1715,7 @@ msgstr "Șterge toate mesajele salvate pe acest dispozitiv. Nu poți anula aceas
 msgid "Delete folder"
 msgstr "Șterge folderul"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Șterge și istoricul de conversații salvat"
 

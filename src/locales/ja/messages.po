@@ -551,7 +551,7 @@ msgstr "監視するアクティビティと、しきい値を超えた場合の
 msgid "Add Server"
 msgstr "サーバーを追加"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "このネットワークをもう一度追加すると、保存されたチャット履歴が戻ります。"
 
@@ -1715,7 +1715,7 @@ msgstr "このデバイスに保存されたすべてのメッセージを削除
 msgid "Delete folder"
 msgstr "フォルダを削除"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "保存されたチャット履歴も削除する"
 

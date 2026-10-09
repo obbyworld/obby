@@ -42,11 +42,7 @@ import {
   verifyE2EESession as e2eeVerify,
 } from "./handlers/e2ee";
 import { routeOutgoingPM } from "./handlers/e2eeOutbound";
-import {
-  forgetSavedHistory,
-  hasSavedHistory,
-  parkSavedHistory,
-} from "./handlers/history";
+import { hasSavedHistory, settleSavedHistory } from "./handlers/history";
 import {
   endOtrSession as otrEnd,
   startOtrSession as otrStart,
@@ -1033,7 +1029,8 @@ export interface AppState {
   cancelRemoveServer: () => void;
   cancelDeleteServer: () => void;
   cancelDisconnectNetwork: () => void;
-  confirmDisconnectNetwork: () => void;
+  confirmDisconnectNetwork: (shouldDeleteHistory: boolean) => void;
+  confirmDisconnectBouncer: (shouldDeleteHistory: boolean) => void;
   setBouncerGroupAccent: (parentServerId: string, hex: string | null) => void;
   openPage: (page: AppPage) => void;
   closePage: () => void;
@@ -2843,7 +2840,7 @@ const useStore = create<AppState>((set, get) => ({
         // Request chathistory for this PM (if server supports it)
         if (server.capabilities?.includes("draft/chathistory")) {
           setTimeout(() => {
-            ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${username} * 50`);
+            ircClient.requestChathistoryLatest(serverId, username);
           }, 50);
         }
 
@@ -2953,7 +2950,7 @@ const useStore = create<AppState>((set, get) => ({
       // Request chathistory for this new PM (if server supports it)
       if (server.capabilities?.includes("draft/chathistory")) {
         setTimeout(() => {
-          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${username} * 50`);
+          ircClient.requestChathistoryLatest(serverId, username);
         }, 50);
       }
 
@@ -3460,9 +3457,7 @@ const useStore = create<AppState>((set, get) => ({
     const target = get().servers.find((s) => s.id === serverId);
     set((s) => ({ ui: { ...s.ui, removeServerConfirmTarget: null } }));
     if (!serverId || !target) return;
-    void (shouldDeleteHistory
-      ? forgetSavedHistory(serverId)
-      : parkSavedHistory(target));
+    void settleSavedHistory(target, shouldDeleteHistory);
     get().deleteServer(serverId);
   },
 
@@ -3482,10 +3477,22 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
-  confirmDisconnectNetwork: () => {
+  confirmDisconnectBouncer: (shouldDeleteHistory) => {
+    const state = get();
+    const targetId = state.ui.disconnectConfirmTarget;
+    if (!targetId) return;
+    for (const server of state.servers)
+      if (server.id === targetId || server.bouncerServerId === targetId)
+        void settleSavedHistory(server, shouldDeleteHistory);
+    state.deleteServer(targetId);
+  },
+
+  confirmDisconnectNetwork: (shouldDeleteHistory) => {
     const state = get();
     const target = state.ui.disconnectNetworkConfirmTarget;
     if (!target) return;
+    const child = state.servers.find((s) => s.id === target.childServerId);
+    if (child) void settleSavedHistory(child, shouldDeleteHistory);
     state.bouncerDelNetwork(target.bouncerServerId, target.netid);
     state.deleteServer(target.childServerId);
     set((s) => ({

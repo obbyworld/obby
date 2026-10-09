@@ -550,7 +550,7 @@ msgstr "Add rules that set which activity to watch and what to do when a thresho
 msgid "Add Server"
 msgstr "Add Server"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Add this network again to get its saved chat history back."
 
@@ -1714,7 +1714,7 @@ msgstr "Delete every saved message on this device. You cannot undo this."
 msgid "Delete folder"
 msgstr "Delete folder"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Delete its saved chat history too"
 
