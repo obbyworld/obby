@@ -16,6 +16,7 @@ import {
   isUnprotectedMessage,
 } from "../../lib/e2ee/messageFlags";
 import { highlightNames } from "../../lib/highlightNames";
+import { LOCAL_HISTORY_TAG } from "../../lib/history/historyLines";
 import { decodeHtmlEntities } from "../../lib/htmlEntities";
 import ircClient from "../../lib/ircClient";
 import {
@@ -853,6 +854,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
               isVerified={isVerified}
               isIrcOp={isIrcOp}
               unprotected={isUnprotected}
+              isSavedLocally={message.tags?.[LOCAL_HISTORY_TAG] !== undefined}
             />
           )}
 

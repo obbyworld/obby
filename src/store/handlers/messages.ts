@@ -5,6 +5,7 @@ import {
   E2EE_UNPROTECTED_TAG,
 } from "../../lib/e2ee/messageFlags";
 import { e2eeSessionKey, expectsProtection } from "../../lib/e2ee/session";
+import { isLocalReplay } from "../../lib/history/historyLines";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
@@ -31,6 +32,17 @@ import { confirmEncryptedEcho } from "./e2eeConversation";
 import { handleInboundOtr } from "./otr";
 import { notePrivateMessageArrived } from "./privateChatArrival";
 
+function isAlreadyProcessed(
+  state: AppState,
+  mtags: Record<string, string> | undefined,
+  msgids = mtags?.msgid ? [mtags.msgid] : [],
+): boolean {
+  return (
+    !isLocalReplay(mtags) &&
+    msgids.some((id) => state.processedMessageIds.has(id))
+  );
+}
+
 export function registerMessageHandlers(store: StoreApi<AppState>): void {
   ircClient.on("CHANMSG", (response) => {
     const { mtags, channelName, message, timestamp } = response;
@@ -38,7 +50,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check for duplicate messages based on msgid
     if (mtags?.msgid) {
       const currentState = store.getState();
-      if (currentState.processedMessageIds.has(mtags.msgid)) {
+      if (isAlreadyProcessed(currentState, mtags)) {
         return;
       }
 
@@ -368,16 +380,11 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check for duplicate messages based on messageIds or batch msgid
     const currentState = store.getState();
     if (messageIds && messageIds.length > 0) {
-      const hasDuplicate = messageIds.some((id) =>
-        currentState.processedMessageIds.has(id),
-      );
+      const hasDuplicate = isAlreadyProcessed(currentState, mtags, messageIds);
       if (hasDuplicate) {
         return;
       }
-    } else if (
-      mtags?.msgid &&
-      currentState.processedMessageIds.has(mtags.msgid)
-    ) {
+    } else if (mtags?.msgid && isAlreadyProcessed(currentState, mtags)) {
       return;
     }
 
@@ -747,7 +754,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check for duplicate messages based on msgid
     if (mtags?.msgid) {
       const currentState = store.getState();
-      if (currentState.processedMessageIds.has(mtags.msgid)) {
+      if (isAlreadyProcessed(currentState, mtags)) {
         return;
       }
     }
@@ -1120,7 +1127,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check for duplicate messages based on msgid
     if (mtags?.msgid) {
       const currentState = store.getState();
-      if (currentState.processedMessageIds.has(mtags.msgid)) {
+      if (isAlreadyProcessed(currentState, mtags)) {
         console.log(
           `Skipping duplicate CHANNNOTICE with msgid: ${mtags.msgid}`,
         );
@@ -1252,7 +1259,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check for duplicate messages based on msgid
     if (mtags?.msgid) {
       const currentState = store.getState();
-      if (currentState.processedMessageIds.has(mtags.msgid)) {
+      if (isAlreadyProcessed(currentState, mtags)) {
         return;
       }
     }
@@ -1524,7 +1531,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     // Check if the sender is not the current user for this specific server
     // we don't care about showing our own typing status
     const currentUser = ircClient.getCurrentUser(response.serverId);
-    if (sender !== currentUser?.username && mtags && mtags["+typing"]) {
+    // A typing tag inside a batch is replayed history, so nobody is typing now.
+    if (
+      sender !== currentUser?.username &&
+      mtags?.["+typing"] &&
+      !mtags.batch
+    ) {
       const isActive = mtags["+typing"] === "active";
       const server = store
         .getState()
@@ -1978,7 +1990,16 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               }
               return channel;
             });
-            return { ...server, channels: updatedChannels };
+            const updatedPrivateChats = server.privateChats?.map((pc) =>
+              pc.username.toLowerCase() === channelName.toLowerCase()
+                ? { ...pc, isLoadingHistory: isLoading }
+                : pc,
+            );
+            return {
+              ...server,
+              channels: updatedChannels,
+              privateChats: updatedPrivateChats,
+            };
           }
           return server;
         });

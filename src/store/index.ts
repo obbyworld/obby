@@ -43,6 +43,11 @@ import {
 } from "./handlers/e2ee";
 import { routeOutgoingPM } from "./handlers/e2eeOutbound";
 import {
+  forgetSavedHistory,
+  hasSavedHistory,
+  parkSavedHistory,
+} from "./handlers/history";
+import {
   endOtrSession as otrEnd,
   startOtrSession as otrStart,
   verifyOtrSession as otrVerify,
@@ -478,6 +483,7 @@ interface UIState {
   // on the named netid. Cleared once the panel reads it.
   pendingBouncerEdit?: { bouncerServerId: string; netid: string } | null;
   disconnectConfirmTarget?: string | null;
+  removeServerConfirmTarget?: string | null;
   disconnectNetworkConfirmTarget?: {
     bouncerServerId: string;
     netid: string;
@@ -1023,6 +1029,8 @@ export interface AppState {
   editBouncerNetwork: (childServerId: string) => void;
   consumePendingBouncerEdit: () => void;
   requestDeleteServer: (serverId: string) => void;
+  confirmRemoveServer: (shouldDeleteHistory: boolean) => void;
+  cancelRemoveServer: () => void;
   cancelDeleteServer: () => void;
   cancelDisconnectNetwork: () => void;
   confirmDisconnectNetwork: () => void;
@@ -1274,6 +1282,7 @@ const useStore = create<AppState>((set, get) => ({
     profilePane: null,
     pendingBouncerEdit: null,
     disconnectConfirmTarget: null,
+    removeServerConfirmTarget: null,
     disconnectNetworkConfirmTarget: null,
     isQuickActionsOpen: false,
     isDarkMode: true,
@@ -1333,6 +1342,8 @@ const useStore = create<AppState>((set, get) => ({
     customMentions: [],
     // Ignore list
     ignoreList: ["HistServ!*@*"],
+    keepHistory: true,
+    historyLimitMb: 500,
     // Hosted chat mode settings
     nickname: "",
     accountName: "",
@@ -3430,7 +3441,33 @@ const useStore = create<AppState>((set, get) => ({
       }));
       return;
     }
+    if (!target) return;
+    // Only a server with saved history needs a confirmation, which asks
+    // whether to keep that history for when it is added again.
+    hasSavedHistory(serverId)
+      .then((hasHistory) => {
+        if (!hasHistory) get().deleteServer(serverId);
+        else
+          set((s) => ({
+            ui: { ...s.ui, removeServerConfirmTarget: serverId },
+          }));
+      })
+      .catch(() => get().deleteServer(serverId));
+  },
+
+  confirmRemoveServer: (shouldDeleteHistory) => {
+    const serverId = get().ui.removeServerConfirmTarget;
+    const target = get().servers.find((s) => s.id === serverId);
+    set((s) => ({ ui: { ...s.ui, removeServerConfirmTarget: null } }));
+    if (!serverId || !target) return;
+    void (shouldDeleteHistory
+      ? forgetSavedHistory(serverId)
+      : parkSavedHistory(target));
     get().deleteServer(serverId);
+  },
+
+  cancelRemoveServer: () => {
+    set((s) => ({ ui: { ...s.ui, removeServerConfirmTarget: null } }));
   },
 
   cancelDeleteServer: () => {

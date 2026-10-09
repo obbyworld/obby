@@ -18,9 +18,13 @@ import {
 } from "../../hooks/useScrollToBottom";
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
-import ircClient from "../../lib/ircClient";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
 import useStore from "../../store";
+import {
+  loadOlderMessages,
+  showSavedHistory,
+} from "../../store/handlers/history";
+import { serverSupportsChathistory } from "../../store/helpers";
 import type { Message as MessageType } from "../../types";
 import { CollapsedEventMessage } from "../message/CollapsedEventMessage";
 import { MessageItem } from "../message/MessageItem";
@@ -155,6 +159,20 @@ export const ChannelMessageList = forwardRef<
           : null,
       [servers, serverId, channelId],
     );
+    const privateChat = useMemo(
+      () =>
+        privateChatId
+          ? (servers
+              .find((s) => s.id === serverId)
+              ?.privateChats?.find((pc) => pc.id === privateChatId) ?? null)
+          : null,
+      [servers, serverId, privateChatId],
+    );
+    const historyTarget = channel?.name ?? privateChat?.username;
+
+    useEffect(() => {
+      if (historyTarget) showSavedHistory(useStore, serverId, historyTarget);
+    }, [serverId, historyTarget]);
 
     const { isScrolledUp, wasAtBottomRef, scrollToBottom } = useScrollToBottom(
       messagesContainerRef,
@@ -246,15 +264,20 @@ export const ChannelMessageList = forwardRef<
     }, [filteredMessages, visibleMessageCount, searchQuery]);
 
     const locallyHidden = filteredMessages.length > displayedMessages.length;
-    const serverHasMore = channel?.hasMoreHistory === true;
+    const serverHasMore =
+      (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
+    const isHistoryLocalOnly = useStore(
+      (state) => !serverSupportsChathistory(state, serverId),
+    );
 
     const eventGroups = useMemo(
       () => groupConsecutiveEvents(displayedMessages),
       [displayedMessages],
     );
 
-    const isLoadingHistory = channel?.isLoadingHistory ?? false;
+    const isLoadingHistory =
+      (channel?.isLoadingHistory ?? privateChat?.isLoadingHistory) === true;
 
     // Scroll to bottom on initial mount, unless a saved position was passed in.
     // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount only
@@ -449,23 +472,34 @@ export const ChannelMessageList = forwardRef<
                         setVisibleMessageCount(
                           (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT,
                         );
-                      } else if (serverHasMore && channel && channelId) {
+                      } else if (serverHasMore && historyTarget) {
                         const oldest = channelMessages[0];
                         if (oldest?.timestamp) {
-                          const ts = new Date(oldest.timestamp).toISOString();
-                          // WebSocket responses are macrotasks; the click handler's React batch
-                          // always commits before the response arrives, so flushSync is unnecessary.
                           isFetchingMoreRef.current = true;
                           setIsFetchingMore(true);
-                          ircClient.requestChathistoryBefore(
+                          const stopFetching = () => {
+                            isFetchingMoreRef.current = false;
+                            setIsFetchingMore(false);
+                          };
+                          loadOlderMessages(
+                            useStore,
                             serverId,
-                            channel.name,
-                            ts,
-                          );
+                            historyTarget,
+                            new Date(oldest.timestamp).getTime(),
+                          )
+                            .then((isPageComing) => {
+                              if (!isPageComing) stopFetching();
+                            })
+                            .catch(stopFetching);
                         }
                       }
                     }}
                     disabled={isFetchingMore}
+                    title={
+                      isHistoryLocalOnly
+                        ? t`Load earlier messages saved on this device`
+                        : undefined
+                    }
                     className="chip-action"
                   >
                     {isFetchingMore ? (

@@ -109,6 +109,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
     "autoprefixer": "^10.5.2",
+    "fake-indexeddb": "^6.2.5",
     "globals": "^15.14.0",
     "jsdom": "^26.1.0",
     "lefthook": "^1.11.10",

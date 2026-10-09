@@ -160,7 +160,13 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
         <select
           className="field-input"
           value={value as string}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+            onChange(
+              setting.options?.find(
+                (option) => String(option.value) === e.target.value,
+              )?.value ?? e.target.value,
+            )
+          }
           disabled={disabled}
         >
           {setting.options?.map((option) => (

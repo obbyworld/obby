@@ -151,6 +151,15 @@ export function serverSupportsMetadata(
   return supports;
 }
 
+export function serverSupportsChathistory(
+  state: AppState,
+  serverId: string,
+): boolean {
+  return !!state.servers
+    .find((s) => s.id === serverId)
+    ?.capabilities?.includes("draft/chathistory");
+}
+
 /**
  * Check if a server supports multiline capability
  */

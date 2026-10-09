@@ -469,6 +469,18 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               state.processedMessageIds,
               newMsgIds,
             ),
+            servers: state.servers.map((s) =>
+              s.id !== serverId
+                ? s
+                : {
+                    ...s,
+                    privateChats: s.privateChats?.map((pc) =>
+                      pc.id === privateChat.id
+                        ? { ...pc, hasMoreHistory: pending.length > 0 }
+                        : pc,
+                    ),
+                  },
+            ),
           };
         }
 

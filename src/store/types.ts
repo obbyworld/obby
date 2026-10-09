@@ -54,6 +54,8 @@ export interface GlobalSettings {
   showKicks: boolean;
   customMentions: string[];
   ignoreList: string[];
+  keepHistory: boolean;
+  historyLimitMb: number;
   nickname: string;
   accountName: string;
   accountPassword: string;

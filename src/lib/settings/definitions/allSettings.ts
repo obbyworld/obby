@@ -3,6 +3,7 @@ import { CallCameraField } from "../../../components/ui/settings/CallCameraField
 import { CallMicrophoneField } from "../../../components/ui/settings/CallMicrophoneField";
 import { CallSpeakerField } from "../../../components/ui/settings/CallSpeakerField";
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
+import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
@@ -409,6 +410,63 @@ const preferenceSettings: SettingDefinition[] = [
     searchKeywords: ["ignore", "block", "mute", "filter"],
     priority: 11,
     customComponent: IgnoreListField,
+  },
+  {
+    id: "preferences.keepHistory",
+    key: "keepHistory",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`Keep chat history on this device`,
+    description: msg`Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved.`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: [
+      "history",
+      "log",
+      "scrollback",
+      "offline",
+      "storage",
+      "disk",
+    ],
+    priority: 12,
+  },
+  {
+    id: "preferences.historyLimitMb",
+    key: "historyLimitMb",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`History disk limit`,
+    description: msg`Set how much history to keep. The oldest messages go first.`,
+    type: "select",
+    defaultValue: 500,
+    options: [
+      { value: 100, label: "100 MB" },
+      { value: 250, label: "250 MB" },
+      { value: 500, label: "500 MB" },
+      { value: 1000, label: "1 GB" },
+      { value: 2000, label: "2 GB" },
+      { value: 5000, label: "5 GB" },
+    ],
+    searchKeywords: ["history", "limit", "storage", "disk", "size"],
+    priority: 13,
+    dependencies: [
+      {
+        settingId: "preferences.keepHistory",
+        condition: (value) => value === true,
+      },
+    ],
+  },
+  {
+    id: "preferences.historyUsage",
+    key: "historyUsage",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`Saved history`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: ["history", "clear", "delete", "storage", "disk"],
+    priority: 14,
+    customComponent: HistoryUsageField,
   },
 ];
 
