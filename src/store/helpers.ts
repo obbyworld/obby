@@ -1,6 +1,19 @@
 import { v5 as uuidv5 } from "uuid";
-import type { Channel, Message, User } from "../types";
+import type { Channel, Message, Server, User } from "../types";
 import type { AppState } from "./index";
+import type { HistoryWindow } from "./types";
+
+export function findServerUser(
+  server: Server | undefined,
+  nick: string,
+): User | undefined {
+  const lower = nick.toLowerCase();
+  for (const channel of server?.channels ?? []) {
+    const user = channel.users.find((u) => u.username.toLowerCase() === lower);
+    if (user) return user;
+  }
+  return undefined;
+}
 
 // Namespace UUID for generating deterministic channel/chat IDs
 export const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -40,6 +53,32 @@ export function ensureUrlFormat(host: string, port: number): string {
 }
 
 export const MAX_MESSAGES_PER_CHANNEL = 1500;
+
+export const messageTime = (message: Message) =>
+  new Date(message.timestamp).getTime();
+
+// Older messages past the cap would push themselves straight out again, so we
+// drop the newest end instead and keep it as the present of a history window.
+export function capMergedMessages(
+  existing: Message[],
+  merged: Message[],
+  window: HistoryWindow | undefined,
+): { messages: Message[]; window?: HistoryWindow } {
+  const isOlder =
+    existing.length > 0 && messageTime(merged[0]) < messageTime(existing[0]);
+  if (merged.length <= MAX_MESSAGES_PER_CHANNEL || !isOlder)
+    return { messages: merged.slice(-MAX_MESSAGES_PER_CHANNEL) };
+  const kept = merged.slice(0, MAX_MESSAGES_PER_CHANNEL);
+  return {
+    messages: kept,
+    window: {
+      ...window,
+      until: messageTime(kept[kept.length - 1]),
+      untilRowId: undefined,
+      present: window?.present ?? existing,
+    },
+  };
+}
 
 // ============================================================================
 // Batch Event Types

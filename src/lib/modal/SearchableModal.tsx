@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { escapeRegExp } from "../escapeRegExp";
 import BaseModal, { type BaseModalProps } from "./BaseModal";
 
 export interface SearchableItem {
@@ -200,10 +201,6 @@ export const SearchableModal: React.FC<SearchableModalProps> = (props) => {
       selectedElement.scrollIntoView({ block: "nearest", behavior: "smooth" });
     }
   }, [selectedIndex]);
-
-  // Helper to escape regex metacharacters
-  const escapeRegExp = (value: string) =>
-    value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   // Highlight search query in text
   const highlightText = (text: string, searchQuery: string) => {

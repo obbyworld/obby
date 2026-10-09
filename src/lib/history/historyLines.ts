@@ -3,11 +3,11 @@ import { E2EE_TAG } from "../e2ee/protocol";
 import type { ParsedLine } from "../irc/IRCClient";
 import { isChannelTarget } from "../ircUtils";
 import type { HistoryGap, HistoryRow, NewHistoryRow } from "./historyDb";
+import { OWN_LINE_TAG, stripTags, trailingOf } from "./searchFields";
 
 export const LOCAL_BATCH_PREFIX = "obby-local-";
 export const LOCAL_HISTORY_TAG = "obby-local";
 export const HISTORY_GAP_CODE = "gap";
-const OWN_LINE_TAG = "obby-own";
 export const HISTORY_PAGE_SIZE = 100;
 
 // Replayed rows may have scrolled out of memory while their msgid is still
@@ -118,17 +118,6 @@ export function withReplayTags(line: string, batchId: string): string {
 function lineTime(mtags: Record<string, string> | undefined, now: number) {
   const parsed = mtags?.time ? Date.parse(mtags.time) : Number.NaN;
   return Number.isNaN(parsed) ? now : parsed;
-}
-
-function stripTags(line: string): string {
-  return line.startsWith("@") ? line.slice(line.indexOf(" ") + 1) : line;
-}
-
-function trailingOf(line: string): string {
-  let rest = stripTags(line);
-  if (rest.startsWith(":")) rest = rest.slice(rest.indexOf(" ") + 1);
-  const start = rest.indexOf(" :");
-  return start === -1 ? "" : rest.slice(start + 2);
 }
 
 export class HistoryRecorder {

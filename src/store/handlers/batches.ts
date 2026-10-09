@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { Message } from "../../types";
-import { type BatchInfo, MAX_MESSAGES_PER_CHANNEL } from "../helpers";
+import { type BatchInfo, capMergedMessages, messageTime } from "../helpers";
 import { type AppState, rememberMsgIds } from "../index";
 
 // Chathistory messages are buffered here (outside the store) to avoid one
@@ -298,13 +298,17 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               ),
           );
 
-          const merged = [...existing, ...newMessages]
-            .sort(
-              (a, b) =>
-                new Date(a.timestamp).getTime() -
-                new Date(b.timestamp).getTime(),
-            )
-            .slice(-MAX_MESSAGES_PER_CHANNEL);
+          const capped = capMergedMessages(
+            existing,
+            [...existing, ...newMessages].sort(
+              (a, b) => messageTime(a) - messageTime(b),
+            ),
+            state.historyWindows[key],
+          );
+          const merged = capped.messages;
+          const historyWindows = capped.window
+            ? { ...state.historyWindows, [key]: capped.window }
+            : state.historyWindows;
 
           // Apply buffered reactions and re-resolve reply references now that
           // all messages from the batch are in `merged` and visible to each other.
@@ -363,6 +367,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               [serverId]: remainingBatches,
             },
             messages: { ...state.messages, [key]: finalMessages },
+            historyWindows,
             processedMessageIds: rememberMsgIds(
               state.processedMessageIds,
               newMsgIds,
@@ -411,13 +416,17 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               ),
           );
 
-          const merged = [...existing, ...newMessages]
-            .sort(
-              (a, b) =>
-                new Date(a.timestamp).getTime() -
-                new Date(b.timestamp).getTime(),
-            )
-            .slice(-MAX_MESSAGES_PER_CHANNEL);
+          const capped = capMergedMessages(
+            existing,
+            [...existing, ...newMessages].sort(
+              (a, b) => messageTime(a) - messageTime(b),
+            ),
+            state.historyWindows[key],
+          );
+          const merged = capped.messages;
+          const historyWindows = capped.window
+            ? { ...state.historyWindows, [key]: capped.window }
+            : state.historyWindows;
 
           const finalMessages = merged.map((m) => {
             let updated = m;
@@ -465,6 +474,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
               [serverId]: remainingBatches,
             },
             messages: { ...state.messages, [key]: finalMessages },
+            historyWindows,
             processedMessageIds: rememberMsgIds(
               state.processedMessageIds,
               newMsgIds,

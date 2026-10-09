@@ -30,7 +30,9 @@ import ircClient from "../../lib/ircClient";
 import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
+import { formatRelativeTime } from "../../lib/relativeTime";
 import useStore from "../../store";
+import { findServerUser } from "../../store/helpers";
 import type { ProfilePane as ProfilePaneTarget } from "../../store/types";
 import type { WhoisSession } from "../../types";
 import ExternalLinkWarningModal from "../ui/ExternalLinkWarningModal";
@@ -83,12 +85,7 @@ const formatAbsoluteTime = (
 const formatRelativeSince = (iso: string | undefined): string | null => {
   if (!iso) return null;
   const ts = new Date(iso).getTime();
-  if (!Number.isFinite(ts)) return null;
-  const secs = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-  if (secs < 60) return t`just now`;
-  if (secs < 3600) return t`${Math.floor(secs / 60)}m ago`;
-  if (secs < 86400) return t`${Math.floor(secs / 3600)}h ago`;
-  return t`${Math.floor(secs / 86400)}d ago`;
+  return Number.isFinite(ts) ? formatRelativeTime(ts) : null;
 };
 
 const parseChannels = (raw: string) =>
@@ -318,8 +315,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
   const openPage = useStore((s) => s.openPage);
   const joinChannel = useStore((s) => s.joinChannel);
   const selectChannel = useStore((s) => s.selectChannel);
-  const openPrivateChat = useStore((s) => s.openPrivateChat);
-  const selectPrivateChat = useStore((s) => s.selectPrivateChat);
+  const openChat = useStore((s) => s.openChat);
   const setAway = useStore((s) => s.setAway);
   const clearAway = useStore((s) => s.clearAway);
   const openE2EEVerify = useStore((s) => s.openE2EEVerify);
@@ -329,9 +325,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
   const useObby = !!server?.capabilities?.includes(OBBY_WHOIS_CAP);
   const metadataKeys = useObby ? METADATA_KEYS : LEGACY_METADATA_KEYS;
 
-  const user = server?.channels
-    .flatMap((ch) => ch.users)
-    .find((u) => u.username === username);
+  const user = findServerUser(server, username);
   const isOwnProfile =
     ircClient.getNick(serverId)?.toLowerCase() === username.toLowerCase();
 
@@ -432,14 +426,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
   };
 
   const messageUser = () => {
-    openPrivateChat(serverId, username);
-    const privateChat = useStore
-      .getState()
-      .servers.find((s) => s.id === serverId)
-      ?.privateChats?.find(
-        (pc) => pc.username.toLowerCase() === username.toLowerCase(),
-      );
-    if (privateChat) selectPrivateChat(privateChat.id, { navigate: true });
+    openChat(serverId, username);
     leaveOnNarrow();
   };
 

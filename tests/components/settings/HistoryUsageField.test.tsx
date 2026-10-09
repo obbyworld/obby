@@ -8,8 +8,14 @@ vi.mock("../../../src/lib/history/historyDb", async (importOriginal) => ({
   clearHistory: vi.fn(),
 }));
 
+vi.mock("../../../src/lib/search/recents", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  clearRecents: vi.fn(),
+}));
+
 import { HistoryUsageField } from "../../../src/components/ui/settings/HistoryUsageField";
 import { clearHistory, usageBytes } from "../../../src/lib/history/historyDb";
+import { clearRecents } from "../../../src/lib/search/recents";
 import useStore from "../../../src/store";
 
 const setting = { id: "preferences.historyUsage" } as SettingDefinition;
@@ -90,6 +96,7 @@ describe("HistoryUsageField", () => {
     fireEvent.click(confirm);
 
     await waitFor(() => expect(clearHistory).toHaveBeenCalledTimes(1));
+    expect(clearRecents).toHaveBeenCalledTimes(1);
     expect(
       await screen.findByText("Chat to start saving history"),
     ).toBeTruthy();

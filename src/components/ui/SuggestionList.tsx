@@ -20,6 +20,9 @@ interface SuggestionListProps<T> {
   className?: string;
   // Lets an input point at the list and its highlighted option.
   id?: string;
+  rowClassName?: string;
+  // Sits inside a panel that already draws the surface, so it adds none.
+  embedded?: boolean;
 }
 
 const GAP_PX = 6;
@@ -47,6 +50,8 @@ export function SuggestionList<T>({
   placement = "above",
   className = "",
   id,
+  rowClassName = "",
+  embedded = false,
 }: SuggestionListProps<T>) {
   const selectedRef = useRef<HTMLButtonElement>(null);
 
@@ -79,7 +84,7 @@ export function SuggestionList<T>({
       role="listbox"
       aria-labelledby={titleId}
       data-popover-panel={isFloatingBelow || undefined}
-      className={`surface-floating ${placement === "inline" ? "w-full" : "z-[9999] min-w-56 max-w-md"} ${rect ? "fixed" : ""} ${className}`}
+      className={`${embedded ? "" : "surface-floating"} ${placement === "inline" ? "w-full" : "z-[9999] min-w-56 max-w-md"} ${rect ? "fixed" : ""} ${className}`}
       style={getListStyle(rect, placement)}
       onMouseDown={(e) => e.preventDefault()}
     >
@@ -98,7 +103,7 @@ export function SuggestionList<T>({
               role="option"
               aria-selected={isSelected}
               tabIndex={-1}
-              className={`row-interactive ${isSelected ? "row-interactive-active" : ""}`}
+              className={`row-interactive ${rowClassName} ${isSelected ? "row-interactive-active" : ""}`}
               onMouseEnter={() => onHover(index)}
               onClick={() => onPick(item)}
             >

@@ -136,7 +136,7 @@ describe("Metadata Display Features", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         linkSecurityWarnings: [],
