@@ -1,11 +1,12 @@
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaPlug } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
 import BaseModal from "../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import useStore from "../../store";
+import { SavedHistoryChoice } from "./SavedHistoryChoice";
 
 export const BouncerNetworkDisconnectConfirmModal: React.FC = () => {
   const target = useStore((s) => s.ui.disconnectNetworkConfirmTarget);
@@ -13,6 +14,12 @@ export const BouncerNetworkDisconnectConfirmModal: React.FC = () => {
   const bouncers = useStore((s) => s.bouncers);
   const cancel = useStore((s) => s.cancelDisconnectNetwork);
   const confirm = useStore((s) => s.confirmDisconnectNetwork);
+  const [shouldDeleteHistory, setShouldDeleteHistory] = useState(false);
+  const childServerId = target?.childServerId;
+
+  useEffect(() => {
+    if (childServerId) setShouldDeleteHistory(false);
+  }, [childServerId]);
 
   const network = useMemo(() => {
     if (!target) return null;
@@ -55,13 +62,18 @@ export const BouncerNetworkDisconnectConfirmModal: React.FC = () => {
             you'll need to add it back.
           </Trans>
         </p>
+        <SavedHistoryChoice
+          serverIds={[target.childServerId]}
+          shouldDelete={shouldDeleteHistory}
+          onChange={setShouldDeleteHistory}
+        />
       </ModalBody>
 
       <ModalFooter>
         <Button variant="secondary" onClick={cancel}>
           <Trans>Cancel</Trans>
         </Button>
-        <Button variant="danger" onClick={confirm}>
+        <Button variant="danger" onClick={() => confirm(shouldDeleteHistory)}>
           <Trans>Disconnect</Trans>
         </Button>
       </ModalFooter>

@@ -551,7 +551,7 @@ msgstr "İzlenecek etkinliği ve eşik aşıldığında yapılacakları belirley
 msgid "Add Server"
 msgstr "Sunucu Ekle"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Kayıtlı sohbet geçmişini geri almak için bu ağı yeniden ekleyin."
 
@@ -1715,7 +1715,7 @@ msgstr "Bu cihazda kayıtlı tüm mesajları silin. Bu işlem geri alınamaz."
 msgid "Delete folder"
 msgstr "Klasörü sil"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Kayıtlı sohbet geçmişini de sil"
 

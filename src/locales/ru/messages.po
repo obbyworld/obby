@@ -551,7 +551,7 @@ msgstr "Добавьте правила: какую активность отс�
 msgid "Add Server"
 msgstr "Добавить сервер"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Добавьте эту сеть снова, чтобы вернуть её сохранённую историю чата."
 
@@ -1715,7 +1715,7 @@ msgstr "Удалите все сообщения, сохранённые на э
 msgid "Delete folder"
 msgstr "Удалить папку"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Также удалить его сохранённую историю чата"
 

@@ -359,7 +359,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
           if (!ch.chathistoryRequested) {
-            ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${ch.name} * 50`);
+            ircClient.requestChathistoryLatest(serverId, ch.name);
           }
         }
       }, 50);
@@ -584,7 +584,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       // Request chathistory for each pinned PM
       setTimeout(() => {
         for (const { username } of sortedPinnedChats) {
-          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${username} * 50`);
+          ircClient.requestChathistoryLatest(serverId, username);
         }
       }, 50);
 

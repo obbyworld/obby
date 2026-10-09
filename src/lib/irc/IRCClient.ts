@@ -36,6 +36,10 @@ function generateDeterministicId(serverId: string, name: string): string {
   return uuidv5(`${serverId}:${name}`, CHANNEL_NAMESPACE);
 }
 
+// Gap and load-more decisions read a short page as the end of server history,
+// so every request has to ask for the same page size.
+export const CHATHISTORY_PAGE_SIZE = 50;
+
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
   connectionStateChange: BaseIRCEvent & {
@@ -1326,7 +1330,7 @@ export class IRCClient implements IRCClientContext {
         !!server.capabilities?.includes("draft/chathistory");
 
       if (wantsChathistory) {
-        this.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
+        this.requestChathistoryLatest(serverId, channelName);
       }
 
       const channel: Channel = {
@@ -1369,6 +1373,7 @@ export class IRCClient implements IRCClientContext {
     serverId: string,
     channelName: string,
     beforeTimestamp: string,
+    { showLoading = true }: { showLoading?: boolean } = {},
   ): void {
     const server = this.servers.get(serverId);
     if (!server?.capabilities?.includes("draft/chathistory")) return;
@@ -1376,14 +1381,22 @@ export class IRCClient implements IRCClientContext {
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
     // and restores scroll position once isLoadingHistory goes false (batch end).
-    this.triggerEvent("CHATHISTORY_LOADING", {
-      serverId,
-      channelName,
-      isLoading: true,
-    });
+    if (showLoading)
+      this.triggerEvent("CHATHISTORY_LOADING", {
+        serverId,
+        channelName,
+        isLoading: true,
+      });
     this.sendRaw(
       serverId,
-      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} 50`,
+      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} ${CHATHISTORY_PAGE_SIZE}`,
+    );
+  }
+
+  requestChathistoryLatest(serverId: string, target: string): void {
+    this.sendRaw(
+      serverId,
+      `CHATHISTORY LATEST ${target} * ${CHATHISTORY_PAGE_SIZE}`,
     );
   }
 

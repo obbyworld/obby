@@ -551,7 +551,7 @@ msgstr "Lisää säännöt, jotka määrittävät seurattavan toiminnan ja toime
 msgid "Add Server"
 msgstr "Lisää palvelin"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Lisää tämä verkko uudelleen saadaksesi sen tallennetun keskusteluhistorian takaisin."
 
@@ -1715,7 +1715,7 @@ msgstr "Poista kaikki tälle laitteelle tallennetut viestit. Tätä ei voi kumot
 msgid "Delete folder"
 msgstr "Poista kansio"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Poista myös sen tallennettu keskusteluhistoria"
 

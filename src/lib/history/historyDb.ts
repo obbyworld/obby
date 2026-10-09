@@ -416,7 +416,11 @@ export function parkServerHistory(
   address: string,
 ): Promise<void> {
   return enqueue(undefined, (db) =>
-    inTx(db, [META], "readwrite", async (tx) => {
+    inTx(db, [ROWS, META], "readwrite", async (tx) => {
+      const rowCount = await awaitRequest<number>(
+        tx.objectStore(ROWS).index("server").count(server),
+      );
+      if (rowCount === 0) return;
       await awaitRequest(
         tx.objectStore(META).put({
           name: parkedName(server),

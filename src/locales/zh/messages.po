@@ -551,7 +551,7 @@ msgstr "添加规则，设定要监视的活动以及超过阈值时的处理方
 msgid "Add Server"
 msgstr "添加服务器"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "再次添加此网络即可找回其已保存的聊天历史。"
 
@@ -1715,7 +1715,7 @@ msgstr "删除此设备上保存的所有消息。此操作无法撤销。"
 msgid "Delete folder"
 msgstr "删除文件夹"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "同时删除其已保存的聊天历史"
 

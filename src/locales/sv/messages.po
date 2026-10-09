@@ -551,7 +551,7 @@ msgstr "Lägg till regler som anger vilken aktivitet som ska övervakas och vad 
 msgid "Add Server"
 msgstr "Lägg till server"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Lägg till nätverket igen för att få tillbaka dess sparade chatthistorik."
 
@@ -1715,7 +1715,7 @@ msgstr "Radera alla sparade meddelanden på denna enhet. Du kan inte ångra dett
 msgid "Delete folder"
 msgstr "Ta bort mapp"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Ta även bort den sparade chatthistoriken"
 

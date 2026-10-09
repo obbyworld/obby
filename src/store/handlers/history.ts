@@ -32,13 +32,13 @@ import {
   LOCAL_HISTORY_TAG,
   planLoadMore,
 } from "../../lib/history/historyLines";
+import { CHATHISTORY_PAGE_SIZE } from "../../lib/irc/IRCClient";
 import ircClient from "../../lib/ircClient";
 import { parseMessageTags } from "../../lib/ircUtils";
 import type { Server } from "../../types";
 import { normalizeHost, serverSupportsChathistory } from "../helpers";
 import type { AppState } from "../index";
 
-const SERVER_PAGE_SIZE = 50;
 export const BYTES_PER_MB = 1_000_000;
 const PRUNE_EVERY_WRITES = 200;
 const MAX_AUTO_FILL_PAGES = 10;
@@ -59,20 +59,25 @@ let writesSincePrune = 0;
 let replayCounter = 0;
 
 // Removed and re-added servers find their parked history by this address.
-function serverAddress(server: Pick<Server, "host" | "port">): string {
-  return `${normalizeHost(server.host).toLowerCase()}:${server.port}`;
+// Bouncer networks share the bouncer's host and port, so theirs adds the netid.
+function serverAddress(
+  server: Pick<Server, "host" | "port" | "bouncerNetid">,
+): string {
+  const address = `${normalizeHost(server.host).toLowerCase()}:${server.port}`;
+  return server.bouncerNetid ? `${address}/${server.bouncerNetid}` : address;
 }
 
 export function hasSavedHistory(serverId: string): Promise<boolean> {
   return hasServerHistory(serverId);
 }
 
-export function forgetSavedHistory(serverId: string): Promise<void> {
-  return deleteServerHistory(serverId);
-}
-
-export function parkSavedHistory(server: Server): Promise<void> {
-  return parkServerHistory(server.id, serverAddress(server));
+export function settleSavedHistory(
+  server: Server,
+  shouldDelete: boolean,
+): Promise<void> {
+  return shouldDelete
+    ? deleteServerHistory(server.id)
+    : parkServerHistory(server.id, serverAddress(server));
 }
 
 const conversationKey = (serverId: string, target: string) =>
@@ -137,7 +142,7 @@ async function saveHistoryPage(
     const decision = decideAfterLatest({
       newestStoredTime: await request.newestStoredTime,
       page,
-      limit: SERVER_PAGE_SIZE,
+      limit: CHATHISTORY_PAGE_SIZE,
     });
     if (decision.kind === "add") {
       const { from, to, lost } = decision;
@@ -153,7 +158,7 @@ async function saveHistoryPage(
       gap: filled,
       page,
       inserted,
-      limit: SERVER_PAGE_SIZE,
+      limit: CHATHISTORY_PAGE_SIZE,
     });
     if (decision.kind === "close") {
       if (filled.id !== undefined) await deleteGap(filled.id);
@@ -164,7 +169,12 @@ async function saveHistoryPage(
         settleGap(store, serverId, target, gap, pagesLeft);
     }
   }
-  await refreshHasMore(store, serverId, target, page.size >= SERVER_PAGE_SIZE);
+  await refreshHasMore(
+    store,
+    serverId,
+    target,
+    page.size >= CHATHISTORY_PAGE_SIZE,
+  );
 }
 
 // We decide load more for a chat from both sources: the server may have an
@@ -254,9 +264,11 @@ function settleGap(
     return;
   }
   nextGapFill = { gap, pagesLeft: pagesLeft - 1 };
-  ircClient.sendRaw(
+  ircClient.requestChathistoryBefore(
     serverId,
-    `CHATHISTORY BEFORE ${target} timestamp=${new Date(gap.to).toISOString()} ${SERVER_PAGE_SIZE}`,
+    target,
+    new Date(gap.to).toISOString(),
+    { showLoading: false },
   );
   nextGapFill = undefined;
 }
@@ -372,7 +384,9 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     if (connectionState === "connected") {
-      const server = ircClient.servers.get(serverId);
+      const server =
+        store.getState().servers.find((s) => s.id === serverId) ??
+        ircClient.servers.get(serverId);
       if (server) void adoptParkedHistory(serverAddress(server), serverId);
       return;
     }

@@ -551,7 +551,7 @@ msgstr "Dodaj reguły określające, jaką aktywność obserwować i co zrobić 
 msgid "Add Server"
 msgstr "Dodaj serwer"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Dodaj tę sieć ponownie, aby odzyskać jej zapisaną historię rozmów."
 
@@ -1715,7 +1715,7 @@ msgstr "Usuń wszystkie wiadomości zapisane na tym urządzeniu. Tej operacji ni
 msgid "Delete folder"
 msgstr "Usuń folder"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Usuń także zapisaną historię rozmów"
 

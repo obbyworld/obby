@@ -551,7 +551,7 @@ msgstr "Voeg regels toe die bepalen welke activiteit je bijhoudt en wat er gebeu
 msgid "Add Server"
 msgstr "Server toevoegen"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Voeg dit netwerk opnieuw toe om de opgeslagen chatgeschiedenis terug te krijgen."
 
@@ -1715,7 +1715,7 @@ msgstr "Verwijder elk opgeslagen bericht op dit apparaat. Je kunt dit niet onged
 msgid "Delete folder"
 msgstr "Map verwijderen"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Verwijder ook de opgeslagen chatgeschiedenis"
 

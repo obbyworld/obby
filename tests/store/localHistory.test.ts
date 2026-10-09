@@ -92,8 +92,14 @@ async function boot(caps: string[]) {
     username,
     isOnline: true,
   });
-  const addServer = (id: string, host: string, port = 6667) => {
+  const addServer = (
+    id: string,
+    host: string,
+    port = 6667,
+    extra: Record<string, unknown> = {},
+  ) => {
     const server = {
+      ...extra,
       id,
       name: "TestNet",
       host,
@@ -995,6 +1001,68 @@ describe("removing a server", () => {
       expect(await w.db.hasServerHistory(SERVER)).toBe(false);
       await w.loadOlderFor("srv2");
       expect(replayedContents("srv2")).toEqual(["one", "two", "three"]);
+    });
+
+    it("keeps the history of bouncer networks apart by netid", async () => {
+      w.useStore.setState((state) => ({
+        servers: state.servers.map((s) =>
+          s.id === SERVER
+            ? { ...s, bouncerServerId: "bnc", bouncerNetid: "n1" }
+            : s,
+        ),
+      }));
+      await seedDisk();
+      w.useStore.setState((state) => ({
+        ui: {
+          ...state.ui,
+          disconnectNetworkConfirmTarget: {
+            bouncerServerId: "bnc",
+            netid: "n1",
+            childServerId: SERVER,
+          },
+        },
+      }));
+      w.useStore.getState().confirmDisconnectNetwork(false);
+      await w.drain();
+
+      w.addServer("other", "irc.test", 6667, {
+        bouncerServerId: "bnc2",
+        bouncerNetid: "n2",
+      });
+      connect("other");
+      await w.drain();
+      expect(await w.db.hasServerHistory("other")).toBe(false);
+
+      w.addServer("same", "irc.test", 6667, {
+        bouncerServerId: "bnc2",
+        bouncerNetid: "n1",
+      });
+      connect("same");
+      await vi.waitFor(async () =>
+        expect(await w.db.hasServerHistory("same")).toBe(true),
+      );
+    });
+
+    it("deletes every bouncer network's history when we disconnect the bouncer and delete it", async () => {
+      w.useStore.setState((state) => ({
+        servers: state.servers.map((s) =>
+          s.id === SERVER
+            ? { ...s, bouncerServerId: "bnc", bouncerNetid: "n1" }
+            : s,
+        ),
+      }));
+      w.addServer("bnc", "irc.test", 6667, { isBouncerControl: true });
+      await seedDisk();
+      w.useStore.setState((state) => ({
+        ui: { ...state.ui, disconnectConfirmTarget: "bnc" },
+      }));
+
+      w.useStore.getState().confirmDisconnectBouncer(true);
+
+      await vi.waitFor(async () =>
+        expect(await w.db.hasServerHistory(SERVER)).toBe(false),
+      );
+      expect(serverIds()).toEqual([]);
     });
 
     it("shares history between hosts that differ only in case", async () => {

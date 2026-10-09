@@ -551,7 +551,7 @@ msgstr "Přidejte pravidla, která určují, jakou aktivitu sledovat a co dělat
 msgid "Add Server"
 msgstr "Přidat server"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Add this network again to get its saved chat history back."
 msgstr "Přidejte tuto síť znovu a získáte zpět její uloženou historii chatu."
 
@@ -1715,7 +1715,7 @@ msgstr "Smažte všechny zprávy uložené v tomto zařízení. Tuto akci nelze 
 msgid "Delete folder"
 msgstr "Smazat složku"
 
-#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/SavedHistoryChoice.tsx
 msgid "Delete its saved chat history too"
 msgstr "Smazat také uloženou historii chatu"
 
