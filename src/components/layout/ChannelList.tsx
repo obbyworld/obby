@@ -281,6 +281,9 @@ export const ChannelList: React.FC = () => {
   }, [selectedServer]);
 
   const isTouch = useIsTouchInput();
+  const serverAlertCount = useStore((s) =>
+    selectedServerId ? (s.serverAlerts[selectedServerId] ?? 0) : 0,
+  );
 
   const applyChannelDrop = (
     ids: string[],
@@ -666,9 +669,17 @@ export const ChannelList: React.FC = () => {
                 <span className="w-6 flex justify-center flex-shrink-0">
                   <FaCommentDots className="text-lg" />
                 </span>
-                <span className="truncate font-medium">
+                <span className="truncate font-medium flex-1">
                   <Trans>Server Notices</Trans>
                 </span>
+                {serverAlertCount > 0 && (
+                  <span
+                    className="min-w-5 h-5 px-1.5 rounded-full bg-discord-red text-white text-xs font-semibold flex items-center justify-center"
+                    title={t`Open Server Notices to see what went wrong`}
+                  >
+                    {serverAlertCount}
+                  </span>
+                )}
               </div>
             </div>
           </>

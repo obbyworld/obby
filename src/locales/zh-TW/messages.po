@@ -3356,7 +3356,6 @@ msgid "Open private chat"
 msgstr "開啟私人聊天"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Open Server Notices to see what went wrong"
 msgstr "打開伺服器通知查看出了什麼問題"

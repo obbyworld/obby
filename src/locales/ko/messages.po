@@ -3356,7 +3356,6 @@ msgid "Open private chat"
 msgstr "개인 채팅 열기"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Open Server Notices to see what went wrong"
 msgstr "서버 알림을 열어 무엇이 잘못됐는지 확인하세요"

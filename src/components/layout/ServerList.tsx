@@ -54,6 +54,7 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   const hasMentions =
     server.channels.some((ch) => ch.isMentioned) ||
     server.privateChats?.some((pc) => pc.isMentioned);
+  const hasAlerts = useStore((s) => (s.serverAlerts[server.id] ?? 0) > 0);
 
   const iconUrl = server.icon;
   const showIcon = canShowAvatarUrl(
@@ -160,6 +161,13 @@ const ServerIcon: React.FC<ServerIconProps> = ({
               <FaPlug className="text-sky-300 text-[8px]" />
             )}
           </div>
+        )}
+
+        {hasAlerts && (
+          <div
+            className="absolute -top-1 -left-1 w-3.5 h-3.5 bg-discord-red rounded-full border-2 border-discord-dark-600"
+            title={t`Open Server Notices to see what went wrong`}
+          />
         )}
 
         {hasMentions && !isSelected && (

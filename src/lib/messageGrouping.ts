@@ -17,7 +17,8 @@ export function isWhisper(message: Message): boolean {
 }
 
 // Whether a message starts a new visual group (avatar + name shown). Beyond the
-// usual author and time-gap breaks, a change in encryption protection also
+// usual author and time-gap breaks, a change of kind (a notice after a message),
+// and a change in encryption protection also
 // breaks the group so an unencrypted run is always its own distinct block.
 // Every whisper sits in its own bubble, so each one shows its sender.
 export function shouldShowMessageHeader(
@@ -26,7 +27,8 @@ export function shouldShowMessageHeader(
 ): boolean {
   return (
     isWhisper(message) ||
-    previous?.type !== "message" ||
+    previous?.type !== message.type ||
+    (message.type !== "message" && message.type !== "notice") ||
     previous.userId !== message.userId ||
     isUnprotectedMessage(previous) !== isUnprotectedMessage(message) ||
     new Date(message.timestamp).getTime() -

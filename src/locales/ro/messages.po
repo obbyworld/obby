@@ -3356,7 +3356,6 @@ msgid "Open private chat"
 msgstr "Deschide chat privat"
 
 #: src/components/layout/ChannelList.tsx
-#: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Open Server Notices to see what went wrong"
 msgstr "Deschide Notificările serverului ca să vezi ce nu a mers"

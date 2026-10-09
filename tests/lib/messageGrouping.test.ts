@@ -51,6 +51,12 @@ describe("shouldShowMessageHeader", () => {
     expect(shouldShowMessageHeader(msg({ type: "system" }), msg())).toBe(true);
   });
 
+  it("groups a run of notices from one sender, like a server welcome", () => {
+    const first = msg({ type: "notice" });
+    expect(shouldShowMessageHeader(first, msg({ type: "notice" }))).toBe(false);
+    expect(shouldShowMessageHeader(first, msg())).toBe(true);
+  });
+
   it("breaks the group when encryption protection changes either way", () => {
     expect(shouldShowMessageHeader(msg(), unprotected())).toBe(true);
     expect(shouldShowMessageHeader(unprotected(), msg())).toBe(true);

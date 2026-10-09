@@ -654,6 +654,8 @@ export interface AppState {
     serverId: string;
     timestamp: Date;
   }[];
+  // Problems a server reported since the user last opened its notices.
+  serverAlerts: Record<string, number>;
   rawLog: Record<
     string,
     {
@@ -997,7 +999,6 @@ export interface AppState {
     target?: string;
     serverId: string;
   }) => void;
-  removeGlobalNotification: (notificationId: string) => void;
   clearGlobalNotifications: () => void;
   appendRawLogLine: (entry: {
     serverId: string;
@@ -1275,6 +1276,7 @@ const useStore = create<AppState>((set, get) => ({
   typingUsers: {},
   typingTimers: {},
   globalNotifications: [],
+  serverAlerts: {},
   channelList: {},
   channelListBuffer: {},
   channelListFilters: {},
@@ -2271,9 +2273,15 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   addGlobalNotification: (notification) => {
+    const isRepeat = get().globalNotifications.some(
+      (n) =>
+        n.serverId === notification.serverId &&
+        n.message === notification.message,
+    );
+    if (isRepeat) return;
     set((state) => ({
       globalNotifications: [
-        ...state.globalNotifications,
+        ...state.globalNotifications.slice(-2),
         {
           id: uuidv4(),
           ...notification,
@@ -2294,14 +2302,6 @@ const useStore = create<AppState>((set, get) => ({
         console.error("Failed to play error sound:", error);
       }
     }
-  },
-
-  removeGlobalNotification: (notificationId) => {
-    set((state) => ({
-      globalNotifications: state.globalNotifications.filter(
-        (n) => n.id !== notificationId,
-      ),
-    }));
   },
 
   clearGlobalNotifications: () => {
