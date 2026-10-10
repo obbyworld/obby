@@ -4550,6 +4550,7 @@ msgstr "Naar beneden scrollen"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Zoeken"
 
@@ -4584,6 +4585,8 @@ msgid "Search GIFs..."
 msgstr "GIF's zoeken..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Berichten doorzoeken"
 

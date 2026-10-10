@@ -301,6 +301,23 @@ describe("SearchPane", () => {
     );
   });
 
+  it("remembers the message an opened hit landed on until another one opens", async () => {
+    search.mockResolvedValue({ hits: [hit(), hit({ nick: "bob" })] });
+    vi.mocked(jumpToMessage)
+      .mockResolvedValueOnce({ ok: true, messageId: "m1" })
+      .mockResolvedValueOnce({ ok: true, messageId: "m2" });
+    openPane();
+
+    fireEvent.click(await screen.findByText("alice"));
+    await waitFor(() =>
+      expect(currentPane()).toMatchObject({ hitMessageId: "m1" }),
+    );
+    fireEvent.click(screen.getByText("bob"));
+    await waitFor(() =>
+      expect(currentPane()).toMatchObject({ hitMessageId: "m2" }),
+    );
+  });
+
   it("keeps the results and shows a translated toast when a jump fails", async () => {
     vi.mocked(jumpToMessage).mockResolvedValueOnce({
       ok: false,

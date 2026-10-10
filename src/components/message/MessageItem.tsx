@@ -96,6 +96,7 @@ interface MessageItemProps {
   onRedactMessage?: (message: MessageType) => void;
   hideReply?: boolean;
   isHighlighted?: boolean;
+  isSearchHit?: boolean;
 }
 
 // Helper function to get user metadata
@@ -179,6 +180,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     onRedactMessage,
     hideReply,
     isHighlighted,
+    isSearchHit,
   } = props;
   const { t } = useLingui();
   // channelId is null in DMs (drives avatar lookup); privateChatId is the message store key.
@@ -790,7 +792,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
         showHeader ? "mt-4" : "py-0.5"
       }${isAimedAtUs ? " message-aimed-at-us" : ""}${
         isHighlighted ? " bg-primary/10 ring-1 ring-primary/30 rounded" : ""
-      }${
+      }${isSearchHit ? " search-hit" : ""}${
         isUnprotected
           ? " border-l-2 border-amber-500/70 bg-amber-500/[0.06]"
           : isUndecryptable

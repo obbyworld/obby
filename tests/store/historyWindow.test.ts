@@ -144,7 +144,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     await w.save(2000);
     await w.showNewest();
 
-    expect(await w.jumpTo(30)).toEqual({ ok: true });
+    expect(await w.jumpTo(30)).toMatchObject({ ok: true });
 
     expect(w.shown()).toEqual(ids(0, 80));
     expect(w.jumpedTo()).toBe("m30");
@@ -288,7 +288,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     await w.showNewest();
 
     const deepJump = w.jumpTo(30);
-    expect(await w.jumpTo(250)).toEqual({ ok: true });
+    expect(await w.jumpTo(250)).toMatchObject({ ok: true });
     await deepJump;
 
     expect(w.window()).toBeUndefined();
@@ -363,7 +363,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
       messages: { [KEY]: state.messages[KEY].slice(-20) },
     }));
 
-    expect(await w.jumpTo(360)).toEqual({ ok: true });
+    expect(await w.jumpTo(360)).toMatchObject({ ok: true });
 
     expect(w.window()).toBeUndefined();
     expect(w.shown()).toEqual(ids(311, 399));
@@ -376,7 +376,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     await w.showNewest();
     await w.jumpTo(50);
 
-    expect(await w.jumpTo(290)).toEqual({ ok: true });
+    expect(await w.jumpTo(290)).toMatchObject({ ok: true });
 
     expect(w.window()).toBeUndefined();
     expect(w.jumpedTo()).toBe("m290");
@@ -386,7 +386,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     const w = await boot();
     await w.save(200, "tester", "bob", "bob");
 
-    expect(await w.jumpTo(20, "bob", "bob")).toEqual({ ok: true });
+    expect(await w.jumpTo(20, "bob", "bob")).toMatchObject({ ok: true });
 
     expect(w.shown(PM_KEY)).toEqual(ids(0, 70));
     expect(w.window(PM_KEY)).toBeDefined();
@@ -400,7 +400,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     w.useStore.getState().updateGlobalSettings({ keepHistory: false });
 
     expect(await w.jumpTo(50)).toEqual({ ok: false, reason: "not-saved" });
-    expect(await w.jumpTo(250)).toEqual({ ok: true });
+    expect(await w.jumpTo(250)).toMatchObject({ ok: true });
   });
 
   it("drops the newest end when older rows pass the cap and keeps it as the present", async () => {

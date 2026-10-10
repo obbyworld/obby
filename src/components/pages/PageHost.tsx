@@ -53,6 +53,13 @@ function renderPage(page: AppPage) {
   }
 }
 
+// A sub-page of Settings returns to the section that links to it.
+export function parentPageOf(page: AppPage): AppPage | null {
+  return page.kind === "twoFactor" || page.kind === "emojiPacks"
+    ? { kind: "settings", section: "account" }
+    : null;
+}
+
 // Sections and highlights move within one page; another server or channel is a
 // fresh page, so no draft from the previous one can be saved onto it.
 function pageInstanceKey(page: AppPage): string {

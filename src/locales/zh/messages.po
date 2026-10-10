@@ -4550,6 +4550,7 @@ msgstr "滚动到底部"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "搜索"
 
@@ -4584,6 +4585,8 @@ msgid "Search GIFs..."
 msgstr "搜索 GIF..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "搜索消息"
 

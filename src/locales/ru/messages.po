@@ -4550,6 +4550,7 @@ msgstr "Прокрутить вниз"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Поиск"
 
@@ -4584,6 +4585,8 @@ msgid "Search GIFs..."
 msgstr "Поиск GIF..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Искать в сообщениях"
 

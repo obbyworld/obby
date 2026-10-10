@@ -307,7 +307,9 @@ const QuickActions: React.FC = () => {
                   : undefined
             }
             aria-label={inputLabel}
-            placeholder={inputLabel}
+            placeholder={
+              isSheet ? (isGoto ? t`Search` : t`Search messages`) : inputLabel
+            }
             enterKeyHint="search"
             {...draft.inputProps}
             onKeyDown={handleInputKeyDown}

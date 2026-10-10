@@ -18,7 +18,7 @@ import {
 import useStore, { loadSavedServers } from "../../store";
 import { PageShell } from "../ui/page/PageShell";
 import { SettingGroup, SettingRow } from "../ui/page/SettingRow";
-import type { PageProps } from "./PageHost";
+import { type PageProps, parentPageOf } from "./PageHost";
 
 function decodeChallenge(blob: string): unknown {
   try {
@@ -268,7 +268,7 @@ const TwoFactorPage: React.FC<PageProps<"twoFactor">> = ({ page }) => {
       title={t`Two-factor authentication`}
       back={{
         label: t`Back to Settings`,
-        onBack: () => openPage({ kind: "settings", section: "account" }),
+        onBack: () => openPage(parentPageOf(page) ?? { kind: "settings" }),
       }}
     >
       <SettingGroup>

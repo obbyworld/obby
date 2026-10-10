@@ -107,8 +107,9 @@ const HitRow = memo<{
   showNetwork: boolean;
   pattern: RegExp | null;
   locale: string;
+  isOpened: boolean;
   onOpen: (hit: SearchHit) => void;
-}>(({ hit, server, showNetwork, pattern, locale, onOpen }) => {
+}>(({ hit, server, showNetwork, pattern, locale, isOpened, onOpen }) => {
   const chat = chatLabel(server, hit.target);
   const where = showNetwork && server ? `${chat} · ${server.name}` : chat;
   const { shown, ranges } = snippetOf(hit.text, pattern);
@@ -117,7 +118,8 @@ const HitRow = memo<{
       <button
         type="button"
         onClick={() => onOpen(hit)}
-        className={"row-interactive items-start py-2"}
+        aria-current={isOpened || undefined}
+        className={`row-interactive items-start py-2 ${isOpened ? "search-hit" : ""}`}
       >
         <MessageAvatar
           userId={hit.nick}
@@ -291,7 +293,9 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     if (!isTouch) requestChatInputFocus();
   };
 
+  const [openedHit, setOpenedHit] = useState<SearchHit | null>(null);
   const openHit = useCallback(async (hit: SearchHit) => {
+    setOpenedHit(hit);
     const result = await jumpToMessage(hit).catch(
       (error: unknown): JumpResult => {
         if (!(error instanceof DOMException)) throw error;
@@ -300,7 +304,9 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     );
     // A failed jump may already have selected the chat, so we bring the
     // results back where both cannot show at once.
-    useStore.getState().setSearchChatShown(result.ok);
+    useStore
+      .getState()
+      .setSearchChatShown(result.ok, result.ok ? result.messageId : undefined);
     if (!result.ok) reportJumpFailure(hit.serverId, result.reason);
   }, []);
 
@@ -390,7 +396,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
               : undefined
           }
           aria-label={inputLabel}
-          placeholder={inputLabel}
+          placeholder={isLarge ? t`Search messages` : inputLabel}
           enterKeyHint="search"
           {...draft.inputProps}
           onFocus={() => setIsInputFocused(true)}
@@ -492,6 +498,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
                 showNetwork={shownQuery.scope.kind === "everywhere"}
                 pattern={pattern}
                 locale={i18n.locale}
+                isOpened={hit === openedHit}
                 onOpen={openHit}
               />,
             ])}
