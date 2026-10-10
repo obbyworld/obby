@@ -22,6 +22,7 @@ import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
+import { whenHistoryIdle } from "./lib/history/historyDb";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isTauri } from "./lib/platformUtils";
@@ -279,6 +280,18 @@ const App: React.FC = () => {
     isAddServerModalOpen,
     toggleAddServerModal,
   ]);
+
+  // With the server list hidden, removing the only server leaves nothing to
+  // pick, so we reload into the welcome prompt once its saved history is
+  // deleted or parked.
+  const hasServers = useStore((state) => state.servers.length > 0);
+  const hadServersRef = useRef(false);
+  useEffect(() => {
+    if (!__HIDE_SERVER_LIST__) return;
+    if (hasServers) hadServersRef.current = true;
+    else if (hadServersRef.current)
+      void whenHistoryIdle().then(() => window.location.reload());
+  }, [hasServers]);
 
   // Handle deeplinks
   useEffect(() => {
