@@ -79,6 +79,7 @@ interface ChannelMessageListProps {
   onOpenProfile: (username: string) => void;
   joinChannel: (serverId: string, channelName: string) => void;
   highlightedMessageId?: string;
+  searchHitMessageId?: string;
   // undefined = first visit; null = was at bottom; object = restore to saved position
   initialScrollState?: { scrollTop: number; visibleCount: number } | null;
 }
@@ -106,6 +107,7 @@ export const ChannelMessageList = forwardRef<
       onOpenProfile,
       joinChannel,
       highlightedMessageId,
+      searchHitMessageId,
       initialScrollState,
     },
     ref,
@@ -669,6 +671,7 @@ export const ChannelMessageList = forwardRef<
                     showHeader={showHeader}
                     setReplyTo={onReply}
                     isHighlighted={message.id === highlightedMessageId}
+                    isSearchHit={message.id === searchHitMessageId}
                     onUsernameContextMenu={onUsernameContextMenu}
                     onIrcLinkClick={onIrcLinkClick}
                     onReactClick={onReactClick}

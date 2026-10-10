@@ -1054,7 +1054,7 @@ export interface AppState {
     options?: { isLive?: boolean; isPaneKept?: boolean },
   ) => void;
   closeSearchResults: () => void;
-  setSearchChatShown: (isChatShown: boolean) => void;
+  setSearchChatShown: (isChatShown: boolean, hitMessageId?: string) => void;
   // Selects the joined channel or the private chat with this nick, opening it
   // when needed, and returns its id.
   openChat: (serverId: string, target: string) => string | null;
@@ -3647,7 +3647,7 @@ const useStore = create<AppState>((set, get) => ({
     );
   },
 
-  setSearchChatShown: (isChatShown) => {
+  setSearchChatShown: (isChatShown, hitMessageId) => {
     set((state) => {
       const { sidePane, selectedServerId, perServerSelections, isNarrowView } =
         state.ui;
@@ -3664,6 +3664,7 @@ const useStore = create<AppState>((set, get) => ({
             ...sidePane,
             isChatShown,
             hitChatId: isChatShown ? (chatId ?? undefined) : sidePane.hitChatId,
+            hitMessageId: hitMessageId ?? sidePane.hitMessageId,
           },
           mobileViewActiveColumn: isNarrowView
             ? isChatShown

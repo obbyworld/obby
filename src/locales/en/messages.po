@@ -4549,6 +4549,7 @@ msgstr "Scroll to bottom"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Search"
 
@@ -4583,6 +4584,8 @@ msgid "Search GIFs..."
 msgstr "Search GIFs..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Search messages"
 

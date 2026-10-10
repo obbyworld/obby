@@ -1,8 +1,10 @@
 import { t } from "@lingui/core/macro";
 import type React from "react";
 import {
+  createContext,
   type ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -11,6 +13,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useIsTouchInput } from "../../../hooks/useIsTouchInput";
 import { flashHighlight, highlightRow } from "../../../lib/highlightRow";
 import useStore from "../../../store";
+import SwipeBackScreen from "../../layout/SwipeBackScreen";
 
 export interface PageSection {
   id: string;
@@ -39,6 +42,10 @@ interface PageShellProps {
 }
 
 let pageBack: (() => void) | null = null;
+
+// A page drawn under a swiped page is only a picture of where back leads, so
+// it must not take the back button, Escape or focus from the live one.
+export const PagePreviewContext = createContext(false);
 
 // Swipe back and the Android back button take the same step as the page's own
 // back button: a section returns to the section list before the page closes.
@@ -128,6 +135,7 @@ export const PageShell: React.FC<PageShellProps> = ({
     onBackRef.current();
   }, []);
   const isTouch = useIsTouchInput();
+  const isPreview = useContext(PagePreviewContext);
   const rootRef = useRef<HTMLDivElement>(null);
   const isNarrow = useStore((s) => s.ui.isNarrowView);
   const chatBackLabel = useBackLabel();
@@ -143,6 +151,7 @@ export const PageShell: React.FC<PageShellProps> = ({
   }, [highlight]);
 
   useEffect(() => {
+    if (isPreview) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || e.defaultPrevented) return;
       if (document.querySelector("[aria-modal='true'], [data-popover-panel]"))
@@ -157,16 +166,16 @@ export const PageShell: React.FC<PageShellProps> = ({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [closePage]);
+  }, [closePage, isPreview]);
 
   // We move focus into the page for keyboard and screen reader users; touch
   // skips it so the page opens without raising the keyboard.
   useEffect(() => {
-    if (!isTouch)
+    if (!isTouch && !isPreview)
       rootRef.current
         ?.querySelector<HTMLElement>("h1")
         ?.focus({ preventScroll: true });
-  }, [isTouch]);
+  }, [isTouch, isPreview]);
 
   const page = useStore((s) => s.ui.page);
   const jumpedSection =
@@ -187,11 +196,12 @@ export const PageShell: React.FC<PageShellProps> = ({
   const showSectionList = useCallback(() => setIsShowingSectionList(true), []);
   const stepBack = isInSection ? showSectionList : closePage;
   useEffect(() => {
+    if (isPreview) return;
     pageBack = stepBack;
     return () => {
       if (pageBack === stepBack) pageBack = null;
     };
-  }, [stepBack]);
+  }, [stepBack, isPreview]);
   const sectionTitle =
     sections?.find((s) => s.id === activeSection)?.label ?? title;
 
@@ -242,50 +252,49 @@ export const PageShell: React.FC<PageShellProps> = ({
   );
 
   if (isNarrow) {
-    if (hasSections && isShowingSectionList) {
-      return (
-        <div
-          ref={rootRef}
-          className="flex flex-col h-full min-h-0 bg-discord-dark-200"
-        >
-          {header(backButton(backLabel, closePage), title)}
-          <div className="flex-1 min-h-0 overflow-y-auto px-3 py-4">
-            {navExtra && <div className="mb-3">{navExtra}</div>}
-            <div className="page-card">
-              {sections?.map((section) => (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => {
-                    onSectionChange?.(section.id);
-                    setIsShowingSectionList(false);
-                  }}
-                  className="w-full min-h-14 flex items-center gap-3 px-3 py-3 text-left active:bg-discord-dark-400/50"
-                >
-                  {section.icon && (
-                    <span className="w-5 flex justify-center text-discord-text-muted">
-                      {section.icon}
+    const sectionList = (
+      <div
+        ref={isShowingSectionList ? rootRef : undefined}
+        className="flex flex-col h-full min-h-0 bg-discord-dark-200"
+      >
+        {header(backButton(backLabel, closePage), title)}
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-4">
+          {navExtra && <div className="mb-3">{navExtra}</div>}
+          <div className="page-card">
+            {sections?.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => {
+                  onSectionChange?.(section.id);
+                  setIsShowingSectionList(false);
+                }}
+                className="w-full min-h-14 flex items-center gap-3 px-3 py-3 text-left active:bg-discord-dark-400/50"
+              >
+                {section.icon && (
+                  <span className="w-5 flex justify-center text-discord-text-muted">
+                    {section.icon}
+                  </span>
+                )}
+                <span className="flex-1 min-w-0 flex flex-col">
+                  <span className="text-[15px] text-white">
+                    {section.label}
+                  </span>
+                  {section.description && (
+                    <span className="text-[13px] text-discord-text-muted truncate">
+                      {section.description}
                     </span>
                   )}
-                  <span className="flex-1 min-w-0 flex flex-col">
-                    <span className="text-[15px] text-white">
-                      {section.label}
-                    </span>
-                    {section.description && (
-                      <span className="text-[13px] text-discord-text-muted truncate">
-                        {section.description}
-                      </span>
-                    )}
-                  </span>
-                  <FaChevronRight className="w-3 h-3 text-discord-text-muted" />
-                </button>
-              ))}
-            </div>
+                </span>
+                <FaChevronRight className="w-3 h-3 text-discord-text-muted" />
+              </button>
+            ))}
           </div>
         </div>
-      );
-    }
-    return (
+      </div>
+    );
+    if (hasSections && isShowingSectionList) return sectionList;
+    const screen = (
       <div
         ref={rootRef}
         className="flex flex-col h-full min-h-0 bg-discord-dark-200"
@@ -296,6 +305,13 @@ export const PageShell: React.FC<PageShellProps> = ({
         )}
         {body}
       </div>
+    );
+    return hasSections && !isPreview ? (
+      <SwipeBackScreen under={sectionList} onBack={showSectionList}>
+        {screen}
+      </SwipeBackScreen>
+    ) : (
+      screen
     );
   }
 

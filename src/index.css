@@ -121,8 +121,14 @@
   .modal-sheet .modal-footer > button {
     @apply h-11 w-full;
   }
+  /* Mention rows already draw their bar with box-shadow, so we mark hits with an outline. */
+  .search-hit {
+    @apply rounded-lg outline outline-1 -outline-offset-1 outline-yellow-400/70;
+    background-color: rgb(250 204 21 / 0.1) !important;
+  }
   .jump-highlight {
-    @apply bg-yellow-400/20 ring-2 ring-yellow-400 rounded-lg;
+    @apply rounded-lg outline outline-2 -outline-offset-2 outline-yellow-400;
+    background-color: rgb(250 204 21 / 0.2) !important;
     animation: blink 0.5s ease-in-out 1;
   }
   @media (prefers-reduced-motion: reduce) {

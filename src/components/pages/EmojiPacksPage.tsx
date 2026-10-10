@@ -18,7 +18,7 @@ import { Button } from "../../lib/modal/components";
 import useStore from "../../store";
 import { PageShell } from "../ui/page/PageShell";
 import { SettingGroup, SettingRow } from "../ui/page/SettingRow";
-import type { PageProps } from "./PageHost";
+import { type PageProps, parentPageOf } from "./PageHost";
 
 interface ExpandedPackEmoji {
   shortcode: string;
@@ -280,7 +280,7 @@ const EmojiPacksPage: React.FC<PageProps<"emojiPacks">> = ({ page }) => {
       wide
       back={{
         label: t`Back to Settings`,
-        onBack: () => openPage({ kind: "settings", section: "account" }),
+        onBack: () => openPage(parentPageOf(page) ?? { kind: "settings" }),
       }}
       headerActions={
         <Button

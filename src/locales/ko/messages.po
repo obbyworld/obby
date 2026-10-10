@@ -4550,6 +4550,7 @@ msgstr "맨 아래로 스크롤"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "검색"
 
@@ -4584,6 +4585,8 @@ msgid "Search GIFs..."
 msgstr "GIF 검색..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "메시지 검색"
 

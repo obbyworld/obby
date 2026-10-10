@@ -659,6 +659,11 @@ export const ChatArea: React.FC<{
   }, [selectedFormatting, isFormattingInitialized]);
 
   const homeView = useStore((state) => state.ui.homeView);
+  const searchHitMessageId = useStore((state) =>
+    state.ui.sidePane?.kind === "search"
+      ? state.ui.sidePane.hitMessageId
+      : undefined,
+  );
 
   // Get selected server and channel/private chat - memoized to prevent re-renders
   const selectedServer = useMemo(
@@ -2197,6 +2202,9 @@ export const ChatArea: React.FC<{
                         isKeyActive
                           ? (navHighlightedMsgId ?? undefined)
                           : undefined
+                      }
+                      searchHitMessageId={
+                        isKeyActive ? searchHitMessageId : undefined
                       }
                       onUsernameContextMenu={handleUsernameClick}
                       onIrcLinkClick={handleIrcLinkClick}

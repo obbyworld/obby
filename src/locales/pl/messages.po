@@ -4550,6 +4550,7 @@ msgstr "Przewiń na dół"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Szukaj"
 
@@ -4584,6 +4585,8 @@ msgid "Search GIFs..."
 msgstr "Szukaj GIFów..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Szukaj w wiadomościach"
 
