@@ -921,6 +921,10 @@ msgstr "ボット"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "ボットビルダー"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Bot コマンド"
@@ -955,6 +959,11 @@ msgstr "ブラウザーが WebAuthn を提供していません"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "ブラウザは、マイクまたはカメラへのアクセスを許可するまでスピーカーを表示しません。何も録音されません。"
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "作者: {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "チャンネルのプロパティ"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "チャンネル設定"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "チャンネル統計"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "ワークフローを閉じる"
 msgid "Code accepted."
 msgstr "コードを確認しました。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "コードスニペット"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "カラー"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "カラーと書式設定"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "近日公開"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "説明（任意、例：「Q3ベータテスター」）"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "説明 (任意)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "自分だけの配色を作ってテーマとして共有しましょう。"
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "アカウント名を入力してください。登録済みの確認済
 msgid "esc to close"
 msgstr "esc で閉じる"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "イベントプランナー"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "イベント"
@@ -2464,6 +2493,10 @@ msgstr "一般"
 msgid "General Support Channel"
 msgstr "一般サポートチャンネル"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "フォロー中の言葉が発言されたら通知を受け取りましょう。"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "メッセージを取得中..."
@@ -2645,6 +2678,10 @@ msgstr "入力"
 msgid "Insert emoji"
 msgstr "絵文字を挿入"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "インストール"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "無効な形式"
@@ -2810,6 +2847,10 @@ msgstr "認証情報を保持"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "全員が退出した後もチャンネルを保持します。IRCop のみ設定できます。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "キーワード通知"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "{0} でリンク"
 msgid "Live"
 msgstr "ライブ"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "ライブ翻訳"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "このデバイスに保存された過去のメッセージを読み込む"
@@ -2993,6 +3038,10 @@ msgstr "リンクセキュリティが低い（レベル {securityLevel}）"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "挙手を下げる"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "コード不要で、コマンドに応答する簡単なボットを作りましょう。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "OPER の認証情報はまだありません。名前とパスワード�
 msgid "No packs yet. Create one to start."
 msgstr "パックはまだありません。作成して始めてください。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "プラグインが見つかりません。"
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "生のIRCトラフィックはまだキャプチャされていません。接続するかメッセージを送信してみてください。"
@@ -3856,6 +3909,10 @@ msgstr "パスワードを更新しました。ログインできます。"
 msgid "Passwords don't match."
 msgstr "パスワードが一致しません。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "構文ハイライトと行番号付きでコードを貼り付けましょう。"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "パターンはすでに存在します"
@@ -3978,6 +4035,11 @@ msgstr "ユーザー名を入力してください"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "しばらくお待ちください..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "プラグイン"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "このメッセージにリアクションしました"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "すべて読む"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "すべてのメッセージを自分の言語で読みましょう。"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "保存中..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "認証アプリでこの QR コードをスキャンし、表示される 6 桁のコードで確認してください。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "集まりを予定し、開始前にチャンネルへリマインドしましょう。"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "チャットをこの応答までスクロール"
@@ -4529,6 +4599,10 @@ msgstr "メッセージを検索、from: in: has:link で絞り込み"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "ほかのチャットも検索"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "プラグインを検索..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "サーバー通知を見る"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "視聴者を見る"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "誰が一番発言しているか、いつチャンネルが活発かを確認しましょう。"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "サーバーが参加を拒否しました。チャンネルモードを
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "ユーザーは {channelName} への参加招待を受け取ります。"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "テーマスタジオ"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

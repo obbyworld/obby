@@ -921,6 +921,10 @@ msgstr "机器人"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "机器人构建器"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "机器人命令"
@@ -955,6 +959,11 @@ msgstr "浏览器未提供 WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "浏览器只有在您允许访问麦克风或摄像头后，才会显示您的扬声器。不会录制任何内容。"
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "作者：{0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "频道属性"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "频道设置"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "频道统计"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "关闭工作流"
 msgid "Code accepted."
 msgstr "代码已接受。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "代码片段"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "颜色"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "颜色与格式"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "即将推出"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "描述（可选）"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "设计你自己的配色并作为主题分享。"
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "输入你的账户名称。我们会将 6 位恢复码发送到已验证
 msgid "esc to close"
 msgstr "esc 关闭"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "活动策划"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "事件"
@@ -2464,6 +2493,10 @@ msgstr "常规"
 msgid "General Support Channel"
 msgstr "通用支持频道"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "有人说出你关注的词时收到通知。"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "正在加载更多消息..."
@@ -2645,6 +2678,10 @@ msgstr "输入"
 msgid "Insert emoji"
 msgstr "插入表情"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "安装"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "格式无效"
@@ -2810,6 +2847,10 @@ msgstr "保留凭据"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "所有人离开后保留频道。只有 IRCop 可以设置。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "关键词提醒"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "通过 {0} 关联"
 msgid "Live"
 msgstr "直播中"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "实时翻译"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "加载保存在此设备上的更早消息"
@@ -2993,6 +3038,10 @@ msgstr "链路安全级别较低（级别 {securityLevel}）"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "放下手"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "无需代码，创建能响应命令的简单机器人。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "尚无 OPER 凭据。请输入名称和密码。"
 msgid "No packs yet. Create one to start."
 msgstr "暂无表情包。创建一个即可开始。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "未找到插件。"
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "尚未捕获任何原始 IRC 流量。请尝试连接或发送消息。"
@@ -3856,6 +3909,10 @@ msgstr "密码已更新。现在可以登录。"
 msgid "Passwords don't match."
 msgstr "两次输入的密码不一致。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "粘贴带语法高亮和行号的代码。"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "模式已存在"
@@ -3978,6 +4035,11 @@ msgstr "请输入用户名"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "请稍候..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "插件"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "对此消息做出了回应"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "阅读全部"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "用你自己的语言阅读每条消息。"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "正在保存..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "用验证器应用扫描此二维码，然后输入它显示的 6 位验证码确认。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "安排聚会并在开始前提醒频道。"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "将聊天滚动到此回复"
@@ -4529,6 +4599,10 @@ msgstr "搜索消息，可用 from: in: has:link 筛选"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "搜索更多聊天"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "搜索插件..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "查看服务器通知"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "查看观众"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "查看谁发言最多以及频道何时最活跃。"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "服务器拒绝了你的加入。请检查频道模式后重试。"
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "用户将收到加入 {channelName} 的邀请。"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "主题工作室"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

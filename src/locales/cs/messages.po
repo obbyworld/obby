@@ -921,6 +921,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Tvůrce botů"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Příkazy bota"
@@ -955,6 +959,11 @@ msgstr "Prohlížeč nepodporuje WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Prohlížeče zobrazí vaše reproduktory, teprve až povolíte přístup k mikrofonu nebo kameře. Nic se nenahrává."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "od {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "Vlastnosti kanálu"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "Nastavení kanálu"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Statistiky kanálu"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "Zavřít workflow"
 msgid "Code accepted."
 msgstr "Kód přijat."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Úryvky kódu"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "Barva"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Barva a formátování"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Již brzy"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "Popis (volitelné, např. \"Beta testeři Q3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Popis (volitelné)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Navrhněte vlastní barvy a sdílejte je jako motivy."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "Zadejte název svého účtu. Pošleme 6místný kód pro obnovení na o
 msgid "esc to close"
 msgstr "esc pro zavření"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Plánovač akcí"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Události"
@@ -2464,6 +2493,10 @@ msgstr "Obecné"
 msgid "General Support Channel"
 msgstr "Obecný podpůrný kanál"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Dostávejte upozornění, když někdo napíše sledovaná slova."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "Načítám více zpráv..."
@@ -2645,6 +2678,10 @@ msgstr "Vstup"
 msgid "Insert emoji"
 msgstr "Vložit emoji"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Instalovat"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Neplatný formát"
@@ -2810,6 +2847,10 @@ msgstr "Ponechat údaje"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Ponechat kanál, i když ho všichni opustí. Může to nastavit jen IRCop."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Upozornění na klíčová slova"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "Propojit s {0}"
 msgid "Live"
 msgstr "Živě"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Živý překlad"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Načíst dřívější zprávy uložené v tomto zařízení"
@@ -2993,6 +3038,10 @@ msgstr "Nízká bezpečnost připojení (Úroveň {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Sundat ruku"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Vytvářejte jednoduché boty, kteří odpovídají na příkazy, bez kódu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "Zatím žádné přihlašovací údaje OPER. Zadejte jméno a heslo."
 msgid "No packs yet. Create one to start."
 msgstr "Zatím žádné balíčky. Vytvořte první."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Žádné pluginy nenalezeny."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Zatím nebyl zachycen žádný surový IRC provoz. Zkuste se připojit nebo odeslat zprávu."
@@ -3856,6 +3909,10 @@ msgstr "Heslo změněno. Nyní se můžete přihlásit."
 msgid "Passwords don't match."
 msgstr "Hesla se neshodují."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Vkládejte kód se zvýrazněním syntaxe a čísly řádků."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Vzor již existuje"
@@ -3978,6 +4035,11 @@ msgstr "Zadejte prosím uživatelské jméno"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Prosím čekejte..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Pluginy"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "reagoval na tuto zprávu"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Přečíst vše"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Čtěte každou zprávu ve svém jazyce."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "Ukládám..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Naskenujte tento QR kód svou autentizační aplikací a potvrďte 6místným kódem, který zobrazí."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Naplánujte setkání a připomeňte je kanálu předem."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Přejít v chatu na tuto odpověď"
@@ -4529,6 +4599,10 @@ msgstr "Hledejte ve zprávách, filtrujte pomocí from: in: has:link"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "Prohledat více chatů"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Hledat pluginy..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "Zobrazit oznámení serveru"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Zobrazit diváky"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Podívejte se, kdo píše nejvíc a kdy je kanál nejrušnější."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "Server odmítl vaše připojení. Zkontrolujte režimy kanálu a zkuste 
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Studio motivů"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

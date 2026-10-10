@@ -921,6 +921,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Bot Oluşturucu"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Bot Komutları"
@@ -955,6 +959,11 @@ msgstr "Tarayıcı WebAuthn sunmuyor"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Tarayıcılar, mikrofon veya kameraya erişime izin verene kadar hoparlörlerinizi göstermez. Hiçbir şey kaydedilmez."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "{0} tarafından"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "Kanal özellikleri"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "Kanal ayarları"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Kanal İstatistikleri"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "İş akışını kapat"
 msgid "Code accepted."
 msgstr "Kod kabul edildi."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Kod Parçacıkları"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "Renk"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Renk ve Biçimlendirme"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Çok yakında"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "Açıklama (isteğe bağlı, örn. \"Beta test ekibi Ç3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Açıklama (isteğe bağlı)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Kendi renklerini tasarla ve tema olarak paylaş."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "Hesap adınızı girin. Kayıtlı doğrulanmış adrese 6 haneli bir kur
 msgid "esc to close"
 msgstr "kapatmak için esc"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Etkinlik Planlayıcı"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Olaylar"
@@ -2464,6 +2493,10 @@ msgstr "Genel"
 msgid "General Support Channel"
 msgstr "Genel Destek Kanalı"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Biri takip ettiğin kelimeleri söylediğinde bildirim al."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "Daha fazla mesaj alınıyor..."
@@ -2645,6 +2678,10 @@ msgstr "Girdi"
 msgid "Insert emoji"
 msgstr "Emoji ekle"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Yükle"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Geçersiz biçim"
@@ -2810,6 +2847,10 @@ msgstr "Kimlik bilgilerini sakla"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Herkes ayrıldıktan sonra kanalı koru. Bunu yalnızca IRCops ayarlayabilir."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Anahtar Kelime Uyarıları"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "{0} ile bağla"
 msgid "Live"
 msgstr "Canlı"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Canlı Çeviri"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Bu cihazda kayıtlı önceki mesajları yükle"
@@ -2993,6 +3038,10 @@ msgstr "Düşük Bağlantı Güvenliği (Seviye {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Eli indir"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Kod yazmadan komutlara yanıt veren basit botlar yap."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "Henüz operatör kimlik bilgisi yok. Bir ad ve parola girin."
 msgid "No packs yet. Create one to start."
 msgstr "Henüz paket yok. Başlamak için bir tane oluşturun."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Eklenti bulunamadı."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Henüz ham IRC trafiği yakalanmadı. Bağlanmayı veya bir mesaj göndermeyi deneyin."
@@ -3856,6 +3909,10 @@ msgstr "Parola güncellendi. Artık giriş yapabilirsiniz."
 msgid "Passwords don't match."
 msgstr "Parolalar eşleşmiyor."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Sözdizimi vurgulama ve satır numaralarıyla kod yapıştır."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Desen zaten mevcut"
@@ -3978,6 +4035,11 @@ msgstr "Lütfen bir kullanıcı adı girin"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Lütfen bekleyin..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Eklentiler"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "bu mesaja tepki verdi"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Hepsini oku"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Her mesajı kendi dilinde oku."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "Kaydediliyor..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Bu QR kodunu kimlik doğrulayıcı uygulamanızla tarayın, ardından gösterdiği 6 haneli kodla onaylayın."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Buluşmaları planla ve başlamadan önce kanala hatırlat."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Sohbeti bu yanıta kaydır"
@@ -4529,6 +4599,10 @@ msgstr "Mesajlarda ara, from: in: has:link ile filtrele"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "Daha fazla sohbette ara"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Eklenti ara..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "Sunucu bildirimlerini gör"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "İzleyicileri gör"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "En çok kimin konuştuğunu ve kanalının ne zaman yoğun olduğunu gör."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "Sunucu katılımınızı reddetti. Kanal modlarını kontrol edip tekrar
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Tema Stüdyosu"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

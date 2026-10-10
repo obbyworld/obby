@@ -921,6 +921,10 @@ msgstr "Бот"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Конструктор ботів"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Команди бота"
@@ -955,6 +959,11 @@ msgstr "Браузер не надає WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Браузери показують ваші динаміки лише після того, як ви дозволите доступ до мікрофона або камери. Нічого не записується."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "автор: {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "Властивості каналу"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "Налаштування каналу"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Статистика каналу"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "Закрити робочий процес"
 msgid "Code accepted."
 msgstr "Код прийнято."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Фрагменти коду"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "Колір"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Колір і форматування"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Незабаром"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "Опис (необов'язково, напр. \"Бета-тестува
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Опис (необов'язково)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Створюйте власні кольори та діліться ними як темами."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "Введіть назву свого акаунта. Ми надішле
 msgid "esc to close"
 msgstr "esc закрити"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Планувальник подій"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Події"
@@ -2464,6 +2493,10 @@ msgstr "Загальне"
 msgid "General Support Channel"
 msgstr "Загальний канал підтримки"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Отримуйте сповіщення, коли хтось пише відстежувані слова."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "Отримання більше повідомлень..."
@@ -2645,6 +2678,10 @@ msgstr "Введення"
 msgid "Insert emoji"
 msgstr "Вставити емодзі"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Встановити"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Недійсний формат"
@@ -2810,6 +2847,10 @@ msgstr "Зберегти облікові дані"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Зберігайте канал, коли всі його покинуть. Це можуть встановити лише IRCop-и."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Сповіщення за ключовими словами"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "Прив'язати через {0}"
 msgid "Live"
 msgstr "В ефірі"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Живий переклад"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Завантажити раніші повідомлення, збережені на цьому пристрої"
@@ -2993,6 +3038,10 @@ msgstr "Низький рівень безпеки з'єднання (Рівен
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Опустити руку"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Створюйте прості боти, що відповідають на команди, без коду."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "Облікових даних оператора ще немає. Вве
 msgid "No packs yet. Create one to start."
 msgstr "Пакетів ще немає. Створіть перший, щоб почати."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Плагінів не знайдено."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Сирий IRC-трафік ще не зафіксовано. Спробуйте підключитися або надіслати повідомлення."
@@ -3856,6 +3909,10 @@ msgstr "Пароль оновлено. Тепер можна увійти."
 msgid "Passwords don't match."
 msgstr "Паролі не збігаються."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Вставляйте код із підсвічуванням синтаксису та номерами рядків."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Шаблон вже існує"
@@ -3978,6 +4035,11 @@ msgstr "Будь ласка, введіть ім'я користувача"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Будь ласка, зачекайте..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Плагіни"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "відреагував на це повідомлення"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Прочитати все"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Читайте кожне повідомлення своєю мовою."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "Збереження..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Скануйте цей QR-код застосунком-автентифікатором, потім підтвердьте 6-значним кодом, який він покаже."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Плануйте зустрічі й нагадуйте про них каналу заздалегідь."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Прокрутити чат до цієї відповіді"
@@ -4529,6 +4599,10 @@ msgstr "Шукайте в повідомленнях, фільтруйте че�
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "Шукати в інших чатах"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Шукати плагіни..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "Переглянути сповіщення сервера"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Переглянути глядачів"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Дивіться, хто пише найбільше і коли канал активний."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "Сервер відхилив ваш вхід. Перевірте реж
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Користувач отримає запрошення приєднатися до {channelName}."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Студія тем"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
