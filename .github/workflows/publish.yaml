@@ -317,6 +317,8 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          packages: platform-tools
 
       - name: Install NDK
         run: sdkmanager "ndk;27.0.11902837"
@@ -426,6 +428,8 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          packages: platform-tools
 
       - name: Install NDK
         run: sdkmanager "ndk;27.0.11902837"
@@ -596,7 +600,7 @@ jobs:
       - name: Start Tauri iOS build with WS server
         run: |
           npm run tauri ios build -- --open &
-          ADDR_FILE="${TMPDIR%/}/com.obsidianirc.dev-server-addr"
+          ADDR_FILE="src-tauri/gen/apple/.tauri/cli-options-server.json"
           echo "Waiting for $ADDR_FILE…"
           for i in $(seq 1 120); do
             [ -f "$ADDR_FILE" ] && { echo "Addr file ready after ${i}s"; break; }
