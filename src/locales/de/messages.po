@@ -2318,6 +2318,14 @@ msgstr "fehlgeschlagen"
 msgid "Failed to load audio"
 msgstr "Audio konnte nicht geladen werden"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Verpasste Nachrichten laden"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Verpasste Nachrichten werden geladen…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Datei nicht hochgeladen: die Verschlüsselung wird noch eingerichtet. Sie geht raus, sobald die Verschlüsselung aktiv ist, oder nachdem du sie beendet hast."

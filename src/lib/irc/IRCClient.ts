@@ -38,7 +38,7 @@ function generateDeterministicId(serverId: string, name: string): string {
 
 // Gap and load-more decisions read a short page as the end of server history,
 // so every request has to ask for the same page size.
-export const CHATHISTORY_PAGE_SIZE = 50;
+const CHATHISTORY_PAGE_SIZE = 50;
 
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
@@ -695,6 +695,7 @@ export class IRCClient implements IRCClientContext {
   /** ISUPPORT accumulator for draft/extended-isupport-0.2's `+=`
    *  append form.  See IRCClientContext for the contract. */
   isupportValues: Map<string, Map<string, string>> = new Map();
+  private diskOnlyBatches = new Set<string>();
   motdLines: Map<string, string[]> = new Map();
 
   private ourCaps: string[] = [
@@ -1371,10 +1372,10 @@ export class IRCClient implements IRCClientContext {
     channelName: string,
     beforeTimestamp: string,
     { showLoading = true }: { showLoading?: boolean } = {},
-  ): void {
+  ): boolean {
     const server = this.servers.get(serverId);
-    if (!server?.capabilities?.includes("draft/chathistory")) return;
-    if (server.isBouncerControl) return;
+    if (!server?.capabilities?.includes("draft/chathistory")) return false;
+    if (server.isBouncerControl) return false;
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
     // and restores scroll position once isLoadingHistory goes false (batch end).
@@ -1386,15 +1387,27 @@ export class IRCClient implements IRCClientContext {
       });
     this.sendRaw(
       serverId,
-      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} ${CHATHISTORY_PAGE_SIZE}`,
+      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} ${this.chathistoryPageSize(serverId)}`,
     );
+    return true;
   }
 
   requestChathistoryLatest(serverId: string, target: string): void {
     this.sendRaw(
       serverId,
-      `CHATHISTORY LATEST ${target} * ${CHATHISTORY_PAGE_SIZE}`,
+      `CHATHISTORY LATEST ${target} * ${this.chathistoryPageSize(serverId)}`,
     );
+  }
+
+  // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means
+  // they state none.
+  private chathistoryPageSize(serverId: string): number {
+    const advertised = Number(
+      this.isupportValues.get(serverId)?.get("CHATHISTORY"),
+    );
+    return advertised > 0
+      ? Math.min(CHATHISTORY_PAGE_SIZE, advertised)
+      : CHATHISTORY_PAGE_SIZE;
   }
 
   leaveChannel(serverId: string, channelName: string): void {
@@ -2029,7 +2042,9 @@ export class IRCClient implements IRCClientContext {
       }
 
       const handler = IRC_DISPATCH[command];
-      if (handler) {
+      if (mtags?.batch && this.isDiskOnlyBatch(serverId, mtags.batch)) {
+        if (command === "BATCH") this.trackNestedDiskOnlyBatch(serverId, parv);
+      } else if (handler) {
         handler(this, serverId, source, parv, mtags, trailing);
       }
       this.triggerEvent("parsedLine", {
@@ -2041,6 +2056,34 @@ export class IRCClient implements IRCClientContext {
         mtags,
       });
     }
+  }
+
+  // We save history pages fetched for search to disk only, so we pass the
+  // lines of their batches, and of nested batches, to the history recorder
+  // and keep them out of the chat handlers.
+  markDiskOnlyBatch(serverId: string, batchId: string): void {
+    this.diskOnlyBatches.add(`${serverId}\n${batchId}`);
+  }
+
+  endDiskOnlyBatch(serverId: string, batchId: string): boolean {
+    return this.diskOnlyBatches.delete(`${serverId}\n${batchId}`);
+  }
+
+  clearDiskOnlyBatches(serverId: string): void {
+    for (const key of this.diskOnlyBatches)
+      if (key.startsWith(`${serverId}\n`)) this.diskOnlyBatches.delete(key);
+  }
+
+  private isDiskOnlyBatch(serverId: string, batchId: string): boolean {
+    return this.diskOnlyBatches.has(`${serverId}\n${batchId}`);
+  }
+
+  private trackNestedDiskOnlyBatch(serverId: string, parv: string[]): void {
+    const reference = parv[0] ?? "";
+    if (reference.startsWith("+"))
+      this.markDiskOnlyBatch(serverId, reference.slice(1));
+    else if (reference.startsWith("-"))
+      this.endDiskOnlyBatch(serverId, reference.slice(1));
   }
 
   // Lines from local history go through the same parser and handlers as

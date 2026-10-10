@@ -2318,6 +2318,14 @@ msgstr "eșuat"
 msgid "Failed to load audio"
 msgstr "Eroare la încărcarea audio"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Preia mesajele ratate"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Se preiau mesajele ratate…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Fișierul nu a fost încărcat: criptarea încă se configurează. Va pleca odată ce criptarea este activă, sau după ce o închei."

@@ -353,6 +353,77 @@ describe("other tabs", () => {
   });
 });
 
+describe("upgrade from version 1", () => {
+  it("reopens gaps that version 1 marked lost", async () => {
+    await db.usageBytes();
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.deleteDatabase("obby-history");
+      request.onblocked = () => reject(new Error("blocked"));
+      request.onsuccess = () => resolve();
+    });
+    const older = await new Promise<IDBDatabase>((resolve, reject) => {
+      const open = indexedDB.open("obby-history", 1);
+      open.onupgradeneeded = () => {
+        const rows = open.result.createObjectStore("rows", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        rows.createIndex("conv", ["server", "target", "time"]);
+        rows.createIndex("dedupe", ["server", "target", "key"], {
+          unique: true,
+        });
+        rows.createIndex("time", "time");
+        rows.createIndex("server", "server");
+        rows.createIndex("ref", ["server", "ref"]);
+        rows.createIndex("msgid", ["server", "target", "msgid"]);
+        const gaps = open.result.createObjectStore("gaps", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        gaps.createIndex("conv", ["server", "target"]);
+        gaps.add({ server: "s1", target: "#a", from: 1, to: 2, lost: true });
+        open.result.createObjectStore("meta", { keyPath: "name" });
+      };
+      open.onsuccess = () => resolve(open.result);
+      open.onerror = () => reject(open.error);
+    });
+    older.close();
+
+    expect(await db.fillableGaps()).toEqual([
+      expect.objectContaining({ server: "s1", target: "#a", lost: false }),
+    ]);
+  });
+});
+
+describe("upgrade from version 2", () => {
+  it("reopens gaps that version 2 marked lost", async () => {
+    await db.usageBytes();
+    await new Promise<void>((resolve, reject) => {
+      const request = indexedDB.deleteDatabase("obby-history");
+      request.onblocked = () => reject(new Error("blocked"));
+      request.onsuccess = () => resolve();
+    });
+    const older = await new Promise<IDBDatabase>((resolve, reject) => {
+      const open = indexedDB.open("obby-history", 2);
+      open.onupgradeneeded = () => {
+        const gaps = open.result.createObjectStore("gaps", {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        gaps.createIndex("conv", ["server", "target"]);
+        gaps.add({ server: "s1", target: "#a", from: 1, to: 2, lost: true });
+      };
+      open.onsuccess = () => resolve(open.result);
+      open.onerror = () => reject(open.error);
+    });
+    older.close();
+
+    expect(await db.fillableGaps()).toEqual([
+      expect.objectContaining({ server: "s1", target: "#a", lost: false }),
+    ]);
+  });
+});
+
 describe("without indexedDB", () => {
   it("resolves to empty results", async () => {
     // biome-ignore lint/suspicious/noExplicitAny: removing the global for this case

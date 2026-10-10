@@ -2318,6 +2318,14 @@ msgstr "başarısız"
 msgid "Failed to load audio"
 msgstr "Ses yüklenemedi"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Kaçırılan mesajları getir"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Kaçırılan mesajlar getiriliyor…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Dosya yüklenmedi: şifreleme henüz kuruluyor. Şifreleme etkin olunca ya da şifrelemeyi bitirdikten sonra gidebilir."

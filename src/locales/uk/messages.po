@@ -2318,6 +2318,14 @@ msgstr "помилка"
 msgid "Failed to load audio"
 msgstr "Не вдалося завантажити аудіо"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Завантажити пропущені повідомлення"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Завантаження пропущених повідомлень…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Файл не завантажено: шифрування ще налаштовується. Він піде, щойно шифрування запрацює, або після його завершення."

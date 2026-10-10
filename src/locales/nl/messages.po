@@ -2318,6 +2318,14 @@ msgstr "mislukt"
 msgid "Failed to load audio"
 msgstr "Audio laden mislukt"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Gemiste berichten ophalen"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Gemiste berichten ophalen…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Bestand niet geüpload: de versleuteling wordt nog opgezet. Het kan weg zodra de versleuteling actief is, of nadat je die beëindigt."
