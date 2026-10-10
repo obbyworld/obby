@@ -691,6 +691,7 @@ msgstr "Demandez à l'administrateur du serveur de publier une URL backend (draf
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Mot de passe oublié"
 msgid "Forgot password?"
 msgstr "Mot de passe oublié ?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Mettre en forme le texte"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Membres"
 msgid "Members — {0}"
 msgstr "Membres — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Mentionner quelqu’un"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Pseudo"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Le pseudo '{nick}' est déjà utilisé, nouvel essai avec '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Le pseudo “{nick}” est déjà utilisé, nouvel essai avec “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Envoyer une action / emote"
 msgid "Send Invite"
 msgstr "Envoyer l'invitation"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Envoyer le message"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Envoyer un message"
@@ -5481,6 +5494,10 @@ msgstr "tronqué"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Sources de confiance"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Réessayer"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

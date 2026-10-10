@@ -1,46 +1,36 @@
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
-export function useMediaQuery(
-  query = "(max-width: 768px)",
-  debounceMs = 0,
-): boolean {
-  const getMatches = (q: string): boolean => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.matchMedia !== "function"
-    ) {
-      return false;
-    }
-    return window.matchMedia(q).matches;
-  };
+// Every message row asks the same few queries, so we share one list per query.
+const queryLists = new Map<string, MediaQueryList>();
+let listsMadeBy: typeof window.matchMedia | null = null;
 
-  const [matches, setMatches] = useState(() => getMatches(query));
+function queryList(query: string): MediaQueryList | null {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function")
+    return null;
+  if (listsMadeBy !== window.matchMedia) {
+    queryLists.clear();
+    listsMadeBy = window.matchMedia;
+  }
+  let list = queryLists.get(query);
+  if (!list) {
+    list = window.matchMedia(query);
+    queryLists.set(query, list);
+  }
+  return list;
+}
 
-  useEffect(() => {
-    if (
-      typeof window === "undefined" ||
-      typeof window.matchMedia !== "function"
-    ) {
-      return;
-    }
-    const mediaQuery = window.matchMedia(query);
-    setMatches(mediaQuery.matches);
-
-    let timeoutId: number | undefined;
-    const handler = (event: MediaQueryListEvent) => {
-      if (timeoutId) clearTimeout(timeoutId);
-
-      timeoutId = window.setTimeout(() => {
-        setMatches(event.matches);
-      }, debounceMs);
-    };
-
-    mediaQuery.addEventListener("change", handler);
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      mediaQuery.removeEventListener("change", handler);
-    };
-  }, [query, debounceMs]);
-
-  return matches;
+export function useMediaQuery(query = "(max-width: 768px)"): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const list = queryList(query);
+      list?.addEventListener("change", onChange);
+      return () => list?.removeEventListener("change", onChange);
+    },
+    [query],
+  );
+  return useSyncExternalStore(
+    subscribe,
+    () => queryList(query)?.matches ?? false,
+    () => false,
+  );
 }

@@ -691,6 +691,7 @@ msgstr "Cereți administratorului serverului să anunțe un URL de backend (draf
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Am uitat parola"
 msgid "Forgot password?"
 msgstr "Ați uitat parola?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Formatează textul"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Membri"
 msgid "Members — {0}"
 msgstr "Membri — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Menționează pe cineva"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Poreclă"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Porecla '{nick}' este deja utilizată, reîncercare cu '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Porecla “{nick}” este deja utilizată, reîncercare cu “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Trimite o acțiune / emote"
 msgid "Send Invite"
 msgstr "Trimiteți invitația"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Trimite mesajul"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Trimite mesaj"
@@ -5481,6 +5494,10 @@ msgstr "trunchiat"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Surse de încredere"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Încearcă din nou"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

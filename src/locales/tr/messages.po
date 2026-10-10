@@ -691,6 +691,7 @@ msgstr "Paketleri yönetmek için sunucu yöneticisinden bir backend URL'si (dra
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Parolamı unuttum"
 msgid "Forgot password?"
 msgstr "Parolanızı mı unuttunuz?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Metni biçimlendir"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Üyeler"
 msgid "Members — {0}"
 msgstr "Üyeler — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Birinden bahset"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Takma Ad"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "'{nick}' takma adı zaten kullanımda, '{newNick}' ile yeniden deneniyor"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "“{nick}” takma adı zaten kullanımda, “{newNick}” ile yeniden deneniyor"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Bir eylem / emote gönder"
 msgid "Send Invite"
 msgstr "Davet Gönder"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Mesajı gönder"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Mesaj Gönder"
@@ -5481,6 +5494,10 @@ msgstr "kısaltılmış"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Güvenilir Kaynaklar"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Tekrar dene"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

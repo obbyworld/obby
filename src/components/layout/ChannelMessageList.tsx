@@ -500,6 +500,41 @@ export const ChannelMessageList = forwardRef<
       return () => observer.disconnect();
     }, [isLoadingHistory, channelId, privateChatId]);
 
+    // The keyboard resizes the list without scrolling it: we keep the bottom in
+    // view, and we pull back a scroll WebKit leaves past the end once it grows.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs and scrollToBottom are stable
+    useEffect(() => {
+      const container = messagesContainerRef.current;
+      if (!container) return;
+      let frame = 0;
+      const keepPlace = () => {
+        if (container.clientHeight === 0) return;
+        if (isHoldingRef.current) {
+          keepHeldRowInPlace();
+          return;
+        }
+        if (wasAtBottomRef.current && !isDetachedRef.current) {
+          scrollToBottom();
+          return;
+        }
+        const end = container.scrollHeight - container.clientHeight;
+        if (container.scrollTop > end) container.scrollTop = end;
+      };
+      let height = container.clientHeight;
+      const observer = new ResizeObserver(() => {
+        if (container.clientHeight === height) return;
+        height = container.clientHeight;
+        keepPlace();
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(keepPlace);
+      });
+      observer.observe(container);
+      return () => {
+        observer.disconnect();
+        cancelAnimationFrame(frame);
+      };
+    }, []);
+
     const [isLoadingNewer, setIsLoadingNewer] = useState(false);
     // biome-ignore lint/correctness/useExhaustiveDependencies: channelMessages reruns it after each page in case the bottom is still in view
     useEffect(() => {
@@ -601,7 +636,7 @@ export const ChannelMessageList = forwardRef<
                         ? t`Load earlier messages saved on this device`
                         : undefined
                     }
-                    className="chip-action"
+                    className={`chip-action ${isTouch ? "min-h-10 px-4" : ""}`}
                   >
                     {isFetchingMore ? (
                       <LoadingSpinner

@@ -273,6 +273,25 @@ describe("LocationShareModal", () => {
     );
 
     expect(await screen.findByText(/denied/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /^share$/i })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /^share$/i })).toBeNull();
+  });
+
+  it("asks for the location again from the error", async () => {
+    mockGetCurrentLocation
+      .mockRejectedValueOnce(new GeolocationPermissionDeniedError())
+      .mockResolvedValueOnce({ latitude: 52.21, longitude: 7.18 });
+    render(
+      <LocationShareModal
+        isOpen
+        target="alice"
+        onCancel={vi.fn()}
+        onShare={vi.fn()}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole("button", { name: /try again/i }));
+
+    await waitForShareEnabled();
+    expect(mockGetCurrentLocation).toHaveBeenCalledTimes(2);
   });
 });

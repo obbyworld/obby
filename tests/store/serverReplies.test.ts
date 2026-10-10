@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
 import {
   registerServerReplyHandlers,
@@ -42,6 +43,23 @@ describe("server replies", () => {
   test("toasts a failure that answers what the user just did", () => {
     document.dispatchEvent(new KeyboardEvent("keydown"));
     reportServerReply(useStore, reply);
+    expect(useStore.getState().globalNotifications).toHaveLength(1);
+  });
+
+  test("leaves invite link failures to the page that shows them inline", () => {
+    document.dispatchEvent(new KeyboardEvent("keydown"));
+    const fail = (command: string) =>
+      ircClient.triggerEvent("FAIL", {
+        serverId,
+        command,
+        code: "ACCOUNT_REQUIRED",
+        context: [],
+        message: "You must be logged in",
+        mtags: {},
+      });
+    fail("INVITELINK");
+    expect(useStore.getState().globalNotifications).toHaveLength(0);
+    fail("MARKREAD");
     expect(useStore.getState().globalNotifications).toHaveLength(1);
   });
 

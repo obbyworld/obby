@@ -133,6 +133,15 @@ describe("text", () => {
     expect(await ids({ text: "deploy sunday" })).toEqual([]);
   });
 
+  it("matches a one letter last word, which the index never holds", async () => {
+    await db.appendRows([
+      message({ id: "n7", time: 5, text: "deploy 7 done" }),
+      message({ id: "n8", time: 6, text: "deploy 8 done" }),
+    ]);
+    expect(await ids({ text: "deploy 7" })).toEqual(["n7"]);
+    expect(await ids({ text: "8" })).toEqual(["n8"]);
+  });
+
   it("finds a long id as the last word and as an earlier word", async () => {
     const sha = "3f9a1c0be27d4e5f8a6b9c0d1e2f3a4b5c6d7e8f";
     await db.appendRows([

@@ -626,7 +626,7 @@ export const ChannelList: React.FC = () => {
                   type="button"
                   aria-expanded={isPrivateChatsOpen}
                   onClick={() => setIsPrivateChatsOpen(!isPrivateChatsOpen)}
-                  className="flex items-center gap-1.5 flex-1 min-w-0 h-6 text-left text-xs font-semibold whitespace-nowrap hover:text-discord-text-normal"
+                  className={`flex items-center gap-1.5 flex-1 min-w-0 ${isTouch ? "h-10" : "h-6"} text-left text-xs font-semibold whitespace-nowrap hover:text-discord-text-normal`}
                 >
                   <span className="truncate">
                     <Trans>Private messages</Trans>

@@ -829,7 +829,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             channel.id,
             makeEventMessage(
               "system",
-              t`Nickname '${nick}' already in use, retrying with '${newNick}'`,
+              t`Nickname “${nick}” already in use, retrying with “${newNick}”`,
               "system",
               channel.id,
               serverId,
@@ -884,6 +884,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       code,
       message,
       target,
+      // The invite links page shows its own failures inline.
+      isQuiet: command === "INVITELINK",
     });
     // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
     // event that normally chains the WHO request will never fire on

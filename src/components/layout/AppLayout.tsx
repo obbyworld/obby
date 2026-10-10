@@ -413,7 +413,8 @@ export const AppLayout: React.FC = () => {
         {isNarrowView ? (
           <div
             ref={containerRef}
-            className="relative w-full h-full overflow-hidden"
+            // We clip so a field focused in an off-screen column cannot scroll the pager sideways.
+            className="relative w-full h-full overflow-clip"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}

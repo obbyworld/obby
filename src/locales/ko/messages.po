@@ -691,6 +691,7 @@ msgstr "팩을 관리하려면 서버 관리자에게 백엔드 URL(draft/authto
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "비밀번호 찾기"
 msgid "Forgot password?"
 msgstr "비밀번호를 잊으셨나요?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "텍스트 서식 지정"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "멤버"
 msgid "Members — {0}"
 msgstr "멤버 — {0}명"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "다른 사람 멘션"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "닉네임"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "닉네임 '{nick}'이(가) 이미 사용 중입니다. '{newNick}'(으)로 다시 시도합니다"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "닉네임 “{nick}”이(가) 이미 사용 중입니다. “{newNick}”(으)로 다시 시도합니다"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "액션 / 감정표현 보내기"
 msgid "Send Invite"
 msgstr "초대 보내기"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "메시지 보내기"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "메시지 보내기"
@@ -5481,6 +5494,10 @@ msgstr "잘린"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "신뢰할 수 있는 출처"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "다시 시도"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

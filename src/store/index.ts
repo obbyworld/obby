@@ -2156,9 +2156,12 @@ const useStore = create<AppState>((set, get) => ({
       const next = list.map((msg) => {
         if (msg.pendingLabel !== label) return msg;
         matched = true;
+        // We keep the time we sent it: a server that delays a burst stamps
+        // later times, and the next sort would shuffle our own lines.
         return {
           ...msg,
           ...updates,
+          timestamp: msg.timestamp,
           pendingLabel: undefined,
           status: undefined,
         };

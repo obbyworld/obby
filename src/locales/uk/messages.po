@@ -691,6 +691,7 @@ msgstr "Попросіть адміністратора сервера огол�
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Забули пароль"
 msgid "Forgot password?"
 msgstr "Забули пароль?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Форматувати текст"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Члени"
 msgid "Members — {0}"
 msgstr "Учасники — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Згадати когось"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Псевдонім"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Псевдонім '{nick}' вже використовується, повторна спроба з '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Псевдонім “{nick}” вже використовується, повторна спроба з “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Надіслати дію / емоцію"
 msgid "Send Invite"
 msgstr "Надіслати запрошення"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Надіслати повідомлення"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Надіслати повідомлення"
@@ -5481,6 +5494,10 @@ msgstr "обрізано"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Надійні джерела"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Спробувати ще раз"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."
