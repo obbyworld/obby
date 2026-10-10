@@ -2,5 +2,8 @@
 # will have compiled files and executables
 /target/
 plugins/*/target/
+# Gradle output for a plugin's Android half. A tree of these was tracked once,
+# carrying absolute paths from whoever last built it.
+plugins/*/android/build/
 /gen/schemas
 /.cargo/config.toml

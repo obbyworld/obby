@@ -1613,6 +1613,10 @@ msgstr "GIF"
 msgid "GitHub:"
 msgstr "GitHub："
 
+#: src/components/message/ChannelLink.tsx
+msgid "Go to {name}"
+msgstr "前往 {name}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2121,6 +2125,7 @@ msgstr "最小值为 {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "弹窗"
 
@@ -2179,6 +2184,10 @@ msgstr "网络"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "通过 soju bouncer 绑定的网络"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "网络日志"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2586,6 +2595,8 @@ msgstr "置顶此私信对话"
 msgid "Plaintext"
 msgstr "明文"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
@@ -3746,6 +3757,10 @@ msgstr "被 {username} 踢出 {channelName} ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "已被踢出频道"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "查看此服务器的原始 IRC 流量"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

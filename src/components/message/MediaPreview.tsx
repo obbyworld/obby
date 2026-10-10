@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import exifr from "exifr";
 import type * as React from "react";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
 import {
   FaFileAlt,
   FaPause,
@@ -11,6 +11,7 @@ import {
   FaVolumeMute,
   FaVolumeUp,
 } from "react-icons/fa";
+import { useNearViewport } from "../../hooks/useNearViewport";
 import { getAudio } from "../../lib/audioManager";
 import ircClient from "../../lib/ircClient";
 import { probeMediaUrl } from "../../lib/mediaProbe";
@@ -291,10 +292,15 @@ const ImagePreview: React.FC<{
             <FaSpinner className="text-discord-text-muted animate-spin text-lg" />
           </div>
         )}
+        {/* Hidden with opacity rather than `display: none`: a lazy image that
+            is not rendered never loads, so `onLoad` would never arrive to
+            reveal it. */}
         <img
           src={displayUrl}
+          loading="lazy"
+          decoding="async"
           alt={isFilehostImage ? t`Filehost image` : t`GIF`}
-          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "block" : "hidden"}`}
+          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           onClick={() => openMedia(displayUrl, msgid, serverId, channelId)}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
@@ -371,6 +377,9 @@ const VideoPlayer: React.FC<{
   const [loadError, setLoadError] = useState(false);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const thumbnailCapturedRef = useRef(false);
+  // Grabbing a poster frame costs a second download of the video. Off-screen
+  // messages must not pay it, or a media-heavy channel opens dozens at once.
+  const nearViewport = useNearViewport(containerRef);
 
   const { isActive, isPlaying, play, pause } = useMediaController({
     url,
@@ -449,18 +458,21 @@ const VideoPlayer: React.FC<{
     // is never affected by crossOrigin restrictions. Falls back silently if the
     // server doesn't support CORS.
     thumbnailCapturedRef.current = false;
-    let thumbVideo: HTMLVideoElement | null = document.createElement("video");
-    thumbVideo.crossOrigin = "anonymous";
-    thumbVideo.preload = "auto";
-    thumbVideo.muted = true;
-    thumbVideo.src = url;
+    let thumbVideo: HTMLVideoElement | null = null;
     const releaseThumbVideo = () => {
       if (thumbVideo) {
         thumbVideo.src = "";
         thumbVideo = null;
       }
     };
-    thumbVideo.addEventListener(
+    if (nearViewport) {
+      thumbVideo = document.createElement("video");
+      thumbVideo.crossOrigin = "anonymous";
+      thumbVideo.preload = "auto";
+      thumbVideo.muted = true;
+      thumbVideo.src = url;
+    }
+    thumbVideo?.addEventListener(
       "loadeddata",
       () => {
         if (!thumbVideo || thumbVideo.videoWidth === 0) {
@@ -488,7 +500,7 @@ const VideoPlayer: React.FC<{
       },
       { once: true },
     );
-    thumbVideo.addEventListener("error", releaseThumbVideo, { once: true });
+    thumbVideo?.addEventListener("error", releaseThumbVideo, { once: true });
 
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("loadedmetadata", onLoadedMetadata);
@@ -504,7 +516,7 @@ const VideoPlayer: React.FC<{
       video.removeEventListener("error", onError);
       setThumbnail(null);
     };
-  }, [url]);
+  }, [url, nearViewport]);
 
   function handlePlayPause() {
     if (isPlaying) {
@@ -798,9 +810,12 @@ const SoundCloudEmbed: React.FC<{
 }> = ({ url, msgid, serverId, channelId }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedError, setEmbedError] = useState(false);
+  // Same reasoning as the other embeds: no widget until playback is asked for.
+  const [activated, setActivated] = useState(false);
 
   const height = /\/sets\//.test(url) ? 350 : 166;
-  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
+  // The widget only mounts after the user asks to play, so it starts itself.
+  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
 
   const pauseWidget = () => {
     iframeRef.current?.contentWindow?.postMessage(
@@ -859,6 +874,22 @@ const SoundCloudEmbed: React.FC<{
 
   if (embedError) return null;
 
+  if (!activated) {
+    return (
+      <div className="max-w-md relative">
+        <button
+          type="button"
+          onClick={() => setActivated(true)}
+          aria-label={t`Play`}
+          className="w-full flex items-center justify-center rounded bg-discord-dark-400/50"
+          style={{ height }}
+        >
+          <FaPlay className="text-white text-2xl drop-shadow-lg" />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-md relative">
       <iframe
@@ -887,6 +918,9 @@ const EmbedPreview: React.FC<{
   const mediaViewerOpen = useStore((state) => state.ui.openedMedia !== null);
   const [playerKey, setPlayerKey] = useState(0);
   const [embedError, setEmbedError] = useState(false);
+  // A provider iframe is the most expensive thing a message can mount, so it
+  // stays unbuilt until someone asks for playback.
+  const [activated, setActivated] = useState(false);
 
   const { isActive, isPlaying } = useMediaController({
     url,
@@ -914,7 +948,42 @@ const EmbedPreview: React.FC<{
       : 380
     : null;
 
+  // Playback can start from elsewhere (the mini player, another tile handing
+  // over), which has to build the real player.
+  useEffect(() => {
+    if (isActive) setActivated(true);
+  }, [isActive]);
+
   if (embedError) return null;
+
+  if (!activated) {
+    const thumbnailUrl = getEmbedThumbnailUrl(url);
+    return (
+      <div className="max-w-md relative group">
+        <button
+          type="button"
+          onClick={() => setActivated(true)}
+          aria-label={t`Play`}
+          className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
+          style={spotifyHeight ? { height: spotifyHeight } : undefined}
+        >
+          {thumbnailUrl && (
+            <img
+              src={thumbnailUrl}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+          <span className="absolute inset-0 flex items-center justify-center">
+            <FaPlay className="text-white text-3xl drop-shadow-lg" />
+          </span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md relative group">
@@ -1165,15 +1234,7 @@ const ProbeablePreview: React.FC<{
   );
 };
 
-export const MediaPreview: React.FC<{
-  entry: MediaEntry;
-  msgid?: string;
-  isFilehostImage?: boolean;
-  serverId?: string;
-  channelId?: string;
-  onOpenProfile?: (username: string) => void;
-  onTypeResolved?: (url: string, type: MediaType) => void;
-}> = ({
+export const MediaPreview = memo(function MediaPreview({
   entry,
   msgid,
   isFilehostImage,
@@ -1181,7 +1242,15 @@ export const MediaPreview: React.FC<{
   channelId,
   onOpenProfile,
   onTypeResolved,
-}) => {
+}: {
+  entry: MediaEntry;
+  msgid?: string;
+  isFilehostImage?: boolean;
+  serverId?: string;
+  channelId?: string;
+  onOpenProfile?: (username: string) => void;
+  onTypeResolved?: (url: string, type: MediaType) => void;
+}) {
   if (entry.type === null) {
     return (
       <ProbeablePreview
@@ -1255,4 +1324,4 @@ export const MediaPreview: React.FC<{
         />
       );
   }
-};
+});
