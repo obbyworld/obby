@@ -96,7 +96,10 @@ export function RecordingPanel({
   const [autoStopReason, setAutoStopReason] = useState<AutoStopReason | null>(
     null,
   );
-  const micLevel = useMicLevelMeter(meterStream);
+  const { level: micLevel, hasSound } = useMicLevelMeter(meterStream);
+  // We start the recorder the moment the device opens, so nothing is lost, and
+  // only light the dot once sound arrives, which is when talking gets heard.
+  const isHearing = status === "recording" && (kind !== "audio" || hasSound);
 
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -129,6 +132,8 @@ export function RecordingPanel({
     const generation = genRef.current;
     setAutoStopReason(null);
     setStoppedFile(null);
+    setStatus("starting");
+    setElapsedMs(0);
 
     const format =
       kind === "audio" ? pickRecordingFormat() : pickVideoRecordingFormat();
@@ -349,7 +354,7 @@ export function RecordingPanel({
             <div className="flex items-center justify-center gap-2 text-discord-text-normal">
               <FaCircle
                 className={`h-2 w-2 ${
-                  status === "recording"
+                  isHearing
                     ? "text-red-500 animate-pulse"
                     : "text-discord-text-muted"
                 }`}
@@ -364,6 +369,11 @@ export function RecordingPanel({
               )}
             </div>
             {kind === "audio" && <MicLevelMeter level={micLevel} />}
+            {kind === "audio" && status === "recording" && !hasSound && (
+              <p className="text-xs text-discord-text-muted text-center">
+                <Trans>Start talking once the dot turns red</Trans>
+              </p>
+            )}
             {stopReasonMessage && (
               <p className="text-xs text-yellow-400 text-center">
                 {stopReasonMessage}

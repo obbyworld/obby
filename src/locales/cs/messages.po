@@ -5136,6 +5136,10 @@ msgstr "Zahájit soukromou zprávu na {0}"
 msgid "Start recording"
 msgstr "Spustit nahrávání"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Začněte mluvit, až tečka zčervená"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Zapnout video"

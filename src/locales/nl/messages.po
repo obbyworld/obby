@@ -5136,6 +5136,10 @@ msgstr "Privébericht starten op {0}"
 msgid "Start recording"
 msgstr "Opname starten"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Begin te praten zodra de stip rood wordt"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Video starten"

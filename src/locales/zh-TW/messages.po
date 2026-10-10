@@ -5136,6 +5136,10 @@ msgstr "在 {0} 上開始私訊"
 msgid "Start recording"
 msgstr "開始錄製"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "圓點變紅後開始說話"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "開啟視訊"

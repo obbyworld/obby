@@ -59,17 +59,24 @@ function makeStream(kind: "audio" | "video" = "audio") {
   } as unknown as MediaStream & { track: MediaStreamTrack };
 }
 
+// The level the fake microphone reports: zero while the device is still
+// switching over, then the noise floor of a live one.
+let micSample: number;
+
 class FakeAudioContext {
   createMediaStreamSource() {
     return { connect: vi.fn() };
   }
   createAnalyser() {
     return {
-      fftSize: 0,
+      fftSize: 32,
       frequencyBinCount: 32,
       getByteFrequencyData: vi.fn(),
+      getFloatTimeDomainData: (samples: Float32Array) =>
+        samples.fill(micSample),
     };
   }
+  resume = vi.fn(() => Promise.resolve());
   close = vi.fn(() => Promise.resolve());
 }
 
@@ -138,6 +145,7 @@ function setupStore() {
 beforeEach(() => {
   setupStore();
   fakeRecorders = [];
+  micSample = 0.01;
 
   enumerateDevicesMock = vi
     .fn()
@@ -204,6 +212,41 @@ describe("RecordingPanel: audio", () => {
     const file = onRecorded.mock.calls[0][0] as File;
     expect(file.name).toMatch(/^voice-message-.*\.webm$/);
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("records from the moment the microphone opens and asks to wait while it is silent", async () => {
+    micSample = 0;
+    render(
+      <RecordingPanel
+        kind="audio"
+        isOpen
+        anchor={anchorEl()}
+        onClose={vi.fn()}
+        onRecorded={vi.fn()}
+        maxBytes={100 * 1024 * 1024}
+      />,
+    );
+
+    await waitFor(() => expect(fakeRecorders).toHaveLength(1));
+    expect(screen.getByText(/start talking/i)).toBeInTheDocument();
+  });
+
+  it("drops the hint once the microphone delivers sound", async () => {
+    render(
+      <RecordingPanel
+        kind="audio"
+        isOpen
+        anchor={anchorEl()}
+        onClose={vi.fn()}
+        onRecorded={vi.fn()}
+        maxBytes={100 * 1024 * 1024}
+      />,
+    );
+
+    await waitFor(() => expect(fakeRecorders).toHaveLength(1));
+    await waitFor(() =>
+      expect(screen.queryByText(/start talking/i)).not.toBeInTheDocument(),
+    );
   });
 
   it("discarding closes without handing anything onward and stops tracks", async () => {
