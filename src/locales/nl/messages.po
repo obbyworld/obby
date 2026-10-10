@@ -921,6 +921,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Botbouwer"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Botopdrachten"
@@ -955,6 +959,11 @@ msgstr "Browser biedt geen WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Browsers laten je luidsprekers pas zien nadat je toegang tot een microfoon of camera hebt toegestaan. Er wordt niets opgenomen."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "door {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "Kanaaleigenschappen"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "Kanaalinstellingen"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Kanaalstatistieken"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "Werkstroom sluiten"
 msgid "Code accepted."
 msgstr "Code geaccepteerd."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Codefragmenten"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "Kleur"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Kleur en opmaak"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Binnenkort"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "Beschrijving (optioneel, bijv. \"Bètatesters K3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Beschrijving (optioneel)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Ontwerp je eigen kleuren en deel ze als thema's."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "Voer je accountnaam in. We e-mailen een 6-cijferige herstelcode naar het
 msgid "esc to close"
 msgstr "esc om te sluiten"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Evenementenplanner"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Gebeurtenissen"
@@ -2464,6 +2493,10 @@ msgstr "Algemeen"
 msgid "General Support Channel"
 msgstr "Algemeen ondersteuningskanaal"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Krijg een melding als iemand de woorden zegt die je volgt."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "Meer berichten ophalen..."
@@ -2645,6 +2678,10 @@ msgstr "Invoer"
 msgid "Insert emoji"
 msgstr "Emoji invoegen"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Installeren"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Ongeldig formaat"
@@ -2810,6 +2847,10 @@ msgstr "Bewaar inloggegevens"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Behoud het kanaal nadat iedereen is weggegaan. Alleen IRCops kunnen dit instellen."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Trefwoordmeldingen"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "Koppelen met {0}"
 msgid "Live"
 msgstr "Live"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Live vertalen"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Eerdere berichten laden die op dit apparaat zijn opgeslagen"
@@ -2993,6 +3038,10 @@ msgstr "Lage verbindingsbeveiliging (niveau {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Hand laten zakken"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Maak eenvoudige bots die op commando's reageren, zonder code."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "Nog geen OPER-inloggegevens. Voer een naam en wachtwoord in."
 msgid "No packs yet. Create one to start."
 msgstr "Nog geen packs. Maak er een aan om te beginnen."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Geen plug-ins gevonden."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Nog geen ruw IRC-verkeer vastgelegd. Probeer verbinding te maken of een bericht te versturen."
@@ -3856,6 +3909,10 @@ msgstr "Wachtwoord bijgewerkt. Je kunt nu inloggen."
 msgid "Passwords don't match."
 msgstr "Wachtwoorden komen niet overeen."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Plak code met syntaxiskleuring en regelnummers."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Patroon bestaat al"
@@ -3978,6 +4035,11 @@ msgstr "Voer een gebruikersnaam in"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Even wachten..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Plug-ins"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "reageerde op dit bericht"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Alles lezen"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Lees elk bericht in je eigen taal."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "Opslaan..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Scan deze QR-code met je authenticator-app en bevestig met de 6-cijferige code die de app toont."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Plan meetups en herinner het kanaal voor de start."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Scroll de chat naar dit antwoord"
@@ -4529,6 +4599,10 @@ msgstr "Doorzoek berichten, filter met from: in: has:link"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "Doorzoek meer chats"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Plug-ins zoeken..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "Servermeldingen bekijken"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Kijkers bekijken"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Zie wie het meest praat en wanneer je kanaal druk is."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "De server heeft je deelname geweigerd. Controleer de kanaalmodi en probe
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "De gebruiker ontvangt een uitnodiging om deel te nemen aan {channelName}."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Themastudio"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

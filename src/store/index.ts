@@ -501,6 +501,7 @@ interface UIState {
   isMemberListVisible: boolean;
   isChannelListVisible: boolean;
   mobileViewActiveColumn: layoutColumn;
+  homeView?: "plugins";
   isServerMenuOpen: boolean;
   contextMenu: {
     isOpen: boolean;
@@ -1120,6 +1121,7 @@ export interface AppState {
   ) => void;
   hideContextMenu: () => void;
   setMobileViewActiveColumn: (column: layoutColumn) => void;
+  setHomeView: (view: "plugins" | undefined) => void;
   setMobileView: (view: layoutColumn) => void;
   // Server notices popup actions
   toggleServerNoticesPopup: (isOpen?: boolean) => void;
@@ -4072,6 +4074,9 @@ const useStore = create<AppState>((set, get) => ({
       },
     }));
   },
+
+  setHomeView: (view) =>
+    set((state) => ({ ui: { ...state.ui, homeView: view } })),
 
   setMobileViewActiveColumn: (column: layoutColumn) => {
     // Dismiss mobile keyboard when navigating away

@@ -119,6 +119,7 @@ import MemberPicker from "../ui/MemberPicker";
 import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import PluginsScreen from "../ui/PluginsScreen";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
@@ -656,6 +657,8 @@ export const ChatArea: React.FC<{
       );
     }
   }, [selectedFormatting, isFormattingInitialized]);
+
+  const homeView = useStore((state) => state.ui.homeView);
 
   // Get selected server and channel/private chat - memoized to prevent re-renders
   const selectedServer = useMemo(
@@ -2141,7 +2144,8 @@ export const ChatArea: React.FC<{
                 <BlankPage />
               </div>
             ))}
-          {!selectedServer && <DiscoverGrid />}
+          {!selectedServer &&
+            (homeView === "plugins" ? <PluginsScreen /> : <DiscoverGrid />)}
 
           {/* Keep-alive channel message lists — last 3 channels stay in DOM with
               display:none to preserve scroll position across channel switches.

@@ -921,6 +921,10 @@ msgstr "봇"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "봇 빌더"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Bot 명령어"
@@ -955,6 +959,11 @@ msgstr "브라우저가 WebAuthn을 제공하지 않습니다"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "브라우저는 마이크 또는 카메라 액세스를 허용해야 스피커를 표시합니다. 아무것도 녹음되지 않습니다."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "제작: {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "채널 속성"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "채널 설정"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "채널 통계"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "워크플로우 닫기"
 msgid "Code accepted."
 msgstr "코드가 확인되었습니다."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "코드 스니펫"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "색상"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "색상 및 서식"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "곧 출시"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "설명 (선택)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "나만의 색상을 디자인하고 테마로 공유하세요."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "계정 이름을 입력하세요. 등록된 인증 주소로 6자리 복
 msgid "esc to close"
 msgstr "esc 닫기"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "이벤트 플래너"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "이벤트"
@@ -2464,6 +2493,10 @@ msgstr "일반"
 msgid "General Support Channel"
 msgstr "일반 지원 채널"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "팔로우하는 단어를 누군가 말하면 알림을 받으세요."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "메시지를 더 불러오는 중..."
@@ -2645,6 +2678,10 @@ msgstr "입력"
 msgid "Insert emoji"
 msgstr "이모지 삽입"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "설치"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "잘못된 형식"
@@ -2810,6 +2847,10 @@ msgstr "인증 정보 유지"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "모두 나간 후에도 채널을 유지합니다. IRCop만 설정할 수 있습니다."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "키워드 알림"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "{0}(으)로 연결"
 msgid "Live"
 msgstr "라이브"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "실시간 번역"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "이 기기에 저장된 이전 메시지 불러오기"
@@ -2993,6 +3038,10 @@ msgstr "낮은 링크 보안 (레벨 {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "손 내리기"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "코드 없이 명령에 응답하는 간단한 봇을 만드세요."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "아직 OPER 인증 정보가 없습니다. 이름과 비밀번호를 입
 msgid "No packs yet. Create one to start."
 msgstr "아직 팩이 없습니다. 하나 만들어 시작하세요."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "플러그인을 찾을 수 없습니다."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "아직 캡처된 원시 IRC 트래픽이 없습니다. 연결하거나 메시지를 보내 보세요."
@@ -3856,6 +3909,10 @@ msgstr "비밀번호가 업데이트되었습니다. 이제 로그인할 수 있
 msgid "Passwords don't match."
 msgstr "비밀번호가 일치하지 않습니다."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "구문 강조와 줄 번호로 코드를 붙여넣으세요."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "이미 존재하는 패턴입니다"
@@ -3978,6 +4035,11 @@ msgstr "사용자 이름을 입력하세요"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "잠시만 기다려 주세요..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "플러그인"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "이 메시지에 반응했습니다"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "모두 읽기"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "모든 메시지를 내 언어로 읽으세요."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "저장 중..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "인증 앱으로 이 QR 코드를 스캔한 다음, 앱에 표시되는 6자리 코드로 확인하세요."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "모임을 예약하고 시작 전에 채널에 알려주세요."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "이 응답으로 채팅 스크롤"
@@ -4529,6 +4599,10 @@ msgstr "메시지 검색, from: in: has:link로 필터"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "더 많은 채팅 검색"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "플러그인 검색..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "서버 알림 보기"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "시청자 보기"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "누가 가장 많이 말하고 채널이 언제 붐비는지 확인하세요."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "서버가 참여를 거부했습니다. 채널 모드를 확인하고 �
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "사용자가 {channelName} 참여 초대를 받게 됩니다."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "테마 스튜디오"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."

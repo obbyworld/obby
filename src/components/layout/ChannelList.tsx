@@ -91,6 +91,7 @@ export const ChannelList: React.FC = () => {
     setMobileViewActiveColumn,
     reorderChannels,
     openProfile,
+    setHomeView,
   } = useStore(
     useShallow((state) => ({
       selectChannel: state.selectChannel,
@@ -104,12 +105,14 @@ export const ChannelList: React.FC = () => {
       setMobileViewActiveColumn: state.setMobileViewActiveColumn,
       reorderChannels: state.reorderChannels,
       openProfile: state.openProfile,
+      setHomeView: state.setHomeView,
     })),
   );
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
 
   const selectedServerId = useStore((state) => state.ui.selectedServerId);
+  const homeView = useStore((state) => state.ui.homeView);
   const selectedChannelId = useStore((state) => {
     if (!state.ui.selectedServerId) return null;
     return (
@@ -539,15 +542,27 @@ export const ChannelList: React.FC = () => {
             <div className="text-discord-channels-default font-medium mb-1 text-xs">
               <Trans>HOME</Trans>
             </div>
-            <div
-              className={`
-                px-2 py-1 mb-1 rounded flex items-center gap-2 cursor-pointer
-                ${selectedChannelId === null ? "bg-discord-dark-400 text-white" : hoverSubtle}
-              `}
-              onClick={() => selectChannel(null, { navigate: true })}
-            >
-              <Trans>Discover</Trans>
-            </div>
+            {(
+              [
+                [undefined, <Trans key="discover">Discover</Trans>],
+                ["plugins", <Trans key="plugins">Plugins</Trans>],
+              ] as const
+            ).map(([view, label]) => (
+              <button
+                type="button"
+                key={view ?? "discover"}
+                className={`
+                  w-full text-left px-2 py-1 mb-1 rounded flex items-center gap-2 cursor-pointer
+                  ${homeView === view ? "bg-discord-dark-400 text-white" : hoverSubtle}
+                `}
+                onClick={() => {
+                  setHomeView(view);
+                  selectChannel(null, { navigate: true });
+                }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         )}
 

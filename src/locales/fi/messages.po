@@ -921,6 +921,10 @@ msgstr "Botti"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Bottirakentaja"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Botin komennot"
@@ -955,6 +959,11 @@ msgstr "Selain ei tue WebAuthnia"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Selaimet paljastavat kaiuttimesi vasta, kun olet sallinut mikrofonin tai kameran käytön. Mitään ei tallenneta."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "tekijä {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1144,10 @@ msgstr "Kanavan ominaisuudet"
 #: src/components/ui/QuickActions/pageTargets.ts
 msgid "Channel settings"
 msgstr "Kanava-asetukset"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Kanavatilastot"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1334,6 +1347,10 @@ msgstr "Sulje työnkulku"
 msgid "Code accepted."
 msgstr "Koodi hyväksytty."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Koodinpätkät"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1355,6 +1372,10 @@ msgstr "Väri"
 #: src/components/ui/ColorPicker.tsx
 msgid "Color & Formatting"
 msgstr "Väri ja muotoilu"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Tulossa pian"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -1793,6 +1814,10 @@ msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Kuvaus (valinnainen)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Suunnittele omat värisi ja jaa ne teemoina."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2240,6 +2265,10 @@ msgstr "Anna tilisi nimi. Lähetämme 6-numeroisen palautuskoodin tilille merkit
 msgid "esc to close"
 msgstr "esc sulkeaksesi"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Tapahtumasuunnittelija"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Tapahtumat"
@@ -2464,6 +2493,10 @@ msgstr "Yleiset"
 msgid "General Support Channel"
 msgstr "Yleinen tukikanava"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Saat ilmoituksen, kun joku sanoo seuraamasi sanat."
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
 msgstr "Haetaan lisää viestejä..."
@@ -2645,6 +2678,10 @@ msgstr "Syöte"
 msgid "Insert emoji"
 msgstr "Lisää emoji"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Asenna"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Virheellinen muoto"
@@ -2810,6 +2847,10 @@ msgstr "Säilytä tunnistautumistiedot"
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Pidä kanava, kun kaikki ovat poistuneet. Vain IRCopit voivat asettaa tämän."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Avainsanahälytykset"
+
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
 msgid "Kick User"
@@ -2919,6 +2960,10 @@ msgstr "Yhdistä palvelulla {0}"
 msgid "Live"
 msgstr "Live"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Livekäännös"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Lataa tälle laitteelle tallennetut aiemmat viestit"
@@ -2993,6 +3038,10 @@ msgstr "Heikko linkkiturvallisuus (taso {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Laske käsi"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Tee yksinkertaisia botteja, jotka vastaavat komentoihin, ilman koodia."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3526,6 +3575,10 @@ msgstr "Ei vielä operaattoritunnuksia. Kirjoita nimi ja salasana."
 msgid "No packs yet. Create one to start."
 msgstr "Ei vielä paketteja. Luo ensimmäinen aloittaaksesi."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Liitännäisiä ei löytynyt."
+
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Raakaa IRC-liikennettä ei ole vielä tallennettu. Kokeile yhdistämistä tai viestin lähettämistä."
@@ -3856,6 +3909,10 @@ msgstr "Salasana päivitetty. Voit nyt kirjautua sisään."
 msgid "Passwords don't match."
 msgstr "Salasanat eivät täsmää."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Liitä koodia syntaksikorostuksella ja rivinumeroilla."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Malli on jo olemassa"
@@ -3978,6 +4035,11 @@ msgstr "Syötä käyttäjänimi"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Odota hetki..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Liitännäiset"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4128,6 +4190,10 @@ msgstr "reagoi tähän viestiin"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Lue kaikki"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Lue jokainen viesti omalla kielelläsi."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4469,6 +4535,10 @@ msgstr "Tallennetaan..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Skannaa tämä QR-koodi todennussovelluksellasi ja vahvista sen näyttämällä 6-numeroisella koodilla."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Ajoita tapaamiset ja muistuta kanavaa ennen alkua."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Vieritä keskustelu tähän vastaukseen"
@@ -4529,6 +4599,10 @@ msgstr "Hae viesteistä, suodata from: in: has:link"
 #: src/components/layout/SearchPane.tsx
 msgid "Search more chats"
 msgstr "Hae useammista keskusteluista"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Hae liitännäisiä..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4597,6 +4671,10 @@ msgstr "Näytä palvelimen ilmoitukset"
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Näytä katsojat"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Katso, kuka puhuu eniten ja milloin kanavasi on vilkkain."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -5201,6 +5279,10 @@ msgstr "Palvelin hylkäsi liittymisesi. Tarkista kanavan tilat ja yritä uudelle
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Teemastudio"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
