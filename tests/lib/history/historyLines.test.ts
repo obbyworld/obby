@@ -983,9 +983,9 @@ describe("decideAfterLatest", () => {
   const page = { size: 3, oldest: 700 };
 
   it("adds nothing without a stored time", () => {
-    expect(
-      decideAfterLatest({ newestStoredTime: undefined, page, limit: 3 }),
-    ).toEqual({ kind: "none" });
+    expect(decideAfterLatest({ newestStoredTime: undefined, page })).toEqual({
+      kind: "none",
+    });
   });
 
   it("adds nothing for an empty page", () => {
@@ -993,33 +993,34 @@ describe("decideAfterLatest", () => {
       decideAfterLatest({
         newestStoredTime: 500,
         page: { size: 0, oldest: undefined },
-        limit: 3,
       }),
     ).toEqual({ kind: "none" });
   });
 
   it("adds nothing when the page starts at the newest stored time", () => {
-    expect(
-      decideAfterLatest({ newestStoredTime: 700, page, limit: 3 }),
-    ).toEqual({ kind: "none" });
+    expect(decideAfterLatest({ newestStoredTime: 700, page })).toEqual({
+      kind: "none",
+    });
   });
 
   it("adds nothing when the page starts before the newest stored time", () => {
-    expect(
-      decideAfterLatest({ newestStoredTime: 800, page, limit: 3 }),
-    ).toEqual({ kind: "none" });
+    expect(decideAfterLatest({ newestStoredTime: 800, page })).toEqual({
+      kind: "none",
+    });
   });
 
-  it("adds an open gap for a full page newer than the stored time", () => {
+  it("adds a gap for a page newer than the stored time, however short", () => {
+    expect(decideAfterLatest({ newestStoredTime: 500, page })).toEqual({
+      kind: "add",
+      from: 500,
+      to: 700,
+    });
     expect(
-      decideAfterLatest({ newestStoredTime: 500, page, limit: 3 }),
-    ).toEqual({ kind: "add", from: 500, to: 700, lost: false });
-  });
-
-  it("adds a lost gap for a short page newer than the stored time", () => {
-    expect(
-      decideAfterLatest({ newestStoredTime: 500, page, limit: 4 }),
-    ).toEqual({ kind: "add", from: 500, to: 700, lost: true });
+      decideAfterLatest({
+        newestStoredTime: 500,
+        page: { ...page, size: 1 },
+      }),
+    ).toEqual({ kind: "add", from: 500, to: 700 });
   });
 });
 
@@ -1039,7 +1040,6 @@ describe("decideAfterGapFill", () => {
         gap,
         page: { size: 2, oldest: 300 },
         inserted: [true, false],
-        limit: 2,
       }),
     ).toEqual({ kind: "close" });
   });
@@ -1050,7 +1050,6 @@ describe("decideAfterGapFill", () => {
         gap,
         page: { size: 2, oldest: 100 },
         inserted: [true, true],
-        limit: 2,
       }),
     ).toEqual({ kind: "close" });
     expect(
@@ -1058,7 +1057,6 @@ describe("decideAfterGapFill", () => {
         gap,
         page: { size: 1, oldest: 50 },
         inserted: [true],
-        limit: 2,
       }),
     ).toEqual({ kind: "close" });
   });
@@ -1069,7 +1067,6 @@ describe("decideAfterGapFill", () => {
         gap,
         page: { size: 0, oldest: undefined },
         inserted: [],
-        limit: 2,
       }),
     ).toEqual({
       kind: "shrink",
@@ -1084,20 +1081,18 @@ describe("decideAfterGapFill", () => {
         gap,
         page: { size: 2, oldest: 300 },
         inserted: [true, true],
-        limit: 2,
       }),
     ).toEqual({ kind: "shrink", to: 300, lost: false });
   });
 
-  it("shrinks and marks the gap lost for a short page", () => {
+  it("keeps the gap open after a short page, since servers may return fewer than asked", () => {
     expect(
       decideAfterGapFill({
         gap,
-        page: { size: 2, oldest: 300 },
-        inserted: [true, true],
-        limit: 3,
+        page: { size: 1, oldest: 300 },
+        inserted: [true],
       }),
-    ).toEqual({ kind: "shrink", to: 300, lost: true });
+    ).toEqual({ kind: "shrink", to: 300, lost: false });
   });
 });
 
@@ -1212,7 +1207,7 @@ describe("own lines", () => {
 });
 
 describe("page size", () => {
-  it("counts event lines we leave off disk, so a full page is not lost", () => {
+  it("counts event lines we leave off disk in the page size", () => {
     const { feedAll } = setup();
     const at = (i: number) => new Date(T1_MS + i * 1000).toISOString();
     const lines = Array.from({ length: 50 }, (_, i) =>
@@ -1225,13 +1220,6 @@ describe("page size", () => {
       throw new Error("expected history-batch");
     expect(action.rows).toHaveLength(30);
     expect(action.page).toEqual({ size: 50, oldest: T1_MS });
-    expect(
-      decideAfterLatest({
-        newestStoredTime: T1_MS - 1000,
-        page: action.page,
-        limit: 50,
-      }),
-    ).toEqual({ kind: "add", from: T1_MS - 1000, to: T1_MS, lost: false });
   });
 });
 

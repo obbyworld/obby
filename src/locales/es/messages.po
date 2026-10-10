@@ -2318,6 +2318,14 @@ msgstr "fallido"
 msgid "Failed to load audio"
 msgstr "Error al cargar el audio"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Cargar mensajes perdidos"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Cargando mensajes perdidos…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Archivo no subido: el cifrado aún se está configurando. Podrá enviarse cuando el cifrado esté activo, o después de finalizarlo."

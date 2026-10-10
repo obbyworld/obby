@@ -2318,6 +2318,14 @@ msgstr "失败"
 msgid "Failed to load audio"
 msgstr "音频加载失败"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "获取错过的消息"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "正在获取错过的消息…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "文件未上传：加密仍在建立中。加密生效后即可发送，或结束加密后发送。"

@@ -80,15 +80,32 @@ function createV1(db: IDBDatabase) {
   db.createObjectStore(META, { keyPath: "name" });
 }
 
-function upgrade(db: IDBDatabase, tx: IDBTransaction, oldVersion: number) {
-  if (oldVersion < 1) createV1(db);
+function createV2(db: IDBDatabase, tx: IDBTransaction) {
   const rows = tx.objectStore(ROWS);
   rows.createIndex("nick", ["nick", "time"]);
   rows.createIndex("serverTime", ["server", "time"]);
   rows.createIndex("reply", ["server", "target", "replyTo"]);
   rows.createIndex("replyToOwn", ["replyToOwn", "time"]);
   db.createObjectStore(TERMS, { keyPath: ["term", "time", "rowId"] });
+}
+
+// Versions 1 and 2 marked a gap lost whenever the server returned a short
+// page, which servers do for many reasons, so we let the server answer again.
+function reopenLostGaps(tx: IDBTransaction) {
+  const cursorRequest = tx.objectStore(GAPS).openCursor();
+  cursorRequest.onsuccess = () => {
+    const cursor = cursorRequest.result;
+    if (!cursor) return;
+    if (cursor.value.lost) cursor.update({ ...cursor.value, lost: false });
+    cursor.continue();
+  };
+}
+
+function upgrade(db: IDBDatabase, tx: IDBTransaction, oldVersion: number) {
+  if (oldVersion < 1) createV1(db);
+  if (oldVersion < 2) createV2(db, tx);
   if (oldVersion === 1) startBackfill(tx);
+  if (oldVersion >= 1 && oldVersion < 3) reopenLostGaps(tx);
 }
 
 // Another tab on an older version blocks our upgrade until it closes, so we
@@ -100,7 +117,7 @@ function openDb(): Promise<IDBDatabase> {
     if (dbPromise === opening) dbPromise = undefined;
   };
   const opening = new Promise<IDBDatabase>((resolve, reject) => {
-    const open = indexedDB.open("obby-history", 2);
+    const open = indexedDB.open("obby-history", 3);
     let isBlocked = false;
     open.onupgradeneeded = (event) =>
       upgrade(
@@ -140,6 +157,10 @@ function enqueue<T>(
   const result = chain.then(openDb).then(op);
   chain = result.catch(() => undefined);
   return result;
+}
+
+export function whenHistoryIdle(): Promise<void> {
+  return chain.then(() => undefined);
 }
 
 function inTx<T>(
@@ -436,6 +457,15 @@ export function gapsFor(server: string, target: string): Promise<HistoryGap[]> {
       ),
     ),
   );
+}
+
+export async function fillableGaps(): Promise<HistoryGap[]> {
+  const gaps = await enqueue<HistoryGap[]>([], (db) =>
+    inTx(db, [GAPS], "readonly", (tx) =>
+      awaitRequest<HistoryGap[]>(tx.objectStore(GAPS).getAll()),
+    ),
+  );
+  return gaps.filter((gap) => !gap.lost);
 }
 
 export function addGap(gap: Omit<HistoryGap, "id">): Promise<void> {

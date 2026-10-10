@@ -2318,6 +2318,14 @@ msgstr "epäonnistui"
 msgid "Failed to load audio"
 msgstr "Äänen lataaminen epäonnistui"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Hae ohitetut viestit"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Haetaan ohitettuja viestejä…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Tiedostoa ei lähetetty: salausta vasta luodaan. Se lähtee, kun salaus on käytössä, tai kun lopetat salauksen."

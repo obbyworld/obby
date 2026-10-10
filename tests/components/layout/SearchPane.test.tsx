@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SidePane } from "../../../src/components/layout/SidePane";
 import { GlobalNotifications } from "../../../src/components/ui/GlobalNotifications";
@@ -8,11 +14,15 @@ import type {
   SearchQuery,
 } from "../../../src/lib/search/searchTypes";
 import useStore from "../../../src/store";
-import { searchSavedMessages } from "../../../src/store/handlers/history";
+import {
+  fillGapsForSearch,
+  searchSavedMessages,
+} from "../../../src/store/handlers/history";
 
 vi.mock("../../../src/store/handlers/history", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   searchSavedMessages: vi.fn(),
+  fillGapsForSearch: vi.fn(() => () => {}),
 }));
 
 vi.mock("../../../src/lib/jumpToMessage", async (importOriginal) => ({
@@ -103,6 +113,35 @@ describe("SearchPane", () => {
     expect(row).toHaveTextContent("1 minute ago");
     expect(screen.getByText("deploy").tagName).toBe("MARK");
     expect(screen.getByText(/1 result · newest first · #general/)).toBeTruthy();
+  });
+
+  it("holds a place for missed messages while fetching them and searches again once they arrive", async () => {
+    search.mockResolvedValue({ hits: [] });
+    let report: Parameters<typeof fillGapsForSearch>[2] = () => {};
+    vi.mocked(fillGapsForSearch).mockImplementationOnce((_, __, onProgress) => {
+      report = onProgress;
+      return () => {};
+    });
+    openPane();
+    await waitFor(() => expect(search).toHaveBeenCalledTimes(1));
+
+    const gap = {
+      id: 1,
+      server: "server1",
+      target: "#general",
+      from: 0,
+      to: NOW,
+      lost: false,
+    };
+    act(() => report([gap], true, 0));
+    expect(await screen.findByText("Fetching missed messages…")).toBeTruthy();
+    expect(screen.queryByText(/No messages match/)).toBeNull();
+
+    search.mockResolvedValue({ hits: [hit()] });
+    act(() => report([], false, 1));
+    expect(await screen.findByText("alice")).toBeTruthy();
+    expect(search).toHaveBeenCalledTimes(2);
+    expect(screen.queryByText("Fetching missed messages…")).toBeNull();
   });
 
   it("names the network next to the chat when searching everywhere", async () => {

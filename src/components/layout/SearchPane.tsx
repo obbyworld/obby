@@ -13,6 +13,7 @@ import {
 import { FaChevronLeft, FaTimes } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { escapeRegExp } from "../../lib/escapeRegExp";
+import type { HistoryGap } from "../../lib/history/historyDb";
 import { isChannelTarget } from "../../lib/ircUtils";
 import {
   type JumpResult,
@@ -28,7 +29,10 @@ import type {
   SearchQuery,
 } from "../../lib/search/searchTypes";
 import useStore from "../../store";
-import { searchSavedMessages } from "../../store/handlers/history";
+import {
+  fillGapsForSearch,
+  searchSavedMessages,
+} from "../../store/handlers/history";
 import { findServerUser } from "../../store/helpers";
 import type { Server } from "../../types";
 import { MessageAvatar } from "../message/MessageAvatar";
@@ -37,6 +41,7 @@ import { useSearchDraft } from "../search/useSearchDraft";
 import HighlightedText, { type TextRange } from "../ui/HighlightedText";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import SegmentedControl from "../ui/SegmentedControl";
+import { SkeletonRow } from "../ui/SkeletonRow";
 import { TextInput } from "../ui/TextInput";
 
 export const SEARCH_PAGE_LIMIT = 50;
@@ -140,6 +145,36 @@ const HitRow = memo<{
   );
 });
 
+const PLACEHOLDER_ROW_IDS = [0, 1, 2];
+
+const GapPlaceholder: React.FC = () => (
+  <li aria-hidden className="flex flex-col gap-0.5 blur-[1px]">
+    {PLACEHOLDER_ROW_IDS.map((id) => (
+      <SkeletonRow
+        key={id}
+        className="flex items-start gap-2.5 px-2 py-2"
+        avatarClassName="w-10 h-10 rounded-full"
+      />
+    ))}
+  </li>
+);
+
+// Hits are newest first, so we place a gap before the first hit older than
+// its upper edge, and place a gap below the loaded hits once all are loaded.
+function gapSlots(
+  gaps: HistoryGap[],
+  hits: SearchHit[],
+  hasMore: boolean,
+): Set<number> {
+  const slots = new Set<number>();
+  for (const gap of gaps) {
+    const index = hits.findIndex((hit) => hit.time < gap.to);
+    if (index >= 0) slots.add(index);
+    else if (!hasMore) slots.add(hits.length);
+  }
+  return slots;
+}
+
 export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
   const { i18n } = useLingui();
   const servers = useStore((s) => s.servers);
@@ -169,19 +204,52 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
   const isLoadingMoreRef = useRef(false);
   const [attempt, setAttempt] = useState(0);
   const [tab, setTab] = useState<AboutTab>("all");
+  const [gapFill, setGapFill] = useState<{
+    gaps: HistoryGap[];
+    isFetching: boolean;
+  }>({ gaps: [], isFetching: false });
+  const [fillRound, setFillRound] = useState(0);
+  const [fetchedPages, setFetchedPages] = useState(0);
+  const isFillRefreshRef = useRef(false);
+  const searchRunRef = useRef(0);
+  const shownCountRef = useRef(0);
+  shownCountRef.current = hits.length;
+  const scopeKey = JSON.stringify(query.scope);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scopeKey stands for query.scope, and fillRound restarts a fetch the person asked for again
+  useEffect(
+    () =>
+      fillGapsForSearch(useStore, query.scope, (gaps, isFetching, pages) => {
+        setGapFill({ gaps, isFetching });
+        if (pages === 0) return;
+        isFillRefreshRef.current = true;
+        setFetchedPages((n) => n + 1);
+      }),
+    [scopeKey, fillRound],
+  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: the pane mounts once per query, so we focus once
   useEffect(() => {
     if (!isTouch) inputRef.current?.focus();
   }, []);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: attempt reruns the same query after an error
+  // biome-ignore lint/correctness/useExhaustiveDependencies: attempt reruns the same query after an error, fetchedPages after each page of missed messages
   useEffect(() => {
     let isCurrent = true;
-    setStatus("loading");
-    setHits([]);
-    setNextCursor(undefined);
-    searchSavedMessages(useStore, query, { limit: SEARCH_PAGE_LIMIT }).then(
+    searchRunRef.current += 1;
+    const isFillRefresh = isFillRefreshRef.current;
+    isFillRefreshRef.current = false;
+    if (!isFillRefresh) {
+      setStatus("loading");
+      setHits([]);
+      setNextCursor(undefined);
+    }
+    // On a refresh for fetched messages we read as many hits as are already
+    // shown, so the list keeps its length and scroll position.
+    const limit = isFillRefresh
+      ? Math.max(SEARCH_PAGE_LIMIT, shownCountRef.current)
+      : SEARCH_PAGE_LIMIT;
+    searchSavedMessages(useStore, query, { limit }).then(
       (page) => {
         if (!isCurrent) return;
         setHits(page.hits);
@@ -193,18 +261,20 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     return () => {
       isCurrent = false;
     };
-  }, [query, attempt]);
+  }, [query, attempt, fetchedPages]);
 
   const loadMore = () => {
     if (!nextCursor || isLoadingMoreRef.current) return;
     isLoadingMoreRef.current = true;
     setIsLoadingMore(true);
+    const run = searchRunRef.current;
     searchSavedMessages(useStore, query, {
       limit: SEARCH_PAGE_LIMIT,
       ...nextCursor,
     })
       .then(
         (page) => {
+          if (searchRunRef.current !== run) return;
           setHits((previous) => [...previous, ...page.hits]);
           setNextCursor(cursorOf(page));
         },
@@ -243,6 +313,22 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
   const pattern = useMemo(() => termPattern(query.text), [query.text]);
   const scopeName = scopeLabel(query.scope, servers);
   const hasMore = nextCursor !== undefined;
+  const slots = gapSlots(gapFill.gaps, shownHits, hasMore);
+  const gapSlot = (index: number) =>
+    slots.has(index) &&
+    (gapFill.isFetching ? (
+      <GapPlaceholder key={`gap-${index}`} />
+    ) : (
+      <li key={`gap-${index}`} className="py-2 flex justify-center">
+        <button
+          type="button"
+          className="chip-action"
+          onClick={() => setFillRound((n) => n + 1)}
+        >
+          <Trans>Fetch missed messages</Trans>
+        </button>
+      </li>
+    ));
   const count = hits.length;
   const countLabel = hasMore
     ? t`${count}+ results`
@@ -318,8 +404,19 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
         completionClassName="border-b border-white/[0.06]"
       />
 
-      <div role="status" className="px-3 pb-2 row-meta truncate">
-        {status === "ready" && t`${countLabel} · newest first · ${scopeName}`}
+      <div
+        role="status"
+        className="px-3 pb-2 row-meta flex items-center gap-2 min-w-0"
+      >
+        <span className="truncate">
+          {status === "ready" && t`${countLabel} · newest first · ${scopeName}`}
+        </span>
+        {gapFill.isFetching && (
+          <span className="ml-auto shrink-0 flex items-center gap-1.5">
+            <LoadingSpinner size="sm" text="" />
+            <Trans>Fetching missed messages…</Trans>
+          </span>
+        )}
       </div>
 
       {query.aboutMe && (
@@ -355,7 +452,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
               <Trans>Search again</Trans>
             </button>
           </div>
-        ) : shownHits.length === 0 && !hasMore ? (
+        ) : shownHits.length === 0 && !hasMore && slots.size === 0 ? (
           <div className="px-4 py-10 flex flex-col items-center gap-3 text-center text-sm text-discord-text-muted">
             <Trans>No messages match. Widen the scope or change filters</Trans>
             {query.scope.kind !== "everywhere" && (
@@ -370,7 +467,8 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
           </div>
         ) : (
           <ul className="flex flex-col gap-0.5">
-            {shownHits.map((hit, index) => (
+            {shownHits.map((hit, index) => [
+              gapSlot(index),
               <HitRow
                 key={keys[index]}
                 hit={hit}
@@ -380,8 +478,9 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
                 locale={i18n.locale}
                 isLarge={isLarge}
                 onOpen={openHit}
-              />
-            ))}
+              />,
+            ])}
+            {gapSlot(shownHits.length)}
           </ul>
         )}
         {status === "ready" && hasMore && (

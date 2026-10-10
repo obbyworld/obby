@@ -269,6 +269,20 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
       // Remove the completed batch
       const { [batchId]: removed, ...remainingBatches } = serverBatches;
 
+      // We fetched this page for disk only, so we leave the chat and its
+      // load-more state as they are.
+      if (ircClient.endDiskOnlyBatch(serverId, batchId)) {
+        chathistoryChannelName = null;
+        chathistoryBuffers.delete(batchId);
+        reactionBuffers.delete(batchId);
+        return {
+          activeBatches: {
+            ...state.activeBatches,
+            [serverId]: remainingBatches,
+          },
+        };
+      }
+
       if (batch.type === "chathistory" && batch.parameters?.[0]) {
         const channelName = batch.parameters[0];
         const server = state.servers.find((s) => s.id === serverId);

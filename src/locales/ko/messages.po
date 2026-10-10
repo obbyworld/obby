@@ -2318,6 +2318,14 @@ msgstr "실패"
 msgid "Failed to load audio"
 msgstr "오디오를 불러오지 못했습니다"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "놓친 메시지 가져오기"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "놓친 메시지를 가져오는 중…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "파일이 업로드되지 않았습니다. 암호화를 설정하는 중입니다. 암호화가 활성화된 뒤, 또는 암호화를 종료한 뒤 보낼 수 있습니다."

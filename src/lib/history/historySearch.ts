@@ -75,7 +75,11 @@ function filterOf(query: SearchQuery, opts: SearchOptions): Filter {
   };
 }
 
-function isInScope(scope: SearchScope, serverId: string, target: string) {
+export function isInScope(
+  scope: SearchScope,
+  serverId: string,
+  target: string,
+) {
   if (scope.kind === "everywhere") return true;
   if (scope.kind === "network") return serverId === scope.serverId;
   return serverId === scope.serverId && target === scope.target.toLowerCase();

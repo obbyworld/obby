@@ -424,27 +424,19 @@ export function planLoadMore(input: {
     : { kind: "none" };
 }
 
-type GapDecision =
-  | { kind: "none" }
-  | { kind: "add"; from: number; to: number; lost: boolean };
+type GapDecision = { kind: "none" } | { kind: "add"; from: number; to: number };
 
 // After the newest page from the server: when it starts after the newest row
 // we had when we asked, the messages in between are not on disk.
 export function decideAfterLatest(input: {
   newestStoredTime: number | undefined;
   page: HistoryPage;
-  limit: number;
 }): GapDecision {
-  const { newestStoredTime, page, limit } = input;
+  const { newestStoredTime, page } = input;
   if (newestStoredTime === undefined || page.oldest === undefined)
     return { kind: "none" };
   if (page.oldest <= newestStoredTime) return { kind: "none" };
-  return {
-    kind: "add",
-    from: newestStoredTime,
-    to: page.oldest,
-    lost: page.size < limit,
-  };
+  return { kind: "add", from: newestStoredTime, to: page.oldest };
 }
 
 type GapFillDecision =
@@ -452,17 +444,18 @@ type GapFillDecision =
   | { kind: "shrink"; to: number; lost: boolean };
 
 // After a server page fetched into a gap: it closes once the page reaches
-// rows we already had, and it is lost once the server has nothing older.
+// rows we already had, and it is lost once the server returns nothing older.
+// Servers may return fewer messages than asked (a multiline message can count
+// as several), so we treat only an empty page as the end of their history.
 export function decideAfterGapFill(input: {
   gap: HistoryGap;
   page: HistoryPage;
   inserted: boolean[];
-  limit: number;
 }): GapFillDecision {
-  const { gap, page, inserted, limit } = input;
+  const { gap, page, inserted } = input;
   if (inserted.some((wasNew) => !wasNew)) return { kind: "close" };
   if (page.oldest === undefined)
     return { kind: "shrink", to: gap.to, lost: true };
   if (page.oldest <= gap.from) return { kind: "close" };
-  return { kind: "shrink", to: page.oldest, lost: page.size < limit };
+  return { kind: "shrink", to: page.oldest, lost: false };
 }

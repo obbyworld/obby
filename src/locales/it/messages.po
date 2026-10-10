@@ -2318,6 +2318,14 @@ msgstr "non riuscito"
 msgid "Failed to load audio"
 msgstr "Caricamento audio non riuscito"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Recupera i messaggi persi"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Recupero dei messaggi persi…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "File non caricato: la cifratura è ancora in fase di avvio. Partirà quando la cifratura sarà attiva, o dopo averla terminata."

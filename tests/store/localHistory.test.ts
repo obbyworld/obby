@@ -461,47 +461,10 @@ describe("local history with a chathistory server", () => {
       );
     });
 
-    it("saves a lost gap when the newer page is short", async () => {
+    it("keeps the gap open and unmarked when the newer page is short", async () => {
       await seedDisk();
 
       latest(page(10, 1000, "n"));
-
-      await vi.waitFor(async () =>
-        expect(await w.db.gapsFor(SERVER, "#chan")).toEqual([
-          expect.objectContaining({
-            from: BASE + 3000,
-            to: BASE + 1000_000,
-            lost: true,
-          }),
-        ]),
-      );
-    });
-
-    it("marks a lost gap on screen with a divider code", async () => {
-      await seedDisk();
-
-      latest(page(10, 1000, "n"));
-
-      await vi.waitFor(() =>
-        expect(
-          w.channelMessages().find((m) => m.type === "system"),
-        ).toMatchObject({
-          content: "",
-          tags: { "obby-local": "gap" },
-          timestamp: new Date(BASE + 3001),
-        }),
-      );
-    });
-
-    it("counts joins toward a full page, so the gap is not lost", async () => {
-      await seedDisk();
-
-      const joins = Array.from(
-        { length: 20 },
-        (_, index) =>
-          `@msgid=j${index};time=${at(1000 + index)} :u${index}!u@h JOIN #chan`,
-      );
-      latest([...joins, ...page(30, 1020, "n")]);
 
       await vi.waitFor(async () =>
         expect(await w.db.gapsFor(SERVER, "#chan")).toEqual([
@@ -512,7 +475,7 @@ describe("local history with a chathistory server", () => {
           }),
         ]),
       );
-      expect(await w.stored()).toHaveLength(33);
+      expect(w.channelMessages().some((m) => m.type === "system")).toBe(false);
     });
 
     it("still saves the gap when a live message arrives between the request and the reply", async () => {
@@ -571,16 +534,21 @@ describe("local history with a chathistory server", () => {
       await vi.waitFor(async () =>
         expect(await w.db.gapsFor(SERVER, "#chan")).toHaveLength(1),
       );
+      // The gap sits between messages on screen, so we fill it at once.
+      await vi.waitFor(() =>
+        expect(w.chathistoryRequests()).toContain(
+          `CHATHISTORY BEFORE #chan timestamp=${new Date(GAP_TO).toISOString()} 50`,
+        ),
+      );
       w.sent.length = 0;
     });
 
-    it("asks the server for the page before the gap and closes the gap once the reply reaches stored rows", async () => {
-      await w.loadOlder(GAP_TO);
+    it("sends no second request for a gap already being filled", async () => {
+      expect(await w.loadOlder(GAP_TO)).toBe(false);
+      expect(w.chathistoryRequests()).toEqual([]);
+    });
 
-      expect(w.chathistoryRequests()).toEqual([
-        `CHATHISTORY BEFORE #chan timestamp=${new Date(GAP_TO).toISOString()} 50`,
-      ]);
-
+    it("closes the gap once the reply reaches stored rows", async () => {
       w.feed(
         ...inBatch("h2", "#chan", [
           privmsg("m2", 2, "two"),
@@ -594,9 +562,6 @@ describe("local history with a chathistory server", () => {
     });
 
     it("shrinks the gap when a full reply does not reach stored rows", async () => {
-      await w.loadOlder(GAP_TO);
-      expect(w.chathistoryRequests()).toHaveLength(1);
-
       w.feed(...inBatch("h2", "#chan", page(50, 500, "g")));
 
       await vi.waitFor(async () =>
@@ -610,17 +575,25 @@ describe("local history with a chathistory server", () => {
       );
     });
 
-    it("marks the gap lost when a short reply does not reach stored rows", async () => {
-      await w.loadOlder(GAP_TO);
-
+    it("keeps the gap open when a short reply does not reach stored rows", async () => {
       w.feed(...inBatch("h2", "#chan", page(5, 500, "g")));
 
       await vi.waitFor(async () =>
         expect(await w.db.gapsFor(SERVER, "#chan")).toEqual([
           expect.objectContaining({
             to: BASE + 500_000,
-            lost: true,
+            lost: false,
           }),
+        ]),
+      );
+    });
+
+    it("marks the gap lost when the server has nothing older", async () => {
+      w.feed(...inBatch("h2", "#chan", []));
+
+      await vi.waitFor(async () =>
+        expect(await w.db.gapsFor(SERVER, "#chan")).toEqual([
+          expect.objectContaining({ to: GAP_TO, lost: true }),
         ]),
       );
     });
@@ -1165,7 +1138,7 @@ describe("a server that gains chathistory later", () => {
     expect(new Set(after.map((row) => row.key)).size).toBe(52);
   });
 
-  it("marks the gap lost when the page is short", async () => {
+  it("keeps the gap open when the page is short", async () => {
     requestLatest(page(10, 1000, "n"));
 
     await vi.waitFor(async () =>
@@ -1173,7 +1146,7 @@ describe("a server that gains chathistory later", () => {
         expect.objectContaining({
           from: BASE + 2000,
           to: BASE + 1000_000,
-          lost: true,
+          lost: false,
         }),
       ]),
     );

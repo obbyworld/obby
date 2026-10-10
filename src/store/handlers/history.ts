@@ -9,6 +9,7 @@ import {
   deleteServerHistory,
   eventRowsAfter,
   eventRowsBefore,
+  fillableGaps,
   gapsFor,
   type HistoryGap,
   type HistoryRow,
@@ -35,16 +36,20 @@ import {
   planLoadMore,
 } from "../../lib/history/historyLines";
 import {
+  isInScope,
   type SearchCandidate,
   type SearchOptions,
   searchCandidates,
   searchMessages,
 } from "../../lib/history/historySearch";
 import { containsLink, plainText } from "../../lib/history/searchFields";
-import { CHATHISTORY_PAGE_SIZE } from "../../lib/irc/IRCClient";
 import ircClient from "../../lib/ircClient";
 import { parseMessageTags } from "../../lib/ircUtils";
-import type { SearchPage, SearchQuery } from "../../lib/search/searchTypes";
+import type {
+  SearchPage,
+  SearchQuery,
+  SearchScope,
+} from "../../lib/search/searchTypes";
 import type { Message, Server } from "../../types";
 import {
   MAX_MESSAGES_PER_CHANNEL,
@@ -57,8 +62,19 @@ import type { AppState } from "../index";
 export const BYTES_PER_MB = 1_000_000;
 const PRUNE_EVERY_WRITES = 200;
 const MAX_AUTO_FILL_PAGES = 10;
+// Servers throttle CHATHISTORY (obbyircd allows about one command a second
+// after a short burst), so we keep one page in flight, pace the rest and stop
+// after a bounded amount of history.
+const SEARCH_FILL_MAX_PAGES = 40;
+const SEARCH_FILL_PACE_MS = 1000;
+const SEARCH_FILL_TIMEOUT_MS = 20_000;
 
-type GapFill = { gap: HistoryGap; pagesLeft?: number };
+type GapFill = {
+  gap: HistoryGap;
+  pagesLeft?: number;
+  isDiskOnly?: boolean;
+  onSettled?: (isSaved: boolean) => void;
+};
 
 type PendingRequest =
   | { kind: "latest"; newestStoredTime: Promise<number | undefined> }
@@ -69,6 +85,34 @@ const pendingRequests = new Map<string, PendingRequest[]>();
 // The gap a BEFORE request is about to fill. We attach it when the line
 // actually leaves, so a request the socket dropped never claims a reply.
 let nextGapFill: GapFill | undefined;
+
+// Two requests for the same gap ask for the same page, and the second reply,
+// all duplicates, would close the gap, so we keep one request per gap.
+function isGapBeingFilled(serverId: string, target: string, gapId: number) {
+  return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
+    (request) => request.kind === "before" && request.fill?.gap.id === gapId,
+  );
+}
+
+function requestPageBefore(
+  serverId: string,
+  target: string,
+  before: number,
+  fill: GapFill | undefined,
+  showLoading = true,
+): boolean {
+  if (fill && isGapBeingFilled(serverId, target, fill.gap.id)) return false;
+  nextGapFill = fill;
+  const isSent = ircClient.requestChathistoryBefore(
+    serverId,
+    target,
+    new Date(before).toISOString(),
+    { showLoading },
+  );
+  nextGapFill = undefined;
+  return isSent;
+}
+
 const shownConversations = new Set<string>();
 let writesSincePrune = 0;
 let replayCounter = 0;
@@ -228,44 +272,38 @@ async function saveHistoryPage(
     ?.shift();
   const inserted = rows.length ? await saveRows(store, rows) : [];
   for (const msgid of redacts) await deleteMessage(key, target, msgid);
-
   if (request?.kind === "latest") {
     const decision = decideAfterLatest({
       newestStoredTime: await request.newestStoredTime,
       page,
-      limit: CHATHISTORY_PAGE_SIZE,
     });
     if (decision.kind === "add") {
-      const { from, to, lost } = decision;
-      await addGap({ server: key, target, from, to, lost });
+      const { from, to } = decision;
+      await addGap({ server: key, target, from, to, lost: false });
       const [gap] = (await gapsFor(key, target)).filter(
         (g) => g.from === from && g.to === to,
       );
       if (gap) settleGap(store, serverId, target, gap, MAX_AUTO_FILL_PAGES);
     }
   } else if (request?.kind === "before" && request.fill) {
-    const { gap: filled, pagesLeft } = request.fill;
-    const decision = decideAfterGapFill({
-      gap: filled,
-      page,
-      inserted,
-      limit: CHATHISTORY_PAGE_SIZE,
-    });
-    if (decision.kind === "close") {
-      if (filled.id !== undefined) await deleteGap(filled.id);
-    } else {
+    const { pagesLeft } = request.fill;
+    // We decide on the gap as saved now, since another fill may have moved it.
+    const filled = (await gapsFor(key, target)).find(
+      (gap) => gap.id === request.fill?.gap.id,
+    );
+    const decision =
+      filled && decideAfterGapFill({ gap: filled, page, inserted });
+    if (filled && decision?.kind === "close") {
+      await deleteGap(filled.id);
+    } else if (filled && decision?.kind === "shrink") {
       const gap = { ...filled, to: decision.to, lost: decision.lost };
       await updateGap(gap);
       if (pagesLeft !== undefined)
         settleGap(store, serverId, target, gap, pagesLeft);
     }
+    request.fill.onSettled?.(true);
   }
-  await refreshHasMore(
-    store,
-    serverId,
-    target,
-    page.size >= CHATHISTORY_PAGE_SIZE,
-  );
+  await refreshHasMore(store, serverId, target, page.size > 0);
 }
 
 // We decide load more for a chat from both sources: the server may have an
@@ -350,18 +388,18 @@ function settleGap(
     (message) => new Date(message.timestamp).getTime() <= gap.from,
   );
   if (!isOnScreen) return;
-  if (gap.lost || pagesLeft === 0) {
+  if (gap.lost) {
     showMissingMarker(store, serverId, conversation.channelId, gap);
     return;
   }
-  nextGapFill = { gap, pagesLeft: pagesLeft - 1 };
-  ircClient.requestChathistoryBefore(
+  if (pagesLeft === 0) return;
+  requestPageBefore(
     serverId,
     target,
-    new Date(gap.to).toISOString(),
-    { showLoading: false },
+    gap.to,
+    { gap, pagesLeft: pagesLeft - 1 },
+    false,
   );
-  nextGapFill = undefined;
 }
 
 function findConversation(
@@ -481,6 +519,30 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     if (isEnabled(store)) trackOutgoing(store, serverId, line);
   });
 
+  ircClient.on("BATCH_START", ({ serverId, batchId, type, parameters }) => {
+    const target = parameters?.[0];
+    if (type !== "chathistory" || !target) return;
+    if (batchId.startsWith(LOCAL_BATCH_PREFIX)) return;
+    const [request] =
+      pendingRequests.get(conversationKey(serverId, target)) ?? [];
+    if (request?.kind === "before" && request.fill?.isDiskOnly)
+      ircClient.markDiskOnlyBatch(serverId, batchId);
+  });
+
+  // A refused CHATHISTORY opens no batch, so we drop its request here or the
+  // next reply would be matched to it.
+  ircClient.on("FAIL", ({ serverId, command, context }) => {
+    if (command !== "CHATHISTORY") return;
+    const target = context.find(
+      (part) => pendingRequests.get(conversationKey(serverId, part))?.length,
+    );
+    if (!target) return;
+    const request = pendingRequests
+      .get(conversationKey(serverId, target))
+      ?.shift();
+    if (request?.kind === "before") request.fill?.onSettled?.(false);
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     if (connectionState === "connected") {
       const server =
@@ -489,9 +551,84 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       if (server) void adoptParkedHistory(serverAddress(server), serverId);
       return;
     }
-    for (const key of pendingRequests.keys())
-      if (key.startsWith(`${serverId}\n`)) pendingRequests.delete(key);
+    ircClient.clearDiskOnlyBatches(serverId);
+    for (const [key, queue] of pendingRequests) {
+      if (!key.startsWith(`${serverId}\n`)) continue;
+      for (const request of queue)
+        if (request.kind === "before") request.fill?.onSettled?.(false);
+      pendingRequests.delete(key);
+    }
   });
+}
+
+async function searchableGaps(
+  store: StoreApi<AppState>,
+  scope: SearchScope,
+): Promise<HistoryGap[]> {
+  const state = store.getState();
+  return (await fillableGaps())
+    .filter(
+      (gap) =>
+        isInScope(scope, gap.server, gap.target.toLowerCase()) &&
+        state.servers.some((s) => s.id === gap.server && s.isConnected) &&
+        serverSupportsChathistory(state, gap.server) &&
+        findConversation(store, gap.server, gap.target) !== undefined,
+    )
+    .sort((a, b) => b.to - a.to);
+}
+
+// We stop waiting at the timeout but keep the request queued, so a late reply
+// still goes to disk and fills its gap.
+function fetchGapPage(gap: HistoryGap): Promise<boolean> {
+  return new Promise((resolve) => {
+    const fill: GapFill = { gap, isDiskOnly: true };
+    const timer = window.setTimeout(
+      () => resolve(false),
+      SEARCH_FILL_TIMEOUT_MS,
+    );
+    fill.onSettled = (isSaved) => {
+      window.clearTimeout(timer);
+      resolve(isSaved);
+    };
+    if (!requestPageBefore(gap.server, gap.target, gap.to, fill, false))
+      fill.onSettled(false);
+  });
+}
+
+// While a search pane is open we fetch what the server still has for the gaps
+// in its scope, newest gap first, and report the gaps left after every page
+// so the results can refresh.
+export function fillGapsForSearch(
+  store: StoreApi<AppState>,
+  scope: SearchScope,
+  onProgress: (
+    gaps: HistoryGap[],
+    isFetching: boolean,
+    pagesFetched: number,
+  ) => void,
+): () => void {
+  let isCancelled = false;
+  let pagesFetched = 0;
+  const report = (gaps: HistoryGap[], isFetching: boolean) => {
+    if (!isCancelled) onProgress(gaps, isFetching, pagesFetched);
+  };
+  void (async () => {
+    if (!isEnabled(store)) return report([], false);
+    while (pagesFetched < SEARCH_FILL_MAX_PAGES) {
+      const gaps = await searchableGaps(store, scope);
+      if (gaps.length === 0 || isCancelled) return report(gaps, false);
+      report(gaps, true);
+      if (pagesFetched > 0)
+        await new Promise((r) => setTimeout(r, SEARCH_FILL_PACE_MS));
+      if (isCancelled) return;
+      if (!(await fetchGapPage(gaps[0]))) break;
+      pagesFetched += 1;
+    }
+    report(await searchableGaps(store, scope), false);
+  })();
+  return () => {
+    isCancelled = true;
+  };
 }
 
 // On a server without history our disk is the only source, so we show its
@@ -618,14 +755,14 @@ export async function loadOlderMessages(
       return true;
     }
     if (plan.kind === "server") {
-      nextGapFill = plan.gap ? { gap: plan.gap } : undefined;
-      ircClient.requestChathistoryBefore(
+      const isSent = requestPageBefore(
         serverId,
         target,
-        new Date(plan.before).toISOString(),
+        plan.before,
+        plan.gap ? { gap: plan.gap } : undefined,
       );
-      nextGapFill = undefined;
-      return true;
+      if (!isSent) setLoading(serverId, target, false);
+      return isSent;
     }
     await refreshHasMore(store, serverId, target, false);
     setLoading(serverId, target, false);
