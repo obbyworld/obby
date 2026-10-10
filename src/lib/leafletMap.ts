@@ -1,3 +1,5 @@
+import type React from "react";
+
 export const MAP_MIN_ZOOM = 2;
 export const MAP_MAX_ZOOM = 19;
 
@@ -13,6 +15,15 @@ export const MAP_PIN_SVG = `<svg width="28" height="40" viewBox="0 0 24 36" xmln
 
 export function clampMapZoom(zoom: number): number {
   return Math.min(MAP_MAX_ZOOM, Math.max(MAP_MIN_ZOOM, zoom));
+}
+
+/** Keeps a touch inside an overlay from reaching gesture handlers around its
+ *  opener. A touch on a map still passes through, because Leaflet follows a
+ *  touch drag from listeners on the document, which React's stopPropagation
+ *  at the root would cut off. */
+export function stopTouchOutsideMap(e: React.TouchEvent) {
+  if (!(e.target as Element).closest?.(".leaflet-container"))
+    e.stopPropagation();
 }
 
 let leafletPromise: Promise<typeof import("leaflet")> | null = null;

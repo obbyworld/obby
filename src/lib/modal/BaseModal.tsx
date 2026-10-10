@@ -5,6 +5,7 @@ import { type ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { findTextField } from "../focus";
+import { stopTouchOutsideMap } from "../leafletMap";
 
 export interface BaseModalProps {
   isOpen: boolean;
@@ -116,14 +117,13 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   if (isTouch) {
     // React bubbles portal events through the component tree, so we stop
     // touches here or the gesture handlers around the opener would fire too.
-    const stopTouch = (e: React.TouchEvent) => e.stopPropagation();
     return createPortal(
       <div
         className={`fixed inset-0 z-[9999] ${overlayClassName}`}
         data-no-gesture=""
-        onTouchStart={stopTouch}
-        onTouchMove={stopTouch}
-        onTouchEnd={stopTouch}
+        onTouchStart={stopTouchOutsideMap}
+        onTouchMove={stopTouchOutsideMap}
+        onTouchEnd={stopTouchOutsideMap}
       >
         <div
           aria-hidden="true"

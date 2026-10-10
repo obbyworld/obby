@@ -5136,6 +5136,10 @@ msgstr "{0} üzerinde özel mesaj başlat"
 msgid "Start recording"
 msgstr "Kaydı başlat"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Nokta kırmızı olunca konuşmaya başlayın"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Videoyu başlat"

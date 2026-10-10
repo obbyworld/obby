@@ -1,15 +1,25 @@
 import { useEffect, useState } from "react";
 
-/** Live 0..1 audio level for a stream. We own the AudioContext and tear it
- *  down when the stream changes, so callers release nothing themselves. */
-export function useMicLevelMeter(stream: MediaStream | null): number {
+export interface MicLevel {
+  /** Live 0..1 audio level. */
+  level: number;
+  /** Turns true at the first real sample. A device that is still switching
+   *  over (a Bluetooth headset moving to its microphone mode, an OS
+   *  reconfiguring the input) delivers exact zeros, while a live microphone
+   *  always carries some signal. */
+  hasSound: boolean;
+}
+
+/** We own the AudioContext and tear it down when the stream changes, so
+ *  callers release nothing themselves. */
+export function useMicLevelMeter(stream: MediaStream | null): MicLevel {
   const [level, setLevel] = useState(0);
+  const [hasSound, setHasSound] = useState(false);
 
   useEffect(() => {
-    if (!stream) {
-      setLevel(0);
-      return;
-    }
+    setLevel(0);
+    setHasSound(false);
+    if (!stream) return;
     let raf: number | null = null;
     let ctx: AudioContext | null = null;
     try {
@@ -18,16 +28,24 @@ export function useMicLevelMeter(stream: MediaStream | null): number {
         (window as unknown as { webkitAudioContext: typeof AudioContext })
           .webkitAudioContext;
       ctx = new AudioCtxCtor();
+      void ctx.resume();
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 512;
       source.connect(analyser);
       const data = new Uint8Array(analyser.frequencyBinCount);
+      const samples = new Float32Array(analyser.fftSize);
+      let heard = false;
       const tick = () => {
         analyser.getByteFrequencyData(data);
         let sum = 0;
         for (const v of data) sum += v;
         setLevel(sum / data.length / 255);
+        if (!heard) {
+          analyser.getFloatTimeDomainData(samples);
+          heard = samples.some((s) => s !== 0);
+          if (heard) setHasSound(true);
+        }
         raf = requestAnimationFrame(tick);
       };
       tick();
@@ -40,5 +58,5 @@ export function useMicLevelMeter(stream: MediaStream | null): number {
     };
   }, [stream]);
 
-  return level;
+  return { level, hasSound };
 }

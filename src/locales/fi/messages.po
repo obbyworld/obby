@@ -5136,6 +5136,10 @@ msgstr "Aloita yksityisviesti verkossa {0}"
 msgid "Start recording"
 msgstr "Aloita tallennus"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Aloita puhuminen, kun piste muuttuu punaiseksi"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Käynnistä video"

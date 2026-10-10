@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { stopTouchOutsideMap } from "../../lib/leafletMap";
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -26,15 +27,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   // React bubbles portal events through the component tree, so we stop touches
   // here or the long-press and swipe handlers around the opener would fire too.
-  const stopTouch = (e: React.TouchEvent) => e.stopPropagation();
-
   return createPortal(
     <div
       className="fixed inset-0 z-[9998]"
       data-no-gesture=""
-      onTouchStart={stopTouch}
-      onTouchMove={stopTouch}
-      onTouchEnd={stopTouch}
+      onTouchStart={stopTouchOutsideMap}
+      onTouchMove={stopTouchOutsideMap}
+      onTouchEnd={stopTouchOutsideMap}
     >
       <div className="absolute inset-0 scrim" onClick={onClose} />
       <div

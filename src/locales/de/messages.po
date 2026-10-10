@@ -5136,6 +5136,10 @@ msgstr "Private Nachricht auf {0} beginnen"
 msgid "Start recording"
 msgstr "Aufnahme starten"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Sprich los, sobald der Punkt rot wird"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Video starten"
