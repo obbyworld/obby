@@ -127,7 +127,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       >
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-black/60 animate-in fade-in duration-150"
+          className="absolute inset-0 scrim animate-in fade-in duration-150"
           onClick={closeOnClickOutside ? onClose : undefined}
         />
         <div
@@ -167,7 +167,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       aria-modal="true"
       aria-labelledby={title ? titleId : undefined}
     >
-      <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
+      <div className="absolute inset-0 scrim" aria-hidden="true" />
       <div
         ref={modalRef}
         tabIndex={-1}

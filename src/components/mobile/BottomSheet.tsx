@@ -36,7 +36,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       onTouchMove={stopTouch}
       onTouchEnd={stopTouch}
     >
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 scrim" onClick={onClose} />
       <div
         role="dialog"
         aria-modal="true"

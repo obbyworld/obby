@@ -265,7 +265,7 @@ const QuickActions: React.FC = () => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 animate-in fade-in duration-100 ${isSheet ? "" : "bg-black/50"}`}
+      className={`fixed inset-0 z-50 animate-in fade-in duration-100 ${isSheet ? "" : "scrim"}`}
       onClick={close}
     >
       <div
