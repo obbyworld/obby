@@ -4,8 +4,40 @@
 
 /* Shared look for menus and floating panels. */
 @layer components {
+  /* We blur only layers that float over content and stay still while open, since a
+     blurred layer repaints whenever what sits under it changes. */
+  .vibrancy {
+    --vibrancy-tint: 32 34 37;
+    background-color: rgb(var(--vibrancy-tint) / var(--vibrancy-alpha, 0.72));
+    background-image: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.06),
+      rgb(255 255 255 / 0) 56px
+    );
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      0 0 0 1px rgb(0 0 0 / 0.5),
+      0 12px 32px rgb(0 0 0 / 0.45);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .vibrancy {
+      background-color: rgb(var(--vibrancy-tint));
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .vibrancy {
+      background-color: rgb(var(--vibrancy-tint));
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
   .surface-floating {
-    @apply bg-discord-dark-300 rounded-lg ring-1 ring-black/40 shadow-[0_8px_24px_rgba(0,0,0,0.45)];
+    @apply vibrancy rounded-lg;
+  }
+  .scrim {
+    @apply bg-black/40;
   }
   .scrollbar-none {
     scrollbar-width: none;
@@ -59,7 +91,7 @@
     @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
   }
   .surface-sheet {
-    @apply bg-discord-dark-300 rounded-t-2xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] flex flex-col overflow-hidden;
+    @apply vibrancy rounded-t-2xl flex flex-col overflow-hidden;
     padding-bottom: var(--safe-area-inset-bottom, 0px);
   }
   .sheet-handle {
@@ -99,7 +131,9 @@
     }
   }
   .surface-dialog {
-    @apply bg-discord-dark-200 rounded-xl ring-1 ring-white/[0.06] shadow-[0_24px_64px_rgba(0,0,0,0.5)];
+    @apply vibrancy rounded-xl;
+    --vibrancy-tint: 54 57 63;
+    --vibrancy-alpha: 0.86;
   }
   .bar-divider {
     @apply shadow-[0_1px_0_rgba(0,0,0,0.25)];

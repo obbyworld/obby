@@ -162,7 +162,7 @@ export const Popover: React.FC<PopoverProps> = ({
         <div
           aria-hidden="true"
           onClick={() => onCloseRef.current()}
-          className="fixed inset-0 bg-black/60 animate-in fade-in duration-150"
+          className="fixed inset-0 scrim animate-in fade-in duration-150"
           style={{ zIndex: Z_INDEX }}
         />
         <div
