@@ -15,6 +15,7 @@ import "./index.css";
 import { RecordingControlsOverlay } from "./components/ui/RecordingControlsOverlay";
 import { RegionMarkerOverlay } from "./components/ui/RegionMarkerOverlay";
 import { RegionSelectOverlay } from "./components/ui/RegionSelectOverlay";
+import { probeVideoSupport } from "./lib/mediaUtils";
 import {
   markOverlayDocument,
   overlayKind,
@@ -27,6 +28,7 @@ const overlay = overlayKind();
 if (overlay) {
   markOverlayDocument();
 } else {
+  probeVideoSupport();
   registerHostedServiceWorker();
   // A crash or a dev reload leaves the picker covering the desktop with no way
   // to dismiss it, so the main window clears any of them left behind.

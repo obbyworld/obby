@@ -46,6 +46,7 @@ describe("ChatHeader - Members Button", () => {
       ],
       currentUser: mockCurrentUser,
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {

@@ -1009,7 +1009,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         <SettingRow
           id="channel.F"
           title={t`Flood profile (+F)`}
-          description={t`Pick a preset flood protection profile. UnrealIRCd only.`}
+          description={t`Pick a preset flood protection profile. This works only on UnrealIRCd servers.`}
         >
           <select
             value={value("F")}
@@ -1077,7 +1077,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         <FlagRow
           letter="G"
           title={t`Filter bad words (+G)`}
-          description={t`Filter out bad words with <censored>`}
+          description={t`Replace bad words with <censored>`}
           checked={flag("G")}
           onChange={(on) => setFlag("G", on)}
         />
@@ -1094,7 +1094,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         <FlagRow
           letter="D"
           title={t`Delay joins (+D)`}
-          description={t`Delay showing joins until someone speaks`}
+          description={t`Hide users who join until they send a message`}
           checked={flag("D")}
           onChange={(on) => setFlag("D", on)}
         />
@@ -1177,7 +1177,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         <FlagRow
           letter="P"
           title={t`Permanent channel (+P)`}
-          description={t`Keep the channel when it empties. Only IRCops can set this.`}
+          description={t`Keep the channel after everyone leaves. Only IRCops can set this.`}
           checked={flag("P")}
           onChange={(on) => setFlag("P", on)}
         />
@@ -1197,7 +1197,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         <SettingRow
           id="channel.L"
           title={t`Channel link (+L)`}
-          description={t`Send users here when they can't join. Leave empty to disable.`}
+          description={t`Enter a channel to send users to when they cannot join this one. Leave empty to disable.`}
         >
           <input
             type="text"

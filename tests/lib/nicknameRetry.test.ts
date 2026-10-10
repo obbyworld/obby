@@ -34,6 +34,7 @@ describe("Nickname retry functionality", () => {
         },
       ],
       ui: {
+        messageJump: null,
         selectedServerId: "test-server",
         perServerSelections: {
           "test-server": {
@@ -127,6 +128,7 @@ describe("Nickname retry functionality", () => {
         },
       ],
       ui: {
+        messageJump: null,
         selectedServerId: "test-server",
         perServerSelections: {
           "test-server": {

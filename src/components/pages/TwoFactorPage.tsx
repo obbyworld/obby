@@ -401,9 +401,9 @@ const TwoFactorPage: React.FC<PageProps<"twoFactor">> = ({ page }) => {
               title={t`Link with ${p.providerLabel}`}
               description={
                 <Trans>
-                  Sign in with the provider to bind its identity to your
-                  account, so SASL OAUTHBEARER and IRCV3BEARER work on later
-                  connections.
+                  Sign in with the provider to link it to your account. Then you
+                  can log in with it on later connections (SASL OAUTHBEARER and
+                  IRCV3BEARER).
                 </Trans>
               }
               control={

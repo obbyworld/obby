@@ -171,6 +171,21 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     expect(w.shown()).toEqual(ids(300, 399));
   });
 
+  it("drops the oldest messages while paging newer and loads them back above", async () => {
+    const w = await boot();
+    await w.save(700);
+    await w.showNewest();
+    await w.jumpTo(100);
+
+    for (let page = 0; page < 6; page++) await w.pageNewer();
+    expect(w.shown()).toEqual(ids(151, 450));
+    expect(w.channel().hasMoreHistory).toBe(true);
+
+    await w.history.loadOlderMessages(w.useStore, SERVER, "#chan", timeOf(151));
+    await vi.waitFor(() => expect(w.shown()).toEqual(ids(51, 450)));
+    expect(w.window()?.until).toBe(timeOf(450));
+  });
+
   it("shows the present again when the user jumps to it", async () => {
     const w = await boot();
     await w.save(300);
@@ -244,6 +259,67 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     );
 
     expect(w.window()).toBeDefined();
+  });
+
+  it("applies reactions and deletions to messages waiting in the present", async () => {
+    const w = await boot();
+    await w.save(300);
+    await w.showNewest();
+    await w.jumpTo(50);
+
+    w.feed(
+      "@+draft/react=👍;+draft/reply=m299 :bob!u@h TAGMSG #chan",
+      ":bob!u@h REDACT #chan m298",
+    );
+    w.history.showPresent(w.useStore, SERVER, "#chan");
+
+    const present = w.useStore.getState().messages[KEY];
+    expect(present.find((m) => m.msgid === "m299")?.reactions).toEqual([
+      { emoji: "👍", userId: "bob" },
+    ]);
+    const redacted = present.find((m) => m.msgid === "m298");
+    expect(redacted?.type).toBe("system");
+    expect(redacted?.tags?.["obby-redacted-by"]).toBe("staff");
+  });
+
+  it("drops a slow jump once a newer one has landed", async () => {
+    const w = await boot();
+    await w.save(300);
+    await w.showNewest();
+
+    const deepJump = w.jumpTo(30);
+    expect(await w.jumpTo(250)).toEqual({ ok: true });
+    await deepJump;
+
+    expect(w.window()).toBeUndefined();
+    expect(w.jumpedTo()).toBe("m250");
+  });
+
+  it("keeps the window whole when live lines pass the message cap", async () => {
+    const w = await boot();
+    await w.save(300);
+    await w.showNewest();
+    await w.jumpTo(50);
+    const before = w.shown();
+    w.useStore.setState((state) => ({
+      messages: {
+        ...state.messages,
+        [KEY]: [
+          ...Array.from({ length: 1500 - before.length }, (_, index) => ({
+            ...state.messages[KEY][0],
+            id: `filler-${index}`,
+            msgid: `filler-${index}`,
+          })),
+          ...state.messages[KEY],
+        ],
+      },
+    }));
+    const top = w.shown()[0];
+
+    w.feed(line(1000));
+
+    expect(w.shown()[0]).toBe(top);
+    expect(w.window()?.present.at(-1)?.msgid).toBe("m1000");
   });
 
   it("loads older saved rows inside a window", async () => {

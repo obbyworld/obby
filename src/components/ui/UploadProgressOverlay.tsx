@@ -115,9 +115,14 @@ export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
                       <FaLockOpen className="text-amber-400" />
                       <span className="text-amber-400">
                         {job.plainReason === "too-large" ? (
-                          <Trans>Too large to encrypt, sent unencrypted</Trans>
+                          <Trans>
+                            Sent unencrypted because the file is too large to
+                            encrypt
+                          </Trans>
                         ) : job.plainReason === "scheme" ? (
-                          <Trans>OTR does not encrypt files, sent as-is</Trans>
+                          <Trans>
+                            Sent unencrypted because OTR encrypts text only
+                          </Trans>
                         ) : (
                           <Trans>Not encrypted</Trans>
                         )}

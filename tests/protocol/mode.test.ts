@@ -24,6 +24,7 @@ describe("MODE Protocol Handler", () => {
       channelList: {},
       listingInProgress: {},
       ui: {
+        messageJump: null,
         selectedServerId: null,
         perServerSelections: {},
         isNarrowView: false,

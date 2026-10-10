@@ -267,7 +267,7 @@ const EmojiPacksPage: React.FC<PageProps<"emojiPacks">> = ({ page }) => {
         )}
         {open && entries.length === 0 && (
           <p className="text-xs text-discord-text-muted">
-            <Trans>Empty pack. Add some emoji.</Trans>
+            <Trans>This pack has no emoji yet. Add one above.</Trans>
           </p>
         )}
       </>

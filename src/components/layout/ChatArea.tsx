@@ -51,6 +51,7 @@ import {
 } from "../../lib/e2ee/media";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
 import { locationSharingSupported } from "../../lib/geolocation";
+import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
@@ -743,7 +744,7 @@ export const ChatArea: React.FC<{
 
   const describeRecordingFailure = (failure: RecordingFailure): string =>
     failure === "screen-gone"
-      ? t`That screen is no longer there.`
+      ? t`That screen is no longer available. Choose another screen.`
       : t`The recording could not be made.`;
 
   // The rectangle is drawn on the desktop first, then the screen it sits on is
@@ -975,9 +976,7 @@ export const ChatArea: React.FC<{
             .isAtBottom ?? false;
         navWasActiveRef.current = true;
       }
-      const el = document.querySelector(
-        `[data-message-id="${navHighlightedMsgId}"]`,
-      );
+      const el = findMessageRow(document, navHighlightedMsgId);
       el?.scrollIntoView({ block: "nearest", behavior: "instant" });
     } else if (navWasActiveRef.current) {
       if (wasAtBottomBeforeNavRef.current) {
@@ -1176,7 +1175,9 @@ export const ChatArea: React.FC<{
     const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
     const filehostUrl = selectedServer?.filehost;
     if (!tokenlessEndpoint && !filehostUrl) {
-      reportUploadFailure(t`This server has nowhere to put a file.`);
+      reportUploadFailure(
+        t`This server has no file host. Connect to a server with a file host to upload files.`,
+      );
       return "failed";
     }
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
@@ -1205,7 +1206,7 @@ export const ChatArea: React.FC<{
           console.error(
             "draft/authtoken: server did not return a filehost token",
           );
-          reportUploadFailure(t`The file host would not let this through.`);
+          reportUploadFailure(t`The file host refused the upload. Try again.`);
           return "failed";
         }
         tokens.push(tok);
@@ -1233,7 +1234,7 @@ export const ChatArea: React.FC<{
           ? t`File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted.`
           : blockedStatus === "error"
             ? t`File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted.`
-            : t`File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption.`,
+            : t`File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted.`,
       );
       return "failed";
     }
@@ -1339,7 +1340,7 @@ export const ChatArea: React.FC<{
             updateJob(job.id, {
               status: "failed",
               error: media
-                ? t`This host does not accept ${CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is.`
+                ? t`This file host refuses ${CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted.`
                 : validationError,
             });
             return null;

@@ -40,7 +40,7 @@ const rectOf = (anchor: PopoverAnchor): DOMRect =>
     ? anchor.getBoundingClientRect()
     : new DOMRect(anchor.x, anchor.y, 0, 0);
 
-const VIEWPORT_MARGIN = 8;
+export const VIEWPORT_MARGIN = 8;
 const ANCHOR_GAP = 6;
 const MIN_PANEL_HEIGHT = 160;
 const AUTO_MIN_WIDTH = 180;

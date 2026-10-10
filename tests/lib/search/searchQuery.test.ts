@@ -33,14 +33,24 @@ describe("parseSearchInput", () => {
   });
 
   it("keeps tokens it cannot understand as words", () => {
-    const query = parseSearchInput(
-      "has:image mentions:you before:2026-13-01 in:#nowhere",
-      chat,
-    );
-    expect(query.text).toBe(
-      "has:image mentions:you before:2026-13-01 in:#nowhere",
-    );
+    const query = parseSearchInput("has:image before:2026-13-01", chat);
+    expect(query.text).toBe("has:image before:2026-13-01");
     expect(query.scope).toBe(chat);
+  });
+
+  it("drops an in: that names no chat, since it is still being typed", () => {
+    const query = parseSearchInput("deploy in:#nowh", chat);
+    expect(query.text).toBe("deploy");
+    expect(query.scope).toBe(chat);
+  });
+
+  it("filters mentions of a person, with or without @", () => {
+    expect(parseSearchInput("mentions:@Valware hi", chat)).toEqual({
+      text: "hi",
+      scope: chat,
+      mentions: "Valware",
+    });
+    expect(parseSearchInput("mentions:me", chat).aboutMe).toBe(true);
   });
 
   it("moves the scope with a resolvable in:", () => {

@@ -214,6 +214,7 @@ for WKWebView's `IntersectionObserver`.
 ## Menus, panels and touch
 
 - Dropdown menus go through `Menu` (`src/components/ui/Menu.tsx`); other floating panels go through `Popover`. Style their contents with the shared classes in the `@layer components` block of `src/index.css` (`surface-floating`, `row-interactive`, `row-meta`, …) so every panel stays one look.
+- Hover hints use one look, the `tooltip-surface` class. A plain `title` attribute is enough: `TitleTooltipLayer` shows it in that style. Wrap richer content in `HoverTooltip`, and never style a tooltip by hand.
 - Touch UI (bottom sheets, long-press, drag handles) follows `useIsTouchInput()`. Window width only decides layout, so a narrow desktop window still gets mouse UI.
 - Lists that suggest completions above the chat input (members, emojis, slash commands) render through `SuggestionList` and take their arrow, Enter and Escape keys from `useSuggestionKeys`.
 - Bottom sheets build on `BottomSheet` with the `sheet-row` and `sheet-action` classes; taps and holds go through `useShortTap` and `useLongPress`, which share one delay so they never fire together.

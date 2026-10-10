@@ -112,7 +112,7 @@ export function VoiceDock({
       id: "step-off",
       show: canStepOffStream,
       icon: <FaDoorOpen />,
-      label: t`Step off stream`,
+      label: t`Stop streaming`,
       onClick: onStepOffStream,
     },
   ];

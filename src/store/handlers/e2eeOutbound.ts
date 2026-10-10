@@ -58,7 +58,7 @@ export function routeOutgoingPM(
       serverId,
       nick,
       session.status === "key-changed"
-        ? t`Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear.`
+        ? t`Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted.`
         : t`Message not sent: encryption isn't active yet. Wait for the lock to turn green, or end encryption to send unencrypted.`,
     );
     return "withheld";

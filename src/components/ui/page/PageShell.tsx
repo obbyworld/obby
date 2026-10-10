@@ -9,6 +9,7 @@ import {
 } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useIsTouchInput } from "../../../hooks/useIsTouchInput";
+import { flashHighlight, highlightRow } from "../../../lib/highlightRow";
 import useStore from "../../../store";
 
 export interface PageSection {
@@ -37,22 +38,25 @@ interface PageShellProps {
   back?: { label: string; onBack: () => void };
 }
 
-let backWithinPage: (() => boolean) | null = null;
+let pageBack: (() => void) | null = null;
 
-// The system back gesture (Android) asks the open page to step back one level
-// first, so it leaves a section for the section list before it closes the page.
-export function stepBackWithinPage(): boolean {
-  return backWithinPage?.() ?? false;
+// Swipe back and the Android back button take the same step as the page's own
+// back button: a section returns to the section list before the page closes.
+export function goBackInPage(): boolean {
+  if (!pageBack) return false;
+  pageBack();
+  return true;
 }
 
-const HIGHLIGHT_MS = 2000;
 const TEXT_FIELD = "input, textarea, select, [contenteditable='true']";
 const HIGHLIGHT_WAIT_MS = 1500;
 
 function useBackLabel(): string {
   return useStore((s) => {
     const serverId = s.ui.selectedServerId;
-    if (!serverId) return t`Back`;
+    const isOverChat =
+      !s.ui.isNarrowView || s.ui.mobileViewActiveColumn === "chatView";
+    if (!serverId || !isOverChat) return t`Back`;
     const selection = s.ui.perServerSelections[serverId];
     const server = s.servers.find((x) => x.id === serverId);
     const channel = server?.channels.find(
@@ -76,7 +80,7 @@ function useHighlightRow(scrollRef: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     if (!highlight) return;
     let frame = 0;
-    let clearTimer: ReturnType<typeof setTimeout> | undefined;
+    let endHighlight: (() => void) | undefined;
     const startedAt = performance.now();
     const tryHighlight = () => {
       const container = scrollRef.current;
@@ -88,24 +92,12 @@ function useHighlightRow(scrollRef: React.RefObject<HTMLDivElement | null>) {
           frame = requestAnimationFrame(tryHighlight);
         return;
       }
-      const top =
-        row.getBoundingClientRect().top -
-        container.getBoundingClientRect().top +
-        container.scrollTop;
-      container.scrollTo({
-        top: top - container.clientHeight / 2 + row.clientHeight / 2,
-        behavior: "smooth",
-      });
-      row.classList.add("setting-highlight");
-      clearTimer = setTimeout(
-        () => row.classList.remove("setting-highlight"),
-        HIGHLIGHT_MS,
-      );
+      endHighlight = highlightRow(container, row);
     };
     frame = requestAnimationFrame(tryHighlight);
     return () => {
       cancelAnimationFrame(frame);
-      if (clearTimer) clearTimeout(clearTimer);
+      endHighlight?.();
     };
   }, [page]);
   return highlight;
@@ -187,27 +179,19 @@ export const PageShell: React.FC<PageShellProps> = ({
   useEffect(() => {
     if (!jumpedSection) return;
     const title = rootRef.current?.querySelector<HTMLElement>("header h1");
-    if (!title) return;
-    title.classList.add("setting-highlight");
-    const timer = setTimeout(
-      () => title.classList.remove("setting-highlight"),
-      HIGHLIGHT_MS,
-    );
-    return () => clearTimeout(timer);
+    if (title) return flashHighlight(title);
   }, [page]);
 
   const hasSections = !!sections?.length;
-  const canStepBack = isNarrow && hasSections && !isShowingSectionList;
+  const isInSection = isNarrow && hasSections && !isShowingSectionList;
+  const showSectionList = useCallback(() => setIsShowingSectionList(true), []);
+  const stepBack = isInSection ? showSectionList : closePage;
   useEffect(() => {
-    if (!canStepBack) return;
-    backWithinPage = () => {
-      setIsShowingSectionList(true);
-      return true;
-    };
+    pageBack = stepBack;
     return () => {
-      backWithinPage = null;
+      if (pageBack === stepBack) pageBack = null;
     };
-  }, [canStepBack]);
+  }, [stepBack]);
   const sectionTitle =
     sections?.find((s) => s.id === activeSection)?.label ?? title;
 
@@ -301,16 +285,13 @@ export const PageShell: React.FC<PageShellProps> = ({
         </div>
       );
     }
-    const onBack = hasSections
-      ? () => setIsShowingSectionList(true)
-      : closePage;
     return (
       <div
         ref={rootRef}
         className="flex flex-col h-full min-h-0 bg-discord-dark-200"
       >
         {header(
-          backButton(hasSections ? title : backLabel, onBack),
+          backButton(hasSections ? title : backLabel, stepBack),
           sectionTitle,
         )}
         {body}

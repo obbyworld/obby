@@ -24,6 +24,7 @@ describe("AppLayout - Resize Behavior", () => {
     useStore.setState({
       servers: [],
       ui: {
+        messageJump: null,
         selectedServerId: null,
         isNarrowView: false,
         mobileViewActiveColumn: "serverList",

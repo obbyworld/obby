@@ -10,9 +10,7 @@ import SearchPane from "./SearchPane";
 export const SidePane: React.FC = () => {
   const sidePane = useStore((s) => s.ui.sidePane);
   if (sidePane?.kind === "search")
-    return (
-      <SearchPane key={JSON.stringify(sidePane.query)} query={sidePane.query} />
-    );
+    return <SearchPane key={sidePane.session} query={sidePane.query} />;
   if (sidePane?.kind === "profile") return <ProfilePane target={sidePane} />;
   return <MemberList />;
 };

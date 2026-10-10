@@ -251,7 +251,7 @@ function onPayload(
           serverId,
           sender,
           willAccept
-            ? t`${sender} restarted encryption, so this conversation is being set up again.`
+            ? t`${sender} restarted encryption. Wait a moment before you send a message.`
             : t`${sender} restarted encryption. This conversation stays unencrypted until you accept.`,
         );
       }
@@ -435,7 +435,7 @@ function handleUnreadable(
   injectSystemNotice(
     serverId,
     nick,
-    t`${nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open.`,
+    t`${nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them.`,
   );
 }
 

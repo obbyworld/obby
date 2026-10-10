@@ -2,6 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getStatusPriority } from "../../lib/channelStatus";
 import ircClient from "../../lib/ircClient";
@@ -299,7 +300,8 @@ export const MemberList: React.FC = () => {
   const { t } = useLingui();
   const {
     servers,
-    ui,
+    selectedServerId,
+    perServerSelections,
     currentUser,
     toggleMemberList,
     openPrivateChat,
@@ -309,10 +311,24 @@ export const MemberList: React.FC = () => {
     banUserByNick,
     banUserByHostmask,
     openProfile,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      servers: state.servers,
+      selectedServerId: state.ui.selectedServerId,
+      perServerSelections: state.ui.perServerSelections,
+      currentUser: state.currentUser,
+      toggleMemberList: state.toggleMemberList,
+      openPrivateChat: state.openPrivateChat,
+      selectPrivateChat: state.selectPrivateChat,
+      warnUser: state.warnUser,
+      kickUser: state.kickUser,
+      banUserByNick: state.banUserByNick,
+      banUserByHostmask: state.banUserByHostmask,
+      openProfile: state.openProfile,
+    })),
+  );
 
-  const selectedServerId = ui.selectedServerId;
-  const currentSelection = ui.perServerSelections[selectedServerId || ""] || {
+  const currentSelection = perServerSelections[selectedServerId || ""] || {
     selectedChannelId: null,
     selectedPrivateChatId: null,
   };

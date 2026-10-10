@@ -127,6 +127,7 @@ describe("jumpToMessage", () => {
       "server1",
       "#general",
       TIME,
+      expect.any(Function),
     );
     expect(useStore.getState().ui.messageJump).toEqual({
       messageId: "internal-2",

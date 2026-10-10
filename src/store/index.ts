@@ -494,7 +494,7 @@ interface UIState {
   } | null;
   quickActions: QuickActionsState | null;
   // The message list holding this id scrolls to it and flashes it.
-  messageJump?: { messageId: string } | null;
+  messageJump: { messageId: string } | null;
   isDarkMode: boolean;
   isNarrowView: boolean;
   isMobileMenuOpen: boolean;
@@ -1048,7 +1048,10 @@ export interface AppState {
   // With no argument: closed opens Go to, open flips the mode.
   toggleQuickActions: (isOpen?: boolean) => void;
   openQuickActions: (mode: QuickActionsMode, scope?: SearchScope) => void;
-  openSearchResults: (query: SearchQuery) => void;
+  openSearchResults: (
+    query: SearchQuery,
+    options?: { isLive?: boolean; isPaneKept?: boolean },
+  ) => void;
   closeSearchResults: () => void;
   setSearchChatShown: (isChatShown: boolean) => void;
   // Selects the joined channel or the private chat with this nick, opening it
@@ -1239,6 +1242,8 @@ export function resolveCallReturnTarget(
 }
 
 // Create store with Zustand
+let searchSession = 0;
+
 const useStore = create<AppState>((set, get) => ({
   servers: [],
   currentUser: null,
@@ -2124,8 +2129,10 @@ const useStore = create<AppState>((set, get) => ({
       });
 
       // Cap per-channel history to prevent unbounded memory growth in long sessions.
+      // A detached window moves its newer lines to the present right after, so we leave it whole.
       const cappedMessages =
-        updatedMessages.length > MAX_MESSAGES_PER_CHANNEL
+        updatedMessages.length > MAX_MESSAGES_PER_CHANNEL &&
+        !state.historyWindows[channelKey]
           ? updatedMessages.slice(-MAX_MESSAGES_PER_CHANNEL)
           : updatedMessages;
 
@@ -3545,17 +3552,10 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
+  // On a phone a page covers whichever column opened it, so closing it
+  // returns there.
   openPage: (page) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        page,
-        quickActions: null,
-        mobileViewActiveColumn: state.ui.isNarrowView
-          ? "chatView"
-          : state.ui.mobileViewActiveColumn,
-      },
-    }));
+    set((state) => ({ ui: { ...state.ui, page, quickActions: null } }));
   },
 
   closePage: () => {
@@ -3602,8 +3602,9 @@ const useStore = create<AppState>((set, get) => ({
     set((state) => ({ ui: { ...state.ui, quickActions: { mode, scope } } }));
   },
 
-  openSearchResults: (query) => {
+  openSearchResults: (query, { isLive = false, isPaneKept = false } = {}) => {
     if (
+      !isLive &&
       get().globalSettings.keepHistory !== false &&
       serializeSearchQuery(query)
     )
@@ -3612,7 +3613,14 @@ const useStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         page: null,
-        sidePane: { kind: "search", query },
+        sidePane: {
+          kind: "search",
+          query,
+          session:
+            isPaneKept && state.ui.sidePane?.kind === "search"
+              ? state.ui.sidePane.session
+              : ++searchSession,
+        },
         quickActions: null,
         mobileViewActiveColumn: state.ui.isNarrowView
           ? "memberList"

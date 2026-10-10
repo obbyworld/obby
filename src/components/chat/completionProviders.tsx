@@ -207,7 +207,7 @@ function sourceLabel(source: SlashSuggestionSource): {
 } {
   switch (source.kind) {
     case "client":
-      return { label: t`client`, title: t`Handled by Obby before being sent` };
+      return { label: t`client`, title: t`Command run by Obby` };
     case "server":
       return {
         label: t`server`,

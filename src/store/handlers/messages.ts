@@ -22,8 +22,12 @@ import type { Channel, Message, PrivateChat, User } from "../../types";
 import {
   generateDeterministicId,
   getCurrentSelection,
+  REDACTED_BY_TAG,
   resolveReplyMessage,
   serverSupportsMetadata,
+  updateMessageByMsgid,
+  withoutReaction,
+  withReaction,
 } from "../helpers";
 import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferChathistoryReaction } from "./batches";
@@ -1751,47 +1755,13 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       if (!channel) return;
 
-      // Find the message to add reaction to
+      // An existing reaction is the echo of our optimistic update or a repeat from history.
       const channelKey = `${server.id}-${channel.id}`;
-      const messages = store.getState().messages[channelKey] || [];
-      const messageIndex = messages.findIndex(
-        (m) => m.msgid === replyMessageId,
+      store.setState((state) =>
+        updateMessageByMsgid(state, channelKey, replyMessageId, (message) =>
+          withReaction(message, emoji, sender),
+        ),
       );
-      if (messageIndex === -1) return;
-
-      const message = messages[messageIndex];
-      const existingReactionIndex = message.reactions.findIndex(
-        (r) => r.emoji === emoji && r.userId === sender,
-      );
-
-      // Skip self-reactions that already exist — they're an echo of our optimistic update.
-      // If the reaction doesn't exist yet (another session / history playback), add it.
-      const currentUserForReaction = ircClient.getCurrentUser(
-        response.serverId,
-      );
-      if (
-        sender === currentUserForReaction?.username &&
-        existingReactionIndex !== -1
-      ) {
-        return;
-      }
-
-      if (existingReactionIndex === -1) {
-        store.setState((state) => {
-          const updatedMessages = [...messages];
-          updatedMessages[messageIndex] = {
-            ...message,
-            reactions: [...message.reactions, { emoji, userId: sender }],
-          };
-          const key = `${server.id}-${channel.id}`;
-          return {
-            messages: {
-              ...state.messages,
-              [key]: updatedMessages,
-            },
-          };
-        });
-      }
     }
 
     // Handle unreacts
@@ -1814,8 +1784,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       const emoji = mtags["+draft/unreact"];
       const replyMessageId = unreactTargetId;
-      // No self-skip needed: if the reaction was already removed optimistically,
-      // existingReactionIndex will be -1 and the guard below is a no-op.
 
       const server = store
         .getState()
@@ -1837,39 +1805,12 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       if (!channel) return;
 
-      // Find the message to remove reaction from
       const channelKey = `${server.id}-${channel.id}`;
-      const messages = store.getState().messages[channelKey] || [];
-      const messageIndex = messages.findIndex(
-        (m) => m.msgid === replyMessageId,
+      store.setState((state) =>
+        updateMessageByMsgid(state, channelKey, replyMessageId, (message) =>
+          withoutReaction(message, emoji, sender),
+        ),
       );
-      if (messageIndex === -1) return;
-
-      const message = messages[messageIndex];
-      const existingReactionIndex = message.reactions.findIndex(
-        (r) => r.emoji === emoji && r.userId === sender,
-      );
-
-      // Only remove if the reaction exists
-      if (existingReactionIndex !== -1) {
-        store.setState((state) => {
-          const updatedMessages = [...messages];
-          updatedMessages[messageIndex] = {
-            ...message,
-            reactions: message.reactions.filter(
-              (_, i) => i !== existingReactionIndex,
-            ),
-          };
-
-          const key = `${server.id}-${channel.id}`;
-          return {
-            messages: {
-              ...state.messages,
-              [key]: updatedMessages,
-            },
-          };
-        });
-      }
     }
 
     // Handle link previews
@@ -1900,15 +1841,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       if (!channel) return;
 
-      // Find the message to add link preview to
       const channelKey = `${server.id}-${channel.id}`;
-      const messages = store.getState().messages[channelKey] || [];
-      const messageIndex = messages.findIndex(
-        (m) => m.msgid === replyMessageId,
-      );
-      if (messageIndex === -1) return;
-
-      const message = messages[messageIndex];
 
       // Helper function to unescape IRC tag values
       const unescapeTagValue = (
@@ -1924,9 +1857,8 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           .replace(/\\\\/g, "\\");
       };
 
-      store.setState((state) => {
-        const updatedMessages = [...messages];
-        updatedMessages[messageIndex] = {
+      store.setState((state) =>
+        updateMessageByMsgid(state, channelKey, replyMessageId, (message) => ({
           ...message,
           linkPreviewTitle: unescapeTagValue(
             mtags["obsidianirc/link-preview-title"],
@@ -1937,16 +1869,8 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           linkPreviewMeta: unescapeTagValue(
             mtags["obsidianirc/link-preview-meta"],
           ),
-        };
-
-        const key = `${server.id}-${channel.id}`;
-        return {
-          messages: {
-            ...state.messages,
-            [key]: updatedMessages,
-          },
-        };
-      });
+        })),
+      );
     }
   });
 
@@ -1968,44 +1892,30 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       if (!channel) return {};
 
-      // Find and replace the message with a system message
       const channelKey = `${server.id}-${channel.id}`;
-      const messages = state.messages[channelKey] || [];
-      const messageIndex = messages.findIndex((m) => m.msgid === msgid);
-      if (messageIndex === -1) return {};
-
-      const updatedMessages = [...messages];
-      const originalMessage = updatedMessages[messageIndex];
-
-      // Determine if the sender deleted their own message
-      const isSender = originalMessage.userId === sender;
-      const deletionMessage = isSender
-        ? "This message has been deleted by the sender"
-        : "This message has been deleted by a member of staff";
-
-      // Replace the entire message with a system message
-      updatedMessages[messageIndex] = {
-        id: originalMessage.id,
-        msgid: originalMessage.msgid,
-        content: deletionMessage,
-        timestamp: originalMessage.timestamp,
-        userId: "system",
-        channelId: originalMessage.channelId,
-        serverId: originalMessage.serverId,
-        type: "system",
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-        tags: originalMessage.tags,
-      };
-
-      const key = `${server.id}-${channel.id}`;
-      return {
-        messages: {
-          ...state.messages,
-          [key]: updatedMessages,
-        },
-      };
+      return updateMessageByMsgid(
+        state,
+        channelKey,
+        msgid,
+        (originalMessage) => ({
+          id: originalMessage.id,
+          msgid: originalMessage.msgid,
+          content: "",
+          timestamp: originalMessage.timestamp,
+          userId: "system",
+          channelId: originalMessage.channelId,
+          serverId: originalMessage.serverId,
+          type: "system",
+          reactions: [],
+          replyMessage: null,
+          mentioned: [],
+          tags: {
+            ...originalMessage.tags,
+            [REDACTED_BY_TAG]:
+              originalMessage.userId === sender ? "sender" : "staff",
+          },
+        }),
+      );
     });
   });
 

@@ -96,6 +96,7 @@ describe("AppLayout Swipe Navigation", () => {
       servers: [mockServer],
       currentUser: { id: "user1", username: "testuser", isOnline: true },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {

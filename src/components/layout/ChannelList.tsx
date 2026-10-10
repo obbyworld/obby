@@ -72,7 +72,21 @@ export const ChannelList: React.FC = () => {
     setMobileViewActiveColumn,
     reorderChannels,
     openProfile,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      selectChannel: state.selectChannel,
+      selectPrivateChat: state.selectPrivateChat,
+      leaveChannel: state.leaveChannel,
+      deletePrivateChat: state.deletePrivateChat,
+      pinPrivateChat: state.pinPrivateChat,
+      unpinPrivateChat: state.unpinPrivateChat,
+      reorderPrivateChats: state.reorderPrivateChats,
+      openPage: state.openPage,
+      setMobileViewActiveColumn: state.setMobileViewActiveColumn,
+      reorderChannels: state.reorderChannels,
+      openProfile: state.openProfile,
+    })),
+  );
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
 
