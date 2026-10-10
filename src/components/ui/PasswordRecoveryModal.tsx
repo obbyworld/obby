@@ -95,7 +95,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
     }) => {
       if (p.serverId !== serverId) return;
       setBusy(false);
-      setErr(p.message || t`SETPASS failed: ${p.code}`);
+      setErr(p.message || t`Could not set the new password: ${p.code}`);
     };
     ircClient.on("RECOVER_NOTE", onRecoverNote);
     ircClient.on("RECOVER_FAIL", onRecoverFail);

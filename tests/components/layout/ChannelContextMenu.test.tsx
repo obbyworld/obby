@@ -98,7 +98,7 @@ describe("ChannelContextMenu", () => {
     ]);
   });
 
-  it("shows 'Take out of folder' only when the channel is already in a folder", () => {
+  it("shows 'Remove from folder' only when the channel is already in a folder", () => {
     useChannelFolders.setState({
       folders: {
         server1: [
@@ -119,7 +119,7 @@ describe("ChannelContextMenu", () => {
     );
     fireEvent.click(screen.getByRole("menuitem", { name: /move to folder/i }));
     fireEvent.click(
-      screen.getByRole("menuitem", { name: /take out of folder/i }),
+      screen.getByRole("menuitem", { name: /remove from folder/i }),
     );
     expect(useChannelFolders.getState().folders.server1?.[0].channels).toEqual(
       [],

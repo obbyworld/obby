@@ -121,10 +121,10 @@ export function describeGeolocationError(err: unknown): string {
     return t`Location access was denied. Allow location access in your browser or system settings, then try again.`;
   }
   if (err instanceof GeolocationTimeoutError || errorCode(err) === 3) {
-    return t`Could not get a location fix in time. Try again somewhere with a clearer view of the sky.`;
+    return t`Could not find your location in time. Try again somewhere with a clearer view of the sky.`;
   }
   if (errorCode(err) === 2) {
-    return t`This device could not get a location fix right now.`;
+    return t`This device could not find your location right now. Try again in a moment.`;
   }
   return t`Could not get your location.`;
 }

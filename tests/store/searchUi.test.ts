@@ -70,7 +70,10 @@ describe("search ui state", () => {
     const state = useStore.getState();
     state.openProfile(SID, "alice");
     state.openSearchResults(query);
-    expect(useStore.getState().ui.sidePane).toEqual({ kind: "search", query });
+    expect(useStore.getState().ui.sidePane).toMatchObject({
+      kind: "search",
+      query,
+    });
     useStore.getState().closeProfile();
     expect(useStore.getState().ui.sidePane?.kind).toBe("search");
     useStore.getState().openProfile(SID, "alice");

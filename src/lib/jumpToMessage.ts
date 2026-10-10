@@ -25,17 +25,6 @@ export type JumpFailure = "left-channel" | "not-saved" | "not-found";
 
 export type JumpResult = { ok: true } | { ok: false; reason: JumpFailure };
 
-const FLASH_MS = 2000;
-
-export function flashMessageRow(
-  row: Element,
-  behavior: ScrollBehavior = "smooth",
-): void {
-  row.scrollIntoView({ behavior, block: "center" });
-  row.classList.add("message-flash");
-  setTimeout(() => row.classList.remove("message-flash"), FLASH_MS);
-}
-
 // Replay rewrites our own lines to our current nick, so a saved own line
 // can carry either that or the nick we had when we sent it.
 function findIn(
@@ -109,6 +98,7 @@ export async function jumpToMessage(
       serverId,
       target,
       time,
+      () => jump === latestJump,
     );
     // A newer jump owns the screen and reports its own result.
     if (jump !== latestJump) return { ok: true };

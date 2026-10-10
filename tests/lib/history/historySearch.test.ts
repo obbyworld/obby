@@ -209,6 +209,23 @@ describe("filters", () => {
   });
 });
 
+describe("mentions of a person", () => {
+  it("finds the whole nick in other people's messages, not their own lines", async () => {
+    await db.appendRows([
+      message({ id: "v1", time: 1, text: "Valware: are you there" }),
+      message({ id: "v2", time: 2, text: "ask @valware about it" }),
+      message({ id: "v3", time: 3, text: "valwares plural is not him" }),
+      message({ id: "v4", time: 4, text: "my own line", nick: "Valware" }),
+      message({ id: "v5", time: 5, text: "the [bot] knows", nick: "bob" }),
+      message({ id: "v6", time: 6, text: "valware deploy now" }),
+    ]);
+
+    expect(await ids({ mentions: "Valware" })).toEqual(["v6", "v2", "v1"]);
+    expect(await ids({ mentions: "valware", text: "dep" })).toEqual(["v6"]);
+    expect(await ids({ mentions: "[bot]" })).toEqual(["v5"]);
+  });
+});
+
 describe("aboutMe", () => {
   it("finds mentions of our nick on that server and replies to our messages", async () => {
     await db.appendRows([

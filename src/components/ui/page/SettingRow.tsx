@@ -27,7 +27,8 @@ export const Switch: React.FC<{
 );
 
 // One row of a settings card: text on the left, an inline control on the
-// right, and anything taller (inputs, lists) stacked under the text.
+// right, and anything taller (inputs, lists) stacked under the text. A control
+// too wide to sit beside the text wraps under it on a phone.
 export const SettingRow: React.FC<{
   id?: string;
   title: ReactNode;
@@ -41,8 +42,8 @@ export const SettingRow: React.FC<{
       id={id ? `setting-${id}` : undefined}
       className="px-3 py-3 transition-colors duration-300"
     >
-      <div className="flex items-center gap-4">
-        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="flex-[1_1_12rem] min-w-0 flex flex-col gap-0.5">
           <span id={titleId} className="text-[15px] text-white">
             {title}
           </span>

@@ -168,15 +168,20 @@ describe("QuickActions palette", () => {
     expect(getRecentSearches()).toEqual([]);
   });
 
-  it("runs a filter-only query on Enter", () => {
+  it("runs a fully typed filter on Enter without picking it again", () => {
     const input = setup({ scope: chatScope });
     type(input, "in:#random");
-    press("Escape");
+    expect(
+      screen.getByRole("button", { name: "Choose where to search" }),
+    ).toHaveTextContent("#random");
     press("Enter");
-    expect(openSearchResults).toHaveBeenCalledWith({
-      text: "",
-      scope: { kind: "chat", serverId: SID, target: "#random" },
-    });
+    expect(openSearchResults).toHaveBeenCalledWith(
+      {
+        text: "",
+        scope: { kind: "chat", serverId: SID, target: "#random" },
+      },
+      expect.anything(),
+    );
   });
 
   it("opens a start-dm result by its nick", () => {
@@ -248,9 +253,12 @@ describe("QuickActions palette", () => {
       hasLink: true,
       aboutMe: true,
     };
-    expect(openSearchResults).toHaveBeenCalledWith(expected);
+    expect(openSearchResults).toHaveBeenCalledWith(expected, {
+      isLive: false,
+      isPaneKept: false,
+    });
     expect(getRecentSearches()).toEqual([expected]);
-    expect(useStore.getState().ui.sidePane).toEqual({
+    expect(useStore.getState().ui.sidePane).toMatchObject({
       kind: "search",
       query: expected,
     });
@@ -276,23 +284,26 @@ describe("QuickActions palette", () => {
     expect(input).toHaveValue("");
   });
 
-  it("is a full-screen sheet with large targets on touch", () => {
+  it("is a full-screen sheet with desktop-sized controls on touch", () => {
     isTouch = true;
     const input = setup({ scope: chatScope });
     expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
-    expect(modeButton("Messages").className).toContain("min-h-11");
+    expect(modeButton("Messages").className).not.toContain("min-h-11");
     const chip = screen.getByRole("button", { name: "Choose where to search" });
-    expect(chip.className).toContain("min-w-0");
+    expect(chip.className).toContain("min-h-8");
     expect(chip.parentElement?.className).toContain("overflow-x-auto");
     expect(chip.querySelector(".truncate")).toHaveTextContent("#dev");
     fireEvent.click(chip);
     fireEvent.click(screen.getByRole("menuitem", { name: /Everywhere/ }));
     type(input, "hello");
     press("Enter");
-    expect(openSearchResults).toHaveBeenCalledWith({
-      text: "hello",
-      scope: { kind: "everywhere" },
-    });
+    expect(openSearchResults).toHaveBeenCalledWith(
+      {
+        text: "hello",
+        scope: { kind: "everywhere" },
+      },
+      expect.anything(),
+    );
   });
 
   it("closes on Escape", () => {

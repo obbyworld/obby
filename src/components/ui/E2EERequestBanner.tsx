@@ -144,9 +144,9 @@ export const E2EERequestBanner: React.FC<{
         <FaExclamationTriangle className="flex-shrink-0 text-discord-red" />
         <div className="min-w-0 flex-1 text-sm text-discord-text-normal">
           <Trans>
-            {nick}'s encryption key changed. That happens on a new device, and
-            it is also what an attacker looks like. Compare the new fingerprint
-            with {nick} somewhere other than this chat, then accept it.
+            {nick}'s encryption key changed. This happens when {nick} uses a new
+            device, and also when an attacker intercepts the chat. Compare the
+            new fingerprint with {nick} outside this chat, then accept it.
           </Trans>
         </div>
         {/* Reviewing is the primary action. Ending encryption and handshaking

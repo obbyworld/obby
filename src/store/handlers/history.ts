@@ -774,6 +774,7 @@ export async function loadOlderMessages(
 }
 
 const WINDOW_ROWS = 50;
+const WINDOW_KEEP_MESSAGES = 300;
 let jumpCounter = 0;
 
 export type SavedJump = "loaded" | "not-saved" | "not-found";
@@ -786,6 +787,7 @@ export async function showSavedMessagesAround(
   serverId: string,
   target: string,
   time: number,
+  isCurrentJump: () => boolean = () => true,
 ): Promise<SavedJump> {
   if (!isEnabled(store)) return "not-saved";
   const lower = target.toLowerCase();
@@ -803,13 +805,17 @@ export async function showSavedMessagesAround(
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return "not-found";
   if (after.length < WINDOW_ROWS) {
-    showPresent(store, serverId, target);
-    await replayRows(store, serverId, target, rows);
+    await replayRows(store, serverId, target, rows, () => {
+      if (!isCurrentJump()) return false;
+      showPresent(store, serverId, target);
+      return true;
+    });
     return "loaded";
   }
   const newest = rows[rows.length - 1];
   const jumpId = ++jumpCounter;
   await replayRows(store, serverId, target, rows, () => {
+    if (!isCurrentJump()) return false;
     store.setState((state) => ({
       messages: { ...state.messages, [conversation.key]: [] },
       historyWindows: {
@@ -877,6 +883,24 @@ export async function loadNewerMessages(
     }));
     return true;
   });
+  if (dropOldestInWindow(store, conversation.key))
+    await refreshHasMore(store, serverId, target, false);
+}
+
+// We cap a window at WINDOW_KEEP_MESSAGES while paging newer, and the chat list
+// corrects its scroll position for the dropped rows.
+function dropOldestInWindow(store: StoreApi<AppState>, key: string): boolean {
+  const { messages, historyWindows } = store.getState();
+  const shown = messages[key] ?? [];
+  if (!historyWindows[key] || shown.length <= WINDOW_KEEP_MESSAGES)
+    return false;
+  store.setState((state) => ({
+    messages: {
+      ...state.messages,
+      [key]: (state.messages[key] ?? []).slice(-WINDOW_KEEP_MESSAGES),
+    },
+  }));
+  return true;
 }
 
 // On a chathistory server we ask for the newest page as on join, so messages

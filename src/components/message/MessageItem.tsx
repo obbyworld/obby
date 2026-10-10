@@ -2,6 +2,7 @@ import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
@@ -355,17 +356,28 @@ export const MessageItem = memo((props: MessageItemProps) => {
     [encryptedMediaTag],
   );
 
-  // Check if message redaction is supported and possible
-  const server = useStore(
-    useCallback(
-      (state) => state.servers.find((s) => s.id === message.serverId),
-      [message.serverId],
-    ),
+  // Every row subscribes here, so we select plain values: a whole server
+  // object changes on any channel update and would re-render every message.
+  // The filehost origins travel as one string so the shallow compare holds.
+  const { canServerRedact, fileHostsKey, channelEmojiUrl, serverEmojiPackUrl } =
+    useStore(
+      useShallow((state) => {
+        const server = state.servers.find((s) => s.id === message.serverId);
+        return {
+          canServerRedact: !!server?.capabilities?.includes(
+            "draft/message-redaction",
+          ),
+          fileHostsKey: serverFilehosts(server).join(" "),
+          channelEmojiUrl: server?.channels.find((c) => c.id === channelId)
+            ?.metadata?.["draft/emoji"]?.value,
+          serverEmojiPackUrl: server?.emojiPackUrl,
+        };
+      }),
+    );
+  const fileHosts = useMemo(
+    () => fileHostsKey.split(" ").filter(Boolean),
+    [fileHostsKey],
   );
-  // Origins trusted for uploaded media: vendor obby.world/FILEHOST plus the
-  // tokenless draft/FILEHOST list. fileHostsKey is a stable memo dependency.
-  const fileHosts = serverFilehosts(server);
-  const fileHostsKey = fileHosts.join(" ");
   const mediaVisibilityLevel = useStore(
     useCallback((state) => state.globalSettings.mediaVisibilityLevel, []),
   );
@@ -379,7 +391,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     !isSystem &&
     isCurrentUser &&
     !!message.msgid &&
-    !!server?.capabilities?.includes("draft/message-redaction") &&
+    canServerRedact &&
     !!onRedactMessage;
   const canReply = !hideReply && message.type === "message";
 
@@ -404,13 +416,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
   // draft/custom-emoji: gather pack URLs for this message's channel +
   // network in priority order so a channel pack can shadow a network
   // shortcode of the same name.
-  const channelEmojiUrl = useMemo(() => {
-    const ch = server?.channels.find((c) => c.id === channelId);
-    return ch?.metadata?.["draft/emoji"]?.value;
-  }, [server, channelId]);
   const { resolve: resolveEmoji } = useEmojiResolver([
     channelEmojiUrl,
-    server?.emojiPackUrl,
+    serverEmojiPackUrl,
   ]);
 
   // We label only plaintext messages, and lead with the real host because the linked page supplies the title.

@@ -13,7 +13,11 @@ type ChatSelection = {
   selectedPrivateChatId: string | null;
 } | null;
 
-const sameName = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
+// A network name can hold spaces, so an `in:` token spells them as dashes.
+export const scopeToken = (label: string) => label.replace(/\s+/g, "-");
+
+const sameName = (a: string, b: string) =>
+  scopeToken(a).toLowerCase() === scopeToken(b).toLowerCase();
 
 export function scopeServerId(scope: SearchScope): string | null {
   return scope.kind === "everywhere" ? null : scope.serverId;

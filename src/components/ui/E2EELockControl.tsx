@@ -136,7 +136,9 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
             <span>
               <Trans>Encrypt (Obby)</Trans>
               <span className="block text-xs text-discord-text-muted">
-                <Trans>Strongest, but only with other Obby users</Trans>
+                <Trans>
+                  Strongest encryption. Works only with other Obby users
+                </Trans>
               </span>
             </span>
           ),

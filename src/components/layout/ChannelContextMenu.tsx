@@ -80,7 +80,7 @@ export const ChannelContextMenu: React.FC<ChannelContextMenuProps> = ({
     },
     {
       id: "out",
-      label: t`Take out of folder`,
+      label: t`Remove from folder`,
       icon: <FaFolderMinus />,
       show: !!currentFolder,
       onClick: () => moveChannelToFolder(serverId, channel.name, null),

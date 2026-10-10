@@ -6,6 +6,7 @@ import {
   LOCAL_HISTORY_TAG,
 } from "../../lib/history/historyLines";
 import { processMarkdownInText } from "../../lib/ircUtils";
+import { REDACTED_BY_TAG } from "../../store/helpers";
 import type { MessageType } from "../../types";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 
@@ -49,6 +50,14 @@ export const SystemMessage: React.FC<SystemMessageProps> = ({
         {message.tags?.[LOCAL_HISTORY_TAG] === HISTORY_GAP_CODE ? (
           <span>
             <Trans>Messages from this time may be missing</Trans>
+          </span>
+        ) : message.tags?.[REDACTED_BY_TAG] === "sender" ? (
+          <span>
+            <Trans>This message has been deleted by the sender</Trans>
+          </span>
+        ) : message.tags?.[REDACTED_BY_TAG] ? (
+          <span>
+            <Trans>This message has been deleted by a member of staff</Trans>
           </span>
         ) : (
           <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>

@@ -125,6 +125,7 @@ describe("Metadata Display Features", () => {
         },
       },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {

@@ -4,6 +4,7 @@
  */
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useShallow } from "zustand/react/shallow";
 import { base64EncodeUtf8 } from "../lib/base64";
 import ircClient from "../lib/ircClient";
 import {
@@ -286,7 +287,13 @@ export function useMessageSending({
   selectedFormatting,
   localReplyTo,
 }: UseMessageSendingOptions): UseMessageSendingReturn {
-  const { globalSettings, setAway, clearAway } = useStore();
+  const { globalSettings, setAway, clearAway } = useStore(
+    useShallow((state) => ({
+      globalSettings: state.globalSettings,
+      setAway: state.setAway,
+      clearAway: state.clearAway,
+    })),
+  );
 
   /**
    * Handle IRC commands like /join, /part, /nick, etc.

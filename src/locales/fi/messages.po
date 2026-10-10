@@ -22,10 +22,6 @@ msgstr "Obby - Viedään IRC tulevaisuuteen"
 msgid "— open in viewer"
 msgstr "— avaa katseluohjelmassa"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(handled by Obby)"
-msgstr "(Obby käsittelee)"
-
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -35,6 +31,10 @@ msgstr "(peritty)"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(not set)"
 msgstr "(ei asetettu)"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "(run by Obby)"
+msgstr "(Obbyn suorittama)"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
@@ -146,8 +146,8 @@ msgid "{count}+ results"
 msgstr "{count}+ tulosta"
 
 #: src/components/layout/SearchPane.tsx
-msgid "{countLabel} · newest first · {scopeName}"
-msgstr "{countLabel} · uusimmat ensin · {scopeName}"
+msgid "{countLabel} in {scopeName}"
+msgstr "{countLabel} kohteessa {scopeName}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -198,8 +198,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} lopetti salauksen."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
-msgstr "{nick} lähettää salattuja viestejä, joita tämä laite ei osaa lukea. Salaus on aloitettava uudelleen, ennen kuin ne aukeavat."
+msgid "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
+msgstr "{nick} lähettää salattuja viestejä, joita tämä laite ei voi purkaa. Aloita salaus uudelleen lukeaksesi ne."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -210,8 +210,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} haluaa aloittaa salatun keskustelun"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
-msgstr "Käyttäjän {nick} salausavain vaihtui. Näin käy uudella laitteella, ja samalta näyttää myös hyökkääjä. Vertaa uutta sormenjälkeä käyttäjän {nick} kanssa muualla kuin tässä keskustelussa ja hyväksy se sitten."
+msgid "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
+msgstr "Käyttäjän {nick} salausavain vaihtui. Näin käy, kun {nick} käyttää uutta laitetta, mutta myös silloin, kun hyökkääjä sieppaa keskustelun. Vertaa uutta sormenjälkeä käyttäjän {nick} kanssa tämän keskustelun ulkopuolella ja hyväksy se."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -234,16 +234,16 @@ msgid "{safeName} is no longer available on the server."
 msgstr "{safeName} ei ole enää saatavilla palvelimella."
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} was changed on the server, so it no longer decrypts."
-msgstr "{safeName} muuttui palvelimella, joten sen salausta ei voi enää purkaa."
-
-#: src/store/handlers/e2ee.ts
-msgid "{sender} restarted encryption, so this conversation is being set up again."
-msgstr "{sender} käynnisti salauksen uudelleen, joten tätä keskustelua määritetään taas."
+msgid "{safeName} was changed on the server, so it cannot be decrypted."
+msgstr "Tiedostoa {safeName} muutettiin palvelimella, joten sitä ei voi purkaa."
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} käynnisti salauksen uudelleen. Tämä keskustelu pysyy salaamattomana, kunnes hyväksyt sen."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. Wait a moment before you send a message."
+msgstr "{sender} aloitti salauksen uudelleen. Odota hetki ennen viestin lähettämistä."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -1167,10 +1167,6 @@ msgstr "Kanavat"
 msgid "Chat"
 msgstr "Keskustelu"
 
-#: src/components/ui/settings/HistoryUsageField.tsx
-msgid "Chat to start saving history"
-msgstr "Keskustele aloittaaksesi historian tallennuksen"
-
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
 msgstr "Keskustelut ja verkot"
@@ -1363,6 +1359,10 @@ msgstr "Väri ja muotoilu"
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "IRC-palvelimen toimittama komento"
+
+#: src/components/chat/completionProviders.tsx
+msgid "Command run by Obby"
+msgstr "Obbyn suorittama komento"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
@@ -1579,8 +1579,8 @@ msgid "Could not find this message"
 msgstr "Tätä viestiä ei löytynyt"
 
 #: src/lib/geolocation.ts
-msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
-msgstr "Sijaintia ei saatu määritettyä ajoissa. Yritä uudelleen paikassa, jossa taivas näkyy paremmin."
+msgid "Could not find your location in time. Try again somewhere with a clearer view of the sky."
+msgstr "Sijaintiasi ei löytynyt ajoissa. Yritä uudelleen paikassa, josta on parempi näkyvyys taivaalle."
 
 #: src/lib/geolocation.ts
 msgid "Could not get your location."
@@ -1593,6 +1593,11 @@ msgstr "GIF-kuvien lataus epäonnistui. Hae uudelleen yrittääksesi."
 #: src/lib/mediaUpload.ts
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Tiedostopalvelimeen ei saatu yhteyttä. Tarkista yhteytesi ja yritä uudelleen."
+
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Could not set the new password: {0}"
+msgstr "Uuden salasanan asettaminen epäonnistui: {0}"
 
 #. placeholder {0}: p.code
 #: src/components/ui/ChangePasswordModal.tsx
@@ -1720,10 +1725,6 @@ msgstr "Oletusnimimerkki"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Delay joins (+D)"
 msgstr "Viivästä liittymisiä (+D)"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Delay showing joins until someone speaks"
-msgstr "Näytä liittymiset vasta kun joku puhuu"
 
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
@@ -2004,10 +2005,6 @@ msgstr "Upotus"
 msgid "Emojis"
 msgstr "Emojit"
 
-#: src/components/pages/EmojiPacksPage.tsx
-msgid "Empty pack. Add some emoji."
-msgstr "Tyhjä paketti. Lisää emojeita."
-
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
@@ -2136,6 +2133,10 @@ msgstr "Vahvista syöttämällä jonkin rekisteröidyn todennussovelluksen 6-num
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Enter a channel name for channel-scoped packs."
 msgstr "Anna kanavan nimi kanavakohtaisia paketteja varten."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+msgstr "Anna kanava, jolle käyttäjät ohjataan, kun he eivät voi liittyä tähän kanavaan. Jätä tyhjäksi poistaaksesi käytöstä."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
@@ -2327,8 +2328,8 @@ msgid "Fetching missed messages…"
 msgstr "Haetaan ohitettuja viestejä…"
 
 #: src/components/layout/ChatArea.tsx
-msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
-msgstr "Tiedostoa ei lähetetty: salausta vasta luodaan. Se lähtee, kun salaus on käytössä, tai kun lopetat salauksen."
+msgid "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
+msgstr "Tiedostoa ei ladattu: salaus on vielä käynnistymässä. Lataa tiedosto uudelleen, kun salaus on käytössä, tai lopeta salaus ladataksesi sen salaamattomana."
 
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
@@ -2344,8 +2345,8 @@ msgstr "Tiedostopalvelimen kuva"
 
 #. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
-msgstr "Yli {0} kokoiset tiedostot lähetetään sellaisenaan. Tiedostopalvelin tallentaa ne luettavassa muodossa, ja kuka tahansa linkin saanut voi avata ne."
+msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
+msgstr "Tiedostot, jotka ovat suurempia kuin {0}, lähetetään salaamattomina. Tiedostopalvelin voi lukea ne, ja jokainen linkin haltija voi avata ne."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -2354,10 +2355,6 @@ msgstr "Suodata kiroilu (+G)"
 #: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "Suodata jäseniä…"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Filter out bad words with <censored>"
-msgstr "Korvaa kiroilu merkinnällä <censored>"
 
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Filters"
@@ -2503,10 +2500,6 @@ msgstr "GZ-Line (maailmanlaajuinen Z-Line)"
 msgid "Halfop"
 msgstr "Halfop"
 
-#: src/components/chat/completionProviders.tsx
-msgid "Handled by Obby before being sent"
-msgstr "Käsitelty Obbylla ennen lähettämistä"
-
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Sisältää linkin"
@@ -2518,6 +2511,10 @@ msgstr "Piilota kommentit"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Piilota kanava LIST- ja NAMES-listoista."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide users who join until they send a message"
+msgstr "Piilota liittyvät käyttäjät, kunnes he lähettävät viestin"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2626,11 +2623,6 @@ msgstr "Kuva {0}/{1}"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Image preview"
 msgstr "Kuvan esikatselu"
-
-#. Search filter chip: messages in a chat or network
-#: src/components/search/SearchQueryBar.tsx
-msgid "In"
-msgstr "Kohteessa"
 
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
@@ -2815,8 +2807,8 @@ msgid "Keep credentials"
 msgstr "Säilytä tunnistautumistiedot"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Keep the channel when it empties. Only IRCops can set this."
-msgstr "Säilytä kanava, kun se tyhjenee. Vain IRC-operaattorit voivat asettaa tämän."
+msgid "Keep the channel after everyone leaves. Only IRCops can set this."
+msgstr "Pidä kanava, kun kaikki ovat poistuneet. Vain IRCopit voivat asettaa tämän."
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -3114,6 +3106,11 @@ msgstr "Maininnat"
 msgid "Mentions & replies"
 msgstr "Maininnat ja vastaukset"
 
+#. Search filter: messages that mention a person
+#: src/components/search/messageSearchProviders.tsx
+msgid "Mentions of"
+msgstr "Maininnat henkilöstä"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
 msgstr "Viesti"
@@ -3161,8 +3158,8 @@ msgid "Message not sent: encryption stopped working. End encryption to send unen
 msgstr "Viestiä ei lähetetty: salaus lakkasi toimimasta. Lopeta salaus lähettääksesi salaamattomana."
 
 #: src/store/handlers/e2eeOutbound.ts
-msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
-msgstr "Viestiä ei lähetetty: salausavain muuttui. Vahvista uusi avain tai lopeta salaus ennen kuin lähetät salaamattomana."
+msgid "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
+msgstr "Viestiä ei lähetetty: salausavain vaihtui. Vahvista uusi avain tai lopeta salaus lähettääksesi salaamattomana."
 
 #: src/components/ui/BlankPage.tsx
 msgid "Message of the day"
@@ -3506,8 +3503,8 @@ msgid "no message"
 msgstr "ei viestiä"
 
 #: src/components/layout/SearchPane.tsx
-msgid "No messages match. Widen the scope or change filters"
-msgstr "Mikään viesti ei täsmää. Laajenna aluetta tai muuta suodattimia"
+msgid "No messages match. Search more chats or change the filters"
+msgstr "Viestejä ei löytynyt. Hae useammista keskusteluista tai muuta suodattimia"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3812,10 +3809,6 @@ msgstr "Valinnaiset kaatumisraportit sovelluksen parantamiseksi"
 msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 msgstr "Muut tämän tilin avoimet istunnot kirjataan ulos muutoksen yhteydessä. Kaksivaiheisen tunnistuksen asetukset, jos niitä on, säilyvät ennallaan."
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "OTR does not encrypt files, sent as-is"
-msgstr "OTR ei salaa tiedostoja, lähetetty sellaisenaan"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Output"
 msgstr "Tuloste"
@@ -3921,8 +3914,8 @@ msgid "Pick a password (3 characters or more)."
 msgstr "Valitse salasana (vähintään 3 merkkiä)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Pick a preset flood protection profile. UnrealIRCd only."
-msgstr "Valitse valmis tulvasuojaprofiili. Vain UnrealIRCd."
+msgid "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
+msgstr "Valitse valmis tulvasuojausprofiili. Tämä toimii vain UnrealIRCd-palvelimilla."
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
@@ -4297,6 +4290,10 @@ msgstr "Poista tunnistautumistapa"
 msgid "remove every attachment"
 msgstr "poista kaikki liitteet"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Remove from folder"
+msgstr "Poista kansiosta"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Poista malli"
@@ -4340,6 +4337,10 @@ msgstr "Näytä Markdown-muotoilu viesteissä"
 #: src/components/layout/NetworkMenu.tsx
 msgid "Reorder list"
 msgstr "Järjestä lista"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Replace bad words with <censored>"
+msgstr "Korvaa kielletyt sanat tekstillä <censored>"
 
 #: src/components/layout/SearchPane.tsx
 msgid "Replies"
@@ -4435,6 +4436,10 @@ msgstr "Tallenna"
 msgid "Save failed: {msg}"
 msgstr "Tallennus epäonnistui: {msg}"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+msgstr "Tallenna viestit tälle laitteelle, jotta voit selata pidemmälle kuin palvelimen historia ulottuu. Kun poistat tämän käytöstä, uusia viestejä ei enää tallenneta, mutta jo tallennetut säilyvät. Salattuja yksityisviestejä ei koskaan tallenneta."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save settings"
 msgstr "Tallenna asetukset"
@@ -4463,10 +4468,6 @@ msgstr "Tallennetaan..."
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Skannaa tämä QR-koodi todennussovelluksellasi ja vahvista sen näyttämällä 6-numeroisella koodilla."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
-msgstr "Selaa taaksepäin pidemmälle kuin palvelin säilyttää. Kun tämän poistaa käytöstä, tallennus loppuu ja jo tallennettu säilyy. Salattuja yksityisviestejä ei koskaan tallenneta."
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4500,6 +4501,7 @@ msgid "Search emojis..."
 msgstr "Hae emojeja..."
 
 #: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
 msgid "Search failed"
 msgstr "Haku epäonnistui"
 
@@ -4524,6 +4526,10 @@ msgstr "Hae viesteistä \"{query}\""
 msgid "Search messages, filter with from: in: has:link"
 msgstr "Hae viesteistä, suodata from: in: has:link"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Search more chats"
+msgstr "Hae useammista keskusteluista"
+
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
 msgstr "Hae palvelimia..."
@@ -4536,6 +4542,7 @@ msgstr "Haetaan kohteesta {label}"
 msgid "Searching..."
 msgstr "Haetaan..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/layout/SearchPane.tsx
 msgid "Searching…"
 msgstr "Haetaan…"
@@ -4645,6 +4652,10 @@ msgstr "Lähetä viesti"
 msgid "Send OPER with the name and password above now."
 msgstr "Lähetä OPER yllä olevalla nimellä ja salasanalla nyt."
 
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Send or receive a message to start saving history"
+msgstr "Lähetä tai vastaanota viesti aloittaaksesi historian tallennuksen"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
 msgstr "Lähetä palautuskoodi"
@@ -4661,10 +4672,6 @@ msgstr "Lähetä kirjoitusilmoituksia"
 msgid "Send unencrypted"
 msgstr "Lähetä salaamattomana"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Send users here when they can't join. Leave empty to disable."
-msgstr "Ohjaa käyttäjät tänne, kun he eivät voi liittyä. Jätä tyhjäksi poistaaksesi käytöstä."
-
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Lähetetään"
@@ -4672,6 +4679,14 @@ msgstr "Lähetetään"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Sending…"
 msgstr "Lähetetään…"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because OTR encrypts text only"
+msgstr "Lähetetty salaamattomana, koska OTR salaa vain tekstin"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because the file is too large to encrypt"
+msgstr "Lähetetty salaamattomana, koska tiedosto on liian suuri salattavaksi"
 
 #: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4793,8 +4808,8 @@ msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "Aseta, kuinka monta sekuntia tulvatoimintaa lasketaan ennen laskurien nollausta"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Set how much history to keep. The oldest messages go first."
-msgstr "Määritä, kuinka paljon historiaa säilytetään. Vanhimmat viestit poistetaan ensin."
+msgid "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
+msgstr "Aseta, kuinka paljon levytilaa tallennettu historia saa käyttää. Vanhimmat viestit poistetaan ensin, kun raja täyttyy."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4815,11 +4830,6 @@ msgstr "Aseta tälle kanavalle näytettävä aihe. Kaikki näkevät sen."
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Merkitse itsesi poissaolevaksi"
-
-#. placeholder {0}: p.code
-#: src/components/ui/PasswordRecoveryModal.tsx
-msgid "SETPASS failed: {0}"
-msgstr "SETPASS epäonnistui: {0}"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4945,16 +4955,16 @@ msgid "Show search results"
 msgstr "Näytä hakutulokset"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show the MOTD"
-msgstr "Näytä MOTD"
+msgid "Show the message of the day"
+msgstr "Näytä päivän viesti"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Show video"
 msgstr "Näytä video"
 
 #: src/components/pages/TwoFactorPage.tsx
-msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
-msgstr "Kirjaudu palveluntarjoajalla liittääksesi sen identiteetin tilillesi, jotta SASL OAUTHBEARER ja IRCV3BEARER toimivat myöhemmissä yhteyksissä."
+msgid "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
+msgstr "Kirjaudu palveluntarjoajalla yhdistääksesi sen tiliisi. Sen jälkeen voit kirjautua sillä myöhemmillä yhteyksillä (SASL OAUTHBEARER ja IRCV3BEARER)."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -5050,14 +5060,6 @@ msgstr "Tila"
 msgid "Status Messages"
 msgstr "Tilaviestit"
 
-#: src/lib/voiceErrors.ts
-msgid "Stay here while we rejoin. The server limits how often you can rejoin."
-msgstr "Pysy tässä, kun liitymme uudelleen. Palvelin rajoittaa, kuinka usein voit liittyä uudelleen."
-
-#: src/components/voice/VoiceDock.tsx
-msgid "Step off stream"
-msgstr "Poistu striimistä"
-
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -5074,6 +5076,10 @@ msgstr "Lopeta tallennus"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
 msgstr "Lopeta jakaminen"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop streaming"
+msgstr "Lopeta suoratoisto"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
@@ -5108,8 +5114,8 @@ msgid "Strip mIRC color codes from messages"
 msgstr "Poista mIRC-värikoodit viesteistä"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Strongest, but only with other Obby users"
-msgstr "Vahvin, mutta vain muiden Obby-käyttäjien kanssa"
+msgid "Strongest encryption. Works only with other Obby users"
+msgstr "Vahvin salaus. Toimii vain muiden Obby-käyttäjien kanssa"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Suspend"
@@ -5130,10 +5136,6 @@ msgstr "Järjestelmä"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Järjestelmän oletus"
-
-#: src/components/layout/ChannelContextMenu.tsx
-msgid "Take out of folder"
-msgstr "Poista kansiosta"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5157,11 +5159,11 @@ msgid "That device is not available right now."
 msgstr "Laite ei ole juuri nyt käytettävissä."
 
 #: src/components/layout/ChatArea.tsx
-msgid "That screen is no longer there."
-msgstr "Kyseistä näyttöä ei enää ole."
+msgid "That screen is no longer available. Choose another screen."
+msgstr "Tämä näyttö ei ole enää saatavilla. Valitse toinen näyttö."
 
 #: src/lib/voiceErrors.ts
-msgid "The call server refused that. Try again in a moment."
+msgid "The call server refused the request. Try again in a moment."
 msgstr "Puhelupalvelin hylkäsi pyynnön. Yritä hetken kuluttua uudelleen."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
@@ -5169,12 +5171,12 @@ msgid "The connection to <0>{serverName}</0> has the following security concerns
 msgstr "Yhteydessä palvelimeen <0>{serverName}</0> on seuraavia tietoturvaongelmia:"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
-msgstr "Tiedostopalvelin tallentaa sen luettavana, ja kuka tahansa linkin saanut voi avata sen. Vaihda Obby-salaukseen, jos haluat lähettää tiedostot salattuina."
+msgid "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
+msgstr "Tiedostopalvelin voi lukea nämä tiedostot, ja jokainen linkin haltija voi avata ne. Vaihda Obby-salaukseen lähettääksesi tiedostot salattuina."
 
 #: src/components/layout/ChatArea.tsx
-msgid "The file host would not let this through."
-msgstr "Tiedostopalvelin ei päästänyt tätä läpi."
+msgid "The file host refused the upload. Try again."
+msgstr "Tiedostopalvelin hylkäsi latauksen. Yritä uudelleen."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
@@ -5214,32 +5216,32 @@ msgid "This chat"
 msgstr "Tämä keskustelu"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr "Tämä keskustelu on salattu Obbyn omalla menetelmällä. Vertaa sormenjälkiä erillistä kanavaa pitkin ja merkitse keskustelu sitten vahvistetuksi."
+msgid "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Tämä keskustelu on salattu Obby-salauksella. Vertaa sormenjälkiä yhteyshenkilösi kanssa tämän keskustelun ulkopuolella ja merkitse se vahvistetuksi."
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr "Tämä keskustelu on salattu OTR:llä, joka on yhteensopiva muiden IRC-asiakkaiden kanssa. Vertaa sormenjälkiä erillistä kanavaa pitkin ja merkitse keskustelu sitten vahvistetuksi."
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Tämä keskustelu on salattu OTR:llä, joka on yhteensopiva muiden IRC-asiakkaiden kanssa. Vertaa sormenjälkiä yhteyshenkilösi kanssa tämän keskustelun ulkopuolella ja merkitse se vahvistetuksi."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tämä komento ei ota parametreja."
 
 #: src/lib/geolocation.ts
-msgid "This device could not get a location fix right now."
-msgstr "Tämä laite ei saanut sijaintia juuri nyt."
+msgid "This device could not find your location right now. Try again in a moment."
+msgstr "Tämä laite ei löytänyt sijaintiasi juuri nyt. Yritä hetken kuluttua uudelleen."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "Tämä kenttä on pakollinen"
 
+#: src/components/layout/ChatArea.tsx
+msgid "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+msgstr "Tämä tiedostopalvelin hylkää {CIPHERTEXT_EXTENSION}-tiedostot, joita Obby käyttää salattuihin liitteisiin. Lopeta salaus lähettääksesi tiedoston salaamattomana."
+
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Tätä tiedostoa ei ole salattu. Kuka tahansa linkin haltija voi avata sen."
-
-#: src/components/layout/ChatArea.tsx
-msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
-msgstr "Tämä palvelin ei hyväksy {CIPHERTEXT_EXTENSION}-tiedostoja, joina salattu liite tallennetaan. Salauksen lopettamisen jälkeen tiedosto lähtee sellaisenaan."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
@@ -5258,6 +5260,14 @@ msgstr "Tämän verran ihmisiä on rekisteröitynyt tämän linkin kautta"
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "Tätä viestiä ei voitu purkaa. Se salattiin istunnolle, jonka avaimia tällä laitteella ei enää ole."
 
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by a member of staff"
+msgstr "Ylläpidon jäsen poisti tämän viestin"
+
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by the sender"
+msgstr "Lähettäjä poisti tämän viestin"
+
 #: src/components/ui/GlobalNotifications.tsx
 msgid "This message is no longer saved"
 msgstr "Tätä viestiä ei ole enää tallennettu"
@@ -5270,6 +5280,10 @@ msgstr "Tätä viestiä ei ollut salattu. Se voi tulla henkilön toisesta ohjelm
 msgid "This network"
 msgstr "Tämä verkko"
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "This pack has no emoji yet. Add one above."
+msgstr "Tässä paketissa ei ole vielä emojeita. Lisää yksi yllä."
+
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "Tämä poistaa verkon soju-bounceristasi. Käyttääksesi sitä uudelleen sinun täytyy lisätä se takaisin."
@@ -5279,8 +5293,8 @@ msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>
 msgstr "Tämä palvelin ei tue kutsulinkkejä (<0>obby.world/invitation</0>-kykyä ei ilmoiteta). Voit silti chattailla normaalisti; tämä paneeli on obbyircd-pohjaisia verkkoja varten."
 
 #: src/components/layout/ChatArea.tsx
-msgid "This server has nowhere to put a file."
-msgstr "Tällä palvelimella ei ole paikkaa tiedostolle."
+msgid "This server has no file host. Connect to a server with a file host to upload files."
+msgstr "Tällä palvelimella ei ole tiedostopalvelinta. Yhdistä palvelimeen, jolla on tiedostopalvelin, ladataksesi tiedostoja."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -5349,10 +5363,6 @@ msgstr "Näytä/piilota jäsenlista"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Toggle Notifications"
 msgstr "Näytä/piilota ilmoitukset"
-
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "Too large to encrypt, sent unencrypted"
-msgstr "Liian suuri salattavaksi, lähetettiin salaamattomana"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
@@ -5713,6 +5723,10 @@ msgstr "Äänenvoimakkuus"
 msgid "Volume for {0}"
 msgstr "Äänenvoimakkuus käyttäjälle {0}"
 
+#: src/lib/voiceErrors.ts
+msgid "Wait here to rejoin. The server limits how often you can rejoin."
+msgstr "Odota täällä liittyäksesi uudelleen. Palvelin rajoittaa, kuinka usein voit liittyä uudelleen."
+
 #. placeholder {0}: open.opponent
 #: src/components/ui/TicTacToeModal.tsx
 msgid "Waiting for {0} to accept…"
@@ -5800,10 +5814,6 @@ msgstr "Kuiskaa käyttäjälle nykyisen kanavan kontekstissa"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
 msgstr "Laaja – laajempi suojauslaajuus"
-
-#: src/components/layout/SearchPane.tsx
-msgid "Widen the scope"
-msgstr "Laajenna aluetta"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
@@ -5921,18 +5931,18 @@ msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Viestisi voidaan siepata palvelimien välillä välitettäessä"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
-msgstr "Viestisi käyttäjän {nick} kanssa on salattu OTR:llä, joka kuljettaa vain tekstiä. Nämä tiedostot lähtisivät salaamattomina."
+msgid "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
+msgstr "Viestisi käyttäjän {nick} kanssa on salattu OTR:llä, joka salaa vain tekstin. Nämä tiedostot lähetetään salaamattomina."
 
 #. placeholder {0}: affected.length
 #. placeholder {1}: files.length
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
-msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. {0} / {1} tiedostosta on liian suuria salattavaksi ja lähetettäisiin selkokielisinä. Loput pysyvät salattuina."
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
+msgstr "Viestisi käyttäjän {nick} kanssa on salattu. {0} / {1} tiedostoa on liian suuria salattavaksi, ja ne lähetetään salaamattomina. Muut tiedostot lähetetään salattuina."
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
-msgstr "Viestisi käyttäjän {nick} kanssa ovat salattuja. Nämä tiedostot ovat liian suuria salattaviksi ja lähetettäisiin selkokielisinä."
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+msgstr "Viestisi käyttäjän {nick} kanssa on salattu. Nämä tiedostot ovat liian suuria salattavaksi, ja ne lähetetään salaamattomina."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

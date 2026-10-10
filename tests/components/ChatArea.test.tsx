@@ -64,6 +64,7 @@ describe("ChatArea Tab Completion Integration", () => {
       servers: [mockServer],
       currentUser: { id: "user1", username: "testuser", isOnline: true },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -395,6 +396,7 @@ describe("ChatArea reply keyboard navigation", () => {
         [NAV_CHANNEL_KEY]: [makeMsg("msg-old"), makeMsg("msg-new")],
       },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {

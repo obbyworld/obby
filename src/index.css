@@ -7,6 +7,15 @@
   .surface-floating {
     @apply bg-discord-dark-300 rounded-lg ring-1 ring-black/40 shadow-[0_8px_24px_rgba(0,0,0,0.45)];
   }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .tooltip-surface {
+    @apply surface-floating pointer-events-none px-3 py-1.5 text-sm font-normal text-white whitespace-pre-line;
+  }
   .surface-list {
     @apply p-1.5;
   }
@@ -80,9 +89,14 @@
   .modal-sheet .modal-footer > button {
     @apply h-11 w-full;
   }
-  .setting-highlight {
+  .jump-highlight {
     @apply bg-yellow-400/20 ring-2 ring-yellow-400 rounded-lg;
     animation: blink 0.5s ease-in-out 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .jump-highlight {
+      animation: none;
+    }
   }
   .surface-dialog {
     @apply bg-discord-dark-200 rounded-xl ring-1 ring-white/[0.06] shadow-[0_24px_64px_rgba(0,0,0,0.5)];
@@ -307,30 +321,6 @@ html {
   #root {
     height: 100vh;
     height: -webkit-fill-available;
-  }
-}
-
-/* Flash animation for message highlighting */
-@keyframes message-flash {
-  0% {
-    background-color: transparent;
-  }
-  10% {
-    background-color: rgba(209, 213, 219, 0.4); /* light gray */
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-.message-flash {
-  animation: message-flash 2s ease-in-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .message-flash {
-    animation: none;
-    background-color: rgba(209, 213, 219, 0.2);
   }
 }
 

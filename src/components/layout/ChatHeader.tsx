@@ -22,6 +22,7 @@ import {
   FaUser,
   FaUserPlus,
 } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import {
   getChannelAvatarUrl,
@@ -121,7 +122,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     setTopicModalRequest,
     clearTopicModalRequest,
     openMediaExplorer,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      openPage: state.openPage,
+      openProfile: state.openProfile,
+      toggleMemberList: state.toggleMemberList,
+      setMobileViewActiveColumn: state.setMobileViewActiveColumn,
+      pinPrivateChat: state.pinPrivateChat,
+      unpinPrivateChat: state.unpinPrivateChat,
+      setTopicModalRequest: state.setTopicModalRequest,
+      clearTopicModalRequest: state.clearTopicModalRequest,
+      openMediaExplorer: state.openMediaExplorer,
+    })),
+  );
   const ui = useStore((state) => state.ui);
   const topicModalRequest = useStore((state) => state.ui.topicModalRequest);
   const botsLoadingCount = useStore(

@@ -41,9 +41,9 @@ export function describeVoiceError(code: VoiceErrorCode): string {
     case "screen-failed":
       return t`Share your screen again to retry`;
     case "server":
-      return t`The call server refused that. Try again in a moment.`;
+      return t`The call server refused the request. Try again in a moment.`;
     case "join-throttled":
-      return t`Stay here while we rejoin. The server limits how often you can rejoin.`;
+      return t`Wait here to rejoin. The server limits how often you can rejoin.`;
     case "join-refused":
       return t`The server refused your join. Check the channel modes and try again.`;
   }
