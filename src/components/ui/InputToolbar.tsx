@@ -37,6 +37,7 @@ export function InputToolbar({
         </button>
       )}
       <button
+        aria-label={t`Format text`}
         className="flex h-[52px] w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onColorPickerClick}
       >
@@ -51,6 +52,7 @@ export function InputToolbar({
         />
       </button>
       <button
+        aria-label={t`Mention someone`}
         className="flex h-[52px] w-9 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
         onClick={onAtClick}
       >
@@ -58,6 +60,7 @@ export function InputToolbar({
       </button>
       {showSendButton && (
         <button
+          aria-label={t`Send message`}
           className={`ml-1 w-9 h-9 rounded-full text-white flex items-center justify-center shrink-0
             transition-[transform,opacity,box-shadow] duration-200 ease-out active:scale-90 ${
               hasText

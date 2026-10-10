@@ -8,6 +8,7 @@ import { type HistoryRow, readSearchIndex } from "./historyDb";
 import { awaitRequest } from "./idb";
 import {
   indexTermOf,
+  isIndexedPrefix,
   matchesTerms,
   mentionsNick,
   type QueryTerms,
@@ -428,7 +429,7 @@ async function planSearch(
 ): Promise<{ driver: Driver; keep: (id: number) => boolean }> {
   const text = [
     ...filter.terms.exact.map((term) => exactTerm(terms, term, filter)),
-    ...(filter.terms.prefix
+    ...(filter.terms.prefix && isIndexedPrefix(filter.terms.prefix)
       ? [prefixTerm(terms, filter.terms.prefix, filter)]
       : []),
   ];

@@ -691,6 +691,7 @@ msgstr "Požádejte správce serveru, aby zveřejnil URL backendu (draft/authtok
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Zapomenuté heslo"
 msgid "Forgot password?"
 msgstr "Zapomenuté heslo?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Formátovat text"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Členové"
 msgid "Members — {0}"
 msgstr "Členové — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Zmínit někoho"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Přezdívka"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Přezdívka '{nick}' je již používána, zkouším s '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Přezdívka “{nick}” je již používána, zkouším s “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Odeslat akci / emote"
 msgid "Send Invite"
 msgstr "Odeslat pozvánku"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Odeslat zprávu"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Odeslat zprávu"
@@ -5481,6 +5494,10 @@ msgstr "zkráceno"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Důvěryhodné zdroje"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Zkusit znovu"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

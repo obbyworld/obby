@@ -691,6 +691,7 @@ msgstr "Pyydä palvelimen ylläpitäjää ilmoittamaan taustajärjestelmän URL-
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Unohtunut salasana"
 msgid "Forgot password?"
 msgstr "Unohditko salasanan?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Muotoile tekstiä"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Jäsenet"
 msgid "Members — {0}"
 msgstr "Jäsenet — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Mainitse joku"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Nimimerkki"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Nimimerkki '{nick}' on jo käytössä, yritetään uudelleen nimellä '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Nimimerkki “{nick}” on jo käytössä, yritetään uudelleen nimellä “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Lähetä toiminto / emote"
 msgid "Send Invite"
 msgstr "Lähetä kutsu"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Lähetä viesti"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Lähetä viesti"
@@ -5481,6 +5494,10 @@ msgstr "katkaistu"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Luotetut lähteet"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Yritä uudelleen"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

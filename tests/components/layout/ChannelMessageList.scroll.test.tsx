@@ -105,6 +105,55 @@ describe("ChannelMessageList scroll state", () => {
   });
 });
 
+describe("ChannelMessageList resized by the keyboard", () => {
+  it("stays at the bottom when the list shrinks and grows back", () => {
+    const observed: { callback: ResizeObserverCallback; target?: Element }[] =
+      [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        entry: { callback: ResizeObserverCallback; target?: Element };
+        constructor(callback: ResizeObserverCallback) {
+          this.entry = { callback };
+          observed.push(this.entry);
+        }
+        observe(target: Element) {
+          this.entry.target = target;
+        }
+        disconnect() {}
+      },
+    );
+    useStore.setState({
+      messages: { [defaultProps.channelKey]: [makeMsg("m1"), makeMsg("m2")] },
+      servers: [],
+    });
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    const list = container.firstElementChild as HTMLElement;
+    let height = 600;
+    let scrollTop = 400;
+    Object.defineProperty(list, "clientHeight", { get: () => height });
+    Object.defineProperty(list, "scrollHeight", { get: () => 1000 });
+    Object.defineProperty(list, "scrollTop", {
+      configurable: true,
+      get: () => scrollTop,
+      set: (value: number) => {
+        scrollTop = Math.min(value, 1000 - height);
+      },
+    });
+    const resizeList = (to: number) => {
+      height = to;
+      for (const { callback, target } of observed)
+        if (target === list) act(() => callback([], {} as ResizeObserver));
+    };
+
+    resizeList(300);
+    expect(scrollTop).toBe(700);
+    resizeList(600);
+    expect(scrollTop).toBe(400);
+    vi.unstubAllGlobals();
+  });
+});
+
 describe("ChannelMessageList highlight", () => {
   beforeEach(() => {
     useStore.setState({
@@ -186,6 +235,41 @@ describe("ChannelMessageList jump to message", () => {
     expect(setTop).not.toHaveBeenCalledWith(5000);
     setTop.mockRestore();
     height.mockRestore();
+  });
+
+  it("centres the jumped row once a hidden list is shown", () => {
+    const observed: { callback: ResizeObserverCallback; target?: Element }[] =
+      [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        entry: { callback: ResizeObserverCallback; target?: Element };
+        constructor(callback: ResizeObserverCallback) {
+          this.entry = { callback };
+          observed.push(this.entry);
+        }
+        observe(target: Element) {
+          this.entry.target = target;
+        }
+        disconnect() {}
+      },
+    );
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    const list = container.firstElementChild as HTMLElement;
+    let height = 0;
+    Object.defineProperty(list, "clientHeight", { get: () => height });
+    act(() => useStore.getState().revealMessage("msg-5"));
+    const scrollTo = vi.mocked(window.HTMLElement.prototype.scrollTo);
+    scrollTo.mockClear();
+
+    height = 600;
+    for (const { callback, target } of observed)
+      if (target === list) act(() => callback([], {} as ResizeObserver));
+
+    expect(scrollTo).toHaveBeenCalledWith(
+      expect.objectContaining({ behavior: "auto" }),
+    );
+    vi.unstubAllGlobals();
   });
 
   it("lets go of the jumped row once the reader scrolls with the keyboard", () => {

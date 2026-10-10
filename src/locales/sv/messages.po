@@ -691,6 +691,7 @@ msgstr "Be serveradministratören att annonsera en backend-URL (draft/authtoken 
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2457,6 +2458,10 @@ msgstr "Glömt lösenord"
 msgid "Forgot password?"
 msgstr "Glömt lösenordet?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Formatera text"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3146,6 +3151,10 @@ msgstr "Medlemmar"
 msgid "Members — {0}"
 msgstr "Medlemmar — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Nämn någon"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3435,8 +3444,8 @@ msgid "Nickname"
 msgstr "Nick"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Smeknamnet '{nick}' används redan, försöker med '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Smeknamnet “{nick}” används redan, försöker med “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4725,6 +4734,10 @@ msgstr "Skicka en handling / emote"
 msgid "Send Invite"
 msgstr "Skicka inbjudan"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Skicka meddelande"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Skicka meddelande"
@@ -5481,6 +5494,10 @@ msgstr "trunkerad"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Betrodda källor"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Försök igen"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

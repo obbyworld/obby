@@ -829,7 +829,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             channel.id,
             makeEventMessage(
               "system",
-              t`Nickname '${nick}' already in use, retrying with '${newNick}'`,
+              t`Nickname “${nick}” already in use, retrying with “${newNick}”`,
               "system",
               channel.id,
               serverId,

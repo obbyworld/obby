@@ -690,6 +690,7 @@ msgstr "Ask the server admin to advertise a backend URL (draft/authtoken or obby
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -2456,6 +2457,10 @@ msgstr "Forgot password"
 msgid "Forgot password?"
 msgstr "Forgot password?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Format text"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -3145,6 +3150,10 @@ msgstr "Members"
 msgid "Members — {0}"
 msgstr "Members — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Mention someone"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3434,8 +3443,8 @@ msgid "Nickname"
 msgstr "Nickname"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Nickname '{nick}' already in use, retrying with '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Nickname “{nick}” already in use, retrying with “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4724,6 +4733,10 @@ msgstr "Send an action / emote"
 msgid "Send Invite"
 msgstr "Send Invite"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Send message"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Send Message"
@@ -5480,6 +5493,10 @@ msgstr "truncated"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Trusted Sources"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Try again"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."

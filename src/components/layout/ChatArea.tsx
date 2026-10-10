@@ -321,6 +321,22 @@ export const ChatArea: React.FC<{
   const channelListRefs = useRef<Map<string, ChannelMessageListHandle | null>>(
     new Map(),
   );
+  // The lists are memoized and React.memo also compares refs, so each list
+  // keeps one ref callback for its lifetime.
+  const listRefCallbacks = useRef(
+    new Map<string, (handle: ChannelMessageListHandle | null) => void>(),
+  );
+  const listRefFor = (key: string) => {
+    let callback = listRefCallbacks.current.get(key);
+    if (!callback) {
+      callback = (handle) => {
+        if (handle) channelListRefs.current.set(key, handle);
+        else channelListRefs.current.delete(key);
+      };
+      listRefCallbacks.current.set(key, callback);
+    }
+    return callback;
+  };
   // lineHeight/padding are static CSS values — cache them after first read to avoid
   // getComputedStyle on every keystroke, which forces layout flush on mobile WebView.
   const textareaMetricsRef = useRef<{
@@ -2184,10 +2200,7 @@ export const ChatArea: React.FC<{
                     }
                   >
                     <ChannelMessageList
-                      ref={(handle) => {
-                        if (handle) channelListRefs.current.set(key, handle);
-                        else channelListRefs.current.delete(key);
-                      }}
+                      ref={listRefFor(key)}
                       channelKey={key}
                       initialScrollState={savedScrollState}
                       serverId={aServerId}
@@ -2223,7 +2236,7 @@ export const ChatArea: React.FC<{
           {/* Input area */}
           {(selectedChannel || selectedPrivateChat) && (
             <div
-              className={`${!isNarrowView && "px-4"} relative chat-input-area`}
+              className={`${isNarrowView ? "" : "px-4"} relative chat-input-area`}
             >
               {selectedPrivateChat && selectedServerId && (
                 <E2EERequestBanner
@@ -2276,6 +2289,9 @@ export const ChatArea: React.FC<{
                 <div className="relative flex flex-nowrap items-end pr-2">
                   <button
                     ref={plusButtonRef}
+                    aria-label={t`Attach`}
+                    aria-haspopup="menu"
+                    aria-expanded={showPlusMenu}
                     className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
                     onClick={() => setShowPlusMenu((prev) => !prev)}
                   >

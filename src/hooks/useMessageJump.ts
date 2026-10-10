@@ -38,6 +38,7 @@ export function useMessageJump({
   const isHoldingRef = useRef(false);
   const heldRowRef = useRef<HTMLElement | null>(null);
   const heldTopRef = useRef(0);
+  const heldHeightRef = useRef(0);
   const [isHolding, setIsHolding] = useState(false);
   const jumpMessageId = useStore((state) => state.ui.messageJump?.messageId);
 
@@ -45,6 +46,7 @@ export function useMessageJump({
     isHoldingRef.current = true;
     heldRowRef.current = row;
     if (row) heldTopRef.current = row.offsetTop;
+    heldHeightRef.current = containerRef.current?.clientHeight ?? 0;
     wasAtBottomRef.current = false;
     setIsHolding(true);
   };
@@ -55,14 +57,20 @@ export function useMessageJump({
     setIsHolding(false);
   };
 
-  // We move the list only when content above the row has shifted it, so the
-  // smooth scroll toward it runs undisturbed.
+  // We move the list only when content above the row has shifted it or the
+  // list changed size, e.g. it was hidden when we jumped, so the smooth scroll
+  // toward it runs undisturbed.
   const keepHeldRowInPlace = () => {
     const row = heldRowRef.current;
     const container = containerRef.current;
     if (!row?.isConnected || !container) return;
-    if (row.offsetTop === heldTopRef.current) return;
+    if (
+      row.offsetTop === heldTopRef.current &&
+      container.clientHeight === heldHeightRef.current
+    )
+      return;
     heldTopRef.current = row.offsetTop;
+    heldHeightRef.current = container.clientHeight;
     centerRow(container, row, "auto");
   };
 

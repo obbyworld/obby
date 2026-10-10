@@ -45,7 +45,9 @@ export function LocationShareModal({
   // Bumped on every press so asking for the same precision twice still puts
   // the map back where it started.
   const [focusToken, setFocusToken] = useState(0);
+  const [attempt, setAttempt] = useState(0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a new attempt asks the device again
   useEffect(() => {
     if (!isOpen) return;
     setStatus("loading");
@@ -71,7 +73,7 @@ export function LocationShareModal({
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, attempt]);
 
   const choosePrecision = (next: LocationPrecision) => {
     const zoom = next === "exact" ? EXACT_ZOOM : APPROXIMATE_ZOOM;
@@ -152,13 +154,19 @@ export function LocationShareModal({
         <Button variant="secondary" onClick={onCancel}>
           <Trans>Cancel</Trans>
         </Button>
-        <Button
-          variant="primary"
-          onClick={handleShare}
-          disabled={status !== "ready"}
-        >
-          <Trans>Share</Trans>
-        </Button>
+        {status === "error" ? (
+          <Button variant="primary" onClick={() => setAttempt((n) => n + 1)}>
+            <Trans>Try again</Trans>
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            onClick={handleShare}
+            disabled={status !== "ready"}
+          >
+            <Trans>Share</Trans>
+          </Button>
+        )}
       </ModalFooter>
     </BaseModal>
   );
