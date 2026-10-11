@@ -37,10 +37,10 @@ import type { ProfilePane as ProfilePaneTarget } from "../../store/types";
 import type { WhoisSession } from "../../types";
 import ExternalLinkWarningModal from "../ui/ExternalLinkWarningModal";
 import Menu, { type MenuItem } from "../ui/Menu";
+import { DEFAULT_ACCENT, isHexColor } from "../ui/ProfileBanner";
 import { SettingGroup } from "../ui/page/SettingRow";
 
 const WHOIS_CACHE_TTL = 5 * 60 * 1000;
-const DEFAULT_ACCENT = "#5865F2";
 const METADATA_KEYS = [
   "avatar",
   "display-name",
@@ -51,9 +51,6 @@ const METADATA_KEYS = [
 ];
 const LEGACY_METADATA_KEYS = [...METADATA_KEYS, "pronouns"];
 const OBBY_WHOIS_CAP = "obby.world/whois";
-
-const isHexColor = (v: string | undefined): v is string =>
-  !!v && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v);
 
 const isHttpUrl = (url: string): boolean => {
   try {

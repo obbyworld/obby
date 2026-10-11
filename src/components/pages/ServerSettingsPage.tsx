@@ -189,42 +189,55 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
 
   const generalSection = (
     <SettingGroup>
-      <SettingRow id="server.name" title={t`Network name`}>
-        <TextInput
-          value={draft.name}
-          onChange={(e) => set("name", e.target.value)}
-          placeholder="ExampleNET"
-          className="field-input"
-        />
-      </SettingRow>
-      <SettingRow id="server.host" title={t`Server host`}>
-        <TextInput
-          value={draft.host}
-          onChange={(e) => set("host", e.target.value)}
-          placeholder="irc.example.com"
-          className="field-input"
-        />
-      </SettingRow>
+      <SettingRow
+        id="server.name"
+        title={t`Network name`}
+        field={
+          <TextInput
+            value={draft.name}
+            onChange={(e) => set("name", e.target.value)}
+            placeholder="ExampleNET"
+            className="field-input"
+          />
+        }
+      />
+      <SettingRow
+        id="server.host"
+        title={t`Server host`}
+        field={
+          <TextInput
+            value={draft.host}
+            onChange={(e) => set("host", e.target.value)}
+            placeholder="irc.example.com"
+            className="field-input"
+          />
+        }
+      />
       <SettingRow
         id="server.port"
         title={t`Port`}
         description={t`Use a secure websocket port.`}
-      >
-        <TextInput
-          value={draft.port}
-          onChange={(e) => set("port", e.target.value)}
-          placeholder="443"
-          className="field-input"
-        />
-      </SettingRow>
-      <SettingRow id="server.nickname" title={t`Nickname`}>
-        <TextInput
-          value={draft.nickname}
-          onChange={(e) => set("nickname", e.target.value)}
-          placeholder="YourNickname"
-          className="field-input"
-        />
-      </SettingRow>
+        field={
+          <TextInput
+            value={draft.port}
+            onChange={(e) => set("port", e.target.value)}
+            placeholder="443"
+            className="field-input"
+          />
+        }
+      />
+      <SettingRow
+        id="server.nickname"
+        title={t`Nickname`}
+        field={
+          <TextInput
+            value={draft.nickname}
+            onChange={(e) => set("nickname", e.target.value)}
+            placeholder="YourNickname"
+            className="field-input"
+          />
+        }
+      />
     </SettingGroup>
   );
 
@@ -235,27 +248,32 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
           id="server.saslAccountName"
           title={t`Account name`}
           description={t`Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously.`}
-        >
-          <TextInput
-            value={draft.saslAccountName}
-            onChange={(e) => set("saslAccountName", e.target.value)}
-            placeholder={draft.nickname || "account"}
-            className="field-input"
-          />
-        </SettingRow>
-        <SettingRow id="server.saslPassword" title={t`Password`}>
-          <TextInput
-            type="password"
-            value={draft.saslPassword}
-            onChange={(e) => set("saslPassword", e.target.value)}
-            placeholder={
-              serverConfig?.saslPassword
-                ? t`(stored, leave blank to keep)`
-                : t`Password`
-            }
-            className="field-input"
-          />
-        </SettingRow>
+          field={
+            <TextInput
+              value={draft.saslAccountName}
+              onChange={(e) => set("saslAccountName", e.target.value)}
+              placeholder={draft.nickname || "account"}
+              className="field-input"
+            />
+          }
+        />
+        <SettingRow
+          id="server.saslPassword"
+          title={t`Password`}
+          field={
+            <TextInput
+              type="password"
+              value={draft.saslPassword}
+              onChange={(e) => set("saslPassword", e.target.value)}
+              placeholder={
+                serverConfig?.saslPassword
+                  ? t`(stored, leave blank to keep)`
+                  : t`Password`
+              }
+              className="field-input"
+            />
+          }
+        />
       </SettingGroup>
 
       <SettingGroup>
@@ -263,19 +281,20 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
           id="server.password"
           title={t`Server password`}
           description={t`Enter the server password only if your network requires one. It is separate from your account password.`}
-        >
-          <TextInput
-            type="password"
-            value={draft.password}
-            onChange={(e) => set("password", e.target.value)}
-            placeholder={
-              serverConfig?.password
-                ? t`(stored, leave blank to keep)`
-                : t`Server password`
-            }
-            className="field-input"
-          />
-        </SettingRow>
+          field={
+            <TextInput
+              type="password"
+              value={draft.password}
+              onChange={(e) => set("password", e.target.value)}
+              placeholder={
+                serverConfig?.password
+                  ? t`(stored, leave blank to keep)`
+                  : t`Server password`
+              }
+              className="field-input"
+            />
+          }
+        />
       </SettingGroup>
 
       {server?.capabilities?.includes("draft/account-recovery") && (
@@ -322,27 +341,32 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
           id="server.operName"
           title={t`Oper name`}
           description={t`Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below.`}
-        >
-          <TextInput
-            value={draft.operName}
-            onChange={(e) => set("operName", e.target.value)}
-            placeholder={t`IRC operator username`}
-            className="field-input"
-          />
-        </SettingRow>
-        <SettingRow id="server.operPassword" title={t`Oper password`}>
-          <TextInput
-            type="password"
-            value={draft.operPassword}
-            onChange={(e) => set("operPassword", e.target.value)}
-            placeholder={
-              serverConfig?.operPassword
-                ? t`(stored, leave blank to keep)`
-                : t`Operator password`
-            }
-            className="field-input"
-          />
-        </SettingRow>
+          field={
+            <TextInput
+              value={draft.operName}
+              onChange={(e) => set("operName", e.target.value)}
+              placeholder={t`IRC operator username`}
+              className="field-input"
+            />
+          }
+        />
+        <SettingRow
+          id="server.operPassword"
+          title={t`Oper password`}
+          field={
+            <TextInput
+              type="password"
+              value={draft.operPassword}
+              onChange={(e) => set("operPassword", e.target.value)}
+              placeholder={
+                serverConfig?.operPassword
+                  ? t`(stored, leave blank to keep)`
+                  : t`Operator password`
+              }
+              className="field-input"
+            />
+          }
+        />
         <SettingRow
           id="server.operOnConnect"
           title={t`Oper on connect`}
@@ -402,6 +426,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
       activeSection={section}
       onSectionChange={(id) => setSection(toSectionId(id))}
       startOnSection={!!page.section}
+      columns
     >
       <form
         onSubmit={(e) => {
@@ -411,11 +436,11 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         onBlur={() => {
           if (isDirty) save();
         }}
-        className="flex flex-col gap-6"
+        className="contents"
       >
         {sectionBodies[section]}
         {error && (
-          <p role="alert" className="text-discord-red text-sm">
+          <p role="alert" className="page-span text-discord-red text-sm">
             {error}
           </p>
         )}

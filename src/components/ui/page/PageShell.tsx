@@ -35,6 +35,8 @@ interface PageShellProps {
   headerActions?: ReactNode;
   /** Full-width content for lists and logs; forms keep a readable column. */
   wide?: boolean;
+  /** Setting groups flow into two columns on a wide page. */
+  columns?: boolean;
   /** The content fills the page height and scrolls itself, e.g. a log. */
   fill?: boolean;
   /** Where Back goes when it is not the chat, e.g. a sub-page of Settings. */
@@ -123,6 +125,7 @@ export const PageShell: React.FC<PageShellProps> = ({
   navExtra,
   headerActions,
   wide = false,
+  columns = false,
   fill = false,
   back,
 }) => {
@@ -220,14 +223,20 @@ export const PageShell: React.FC<PageShellProps> = ({
   const body = (
     <div
       ref={scrollRef}
-      className={`flex-1 min-h-0 flex flex-col ${
+      className={`page-body flex-1 min-h-0 flex flex-col ${
         fill ? "" : "overflow-y-auto overscroll-contain"
       }`}
     >
+      {/* We keep the content beside the section list it belongs to, so on a
+          wide screen the spare room collects on the far side. */}
       <div
-        className={`mx-auto w-full flex flex-col gap-6 ${
-          wide ? "max-w-[1040px]" : "max-w-[720px]"
-        } ${fill ? "flex-1 min-h-0" : ""} ${isNarrow ? "px-3 py-4" : "px-8 py-7"}`}
+        className={`w-full flex flex-col gap-6 ${
+          wide
+            ? "max-w-[1600px]"
+            : columns
+              ? "max-w-[1280px] page-columns"
+              : "max-w-[760px]"
+        } ${fill ? "flex-1 min-h-0" : ""} ${isNarrow ? "px-3 py-4" : "px-10 py-7"}`}
         style={{
           paddingBottom: "max(1.5rem, var(--safe-area-inset-bottom, 0px))",
         }}
