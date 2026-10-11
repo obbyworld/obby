@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { syncOwnMetadata } from "./metadata";
 import { reportServerReply } from "./serverReplies";
 
 // Track which servers have had their ready handler run to prevent duplicate processing
@@ -235,16 +236,9 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     // visible to us, but display-name / avatar don't change often and
     // the profile modal re-GETs anyway.
     if (serverSupportsMetadata(store.getState(), serverId)) {
-      fetchAndMergeOwnMetadata(store, serverId).then(() => {
-        const ourNick = ircClient.getNick(serverId);
-        if (!ourNick) return;
-        const onServer = storage.metadata.load()[serverId]?.[ourNick] ?? {};
-        const ours = storage.ownMetadata.load()[serverId] ?? {};
-        for (const [key, value] of Object.entries(ours)) {
-          if (!onServer[key]?.value)
-            store.getState().metadataSet(serverId, "*", key, value);
-        }
-      });
+      fetchAndMergeOwnMetadata(store, serverId).then(() =>
+        syncOwnMetadata(store, serverId, OWN_METADATA_KEYS),
+      );
     }
 
     store.setState((state) => {
@@ -639,6 +633,16 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
 }
 
 // Inlined from fetchAndMergeOwnMetadata in index.ts — uses store instead of useStore
+const OWN_METADATA_KEYS = [
+  "url",
+  "website",
+  "status",
+  "location",
+  "avatar",
+  "color",
+  "display-name",
+];
+
 async function fetchAndMergeOwnMetadata(
   store: StoreApi<AppState>,
   serverId: string,
@@ -658,19 +662,10 @@ async function fetchAndMergeOwnMetadata(
       },
     }));
 
-    // Request all metadata for ourselves (target "*" means us)
-    const defaultKeys = [
-      "url",
-      "website",
-      "status",
-      "location",
-      "avatar",
-      "color",
-      "display-name",
-    ];
-
-    // Get our metadata from the server
-    ircClient.metadataGet(serverId, "*", defaultKeys);
+    const saved = Object.keys(storage.ownMetadata.load()[serverId] ?? {});
+    ircClient.metadataGet(serverId, "*", [
+      ...new Set([...OWN_METADATA_KEYS, ...saved]),
+    ]);
 
     // Wait a bit for responses to come in, then resolve
     // The METADATA_KEYVALUE handler will update saved values

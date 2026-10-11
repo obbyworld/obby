@@ -4,6 +4,27 @@ import { isChannelTarget } from "../../lib/ircUtils";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
+// A server that still holds some of our metadata is the newest copy, since
+// another of our clients may have changed it; one that holds none has
+// forgotten us, so we set ours again.
+export function syncOwnMetadata(
+  store: StoreApi<AppState>,
+  serverId: string,
+  keys: string[],
+): void {
+  const ourNick = ircClient.getNick(serverId);
+  if (!ourNick) return;
+  const onServer = storage.metadata.load()[serverId]?.[ourNick] ?? {};
+  const ours = storage.ownMetadata.load()[serverId] ?? {};
+  const serverKept = Object.values(onServer).some((entry) => entry.value);
+  for (const key of new Set([...keys, ...Object.keys(ours)])) {
+    if (serverKept)
+      storage.ownMetadata.remember(serverId, key, onServer[key]?.value);
+    else if (ours[key])
+      store.getState().metadataSet(serverId, "*", key, ours[key]);
+  }
+}
+
 export function registerMetadataHandlers(store: StoreApi<AppState>): void {
   ircClient.on("rawLine", ({ serverId, direction, line }) => {
     if (direction !== "tx") return;
@@ -12,6 +33,8 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("METADATA", ({ serverId, target, key, visibility, value }) => {
+    if (target === "*" || target.split("!")[0] === ircClient.getNick(serverId))
+      storage.ownMetadata.remember(serverId, key, value || undefined);
     store.setState((state) => {
       // Resolve the target - if it's "*", it refers to the current user
       const serverCurrentUser = ircClient.getCurrentUser(serverId);
