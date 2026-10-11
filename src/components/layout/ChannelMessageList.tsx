@@ -610,24 +610,24 @@ export const ChannelMessageList = forwardRef<
                         );
                       } else if (serverHasMore && historyTarget) {
                         const oldest = channelMessages[0];
-                        if (oldest?.timestamp) {
-                          isFetchingMoreRef.current = true;
-                          setIsFetchingMore(true);
-                          const stopFetching = () => {
-                            isFetchingMoreRef.current = false;
-                            setIsFetchingMore(false);
-                          };
-                          loadOlderMessages(
-                            useStore,
-                            serverId,
-                            historyTarget,
-                            new Date(oldest.timestamp).getTime(),
-                          )
-                            .then((isPageComing) => {
-                              if (!isPageComing) stopFetching();
-                            })
-                            .catch(stopFetching);
-                        }
+                        isFetchingMoreRef.current = true;
+                        setIsFetchingMore(true);
+                        const stopFetching = () => {
+                          isFetchingMoreRef.current = false;
+                          setIsFetchingMore(false);
+                        };
+                        loadOlderMessages(
+                          useStore,
+                          serverId,
+                          historyTarget,
+                          oldest?.timestamp
+                            ? new Date(oldest.timestamp).getTime()
+                            : Date.now(),
+                        )
+                          .then((isPageComing) => {
+                            if (!isPageComing) stopFetching();
+                          })
+                          .catch(stopFetching);
                       }
                     }}
                     disabled={isFetchingMore}

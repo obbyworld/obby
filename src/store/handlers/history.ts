@@ -44,7 +44,7 @@ import {
 } from "../../lib/history/historySearch";
 import { containsLink, plainText } from "../../lib/history/searchFields";
 import ircClient from "../../lib/ircClient";
-import { parseMessageTags } from "../../lib/ircUtils";
+import { isChannelTarget, parseMessageTags } from "../../lib/ircUtils";
 import type {
   SearchPage,
   SearchQuery,
@@ -631,8 +631,9 @@ export function fillGapsForSearch(
   };
 }
 
-// On a server without history our disk is the only source, so we show its
-// newest page the first time a chat is opened in this session.
+// Our disk is the only source on a server without history, and for private
+// chats on servers that keep channel history only, so we show its newest page
+// the first time such a chat is opened in this session.
 export function showSavedHistory(
   store: StoreApi<AppState>,
   serverId: string,
@@ -641,7 +642,8 @@ export function showSavedHistory(
   const key = conversationKey(serverId, target);
   if (
     !isEnabled(store) ||
-    serverSupportsChathistory(store.getState(), serverId)
+    (isChannelTarget(target) &&
+      serverSupportsChathistory(store.getState(), serverId))
   )
     return;
   if (shownConversations.has(key)) return;
