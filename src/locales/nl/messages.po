@@ -627,6 +627,10 @@ msgstr "Sta microfoontoegang toe in de instellingen om te praten"
 msgid "Allow microphone access to record sound."
 msgstr "Sta microfoontoegang toe om geluid op te nemen."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Sta Obby toe onder Schermopname in Systeeminstellingen en neem daarna opnieuw op."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"

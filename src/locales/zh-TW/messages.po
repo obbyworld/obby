@@ -627,6 +627,10 @@ msgstr "在設定中允許存取麥克風以說話"
 msgid "Allow microphone access to record sound."
 msgstr "允許存取麥克風以錄製聲音。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "請在系統設定的「螢幕錄製」中允許 Obby，然後再錄製一次。"
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"

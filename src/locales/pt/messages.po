@@ -627,6 +627,10 @@ msgstr "Permita o acesso ao microfone nas configurações para falar"
 msgid "Allow microphone access to record sound."
 msgstr "Permita o acesso ao microfone para gravar som."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Permita o Obby em Gravação de Tela nos Ajustes do Sistema e grave novamente."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"

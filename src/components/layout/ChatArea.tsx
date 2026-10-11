@@ -72,7 +72,10 @@ import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
-import { regionRecordingSupported } from "../../lib/screenRecorder";
+import {
+  regionRecordingSupported,
+  screenRecordingAllowed,
+} from "../../lib/screenRecorder";
 import {
   focusMainWindow,
   type SelectedRegion,
@@ -775,6 +778,16 @@ export const ChatArea: React.FC<{
   // The rectangle is drawn on the desktop first, then the screen it sits on is
   // captured and cropped to it.
   const startRegionRecording = async () => {
+    if (!(await screenRecordingAllowed())) {
+      useStore.getState().addGlobalNotification({
+        type: "warn",
+        command: "RECORD SCREEN",
+        code: "SCREEN_PERMISSION",
+        message: t`Allow Obby under Screen Recording in System Settings, then record again.`,
+        serverId: selectedServerId ?? "",
+      });
+      return;
+    }
     const selection = await selectScreenRegion();
     if (!selection) return;
     await focusMainWindow();

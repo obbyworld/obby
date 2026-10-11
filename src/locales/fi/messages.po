@@ -627,6 +627,10 @@ msgstr "Salli mikrofonin käyttö asetuksista puhuaksesi"
 msgid "Allow microphone access to record sound."
 msgstr "Salli mikrofonin käyttö äänen tallentamiseen."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Salli Obby kohdassa Näytön tallennus Järjestelmäasetuksissa ja tallenna sitten uudelleen."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
