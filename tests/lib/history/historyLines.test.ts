@@ -495,7 +495,7 @@ describe("channel events", () => {
         target: "#chan",
         rows: [],
         redacts: [],
-        page: { size: 1, oldest: T1_MS },
+        page: { size: 1, oldest: T1_MS, newest: T1_MS, msgids: ["m2"] },
       },
     ]);
   });
@@ -572,7 +572,7 @@ describe("chathistory batch", () => {
         target: "#c",
         rows: [],
         redacts: [],
-        page: { size: 0, oldest: undefined },
+        page: { size: 0, oldest: undefined, newest: undefined, msgids: [] },
       },
     ]);
   });
@@ -613,7 +613,7 @@ describe("chathistory batch", () => {
         target: "#c",
         rows: [],
         redacts: ["m1"],
-        page: { size: 1, oldest: undefined },
+        page: { size: 1, oldest: undefined, newest: undefined, msgids: [] },
       },
     ]);
   });
@@ -1219,7 +1219,9 @@ describe("page size", () => {
     if (action.type !== "history-batch")
       throw new Error("expected history-batch");
     expect(action.rows).toHaveLength(30);
-    expect(action.page).toEqual({ size: 50, oldest: T1_MS });
+    expect(action.page).toMatchObject({ size: 50, oldest: T1_MS });
+    expect(action.page.newest).toBe(T1_MS + 49_000);
+    expect(action.page.msgids).toHaveLength(50);
   });
 });
 

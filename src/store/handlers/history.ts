@@ -6,6 +6,7 @@ import {
   appendRows,
   deleteGap,
   deleteMessage,
+  deleteMessagesMissingFromPage,
   deleteServerHistory,
   eventRowsAfter,
   eventRowsBefore,
@@ -272,6 +273,14 @@ async function saveHistoryPage(
     ?.shift();
   const inserted = rows.length ? await saveRows(store, rows) : [];
   for (const msgid of redacts) await deleteMessage(key, target, msgid);
+  if (page.oldest !== undefined && page.newest !== undefined)
+    await deleteMessagesMissingFromPage(
+      key,
+      target,
+      page.oldest,
+      page.newest,
+      page.msgids,
+    );
   if (request?.kind === "latest") {
     const decision = decideAfterLatest({
       newestStoredTime: await request.newestStoredTime,
