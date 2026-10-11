@@ -249,6 +249,7 @@ export const ChatArea: React.FC<{
     files: File[];
     caption: string;
     links: string[];
+    replyTo: MessageType | null;
     reason: PlainUploadReason;
     // The upload path reads the current selection, so the conversation the
     // warning was raised about is pinned here. Otherwise a confirmation aimed
@@ -1150,15 +1151,19 @@ export const ChatArea: React.FC<{
         // thumbnails stay alive until an upload is known to have started and
         // an upload that never starts hands the words and the files back.
         const held = attachments;
+        const replyTo = localReplyTo;
         updateAttachments(channelKey, () => NO_ATTACHMENTS);
-        void handleFilesUpload(files, caption, links).then((outcome) => {
-          if (outcome === "failed") {
-            updateAttachments(channelKey, () => held);
-            applyText(caption);
-            return;
-          }
-          for (const attachment of held) releasePreview(attachment);
-        });
+        void handleFilesUpload(files, caption, links, replyTo).then(
+          (outcome) => {
+            if (outcome === "failed") {
+              updateAttachments(channelKey, () => held);
+              applyText(caption);
+              setLocalReplyTo(replyTo);
+              return;
+            }
+            for (const attachment of held) releasePreview(attachment);
+          },
+        );
       } else {
         if (sendMessage([caption, ...links].join(" ")) === "withheld") return;
         clearAttachments();
@@ -1189,6 +1194,7 @@ export const ChatArea: React.FC<{
     files: File[],
     caption: string,
     links: string[],
+    replyTo: MessageType | null,
     confirmedForNick: string | null = null,
   ): Promise<UploadOutcome> => {
     if (!selectedServerId || files.length === 0) return "failed";
@@ -1273,6 +1279,7 @@ export const ChatArea: React.FC<{
         files,
         caption,
         links,
+        replyTo,
         reason: encryptHere ? "too-large" : "scheme",
         nick: target,
       });
@@ -1432,7 +1439,13 @@ export const ChatArea: React.FC<{
           line,
         ) !== "none";
       if (!encrypted) {
-        ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
+        const replyTags = replyTo?.msgid
+          ? `@+reply=${replyTo.msgid};+draft/reply=${replyTo.msgid} `
+          : "";
+        ircClient.sendRaw(
+          selectedServerId,
+          `${replyTags}PRIVMSG ${target} :${line}`,
+        );
         if (selectedPrivateChat && currentUser) {
           const outgoing = {
             id: uuidv4(),
@@ -1443,7 +1456,7 @@ export const ChatArea: React.FC<{
             serverId: selectedServerId,
             type: "message" as const,
             reactions: [],
-            replyMessage: null,
+            replyMessage: replyTo,
             mentioned: [],
           };
           useStore.getState().addMessage(outgoing);
@@ -2787,9 +2800,9 @@ export const ChatArea: React.FC<{
           reason={pendingPlainUpload.reason}
           nick={pendingPlainUpload.nick}
           onConfirm={() => {
-            const { files, caption, links, nick } = pendingPlainUpload;
+            const { files, caption, links, replyTo, nick } = pendingPlainUpload;
             setPendingPlainUpload(null);
-            void handleFilesUpload(files, caption, links, nick);
+            void handleFilesUpload(files, caption, links, replyTo, nick);
           }}
           onCancel={() => setPendingPlainUpload(null)}
         />
