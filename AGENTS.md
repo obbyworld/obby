@@ -189,6 +189,23 @@ Do not call `openExternalUrl` directly from any UI element without this protecti
 
 ---
 
+## Credentials: long-lived secrets go only to the IRCd
+
+**Critical invariant:** a long-lived credential (the SASL or server password, a personal
+access token, a client certificate key) is sent only to the IRC server the user logs in to.
+Never send one to a file host, an API or any other HTTP endpoint, even one the server
+advertises, and even over https.
+
+A service that needs to know who the user is gets a short-lived, single-purpose token
+minted by the IRCd: `draft/authtoken` (`TOKEN GENERATE <service>`, one token per request).
+The vendor `obby.world/FILEHOST` uploader works this way.
+
+- `draft/FILEHOST` hosts are passwordless: POST the file with no credentials.
+- We do not support `soju.im/FILEHOST`, since it logs in to the file host with the IRC
+  credentials. See https://github.com/obbyworld/obby/issues/203#issuecomment-4512606251.
+
+---
+
 ## Zustand + React Gotchas
 
 **Store action refs are unstable.** Functions from `useStore((s) => s.someAction)` change
