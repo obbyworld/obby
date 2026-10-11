@@ -3,12 +3,12 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tauri::{Emitter, State};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpStream;
+use tokio::net::{lookup_host, TcpStream};
 use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio::task;
 use tokio::time::{timeout, Duration};
 
-const CONNECT_TIMEOUT: Duration = Duration::from_secs(15);
+const ADDRESS_CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
 const TLS_HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(15);
 
 // Platform-specific TLS imports
@@ -188,6 +188,31 @@ async fn write_task<W>(
     }
 }
 
+// Networks with a dead IPv6 route drop our SYNs silently, so we try IPv4
+// first and give each address its own timeout to reach the next one.
+async fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
+    let mut addresses: Vec<_> = lookup_host((host, port))
+        .await
+        .map_err(|e| format!("Failed to resolve {}:{}: {}", host, port, e))?
+        .collect();
+    addresses.sort_by_key(|address| address.is_ipv6());
+    let mut last_error = format!("No addresses found for {}:{}", host, port);
+    for address in addresses {
+        match timeout(ADDRESS_CONNECT_TIMEOUT, TcpStream::connect(address)).await {
+            Ok(Ok(stream)) => return Ok(stream),
+            Ok(Err(e)) => last_error = format!("Failed to connect to {}: {}", address, e),
+            Err(_) => {
+                last_error = format!(
+                    "TCP connect timed out after {}s ({})",
+                    ADDRESS_CONNECT_TIMEOUT.as_secs(),
+                    address
+                )
+            }
+        }
+    }
+    Err(last_error)
+}
+
 /// Connect to IRC server with real TCP/TLS implementation
 #[tauri::command]
 pub async fn connect(
@@ -199,22 +224,7 @@ pub async fn connect(
     // Parse the address to determine protocol and extract host:port
     let (use_tls, host, port) = parse_address(&address)?;
 
-    // Create TCP connection with a hard timeout so a stalled SYN/SYN-ACK
-    // surfaces as a clear error instead of hanging on kernel retransmits.
-    let tcp_stream = timeout(
-        CONNECT_TIMEOUT,
-        TcpStream::connect(format!("{}:{}", host, port)),
-    )
-    .await
-    .map_err(|_| {
-        format!(
-            "TCP connect timed out after {}s ({}:{})",
-            CONNECT_TIMEOUT.as_secs(),
-            host,
-            port
-        )
-    })?
-    .map_err(|e| format!("Failed to connect to {}:{}: {}", host, port, e))?;
+    let tcp_stream = connect_tcp(&host, port).await?;
 
     // Create channels for write operations
     let (write_tx, write_rx) = mpsc::channel::<String>(100);
