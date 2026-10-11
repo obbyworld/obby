@@ -43,7 +43,13 @@ export function startLimitedRecording(
   let released = false;
   const startedAt = Date.now();
 
-  const options: MediaRecorderOptions = { mimeType: format.mimeType };
+  // Firefox never fires onstop when the mime type names an audio codec and
+  // the stream has no audio track, as with window capture or a camera alone.
+  const mimeType =
+    stream.getAudioTracks().length > 0
+      ? format.mimeType
+      : format.mimeType.replace(/,\s*opus/, "");
+  const options: MediaRecorderOptions = { mimeType };
   if (video) {
     options.videoBitsPerSecond = VIDEO_BITS_PER_SECOND;
     options.audioBitsPerSecond = AUDIO_BITS_PER_SECOND;
@@ -75,11 +81,11 @@ export function startLimitedRecording(
   recorder.onstop = () => {
     clearTick();
     if (released) return;
-    const blob = new Blob(chunks, { type: format.mimeType });
+    const blob = new Blob(chunks, { type: mimeType });
     const file = new File(
       [blob],
       recordingFileName(filePrefix, format.extension),
-      { type: format.mimeType },
+      { type: mimeType },
     );
     onFile(file, stoppedBy);
   };
