@@ -577,7 +577,7 @@ export function MediaCommentsSidebar({
             onSendClick={handleSend}
             showSendButton={isNativeMobile}
             hideEmoji={isNativeMobile}
-            hasText={commentText.trim().length > 0}
+            canSend={commentText.trim().length > 0}
           />
         </div>
         {isColorPickerOpen && (
