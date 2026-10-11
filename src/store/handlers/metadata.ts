@@ -5,6 +5,12 @@ import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
 export function registerMetadataHandlers(store: StoreApi<AppState>): void {
+  ircClient.on("rawLine", ({ serverId, direction, line }) => {
+    if (direction !== "tx") return;
+    const set = /^METADATA \* SET (\S+)(?: :(.*))?$/.exec(line);
+    if (set) storage.ownMetadata.remember(serverId, set[1], set[2]);
+  });
+
   ircClient.on("METADATA", ({ serverId, target, key, visibility, value }) => {
     store.setState((state) => {
       // Resolve the target - if it's "*", it refers to the current user

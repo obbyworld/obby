@@ -12,6 +12,7 @@ import type {
 const KEYS = {
   SERVERS: "savedServers",
   METADATA: "serverMetadata",
+  OWN_METADATA: "ownMetadata",
   SETTINGS: "globalSettings",
   CHANNEL_ORDER: "channelOrder",
   CHANNEL_FOLDERS: "channelFolders",
@@ -66,6 +67,31 @@ export const metadata = {
   load: (): SavedMetadata => metadataCache,
   save: (data: SavedMetadata) => {
     metadataCache = data;
+  },
+};
+
+// The server forgets our own metadata when the session ends, so we keep what
+// we set ourselves, per server, to set it again on the next connect.
+type OwnMetadata = Record<string, Record<string, string>>;
+export const ownMetadata = {
+  load: (): OwnMetadata => {
+    try {
+      return JSON.parse(localStorage.getItem(KEYS.OWN_METADATA) || "{}");
+    } catch {
+      return {};
+    }
+  },
+  remember: (serverId: string, key: string, value: string | undefined) => {
+    const all = ownMetadata.load();
+    const mine = { ...all[serverId] };
+    if (value) mine[key] = value;
+    else delete mine[key];
+    all[serverId] = mine;
+    try {
+      localStorage.setItem(KEYS.OWN_METADATA, JSON.stringify(all));
+    } catch {
+      // private-window or storage-disabled -- not fatal
+    }
   },
 };
 
