@@ -381,6 +381,34 @@ describe("local history with a chathistory server", () => {
       expect((await w.stored()).map((row) => row.msgid)).toEqual(["x0"]);
     });
 
+    it("drops saved messages that a page no longer has inside its span", async () => {
+      w.feed(
+        privmsg("m1", 1, "before the page"),
+        privmsg("m2", 2, "two"),
+        privmsg("m3", 3, "redacted while away"),
+        privmsg("m4", 4, "four"),
+        reactionTag("r1", 5, "+draft/react", "👍", "m3"),
+      );
+      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(4));
+
+      w.ircClient.sendRaw(SERVER, "CHATHISTORY LATEST #chan * 50");
+      w.feed(
+        ...inBatch("h1", "#chan", [
+          privmsg("m2", 2, "two"),
+          privmsg("m4", 4, "four"),
+        ]),
+      );
+
+      await vi.waitFor(async () =>
+        expect((await w.stored()).map((row) => row.msgid)).toEqual([
+          "m1",
+          "m2",
+          "m4",
+        ]),
+      );
+      expect(await w.db.refRowsFor(SERVER, ["m3"])).toEqual([]);
+    });
+
     it.each([
       ["an empty", []],
       ["a short", [privmsg("p1", 10, "p one"), privmsg("p2", 11, "p two")]],

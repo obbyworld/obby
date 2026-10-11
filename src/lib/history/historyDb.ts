@@ -434,16 +434,59 @@ export function deleteMessage(
       const events = await awaitRequest<HistoryRow[]>(
         rows.index("msgid").getAll(IDBKeyRange.only([server, target, msgid])),
       );
-      const reactions = await awaitRequest<HistoryRow[]>(
-        rows.index("ref").getAll(IDBKeyRange.only([server, msgid])),
-      );
-      const doomed = new Map<number, HistoryRow>();
-      for (const row of [...events.filter((row) => !row.ref), ...reactions]) {
-        doomed.set(row.id, row);
-      }
-      await deleteRows(tx, [...doomed.values()]);
+      await deleteWithReactions(tx, server, events, [msgid]);
     }),
   );
+}
+
+// A message redacted while we were away is gone from the server's history and
+// no REDACT reaches us, so we drop saved messages a page skipped inside its span.
+export function deleteMessagesMissingFromPage(
+  server: string,
+  target: string,
+  from: number,
+  to: number,
+  kept: string[],
+): Promise<void> {
+  if (to - from < 2) return Promise.resolve();
+  const keptIds = new Set(kept);
+  return enqueue(undefined, (db) =>
+    inTx(db, [ROWS, META, TERMS], "readwrite", async (tx) => {
+      const inside = await awaitRequest<HistoryRow[]>(
+        tx
+          .objectStore(ROWS)
+          .index("conv")
+          .getAll(convRange(server, target, from + 1, to - 1)),
+      );
+      const missing = inside.filter(
+        (row) => !row.ref && row.msgid && !keptIds.has(row.msgid),
+      );
+      await deleteWithReactions(
+        tx,
+        server,
+        missing,
+        missing.map((row) => row.msgid ?? ""),
+      );
+    }),
+  );
+}
+
+async function deleteWithReactions(
+  tx: IDBTransaction,
+  server: string,
+  events: HistoryRow[],
+  msgids: string[],
+): Promise<void> {
+  const refIndex = tx.objectStore(ROWS).index("ref");
+  const doomed = new Map<number, HistoryRow>();
+  for (const row of events.filter((row) => !row.ref)) doomed.set(row.id, row);
+  for (const msgid of msgids) {
+    const reactions = await awaitRequest<HistoryRow[]>(
+      refIndex.getAll(IDBKeyRange.only([server, msgid])),
+    );
+    for (const reaction of reactions) doomed.set(reaction.id, reaction);
+  }
+  await deleteRows(tx, [...doomed.values()]);
 }
 
 export function gapsFor(server: string, target: string): Promise<HistoryGap[]> {
