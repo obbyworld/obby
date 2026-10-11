@@ -111,6 +111,9 @@ export interface Server {
   // Endpoints from the standard tokenless `draft/FILEHOST` ISUPPORT token:
   // POST the file directly, no auth, take the returned URL.
   fileHosts?: string[];
+  // Upload endpoint from `soju.im/FILEHOST`: POST the file as the body, logged
+  // in with the IRC credentials.
+  sojuFileHost?: string;
   linkSecurity?: number; // Link security level from unrealircd.org/link-security
   jwtToken?: string; // JWT token for filehost authentication (from EXTJWT)
   // Bearer token from draft/authtoken (TOKEN GENERATE).  Used as the

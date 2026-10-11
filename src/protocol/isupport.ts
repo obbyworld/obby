@@ -104,6 +104,18 @@ export function registerISupportHandler(
       return;
     }
 
+    if (key === "soju.im/FILEHOST") {
+      const endpoint = /^https?:\/\//i.test(value) ? value : undefined;
+      useStore.setState((state) => ({
+        servers: state.servers.map((server: Server) =>
+          server.id === serverId
+            ? { ...server, sojuFileHost: endpoint }
+            : server,
+        ),
+      }));
+      return;
+    }
+
     if (key === "ELIST") {
       useStore.setState((state) => {
         const updatedServers = state.servers.map((server: Server) => {

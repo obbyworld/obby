@@ -1214,17 +1214,23 @@ export function isUrlFromFilehost(
 
 /**
  * Every origin a server trusts for uploaded media: the vendor
- * obby.world/FILEHOST endpoint plus the tokenless draft/FILEHOST list. Pass
+ * obby.world/FILEHOST endpoint, the tokenless draft/FILEHOST list and the
+ * soju.im/FILEHOST endpoint. Pass
  * the result wherever a filehost is needed for media-trust checks so both
  * upload mechanisms are covered.
  */
 export function serverFilehosts(
-  server?: { filehost?: string; fileHosts?: string[] } | null,
+  server?: {
+    filehost?: string;
+    fileHosts?: string[];
+    sojuFileHost?: string;
+  } | null,
 ): string[] {
   if (!server) return [];
   const hosts: string[] = [];
   if (server.filehost) hosts.push(server.filehost);
   if (server.fileHosts) hosts.push(...server.fileHosts);
+  if (server.sojuFileHost) hosts.push(server.sojuFileHost);
   return hosts;
 }
 

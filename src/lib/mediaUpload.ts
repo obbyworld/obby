@@ -143,8 +143,11 @@ export function uploadFile(file: File, opts: UploadOptions): Promise<string> {
 }
 
 export interface TokenlessUploadOptions {
-  /** Endpoint from draft/FILEHOST; we POST the file here as-is. */
+  /** Endpoint from draft/FILEHOST or soju.im/FILEHOST. */
   endpoint: string;
+  /** soju.im/FILEHOST takes the file as the whole body, draft/FILEHOST a form. */
+  rawBody?: boolean;
+  authorization?: string;
   onProgress?: (loaded: number, total: number) => void;
   signal?: AbortSignal;
 }
@@ -158,8 +161,12 @@ export interface TokenlessUploadOptions {
 export function parseFilehostUploadResponse(
   location: string | null,
   body: string,
+  endpoint?: string,
 ): string | null {
-  if (location) return location;
+  if (location)
+    return URL.canParse(location, endpoint)
+      ? new URL(location, endpoint).href
+      : null;
   const text = body.trim();
   try {
     const parsed = JSON.parse(text) as { url?: string; saved_url?: string };
@@ -205,6 +212,7 @@ export function uploadFileTokenless(
       const url = parseFilehostUploadResponse(
         xhr.getResponseHeader("Location"),
         xhr.responseText || "",
+        opts.endpoint,
       );
       if (url) {
         resolve(url);
@@ -224,10 +232,36 @@ export function uploadFileTokenless(
     }
 
     xhr.open("POST", opts.endpoint);
+    if (opts.authorization)
+      xhr.setRequestHeader("Authorization", opts.authorization);
+    if (opts.rawBody) {
+      xhr.setRequestHeader(
+        "Content-Type",
+        file.type || "application/octet-stream",
+      );
+      xhr.setRequestHeader(
+        "Content-Disposition",
+        `attachment; filename*=UTF-8''${encodeURIComponent(file.name)}`,
+      );
+      xhr.send(file);
+      return;
+    }
     const form = new FormData();
     form.append("file", file);
     xhr.send(form);
   });
+}
+
+// We log in to soju.im/FILEHOST with the SASL PLAIN credentials, and only over
+// https so the password never crosses the network in the clear.
+export function filehostBasicAuth(
+  endpoint: string,
+  account: string | undefined,
+  password: string | undefined,
+): string | undefined {
+  if (!account || !password || !endpoint.startsWith("https://")) return;
+  const bytes = new TextEncoder().encode(`${account}:${password}`);
+  return `Basic ${btoa(String.fromCharCode(...bytes))}`;
 }
 
 /** Byte count at the largest unit that keeps it readable. */

@@ -58,6 +58,7 @@ import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   describeUploadFailure,
   fetchUploadInfo,
+  filehostBasicAuth,
   type UploadInfo,
   uploadFile,
   uploadFileTokenless,
@@ -81,7 +82,7 @@ import {
   type SelectedRegion,
   selectScreenRegion,
 } from "../../lib/screenRegion";
-import useStore from "../../store";
+import useStore, { loadSavedServers } from "../../store";
 import { sendEncryptedMedia } from "../../store/handlers/e2ee";
 import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
 import {
@@ -89,7 +90,12 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType, User } from "../../types";
+import type {
+  BotCommand,
+  Message as MessageType,
+  Server,
+  User,
+} from "../../types";
 import {
   type EmojiItem,
   emojiProvider,
@@ -179,6 +185,27 @@ function releasePreview(attachment: PendingAttachment): void {
   if (attachment.kind === "file" && attachment.previewUrl) {
     URL.revokeObjectURL(attachment.previewUrl);
   }
+}
+
+// We prefer the tokenless draft/FILEHOST, then soju.im/FILEHOST, and fall back
+// to the vendor obby.world/FILEHOST that needs a draft/authtoken per file.
+function directUploadFor(
+  server: Pick<Server, "id" | "fileHosts" | "sojuFileHost"> | undefined,
+) {
+  const tokenless = server?.fileHosts?.[0];
+  if (tokenless) return { endpoint: tokenless };
+  const soju = server?.sojuFileHost;
+  if (!soju) return null;
+  const saved = loadSavedServers().find((s) => s.id === server.id);
+  return {
+    endpoint: soju,
+    rawBody: true,
+    authorization: filehostBasicAuth(
+      soju,
+      saved?.saslAccountName || saved?.nickname,
+      saved?.saslPassword,
+    ),
+  };
 }
 
 export const ChatArea: React.FC<{
@@ -691,10 +718,10 @@ export const ChatArea: React.FC<{
     [servers, selectedServerId],
   );
 
-  // The server offers file uploads via either the vendor token uploader
-  // (obby.world/FILEHOST) or the standard tokenless one (draft/FILEHOST).
   const canUpload = !!(
-    selectedServer?.filehost || selectedServer?.fileHosts?.length
+    selectedServer?.filehost ||
+    selectedServer?.fileHosts?.length ||
+    selectedServer?.sojuFileHost
   );
 
   const isTouch = useIsTouchInput();
@@ -1213,11 +1240,9 @@ export const ChatArea: React.FC<{
     confirmedForNick: string | null = null,
   ): Promise<UploadOutcome> => {
     if (!selectedServerId || files.length === 0) return "failed";
-    // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
-    // fall back to the vendor token-authenticated obby.world/FILEHOST.
-    const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
+    const directUpload = directUploadFor(selectedServer);
     const filehostUrl = selectedServer?.filehost;
-    if (!tokenlessEndpoint && !filehostUrl) {
+    if (!directUpload && !filehostUrl) {
       reportUploadFailure(
         t`This server has no file host. Connect to a server with a file host to upload files.`,
       );
@@ -1237,7 +1262,7 @@ export const ChatArea: React.FC<{
     // neither -- it POSTs straight to the advertised endpoint.
     let info: Awaited<ReturnType<typeof fetchUploadInfo>> = null;
     const tokens: string[] = [];
-    if (!tokenlessEndpoint && filehostUrl) {
+    if (!directUpload && filehostUrl) {
       info = await fetchUploadInfo(filehostUrl);
       // Serialised because waitForAuthToken resolves on the first matching
       // TOKEN_GENERATE event -- parallel mints would race for the reply.
@@ -1389,14 +1414,14 @@ export const ChatArea: React.FC<{
             });
             return null;
           }
-          const url = tokenlessEndpoint
+          const url = directUpload
             ? await uploadFileTokenless(upload, {
-                endpoint: tokenlessEndpoint,
+                ...directUpload,
                 signal: ac.signal,
                 onProgress,
               })
             : await uploadFile(upload, {
-                // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when tokenlessEndpoint isn't (guarded above)
+                // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when directUpload isn't (guarded above)
                 filehostUrl: filehostUrl!,
                 bearerToken: tokens[jobIdx],
                 signal: ac.signal,
