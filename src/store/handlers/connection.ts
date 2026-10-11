@@ -236,22 +236,13 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     // the profile modal re-GETs anyway.
     if (serverSupportsMetadata(store.getState(), serverId)) {
       fetchAndMergeOwnMetadata(store, serverId).then(() => {
-        const savedMetadataAfterMerge = storage.metadata.load();
-        const serverMetadataAfterMerge = savedMetadataAfterMerge[serverId];
         const ourNick = ircClient.getNick(serverId);
-        if (serverMetadataAfterMerge && ourNick) {
-          const ourMetadata = serverMetadataAfterMerge[ourNick];
-          if (ourMetadata) {
-            Object.entries(ourMetadata).forEach(
-              ([key, { value, visibility }]) => {
-                if (value !== undefined) {
-                  store
-                    .getState()
-                    .metadataSet(serverId, "*", key, value, visibility);
-                }
-              },
-            );
-          }
+        if (!ourNick) return;
+        const onServer = storage.metadata.load()[serverId]?.[ourNick] ?? {};
+        const ours = storage.ownMetadata.load()[serverId] ?? {};
+        for (const [key, value] of Object.entries(ours)) {
+          if (!onServer[key]?.value)
+            store.getState().metadataSet(serverId, "*", key, value);
         }
       });
     }
