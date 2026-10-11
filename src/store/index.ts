@@ -1422,7 +1422,7 @@ const useStore = create<AppState>((set, get) => ({
         s.isConnected,
     );
     if (existingServer) {
-      // Already connected, just return the existing server
+      if (isNewServer) get().selectServer(existingServer.id);
       return existingServer;
     }
 
@@ -1431,6 +1431,30 @@ const useStore = create<AppState>((set, get) => ({
       isAddingNewServer: isNewServer,
       connectionError: null,
     });
+
+    const knownServer = state.servers.find(
+      (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
+    );
+    const newServerId = isNewServer && !knownServer ? uuidv4() : undefined;
+    if (newServerId) {
+      set((state) => ({
+        servers: [
+          ...state.servers,
+          {
+            id: newServerId,
+            name: name || normalizeHost(host),
+            host: normalizeHost(host),
+            port,
+            channels: [],
+            privateChats: [],
+            isConnected: false,
+            connectionState: "connecting",
+            users: [],
+          },
+        ],
+      }));
+      get().selectServer(newServerId);
+    }
 
     try {
       // Look up saved server to get its ID
@@ -1463,7 +1487,7 @@ const useStore = create<AppState>((set, get) => ({
         password,
         saslAccountName,
         saslPassword,
-        existingSavedServer?.id, // Pass the saved server ID if it exists
+        existingSavedServer?.id ?? newServerId,
         oauthBearerEnabled,
       );
 
