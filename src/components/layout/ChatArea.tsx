@@ -2354,7 +2354,7 @@ export const ChatArea: React.FC<{
                     onSendClick={handleSendMessage}
                     showSendButton={isNativeMobile}
                     hideEmoji={isNativeMobile}
-                    hasText={hasText}
+                    canSend={hasText || attachments.length > 0}
                   />
                 </div>
               </div>
