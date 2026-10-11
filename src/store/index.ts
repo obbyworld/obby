@@ -356,52 +356,6 @@ function restoreServerMetadata(serverId: string) {
   });
 }
 
-// Fetch our own metadata from the server and update saved values
-async function fetchAndMergeOwnMetadata(serverId: string): Promise<void> {
-  return new Promise((resolve) => {
-    const nickname = ircClient.getNick(serverId);
-    if (!nickname) {
-      resolve();
-      return;
-    }
-
-    // Mark as fetching
-    useStore.setState((state) => ({
-      metadataFetchInProgress: {
-        ...state.metadataFetchInProgress,
-        [serverId]: true,
-      },
-    }));
-
-    // Request all metadata for ourselves (target "*" means us)
-    const defaultKeys = [
-      "url",
-      "website",
-      "status",
-      "location",
-      "avatar",
-      "color",
-      "display-name",
-      "pronouns",
-    ];
-
-    // Get our metadata from the server
-    ircClient.metadataGet(serverId, "*", defaultKeys);
-
-    // Wait a bit for responses to come in, then resolve
-    // The METADATA_KEYVALUE handler will update saved values
-    setTimeout(() => {
-      useStore.setState((state) => ({
-        metadataFetchInProgress: {
-          ...state.metadataFetchInProgress,
-          [serverId]: false,
-        },
-      }));
-      resolve();
-    }, 1000);
-  });
-}
-
 // Fetch channel metadata for the channel list modal
 // Uses caching to avoid refetching and rate limiting
 function fetchChannelMetadata(serverId: string, channelNames: string[]) {
@@ -713,7 +667,6 @@ export interface AppState {
     }
   >; // batchId -> batch info
   activeBatches: Record<string, Record<string, BatchInfo>>; // serverId -> batchId -> batch info
-  metadataFetchInProgress: Record<string, boolean>; // serverId -> is fetching own metadata
   userMetadataRequested: Record<string, Set<string>>; // serverId -> Set of usernames we've requested metadata for
   metadataChangeCounter: number; // Counter incremented on metadata changes for reactivity
   // soju.im/bouncer-networks: per-bouncer (i.e. per control-connection)
@@ -1278,7 +1231,6 @@ const useStore = create<AppState>((set, get) => ({
   metadataSubscriptions: {},
   metadataBatches: {},
   activeBatches: {},
-  metadataFetchInProgress: {},
   userMetadataRequested: {},
   metadataChangeCounter: 0,
   bouncers: {},
