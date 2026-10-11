@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { compactUrl } from "../../lib/ircUtils";
+import { compactUrl, makeUrlRegex } from "../../lib/ircUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 
@@ -17,9 +17,6 @@ interface EnhancedLinkWrapperProps {
   children: React.ReactNode;
   onIrcLinkClick?: (url: string) => void;
 }
-
-// Factory so each call gets a fresh lastIndex (global-flag regex is stateful)
-const makeUrlRegex = () => /\b(?:https?|irc|ircs):\/\/[^\s<>"']+/gi;
 
 export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
   children,
@@ -86,13 +83,13 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
 
       if (index < matches.length) {
         const url = matches[index];
-        const isWebLink = /^https?:\/\//i.test(url);
+        const isWebLink = !/^ircs?:\/\//i.test(url);
         const fragmentKey = `fragment-${url}-${index}`;
         return (
           <Fragment key={fragmentKey}>
             {textPart}
             <a
-              href={url}
+              href={/^www\./i.test(url) ? `https://${url}` : url}
               target="_blank"
               rel="noopener noreferrer"
               className={`text-blue-500 underline hover:text-blue-700 break-all ${

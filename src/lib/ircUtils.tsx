@@ -966,9 +966,12 @@ function processChannelsInText(
 }
 
 // Matches http(s), irc(s) and bare www. links the way chat makes them clickable.
+// A link ends on a character that is not sentence punctuation, so "see x.com."
+// leaves the dot out; parentheses belong to the link only as a pair, as in
+// wiki/Foo_(bar).
 // A factory, so every caller gets its own lastIndex on the global regex.
-const makeUrlRegex = () =>
-  /((?:https?|ircs?):\/\/[^\s<>"{}|\\^`[\]]+|www\.[^\s<>"{}|\\^`[\]]+)/gi;
+export const makeUrlRegex = () =>
+  /(?:(?:https?|ircs?):\/\/|www\.)(?:[^\s<>"{}|\\^`[\]()]|\([^\s()<>]*\))*(?:\([^\s()<>]*\)|[^\s<>"{}|\\^`[\]().,;:!?'])/gi;
 
 /** A web address as people read it: no scheme, no "www." and no trailing slash. */
 export function compactUrl(url: string): string {
