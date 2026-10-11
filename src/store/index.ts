@@ -647,6 +647,8 @@ export interface AppState {
     message: string;
     target?: string;
     serverId: string;
+    // Set when the same reply is also a row in that server's notices.
+    inServerNotices?: boolean;
     timestamp: Date;
   }[];
   // Problems a server reported since the user last opened its notices.
@@ -991,6 +993,7 @@ export interface AppState {
     message: string;
     target?: string;
     serverId: string;
+    inServerNotices?: boolean;
   }) => void;
   clearGlobalNotifications: () => void;
   appendRawLogLine: (entry: {

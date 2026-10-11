@@ -273,6 +273,7 @@ pub fn run() {
             download_image,
             overlay::prepare_region_overlay,
             screen_record::region_recording_supported,
+            screen_record::screen_recording_allowed,
             screen_record::start_region_recording,
             screen_record::stop_region_recording,
             screen_record::cancel_region_recording,

@@ -55,7 +55,7 @@ export const GlobalNotifications: React.FC = () => {
 
   if (!latest) return null;
   const isJumpFailure = latest.command === JUMP_FAILURE_COMMAND;
-  const opensNotices = hasServer && !isJumpFailure;
+  const opensNotices = hasServer && !!latest.inServerNotices;
 
   const openNotices = () => {
     const { selectServer, selectChannel } = useStore.getState();

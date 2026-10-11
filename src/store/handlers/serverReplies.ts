@@ -80,6 +80,7 @@ export function reportServerReply(
       message,
       target,
       serverId,
+      inServerNotices: true,
     });
   }
 }

@@ -627,6 +627,10 @@ msgstr "Tillåt mikrofonåtkomst i inställningarna för att prata"
 msgid "Allow microphone access to record sound."
 msgstr "Tillåt mikrofonåtkomst för att spela in ljud."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Tillåt Obby under Skärminspelning i Systeminställningar och spela sedan in igen."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"

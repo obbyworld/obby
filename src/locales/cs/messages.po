@@ -627,6 +627,10 @@ msgstr "Povolte přístup k mikrofonu v nastavení, abyste mohli mluvit"
 msgid "Allow microphone access to record sound."
 msgstr "Povolte přístup k mikrofonu pro nahrávání zvuku."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Povolte Obby v Nastavení systému v části Nahrávání obrazovky a pak nahrávejte znovu."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"

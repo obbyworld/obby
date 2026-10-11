@@ -627,6 +627,10 @@ msgstr "Permite accesul la microfon din setări pentru a vorbi"
 msgid "Allow microphone access to record sound."
 msgstr "Permite accesul la microfon pentru a înregistra sunet."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Permite Obby la Înregistrare ecran în Configurări sistem, apoi înregistrează din nou."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
