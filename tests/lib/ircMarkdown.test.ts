@@ -332,7 +332,27 @@ describe("findFirstUrl", () => {
   it("returns the first web link and skips irc links", () => {
     expect(
       findFirstUrl("join ircs://irc.example/#a then https://example.org/b."),
-    ).toBe("https://example.org/b.");
+    ).toBe("https://example.org/b");
+  });
+
+  it.each([
+    [
+      "see https://irc.h4ks.com/uploads/a.png.",
+      "https://irc.h4ks.com/uploads/a.png",
+    ],
+    ["is it https://example.org/x?", "https://example.org/x"],
+    ["(see https://example.org/a)", "https://example.org/a"],
+    ["wow https://example.org/a!, right", "https://example.org/a"],
+    [
+      "https://en.wikipedia.org/wiki/Foo_(bar).",
+      "https://en.wikipedia.org/wiki/Foo_(bar)",
+    ],
+    [
+      "https://example.org/a.b/c?d=1&e=2#f",
+      "https://example.org/a.b/c?d=1&e=2#f",
+    ],
+  ])("leaves sentence punctuation out of %s", (text, url) => {
+    expect(findFirstUrl(text)).toBe(url);
   });
 
   it("returns null when there is no web link", () => {
