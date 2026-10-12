@@ -994,7 +994,6 @@ msgstr "Can't remove your last 2FA credential"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1005,6 +1004,7 @@ msgstr "Can't remove your last 2FA credential"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -1746,11 +1746,19 @@ msgstr "Default Nickname"
 msgid "Delay joins (+D)"
 msgstr "Delay joins (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Delete"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Delete bot"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1769,7 +1777,9 @@ msgstr "Delete folder"
 msgid "Delete its saved chat history too"
 msgstr "Delete its saved chat history too"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Delete message"
 
@@ -1777,6 +1787,7 @@ msgstr "Delete message"
 msgid "Delete network"
 msgstr "Delete network"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Delete pack"

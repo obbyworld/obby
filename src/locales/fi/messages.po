@@ -995,7 +995,6 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1006,6 +1005,7 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -1747,11 +1747,19 @@ msgstr "Oletusnimimerkki"
 msgid "Delay joins (+D)"
 msgstr "Viivästä liittymisiä (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Poista"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Poista botti"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1770,7 +1778,9 @@ msgstr "Poista kansio"
 msgid "Delete its saved chat history too"
 msgstr "Poista myös sen tallennettu keskusteluhistoria"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Poista viesti"
 
@@ -1778,6 +1788,7 @@ msgstr "Poista viesti"
 msgid "Delete network"
 msgstr "Poista verkko"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Poista paketti"

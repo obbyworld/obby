@@ -995,7 +995,6 @@ msgstr "无法删除你的最后一个 2FA 凭据"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1006,6 +1005,7 @@ msgstr "无法删除你的最后一个 2FA 凭据"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "取消"
 
@@ -1747,11 +1747,19 @@ msgstr "默认昵称"
 msgid "Delay joins (+D)"
 msgstr "延迟加入 (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "删除"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "删除机器人"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1770,7 +1778,9 @@ msgstr "删除文件夹"
 msgid "Delete its saved chat history too"
 msgstr "同时删除其已保存的聊天历史"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "删除消息"
 
@@ -1778,6 +1788,7 @@ msgstr "删除消息"
 msgid "Delete network"
 msgstr "删除网络"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "删除表情包"

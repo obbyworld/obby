@@ -150,7 +150,7 @@ export function handleRedact(
 ): void {
   const target = parv[0];
   const msgid = parv[1];
-  const reason = parv[2] ? parv[2].substring(1) : "";
+  const reason = parv[2] ?? "";
   const sender = getNickFromNuh(source);
   ctx.triggerEvent("REDACT", {
     serverId,

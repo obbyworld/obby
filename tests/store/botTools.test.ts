@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
+import { effectiveWorkflowState } from "../../src/lib/botTools";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
@@ -47,6 +48,35 @@ describe("botTools store handler", () => {
       collapsed: true,
       dismissed: false,
     });
+  });
+
+  test("a run replayed from history keeps its server time and reads as over", () => {
+    useStore.setState({
+      activeBatches: {
+        [SID]: {
+          hist: {
+            type: "chathistory",
+            parameters: [CHAN],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    } as Partial<AppState>);
+    emit("TAGMSG", {
+      serverId: SID,
+      mtags: {
+        ...tag('{"msg":"workflow","id":"old","state":"start"}'),
+        batch: "hist",
+        time: "2026-01-01T10:00:00.000Z",
+      },
+      sender: BOT,
+      channelName: CHAN,
+    });
+    const wf = useStore.getState().aiWorkflows[SID]?.old;
+    expect(wf?.startedAt).toBe(Date.parse("2026-01-01T10:00:00.000Z"));
+    expect(wf?.historical).toBe(true);
+    expect(wf && effectiveWorkflowState(wf)).toBe("failed");
   });
 
   test("subsequent workflow update merges over existing state", () => {

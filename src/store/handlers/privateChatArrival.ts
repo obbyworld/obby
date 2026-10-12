@@ -54,7 +54,7 @@ export function notePrivateMessageArrived(
         privateChats:
           s.privateChats?.map((pc) => {
             if (pc.id !== privateChatId) return pc;
-            return { ...pc, lastActivity: new Date() };
+            return { ...pc, lastActivity: laterActivity(pc, arrival.message) };
           }) || [],
       };
     }),
@@ -84,4 +84,16 @@ export function notePrivateMessageArrived(
       });
     },
   );
+}
+
+// A replayed message carries its own server-time and must never move a chat
+// back in the list.
+export function laterActivity(
+  chat: { lastActivity?: Date },
+  message: { timestamp: Date },
+): Date {
+  const at = new Date(message.timestamp);
+  return chat.lastActivity && new Date(chat.lastActivity) >= at
+    ? chat.lastActivity
+    : at;
 }

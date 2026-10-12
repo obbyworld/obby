@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useSwipeNavigation } from "../../hooks/useSwipeNavigation";
+import { ConfirmDialogHost } from "../../lib/modal/ConfirmDialog";
 import { isTauriAndroid } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
@@ -458,6 +459,7 @@ export const AppLayout: React.FC = () => {
           </>
         )}
         <GlobalNotifications />
+        <ConfirmDialogHost />
         <VoicePipOverlay />
         {/* Rendered here so window resizes never unmount it */}
         <MediaViewerModal

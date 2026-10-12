@@ -235,6 +235,7 @@ for WKWebView's `IntersectionObserver`.
 - Touch UI (bottom sheets, long-press, drag handles) follows `useIsTouchInput()`. Window width only decides layout, so a narrow desktop window still gets mouse UI.
 - Lists that suggest completions above the chat input (members, emojis, slash commands) render through `SuggestionList` and take their arrow, Enter and Escape keys from `useSuggestionKeys`.
 - Bottom sheets build on `BottomSheet` with the `sheet-row` and `sheet-action` classes; taps and holds go through `useShortTap` and `useLongPress`, which share one delay so they never fire together.
+- Never call `window.confirm`, `window.alert` or `window.prompt`: the Tauri webview on macOS and iOS returns without showing anything. Ask with `confirmDestructive` or build the dialog on `ConfirmDialog` (`src/lib/modal/ConfirmDialog.tsx`); every dialog built on `BaseModal` closes on a click outside.
 - Stray typing goes to the chat input. An open modal dialog takes it for its own text field, and an inline editor can claim it with `useTypingOwner`.
 
 ---

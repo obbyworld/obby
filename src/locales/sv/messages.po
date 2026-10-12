@@ -995,7 +995,6 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1006,6 +1005,7 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -1747,11 +1747,19 @@ msgstr "Standard-nick"
 msgid "Delay joins (+D)"
 msgstr "Fördröj inträden (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Ta bort"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Ta bort bot"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1770,7 +1778,9 @@ msgstr "Ta bort mapp"
 msgid "Delete its saved chat history too"
 msgstr "Ta även bort den sparade chatthistoriken"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Ta bort meddelande"
 
@@ -1778,6 +1788,7 @@ msgstr "Ta bort meddelande"
 msgid "Delete network"
 msgstr "Ta bort nätverk"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Ta bort paket"

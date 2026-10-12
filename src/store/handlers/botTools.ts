@@ -8,11 +8,13 @@ import {
 import ircClient from "../../lib/ircClient";
 import { extractMentions } from "../../lib/notifications";
 import type { Message } from "../../types";
-import { resolveReplyMessage } from "../helpers";
+import { isHistoryEvent, resolveReplyMessage } from "../helpers";
 import type { AiStep, AiWorkflow, AppState } from "../index";
 
-function nowMs(): number {
-  return Date.now();
+// We date runs by server-time so a run replayed from history keeps its real age.
+function eventTime(mtags: Record<string, string> | undefined): number {
+  const serverTime = mtags?.time ? Date.parse(mtags.time) : Number.NaN;
+  return Number.isNaN(serverTime) ? Date.now() : serverTime;
 }
 
 function emptyWorkflow(
@@ -21,6 +23,7 @@ function emptyWorkflow(
   senderNick: string,
   m: AiWorkflowMessage,
   historical: boolean,
+  at: number,
 ): AiWorkflow {
   return {
     id: m.id,
@@ -32,8 +35,8 @@ function emptyWorkflow(
     trigger: m.trigger,
     prompt: m.prompt,
     cancelledBy: m["cancelled-by"],
-    startedAt: nowMs(),
-    updatedAt: nowMs(),
+    startedAt: at,
+    updatedAt: at,
     steps: [],
     collapsed: true,
     dismissed: false,
@@ -48,8 +51,10 @@ function applyWorkflowUpdate(
   senderNick: string,
   m: AiWorkflowMessage,
   historical: boolean,
+  at: number,
 ): AiWorkflow {
-  if (!prev) return emptyWorkflow(serverId, channel, senderNick, m, historical);
+  if (!prev)
+    return emptyWorkflow(serverId, channel, senderNick, m, historical, at);
   // Stickiness: if the workflow was first seen historical, keep it that
   // way even if later events (rare) arrive live. The converse -- live
   // workflow gets later replayed events -- can't happen in practice.
@@ -60,13 +65,14 @@ function applyWorkflowUpdate(
     trigger: m.trigger ?? prev.trigger,
     prompt: m.prompt ?? prev.prompt,
     cancelledBy: m["cancelled-by"] ?? prev.cancelledBy,
-    updatedAt: nowMs(),
+    updatedAt: at,
   };
 }
 
 function applyStepUpdate(
   prev: AiWorkflow | undefined,
   m: AiStepMessage,
+  at: number,
 ): { workflow: AiWorkflow; created: boolean } | undefined {
   if (!prev) return undefined;
   const idx = prev.steps.findIndex((s) => s.sid === m.sid);
@@ -80,8 +86,8 @@ function applyStepUpdate(
           label: m.label,
           content: m.content,
           truncated: m.truncated,
-          startedAt: nowMs(),
-          updatedAt: nowMs(),
+          startedAt: at,
+          updatedAt: at,
         }
       : {
           ...prev.steps[idx],
@@ -100,33 +106,19 @@ function applyStepUpdate(
                 ? m.content
                 : prev.steps[idx].content,
           truncated: m.truncated ?? prev.steps[idx].truncated,
-          updatedAt: nowMs(),
+          updatedAt: at,
         };
   const steps =
     idx === -1
       ? [...prev.steps, baseStep]
       : prev.steps.map((s, i) => (i === idx ? baseStep : s));
   return {
-    workflow: { ...prev, steps, updatedAt: nowMs() },
+    workflow: { ...prev, steps, updatedAt: at },
     created: idx === -1,
   };
 }
 
 export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
-  // Decide whether an event arrived inside a CHATHISTORY batch by
-  // looking at the @batch tag and resolving its type against the
-  // store's active-batch map. Returns true for replayed events, so
-  // the floating tray can stay quiet on channel join.
-  const isReplayed = (
-    serverId: string,
-    mtags: Record<string, string> | undefined,
-  ): boolean => {
-    const batchId = mtags?.batch;
-    if (!batchId) return false;
-    const batch = store.getState().activeBatches[serverId]?.[batchId];
-    return batch?.type === "chathistory";
-  };
-
   const handleTaggedMessage = ({
     serverId,
     mtags,
@@ -148,7 +140,8 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
     if (!raw) return;
     const msg = decodeBotToolsValue(raw);
     if (!msg) return;
-    const historical = isReplayed(serverId, mtags);
+    const historical = isHistoryEvent(store.getState(), serverId, mtags);
+    const at = eventTime(mtags);
 
     if (msg.msg === "workflow") {
       // The bot's final answer is a PRIVMSG carrying the workflow tag.
@@ -164,6 +157,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
           sender,
           msg,
           historical,
+          at,
         );
         if (finalMsgid && !merged.finalMsgid) {
           merged.finalMsgid = finalMsgid;
@@ -243,7 +237,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
               msgid: mtags?.msgid,
               tags: mtags,
               content: body ?? existing[idx].content,
-              timestamp: new Date(),
+              timestamp: new Date(at),
               userId: sender,
               replyMessage,
               mentioned: mentions,
@@ -286,7 +280,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
             id: placeholderId,
             type: "message",
             content: "",
-            timestamp: new Date(),
+            timestamp: new Date(at),
             userId: sender,
             channelId: channel?.id ?? "",
             serverId,
@@ -313,7 +307,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
       store.setState((state) => {
         const server = state.aiWorkflows[serverId] ?? {};
         const prev = server[msg.wid];
-        const result = applyStepUpdate(prev, msg);
+        const result = applyStepUpdate(prev, msg, at);
         if (!result) return state;
         return {
           aiWorkflows: {

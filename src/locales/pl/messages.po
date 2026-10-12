@@ -995,7 +995,6 @@ msgstr "Nie można usunąć ostatniej metody 2FA"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1006,6 +1005,7 @@ msgstr "Nie można usunąć ostatniej metody 2FA"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Anuluj"
 
@@ -1747,11 +1747,19 @@ msgstr "Domyślny nick"
 msgid "Delay joins (+D)"
 msgstr "Opóźnij dołączenia (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Usuń"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Usuń bota"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1770,7 +1778,9 @@ msgstr "Usuń folder"
 msgid "Delete its saved chat history too"
 msgstr "Usuń także zapisaną historię rozmów"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Usuń wiadomość"
 
@@ -1778,6 +1788,7 @@ msgstr "Usuń wiadomość"
 msgid "Delete network"
 msgstr "Usuń sieć"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Usuń pakiet"

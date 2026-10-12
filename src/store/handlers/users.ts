@@ -6,6 +6,7 @@ import type { Message, User } from "../../types";
 import {
   generateDeterministicId,
   getCurrentSelection,
+  isHistoryEvent,
   resolveUserMetadata,
 } from "../helpers";
 import type { AppState } from "../index";
@@ -653,29 +654,35 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on(
     "KICK",
-    ({ serverId, username, target, channelName, reason }) => {
-      store.setState((state) => {
-        const updatedServers = state.servers.map((server) => {
-          const updatedChannels = server.channels.map((channel) => {
-            if (channel.name.toLowerCase() === channelName.toLowerCase()) {
-              return {
-                ...channel,
-                users: channel.users.filter((user) => user.username !== target),
-              };
-            }
-            return channel;
+    ({ serverId, mtags, username, target, channelName, reason }) => {
+      const historical = isHistoryEvent(store.getState(), serverId, mtags);
+      if (!historical)
+        store.setState((state) => {
+          const updatedServers = state.servers.map((server) => {
+            const updatedChannels = server.channels.map((channel) => {
+              if (channel.name.toLowerCase() === channelName.toLowerCase()) {
+                return {
+                  ...channel,
+                  users: channel.users.filter(
+                    (user) => user.username !== target,
+                  ),
+                };
+              }
+              return channel;
+            });
+            return { ...server, channels: updatedChannels };
           });
-          return { ...server, channels: updatedChannels };
-        });
 
-        return { servers: updatedServers };
-      });
+          return { servers: updatedServers };
+        });
 
       const state = store.getState();
       if (state.globalSettings.showEvents && state.globalSettings.showKicks) {
         const server = state.servers.find((s) => s.id === serverId);
         if (server) {
-          const channel = server.channels.find((c) => c.name === channelName);
+          const channel = server.channels.find(
+            (c) => c.name.toLowerCase() === channelName.toLowerCase(),
+          );
           if (channel) {
             appendMessage(
               store,
@@ -689,12 +696,14 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                 target,
                 channel.id,
                 serverId,
-                new Date(),
+                mtags?.time ? new Date(mtags.time) : new Date(),
+                historical,
               ),
             );
           }
         }
       }
+      if (historical) return;
 
       const server = state.servers.find((s) => s.id === serverId);
       if (server) {
@@ -728,8 +737,9 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     },
   );
 
-  ircClient.on("INVITE", ({ serverId, inviter, target, channel }) => {
+  ircClient.on("INVITE", ({ serverId, mtags, inviter, target, channel }) => {
     const state = store.getState();
+    if (isHistoryEvent(state, serverId, mtags)) return;
     const server = state.servers.find((s) => s.id === serverId);
     if (!server) return;
 

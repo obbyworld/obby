@@ -2,7 +2,15 @@ import { t } from "@lingui/core/macro";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { Message } from "../../types";
-import { type BatchInfo, capMergedMessages, messageTime } from "../helpers";
+import {
+  type BatchInfo,
+  capMergedMessages,
+  hasMsgid,
+  messageTime,
+  redactedMessage,
+  withoutReaction,
+  withReaction,
+} from "../helpers";
 import { type AppState, rememberMsgIds } from "../index";
 
 // Chathistory messages are buffered here (outside the store) to avoid one
@@ -18,27 +26,55 @@ export function bufferChathistoryMessage(batchId: string, msg: Message): void {
   buf.push(msg);
 }
 
-interface BufferedReaction {
-  emoji: string;
-  userId: string;
-  targetMsgId: string;
-  isUnreact: boolean;
-}
+type HistoryEdit =
+  | {
+      kind: "react" | "unreact";
+      emoji: string;
+      userId: string;
+      targetMsgId: string;
+    }
+  | { kind: "redact"; sender: string; targetMsgId: string };
 
-// Reactions that arrive via TAGMSG during a chathistory batch are buffered here.
-// The target message is still in chathistoryBuffers at that point, not in the store.
-export const reactionBuffers = new Map<string, BufferedReaction[]>();
+// Reactions and redactions inside a chathistory batch point at messages that
+// are still in chathistoryBuffers, so we hold them until BATCH_END too.
+export const historyEditBuffers = new Map<string, HistoryEdit[]>();
 
-export function bufferChathistoryReaction(
-  batchId: string,
-  r: BufferedReaction,
-): void {
-  let buf = reactionBuffers.get(batchId);
+export function bufferHistoryEdit(batchId: string, edit: HistoryEdit): void {
+  let buf = historyEditBuffers.get(batchId);
   if (!buf) {
     buf = [];
-    reactionBuffers.set(batchId, buf);
+    historyEditBuffers.set(batchId, buf);
   }
-  buf.push(r);
+  buf.push(edit);
+}
+
+function applyHistoryEdit(message: Message, edit: HistoryEdit): Message {
+  switch (edit.kind) {
+    case "react":
+      return withReaction(message, edit.emoji, edit.userId) ?? message;
+    case "unreact":
+      return withoutReaction(message, edit.emoji, edit.userId) ?? message;
+    case "redact":
+      return redactedMessage(message, edit.sender);
+  }
+}
+
+// Every message of the page is in `merged` now, so replies and edits can find
+// targets that arrived later in the same batch.
+function resolveHistoryPage(merged: Message[], edits: HistoryEdit[]) {
+  return merged.map((message) => {
+    let updated = message;
+    const replyId = (updated.tags?.["+reply"] ??
+      updated.tags?.["+draft/reply"]) as string | undefined;
+    if (!updated.replyMessage && replyId) {
+      const found = merged.find((r) => hasMsgid(r, replyId));
+      if (found) updated = { ...updated, replyMessage: found };
+    }
+    for (const edit of edits)
+      if (hasMsgid(message, edit.targetMsgId))
+        updated = applyHistoryEdit(updated, edit);
+    return updated;
+  });
 }
 
 function processBatchedNetsplit(
@@ -274,7 +310,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
       if (ircClient.endDiskOnlyBatch(serverId, batchId)) {
         chathistoryChannelName = null;
         chathistoryBuffers.delete(batchId);
-        reactionBuffers.delete(batchId);
+        historyEditBuffers.delete(batchId);
         return {
           activeBatches: {
             ...state.activeBatches,
@@ -324,52 +360,9 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
             ? { ...state.historyWindows, [key]: capped.window }
             : state.historyWindows;
 
-          // Apply buffered reactions and re-resolve reply references now that
-          // all messages from the batch are in `merged` and visible to each other.
-          const pendingReactions = reactionBuffers.get(batchId) ?? [];
-          reactionBuffers.delete(batchId);
-
-          const finalMessages = merged.map((m) => {
-            let updated = m;
-
-            // Re-resolve reply if it was null when the message was buffered
-            // (the reply target may have been later in the same batch).
-            if (
-              !updated.replyMessage &&
-              (updated.tags?.["+reply"] || updated.tags?.["+draft/reply"])
-            ) {
-              const replyId = (updated.tags["+reply"] ??
-                updated.tags["+draft/reply"]) as string;
-              const found = merged.find(
-                (r) =>
-                  r.msgid === replyId ||
-                  r.multilineMessageIds?.includes(replyId),
-              );
-              if (found) updated = { ...updated, replyMessage: found };
-            }
-
-            // Apply any reactions/unreactions buffered for this message.
-            const relevant = pendingReactions.filter(
-              (r) => r.targetMsgId === m.msgid,
-            );
-            if (relevant.length === 0) return updated;
-
-            let reactions = [...updated.reactions];
-            for (const r of relevant) {
-              if (r.isUnreact) {
-                reactions = reactions.filter(
-                  (e) => !(e.emoji === r.emoji && e.userId === r.userId),
-                );
-              } else if (
-                !reactions.some(
-                  (e) => e.emoji === r.emoji && e.userId === r.userId,
-                )
-              ) {
-                reactions.push({ emoji: r.emoji, userId: r.userId });
-              }
-            }
-            return { ...updated, reactions };
-          });
+          const edits = historyEditBuffers.get(batchId) ?? [];
+          historyEditBuffers.delete(batchId);
+          const finalMessages = resolveHistoryPage(merged, edits);
 
           const newMsgIds = newMessages
             .filter((m) => m.msgid)
@@ -411,8 +404,8 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
           const key = `${serverId}-${privateChat.id}`;
           const pending = chathistoryBuffers.get(batchId) ?? [];
           chathistoryBuffers.delete(batchId);
-          const pendingReactions = reactionBuffers.get(batchId) ?? [];
-          reactionBuffers.delete(batchId);
+          const edits = historyEditBuffers.get(batchId) ?? [];
+          historyEditBuffers.delete(batchId);
           const existing = state.messages[key] || [];
 
           const existingIds = new Set(
@@ -442,41 +435,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
             ? { ...state.historyWindows, [key]: capped.window }
             : state.historyWindows;
 
-          const finalMessages = merged.map((m) => {
-            let updated = m;
-            if (
-              !updated.replyMessage &&
-              (updated.tags?.["+reply"] || updated.tags?.["+draft/reply"])
-            ) {
-              const replyId = (updated.tags["+reply"] ??
-                updated.tags["+draft/reply"]) as string;
-              const found = merged.find(
-                (r) =>
-                  r.msgid === replyId ||
-                  r.multilineMessageIds?.includes(replyId),
-              );
-              if (found) updated = { ...updated, replyMessage: found };
-            }
-            const relevant = pendingReactions.filter(
-              (r) => r.targetMsgId === m.msgid,
-            );
-            if (relevant.length === 0) return updated;
-            let reactions = [...updated.reactions];
-            for (const r of relevant) {
-              if (r.isUnreact) {
-                reactions = reactions.filter(
-                  (e) => !(e.emoji === r.emoji && e.userId === r.userId),
-                );
-              } else if (
-                !reactions.some(
-                  (e) => e.emoji === r.emoji && e.userId === r.userId,
-                )
-              ) {
-                reactions.push({ emoji: r.emoji, userId: r.userId });
-              }
-            }
-            return { ...updated, reactions };
-          });
+          const finalMessages = resolveHistoryPage(merged, edits);
 
           const newMsgIds = newMessages
             .filter((m) => m.msgid)
@@ -510,7 +469,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
 
         // Unknown target — still clean up buffers to prevent dangling data
         chathistoryBuffers.delete(batchId);
-        reactionBuffers.delete(batchId);
+        historyEditBuffers.delete(batchId);
       }
 
       return {

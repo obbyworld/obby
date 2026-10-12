@@ -69,6 +69,7 @@ import {
   isValidFormattingType,
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
@@ -2028,10 +2029,12 @@ export const ChatArea: React.FC<{
   };
 
   const handleRedactMessage = useCallback(
-    (message: MessageType) => {
+    async (message: MessageType) => {
       if (message.msgid && selectedServerId) {
-        const confirmed = window.confirm(
+        const confirmed = await confirmDestructive(
+          t`Delete message`,
           t`Are you sure you want to delete this message? This action cannot be undone.`,
+          t`Delete`,
         );
         if (confirmed) {
           const { servers: currentServers } = useStore.getState();

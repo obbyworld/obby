@@ -995,7 +995,6 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1006,6 +1005,7 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "İptal"
 
@@ -1747,11 +1747,19 @@ msgstr "Varsayılan Takma Ad"
 msgid "Delay joins (+D)"
 msgstr "Katılımları geciktir (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Sil"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Botu sil"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1770,7 +1778,9 @@ msgstr "Klasörü sil"
 msgid "Delete its saved chat history too"
 msgstr "Kayıtlı sohbet geçmişini de sil"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Mesajı sil"
 
@@ -1778,6 +1788,7 @@ msgstr "Mesajı sil"
 msgid "Delete network"
 msgstr "Ağı sil"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Paketi sil"

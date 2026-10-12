@@ -167,6 +167,47 @@ export function withoutReaction(
     : { ...message, reactions };
 }
 
+// A multiline message answers to its own msgid and to each of its lines' msgids.
+export function hasMsgid(message: Message, msgid: string): boolean {
+  return (
+    message.msgid === msgid || !!message.multilineMessageIds?.includes(msgid)
+  );
+}
+
+// Replayed history (server CHATHISTORY or our local replay) updates what was
+// said, never live state such as typing, presence, notifications or bot runs.
+export function isHistoryEvent(
+  state: Pick<AppState, "activeBatches">,
+  serverId: string,
+  mtags: Record<string, string> | undefined,
+): boolean {
+  const batchId = mtags?.batch;
+  return (
+    !!batchId &&
+    state.activeBatches[serverId]?.[batchId]?.type === "chathistory"
+  );
+}
+
+export function redactedMessage(original: Message, sender: string): Message {
+  return {
+    id: original.id,
+    msgid: original.msgid,
+    content: "",
+    timestamp: original.timestamp,
+    userId: "system",
+    channelId: original.channelId,
+    serverId: original.serverId,
+    type: "system",
+    reactions: [],
+    replyMessage: null,
+    mentioned: [],
+    tags: {
+      ...original.tags,
+      [REDACTED_BY_TAG]: original.userId === sender ? "sender" : "staff",
+    },
+  };
+}
+
 export function updateMessageByMsgid(
   state: Pick<AppState, "messages" | "historyWindows">,
   key: string,
@@ -174,7 +215,7 @@ export function updateMessageByMsgid(
   update: (message: Message) => Message | null,
 ): Partial<AppState> {
   const shown = state.messages[key] ?? [];
-  const index = shown.findIndex((m) => m.msgid === msgid);
+  const index = shown.findIndex((m) => hasMsgid(m, msgid));
   if (index >= 0) {
     const next = update(shown[index]);
     return next
@@ -185,7 +226,7 @@ export function updateMessageByMsgid(
   }
   const window = state.historyWindows[key];
   const presentIndex =
-    window?.present.findIndex((m) => m.msgid === msgid) ?? -1;
+    window?.present.findIndex((m) => hasMsgid(m, msgid)) ?? -1;
   if (!window || presentIndex < 0) return {};
   const next = update(window.present[presentIndex]);
   if (!next) return {};

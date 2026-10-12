@@ -4,6 +4,7 @@ import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { FaCircle } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import useStore from "../../store";
 import type { BotCommand, PushBotInfo } from "../../types";
 import LoadingSpinner from "../ui/LoadingSpinner";
@@ -231,10 +232,12 @@ const BotDetail: React.FC<BotDetailProps> = ({
             )}
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 if (
-                  window.confirm(
+                  await confirmDestructive(
+                    t`Delete bot`,
                     t`Delete bot ${bot.nick}? Run /REHASH before you register this nick again.`,
+                    t`Delete`,
                   )
                 ) {
                   onAction("DELETE");
