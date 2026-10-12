@@ -273,5 +273,32 @@ describe("botTools store handler", () => {
         content: "done",
       });
     });
+
+    test("finishes the run when the final answer arrives as a multiline batch", () => {
+      startRun();
+      const done = tag('{"msg":"workflow","id":"w9","state":"complete"}')[
+        "+draft/bot-tools"
+      ];
+      const feed = (line: string) =>
+        (
+          ircClient as unknown as {
+            handleMessage(data: string, serverId: string): void;
+          }
+        ).handleMessage(`${line}\r\n`, SID);
+      feed(
+        `@+draft/bot-tools=${done};msgid=b-1 :irc.test BATCH +ml1 draft/multiline ${CHAN}`,
+      );
+      feed(`@batch=ml1;msgid=l-1 :${BOT}!b@h PRIVMSG ${CHAN} :first line`);
+      feed(`@batch=ml1;msgid=l-2 :${BOT}!b@h PRIVMSG ${CHAN} :second line`);
+      feed(":irc.test BATCH -ml1");
+
+      expect(useStore.getState().aiWorkflows[SID]?.w9?.state).toBe("complete");
+      expect(rows()).toHaveLength(1);
+      expect(rows()[0]).toMatchObject({
+        botToolsWorkflowId: "w9",
+        botToolsPending: false,
+        content: "first line\nsecond line",
+      });
+    });
   });
 });

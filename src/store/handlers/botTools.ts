@@ -134,6 +134,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
     target,
     fromPrivmsg,
     body,
+    lineMsgids = [],
   }: {
     serverId: string;
     mtags?: Record<string, string>;
@@ -141,6 +142,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
     target: string;
     fromPrivmsg: boolean;
     body?: string;
+    lineMsgids?: string[];
   }): void => {
     const raw = mtags?.[BOT_TOOLS_TAG];
     if (!raw) return;
@@ -210,8 +212,12 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
         // skips appending its own duplicate row.
         if (fromPrivmsg) {
           if (idx >= 0) {
-            const processedMessageIds = mtags?.msgid
-              ? new Set([...state.processedMessageIds, mtags.msgid])
+            const replyMsgids = [
+              ...(mtags?.msgid ? [mtags.msgid] : []),
+              ...lineMsgids,
+            ];
+            const processedMessageIds = replyMsgids.length
+              ? new Set([...state.processedMessageIds, ...replyMsgids])
               : state.processedMessageIds;
             // Resolve reply + mentions the same way the generic CHANMSG
             // handler would, so the morphed row reads identically to a
@@ -242,6 +248,7 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
               replyMessage,
               mentioned: mentions,
               botToolsPending: false,
+              ...(lineMsgids.length && { multilineMessageIds: lineMsgids }),
             };
             const updated = existing.slice();
             updated[idx] = morphed;
@@ -346,6 +353,22 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
         target: channelName,
         fromPrivmsg: true,
         body: message,
+      });
+    },
+  );
+  // A long final answer arrives as a multiline batch, whose tags ride on the
+  // BATCH line, so the run's closing state comes with the assembled message.
+  ircClient.on(
+    "MULTILINE_MESSAGE",
+    ({ serverId, mtags, sender, target, message, messageIds }) => {
+      handleTaggedMessage({
+        serverId,
+        mtags,
+        sender,
+        target,
+        fromPrivmsg: true,
+        body: message,
+        lineMsgids: messageIds,
       });
     },
   );
