@@ -63,6 +63,7 @@ async function boot(caps = ["message-tags"]) {
         serverId: SERVER,
         unreadCount: 0,
         isMentioned: false,
+        readMarker: new Date(BASE).toISOString(),
         messages: [],
         users: [],
       },
@@ -432,5 +433,162 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     expect(w.shown()).toHaveLength(1500);
     expect(w.window()?.until).toBe(timeOf(1000 + 1399));
     expect(w.window()?.present).toBe(newer);
+  });
+
+  it("opens on a read marker from a page the server sends and fetches forward over the hole", async () => {
+    const w = await boot(["draft/chathistory", "message-tags"]);
+    const page = (id: string, from: number, count: number) => [
+      `:irc.test BATCH +${id} chathistory #chan`,
+      ...Array.from({ length: count }, (_, index) =>
+        line(from + index).replace("@", `@batch=${id};`),
+      ),
+      `:irc.test BATCH -${id}`,
+    ];
+    const iso = (index: number) => new Date(timeOf(index)).toISOString();
+    w.feed(line(1000), line(1001), line(1002));
+    await vi.waitFor(
+      async () =>
+        expect(await w.db.newestEventRows(SERVER, "#chan", 10)).toHaveLength(3),
+      { timeout: WRITE_TIMEOUT_MS },
+    );
+
+    const opened = w.history.showMessagesFromReadMarker(
+      w.useStore,
+      SERVER,
+      "#chan",
+      timeOf(100),
+    );
+    await vi.waitFor(() =>
+      expect(w.sent).toContain(
+        `CHATHISTORY AROUND #chan timestamp=${iso(100)} 50`,
+      ),
+    );
+    w.feed(...page("around", 90, 21));
+    expect(await opened).toBe(true);
+    expect(w.shown()).toEqual(ids(90, 110));
+    expect(w.window()).toBeDefined();
+
+    void w.history.loadNewerMessages(w.useStore, SERVER, "#chan");
+    await vi.waitFor(() =>
+      expect(w.sent).toContain(
+        `CHATHISTORY AFTER #chan timestamp=${iso(110)} 50`,
+      ),
+    );
+    w.feed(...page("after", 111, 10));
+    await vi.waitFor(() => expect(w.shown()).toEqual(ids(90, 120)));
+  });
+
+  describe("after a night offline", () => {
+    const page = (id: string, from: number, count: number) => [
+      `:irc.test BATCH +${id} chathistory #chan`,
+      ...Array.from({ length: count }, (_, index) =>
+        line(from + index).replace("@", `@batch=${id};`),
+      ),
+      `:irc.test BATCH -${id}`,
+    ];
+    const iso = (index: number) => new Date(timeOf(index)).toISOString();
+
+    // We saved 0..99 live, slept, and the newest page on reconnect is 500..549.
+    async function wake() {
+      const w = await boot(["draft/chathistory", "message-tags"]);
+      await w.save(100);
+      w.ircClient.requestChathistoryLatest(SERVER, "#chan");
+      w.feed(...page("latest", 500, 50));
+      await vi.waitFor(
+        async () =>
+          expect(await w.db.gapsFor(SERVER, "#chan")).toMatchObject([
+            { from: timeOf(99), to: timeOf(500) },
+          ]),
+        { timeout: WRITE_TIMEOUT_MS },
+      );
+      return w;
+    }
+
+    it("fetches the night from the server when scrolling up", async () => {
+      const w = await wake();
+      w.useStore.setState({
+        messages: {
+          [KEY]: w.useStore.getState().messages[KEY].filter((m) => m.msgid),
+        },
+      });
+      expect(w.shown()).toEqual(ids(500, 549));
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(500),
+      );
+
+      expect(w.sent.at(-1)).toBe(
+        `CHATHISTORY BEFORE #chan timestamp=${iso(500)} 50`,
+      );
+
+      // Servers may send fewer than asked, which leaves part of the night open.
+      w.feed(...page("short", 470, 30));
+      await vi.waitFor(() => expect(w.shown()).toEqual(ids(470, 549)));
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(470),
+      );
+      expect(w.sent.at(-1)).toBe(
+        `CHATHISTORY BEFORE #chan timestamp=${iso(470)} 50`,
+      );
+    });
+
+    it("opens on a read marker at the last message before the night and fetches the night forward", async () => {
+      const w = await wake();
+      w.useStore.setState({ messages: {} });
+
+      expect(
+        await w.history.showMessagesFromReadMarker(
+          w.useStore,
+          SERVER,
+          "#chan",
+          timeOf(99),
+        ),
+      ).toBe(true);
+      expect(w.shown().at(-1)).toBe("m99");
+
+      void w.history.loadNewerMessages(w.useStore, SERVER, "#chan");
+      await vi.waitFor(() =>
+        expect(w.sent.at(-1)).toBe(
+          `CHATHISTORY AFTER #chan timestamp=${iso(99)} 50`,
+        ),
+      );
+    });
+
+    it("opens on a read marker another client set inside the night", async () => {
+      const w = await wake();
+      w.useStore.setState({ messages: {} });
+
+      const opened = w.history.showMessagesFromReadMarker(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(300),
+      );
+      await vi.waitFor(() =>
+        expect(w.sent.at(-1)).toBe(
+          `CHATHISTORY AROUND #chan timestamp=${iso(300)} 50`,
+        ),
+      );
+      w.feed(...page("around", 275, 51));
+      expect(await opened).toBe(true);
+      expect(w.shown()).toEqual(ids(275, 325));
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(275),
+      );
+      expect(w.sent.at(-1)).toBe(
+        `CHATHISTORY BEFORE #chan timestamp=${iso(275)} 50`,
+      );
+    });
   });
 });

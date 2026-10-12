@@ -25,6 +25,7 @@ import {
 } from "../../lib/history/historyDb";
 import {
   buildReplayLines,
+  decideAfterForwardFill,
   decideAfterGapFill,
   decideAfterLatest,
   HISTORY_GAP_CODE,
@@ -79,7 +80,7 @@ type GapFill = {
 
 type PendingRequest =
   | { kind: "latest"; newestStoredTime: Promise<number | undefined> }
-  | { kind: "before"; fill?: GapFill };
+  | { kind: "before" | "after" | "around"; fill?: GapFill };
 
 const recorders = new Map<string, HistoryRecorder>();
 const pendingRequests = new Map<string, PendingRequest[]>();
@@ -91,7 +92,7 @@ let nextGapFill: GapFill | undefined;
 // all duplicates, would close the gap, so we keep one request per gap.
 function isGapBeingFilled(serverId: string, target: string, gapId: number) {
   return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
-    (request) => request.kind === "before" && request.fill?.gap?.id === gapId,
+    (request) => request.kind !== "latest" && request.fill?.gap?.id === gapId,
   );
 }
 
@@ -260,6 +261,38 @@ async function saveRows(store: StoreApi<AppState>, rows: NewHistoryRow[]) {
   return inserted;
 }
 
+// A page fetched around a time can land apart from the rows we had, or inside
+// a gap, so we replace the gaps it overlaps with one on each side whose edge
+// row is new to us.
+async function addIslandGaps(
+  server: string,
+  target: string,
+  page: HistoryPage,
+  inserted: boolean[],
+) {
+  if (page.oldest === undefined || page.newest === undefined) return;
+  for (const gap of await gapsFor(server, target))
+    if (gap.from < page.newest && gap.to > page.oldest) await deleteGap(gap.id);
+  const [older] = await eventRowsBefore(server, target, page.oldest - 1, 1);
+  if (older && inserted[0])
+    await addGap({
+      server,
+      target,
+      from: older.time,
+      to: page.oldest,
+      lost: false,
+    });
+  const [newer] = await eventRowsAfter(server, target, page.newest + 1, 1);
+  if (newer && inserted[inserted.length - 1])
+    await addGap({
+      server,
+      target,
+      from: page.newest,
+      to: newer.time,
+      lost: false,
+    });
+}
+
 async function saveHistoryPage(
   store: StoreApi<AppState>,
   serverId: string,
@@ -295,6 +328,19 @@ async function saveHistoryPage(
       );
       if (gap) settleGap(store, serverId, target, gap, MAX_AUTO_FILL_PAGES);
     }
+  } else if (request?.kind === "around") {
+    await addIslandGaps(key, target, page, inserted);
+    request.fill?.onSettled?.(true);
+  } else if (request?.kind === "after" && request.fill) {
+    const filled = (await gapsFor(key, target)).find(
+      (gap) => gap.id === request.fill?.gap?.id,
+    );
+    const decision =
+      filled && decideAfterForwardFill({ gap: filled, page, inserted });
+    if (filled && decision?.kind === "close") await deleteGap(filled.id);
+    else if (filled && decision?.kind === "shrink")
+      await updateGap({ ...filled, from: decision.from });
+    request.fill.onSettled?.(true);
   } else if (request?.kind === "before" && request.fill) {
     const { pagesLeft } = request.fill;
     // We decide on the gap as saved now, since another fill may have moved it.
@@ -350,6 +396,32 @@ async function refreshHasMore(
   }));
 }
 
+async function gapsServerCanFill(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+): Promise<HistoryGap[]> {
+  if (!serverSupportsChathistory(store.getState(), serverId)) return [];
+  return (await gapsFor(serverId, target.toLowerCase())).filter(
+    (gap) => !gap.lost,
+  );
+}
+
+// We read saved rows only down to the nearest gap the server can still fill,
+// so the messages on screen never run across a hole without a way to fill it.
+async function rowsAboveGap(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  time: number,
+  rows: HistoryRow[],
+): Promise<HistoryRow[]> {
+  const [gap] = (await gapsServerCanFill(store, serverId, target))
+    .filter((g) => g.to <= time)
+    .sort((a, b) => b.to - a.to);
+  return gap ? rows.filter((row) => row.time >= gap.to) : rows;
+}
+
 // Rows on disk older than the oldest message on screen. Messages can share a
 // millisecond, so we read past the ones on screen and skip them by msgid.
 async function olderDiskRows(
@@ -363,7 +435,13 @@ async function olderDiskRows(
     ? (store.getState().messages[conversation.key] ?? [])
     : [];
   if (messages.length === 0)
-    return newestEventRows(serverId, target.toLowerCase(), limit);
+    return rowsAboveGap(
+      store,
+      serverId,
+      target,
+      Number.POSITIVE_INFINITY,
+      await newestEventRows(serverId, target.toLowerCase(), limit),
+    );
   const oldest = new Date(messages[0].timestamp).getTime();
   const sameMs = messages.filter(
     (m) => new Date(m.timestamp).getTime() === oldest,
@@ -377,9 +455,13 @@ async function olderDiskRows(
     oldest,
     limit + sameMs.length,
   );
-  return rows
-    .filter((row) => !row.msgid || !shown.has(row.msgid))
-    .slice(-limit);
+  return rowsAboveGap(
+    store,
+    serverId,
+    target,
+    oldest,
+    rows.filter((row) => !row.msgid || !shown.has(row.msgid)).slice(-limit),
+  );
 }
 
 // A gap inside the messages on screen is invisible, so we fill it from the
@@ -473,10 +555,11 @@ function trackOutgoing(
   serverId: string,
   line: string,
 ) {
-  const request = /^CHATHISTORY (LATEST|BEFORE) (\S+)/.exec(line);
+  const request = /^CHATHISTORY (LATEST|BEFORE|AFTER|AROUND) (\S+)/.exec(line);
   if (request) {
     const target = request[2].toLowerCase();
     const queue = pendingRequests.get(conversationKey(serverId, target)) ?? [];
+    const kind = request[1].toLowerCase() as "before" | "after" | "around";
     queue.push(
       request[1] === "LATEST"
         ? {
@@ -485,7 +568,7 @@ function trackOutgoing(
               ([row]) => row?.time,
             ),
           }
-        : { kind: "before", fill: nextGapFill },
+        : { kind, fill: nextGapFill },
     );
     pendingRequests.set(conversationKey(serverId, target), queue);
     return;
@@ -535,7 +618,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     if (batchId.startsWith(LOCAL_BATCH_PREFIX)) return;
     const [request] =
       pendingRequests.get(conversationKey(serverId, target)) ?? [];
-    if (request?.kind === "before" && request.fill?.isDiskOnly)
+    if (request && request.kind !== "latest" && request.fill?.isDiskOnly)
       ircClient.markDiskOnlyBatch(serverId, batchId);
   });
 
@@ -550,7 +633,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     const request = pendingRequests
       .get(conversationKey(serverId, target))
       ?.shift();
-    if (request?.kind === "before") request.fill?.onSettled?.(false);
+    if (request && request.kind !== "latest") request.fill?.onSettled?.(false);
   });
 
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
@@ -565,7 +648,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     for (const [key, queue] of pendingRequests) {
       if (!key.startsWith(`${serverId}\n`)) continue;
       for (const request of queue)
-        if (request.kind === "before") request.fill?.onSettled?.(false);
+        if (request.kind !== "latest") request.fill?.onSettled?.(false);
       pendingRequests.delete(key);
     }
   });
@@ -603,6 +686,78 @@ function fetchGapPage(gap: HistoryGap): Promise<boolean> {
     if (!requestPageBefore(gap.server, gap.target, gap.to, fill, false))
       fill.onSettled(false);
   });
+}
+
+function fetchPageToDisk(
+  serverId: string,
+  target: string,
+  subcommand: "AFTER" | "AROUND",
+  time: number,
+  gap?: HistoryGap,
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const fill: GapFill = { gap, isDiskOnly: true };
+    const timer = window.setTimeout(
+      () => resolve(false),
+      SEARCH_FILL_TIMEOUT_MS,
+    );
+    fill.onSettled = (isSaved) => {
+      window.clearTimeout(timer);
+      resolve(isSaved);
+    };
+    nextGapFill = fill;
+    const isSent = ircClient.requestChathistoryAt(
+      serverId,
+      target,
+      subcommand,
+      new Date(time).toISOString(),
+    );
+    nextGapFill = undefined;
+    if (!isSent) fill.onSettled(false);
+  });
+}
+
+// A chat opens on its read marker: from the rows we saved when they cover it,
+// otherwise from a page the server sends around it. A marker older than what
+// the server keeps opens on the oldest message it still has after it.
+export async function showMessagesFromReadMarker(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  marker: number,
+): Promise<boolean> {
+  if (!isEnabled(store)) return false;
+  const lower = target.toLowerCase();
+  const [lastRead] = await eventRowsBefore(serverId, lower, marker + 1, 1);
+  const isMarkerInGap = (await gapsFor(serverId, lower)).some(
+    (gap) => gap.from < marker && marker < gap.to,
+  );
+  const isSaved = lastRead?.time === marker && !isMarkerInGap;
+  if (!isSaved && serverSupportsChathistory(store.getState(), serverId))
+    await fetchPageToDisk(serverId, target, "AROUND", marker);
+  const [firstUnread] = await eventRowsAfter(serverId, lower, marker, 1);
+  if (!firstUnread) return false;
+  const shown = await showSavedMessagesAround(
+    store,
+    serverId,
+    target,
+    firstUnread.time,
+  );
+  if (shown !== "loaded") return false;
+  // The last read message is gone from both the server and this device, so
+  // we say messages before the first unread one may be missing.
+  const [stillSaved] = await eventRowsBefore(serverId, lower, marker + 1, 1);
+  const conversation = findConversation(store, serverId, target);
+  if (stillSaved?.time !== marker && conversation)
+    showMissingMarker(store, serverId, conversation.channelId, {
+      id: -firstUnread.time,
+      server: serverId,
+      target: lower,
+      from: firstUnread.time - 2,
+      to: firstUnread.time,
+      lost: true,
+    });
+  return true;
 }
 
 // While a search pane is open we fetch what the server still has for the gaps
@@ -828,6 +983,17 @@ export async function loadOlderMessages(
 }
 
 const WINDOW_ROWS = 50;
+
+async function nextGapAfter(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  time: number,
+): Promise<HistoryGap | undefined> {
+  return (await gapsServerCanFill(store, serverId, target))
+    .filter((gap) => gap.to > time)
+    .sort((a, b) => a.from - b.from)[0];
+}
 const WINDOW_KEEP_MESSAGES = 300;
 let jumpCounter = 0;
 
@@ -845,20 +1011,29 @@ export async function showSavedMessagesAround(
 ): Promise<SavedJump> {
   if (!isEnabled(store)) return "not-saved";
   const lower = target.toLowerCase();
-  const before = await eventRowsBefore(serverId, lower, time, WINDOW_ROWS);
-  const last = before[before.length - 1];
-  const after = await eventRowsAfter(
+  const before = await rowsAboveGap(
+    store,
     serverId,
     lower,
-    last?.time ?? time,
-    WINDOW_ROWS,
-    last?.id,
+    time,
+    await eventRowsBefore(serverId, lower, time, WINDOW_ROWS),
   );
+  const last = before[before.length - 1];
+  const hole = await nextGapAfter(store, serverId, lower, time);
+  const after = (
+    await eventRowsAfter(
+      serverId,
+      lower,
+      last?.time ?? time,
+      WINDOW_ROWS,
+      last?.id,
+    )
+  ).filter((row) => !hole || row.time <= hole.from);
   const rows = [...before, ...after];
   if (!rows.some((row) => row.time === time)) return "not-saved";
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return "not-found";
-  if (after.length < WINDOW_ROWS) {
+  if (after.length < WINDOW_ROWS && !hole) {
     await replayRows(store, serverId, target, rows, () => {
       if (!isCurrentJump()) return false;
       showPresent(store, serverId, target);
@@ -905,6 +1080,14 @@ export async function loadNewerMessages(
       .filter((m) => messageTime(m) === window.until)
       .flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
   );
+  // A gap above the window holds messages only the server has, so we read
+  // our rows up to it and then fetch forward from its older edge.
+  const hole = await nextGapAfter(
+    store,
+    serverId,
+    target.toLowerCase(),
+    window.until,
+  );
   const rows = (
     await eventRowsAfter(
       serverId,
@@ -915,8 +1098,23 @@ export async function loadNewerMessages(
     )
   )
     .filter((row) => !row.msgid || !shown.has(row.msgid))
+    .filter((row) => !hole || row.time <= hole.from)
     .slice(0, WINDOW_ROWS);
-  if (rows.length < WINDOW_ROWS) {
+  if (rows.length === 0 && hole) {
+    if (
+      serverSupportsChathistory(store.getState(), serverId) &&
+      (await fetchPageToDisk(
+        serverId,
+        target,
+        "AFTER",
+        Math.max(window.until, hole.from),
+        hole,
+      ))
+    )
+      await loadNewerMessages(store, serverId, target);
+    return;
+  }
+  if (rows.length < WINDOW_ROWS && !hole) {
     showPresent(store, serverId, target);
     return;
   }

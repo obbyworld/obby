@@ -449,6 +449,20 @@ export function decideAfterLatest(input: {
   return { kind: "add", from: newestStoredTime, to: page.oldest };
 }
 
+// After a page fetched forward into a gap from its older edge: it closes once
+// the page reaches rows we already had, otherwise its older edge moves up.
+export function decideAfterForwardFill(input: {
+  gap: HistoryGap;
+  page: Pick<HistoryPage, "newest">;
+  inserted: boolean[];
+}): { kind: "close" } | { kind: "shrink"; from: number } {
+  const { gap, page, inserted } = input;
+  if (inserted.some((wasNew) => !wasNew)) return { kind: "close" };
+  if (page.newest === undefined || page.newest >= gap.to)
+    return { kind: "close" };
+  return { kind: "shrink", from: page.newest };
+}
+
 type GapFillDecision =
   | { kind: "close" }
   | { kind: "shrink"; to: number; lost: boolean };

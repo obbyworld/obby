@@ -1398,6 +1398,22 @@ export class IRCClient implements IRCClientContext {
     return true;
   }
 
+  requestChathistoryAt(
+    serverId: string,
+    target: string,
+    subcommand: "AFTER" | "AROUND",
+    timestamp: string,
+  ): boolean {
+    const server = this.servers.get(serverId);
+    if (!server?.capabilities?.includes("draft/chathistory")) return false;
+    if (server.isBouncerControl) return false;
+    this.sendRaw(
+      serverId,
+      `CHATHISTORY ${subcommand} ${target} timestamp=${timestamp} ${this.chathistoryPageSize(serverId)}`,
+    );
+    return true;
+  }
+
   requestChathistoryLatest(serverId: string, target: string): void {
     this.sendRaw(
       serverId,
