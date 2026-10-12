@@ -1108,7 +1108,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
           copyText={stripIrcFormatting(message.content)}
           onReply={canReply ? () => setReplyTo(message) : undefined}
         >
-          {htmlContent}
+          <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
+            {htmlContent}
+          </EnhancedLinkWrapper>
         </MessageReaderSheet>
       )}
     </div>

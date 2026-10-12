@@ -8,6 +8,7 @@ import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
 import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
 import PageHost, { preloadPages } from "../pages/PageHost";
+import ExternalLinkGuard from "../ui/ExternalLinkGuard";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
 import LinkHoverLayer from "../ui/LinkHoverLayer";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
@@ -471,6 +472,7 @@ export const AppLayout: React.FC = () => {
           decryptedType={openedMedia?.decryptedType}
         />
         <LinkHoverLayer />
+        <ExternalLinkGuard />
         <TitleTooltipLayer />
       </div>
     </ChannelLinkProvider>

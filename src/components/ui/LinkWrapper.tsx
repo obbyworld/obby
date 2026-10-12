@@ -145,7 +145,9 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
         onConfirm={handleConfirmOpen}
         onCancel={handleCancelOpen}
       />
-      <div ref={containerRef}>{processChildren(children)}</div>
+      <div ref={containerRef} data-link-wrapper>
+        {processChildren(children)}
+      </div>
     </>
   );
 };
