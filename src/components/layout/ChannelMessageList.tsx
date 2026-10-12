@@ -374,6 +374,25 @@ export const ChannelMessageList = forwardRef<
     const isAppFocused = useStore((state) => state.ui.isAppFocused !== false);
     const isAppFocusedRef = useRef(isAppFocused);
     isAppFocusedRef.current = isAppFocused;
+    // While the user is away we follow new messages only until the "New
+    // messages" line reaches the top, so nothing unseen scrolls out of view.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs and scrollToBottom are stable
+    const followNewMessages = useCallback(() => {
+      const container = messagesContainerRef.current;
+      const line = container?.querySelector<HTMLElement>("[data-unread-line]");
+      if (!container || isAppFocusedRef.current || !line) {
+        scrollToBottom();
+        return;
+      }
+      const lineTop =
+        line.getBoundingClientRect().top -
+        container.getBoundingClientRect().top +
+        container.scrollTop;
+      container.scrollTop = Math.min(
+        container.scrollHeight - container.clientHeight,
+        Math.max(0, lineTop - UNREAD_LINE_MARGIN_PX),
+      );
+    }, []);
     const tracksReadMarker = useStore((state) =>
       serverTracksReadMarker(state, serverId),
     );
@@ -722,12 +741,8 @@ export const ChannelMessageList = forwardRef<
         resizeObserverPrevSHRef.current = container.scrollHeight;
         if (isHoldingRef.current) {
           keepHeldRowInPlace();
-        } else if (
-          wasAtPrevBottom &&
-          !isDetachedRef.current &&
-          isAppFocusedRef.current
-        ) {
-          scrollToBottom();
+        } else if (wasAtPrevBottom && !isDetachedRef.current) {
+          followNewMessages();
         } else if (widthChanged && prevSH > 0) {
           const ratio = container.scrollTop / prevSH;
           container.scrollTop = Math.round(ratio * container.scrollHeight);
@@ -865,19 +880,15 @@ export const ChannelMessageList = forwardRef<
       isHoldingJump,
     ]);
 
-    // We follow new messages only while the user looks at the app, so what
-    // arrives while they are away waits below the "New messages" line.
+    // Auto-scroll on new messages — skip when this channel is hidden (display:none).
     // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes
     useEffect(() => {
       if (!isActive || isDetachedRef.current || isHoldingRef.current) return;
-      if (!isAppFocusedRef.current) return;
       const isNarrowView = window.matchMedia("(max-width: 768px)").matches;
       const isChatVisible =
         !isNarrowView || mobileViewActiveColumn === "chatView";
-      if (wasAtBottomRef.current && isChatVisible) {
-        scrollToBottom();
-      }
-    }, [displayedMessages, mobileViewActiveColumn, scrollToBottom, isActive]);
+      if (wasAtBottomRef.current && isChatVisible) followNewMessages();
+    }, [displayedMessages, mobileViewActiveColumn, isActive]);
 
     return (
       <>
