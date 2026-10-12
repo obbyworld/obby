@@ -57,6 +57,52 @@ export const MAX_MESSAGES_PER_CHANNEL = 1500;
 export const messageTime = (message: Message) =>
   new Date(message.timestamp).getTime();
 
+const isChatMessage = (message: Message) =>
+  message.type === "message" || message.type === undefined;
+
+// The newest message we hold for a chat, counting live messages a history
+// window is keeping aside.
+export function newestMessageTime(
+  state: AppState,
+  key: string,
+): number | undefined {
+  const messages = state.historyWindows[key]?.present ?? state.messages[key];
+  let newest: number | undefined;
+  for (const message of messages ?? []) {
+    const time = messageTime(message);
+    if (isChatMessage(message) && !Number.isNaN(time))
+      newest = newest === undefined ? time : Math.max(newest, time);
+  }
+  return newest;
+}
+
+// The message a "New messages" line goes above: the first message from someone
+// else that is newer than the read marker.
+export function firstUnreadMessageId(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+): string | undefined {
+  const own = ownNick?.toLowerCase();
+  return messages.find(
+    (message) =>
+      isChatMessage(message) &&
+      messageTime(message) > readUpTo &&
+      message.userId.toLowerCase() !== own,
+  )?.id;
+}
+
+export function serverTracksReadMarker(
+  state: AppState,
+  serverId: string,
+): boolean {
+  const server = state.servers.find((s) => s.id === serverId);
+  return (
+    !!server?.capabilities?.includes("draft/read-marker") &&
+    !server.readMarkerRefused
+  );
+}
+
 const replaceAt = <T>(list: T[], index: number, item: T): T[] =>
   list.map((existing, i) => (i === index ? item : existing));
 
@@ -234,6 +280,18 @@ export function getCurrentSelection(state: AppState) {
     };
   }
   return getServerSelection(state, state.ui.selectedServerId);
+}
+
+// The chat the user is looking at right now: selected, with the app visible
+// and, on a phone, the chat column showing. Messages anywhere else are unread.
+export function getViewedSelection(state: AppState) {
+  const isInView =
+    (typeof document === "undefined" ||
+      document.visibilityState === "visible") &&
+    (!state.ui.isNarrowView || state.ui.mobileViewActiveColumn === "chatView");
+  return isInView
+    ? getCurrentSelection(state)
+    : { selectedChannelId: null, selectedPrivateChatId: null };
 }
 
 // ============================================================================

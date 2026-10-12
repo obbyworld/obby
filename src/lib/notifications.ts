@@ -132,6 +132,25 @@ export const extractMentions = (
   return mentions;
 };
 
+const shownMentions = new Map<string, Notification>();
+
+const mentionTag = (serverId: string, channelName: string) =>
+  `mention-${serverId}-${channelName}`;
+
+export const privateMessageNotificationName = (nick: string) =>
+  `DM from ${nick}`;
+
+/** Takes back a mention notification once the chat was read, here or on
+ *  another of the user's clients. */
+export const closeMentionNotification = (
+  serverId: string,
+  channelName: string,
+): void => {
+  const tag = mentionTag(serverId, channelName);
+  shownMentions.get(tag)?.close();
+  shownMentions.delete(tag);
+};
+
 /**
  * Show a mention notification using browser API or fallback
  */
@@ -150,13 +169,17 @@ export const showMentionNotification = async (
         body:
           message.length > 100 ? `${message.substring(0, 100)}...` : message,
         icon: "/images/obby.png",
-        tag: `mention-${serverId}-${channelName}`,
+        tag: mentionTag(serverId, channelName),
         requireInteraction: false,
       },
     );
 
     if (notification) {
-      // Successfully showed browser notification
+      const tag = mentionTag(serverId, channelName);
+      shownMentions.set(tag, notification);
+      notification.onclose = () => {
+        if (shownMentions.get(tag) === notification) shownMentions.delete(tag);
+      };
       return;
     }
   }

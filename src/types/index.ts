@@ -93,6 +93,8 @@ export interface Server {
   awayMessage?: string; // Our away message on this server
   users: User[];
   capabilities?: string[];
+  // The server answered MARKREAD with FAIL on this connection.
+  readMarkerRefused?: boolean;
   // Per-cap value strings as advertised in CAP LS (e.g.
   // "draft/account-2fa" -> "totp,webauthn,oauth", "sasl" ->
   // "PLAIN,EXTERNAL"). CAP ACK only echoes names so the value list

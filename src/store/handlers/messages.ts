@@ -21,7 +21,7 @@ import {
 import type { Channel, Message, PrivateChat, User } from "../../types";
 import {
   generateDeterministicId,
-  getCurrentSelection,
+  getViewedSelection,
   REDACTED_BY_TAG,
   resolveReplyMessage,
   serverSupportsMetadata,
@@ -187,7 +187,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
         // Update channel unread count and mention flag if not the active channel
         const isActiveChannel =
-          getCurrentSelection(currentState).selectedChannelId === channel.id &&
+          getViewedSelection(currentState).selectedChannelId === channel.id &&
           currentState.ui.selectedServerId === server.id;
 
         // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
@@ -512,7 +512,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
         const isHistoricalMessage = mtags?.batch !== undefined;
         const isActiveChannel =
-          getCurrentSelection(multilineCurrentState).selectedChannelId ===
+          getViewedSelection(multilineCurrentState).selectedChannelId ===
             channel.id &&
           multilineCurrentState.ui.selectedServerId === server.id;
 
@@ -1462,7 +1462,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
               s.privateChats?.map((pc) => {
                 if (pc.id === privateChat.id) {
                   const isActive =
-                    getCurrentSelection(state).selectedPrivateChatId === pc.id;
+                    getViewedSelection(state).selectedPrivateChatId === pc.id;
                   const reset = isActive || isHistoricalMessage;
                   return {
                     ...pc,

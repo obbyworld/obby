@@ -54,7 +54,7 @@ import {
   trustOtrChangedKey,
 } from "./handlers/otr";
 import * as tictactoeActions from "./handlers/tictactoeActions";
-import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
+import { MAX_MESSAGES_PER_CHANNEL, serverTracksReadMarker } from "./helpers";
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
@@ -191,35 +191,6 @@ export const getChannelMessages = (serverId: string, channelId: string) => {
   const key = `${serverId}-${channelId}`;
   return state.messages[key] || [];
 };
-
-// draft/read-marker: find the latest message timestamp (across normal
-// chat messages -- system / event rows are ignored so reading a "X
-// joined" line doesn't move the marker).  Returns an ISO 8601 string
-// in the spec's format, or null if there's nothing to mark.
-const ISO_DROP_END_RX = /Z?$/;
-function _toMarkreadIso(d: Date): string {
-  // The spec mandates "YYYY-MM-DDThh:mm:ss.sssZ" -- exactly the form
-  // toISOString() emits.
-  return d.toISOString().replace(ISO_DROP_END_RX, "Z");
-}
-
-export function getLatestMessageTimestampIso(
-  serverId: string,
-  bufferId: string,
-): string | null {
-  const state = useStore.getState();
-  const key = `${serverId}-${bufferId}`;
-  const messages = state.historyWindows[key]?.present ?? state.messages[key];
-  if (!messages || messages.length === 0) return null;
-  let latest: number | null = null;
-  for (const msg of messages) {
-    if (msg.type !== "message" && msg.type !== undefined) continue;
-    const t = msg.timestamp ? new Date(msg.timestamp).getTime() : Number.NaN;
-    if (Number.isNaN(t)) continue;
-    if (latest === null || t > latest) latest = t;
-  }
-  return latest === null ? null : _toMarkreadIso(new Date(latest));
-}
 
 export const findChannelMessageById = (
   serverId: string,
@@ -455,6 +426,8 @@ interface UIState {
   isMemberListVisible: boolean;
   isChannelListVisible: boolean;
   mobileViewActiveColumn: layoutColumn;
+  // The open chat shows older messages than the newest, so new ones are unseen.
+  isChatAwayFromPresent?: boolean;
   homeView?: "plugins";
   isServerMenuOpen: boolean;
   contextMenu: {
@@ -1279,6 +1252,7 @@ const useStore = create<AppState>((set, get) => ({
     isChannelListVisible:
       loadUISelections().sidebarPreferences?.channelList.isVisible ?? true,
     mobileViewActiveColumn: "serverList", // Always start on server/channel list, never auto-navigate to chat
+    isChatAwayFromPresent: false,
     isServerMenuOpen: false,
     contextMenu: {
       isOpen: false,
@@ -2512,20 +2486,6 @@ const useStore = create<AppState>((set, get) => ({
           }
         }
 
-        // draft/read-marker: tell the server how far we've read so
-        // our other sessions clear their unread state too. The marker
-        // is keyed to the user's account on the server, so skip the
-        // request entirely when the user isn't logged in -- the
-        // server would just FAIL MARKREAD :Account required.
-        if (
-          channelName &&
-          server?.capabilities?.includes("draft/read-marker") &&
-          ircClient.getCurrentUser(serverId)?.account
-        ) {
-          const ts = getLatestMessageTimestampIso(serverId, channelId);
-          if (ts) ircClient.markreadSet(serverId, channelName, ts);
-        }
-
         // Update unread state in store
         const updatedServers = state.servers.map((server) => {
           if (server.id === serverId) {
@@ -2716,23 +2676,14 @@ const useStore = create<AppState>((set, get) => ({
         const pc = server?.privateChats?.find((pc) => pc.id === privateChatId);
         const pcUsername = pc?.username || null;
 
-        // draft/read-marker: PMs aren't auto-pushed by the server,
-        // so the first time we open one ask for its stored marker
-        // (so the unread badge can clear if another device already
-        // read past it).  After that, push the latest timestamp like
-        // we do for channels. The marker is keyed to the user's
-        // account on the server, so skip when the user isn't logged
-        // in (server would FAIL MARKREAD :Account required).
+        // The server sends a channel's marker on JOIN but a private chat's
+        // only when asked, so we fetch it the first time the chat opens.
         if (
           pcUsername &&
-          server?.capabilities?.includes("draft/read-marker") &&
-          ircClient.getCurrentUser(serverId)?.account
+          !pc?.readMarkerFetched &&
+          serverTracksReadMarker(state, serverId)
         ) {
-          if (!pc?.readMarkerFetched) {
-            ircClient.markreadGet(serverId, pcUsername);
-          }
-          const ts = getLatestMessageTimestampIso(serverId, privateChatId);
-          if (ts) ircClient.markreadSet(serverId, pcUsername, ts);
+          ircClient.markreadGet(serverId, pcUsername);
         }
 
         const updatedServers = state.servers.map((server) => {

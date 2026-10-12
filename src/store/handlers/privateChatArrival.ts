@@ -11,9 +11,12 @@ import {
   playNotificationSound,
   shouldPlayNotificationSound,
 } from "../../lib/notificationSounds";
-import { showMentionNotification } from "../../lib/notifications";
+import {
+  privateMessageNotificationName,
+  showMentionNotification,
+} from "../../lib/notifications";
 import type { Message } from "../../types";
-import { getCurrentSelection } from "../helpers";
+import { getViewedSelection } from "../helpers";
 import type { AppState } from "../index";
 
 export interface PrivateMessageArrival {
@@ -53,7 +56,7 @@ export function notePrivateMessageArrived(
           s.privateChats?.map((pc) => {
             if (pc.id !== privateChatId) return pc;
             const isActive =
-              getCurrentSelection(state).selectedPrivateChatId === pc.id;
+              getViewedSelection(state).selectedPrivateChatId === pc.id;
             const reset = isActive || isHistorical;
             return {
               ...pc,
@@ -71,7 +74,7 @@ export function notePrivateMessageArrived(
 
   const current = store.getState();
   const isActiveChat =
-    getCurrentSelection(current).selectedPrivateChatId === privateChatId;
+    getViewedSelection(current).selectedPrivateChatId === privateChatId;
   if (
     isActiveChat ||
     isHistorical ||
@@ -80,7 +83,7 @@ export function notePrivateMessageArrived(
     return;
   showMentionNotification(
     serverId,
-    `DM from ${sender}`,
+    privateMessageNotificationName(sender),
     sender,
     body,
     (id, msg) => {
