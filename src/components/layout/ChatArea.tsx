@@ -1149,7 +1149,7 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    channelListRefs.current.get(channelKey)?.setAtBottom();
+    channelListRefs.current.get(channelKey)?.scrollToBottom();
     if (attachments.length > 0) {
       const files = attachments.flatMap((a) =>
         a.kind === "file" ? [a.file] : [],

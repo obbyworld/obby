@@ -72,7 +72,6 @@ type Opening =
 const EMPTY_MESSAGES: import("../../types").Message[] = [];
 
 export interface ChannelMessageListHandle {
-  setAtBottom: () => void;
   scrollToBottom: () => void;
   getScrollState: () => {
     scrollTop: number;
@@ -250,10 +249,10 @@ export const ChannelMessageList = forwardRef<
     }, [isActive]);
 
     useImperativeHandle(ref, () => ({
-      setAtBottom: () => {
+      scrollToBottom: () => {
         wasAtBottomRef.current = true;
+        scrollToBottom();
       },
-      scrollToBottom,
       getScrollState: () => ({
         scrollTop: lastScrollTopRef.current,
         isAtBottom: wasAtBottomRef.current,
