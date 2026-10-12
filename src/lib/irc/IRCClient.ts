@@ -39,6 +39,10 @@ function generateDeterministicId(serverId: string, name: string): string {
 // Gap and load-more decisions read a short page as the end of server history,
 // so every request has to ask for the same page size.
 const CHATHISTORY_PAGE_SIZE = 50;
+const PING_INTERVAL_MS = 30_000;
+const PONG_TIMEOUT_MS = 10_000;
+const WAKE_PONG_TIMEOUT_MS = 5_000;
+const DEAD_SOCKET_CLOSE_WAIT_MS = 2_000;
 
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
@@ -1246,37 +1250,39 @@ export class IRCClient implements IRCClientContext {
     // Clear any existing ping timer
     this.stopWebSocketPing(serverId);
 
-    // Send ping every 30 seconds
-    const pingTimer = setInterval(() => {
-      const socket = this.sockets.get(serverId);
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        try {
-          // Send WebSocket ping frame (opcode 0x9)
-          // Since we can't send ping frames directly in JS, we'll send an IRC PING
-          // which serves as both IRC keepalive and WebSocket activity
-          const timestamp = Date.now().toString();
-          this.sendRaw(serverId, `PING :${timestamp}`);
-
-          // Clear any previous pong timeout before starting a new one — otherwise
-          // a missed PONG from the prior cycle would close the socket mid-interval.
-          const oldPongTimeout = this.pongTimeouts.get(serverId);
-          if (oldPongTimeout) clearTimeout(oldPongTimeout);
-
-          const pongTimeout = setTimeout(() => {
-            console.warn(
-              `WebSocket ping timeout for server ${serverId}, closing connection`,
-            );
-            socket.close();
-          }, 10000);
-
-          this.pongTimeouts.set(serverId, pongTimeout);
-        } catch (error) {
-          console.error(`Failed to send ping for server ${serverId}:`, error);
-        }
-      }
-    }, 30000); // 30 seconds
-
+    const pingTimer = setInterval(
+      () => this.checkAlive(serverId, PONG_TIMEOUT_MS),
+      PING_INTERVAL_MS,
+    );
     this.pingTimers.set(serverId, pingTimer);
+  }
+
+  checkAlive(serverId: string, timeoutMs: number): void {
+    const socket = this.sockets.get(serverId);
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    // A check already waiting for its PONG keeps its earlier deadline.
+    if (this.pongTimeouts.has(serverId)) return;
+    this.sendRaw(serverId, `PING :${Date.now()}`);
+    this.pongTimeouts.set(
+      serverId,
+      setTimeout(() => {
+        this.pongTimeouts.delete(serverId);
+        console.warn(`Ping timeout for server ${serverId}, closing connection`);
+        this.dropDeadSocket(serverId, socket);
+      }, timeoutMs),
+    );
+  }
+
+  // A socket whose network died, as after the machine slept, can take minutes
+  // to report its close, so we run the close handling ourselves.
+  private dropDeadSocket(serverId: string, socket: ISocket): void {
+    socket.close();
+    setTimeout(() => {
+      if (this.sockets.get(serverId) !== socket) return;
+      const onclose = socket.onclose;
+      socket.onclose = null;
+      onclose?.();
+    }, DEAD_SOCKET_CLOSE_WAIT_MS);
   }
 
   private stopWebSocketPing(serverId: string): void {
@@ -2413,8 +2419,7 @@ export class IRCClient implements IRCClientContext {
       return;
     }
 
-    // connectionState === "connected" or "connecting": leave it alone.
-    // The existing ping/pong mechanism will detect a dead socket within ~40s
-    // and kick the normal reconnection flow.
+    if (server.connectionState === "connected")
+      this.checkAlive(serverId, WAKE_PONG_TIMEOUT_MS);
   }
 }
