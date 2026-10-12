@@ -37,6 +37,8 @@ import {
   handleCap,
   handleError,
   handleIsupport,
+  handleLoggedIn,
+  handleLoggedOut,
   handlePing,
   handlePong,
   handleRplEndOfMotd,
@@ -157,9 +159,11 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
   "381": (ctx, serverId, source, parv) =>
     handleRplYoureOper(ctx, serverId, source, parv),
 
-  // SASL authentication successful (901, 902, 903): finish CAP negotiation
+  "900": (ctx, serverId, source, parv) =>
+    handleLoggedIn(ctx, serverId, source, parv),
   "901": (ctx, serverId, source, parv) =>
-    handleSaslSuccess(ctx, serverId, source, parv),
+    handleLoggedOut(ctx, serverId, source, parv),
+  // SASL authentication successful (902, 903): finish CAP negotiation
   "902": (ctx, serverId, source, parv) =>
     handleSaslSuccess(ctx, serverId, source, parv),
   "903": (ctx, serverId, source, parv) =>

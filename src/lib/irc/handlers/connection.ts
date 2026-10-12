@@ -256,6 +256,28 @@ export function handleRplYoureOper(
   });
 }
 
+// 900/901: the server names the account we are logged in to, or none.
+export function handleLoggedIn(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+): void {
+  const user = ctx.currentUsers.get(serverId);
+  if (user) ctx.currentUsers.set(serverId, { ...user, account: parv[2] });
+}
+
+export function handleLoggedOut(
+  ctx: IRCClientContext,
+  serverId: string,
+  source: string,
+  parv: string[],
+): void {
+  const user = ctx.currentUsers.get(serverId);
+  if (user) ctx.currentUsers.set(serverId, { ...user, account: undefined });
+  handleSaslSuccess(ctx, serverId, source, parv);
+}
+
 export function handleSaslSuccess(
   ctx: IRCClientContext,
   serverId: string,
