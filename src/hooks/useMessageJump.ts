@@ -122,6 +122,7 @@ export function useMessageJump({
   return {
     isHoldingRef,
     isHoldingJump: isHolding,
+    holdRow: hold,
     releaseJump,
     keepHeldRowInPlace,
   };

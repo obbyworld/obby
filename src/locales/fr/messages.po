@@ -113,11 +113,6 @@ msgstr "{0} doit être un nombre entier."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} réseau{1} — choisissez-en un à rejoindre"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} anciens messages"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Canal d'assistance générale"
 msgid "Get notified when someone says the words you follow."
 msgstr "Soyez averti quand quelqu’un dit les mots que vous suivez."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Chargement des messages..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "a rejoint et quitté"
 msgid "Joined the channel"
 msgstr "A rejoint le canal"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Revenir au présent"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Conserver l'historique des conversations sur cet appareil"
@@ -2973,17 +2960,9 @@ msgstr "En direct"
 msgid "Live Translate"
 msgstr "Traduction en direct"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Charger les messages précédents enregistrés sur cet appareil"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Charger plus de résultats"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Charger les anciens messages"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Réseaux sur {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nouveau dossier"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nouveaux messages"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

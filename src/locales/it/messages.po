@@ -113,11 +113,6 @@ msgstr "{0} deve essere un numero intero."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} rete{1} — scegline una a cui unirti"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} messaggi precedenti"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Canale di supporto generale"
 msgid "Get notified when someone says the words you follow."
 msgstr "Ricevi un avviso quando qualcuno scrive le parole che segui."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Caricamento messaggi..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "è entrato e uscito"
 msgid "Joined the channel"
 msgstr "È entrato nel canale"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Vai al presente"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Mantieni la cronologia chat su questo dispositivo"
@@ -2973,17 +2960,9 @@ msgstr "In diretta"
 msgid "Live Translate"
 msgstr "Traduzione dal vivo"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Carica i messaggi precedenti salvati su questo dispositivo"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Carica altri risultati"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Carica messaggi precedenti"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Reti su {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nuova cartella"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nuovi messaggi"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

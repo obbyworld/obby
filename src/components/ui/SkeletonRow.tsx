@@ -17,3 +17,23 @@ export const SkeletonRow: React.FC<{
     </span>
   </div>
 );
+
+const SKELETON_ROW_IDS = [0, 1, 2];
+
+export const MessageSkeletons: React.FC<{
+  rowClassName?: string;
+  avatarClassName?: string;
+}> = ({
+  rowClassName = "flex items-start gap-4 px-4 py-2",
+  avatarClassName = "w-8 h-8 rounded-full",
+}) => (
+  <div aria-hidden="true" className="flex flex-col gap-0.5 blur-[1px]">
+    {SKELETON_ROW_IDS.map((id) => (
+      <SkeletonRow
+        key={id}
+        className={rowClassName}
+        avatarClassName={avatarClassName}
+      />
+    ))}
+  </div>
+);

@@ -113,11 +113,6 @@ msgstr "{0} は整数である必要があります。"
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} 件のネットワーク{1} — 参加するものを1つ選んでください"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} 件の古いメッセージ"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "一般サポートチャンネル"
 msgid "Get notified when someone says the words you follow."
 msgstr "フォロー中の言葉が発言されたら通知を受け取りましょう。"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "メッセージを取得中..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "参加して退出しました"
 msgid "Joined the channel"
 msgstr "チャンネルに参加しました"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "最新に移動"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "チャット履歴をこのデバイスに保存する"
@@ -2973,17 +2960,9 @@ msgstr "ライブ"
 msgid "Live Translate"
 msgstr "ライブ翻訳"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "このデバイスに保存された過去のメッセージを読み込む"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "さらに結果を読み込む"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "古いメッセージを読み込む"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "{0} のネットワーク"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "新しいフォルダ"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "新着メッセージ"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

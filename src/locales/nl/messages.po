@@ -113,11 +113,6 @@ msgstr "{0} moet een geheel getal zijn."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} netwerk{1} — kies er een om deel te nemen"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} oudere berichten"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Algemeen ondersteuningskanaal"
 msgid "Get notified when someone says the words you follow."
 msgstr "Krijg een melding als iemand de woorden zegt die je volgt."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Meer berichten ophalen..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "is toegetreden en vertrokken"
 msgid "Joined the channel"
 msgstr "Het kanaal betreden"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Naar het heden springen"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Chatgeschiedenis op dit apparaat bewaren"
@@ -2973,17 +2960,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Live vertalen"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Eerdere berichten laden die op dit apparaat zijn opgeslagen"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Meer resultaten laden"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Oudere berichten laden"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Netwerken op {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nieuwe map"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nieuwe berichten"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

@@ -113,11 +113,6 @@ msgstr "{0} musí být celé číslo."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} síť{1} — vyberte jednu k připojení"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} starších zpráv"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Obecný podpůrný kanál"
 msgid "Get notified when someone says the words you follow."
 msgstr "Dostávejte upozornění, když někdo napíše sledovaná slova."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Načítám více zpráv..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "se připojil a odpojil"
 msgid "Joined the channel"
 msgstr "Připojil se ke kanálu"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Přejít na současnost"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Uchovávat historii chatu v tomto zařízení"
@@ -2973,17 +2960,9 @@ msgstr "Živě"
 msgid "Live Translate"
 msgstr "Živý překlad"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Načíst dřívější zprávy uložené v tomto zařízení"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Načíst další výsledky"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Načíst starší zprávy"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Sítě na {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nová složka"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nové zprávy"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

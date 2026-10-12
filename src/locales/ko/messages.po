@@ -113,11 +113,6 @@ msgstr "{0}은(는) 정수여야 합니다."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0}개 네트워크{1} — 참여할 네트워크를 선택하세요"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "이전 메시지 {0}개"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "일반 지원 채널"
 msgid "Get notified when someone says the words you follow."
 msgstr "팔로우하는 단어를 누군가 말하면 알림을 받으세요."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "메시지를 더 불러오는 중..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "참여했다가 퇴장했습니다"
 msgid "Joined the channel"
 msgstr "채널에 참여했습니다"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "최신으로 이동"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "이 기기에 채팅 기록 보관"
@@ -2973,17 +2960,9 @@ msgstr "라이브"
 msgid "Live Translate"
 msgstr "실시간 번역"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "이 기기에 저장된 이전 메시지 불러오기"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "결과 더 불러오기"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "이전 메시지 불러오기"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "{0}의 네트워크"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "새 폴더"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "새 메시지"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

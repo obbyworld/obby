@@ -113,11 +113,6 @@ msgstr "{0} bir tam sayı olmalıdır."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} ağ{1} — katılmak için birini seçin"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} eski mesaj"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Genel Destek Kanalı"
 msgid "Get notified when someone says the words you follow."
 msgstr "Biri takip ettiğin kelimeleri söylediğinde bildirim al."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Daha fazla mesaj alınıyor..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "katıldı ve ayrıldı"
 msgid "Joined the channel"
 msgstr "Kanala katıldı"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Şimdiye atla"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Sohbet geçmişini bu cihazda tut"
@@ -2973,17 +2960,9 @@ msgstr "Canlı"
 msgid "Live Translate"
 msgstr "Canlı Çeviri"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Bu cihazda kayıtlı önceki mesajları yükle"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Daha fazla sonuç yükle"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Eski mesajları yükle"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "{0} üzerindeki ağlar"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "yeni klasör"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Yeni mesajlar"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

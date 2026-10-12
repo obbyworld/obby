@@ -113,11 +113,6 @@ msgstr "{0} должно быть целым числом."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} сеть{1} — выберите одну для подключения"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} старых сообщений"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Канал общей поддержки"
 msgid "Get notified when someone says the words you follow."
 msgstr "Получайте уведомления, когда кто-то пишет отслеживаемые слова."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Загрузка сообщений..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "подключился и отключился"
 msgid "Joined the channel"
 msgstr "Присоединился к каналу"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Перейти к настоящему"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Хранить историю чатов на этом устройстве"
@@ -2973,17 +2960,9 @@ msgstr "В эфире"
 msgid "Live Translate"
 msgstr "Живой перевод"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Загрузить более ранние сообщения, сохранённые на этом устройстве"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Загрузить ещё результаты"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Загрузить старые сообщения"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Сети на {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "новая папка"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Новые сообщения"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

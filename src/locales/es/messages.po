@@ -113,11 +113,6 @@ msgstr "{0} debe ser un número entero."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} red{1} — elige una para unirte"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} mensajes anteriores"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Canal de soporte general"
 msgid "Get notified when someone says the words you follow."
 msgstr "Recibe avisos cuando alguien diga las palabras que sigues."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Cargando más mensajes..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "se unió y salió"
 msgid "Joined the channel"
 msgstr "Se unió al canal"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Saltar al presente"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Conservar el historial de chat en este dispositivo"
@@ -2973,17 +2960,9 @@ msgstr "En vivo"
 msgid "Live Translate"
 msgstr "Traducción en vivo"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Cargar mensajes anteriores guardados en este dispositivo"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Cargar más resultados"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Cargar mensajes anteriores"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Redes en {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nueva carpeta"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Mensajes nuevos"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

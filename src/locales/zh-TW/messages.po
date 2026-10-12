@@ -113,11 +113,6 @@ msgstr "{0} 必須是整數。"
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} 個網路{1} — 選擇一個加入"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} 則較早的訊息"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "通用支持频道"
 msgid "Get notified when someone says the words you follow."
 msgstr "有人說出你關注的詞時收到通知。"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "正在載入更多訊息..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "已加入並退出"
 msgid "Joined the channel"
 msgstr "已加入频道"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "跳至最新"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "在此裝置上保留聊天歷史"
@@ -2973,17 +2960,9 @@ msgstr "直播中"
 msgid "Live Translate"
 msgstr "即時翻譯"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "載入儲存在此裝置上的更早訊息"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "載入更多結果"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "載入較早的訊息"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "{0} 上的網路"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "新資料夾"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "新訊息"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

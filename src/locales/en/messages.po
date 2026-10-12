@@ -112,11 +112,6 @@ msgstr "{0} must be a whole number."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} network{1} — pick one to join"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} older messages"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2505,10 +2500,6 @@ msgstr "General Support Channel"
 msgid "Get notified when someone says the words you follow."
 msgstr "Get notified when someone says the words you follow."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Getting more messages..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2839,10 +2830,6 @@ msgstr "joined and quit"
 msgid "Joined the channel"
 msgstr "Joined the channel"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Jump to present"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Keep chat history on this device"
@@ -2972,17 +2959,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Live Translate"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Load earlier messages saved on this device"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Load more results"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Load older messages"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3400,6 +3379,10 @@ msgstr "Networks on {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "new folder"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "New messages"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

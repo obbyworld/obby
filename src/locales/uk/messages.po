@@ -113,11 +113,6 @@ msgstr "{0} має бути цілим числом."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} мереж{1} — виберіть одну, щоб приєднатися"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} старіших повідомлень"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Загальний канал підтримки"
 msgid "Get notified when someone says the words you follow."
 msgstr "Отримуйте сповіщення, коли хтось пише відстежувані слова."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Отримання більше повідомлень..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "приєднався та вийшов"
 msgid "Joined the channel"
 msgstr "Приєднався до каналу"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Перейти до теперішнього"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Зберігати історію чатів на цьому пристрої"
@@ -2973,17 +2960,9 @@ msgstr "В ефірі"
 msgid "Live Translate"
 msgstr "Живий переклад"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Завантажити раніші повідомлення, збережені на цьому пристрої"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Завантажити ще результати"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Завантажити старіші повідомлення"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Мережі на {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "нова папка"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Нові повідомлення"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

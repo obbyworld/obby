@@ -113,11 +113,6 @@ msgstr "{0} muss eine ganze Zahl sein."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} Netzwerk{1} — wähle eines zum Beitreten"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} ältere Nachrichten"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Allgemeiner Support-Kanal"
 msgid "Get notified when someone says the words you follow."
 msgstr "Lass dich benachrichtigen, wenn jemand deine Stichwörter sagt."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Weitere Nachrichten werden geladen..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "ist beigetreten und gegangen"
 msgid "Joined the channel"
 msgstr "Dem Kanal beigetreten"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Zur Gegenwart springen"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Chatverlauf auf diesem Gerät behalten"
@@ -2973,17 +2960,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Live-Übersetzung"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Frühere auf diesem Gerät gespeicherte Nachrichten laden"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Weitere Ergebnisse laden"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Ältere Nachrichten laden"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Netzwerke auf {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "neuer ordner"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Neue Nachrichten"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

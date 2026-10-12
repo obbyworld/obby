@@ -376,7 +376,7 @@ describe("ChannelMessageList history window", () => {
     expect(
       container.querySelector('[data-message-id="past-50"]')?.classList,
     ).toContain("jump-highlight");
-    fireEvent.click(getByRole("button", { name: "Jump to present" }));
+    fireEvent.click(getByRole("button", { name: "Scroll to bottom" }));
     expect(useStore.getState().historyWindows[KEY]).toBeUndefined();
     expect(container.querySelector('[data-message-id="now-2"]')).not.toBeNull();
   });

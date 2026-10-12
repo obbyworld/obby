@@ -41,7 +41,7 @@ import { useSearchDraft } from "../search/useSearchDraft";
 import HighlightedText, { type TextRange } from "../ui/HighlightedText";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import SegmentedControl from "../ui/SegmentedControl";
-import { SkeletonRow } from "../ui/SkeletonRow";
+import { MessageSkeletons } from "../ui/SkeletonRow";
 import { TextInput } from "../ui/TextInput";
 
 export const SEARCH_PAGE_LIMIT = 50;
@@ -146,17 +146,12 @@ const HitRow = memo<{
   );
 });
 
-const PLACEHOLDER_ROW_IDS = [0, 1, 2];
-
 const GapPlaceholder: React.FC = () => (
-  <li aria-hidden className="flex flex-col gap-0.5 blur-[1px]">
-    {PLACEHOLDER_ROW_IDS.map((id) => (
-      <SkeletonRow
-        key={id}
-        className="flex items-start gap-2.5 px-2 py-2"
-        avatarClassName="w-10 h-10 rounded-full"
-      />
-    ))}
+  <li aria-hidden>
+    <MessageSkeletons
+      rowClassName="flex items-start gap-2.5 px-2 py-2"
+      avatarClassName="w-10 h-10 rounded-full"
+    />
   </li>
 );
 

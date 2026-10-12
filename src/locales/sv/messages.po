@@ -113,11 +113,6 @@ msgstr "{0} måste vara ett heltal."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} nätverk{1} — välj ett att gå med i"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} äldre meddelanden"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Allmän supportkanal"
 msgid "Get notified when someone says the words you follow."
 msgstr "Få en avisering när någon säger orden du följer."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Hämtar fler meddelanden..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "gick med och lämnade"
 msgid "Joined the channel"
 msgstr "Gick med i kanalen"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Hoppa till nuet"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Behåll chatthistorik på denna enhet"
@@ -2973,17 +2960,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Liveöversättning"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Ladda tidigare meddelanden som sparats på denna enhet"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Läs in fler resultat"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Ladda äldre meddelanden"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Nätverk på {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "ny mapp"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nya meddelanden"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"

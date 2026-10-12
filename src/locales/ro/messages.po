@@ -113,11 +113,6 @@ msgstr "{0} trebuie să fie un număr întreg."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} rețea{1} — alege una pentru a te conecta"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} mesaje mai vechi"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -2506,10 +2501,6 @@ msgstr "Canal general de suport"
 msgid "Get notified when someone says the words you follow."
 msgstr "Primește notificări când cineva spune cuvintele urmărite."
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Se încarcă mai multe mesaje..."
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2840,10 +2831,6 @@ msgstr "s-a alăturat și a ieșit"
 msgid "Joined the channel"
 msgstr "S-a alăturat canalului"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Salt la prezent"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
@@ -2973,17 +2960,9 @@ msgstr "În direct"
 msgid "Live Translate"
 msgstr "Traducere live"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Încarcă mesajele anterioare salvate pe acest dispozitiv"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Încarcă mai multe rezultate"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Încarcă mesaje mai vechi"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3401,6 +3380,10 @@ msgstr "Rețele pe {0}"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "folder nou"
+
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Mesaje noi"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
