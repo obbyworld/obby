@@ -71,7 +71,7 @@ const SEARCH_FILL_PACE_MS = 1000;
 const SEARCH_FILL_TIMEOUT_MS = 20_000;
 
 type GapFill = {
-  gap: HistoryGap;
+  gap?: HistoryGap;
   pagesLeft?: number;
   isDiskOnly?: boolean;
   onSettled?: (isSaved: boolean) => void;
@@ -91,7 +91,7 @@ let nextGapFill: GapFill | undefined;
 // all duplicates, would close the gap, so we keep one request per gap.
 function isGapBeingFilled(serverId: string, target: string, gapId: number) {
   return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
-    (request) => request.kind === "before" && request.fill?.gap.id === gapId,
+    (request) => request.kind === "before" && request.fill?.gap?.id === gapId,
   );
 }
 
@@ -102,7 +102,8 @@ function requestPageBefore(
   fill: GapFill | undefined,
   showLoading = true,
 ): boolean {
-  if (fill && isGapBeingFilled(serverId, target, fill.gap.id)) return false;
+  if (fill?.gap && isGapBeingFilled(serverId, target, fill.gap.id))
+    return false;
   nextGapFill = fill;
   const isSent = ircClient.requestChathistoryBefore(
     serverId,
@@ -298,7 +299,7 @@ async function saveHistoryPage(
     const { pagesLeft } = request.fill;
     // We decide on the gap as saved now, since another fill may have moved it.
     const filled = (await gapsFor(key, target)).find(
-      (gap) => gap.id === request.fill?.gap.id,
+      (gap) => gap.id === request.fill?.gap?.id,
     );
     const decision =
       filled && decideAfterGapFill({ gap: filled, page, inserted });
@@ -690,7 +691,16 @@ async function replayRows(
       nick ? `${nick}!${nick}@local` : undefined,
     ),
   );
-  if (rows.length) await markLostGaps(store, serverId, target, rows);
+  if (rows.length) {
+    const oldest = rows[0].time;
+    const newest = rows[rows.length - 1].time;
+    await showLostGaps(
+      store,
+      serverId,
+      target,
+      (gap) => gap.from >= oldest && gap.from <= newest,
+    );
+  }
   await refreshHasMore(
     store,
     serverId,
@@ -699,19 +709,27 @@ async function replayRows(
   );
 }
 
-async function markLostGaps(
+async function showLostGaps(
   store: StoreApi<AppState>,
   serverId: string,
   target: string,
-  rows: HistoryRow[],
+  isShown: (gap: HistoryGap) => boolean,
 ) {
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return;
-  const oldest = rows[0].time;
-  const newest = rows[rows.length - 1].time;
   for (const gap of await gapsFor(serverId, target.toLowerCase()))
-    if (gap.lost && gap.from >= oldest && gap.from <= newest)
+    if (gap.lost && isShown(gap))
       showMissingMarker(store, serverId, conversation.channelId, gap);
+}
+
+async function replayOlderDiskPage(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+): Promise<number> {
+  const rows = await olderDiskRows(store, serverId, target, HISTORY_PAGE_SIZE);
+  await replayRows(store, serverId, target, rows);
+  return rows.length;
 }
 
 async function replayNewestPage(
@@ -725,6 +743,35 @@ async function replayNewestPage(
     HISTORY_PAGE_SIZE,
   );
   if (rows.length) await replayRows(store, serverId, target, rows);
+}
+
+// A channel's older page goes to disk first and the list reads it back from
+// there, so scrolling shows history through one path. Private chats skip
+// this: we never save encrypted or services messages, which would vanish.
+function diskFirstFill(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  oldestTime: number,
+  gap: HistoryGap | undefined,
+): GapFill {
+  return {
+    gap,
+    isDiskOnly: true,
+    onSettled: (isSaved) => {
+      void (async () => {
+        if (isSaved && (await replayOlderDiskPage(store, serverId, target)))
+          return;
+        setLoading(serverId, target, false);
+        await showLostGaps(
+          store,
+          serverId,
+          target,
+          (lost) => lost.from < oldestTime,
+        );
+      })();
+    },
+  };
 }
 
 export async function loadOlderMessages(
@@ -756,13 +803,7 @@ export async function loadOlderMessages(
       hasChathistory: serverHasChathistory,
     });
     if (plan.kind === "disk") {
-      const rows = await olderDiskRows(
-        store,
-        serverId,
-        target,
-        HISTORY_PAGE_SIZE,
-      );
-      await replayRows(store, serverId, target, rows);
+      await replayOlderDiskPage(store, serverId, target);
       return true;
     }
     if (plan.kind === "server") {
@@ -770,7 +811,9 @@ export async function loadOlderMessages(
         serverId,
         target,
         plan.before,
-        plan.gap ? { gap: plan.gap } : undefined,
+        isChannelTarget(target)
+          ? diskFirstFill(store, serverId, target, oldestTime, plan.gap)
+          : plan.gap && { gap: plan.gap },
       );
       if (!isSent) setLoading(serverId, target, false);
       return isSent;

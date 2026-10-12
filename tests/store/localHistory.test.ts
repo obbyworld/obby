@@ -456,6 +456,25 @@ describe("local history with a chathistory server", () => {
 
       expect(w.channelMessages()).toEqual([]);
     });
+
+    it("saves an older channel page to disk and shows it from there", async () => {
+      expect(await w.loadOlderFor(SERVER, BASE + 100_000)).toBe(true);
+      expect(w.chathistoryRequests()).toEqual([
+        `CHATHISTORY BEFORE #chan timestamp=${at(100)} 50`,
+      ]);
+
+      w.feed(...inBatch("old1", "#chan", page(3, 10, "o")));
+
+      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(3));
+      await vi.waitFor(() =>
+        expect(w.channelMessages().map((m) => m.msgid)).toEqual([
+          "o0",
+          "o1",
+          "o2",
+        ]),
+      );
+      expect(w.channel()?.isLoadingHistory).toBe(false);
+    });
   });
 
   describe("gap on reconnect", () => {
