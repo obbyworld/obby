@@ -53,8 +53,9 @@ import {
   verifyOtrSession as otrVerify,
   trustOtrChangedKey,
 } from "./handlers/otr";
+import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
-import { MAX_MESSAGES_PER_CHANNEL, serverTracksReadMarker } from "./helpers";
+import { isAppInFront, MAX_MESSAGES_PER_CHANNEL } from "./helpers";
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
@@ -428,6 +429,7 @@ interface UIState {
   mobileViewActiveColumn: layoutColumn;
   // The open chat shows older messages than the newest, so new ones are unseen.
   isChatAwayFromPresent?: boolean;
+  isAppFocused?: boolean;
   homeView?: "plugins";
   isServerMenuOpen: boolean;
   contextMenu: {
@@ -1253,6 +1255,7 @@ const useStore = create<AppState>((set, get) => ({
       loadUISelections().sidebarPreferences?.channelList.isVisible ?? true,
     mobileViewActiveColumn: "serverList", // Always start on server/channel list, never auto-navigate to chat
     isChatAwayFromPresent: false,
+    isAppFocused: isAppInFront(),
     isServerMenuOpen: false,
     contextMenu: {
       isOpen: false,
@@ -2323,55 +2326,7 @@ const useStore = create<AppState>((set, get) => ({
         server?.privateChats?.find((pc) => pc.id === selectedPrivateChatId)
           ?.username || null;
 
-      // When the user switches *to* a server, the channel or PM that
-      // restores into focus has now been "looked at" -- clear its
-      // unread / mention indicators.  Without this the badge sticks
-      // on the just-foregrounded buffer until the user clicks somewhere
-      // else and back.
-      let updatedServers = state.servers;
-      if (selectedChannelId || selectedPrivateChatId) {
-        updatedServers = state.servers.map((s) => {
-          if (s.id !== serverId) return s;
-          let touched = false;
-          const channels = s.channels.map((ch) => {
-            if (ch.id !== selectedChannelId) return ch;
-            if (
-              ch.unreadCount === 0 &&
-              !ch.isMentioned &&
-              (ch.mentionCount ?? 0) === 0
-            )
-              return ch;
-            touched = true;
-            return {
-              ...ch,
-              unreadCount: 0,
-              mentionCount: 0,
-              isMentioned: false,
-            };
-          });
-          const privateChats = s.privateChats?.map((pc) => {
-            if (pc.id !== selectedPrivateChatId) return pc;
-            if (
-              pc.unreadCount === 0 &&
-              !pc.isMentioned &&
-              (pc.mentionCount ?? 0) === 0
-            )
-              return pc;
-            touched = true;
-            return {
-              ...pc,
-              unreadCount: 0,
-              mentionCount: 0,
-              isMentioned: false,
-            };
-          });
-          if (!touched) return s;
-          return { ...s, channels, privateChats };
-        });
-      }
-
       return {
-        servers: updatedServers,
         ui: {
           ...state.ui,
           selectedServerId: serverId,
@@ -2452,10 +2407,7 @@ const useStore = create<AppState>((set, get) => ({
         }
       }
 
-      // Mark channel as read
       if (serverId && channelId) {
-        ircClient.markChannelAsRead(serverId, channelId);
-
         const server = state.servers.find((s) => s.id === serverId);
         const channelName =
           server?.channels.find((c) => c.id === channelId)?.name || null;
@@ -2486,31 +2438,7 @@ const useStore = create<AppState>((set, get) => ({
           }
         }
 
-        // Update unread state in store
-        const updatedServers = state.servers.map((server) => {
-          if (server.id === serverId) {
-            const updatedChannels = server.channels.map((channel) => {
-              if (channel.id === channelId) {
-                return {
-                  ...channel,
-                  unreadCount: 0,
-                  mentionCount: 0,
-                  isMentioned: false,
-                };
-              }
-              return channel;
-            });
-
-            return {
-              ...server,
-              channels: updatedChannels,
-            };
-          }
-          return server;
-        });
-
         return {
-          servers: updatedServers,
           ui: {
             ...state.ui,
             selectedServerId: serverId,
@@ -2573,35 +2501,7 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   markChannelAsRead: (serverId, channelId) => {
-    ircClient.markChannelAsRead(serverId, channelId);
-
-    set((state) => {
-      const updatedServers = state.servers.map((server) => {
-        if (server.id === serverId) {
-          const updatedChannels = server.channels.map((channel) => {
-            if (channel.id === channelId) {
-              return {
-                ...channel,
-                unreadCount: 0,
-                mentionCount: 0,
-                isMentioned: false,
-              };
-            }
-            return channel;
-          });
-
-          return {
-            ...server,
-            channels: updatedChannels,
-          };
-        }
-        return server;
-      });
-
-      return {
-        servers: updatedServers,
-      };
-    });
+    markChatRead(useStore, serverId, channelId);
   },
 
   reorderChannels: (serverId, channelIds) => {
@@ -2670,51 +2570,13 @@ const useStore = create<AppState>((set, get) => ({
         return state;
       }
 
-      // Mark private chat as read
       if (serverId && privateChatId) {
         const server = state.servers.find((s) => s.id === serverId);
-        const pc = server?.privateChats?.find((pc) => pc.id === privateChatId);
-        const pcUsername = pc?.username || null;
-
-        // The server sends a channel's marker on JOIN but a private chat's
-        // only when asked, so we fetch it the first time the chat opens.
-        if (
-          pcUsername &&
-          !pc?.readMarkerFetched &&
-          serverTracksReadMarker(state, serverId)
-        ) {
-          ircClient.markreadGet(serverId, pcUsername);
-        }
-
-        const updatedServers = state.servers.map((server) => {
-          if (server.id === serverId) {
-            const updatedPrivateChats =
-              server.privateChats?.map((privateChat) => {
-                if (privateChat.id === privateChatId) {
-                  return {
-                    ...privateChat,
-                    unreadCount: 0,
-                    mentionCount: 0,
-                    isMentioned: false,
-                    // Mark as fetched so we don't spam GETs on every
-                    // re-selection of the same PM.  The reply will
-                    // overwrite this with the actual marker.
-                    readMarkerFetched: true,
-                  };
-                }
-                return privateChat;
-              }) || [];
-
-            return {
-              ...server,
-              privateChats: updatedPrivateChats,
-            };
-          }
-          return server;
-        });
+        const pcUsername =
+          server?.privateChats?.find((pc) => pc.id === privateChatId)
+            ?.username || null;
 
         return {
-          servers: updatedServers,
           ui: {
             ...state.ui,
             selectedServerId: serverId,

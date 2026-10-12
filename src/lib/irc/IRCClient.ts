@@ -1949,12 +1949,6 @@ export class IRCClient implements IRCClientContext {
     this.sendRaw(serverId, "AWAY");
   }
 
-  markChannelAsRead(serverId: string, channelId: string): void {
-    const server = this.servers.get(serverId);
-    const channel = server?.channels.find((c) => c.id === channelId);
-    if (channel) channel.unreadCount = 0;
-  }
-
   capAck(serverId: string, key: string, capabilities: string): void {
     this.triggerEvent("CAP_ACKNOWLEDGED", { serverId, key, capabilities });
   }

@@ -14,6 +14,7 @@ import {
 } from "react";
 import { useMessageJump } from "../../hooks/useMessageJump";
 import {
+  isScrolledToBottom,
   SCROLL_TOLERANCE,
   useScrollToBottom,
 } from "../../hooks/useScrollToBottom";
@@ -26,6 +27,7 @@ import useStore from "../../store";
 import {
   loadNewerMessages,
   loadOlderMessages,
+  showMessagesFromReadMarker,
   showPresent,
   showSavedHistory,
 } from "../../store/handlers/history";
@@ -44,12 +46,26 @@ import { MessageSkeletons } from "../ui/SkeletonRow";
 export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100;
 // How close to either end of the list we start loading the next page.
 const LOAD_AHEAD_PX = 800;
-// How far back we page on our own to reach the last read message.
-const MAX_PAGES_TO_READ_MARKER = 10;
+// How long we wait for an older page before letting scrolling ask again.
+const OLDER_PAGE_TIMEOUT_MS = 10_000;
+// How long a chat may stay behind placeholders while it finds its unread line.
+const UNREAD_POSITIONING_LIMIT_MS = 4000;
 // How long a chat waits for its read marker before opening at the bottom.
 const READ_MARKER_WAIT_MS = 3000;
 // The room left above the "New messages" line when a chat opens on it.
 const UNREAD_LINE_MARGIN_PX = 48;
+// How long the "New messages" line stays once everything under it is read.
+const READ_LINE_LINGER_MS = 4000;
+// The read messages we show above the "New messages" line.
+const UNREAD_CONTEXT_ROWS = 20;
+
+type Opening =
+  | { step: "marker" }
+  | {
+      step: "placing" | "loading" | "open";
+      after: number | null;
+      hasFetched: boolean;
+    };
 
 // Stable empty array — prevents selector from returning a new [] on every render
 // when the channel has no messages yet (undefined ?? [] would create a new ref each time).
@@ -143,9 +159,6 @@ export const ChannelMessageList = forwardRef<
     const messagesInnerRef = useRef<HTMLDivElement>(null);
     // prev scrollHeight for prepend delta-correction.
     const prevScrollHeightRef = useRef(0);
-    // Ref mirror of isScrolledUp — lets useLayoutEffect closures read current value
-    // without listing isScrolledUp as a dep (which would re-run effects on every scroll).
-    const isScrolledUpRef = useRef(false);
     const prevFilteredLengthRef = useRef(0);
     const prevFirstMsgIdRef = useRef<string | null>(null);
     // Set when older messages are prepended, so the correction below knows a
@@ -248,18 +261,7 @@ export const ChannelMessageList = forwardRef<
       }),
     }));
 
-    const isAwayFromPresent = isScrolledUp || isDetached;
     useEffect(() => {
-      if (!isActive) return;
-      useStore.setState((state) =>
-        state.ui.isChatAwayFromPresent === isAwayFromPresent
-          ? {}
-          : { ui: { ...state.ui, isChatAwayFromPresent: isAwayFromPresent } },
-      );
-    }, [isActive, isAwayFromPresent]);
-
-    useEffect(() => {
-      isScrolledUpRef.current = isScrolledUp;
       // When the user returns to the bottom, shrink the window back to the base so
       // slice(-N) resumes trimming old messages from the top (memory optimization).
       // Only shrink if we grew above the base — preserves a sub-default saved visibleCount.
@@ -367,40 +369,37 @@ export const ChannelMessageList = forwardRef<
       (channel?.isLoadingHistory ?? privateChat?.isLoadingHistory) === true;
 
     const readMarker = channel ? channel.readMarker : privateChat?.readMarker;
+    const isServerConnected =
+      servers.find((s) => s.id === serverId)?.isConnected === true;
+    const isAppFocused = useStore((state) => state.ui.isAppFocused !== false);
+    const isAppFocusedRef = useRef(isAppFocused);
+    isAppFocusedRef.current = isAppFocused;
     const tracksReadMarker = useStore((state) =>
       serverTracksReadMarker(state, serverId),
     );
-    const isServerConnected =
-      servers.find((s) => s.id === serverId)?.isConnected === true;
-    // We keep the read marker as it stood when the chat came into view, so the
-    // "New messages" line stays where it was while the chat is read.
-    const [unreadAfter, setUnreadAfter] = useState<number | null | undefined>();
-    const pagesToReadMarkerRef = useRef(0);
-    const hasOpenedOnUnreadRef = useRef(false);
-    useEffect(() => {
-      if (!isActive) {
-        setUnreadAfter(undefined);
-        return;
-      }
-      if (unreadAfter !== undefined) return;
-      pagesToReadMarkerRef.current = 0;
-      hasOpenedOnUnreadRef.current = false;
-      if (readMarker !== undefined) {
-        setUnreadAfter(readMarker ? Date.parse(readMarker) : null);
-        return;
-      }
-      // A chat restored at startup opens before we have logged in, so we wait
-      // for its marker while the server could still send one.
-      if (!tracksReadMarker && !isServerConnected) return;
-      const timer = setTimeout(() => setUnreadAfter(null), READ_MARKER_WAIT_MS);
-      return () => clearTimeout(timer);
-    }, [
-      isActive,
-      readMarker,
-      unreadAfter,
-      tracksReadMarker,
-      isServerConnected,
-    ]);
+    // We keep the marker as it stood on arrival, so the "New messages" line
+    // stays put while the chat is read.
+    const [opening, setOpening] = useState<Opening>({ step: "marker" });
+    const [wasActive, setWasActive] = useState(isActive);
+    if (wasActive !== isActive) {
+      setWasActive(isActive);
+      if (isActive) setOpening({ step: "marker" });
+    }
+    // A server without read markers keeps no shared place, so its chats open
+    // at the bottom.
+    if (isActive && opening.step === "marker" && readMarker !== undefined)
+      setOpening(
+        tracksReadMarker
+          ? {
+              step: "placing",
+              after: readMarker
+                ? Date.parse(readMarker)
+                : Number.NEGATIVE_INFINITY,
+              hasFetched: false,
+            }
+          : { step: "open", after: null, hasFetched: false },
+      );
+    const unreadAfter = opening.step === "marker" ? null : opening.after;
 
     const firstUnreadId = useMemo(
       () =>
@@ -414,25 +413,133 @@ export const ChannelMessageList = forwardRef<
       [channelMessages, unreadAfter, serverId],
     );
     const oldestLoaded = channelMessages[0];
-    const isUnreadLineHidden =
-      !!firstUnreadId && !displayedMessages.some((m) => m.id === firstUnreadId);
-    const isMarkerOlderThanLoaded =
-      !!oldestLoaded && messageTime(oldestLoaded) > (unreadAfter ?? 0);
-    const needsOlderForUnreadLine =
+    const needsMarkerPage =
+      opening.step === "placing" &&
+      !opening.hasFetched &&
       unreadAfter != null &&
+      Number.isFinite(unreadAfter) &&
       !isDetached &&
       hasMoreMessages &&
-      (isUnreadLineHidden || isMarkerOlderThanLoaded) &&
-      pagesToReadMarkerRef.current < MAX_PAGES_TO_READ_MARKER;
+      !!oldestLoaded &&
+      messageTime(oldestLoaded) > unreadAfter;
+    const isPositioningOnUnread =
+      isActive &&
+      (opening.step === "placing" || opening.step === "loading") &&
+      unreadAfter != null;
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and marker decide when to look
-    useLayoutEffect(() => {
-      if (!isActive || hasOpenedOnUnreadRef.current || unreadAfter == null)
+    const isAwayFromPresent =
+      isScrolledUp || isDetached || isPositioningOnUnread;
+    // Messages that land while the user watches the bottom are read as they
+    // arrive, so they never start a new line.
+    const [watchedMessages, setWatchedMessages] = useState(channelMessages);
+    if (watchedMessages !== channelMessages) {
+      setWatchedMessages(channelMessages);
+      const newest = channelMessages.at(-1);
+      if (
+        isActive &&
+        opening.step === "open" &&
+        opening.after != null &&
+        newest &&
+        !isAwayFromPresent &&
+        isAppFocused &&
+        !firstUnreadMessageId(
+          watchedMessages,
+          opening.after,
+          ircClient.getNick(serverId),
+        )
+      )
+        setOpening({
+          ...opening,
+          after: Math.max(opening.after, messageTime(newest)),
+        });
+    }
+    useEffect(() => {
+      if (!isActive) return;
+      useStore.setState((state) =>
+        state.ui.isChatAwayFromPresent === isAwayFromPresent
+          ? {}
+          : { ui: { ...state.ui, isChatAwayFromPresent: isAwayFromPresent } },
+      );
+    }, [isActive, isAwayFromPresent]);
+
+    // Once the user has read past the line at the bottom, we keep it a moment
+    // so a glance still shows where the new messages began, then drop it.
+    const readUpTo = readMarker ? Date.parse(readMarker) : null;
+    useEffect(() => {
+      if (!isActive || opening.step !== "open" || isAwayFromPresent) return;
+      if (!isAppFocused) return;
+      if (readUpTo == null || unreadAfter == null || readUpTo <= unreadAfter)
         return;
-      if (isLoadingHistory || needsOlderForUnreadLine) return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) =>
+            o.step === "open" ? { ...o, after: readUpTo } : o,
+          ),
+        READ_LINE_LINGER_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [
+      isActive,
+      opening.step,
+      isAwayFromPresent,
+      isAppFocused,
+      readUpTo,
+      unreadAfter,
+    ]);
+
+    // A chat restored at startup opens before we have logged in, so we wait
+    // for its marker while the server could still send one.
+    useEffect(() => {
+      if (!isActive || opening.step !== "marker" || !isServerConnected) return;
+      const timer = setTimeout(
+        () => setOpening({ step: "open", after: null, hasFetched: false }),
+        READ_MARKER_WAIT_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isActive, opening.step, isServerConnected]);
+
+    useEffect(() => {
+      if (!isPositioningOnUnread) return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) => (o.step === "marker" ? o : { ...o, step: "open" })),
+        UNREAD_POSITIONING_LIMIT_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isPositioningOnUnread]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: the marker, the loaded rows and loading decide when to ask
+    useEffect(() => {
+      if (!needsMarkerPage || isLoadingHistory || !historyTarget) return;
+      if (opening.step !== "placing" || opening.after == null) return;
+      const { after } = opening;
+      setOpening({ step: "loading", after, hasFetched: true });
+      showMessagesFromReadMarker(
+        useStore,
+        serverId,
+        historyTarget,
+        after,
+      ).finally(() =>
+        setOpening((o) =>
+          o.step === "loading" ? { ...o, step: "placing" } : o,
+        ),
+      );
+    }, [needsMarkerPage, isLoadingHistory]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and the opening step decide when to look
+    useLayoutEffect(() => {
+      if (!isActive || opening.step !== "placing") return;
+      if (isLoadingHistory || needsMarkerPage) return;
       const container = messagesContainerRef.current;
-      if (!container || channelMessages.length === 0) return;
-      hasOpenedOnUnreadRef.current = true;
+      if (!container) return;
+      const index = channelMessages.findIndex((m) => m.id === firstUnreadId);
+      if (index >= 0 && channelMessages.length - index > visibleMessageCount) {
+        setVisibleMessageCount(
+          channelMessages.length - index + UNREAD_CONTEXT_ROWS,
+        );
+        return;
+      }
+      setOpening({ ...opening, step: "open" });
       const line = container.querySelector<HTMLElement>("[data-unread-line]");
       if (!line) return;
       const top =
@@ -452,10 +559,10 @@ export const ChannelMessageList = forwardRef<
       );
     }, [
       displayedMessages,
-      unreadAfter,
+      opening,
       isActive,
       isLoadingHistory,
-      needsOlderForUnreadLine,
+      needsMarkerPage,
     ]);
 
     // Scroll to bottom on initial mount, unless a saved position was passed in.
@@ -557,8 +664,13 @@ export const ChannelMessageList = forwardRef<
         pendingPrependRef.current = false;
       }
 
+      // We read the position here because the scrolled-up state updates a
+      // render late, after the first scroll that loads a page.
+      const wasAboveBottom =
+        container.scrollTop + container.clientHeight <
+        prevHeight - SCROLL_TOLERANCE;
       if (
-        isScrolledUpRef.current &&
+        wasAboveBottom &&
         prevHeight > 0 &&
         newHeight > prevHeight &&
         wasPrepend
@@ -610,7 +722,11 @@ export const ChannelMessageList = forwardRef<
         resizeObserverPrevSHRef.current = container.scrollHeight;
         if (isHoldingRef.current) {
           keepHeldRowInPlace();
-        } else if (wasAtPrevBottom && !isDetachedRef.current) {
+        } else if (
+          wasAtPrevBottom &&
+          !isDetachedRef.current &&
+          isAppFocusedRef.current
+        ) {
           scrollToBottom();
         } else if (widthChanged && prevSH > 0) {
           const ratio = container.scrollTop / prevSH;
@@ -677,6 +793,11 @@ export const ChannelMessageList = forwardRef<
         isFetchingMoreRef.current = false;
         setIsFetchingMore(false);
       };
+      // A page read from disk can start and end loading within one render,
+      // which the loading watcher never sees, so we also stop after a while.
+      setTimeout(() => {
+        if (oldestAtFetchRef.current === (oldest?.id ?? null)) stopFetching();
+      }, OLDER_PAGE_TIMEOUT_MS);
       loadOlderMessages(
         useStore,
         serverId,
@@ -689,6 +810,14 @@ export const ChannelMessageList = forwardRef<
         .catch(stopFetching);
       return true;
     };
+
+    useEffect(() => {
+      if (!isFetchingMoreRef.current) return;
+      if (channelMessages[0]?.id === oldestAtFetchRef.current) return;
+      oldestAtFetchRef.current = null;
+      isFetchingMoreRef.current = false;
+      setIsFetchingMore(false);
+    }, [channelMessages]);
 
     const loadNewer = () => {
       if (!isDetached || !isActive || !historyTarget) return;
@@ -706,17 +835,13 @@ export const ChannelMessageList = forwardRef<
       const container = messagesContainerRef.current;
       if (!container || container.clientHeight === 0) return;
       if (isHoldingRef.current) return;
-      if (needsOlderForUnreadLine) {
-        if (loadOlder()) pagesToReadMarkerRef.current += 1;
-      } else if (
+      if (
         container.scrollTop < LOAD_AHEAD_PX &&
-        (isScrolledUpRef.current ||
+        (!isScrolledToBottom(container) ||
           container.scrollHeight <= container.clientHeight)
       )
         loadOlder();
-      const belowView =
-        container.scrollHeight - container.scrollTop - container.clientHeight;
-      if (belowView < LOAD_AHEAD_PX) loadNewer();
+      if (isScrolledToBottom(container, LOAD_AHEAD_PX)) loadNewer();
     };
 
     useEffect(() => {
@@ -740,10 +865,12 @@ export const ChannelMessageList = forwardRef<
       isHoldingJump,
     ]);
 
-    // Auto-scroll on new messages — skip when this channel is hidden (display:none).
+    // We follow new messages only while the user looks at the app, so what
+    // arrives while they are away waits below the "New messages" line.
     // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes
     useEffect(() => {
       if (!isActive || isDetachedRef.current || isHoldingRef.current) return;
+      if (!isAppFocusedRef.current) return;
       const isNarrowView = window.matchMedia("(max-width: 768px)").matches;
       const isChatVisible =
         !isNarrowView || mobileViewActiveColumn === "chatView";
@@ -772,6 +899,13 @@ export const ChannelMessageList = forwardRef<
             }
           }}
         >
+          {isPositioningOnUnread && (
+            <div className="sticky top-0 z-10 h-0">
+              <div className="h-screen bg-discord-dark-200">
+                <MessageSkeletons />
+              </div>
+            </div>
+          )}
           {isLoadingHistory &&
           !isFetchingMore &&
           channelMessages.length === 0 ? (

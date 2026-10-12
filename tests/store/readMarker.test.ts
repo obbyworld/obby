@@ -44,6 +44,7 @@ async function boot({
     account: "tester",
     isOnline: true,
   });
+  vi.spyOn(ircClient, "getNick").mockReturnValue("tester");
   const markreadSet = vi
     .spyOn(ircClient, "markreadSet")
     .mockImplementation(() => {});
@@ -116,7 +117,7 @@ describe("read markers", () => {
       target: "#chan",
       timestamp: new Date(BASE + 2000).toISOString(),
     });
-    expect(channel().unreadCount).toBe(3);
+    expect(channel().unreadCount).toBe(1);
     ircClient.triggerEvent("MARKREAD", {
       serverId: SERVER,
       target: "#CHAN",
@@ -223,5 +224,77 @@ describe("read markers", () => {
     expect(markreadSet).not.toHaveBeenCalled();
     expect(channel().unreadCount).toBe(3);
     visibility.mockRestore();
+  });
+
+  it("counts messages from history after the marker as unread, as after a restart", async () => {
+    const { useStore, channel } = await boot({ selected: false });
+    useStore.setState({ messages: {} });
+    expect(channel().unreadCount).toBe(0);
+
+    useStore.setState({
+      messages: { [KEY]: [message(1), message(2), message(3, "tester")] },
+    });
+
+    expect(channel()).toMatchObject({ unreadCount: 1, isMentioned: false });
+  });
+
+  it("marks a chat read when the user leaves it before the marker would go out", async () => {
+    vi.useFakeTimers();
+    const { useStore, markreadSet, channel } = await boot({ selected: true });
+    useStore.setState((state) => ({
+      messages: {
+        ...state.messages,
+        [KEY]: [...state.messages[KEY], message(4)],
+      },
+    }));
+    useStore.setState((state) => ({
+      ui: { ...state.ui, selectedServerId: null },
+    }));
+
+    expect(markreadSet).toHaveBeenCalledWith(
+      SERVER,
+      "#chan",
+      new Date(BASE + 4000).toISOString(),
+    );
+    expect(channel().unreadCount).toBe(0);
+  });
+
+  it("counts the first private message on a server without read markers", async () => {
+    const { useStore, ircClient } = await boot({ selected: false });
+    useStore.setState((state) => ({
+      servers: state.servers.map((server) => ({
+        ...server,
+        capabilities: [],
+        privateChats: [
+          {
+            id: "pm-bob",
+            username: "bob",
+            serverId: SERVER,
+            unreadCount: 0,
+            isMentioned: false,
+          },
+        ],
+      })),
+    }));
+    ircClient.triggerEvent("parsedLine", {
+      serverId: SERVER,
+      line: ":irc.test 001 tester :Welcome",
+      command: "001",
+      source: "irc.test",
+      parv: ["tester", "Welcome"],
+      mtags: { time: new Date(Date.now() - 1000).toISOString() },
+    });
+    useStore.setState((state) => ({
+      messages: {
+        ...state.messages,
+        [`${SERVER}-pm-bob`]: [{ ...message(1, "bob"), timestamp: new Date() }],
+      },
+    }));
+
+    expect(useStore.getState().servers[0].privateChats?.[0]).toMatchObject({
+      unreadCount: 1,
+      mentionCount: 1,
+      isMentioned: true,
+    });
   });
 });

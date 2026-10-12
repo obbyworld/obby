@@ -208,28 +208,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           response.sender !== currentServerUser?.username &&
           !isHistoricalMessage
         ) {
-          store.setState((state) => {
-            const updatedServers = state.servers.map((s) => {
-              if (s.id === server.id) {
-                const updatedChannels = s.channels.map((ch) => {
-                  if (ch.id === channel.id) {
-                    return {
-                      ...ch,
-                      unreadCount: ch.unreadCount + 1,
-                      mentionCount:
-                        (ch.mentionCount ?? 0) + (hasMention ? 1 : 0),
-                      isMentioned: hasMention || ch.isMentioned,
-                    };
-                  }
-                  return ch;
-                });
-                return { ...s, channels: updatedChannels };
-              }
-              return s;
-            });
-            return { servers: updatedServers };
-          });
-
           // Show browser notification for mentions
           if (hasMention && currentState.globalSettings.enableNotifications) {
             showMentionNotification(
@@ -517,28 +495,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           multilineCurrentState.ui.selectedServerId === server.id;
 
         if (!isActiveChannel && !isOwnMessage && !isHistoricalMessage) {
-          store.setState((state) => {
-            const updatedServers = state.servers.map((s) => {
-              if (s.id === server.id) {
-                const updatedChannels = s.channels.map((ch) => {
-                  if (ch.id === channel.id) {
-                    return {
-                      ...ch,
-                      unreadCount: ch.unreadCount + 1,
-                      mentionCount:
-                        (ch.mentionCount ?? 0) + (hasMention ? 1 : 0),
-                      isMentioned: hasMention || ch.isMentioned,
-                    };
-                  }
-                  return ch;
-                });
-                return { ...s, channels: updatedChannels };
-              }
-              return s;
-            });
-            return { servers: updatedServers };
-          });
-
           if (
             hasMention &&
             multilineCurrentState.globalSettings.enableNotifications
@@ -1461,16 +1417,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             const updatedPrivateChats =
               s.privateChats?.map((pc) => {
                 if (pc.id === privateChat.id) {
-                  const isActive =
-                    getViewedSelection(state).selectedPrivateChatId === pc.id;
-                  const reset = isActive || isHistoricalMessage;
-                  return {
-                    ...pc,
-                    lastActivity: new Date(),
-                    unreadCount: reset ? 0 : pc.unreadCount + 1,
-                    mentionCount: reset ? 0 : (pc.mentionCount ?? 0) + 1,
-                    isMentioned: !isHistoricalMessage && true, // All PMs are considered mentions (except historical)
-                  };
+                  return { ...pc, lastActivity: new Date() };
                 }
                 return pc;
               }) || [];

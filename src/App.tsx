@@ -27,6 +27,7 @@ import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isTauri } from "./lib/platformUtils";
 import useStore, { type AppState, loadSavedServers } from "./store";
+import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
 
 const askPermissions = async () => {
@@ -366,20 +367,31 @@ const App: React.FC = () => {
 
   // Suppress :hover popups on blur; reclaim focus from iframes immediately.
   useEffect(() => {
+    const noteAppInFront = () =>
+      useStore.setState((state) =>
+        state.ui.isAppFocused === isAppInFront()
+          ? {}
+          : { ui: { ...state.ui, isAppFocused: isAppInFront() } },
+      );
     const onBlur = () => {
+      noteAppInFront();
       document.documentElement.classList.add("window-blurred");
       // Cross-origin iframes swallow all keystrokes — blur immediately so the parent document regains them.
       if (document.activeElement?.tagName === "IFRAME") {
         (document.activeElement as HTMLElement).blur();
       }
     };
-    const onFocus = () =>
+    const onFocus = () => {
+      noteAppInFront();
       document.documentElement.classList.remove("window-blurred");
+    };
     window.addEventListener("blur", onBlur);
     window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", noteAppInFront);
     return () => {
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", noteAppInFront);
     };
   }, []);
 

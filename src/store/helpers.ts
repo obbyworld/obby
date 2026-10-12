@@ -84,12 +84,45 @@ export function firstUnreadMessageId(
   ownNick: string | undefined,
 ): string | undefined {
   const own = ownNick?.toLowerCase();
-  return messages.find(
-    (message) =>
-      isChatMessage(message) &&
-      messageTime(message) > readUpTo &&
-      message.userId.toLowerCase() !== own,
-  )?.id;
+  return messages.find((message) => isUnread(message, readUpTo, own))?.id;
+}
+
+const isUnread = (message: Message, readUpTo: number, own?: string) =>
+  isChatMessage(message) &&
+  messageTime(message) > readUpTo &&
+  message.userId.toLowerCase() !== own;
+
+export type UnreadCounts = {
+  unreadCount: number;
+  mentionCount: number;
+  isMentioned: boolean;
+};
+
+// Unread messages are the ones from someone else newer than the read marker.
+// Every private message is addressed to the user, so each one is a mention.
+export function countUnread(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+  isPrivate: boolean,
+): UnreadCounts {
+  const own = ownNick?.toLowerCase();
+  const counted = new Set<string>();
+  let unreadCount = 0;
+  let mentionCount = 0;
+  for (const message of messages) {
+    const id = message.msgid ?? message.id;
+    if (counted.has(id) || !isUnread(message, readUpTo, own)) continue;
+    counted.add(id);
+    unreadCount += 1;
+    if (
+      isPrivate ||
+      message.mentioned.length > 0 ||
+      (own !== undefined && message.replyMessage?.userId.toLowerCase() === own)
+    )
+      mentionCount += 1;
+  }
+  return { unreadCount, mentionCount, isMentioned: mentionCount > 0 };
 }
 
 export function serverTracksReadMarker(
@@ -282,12 +315,23 @@ export function getCurrentSelection(state: AppState) {
   return getServerSelection(state, state.ui.selectedServerId);
 }
 
-// The chat the user is looking at right now: selected, with the app visible
+// A phone shows one app at a time, so a visible app there has the user's eyes,
+// while a desktop window also needs focus.
+export function isAppInFront(): boolean {
+  if (typeof document === "undefined" || typeof window === "undefined")
+    return true;
+  if (document.visibilityState !== "visible") return false;
+  return (
+    document.hasFocus() ||
+    window.matchMedia?.("(pointer: coarse)").matches === true
+  );
+}
+
+// The chat the user is looking at right now: selected, with the app in front
 // and, on a phone, the chat column showing. Messages anywhere else are unread.
 export function getViewedSelection(state: AppState) {
   const isInView =
-    (typeof document === "undefined" ||
-      document.visibilityState === "visible") &&
+    state.ui.isAppFocused !== false &&
     (!state.ui.isNarrowView || state.ui.mobileViewActiveColumn === "chatView");
   return isInView
     ? getCurrentSelection(state)

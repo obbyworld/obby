@@ -117,6 +117,7 @@ async function boot(caps: string[]) {
           serverId: id,
           unreadCount: 0,
           isMentioned: false,
+          readMarker: new Date(BASE).toISOString(),
           messages: [],
           users: [user("alice"), user("bob"), user(OWN_NICK)],
         },
@@ -333,6 +334,7 @@ describe("local history with a chathistory server", () => {
             unreadCount: 0,
             mentionCount: 0,
             isMentioned: false,
+            readMarker: at(5),
           })),
         })),
       }));
