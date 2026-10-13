@@ -124,7 +124,7 @@ msgstr "{0} 人正在观看"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} 人正在直播 · {1} 人观看中"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, other {正在上传 # 个文件}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ 条结果"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} 中的 {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, other {# 个上传失败}}"
 
@@ -445,6 +445,7 @@ msgid "active"
 msgstr "活跃"
 
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "活动"
 
@@ -682,6 +683,10 @@ msgstr "现在称为 **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "您确定要删除此消息吗？此操作无法撤销。"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "请让频道管理员修改此列表。"
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "请服务器管理员公布后端 URL（draft/authtoken 或 obby.world/FILEHOST），以便管理表情包。"
@@ -702,6 +707,7 @@ msgstr "附件选项"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "音频"
 
@@ -777,9 +783,13 @@ msgid "Avatar preview"
 msgstr "头像预览"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "离开"
 
@@ -1009,6 +1019,11 @@ msgstr "无法删除你的最后一个 2FA 凭据"
 msgid "Cancel"
 msgstr "取消"
 
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
+msgid "Cancel all uploads"
+msgstr "取消所有上传"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "取消连接"
@@ -1021,7 +1036,8 @@ msgstr "取消加密"
 msgid "Cancel reply"
 msgstr "取消回复"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Cancel upload"
 msgstr "取消上传"
 
@@ -1461,15 +1477,12 @@ msgstr "连接到服务器以管理操作员设置。"
 msgid "Connected to"
 msgstr "已连接到"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Connecting"
-msgstr "连接中"
-
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "正在连接..."
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "正在连接…"
 
@@ -1949,7 +1962,7 @@ msgstr "是否在新标签页中打开此链接？"
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "done"
 msgstr "完成"
 
@@ -2091,7 +2104,7 @@ msgstr "加密 (OTR)"
 msgid "Encrypt this chat"
 msgstr "加密此聊天"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Encrypted"
 msgstr "已加密"
 
@@ -2179,16 +2192,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "可包含空格、表情或符号。IRC 命令仍使用真实名称（{channelName}）。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "输入 URL。在 URL 中使用 {size} 可动态调整尺寸。示例：https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "输入 URL。在 URL 中使用 {sizeToken} 可动态调整尺寸。示例：https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "输入账户名称..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "输入账户名，以便在加入频道前通过 SASL PLAIN 登录。留空则匿名连接。"
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "输入账户名，以便在加入频道前通过 SASL PLAIN 登录。留空则使用你的昵称。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2349,13 +2362,16 @@ msgstr "扩展资料不可用"
 msgid "External Link Warning"
 msgstr "外部链接警告"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失败"
 
-#: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+msgid "Failed to load"
+msgstr "加载失败"
+
+#: src/components/ui/MediaViewerModal.tsx
 msgid "Failed to load audio"
 msgstr "音频加载失败"
 
@@ -2460,6 +2476,14 @@ msgstr "认输"
 msgid "Forget credentials"
 msgstr "忘记凭据"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "忘记密码"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "忘记已保存的 SASL 和服务器密码，连接时不再发送它们。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "忘记密码"
@@ -2552,6 +2576,10 @@ msgstr "包含链接"
 msgid "Hide comments"
 msgstr "隐藏评论"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Hide files"
+msgstr "隐藏文件"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "在 LIST 和 NAMES 中隐藏此频道。"
@@ -2614,8 +2642,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2850,6 +2878,10 @@ msgstr "在此设备上保留聊天历史"
 msgid "Keep credentials"
 msgstr "保留凭据"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "保留密码"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "所有人离开后保留频道。只有 IRCop 可以设置。"
@@ -2964,6 +2996,7 @@ msgid "Link with {0}"
 msgstr "通过 {0} 关联"
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "直播中"
 
@@ -3470,6 +3503,10 @@ msgstr "此服务器没有高级模式。"
 msgid "No bans yet, add one above"
 msgstr "暂无封禁，请在上方添加"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "还没有封禁，请让频道管理员添加"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "没有匹配的机器人。请清除搜索或更改筛选条件。"
@@ -3507,6 +3544,10 @@ msgid "No exceptions yet, add one above"
 msgstr "暂无例外，请在上方添加"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "还没有例外，请让频道管理员添加"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "禁止外部消息 (+n)"
 
@@ -3529,6 +3570,10 @@ msgstr "未设置主机"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "暂无邀请，请在上方添加"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "还没有邀请，请让频道管理员添加"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3651,7 +3696,8 @@ msgid "Normal - Standard protection"
 msgstr "普通 – 标准保护"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Not encrypted"
 msgstr "未加密"
 
@@ -3715,9 +3761,13 @@ msgid "one of:"
 msgstr "之一："
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "在线"
 
@@ -3777,6 +3827,7 @@ msgstr "在浏览器中打开"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3808,6 +3859,7 @@ msgid "Open settings"
 msgstr "打开设置"
 
 #: src/components/message/WorkflowLine.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "打开工作流"
 
@@ -3934,6 +3986,7 @@ msgstr "模式不能为空"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "暂停"
 
@@ -4022,6 +4075,7 @@ msgstr "明文"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4769,11 +4823,11 @@ msgstr "发送中"
 msgid "Sending…"
 msgstr "正在发送…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "未加密发送，因为 OTR 只加密文本"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "未加密发送，因为文件太大无法加密"
 
@@ -4978,6 +5032,10 @@ msgstr "短代码（例如 partyparrot）"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "短代码必须匹配 [A-Za-z0-9._-]+。"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Show {hiddenCount} more"
+msgstr "再显示 {hiddenCount} 项"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "显示所有事件"
@@ -4989,6 +5047,10 @@ msgstr "显示评论"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "显示评论 ({commentCount})"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Show files"
+msgstr "显示文件"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5008,6 +5070,7 @@ msgstr "显示更少"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "收起"
 
@@ -5139,6 +5202,10 @@ msgstr "圆点变红后开始说话"
 msgid "Start video"
 msgstr "开启视频"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Starting"
+msgstr "正在启动"
+
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "正在启动工作流…"
@@ -5155,6 +5222,8 @@ msgstr "状态消息"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5177,6 +5246,10 @@ msgstr "停止直播"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "关闭视频"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "已保存的密码"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5298,6 +5371,10 @@ msgstr "用户将收到加入 {channelName} 的邀请。"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "主题工作室"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Thinking"
+msgstr "正在思考"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5592,8 +5669,8 @@ msgid "Unsuspend"
 msgstr "取消停用"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "上传图片或输入 URL。在 URL 中使用 {size} 可动态调整尺寸。"
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "上传图片或输入 URL。在 URL 中使用 {sizeToken} 可动态调整尺寸。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5607,7 +5684,7 @@ msgstr "上传已取消。"
 msgid "Upload Files"
 msgstr "上传文件"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Uploaded"
 msgstr "已上传"
 

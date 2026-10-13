@@ -124,7 +124,7 @@ msgstr "Смотрят: {0}"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} в эфире · {1} смотрят"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Загрузка # файла} few {Загрузка # файлов} many {Загрузка # файлов} other {Загрузка # файлов}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ результатов"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} в {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {# загрузка не удалась} few {# загрузки не удались} many {# загрузок не удалось} other {# загрузок не удалось}}"
 
@@ -445,6 +445,7 @@ msgid "active"
 msgstr "активен"
 
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Активность"
 
@@ -682,6 +683,10 @@ msgstr "теперь известен как **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Вы уверены, что хотите удалить это сообщение? Это действие нельзя отменить."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Попросите оператора канала изменить этот список."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Попросите администратора сервера указать URL бэкенда (draft/authtoken или obby.world/FILEHOST), чтобы управлять наборами."
@@ -702,6 +707,7 @@ msgstr "Параметры вложения"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Аудио"
 
@@ -777,9 +783,13 @@ msgid "Avatar preview"
 msgstr "Предпросмотр аватара"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Отсутствую"
 
@@ -1009,6 +1019,11 @@ msgstr "Нельзя удалить последние учётные данны
 msgid "Cancel"
 msgstr "Отмена"
 
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
+msgid "Cancel all uploads"
+msgstr "Отменить все загрузки"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Отменить подключение"
@@ -1021,7 +1036,8 @@ msgstr "Отменить шифрование"
 msgid "Cancel reply"
 msgstr "Отменить ответ"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Cancel upload"
 msgstr "Отменить загрузку"
 
@@ -1461,15 +1477,12 @@ msgstr "Подключитесь к серверу, чтобы управлят�
 msgid "Connected to"
 msgstr "Подключено к"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Connecting"
-msgstr "Подключение"
-
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Подключение..."
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Подключение…"
 
@@ -1949,7 +1962,7 @@ msgstr "Открыть эту ссылку в новой вкладке?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Не предупреждать меня о низком уровне безопасности соединений для этого сервера"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "done"
 msgstr "готово"
 
@@ -2091,7 +2104,7 @@ msgstr "Шифровать (OTR)"
 msgid "Encrypt this chat"
 msgstr "Зашифровать этот чат"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Encrypted"
 msgstr "Зашифровано"
 
@@ -2179,16 +2192,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Введите название с пробелами, эмодзи или символами. IRC-команды по-прежнему используют настоящее название ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Введите URL. Используйте {size} в адресе для динамического размера. Пример: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Введите URL. Используйте {sizeToken} в адресе для динамического размера. Пример: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Введите имя аккаунта..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Введите имя аккаунта для входа через SASL PLAIN перед входом в каналы. Оставьте пустым, чтобы подключиться анонимно."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Введите имя учётной записи, чтобы войти через SASL PLAIN перед входом в каналы. Оставьте пустым, чтобы использовать свой ник."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2349,13 +2362,16 @@ msgstr "Расширенный профиль недоступен"
 msgid "External Link Warning"
 msgstr "Предупреждение о внешней ссылке"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "ошибка"
 
-#: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+msgid "Failed to load"
+msgstr "Не удалось загрузить"
+
+#: src/components/ui/MediaViewerModal.tsx
 msgid "Failed to load audio"
 msgstr "Не удалось загрузить аудио"
 
@@ -2460,6 +2476,14 @@ msgstr "Сдаться"
 msgid "Forget credentials"
 msgstr "Удалить учётные данные"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Забыть пароли"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Забудьте сохранённые пароли SASL и сервера, чтобы они больше не отправлялись при подключении."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Забыли пароль"
@@ -2552,6 +2576,10 @@ msgstr "Есть ссылка"
 msgid "Hide comments"
 msgstr "Скрыть комментарии"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Hide files"
+msgstr "Скрыть файлы"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Скрыть канал из LIST и NAMES."
@@ -2614,8 +2642,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2850,6 +2878,10 @@ msgstr "Хранить историю чатов на этом устройст�
 msgid "Keep credentials"
 msgstr "Сохранить учётные данные"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Сохранить пароли"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Сохранять канал после ухода всех. Это могут задать только IRCops."
@@ -2964,6 +2996,7 @@ msgid "Link with {0}"
 msgstr "Привязать через {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "В эфире"
 
@@ -3470,6 +3503,10 @@ msgstr "На этом сервере нет расширенных режимо�
 msgid "No bans yet, add one above"
 msgstr "Банов пока нет, добавьте выше"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Банов пока нет, попросите оператора канала добавить"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Ботов не найдено. Очистите поиск или измените фильтр."
@@ -3507,6 +3544,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Исключений пока нет, добавьте выше"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Исключений пока нет, попросите оператора канала добавить"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Без внешних сообщений (+n)"
 
@@ -3529,6 +3570,10 @@ msgstr "хост не задан"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Приглашений пока нет, добавьте выше"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Приглашений пока нет, попросите оператора канала добавить"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3651,7 +3696,8 @@ msgid "Normal - Standard protection"
 msgstr "Обычный — стандартная защита"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Not encrypted"
 msgstr "Не зашифровано"
 
@@ -3715,9 +3761,13 @@ msgid "one of:"
 msgstr "один из:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "В сети"
 
@@ -3777,6 +3827,7 @@ msgstr "Открыть в браузере"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3808,6 +3859,7 @@ msgid "Open settings"
 msgstr "Открыть настройки"
 
 #: src/components/message/WorkflowLine.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Открыть процесс"
 
@@ -3934,6 +3986,7 @@ msgstr "Шаблон не может быть пустым"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Пауза"
 
@@ -4022,6 +4075,7 @@ msgstr "Открытый текст"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4769,11 +4823,11 @@ msgstr "Отправка"
 msgid "Sending…"
 msgstr "Отправка…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Отправлено без шифрования, потому что OTR шифрует только текст"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Отправлено без шифрования, потому что файл слишком велик для шифрования"
 
@@ -4978,6 +5032,10 @@ msgstr "шорткод (напр. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Шорткод должен соответствовать [A-Za-z0-9._-]+."
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Show {hiddenCount} more"
+msgstr "Показать ещё {hiddenCount}"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Показывать все события"
@@ -4989,6 +5047,10 @@ msgstr "Показать комментарии"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Показать комментарии ({commentCount})"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Show files"
+msgstr "Показать файлы"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5008,6 +5070,7 @@ msgstr "показать меньше"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Свернуть"
 
@@ -5139,6 +5202,10 @@ msgstr "Начните говорить, когда точка станет кр
 msgid "Start video"
 msgstr "Включить видео"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Starting"
+msgstr "Запуск"
+
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Запуск рабочего процесса…"
@@ -5155,6 +5222,8 @@ msgstr "Статусные сообщения"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5177,6 +5246,10 @@ msgstr "Остановить трансляцию"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Отключить видео"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Сохранённые пароли"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5298,6 +5371,10 @@ msgstr "Пользователь получит приглашение всту�
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Студия тем"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Thinking"
+msgstr "Думает"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5592,8 +5669,8 @@ msgid "Unsuspend"
 msgstr "Возобновить"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Загрузите изображение или введите URL. Используйте {size} в адресе для динамического размера."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Загрузите изображение или введите URL. Используйте {sizeToken} в адресе для динамического размера."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5607,7 +5684,7 @@ msgstr "Загрузка отменена."
 msgid "Upload Files"
 msgstr "Загрузить файлы"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Uploaded"
 msgstr "Загружено"
 

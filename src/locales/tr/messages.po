@@ -124,7 +124,7 @@ msgstr "{0} kişi izliyor"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} yayında · {1} izliyor"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {1 dosya yükleniyor} other {# dosya yükleniyor}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ sonuç"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} içinde {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 yükleme başarısız oldu} other {# yükleme başarısız oldu}}"
 
@@ -445,6 +445,7 @@ msgid "active"
 msgstr "aktif"
 
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Etkinlik"
 
@@ -682,6 +683,10 @@ msgstr "artık **{newNick}** olarak bilinmektedir"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Bu mesajı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Bu listeyi değiştirmesi için bir kanal operatöründen isteyin."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Paketleri yönetmek için sunucu yöneticisinden bir backend URL'si (draft/authtoken veya obby.world/FILEHOST) duyurmasını isteyin."
@@ -702,6 +707,7 @@ msgstr "Ek seçenekleri"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Ses"
 
@@ -777,9 +783,13 @@ msgid "Avatar preview"
 msgstr "Avatar önizlemesi"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Uzakta"
 
@@ -1009,6 +1019,11 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 msgid "Cancel"
 msgstr "İptal"
 
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
+msgid "Cancel all uploads"
+msgstr "Tüm yüklemeleri iptal et"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Bağlantıyı İptal Et"
@@ -1021,7 +1036,8 @@ msgstr "Şifrelemeyi iptal et"
 msgid "Cancel reply"
 msgstr "Yanıtı iptal et"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Cancel upload"
 msgstr "Yüklemeyi iptal et"
 
@@ -1461,15 +1477,12 @@ msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
 msgid "Connected to"
 msgstr "Bağlanılan"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Connecting"
-msgstr "Bağlanıyor"
-
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Bağlanıyor..."
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Bağlanıyor…"
 
@@ -1949,7 +1962,7 @@ msgstr "Bu bağlantıyı yeni sekmede açmak istiyor musunuz?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "done"
 msgstr "bitti"
 
@@ -2091,7 +2104,7 @@ msgstr "Şifrele (OTR)"
 msgid "Encrypt this chat"
 msgstr "Bu sohbeti şifrele"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Encrypted"
 msgstr "Şifrelenmiş"
 
@@ -2179,16 +2192,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Boşluk, emoji veya sembol içerebilen bir ad girin. IRC komutları yine de gerçek adı ({channelName}) kullanır."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Bir URL girin. Dinamik boyut için URL'de {size} kullanın. Örnek: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın. Örnek: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Hesap adını girin..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Kanallara katılmadan önce SASL PLAIN ile giriş yapmak için bir hesap adı girin. Anonim bağlanmak için boş bırakın."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Kanallara katılmadan önce SASL PLAIN ile giriş yapmak için bir hesap adı girin. Takma adınızı kullanmak için boş bırakın."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2349,13 +2362,16 @@ msgstr "Genişletilmiş profil kullanılamıyor"
 msgid "External Link Warning"
 msgstr "Harici Bağlantı Uyarısı"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "başarısız"
 
-#: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+msgid "Failed to load"
+msgstr "Yüklenemedi"
+
+#: src/components/ui/MediaViewerModal.tsx
 msgid "Failed to load audio"
 msgstr "Ses yüklenemedi"
 
@@ -2460,6 +2476,14 @@ msgstr "Pes et"
 msgid "Forget credentials"
 msgstr "Kimlik bilgilerini unut"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Parolaları unut"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Bağlanırken gönderilmemeleri için kayıtlı SASL ve sunucu parolalarını unutun."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Parolamı unuttum"
@@ -2552,6 +2576,10 @@ msgstr "Bağlantı içeren"
 msgid "Hide comments"
 msgstr "Yorumları gizle"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Hide files"
+msgstr "Dosyaları gizle"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Kanalı LIST ve NAMES'ten gizle."
@@ -2614,8 +2642,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2850,6 +2878,10 @@ msgstr "Sohbet geçmişini bu cihazda tut"
 msgid "Keep credentials"
 msgstr "Kimlik bilgilerini sakla"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Parolaları sakla"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Herkes ayrıldıktan sonra kanalı koru. Bunu yalnızca IRCops ayarlayabilir."
@@ -2964,6 +2996,7 @@ msgid "Link with {0}"
 msgstr "{0} ile bağla"
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Canlı"
 
@@ -3470,6 +3503,10 @@ msgstr "Bu sunucuda gelişmiş mod yok."
 msgid "No bans yet, add one above"
 msgstr "Henüz yasak yok, yukarıdan bir tane ekleyin"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Henüz yasak yok, eklemesi için bir kanal operatöründen isteyin"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Eşleşen bot yok. Aramayı temizleyin veya filtreyi değiştirin."
@@ -3507,6 +3544,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Henüz istisna yok, yukarıdan bir tane ekleyin"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Henüz istisna yok, eklemesi için bir kanal operatöründen isteyin"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Dış iletiler yok (+n)"
 
@@ -3529,6 +3570,10 @@ msgstr "sunucu ayarlanmadı"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Henüz davet yok, yukarıdan bir tane ekleyin"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Henüz davet yok, eklemesi için bir kanal operatöründen isteyin"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3651,7 +3696,8 @@ msgid "Normal - Standard protection"
 msgstr "Normal - Standart koruma"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Not encrypted"
 msgstr "Şifrelenmemiş"
 
@@ -3715,9 +3761,13 @@ msgid "one of:"
 msgstr "şunlardan biri:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Çevrimiçi"
 
@@ -3777,6 +3827,7 @@ msgstr "Tarayıcıda aç"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3808,6 +3859,7 @@ msgid "Open settings"
 msgstr "Ayarları aç"
 
 #: src/components/message/WorkflowLine.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "İş akışını aç"
 
@@ -3934,6 +3986,7 @@ msgstr "Desen boş olamaz"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Duraklat"
 
@@ -4022,6 +4075,7 @@ msgstr "Düz metin"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4769,11 +4823,11 @@ msgstr "Gönderiliyor"
 msgid "Sending…"
 msgstr "Gönderiliyor…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Şifresiz gönderildi çünkü OTR yalnızca metni şifreler"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Şifresiz gönderildi çünkü dosya şifrelenemeyecek kadar büyük"
 
@@ -4978,6 +5032,10 @@ msgstr "kısa kod (örn. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Show {hiddenCount} more"
+msgstr "{hiddenCount} tane daha göster"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Tüm Olayları Göster"
@@ -4989,6 +5047,10 @@ msgstr "Yorumları göster"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Yorumları göster ({commentCount})"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Show files"
+msgstr "Dosyaları göster"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5008,6 +5070,7 @@ msgstr "daha az göster"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Daha az göster"
 
@@ -5139,6 +5202,10 @@ msgstr "Nokta kırmızı olunca konuşmaya başlayın"
 msgid "Start video"
 msgstr "Videoyu başlat"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Starting"
+msgstr "Başlatılıyor"
+
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "İş akışı başlatılıyor…"
@@ -5155,6 +5222,8 @@ msgstr "Durum Mesajları"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5177,6 +5246,10 @@ msgstr "Yayını durdur"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Videoyu durdur"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Kayıtlı parolalar"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5298,6 +5371,10 @@ msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Tema Stüdyosu"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Thinking"
+msgstr "Düşünüyor"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5592,8 +5669,8 @@ msgid "Unsuspend"
 msgstr "Askıdan al"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Bir resim yükleyin veya bir URL girin. Dinamik boyut için URL'de {size} kullanın."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Bir resim yükleyin veya bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5607,7 +5684,7 @@ msgstr "Yükleme iptal edildi."
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Uploaded"
 msgstr "Yüklendi"
 

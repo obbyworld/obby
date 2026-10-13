@@ -111,6 +111,7 @@ import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ColorPicker from "../ui/ColorPicker";
 import CompletionList from "../ui/CompletionList";
+import { ComposerDock, type UploadJob } from "../ui/ComposerDock";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
 import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
@@ -138,10 +139,6 @@ import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
-import {
-  type UploadJob,
-  UploadProgressOverlay,
-} from "../ui/UploadProgressOverlay";
 import UserContextMenu from "../ui/UserContextMenu";
 import {
   MemoChannelMessageList as ChannelMessageList,
@@ -2272,6 +2269,14 @@ export const ChatArea: React.FC<{
                   </div>,
                   document.body,
                 )}
+              <ComposerDock
+                jobs={uploadJobs}
+                onCancel={cancelUploadJob}
+                serverId={selectedServerId}
+                channel={
+                  selectedChannel?.name ?? selectedPrivateChat?.username ?? null
+                }
+              />
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}
@@ -2487,12 +2492,6 @@ export const ChatArea: React.FC<{
                   customEmojis={pickerCustomEmojis}
                 />
               )}
-
-              {/* Multi-file upload progress strip, anchored above input */}
-              <UploadProgressOverlay
-                jobs={uploadJobs}
-                onCancel={cancelUploadJob}
-              />
 
               {completion.isOpen && (
                 <CompletionList

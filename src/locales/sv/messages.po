@@ -124,7 +124,7 @@ msgstr "{0} tittar"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} sänder · {1} tittar"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Laddar upp 1 fil} other {Laddar upp # filer}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ resultat"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} i {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 uppladdning misslyckades} other {# uppladdningar misslyckades}}"
 
@@ -445,6 +445,7 @@ msgid "active"
 msgstr "aktiv"
 
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Aktivitet"
 
@@ -682,6 +683,10 @@ msgstr "är nu känd som **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Är du säker på att du vill ta bort det här meddelandet? Den här åtgärden kan inte ångras."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Be en kanaloperatör att ändra den här listan."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Be serveradministratören att annonsera en backend-URL (draft/authtoken eller obby.world/FILEHOST) för att hantera paket."
@@ -702,6 +707,7 @@ msgstr "Bilagealternativ"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Ljud"
 
@@ -777,9 +783,13 @@ msgid "Avatar preview"
 msgstr "Förhandsvisning av avatar"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Borta"
 
@@ -1009,6 +1019,11 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 msgid "Cancel"
 msgstr "Avbryt"
 
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
+msgid "Cancel all uploads"
+msgstr "Avbryt alla uppladdningar"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Avbryt anslutning"
@@ -1021,7 +1036,8 @@ msgstr "Avbryt kryptering"
 msgid "Cancel reply"
 msgstr "Avbryt svar"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Cancel upload"
 msgstr "Avbryt uppladdning"
 
@@ -1461,15 +1477,12 @@ msgstr "Anslut till en server för att hantera operatörsinställningar."
 msgid "Connected to"
 msgstr "Ansluten till"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Connecting"
-msgstr "Ansluter"
-
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Ansluter..."
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Ansluter…"
 
@@ -1949,7 +1962,7 @@ msgstr "Vill du öppna den här länken i en ny flik?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "done"
 msgstr "klart"
 
@@ -2091,7 +2104,7 @@ msgstr "Kryptera (OTR)"
 msgid "Encrypt this chat"
 msgstr "Kryptera den här chatten"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Encrypted"
 msgstr "Krypterad"
 
@@ -2179,16 +2192,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Ange ett namn med valfria mellanslag, emojis eller symboler. IRC-kommandon använder fortfarande det riktiga namnet ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Ange en URL. Använd {size} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Ange kontonamn..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Ange ett kontonamn för inloggning med SASL PLAIN innan du går med i kanaler. Lämna tomt för att ansluta anonymt."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Ange ett kontonamn för att logga in med SASL PLAIN innan du går med i kanaler. Lämna tomt för att använda ditt smeknamn."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2349,13 +2362,16 @@ msgstr "Utökad profil är inte tillgänglig"
 msgid "External Link Warning"
 msgstr "Varning för extern länk"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "misslyckades"
 
-#: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+msgid "Failed to load"
+msgstr "Det gick inte att läsa in"
+
+#: src/components/ui/MediaViewerModal.tsx
 msgid "Failed to load audio"
 msgstr "Det gick inte att läsa in ljud"
 
@@ -2460,6 +2476,14 @@ msgstr "Ge upp"
 msgid "Forget credentials"
 msgstr "Glöm inloggningsuppgifter"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Glöm lösenord"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Glöm de sparade SASL- och serverlösenorden så att de inte längre skickas vid anslutning."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Glömt lösenord"
@@ -2552,6 +2576,10 @@ msgstr "Har länk"
 msgid "Hide comments"
 msgstr "Dölj kommentarer"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Hide files"
+msgstr "Dölj filer"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Dölj kanalen från LIST och NAMES."
@@ -2614,8 +2642,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2850,6 +2878,10 @@ msgstr "Behåll chatthistorik på denna enhet"
 msgid "Keep credentials"
 msgstr "Behåll inloggningsuppgifter"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Behåll lösenord"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Behåll kanalen när alla har lämnat. Bara IRCops kan ställa in detta."
@@ -2964,6 +2996,7 @@ msgid "Link with {0}"
 msgstr "Länka med {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Live"
 
@@ -3470,6 +3503,10 @@ msgstr "Inga avancerade lägen på den här servern."
 msgid "No bans yet, add one above"
 msgstr "Inga bannlysningar ännu, lägg till en ovan"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Inga bannlysningar än, be en kanaloperatör lägga till en"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Inga bottar matchar. Rensa sökningen eller ändra filtret."
@@ -3507,6 +3544,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Inga undantag ännu, lägg till ett ovan"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Inga undantag än, be en kanaloperatör lägga till ett"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Inga externa meddelanden (+n)"
 
@@ -3529,6 +3570,10 @@ msgstr "ingen värd inställd"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Inga inbjudningar ännu, lägg till en ovan"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Inga inbjudningar än, be en kanaloperatör lägga till en"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3651,7 +3696,8 @@ msgid "Normal - Standard protection"
 msgstr "Normal – standardskydd"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Not encrypted"
 msgstr "Inte krypterat"
 
@@ -3715,9 +3761,13 @@ msgid "one of:"
 msgstr "en av:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -3777,6 +3827,7 @@ msgstr "Öppna i webbläsare"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3808,6 +3859,7 @@ msgid "Open settings"
 msgstr "Öppna inställningar"
 
 #: src/components/message/WorkflowLine.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Öppna arbetsflöde"
 
@@ -3934,6 +3986,7 @@ msgstr "Mönstret kan inte vara tomt"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Pausa"
 
@@ -4022,6 +4075,7 @@ msgstr "Klartext"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4769,11 +4823,11 @@ msgstr "Skickar"
 msgid "Sending…"
 msgstr "Skickar…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Skickades okrypterat eftersom OTR bara krypterar text"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Skickades okrypterat eftersom filen är för stor för att krypteras"
 
@@ -4978,6 +5032,10 @@ msgstr "kortkod (t.ex. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kortkoden måste matcha [A-Za-z0-9._-]+."
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Show {hiddenCount} more"
+msgstr "Visa {hiddenCount} till"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Visa alla händelser"
@@ -4989,6 +5047,10 @@ msgstr "Visa kommentarer"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Visa kommentarer ({commentCount})"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Show files"
+msgstr "Visa filer"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5008,6 +5070,7 @@ msgstr "visa mindre"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Visa mindre"
 
@@ -5139,6 +5202,10 @@ msgstr "Börja prata när pricken blir röd"
 msgid "Start video"
 msgstr "Starta video"
 
+#: src/components/ui/ComposerDock.tsx
+msgid "Starting"
+msgstr "Startar"
+
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Startar arbetsflöde…"
@@ -5155,6 +5222,8 @@ msgstr "Statusmeddelanden"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5177,6 +5246,10 @@ msgstr "Sluta streama"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Stoppa video"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Sparade lösenord"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5298,6 +5371,10 @@ msgstr "Användaren får en inbjudan att gå med i {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Temastudio"
+
+#: src/components/ui/ComposerDock.tsx
+msgid "Thinking"
+msgstr "Tänker"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5592,8 +5669,8 @@ msgid "Unsuspend"
 msgstr "Återaktivera"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Ladda upp en bild eller ange en URL. Använd {size} i URL:en för dynamisk storlek."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Ladda upp en bild eller ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5607,7 +5684,7 @@ msgstr "Uppladdningen avbröts."
 msgid "Upload Files"
 msgstr "Ladda upp filer"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/ComposerDock.tsx
 msgid "Uploaded"
 msgstr "Uppladdad"
 
