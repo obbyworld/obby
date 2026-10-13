@@ -8,9 +8,9 @@ import {
   FaFile,
   FaLock,
   FaLockOpen,
-  FaSpinner,
   FaTimes,
 } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import type { PlainUploadReason } from "../../lib/e2ee/media";
 import { formatFileSize } from "../../lib/mediaUpload";
 
@@ -43,12 +43,25 @@ const JobStatusIcon: React.FC<{ status: UploadJob["status"] }> = ({
     <FaCheck className="w-3.5 h-3.5 text-discord-green shrink-0" />
   ) : status === "failed" ? (
     <FaTimes className="w-3.5 h-3.5 text-discord-red shrink-0" />
-  ) : (
-    <FaSpinner className="w-3.5 h-3.5 animate-spin text-discord-primary shrink-0" />
-  );
+  ) : null;
+
+const ProgressTrack: React.FC<{ percent: number; isFailed: boolean }> = ({
+  percent,
+  isFailed,
+}) => (
+  <div className="h-1.5 rounded-full bg-discord-dark-500 overflow-hidden">
+    <div
+      className={`h-full rounded-full ${isFailed ? "bg-discord-red" : "bg-discord-primary"}`}
+      style={{ width: `${percent}%` }}
+    />
+  </div>
+);
+
+const jobPercent = (job: UploadJob) =>
+  job.total > 0 ? Math.min(100, (job.loaded / job.total) * 100) : 0;
 
 const JobBytes: React.FC<{ job: UploadJob }> = ({ job }) => (
-  <span className="text-xs row-meta whitespace-nowrap">
+  <span className="row-meta whitespace-nowrap">
     {job.status === "failed" ? (
       <Trans>failed</Trans>
     ) : job.status === "done" ? (
@@ -78,10 +91,32 @@ const EncryptionNote: React.FC<{ job: UploadJob }> = ({ job }) =>
     </span>
   );
 
+const BarButton: React.FC<{
+  label: string;
+  onClick: () => void;
+  isExpanded?: boolean;
+  children: React.ReactNode;
+}> = ({ label, onClick, isExpanded, children }) => {
+  const isTouch = useIsTouchInput();
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`icon-button ${isTouch ? "w-11 h-11" : "w-6 h-6"}`}
+      aria-label={label}
+      title={label}
+      aria-expanded={isExpanded}
+    >
+      {children}
+    </button>
+  );
+};
+
 // We show uploads as one line in the strip under the header, so the end of the chat stays visible.
 export const UploadProgressBar: React.FC<Props> = ({ jobs, onCancel }) => {
   const { t } = useLingui();
   const [isExpanded, setIsExpanded] = useState(false);
+  const isTouch = useIsTouchInput();
   if (jobs.length === 0) return null;
 
   const single = jobs.length === 1 ? jobs[0] : null;
@@ -99,7 +134,9 @@ export const UploadProgressBar: React.FC<Props> = ({ jobs, onCancel }) => {
 
   return (
     <div className="shrink-0 border-b border-discord-dark-400 bg-discord-dark-300 animate-in slide-in-from-top-2 duration-200">
-      <div className="relative h-9 flex items-center gap-2 px-3 min-w-0">
+      <div
+        className={`relative flex items-center gap-2 px-3 min-w-0 ${isTouch ? "h-11" : "h-9"}`}
+      >
         <JobStatusIcon status={summaryStatus} />
         <FaFile className="w-3 h-3 text-discord-text-muted shrink-0" />
         <span
@@ -124,54 +161,45 @@ export const UploadProgressBar: React.FC<Props> = ({ jobs, onCancel }) => {
             <Trans>Uploaded</Trans>
           )}
         </span>
-        {hasPlainUpload && !isExpanded && (
+        {hasPlainUpload && !single && !isExpanded && (
           <FaLockOpen className="w-3 h-3 text-amber-400 shrink-0" />
         )}
         {single ? (
           <JobBytes job={single} />
         ) : (
-          <span className="text-xs row-meta whitespace-nowrap">
+          <span className="row-meta whitespace-nowrap">
             {`${formatFileSize(loaded)} / ${formatFileSize(total)}`}
           </span>
         )}
         {!single && (
-          <button
-            type="button"
+          <BarButton
+            label={isExpanded ? t`Collapse` : t`Expand`}
             onClick={() => setIsExpanded((open) => !open)}
-            className="icon-button w-6 h-6 rounded shrink-0"
-            aria-expanded={isExpanded}
-            aria-label={isExpanded ? t`Collapse` : t`Expand`}
-            title={isExpanded ? t`Collapse` : t`Expand`}
+            isExpanded={isExpanded}
           >
             {isExpanded ? (
               <FaChevronUp className="w-3 h-3" />
             ) : (
               <FaChevronDown className="w-3 h-3" />
             )}
-          </button>
+          </BarButton>
         )}
         {single && onCancel && single.status !== "done" && (
-          <button
-            type="button"
+          <BarButton
+            label={t`Cancel upload`}
             onClick={() => onCancel(single.id)}
-            className="icon-button w-6 h-6 rounded shrink-0"
-            aria-label={t`Cancel upload`}
-            title={t`Cancel upload`}
           >
             <FaTimes className="w-3 h-3" />
-          </button>
-        )}
-        {activeCount > 0 && (
-          <div className="absolute inset-x-0 bottom-0 h-0.5 bg-white/5">
-            <div
-              className="h-full bg-discord-primary transition-[width] duration-150"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
+          </BarButton>
         )}
       </div>
+      {summaryStatus !== "done" && (
+        <div className="px-3 pb-2">
+          <ProgressTrack percent={pct} isFailed={summaryStatus === "failed"} />
+        </div>
+      )}
       {single && (single.encrypted !== undefined || single.error) && (
-        <div className="px-3 pb-1.5 pl-[3.25rem] flex flex-col gap-0.5">
+        <div className="px-3 pb-2 flex flex-col gap-0.5">
           {single.encrypted !== undefined && <EncryptionNote job={single} />}
           {single.error && (
             <p className="text-xs text-discord-red">{single.error}</p>
@@ -192,24 +220,25 @@ export const UploadProgressBar: React.FC<Props> = ({ jobs, onCancel }) => {
                 </span>
                 <JobBytes job={job} />
                 {onCancel && job.status !== "done" && (
-                  <button
-                    type="button"
+                  <BarButton
+                    label={t`Cancel upload`}
                     onClick={() => onCancel(job.id)}
-                    className="icon-button w-6 h-6 rounded shrink-0"
-                    aria-label={t`Cancel upload`}
-                    title={t`Cancel upload`}
                   >
                     <FaTimes className="w-3 h-3" />
-                  </button>
+                  </BarButton>
                 )}
               </div>
-              {job.encrypted !== undefined && (
-                <div className="pl-5">
-                  <EncryptionNote job={job} />
+              {job.encrypted !== undefined && <EncryptionNote job={job} />}
+              {job.status !== "done" && (
+                <div className="mt-1">
+                  <ProgressTrack
+                    percent={jobPercent(job)}
+                    isFailed={job.status === "failed"}
+                  />
                 </div>
               )}
               {job.error && (
-                <p className="text-xs text-discord-red pl-5">{job.error}</p>
+                <p className="text-xs text-discord-red">{job.error}</p>
               )}
             </div>
           ))}
