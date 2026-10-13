@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
-import type { Message, User } from "../../types";
+import type { Message, Server, User } from "../../types";
 import {
   generateDeterministicId,
   getCurrentSelection,
@@ -23,6 +23,30 @@ function appendMessage(
   store.setState((s) => ({
     messages: { ...s.messages, [key]: [...(s.messages[key] || []), message] },
   }));
+}
+
+function setUserAwayInChannels(
+  server: Server,
+  nick: string | undefined,
+  isAway: boolean,
+  awayMessage: string | undefined,
+): Server {
+  if (!nick) return server;
+  const lowerNick = nick.toLowerCase();
+  let hasChanged = false;
+  const channels = server.channels.map((channel) => {
+    const index = channel.users.findIndex(
+      (user) => user.username.toLowerCase() === lowerNick,
+    );
+    const user = channel.users[index];
+    if (!user || (user.isAway === isAway && user.awayMessage === awayMessage))
+      return channel;
+    hasChanged = true;
+    const users = [...channel.users];
+    users[index] = { ...user, isAway, awayMessage };
+    return { ...channel, users };
+  });
+  return hasChanged ? { ...server, channels } : server;
 }
 
 function makeEventMessage(
@@ -1122,40 +1146,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          const updatedChannels = s.channels.map((channel) => {
-            const updatedUsers = channel.users.map((user) => {
-              if (user.username === username) {
-                const newIsAway = !!awayMessage;
-                const newAwayMessage = awayMessage || undefined;
-
-                if (
-                  user.isAway === newIsAway &&
-                  user.awayMessage === newAwayMessage
-                ) {
-                  return user;
-                }
-
-                return {
-                  ...user,
-                  isAway: newIsAway,
-                  awayMessage: newAwayMessage,
-                };
-              }
-              return user;
-            });
-
-            if (updatedUsers === channel.users) {
-              return channel;
-            }
-
-            return { ...channel, users: updatedUsers };
-          });
-
-          if (updatedChannels === s.channels) {
-            return s;
-          }
-
-          return { ...s, channels: updatedChannels };
+          return setUserAwayInChannels(
+            s,
+            username,
+            !!awayMessage,
+            awayMessage || undefined,
+          );
         }
         return s;
       });
@@ -1270,11 +1266,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return {
-            ...s,
-            isAway: true,
-            awayMessage: message,
-          };
+          return setUserAwayInChannels(
+            { ...s, isAway: true, awayMessage: message },
+            ircClient.getNick(serverId),
+            true,
+            message,
+          );
         }
         return s;
       });
@@ -1298,11 +1295,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return {
-            ...s,
-            isAway: false,
-            awayMessage: undefined,
-          };
+          return setUserAwayInChannels(
+            { ...s, isAway: false, awayMessage: undefined },
+            ircClient.getNick(serverId),
+            false,
+            undefined,
+          );
         }
         return s;
       });
