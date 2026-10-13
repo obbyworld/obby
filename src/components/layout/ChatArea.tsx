@@ -111,7 +111,6 @@ import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
 import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ColorPicker from "../ui/ColorPicker";
 import CompletionList from "../ui/CompletionList";
-import { ComposerDock, type UploadJob } from "../ui/ComposerDock";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
 import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
@@ -139,6 +138,7 @@ import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
+import { type UploadJob, UploadProgressBar } from "../ui/UploadProgressBar";
 import UserContextMenu from "../ui/UserContextMenu";
 import {
   MemoChannelMessageList as ChannelMessageList,
@@ -2122,6 +2122,7 @@ export const ChatArea: React.FC<{
 
       <TopicMediaStrip />
       <MiniMediaPlayer />
+      <UploadProgressBar jobs={uploadJobs} onCancel={cancelUploadJob} />
       {/* Member list overlay replaces messages when desktop is too narrow for sidebar */}
       {showMemberListOverlay && (
         <div
@@ -2269,14 +2270,6 @@ export const ChatArea: React.FC<{
                   </div>,
                   document.body,
                 )}
-              <ComposerDock
-                jobs={uploadJobs}
-                onCancel={cancelUploadJob}
-                serverId={selectedServerId}
-                channel={
-                  selectedChannel?.name ?? selectedPrivateChat?.username ?? null
-                }
-              />
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}

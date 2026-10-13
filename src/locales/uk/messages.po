@@ -124,7 +124,7 @@ msgstr "Дивляться: {0}"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} в ефірі · {1} дивляться"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Завантаження 1 файлу} few {Завантаження # файлів} many {Завантаження # файлів} other {Завантаження # файлу}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ результатів"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} у {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {Не вдалося завантажити 1 файл} few {Не вдалося завантажити # файли} many {Не вдалося завантажити # файлів} other {Не вдалося завантажити # файлу}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "активний"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Активність"
 
@@ -707,7 +706,6 @@ msgstr "Параметри вкладення"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Аудіо"
 
@@ -1019,11 +1017,6 @@ msgstr "Не можна видалити останні облікові дан�
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Скасувати всі завантаження"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Скасувати підключення"
@@ -1036,8 +1029,10 @@ msgstr "Скасувати шифрування"
 msgid "Cancel reply"
 msgstr "Скасувати відповідь"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Скасувати завантаження"
 
@@ -1367,6 +1362,8 @@ msgstr "Код прийнято."
 msgid "Code Snippets"
 msgstr "Фрагменти коду"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Підключіться до сервера, щоб керувати н
 msgid "Connected to"
 msgstr "Підключено до"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Підключення"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Підключення..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Підключення…"
 
@@ -1962,7 +1962,7 @@ msgstr "Бажаєте відкрити це посилання в новій в
 msgid "Don't warn me about low link security for this server"
 msgstr "Не попереджати мене про низький рівень безпеки для цього сервера"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "готово"
 
@@ -2104,7 +2104,7 @@ msgstr "Шифрувати (OTR)"
 msgid "Encrypt this chat"
 msgstr "Зашифрувати цей чат"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Зашифровано"
 
@@ -2329,6 +2329,8 @@ msgstr "Вийти з повноекранного режиму"
 msgid "Exit spotlight"
 msgstr "Вийти з режиму виділення"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Розширений профіль недоступний"
 msgid "External Link Warning"
 msgstr "Попередження про зовнішнє посилання"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "помилка"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Не вдалося завантажити"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Не вдалося завантажити аудіо"
 
@@ -2575,10 +2574,6 @@ msgstr "Має посилання"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Приховати коментарі"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Сховати файли"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "Прив'язати через {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "В ефірі"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Нормальний - стандартний захист"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Не зашифровано"
 
@@ -3827,7 +3820,6 @@ msgstr "Відкрити в браузері"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Відкрити налаштування"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Відкрити процес"
 
@@ -3986,7 +3977,6 @@ msgstr "Шаблон не може бути порожнім"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Пауза"
 
@@ -4075,7 +4065,6 @@ msgstr "Відкритий текст"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Надсилання"
 msgid "Sending…"
 msgstr "Надсилання…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Надіслано без шифрування, бо OTR шифрує лише текст"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Надіслано без шифрування, бо файл завеликий для шифрування"
 
@@ -5032,10 +5021,6 @@ msgstr "шорткод (напр. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Шорткод має відповідати [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Показати ще {hiddenCount}"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Показати всі події"
@@ -5047,10 +5032,6 @@ msgstr "Показати коментарі"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Показати коментарі ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Показати файли"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "показати менше"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Показати менше"
 
@@ -5202,10 +5182,6 @@ msgstr "Почніть говорити, коли крапка стане чер
 msgid "Start video"
 msgstr "Увімкнути відео"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Запуск"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Запуск робочого процесу…"
@@ -5222,8 +5198,6 @@ msgstr "Статусні повідомлення"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Користувач отримає запрошення приєдна�
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Студія тем"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Думає"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Завантаження скасовано."
 msgid "Upload Files"
 msgstr "Завантажити файли"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Завантажено"
 

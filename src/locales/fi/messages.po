@@ -124,7 +124,7 @@ msgstr "{0} katsoo"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} striimaa · {1} katsoo"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Ladataan 1 tiedostoa} other {Ladataan # tiedostoa}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ tulosta"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} kohteessa {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 lataus epäonnistui} other {# latausta epäonnistui}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "aktiivinen"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Toiminta"
 
@@ -707,7 +706,6 @@ msgstr "Liitteet-valinnat"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Ääni"
 
@@ -1019,11 +1017,6 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Peruuta kaikki lähetykset"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Peruuta yhteys"
@@ -1036,8 +1029,10 @@ msgstr "Peruuta salaus"
 msgid "Cancel reply"
 msgstr "Peruuta vastaus"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Peruuta lataus"
 
@@ -1367,6 +1362,8 @@ msgstr "Koodi hyväksytty."
 msgid "Code Snippets"
 msgstr "Koodinpätkät"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Yhdistä palvelimeen hallitaksesi operaattoriasetuksia."
 msgid "Connected to"
 msgstr "Yhdistetty palvelimeen"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Yhdistetään"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Yhdistetään..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Yhdistetään…"
 
@@ -1962,7 +1962,7 @@ msgstr "Haluatko avata tämän linkin uudessa välilehdessä?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "valmis"
 
@@ -2104,7 +2104,7 @@ msgstr "Salaa (OTR)"
 msgid "Encrypt this chat"
 msgstr "Salaa tämä keskustelu"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Salattu"
 
@@ -2329,6 +2329,8 @@ msgstr "Poistu koko näytöstä"
 msgid "Exit spotlight"
 msgstr "Poistu spotlight-tilasta"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Laajennettu profiili ei ole saatavilla"
 msgid "External Link Warning"
 msgstr "Ulkoisen linkin varoitus"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "epäonnistui"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Lataus epäonnistui"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Äänen lataaminen epäonnistui"
 
@@ -2575,10 +2574,6 @@ msgstr "Sisältää linkin"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Piilota kommentit"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Piilota tiedostot"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "Yhdistä palvelulla {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Live"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Normaali – tavallinen suojaus"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Ei salattu"
 
@@ -3827,7 +3820,6 @@ msgstr "Avaa selaimessa"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Avaa asetukset"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Avaa työnkulku"
 
@@ -3986,7 +3977,6 @@ msgstr "Malli ei voi olla tyhjä"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Tauko"
 
@@ -4075,7 +4065,6 @@ msgstr "Salaamaton"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Lähetetään"
 msgid "Sending…"
 msgstr "Lähetetään…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Lähetetty salaamattomana, koska OTR salaa vain tekstin"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Lähetetty salaamattomana, koska tiedosto on liian suuri salattavaksi"
 
@@ -5032,10 +5021,6 @@ msgstr "lyhytkoodi (esim. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Lyhytkoodin on vastattava muotoa [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Näytä {hiddenCount} lisää"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Näytä kaikki tapahtumat"
@@ -5047,10 +5032,6 @@ msgstr "Näytä kommentit"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Näytä kommentit ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Näytä tiedostot"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "näytä vähemmän"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Näytä vähemmän"
 
@@ -5202,10 +5182,6 @@ msgstr "Aloita puhuminen, kun piste muuttuu punaiseksi"
 msgid "Start video"
 msgstr "Käynnistä video"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Käynnistyy"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Käynnistetään työnkulkua…"
@@ -5222,8 +5198,6 @@ msgstr "Tilaviestit"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Käyttäjä saa kutsun liittyä kanavalle {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Teemastudio"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Miettii"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Lataus peruutettu."
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Ladattu"
 

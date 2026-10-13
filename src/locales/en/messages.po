@@ -123,7 +123,7 @@ msgstr "{0} watching"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 
@@ -143,7 +143,7 @@ msgstr "{count}+ results"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} in {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 
@@ -444,7 +444,6 @@ msgid "active"
 msgstr "active"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Activity"
 
@@ -706,7 +705,6 @@ msgstr "Attachment options"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Audio"
 
@@ -1018,11 +1016,6 @@ msgstr "Can't remove your last 2FA credential"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Cancel all uploads"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Cancel Connection"
@@ -1035,8 +1028,10 @@ msgstr "Cancel encryption"
 msgid "Cancel reply"
 msgstr "Cancel reply"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Cancel upload"
 
@@ -1366,6 +1361,8 @@ msgstr "Code accepted."
 msgid "Code Snippets"
 msgstr "Code Snippets"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1476,12 +1473,15 @@ msgstr "Connect to a server to manage operator settings."
 msgid "Connected to"
 msgstr "Connected to"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Connecting"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Connecting..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Connecting…"
 
@@ -1961,7 +1961,7 @@ msgstr "Do you want to open this link in a new tab?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Don't warn me about low link security for this server"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "done"
 
@@ -2103,7 +2103,7 @@ msgstr "Encrypt (OTR)"
 msgid "Encrypt this chat"
 msgstr "Encrypt this chat"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Encrypted"
 
@@ -2328,6 +2328,8 @@ msgstr "Exit full screen"
 msgid "Exit spotlight"
 msgstr "Exit spotlight"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2361,16 +2363,13 @@ msgstr "Extended profile unavailable"
 msgid "External Link Warning"
 msgstr "External Link Warning"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "failed"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Failed to load"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Failed to load audio"
 
@@ -2574,10 +2573,6 @@ msgstr "Has link"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Hide comments"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Hide files"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2995,7 +2990,6 @@ msgid "Link with {0}"
 msgstr "Link with {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Live"
 
@@ -3695,8 +3689,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal - Standard protection"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Not encrypted"
 
@@ -3826,7 +3819,6 @@ msgstr "Open in browser"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3858,7 +3850,6 @@ msgid "Open settings"
 msgstr "Open settings"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Open workflow"
 
@@ -3985,7 +3976,6 @@ msgstr "Pattern cannot be empty"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Pause"
 
@@ -4074,7 +4064,6 @@ msgstr "Plaintext"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4822,11 +4811,11 @@ msgstr "Sending"
 msgid "Sending…"
 msgstr "Sending…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Sent unencrypted because OTR encrypts text only"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Sent unencrypted because the file is too large to encrypt"
 
@@ -5031,10 +5020,6 @@ msgstr "shortcode (e.g. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode must match [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Show {hiddenCount} more"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Show All Events"
@@ -5046,10 +5031,6 @@ msgstr "Show comments"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Show comments ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Show files"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5069,7 +5050,6 @@ msgstr "show less"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Show less"
 
@@ -5201,10 +5181,6 @@ msgstr "Start talking once the dot turns red"
 msgid "Start video"
 msgstr "Start video"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Starting"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Starting workflow…"
@@ -5221,8 +5197,6 @@ msgstr "Status Messages"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5370,10 +5344,6 @@ msgstr "The user will receive an invitation to join {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Theme Studio"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Thinking"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5683,7 +5653,7 @@ msgstr "Upload cancelled."
 msgid "Upload Files"
 msgstr "Upload Files"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Uploaded"
 

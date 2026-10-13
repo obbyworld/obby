@@ -124,7 +124,7 @@ msgstr "{0} 人正在观看"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} 人正在直播 · {1} 人观看中"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, other {正在上传 # 个文件}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ 条结果"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} 中的 {countLabel}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, other {# 个上传失败}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "活跃"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "活动"
 
@@ -707,7 +706,6 @@ msgstr "附件选项"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "音频"
 
@@ -1019,11 +1017,6 @@ msgstr "无法删除你的最后一个 2FA 凭据"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "取消所有上传"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "取消连接"
@@ -1036,8 +1029,10 @@ msgstr "取消加密"
 msgid "Cancel reply"
 msgstr "取消回复"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "取消上传"
 
@@ -1367,6 +1362,8 @@ msgstr "代码已接受。"
 msgid "Code Snippets"
 msgstr "代码片段"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "连接到服务器以管理操作员设置。"
 msgid "Connected to"
 msgstr "已连接到"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "连接中"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "正在连接..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "正在连接…"
 
@@ -1962,7 +1962,7 @@ msgstr "是否在新标签页中打开此链接？"
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "完成"
 
@@ -2104,7 +2104,7 @@ msgstr "加密 (OTR)"
 msgid "Encrypt this chat"
 msgstr "加密此聊天"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "已加密"
 
@@ -2329,6 +2329,8 @@ msgstr "退出全屏"
 msgid "Exit spotlight"
 msgstr "退出聚焦"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "扩展资料不可用"
 msgid "External Link Warning"
 msgstr "外部链接警告"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失败"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "加载失败"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "音频加载失败"
 
@@ -2575,10 +2574,6 @@ msgstr "包含链接"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "隐藏评论"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "隐藏文件"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "通过 {0} 关联"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "直播中"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "普通 – 标准保护"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "未加密"
 
@@ -3827,7 +3820,6 @@ msgstr "在浏览器中打开"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "打开设置"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "打开工作流"
 
@@ -3986,7 +3977,6 @@ msgstr "模式不能为空"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "暂停"
 
@@ -4075,7 +4065,6 @@ msgstr "明文"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "发送中"
 msgid "Sending…"
 msgstr "正在发送…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "未加密发送，因为 OTR 只加密文本"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "未加密发送，因为文件太大无法加密"
 
@@ -5032,10 +5021,6 @@ msgstr "短代码（例如 partyparrot）"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "短代码必须匹配 [A-Za-z0-9._-]+。"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "再显示 {hiddenCount} 项"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "显示所有事件"
@@ -5047,10 +5032,6 @@ msgstr "显示评论"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "显示评论 ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "显示文件"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "显示更少"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "收起"
 
@@ -5202,10 +5182,6 @@ msgstr "圆点变红后开始说话"
 msgid "Start video"
 msgstr "开启视频"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "正在启动"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "正在启动工作流…"
@@ -5222,8 +5198,6 @@ msgstr "状态消息"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "用户将收到加入 {channelName} 的邀请。"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "主题工作室"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "正在思考"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "上传已取消。"
 msgid "Upload Files"
 msgstr "上传文件"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "已上传"
 

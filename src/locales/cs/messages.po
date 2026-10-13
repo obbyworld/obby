@@ -124,7 +124,7 @@ msgstr "Sleduje: {0}"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} vysílá · {1} sleduje"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Nahrávání 1 souboru} few {Nahrávání # souborů} other {Nahrávání # souborů}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ výsledků"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} v {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 nahrání selhalo} few {# nahrání selhala} other {# nahrání selhalo}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "aktivní"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Aktivita"
 
@@ -707,7 +706,6 @@ msgstr "Možnosti přílohy"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Zvuk"
 
@@ -1019,11 +1017,6 @@ msgstr "Nelze odebrat poslední údaj 2FA"
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Zrušit všechna nahrávání"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Zrušit připojení"
@@ -1036,8 +1029,10 @@ msgstr "Zrušit šifrování"
 msgid "Cancel reply"
 msgstr "Zrušit odpověď"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Zrušit nahrávání"
 
@@ -1367,6 +1362,8 @@ msgstr "Kód přijat."
 msgid "Code Snippets"
 msgstr "Úryvky kódu"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Připojte se k serveru a spravujte nastavení operátora."
 msgid "Connected to"
 msgstr "Připojeno k"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Připojování"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Připojování..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Připojování…"
 
@@ -1962,7 +1962,7 @@ msgstr "Chcete otevřít tento odkaz v nové záložce?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "hotovo"
 
@@ -2104,7 +2104,7 @@ msgstr "Šifrovat (OTR)"
 msgid "Encrypt this chat"
 msgstr "Šifrovat tento chat"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Šifrováno"
 
@@ -2329,6 +2329,8 @@ msgstr "Ukončit celou obrazovku"
 msgid "Exit spotlight"
 msgstr "Ukončit zvýraznění"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Rozšířený profil není dostupný"
 msgid "External Link Warning"
 msgstr "Varování o externím odkazu"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "selhalo"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Načtení selhalo"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Nepodařilo se načíst zvuk"
 
@@ -2575,10 +2574,6 @@ msgstr "Obsahuje odkaz"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Skrýt komentáře"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Skrýt soubory"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "Propojit s {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Živě"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Normální - standardní ochrana"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Nešifrováno"
 
@@ -3827,7 +3820,6 @@ msgstr "Otevřít v prohlížeči"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Otevřít nastavení"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Otevřít workflow"
 
@@ -3986,7 +3977,6 @@ msgstr "Vzor nemůže být prázdný"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Pauza"
 
@@ -4075,7 +4065,6 @@ msgstr "Nešifrované"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Odesílání"
 msgid "Sending…"
 msgstr "Odesílání…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Odesláno nešifrovaně, protože OTR šifruje jen text"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Odesláno nešifrovaně, protože soubor je příliš velký na šifrování"
 
@@ -5032,10 +5021,6 @@ msgstr "shortcode (např. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode musí odpovídat [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Zobrazit {hiddenCount} další"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Zobrazit všechny události"
@@ -5047,10 +5032,6 @@ msgstr "Zobrazit komentáře"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Zobrazit komentáře ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Zobrazit soubory"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "zobrazit méně"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Zobrazit méně"
 
@@ -5202,10 +5182,6 @@ msgstr "Začněte mluvit, až tečka zčervená"
 msgid "Start video"
 msgstr "Zapnout video"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Spouští se"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Spouštění pracovního postupu…"
@@ -5222,8 +5198,6 @@ msgstr "Stavové zprávy"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Studio motivů"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Přemýšlí"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Nahrávání zrušeno."
 msgid "Upload Files"
 msgstr "Nahrát soubory"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Nahráno"
 

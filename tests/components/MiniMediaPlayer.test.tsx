@@ -1,9 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import {
-  AudioControls,
-  MiniMediaPlayer,
-} from "../../src/components/ui/MiniMediaPlayer";
+import { MiniMediaPlayer } from "../../src/components/ui/MiniMediaPlayer";
 
 type ActiveMedia = {
   url: string;
@@ -103,7 +100,7 @@ describe("MiniMediaPlayer", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  test("renders no bar for audio, which the composer dock shows", () => {
+  test("renders bar when activeMedia is set", () => {
     mockState.ui.activeMedia = {
       url: "https://example.com/song.mp3",
       type: "audio",
@@ -111,8 +108,7 @@ describe("MiniMediaPlayer", () => {
       isInlineVisible: true,
     };
     const { container } = render(<MiniMediaPlayer />);
-    expect(container.firstChild).toBeNull();
-    expect(fakeAudio.src).toBe("https://example.com/song.mp3");
+    expect(container.firstChild).not.toBeNull();
   });
 
   test("audio: play and stop buttons are present", () => {
@@ -122,7 +118,7 @@ describe("MiniMediaPlayer", () => {
       isPlaying: true,
       isInlineVisible: true,
     };
-    const { getByLabelText } = render(<AudioControls buttonClassName="" />);
+    const { getByLabelText } = render(<MiniMediaPlayer />);
     expect(getByLabelText("Pause")).toBeTruthy();
     expect(getByLabelText("Stop")).toBeTruthy();
   });
@@ -134,7 +130,7 @@ describe("MiniMediaPlayer", () => {
       isPlaying: false,
       isInlineVisible: true,
     };
-    const { getByLabelText } = render(<AudioControls buttonClassName="" />);
+    const { getByLabelText } = render(<MiniMediaPlayer />);
     expect(getByLabelText("Play")).toBeTruthy();
   });
 
@@ -145,7 +141,7 @@ describe("MiniMediaPlayer", () => {
       isPlaying: true,
       isInlineVisible: true,
     };
-    const { getByLabelText } = render(<AudioControls buttonClassName="" />);
+    const { getByLabelText } = render(<MiniMediaPlayer />);
     fireEvent.click(getByLabelText("Stop"));
     expect(mockState.stopActiveMedia).toHaveBeenCalledOnce();
   });

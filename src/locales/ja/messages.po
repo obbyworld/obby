@@ -124,7 +124,7 @@ msgstr "{0}人が視聴中"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} 人が配信中 · {1} 人が視聴中"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {1 件のファイルをアップロード中} other {# 件のファイルをアップロード中}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ 件の結果"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} 内の {countLabel}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 件のアップロードに失敗しました} other {# 件のアップロードに失敗しました}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "アクティブ"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "アクティビティ"
 
@@ -707,7 +706,6 @@ msgstr "添付オプション"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "音声"
 
@@ -1019,11 +1017,6 @@ msgstr "最後の 2FA 認証情報は削除できません"
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "すべてのアップロードをキャンセル"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "接続をキャンセル"
@@ -1036,8 +1029,10 @@ msgstr "暗号化をキャンセル"
 msgid "Cancel reply"
 msgstr "返信をキャンセル"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "アップロードをキャンセル"
 
@@ -1367,6 +1362,8 @@ msgstr "コードを確認しました。"
 msgid "Code Snippets"
 msgstr "コードスニペット"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "オペレーター設定を管理するにはサーバーに接続して
 msgid "Connected to"
 msgstr "接続先"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "接続中"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "接続中..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "接続中…"
 
@@ -1962,7 +1962,7 @@ msgstr "このリンクを新しいタブで開きますか？"
 msgid "Don't warn me about low link security for this server"
 msgstr "このサーバーのリンクセキュリティが低い場合に警告しない"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "完了"
 
@@ -2104,7 +2104,7 @@ msgstr "暗号化 (OTR)"
 msgid "Encrypt this chat"
 msgstr "このチャットを暗号化"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "暗号化済み"
 
@@ -2329,6 +2329,8 @@ msgstr "全画面表示を終了"
 msgid "Exit spotlight"
 msgstr "スポットライトを終了"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "拡張プロフィールは利用できません"
 msgid "External Link Warning"
 msgstr "外部リンクの警告"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失敗"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "読み込みに失敗しました"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "音声の読み込みに失敗しました"
 
@@ -2575,10 +2574,6 @@ msgstr "リンクあり"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "コメントを非表示"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "ファイルを隠す"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "{0} でリンク"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "ライブ"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "通常 — 標準的な保護"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "暗号化されていません"
 
@@ -3827,7 +3820,6 @@ msgstr "ブラウザで開く"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "設定を開く"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "ワークフローを開く"
 
@@ -3986,7 +3977,6 @@ msgstr "パターンを空にすることはできません"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "一時停止"
 
@@ -4075,7 +4065,6 @@ msgstr "平文"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "送信中"
 msgid "Sending…"
 msgstr "送信中…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "OTR はテキストのみを暗号化するため、暗号化なしで送信しました"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "ファイルが大きすぎて暗号化できないため、暗号化なしで送信しました"
 
@@ -5032,10 +5021,6 @@ msgstr "ショートコード (例: partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "ショートコードは [A-Za-z0-9._-]+ に一致する必要があります。"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "さらに{hiddenCount}件を表示"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "すべてのイベントを表示"
@@ -5047,10 +5032,6 @@ msgstr "コメントを表示"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "コメントを表示 ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "ファイルを表示"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "縮小"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "折りたたむ"
 
@@ -5202,10 +5182,6 @@ msgstr "点が赤くなったら話し始めてください"
 msgid "Start video"
 msgstr "ビデオを開始"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "開始中"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "ワークフローを開始しています…"
@@ -5222,8 +5198,6 @@ msgstr "ステータスメッセージ"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "ユーザーは {channelName} への参加招待を受け取ります。
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "テーマスタジオ"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "考え中"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "アップロードをキャンセルしました。"
 msgid "Upload Files"
 msgstr "ファイルをアップロード"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "アップロード済み"
 

@@ -124,7 +124,7 @@ msgstr "{0} urmăresc"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} transmit · {1} urmăresc"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Se încarcă 1 fișier} other {Se încarcă # fișiere}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ rezultate"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} în {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 încărcare a eșuat} other {# încărcări au eșuat}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "activ"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Activitate"
 
@@ -707,7 +706,6 @@ msgstr "Opțiuni atașament"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Audio"
 
@@ -1019,11 +1017,6 @@ msgstr "Nu poți elimina ultima credențială 2FA"
 msgid "Cancel"
 msgstr "Anulează"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Anulează toate încărcările"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Anulează conexiunea"
@@ -1036,8 +1029,10 @@ msgstr "Anulează criptarea"
 msgid "Cancel reply"
 msgstr "Anulează răspunsul"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Anulează încărcarea"
 
@@ -1367,6 +1362,8 @@ msgstr "Cod acceptat."
 msgid "Code Snippets"
 msgstr "Fragmente de cod"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
 msgid "Connected to"
 msgstr "Conectat la"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Se conectează"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Se conectează..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Se conectează…"
 
@@ -1962,7 +1962,7 @@ msgstr "Dorești să deschizi acest link într-o filă nouă?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Nu mă avertiza despre securitatea scăzută a legăturilor pentru acest server"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "gata"
 
@@ -2104,7 +2104,7 @@ msgstr "Criptează (OTR)"
 msgid "Encrypt this chat"
 msgstr "Criptează această conversație"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Criptat"
 
@@ -2329,6 +2329,8 @@ msgstr "Ieși din ecran complet"
 msgid "Exit spotlight"
 msgstr "Ieși din evidențiere"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Profilul extins nu este disponibil"
 msgid "External Link Warning"
 msgstr "Avertisment link extern"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "eșuat"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Încărcarea a eșuat"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Eroare la încărcarea audio"
 
@@ -2575,10 +2574,6 @@ msgstr "Are link"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Ascundeți comentariile"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Ascunde fișierele"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "Leagă cu {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "În direct"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – Protecție standard"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Necriptat"
 
@@ -3827,7 +3820,6 @@ msgstr "Deschide în browser"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Deschide setările"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Deschide fluxul de lucru"
 
@@ -3986,7 +3977,6 @@ msgstr "Modelul nu poate fi gol"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Pauză"
 
@@ -4075,7 +4065,6 @@ msgstr "Text simplu"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Se trimite"
 msgid "Sending…"
 msgstr "Se trimite…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Trimis necriptat deoarece OTR criptează doar text"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Trimis necriptat deoarece fișierul este prea mare pentru a fi criptat"
 
@@ -5032,10 +5021,6 @@ msgstr "shortcode (de ex. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode-ul trebuie să se potrivească cu [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Arată încă {hiddenCount}"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Afișați toate evenimentele"
@@ -5047,10 +5032,6 @@ msgstr "Afișați comentariile"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Afișați comentariile ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Arată fișierele"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "arată mai puțin"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Arată mai puțin"
 
@@ -5202,10 +5182,6 @@ msgstr "Începe să vorbești când punctul devine roșu"
 msgid "Start video"
 msgstr "Pornește camera video"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Pornește"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Se pornește fluxul de lucru…"
@@ -5222,8 +5198,6 @@ msgstr "Mesaje de stare"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Studio de teme"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Se gândește"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Încărcare anulată."
 msgid "Upload Files"
 msgstr "Încărcați fișiere"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Încărcat"
 

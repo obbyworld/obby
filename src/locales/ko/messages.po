@@ -124,7 +124,7 @@ msgstr "{0}명 시청 중"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS}명 스트리밍 중 · {1}명 시청 중"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {파일 1개 업로드 중} other {파일 #개 업로드 중}}"
 
@@ -144,7 +144,7 @@ msgstr "결과 {count}+개"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName}의 {countLabel}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {업로드 1건 실패} other {업로드 #건 실패}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "활성"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "활동"
 
@@ -707,7 +706,6 @@ msgstr "첨부 옵션"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "오디오"
 
@@ -1019,11 +1017,6 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "모든 업로드 취소"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "연결 취소"
@@ -1036,8 +1029,10 @@ msgstr "암호화 취소"
 msgid "Cancel reply"
 msgstr "답장 취소"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "업로드 취소"
 
@@ -1367,6 +1362,8 @@ msgstr "코드가 확인되었습니다."
 msgid "Code Snippets"
 msgstr "코드 스니펫"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "운영자 설정을 관리하려면 서버에 연결하세요."
 msgid "Connected to"
 msgstr "연결된 서버"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "연결 중"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "연결 중..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "연결 중…"
 
@@ -1962,7 +1962,7 @@ msgstr "이 링크를 새 탭에서 여시겠습니까?"
 msgid "Don't warn me about low link security for this server"
 msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "완료"
 
@@ -2104,7 +2104,7 @@ msgstr "암호화 (OTR)"
 msgid "Encrypt this chat"
 msgstr "이 대화 암호화"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "암호화됨"
 
@@ -2329,6 +2329,8 @@ msgstr "전체 화면 종료"
 msgid "Exit spotlight"
 msgstr "스포트라이트 종료"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "확장 프로필을 사용할 수 없습니다"
 msgid "External Link Warning"
 msgstr "외부 링크 경고"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "실패"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "불러오기 실패"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "오디오를 불러오지 못했습니다"
 
@@ -2575,10 +2574,6 @@ msgstr "링크 포함"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "댓글 숨기기"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "파일 숨기기"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "{0}(으)로 연결"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "라이브"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "기본 - 표준 보호"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "암호화되지 않음"
 
@@ -3827,7 +3820,6 @@ msgstr "브라우저에서 열기"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "설정 열기"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "워크플로 열기"
 
@@ -3986,7 +3977,6 @@ msgstr "패턴은 비워둘 수 없습니다"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "일시 정지"
 
@@ -4075,7 +4065,6 @@ msgstr "일반 텍스트"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "보내는 중"
 msgid "Sending…"
 msgstr "보내는 중…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "OTR은 텍스트만 암호화하므로 암호화 없이 전송됨"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "파일이 너무 커서 암호화할 수 없으므로 암호화 없이 전송됨"
 
@@ -5032,10 +5021,6 @@ msgstr "숏코드 (예: partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "숏코드는 [A-Za-z0-9._-]+ 형식이어야 합니다."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "{hiddenCount}개 더 보기"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "모든 이벤트 표시"
@@ -5047,10 +5032,6 @@ msgstr "댓글 보기"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "댓글 보기 ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "파일 보기"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "축소"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "접기"
 
@@ -5202,10 +5182,6 @@ msgstr "점이 빨간색으로 바뀌면 말하세요"
 msgid "Start video"
 msgstr "비디오 시작"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "시작 중"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "워크플로 시작 중…"
@@ -5222,8 +5198,6 @@ msgstr "상태 메시지"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "사용자가 {channelName} 참여 초대를 받게 됩니다."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "테마 스튜디오"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "생각 중"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "업로드가 취소되었습니다."
 msgid "Upload Files"
 msgstr "파일 업로드"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "업로드됨"
 

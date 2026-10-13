@@ -124,7 +124,7 @@ msgstr "{0} kişi izliyor"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} yayında · {1} izliyor"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {1 dosya yükleniyor} other {# dosya yükleniyor}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ sonuç"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} içinde {countLabel}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 yükleme başarısız oldu} other {# yükleme başarısız oldu}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "aktif"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Etkinlik"
 
@@ -707,7 +706,6 @@ msgstr "Ek seçenekleri"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Ses"
 
@@ -1019,11 +1017,6 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Tüm yüklemeleri iptal et"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Bağlantıyı İptal Et"
@@ -1036,8 +1029,10 @@ msgstr "Şifrelemeyi iptal et"
 msgid "Cancel reply"
 msgstr "Yanıtı iptal et"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Yüklemeyi iptal et"
 
@@ -1367,6 +1362,8 @@ msgstr "Kod kabul edildi."
 msgid "Code Snippets"
 msgstr "Kod Parçacıkları"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
 msgid "Connected to"
 msgstr "Bağlanılan"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Bağlanıyor"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Bağlanıyor..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Bağlanıyor…"
 
@@ -1962,7 +1962,7 @@ msgstr "Bu bağlantıyı yeni sekmede açmak istiyor musunuz?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "bitti"
 
@@ -2104,7 +2104,7 @@ msgstr "Şifrele (OTR)"
 msgid "Encrypt this chat"
 msgstr "Bu sohbeti şifrele"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Şifrelenmiş"
 
@@ -2329,6 +2329,8 @@ msgstr "Tam ekrandan çık"
 msgid "Exit spotlight"
 msgstr "Öne çıkarmayı durdur"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Genişletilmiş profil kullanılamıyor"
 msgid "External Link Warning"
 msgstr "Harici Bağlantı Uyarısı"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "başarısız"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Yüklenemedi"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Ses yüklenemedi"
 
@@ -2575,10 +2574,6 @@ msgstr "Bağlantı içeren"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Yorumları gizle"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Dosyaları gizle"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "{0} ile bağla"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Canlı"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal - Standart koruma"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Şifrelenmemiş"
 
@@ -3827,7 +3820,6 @@ msgstr "Tarayıcıda aç"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Ayarları aç"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "İş akışını aç"
 
@@ -3986,7 +3977,6 @@ msgstr "Desen boş olamaz"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Duraklat"
 
@@ -4075,7 +4065,6 @@ msgstr "Düz metin"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Gönderiliyor"
 msgid "Sending…"
 msgstr "Gönderiliyor…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Şifresiz gönderildi çünkü OTR yalnızca metni şifreler"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Şifresiz gönderildi çünkü dosya şifrelenemeyecek kadar büyük"
 
@@ -5032,10 +5021,6 @@ msgstr "kısa kod (örn. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "{hiddenCount} tane daha göster"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Tüm Olayları Göster"
@@ -5047,10 +5032,6 @@ msgstr "Yorumları göster"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Yorumları göster ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Dosyaları göster"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "daha az göster"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Daha az göster"
 
@@ -5202,10 +5182,6 @@ msgstr "Nokta kırmızı olunca konuşmaya başlayın"
 msgid "Start video"
 msgstr "Videoyu başlat"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Başlatılıyor"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "İş akışı başlatılıyor…"
@@ -5222,8 +5198,6 @@ msgstr "Durum Mesajları"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Kullanıcı {channelName} kanalına katılmak için davet alacak."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Tema Stüdyosu"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Düşünüyor"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Yükleme iptal edildi."
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Yüklendi"
 

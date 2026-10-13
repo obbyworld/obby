@@ -124,7 +124,7 @@ msgstr "{0} tittar"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} sänder · {1} tittar"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Laddar upp 1 fil} other {Laddar upp # filer}}"
 
@@ -144,7 +144,7 @@ msgstr "{count}+ resultat"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} i {scopeName}"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 uppladdning misslyckades} other {# uppladdningar misslyckades}}"
 
@@ -445,7 +445,6 @@ msgid "active"
 msgstr "aktiv"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Activity"
 msgstr "Aktivitet"
 
@@ -707,7 +706,6 @@ msgstr "Bilagealternativ"
 
 #: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Audio"
 msgstr "Ljud"
 
@@ -1019,11 +1017,6 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
-msgid "Cancel all uploads"
-msgstr "Avbryt alla uppladdningar"
-
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
 msgstr "Avbryt anslutning"
@@ -1036,8 +1029,10 @@ msgstr "Avbryt kryptering"
 msgid "Cancel reply"
 msgstr "Avbryt svar"
 
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Avbryt uppladdning"
 
@@ -1367,6 +1362,8 @@ msgstr "Koden godkändes."
 msgid "Code Snippets"
 msgstr "Kodsnuttar"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1477,12 +1474,15 @@ msgstr "Anslut till en server för att hantera operatörsinställningar."
 msgid "Connected to"
 msgstr "Ansluten till"
 
+#: src/components/ui/MiniMediaPlayer.tsx
+msgid "Connecting"
+msgstr "Ansluter"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Connecting..."
 msgstr "Ansluter..."
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting…"
 msgstr "Ansluter…"
 
@@ -1962,7 +1962,7 @@ msgstr "Vill du öppna den här länken i en ny flik?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "klart"
 
@@ -2104,7 +2104,7 @@ msgstr "Kryptera (OTR)"
 msgid "Encrypt this chat"
 msgstr "Kryptera den här chatten"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Krypterad"
 
@@ -2329,6 +2329,8 @@ msgstr "Avsluta helskärm"
 msgid "Exit spotlight"
 msgstr "Lämna spotlight"
 
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2362,16 +2364,13 @@ msgstr "Utökad profil är inte tillgänglig"
 msgid "External Link Warning"
 msgstr "Varning för extern länk"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "misslyckades"
 
-#: src/components/ui/MiniMediaPlayer.tsx
-msgid "Failed to load"
-msgstr "Det gick inte att läsa in"
-
 #: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Failed to load audio"
 msgstr "Det gick inte att läsa in ljud"
 
@@ -2575,10 +2574,6 @@ msgstr "Har länk"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Dölj kommentarer"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Hide files"
-msgstr "Dölj filer"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
@@ -2996,7 +2991,6 @@ msgid "Link with {0}"
 msgstr "Länka med {0}"
 
 #: src/components/layout/VoiceChannelView.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Live"
 msgstr "Live"
 
@@ -3696,8 +3690,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – standardskydd"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/ComposerDock.tsx
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Inte krypterat"
 
@@ -3827,7 +3820,6 @@ msgstr "Öppna i webbläsare"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Open in viewer"
@@ -3859,7 +3851,6 @@ msgid "Open settings"
 msgstr "Öppna inställningar"
 
 #: src/components/message/WorkflowLine.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Open workflow"
 msgstr "Öppna arbetsflöde"
 
@@ -3986,7 +3977,6 @@ msgstr "Mönstret kan inte vara tomt"
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 msgid "Pause"
 msgstr "Pausa"
 
@@ -4075,7 +4065,6 @@ msgstr "Klartext"
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -4823,11 +4812,11 @@ msgstr "Skickar"
 msgid "Sending…"
 msgstr "Skickar…"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Skickades okrypterat eftersom OTR bara krypterar text"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Skickades okrypterat eftersom filen är för stor för att krypteras"
 
@@ -5032,10 +5021,6 @@ msgstr "kortkod (t.ex. partyparrot)"
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kortkoden måste matcha [A-Za-z0-9._-]+."
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Show {hiddenCount} more"
-msgstr "Visa {hiddenCount} till"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Visa alla händelser"
@@ -5047,10 +5032,6 @@ msgstr "Visa kommentarer"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Visa kommentarer ({commentCount})"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Show files"
-msgstr "Visa filer"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"
@@ -5070,7 +5051,6 @@ msgstr "visa mindre"
 
 #: src/components/message/CollapsibleMessage.tsx
 #: src/components/message/MessageItem.tsx
-#: src/components/ui/ComposerDock.tsx
 msgid "Show less"
 msgstr "Visa mindre"
 
@@ -5202,10 +5182,6 @@ msgstr "Börja prata när pricken blir röd"
 msgid "Start video"
 msgstr "Starta video"
 
-#: src/components/ui/ComposerDock.tsx
-msgid "Starting"
-msgstr "Startar"
-
 #: src/components/message/WorkflowLine.tsx
 msgid "Starting workflow…"
 msgstr "Startar arbetsflöde…"
@@ -5222,8 +5198,6 @@ msgstr "Statusmeddelanden"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
-#: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -5371,10 +5345,6 @@ msgstr "Användaren får en inbjudan att gå med i {channelName}."
 #: src/components/ui/PluginsScreen.tsx
 msgid "Theme Studio"
 msgstr "Temastudio"
-
-#: src/components/ui/ComposerDock.tsx
-msgid "Thinking"
-msgstr "Tänker"
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -5684,7 +5654,7 @@ msgstr "Uppladdningen avbröts."
 msgid "Upload Files"
 msgstr "Ladda upp filer"
 
-#: src/components/ui/ComposerDock.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Uppladdad"
 
