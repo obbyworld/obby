@@ -102,3 +102,51 @@ describe("reconnecting a server whose socket is still open", () => {
     expect(internals.sockets.get(SERVER)).not.toBe(socket);
   });
 });
+
+describe("joining a channel typed without its prefix", () => {
+  it("joins the # channel and lists it under that name", () => {
+    const { client, sent } = connectedClient();
+    (client as unknown as { servers: Map<string, unknown> }).servers.set(
+      SERVER,
+      { id: SERVER, channels: [], capabilities: [] },
+    );
+
+    const channel = client.joinChannel(SERVER, "qaop");
+
+    expect(channel.name).toBe("#qaop");
+    expect(sent).toContain("JOIN #qaop");
+  });
+
+  it("keeps a name that already has one of the server's channel prefixes", () => {
+    const { client } = connectedClient();
+    const internals = client as unknown as {
+      servers: Map<string, unknown>;
+      isupportValues: Map<string, Map<string, string>>;
+    };
+    internals.servers.set(SERVER, {
+      id: SERVER,
+      channels: [],
+      capabilities: [],
+    });
+    internals.isupportValues.set(SERVER, new Map([["CHANTYPES", "#^$"]]));
+
+    expect(client.joinChannel(SERVER, "^voice").name).toBe("^voice");
+  });
+
+  it("follows the channel types the server advertises", () => {
+    const { client } = connectedClient();
+    const internals = client as unknown as {
+      servers: Map<string, unknown>;
+      isupportValues: Map<string, Map<string, string>>;
+    };
+    internals.servers.set(SERVER, {
+      id: SERVER,
+      channels: [],
+      capabilities: [],
+    });
+    internals.isupportValues.set(SERVER, new Map([["CHANTYPES", "&"]]));
+
+    expect(client.joinChannel(SERVER, "&ops").name).toBe("&ops");
+    expect(client.joinChannel(SERVER, "lobby").name).toBe("&lobby");
+  });
+});

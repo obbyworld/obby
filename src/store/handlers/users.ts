@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { Message, Server, User } from "../../types";
+import { settleFreshJoin } from "../freshJoins";
 import {
   generateDeterministicId,
   getCurrentSelection,
@@ -74,6 +75,12 @@ function makeEventMessage(
 }
 
 export function registerUserHandlers(store: StoreApi<AppState>): void {
+  // The server refused a join the user just asked for, so we drop the entry we added for it.
+  ircClient.on("JOIN_REFUSED", ({ serverId, channelName }) => {
+    if (settleFreshJoin(serverId, channelName))
+      store.getState().forgetChannel(serverId, channelName);
+  });
+
   ircClient.on(
     "JOIN",
     ({
@@ -136,6 +143,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       const isOurJoin = username === ourNick;
 
       if (isOurJoin) {
+        settleFreshJoin(serverId, channelName);
         // Server-initiated JOIN (Unreal persistence, sajoin, perform list,
         // perform-on-connect): joinChannel() never ran, so the CHATHISTORY
         // + WHO chain that normally lives inside it was never kicked off.

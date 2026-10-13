@@ -1322,7 +1322,8 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, channelName: string): Channel {
+  joinChannel(serverId: string, typedName: string): Channel {
+    const channelName = this.withChannelPrefix(serverId, typedName);
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1443,12 +1444,24 @@ export class IRCClient implements IRCClientContext {
       : CHATHISTORY_PAGE_SIZE;
   }
 
+  // We prefix a bare name with the server's first channel type, so `/join foo` reaches a channel the server allows.
+  withChannelPrefix(serverId: string, name: string): string {
+    const chantypes =
+      this.isupportValues.get(serverId)?.get("CHANTYPES") ?? "#&";
+    if (!chantypes || chantypes.includes(name[0])) return name;
+    return `${chantypes[0]}${name}`;
+  }
+
   leaveChannel(serverId: string, channelName: string): void {
+    if (!this.servers.has(serverId)) return;
+    this.sendRaw(serverId, `PART ${channelName}`);
+    this.forgetChannel(serverId, channelName);
+  }
+
+  forgetChannel(serverId: string, channelName: string): void {
     const server = this.servers.get(serverId);
-    if (server) {
-      this.sendRaw(serverId, `PART ${channelName}`);
+    if (server)
       server.channels = server.channels.filter((c) => c.name !== channelName);
-    }
   }
 
   sendMessage(serverId: string, channelId: string, content: string): void {

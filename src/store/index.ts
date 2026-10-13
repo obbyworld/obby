@@ -33,6 +33,7 @@ import type {
   User,
   WhoisData,
 } from "../types";
+import { markFreshJoin } from "./freshJoins";
 import { registerAllHandlers } from "./handlers";
 import { readyProcessedServers } from "./handlers/connection";
 import {
@@ -785,6 +786,7 @@ export interface AppState {
   disconnect: (serverId: string) => void;
   joinChannel: (serverId: string, channelName: string) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
+  forgetChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
   startE2EESession: (
     serverId: string,
@@ -1693,12 +1695,13 @@ const useStore = create<AppState>((set, get) => ({
           if (server.id === serverId) {
             // Check if channel already exists in store
             const existingChannel = server.channels.find(
-              (c) => c.name.toLowerCase() === channelName.toLowerCase(),
+              (c) => c.name.toLowerCase() === channel.name.toLowerCase(),
             );
             if (existingChannel) {
               // Channel already exists, don't add duplicate
               return server;
             }
+            markFreshJoin(serverId, channel.name);
             return {
               ...server,
               channels: [...server.channels, channel],
@@ -1747,7 +1750,11 @@ const useStore = create<AppState>((set, get) => ({
     // channel is the only thing left that can end it.
     releaseVoiceClient(serverId, channelName);
     ircClient.leaveChannel(serverId, channelName); // Send PART command to the IRC server
+    get().forgetChannel(serverId, channelName);
+  },
 
+  forgetChannel: (serverId, channelName) => {
+    ircClient.forgetChannel(serverId, channelName);
     set((state) => {
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {

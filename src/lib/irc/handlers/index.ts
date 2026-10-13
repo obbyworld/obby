@@ -203,7 +203,19 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
   "500": (ctx, serverId, _source, parv) =>
     handleJoinRefused(ctx, serverId, parv, true),
   ...Object.fromEntries(
-    ["405", "471", "473", "474", "475", "477", "489", "520"].map((code) => [
+    [
+      "403",
+      "405",
+      "471",
+      "473",
+      "474",
+      "475",
+      "476",
+      "477",
+      "479",
+      "489",
+      "520",
+    ].map((code) => [
       code,
       ((ctx, serverId, _source, parv) =>
         handleJoinRefused(ctx, serverId, parv, false)) satisfies HandlerFn,
