@@ -367,18 +367,24 @@ const App: React.FC = () => {
 
   // Suppress :hover popups on blur; reclaim focus from iframes immediately.
   useEffect(() => {
-    const noteAppInFront = () =>
+    const setAppFocused = (isAppFocused: boolean) =>
       useStore.setState((state) =>
-        state.ui.isAppFocused === isAppInFront()
+        state.ui.isAppFocused === isAppFocused
           ? {}
-          : { ui: { ...state.ui, isAppFocused: isAppInFront() } },
+          : { ui: { ...state.ui, isAppFocused } },
       );
+    const noteAppInFront = () => setAppFocused(isAppInFront());
+    // Focus returning from an embedded player, or to the macOS webview, can
+    // come without a focus event, so we take a click or a key press as the app in front.
+    const noteInput = () =>
+      setAppFocused(document.visibilityState === "visible");
     const onBlur = () => {
       noteAppInFront();
       document.documentElement.classList.add("window-blurred");
       // Cross-origin iframes swallow all keystrokes — blur immediately so the parent document regains them.
       if (document.activeElement?.tagName === "IFRAME") {
         (document.activeElement as HTMLElement).blur();
+        setTimeout(noteAppInFront, 0);
       }
     };
     const onFocus = () => {
@@ -388,10 +394,25 @@ const App: React.FC = () => {
     window.addEventListener("blur", onBlur);
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", noteAppInFront);
+    document.addEventListener("pointerdown", noteInput, true);
+    document.addEventListener("keydown", noteInput, true);
+    const unlisteners: (() => void)[] = [];
+    if (isTauri())
+      import("@tauri-apps/api/event").then(({ listen }) => {
+        listen("tauri://focus", () => setAppFocused(true)).then((off) =>
+          unlisteners.push(off),
+        );
+        listen("tauri://blur", () => setAppFocused(false)).then((off) =>
+          unlisteners.push(off),
+        );
+      });
     return () => {
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", noteAppInFront);
+      document.removeEventListener("pointerdown", noteInput, true);
+      document.removeEventListener("keydown", noteInput, true);
+      for (const off of unlisteners) off();
     };
   }, []);
 
