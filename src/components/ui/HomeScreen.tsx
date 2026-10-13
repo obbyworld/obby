@@ -8,13 +8,21 @@ import { TextInput } from "./TextInput";
 
 interface DiscoverServer {
   name: string;
-  description: string;
+  description?: string;
   wss?: string;
   ircs?: string;
   obby?: boolean;
   icon?: string;
   users?: number;
   channels?: number;
+}
+
+// We drop entries whose name or description is not text, so one bad entry cannot break the page.
+export function isListableServer(server: DiscoverServer | null): boolean {
+  return (
+    typeof server?.name === "string" &&
+    (server.description === undefined || typeof server.description === "string")
+  );
 }
 
 const SERVER_LIST_BASE =
@@ -26,18 +34,6 @@ export function serverIconUrl(icon: string | undefined): string | null {
   if (!icon) return null;
   const url = new URL(icon, SERVER_LIST_BASE);
   return url.href.startsWith(SERVER_LIST_BASE) ? url.href : null;
-}
-
-// Most entries carry their size only as a netsplit.de sentence, so we read
-// the numbers out of it when the entry has no users/channels fields.
-const NETSPLIT_STATS =
-  /^(\d+) users, (\d+) channels on average \(via netsplit\.de\)\.?$/;
-
-export function parseNetworkStats(
-  description: string,
-): { users: number; channels: number } | null {
-  const match = NETSPLIT_STATS.exec(description.trim());
-  return match ? { users: Number(match[1]), channels: Number(match[2]) } : null;
 }
 
 const NetworkStats: React.FC<{ users: number; channels: number }> = ({
@@ -56,20 +52,26 @@ const NetworkStats: React.FC<{ users: number; channels: number }> = ({
   </span>
 );
 
-const ServerSummary: React.FC<{ server: DiscoverServer }> = ({ server }) => {
-  const parsed = parseNetworkStats(server.description);
-  const stats =
-    server.users !== undefined && server.channels !== undefined
-      ? { users: server.users, channels: server.channels }
-      : parsed;
+export const ServerSummary: React.FC<{ server: DiscoverServer }> = ({
+  server,
+}) => {
+  const hasStats =
+    typeof server.users === "number" && typeof server.channels === "number";
   return (
     <>
-      {!parsed && (
-        <span className="text-[13px] text-discord-text-muted line-clamp-2">
+      {server.description && (
+        <span
+          className={`text-[13px] text-discord-text-muted ${hasStats ? "line-clamp-1" : "line-clamp-2"}`}
+        >
           {server.description}
         </span>
       )}
-      {stats && <NetworkStats users={stats.users} channels={stats.channels} />}
+      {hasStats && (
+        <NetworkStats
+          users={server.users ?? 0}
+          channels={server.channels ?? 0}
+        />
+      )}
     </>
   );
 };
@@ -116,8 +118,8 @@ const DiscoverGrid = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch servers");
         }
-        const data = await response.json();
-        setServers(data);
+        const listedServers: DiscoverServer[] = await response.json();
+        setServers(listedServers.filter(isListableServer));
       } catch (error) {
         console.error("Error fetching servers:", error);
       }
@@ -135,7 +137,7 @@ const DiscoverGrid = () => {
     .filter(
       (server) =>
         server.name.toLowerCase().includes(query.toLowerCase()) ||
-        server.description.toLowerCase().includes(query.toLowerCase()),
+        (server.description ?? "").toLowerCase().includes(query.toLowerCase()),
     );
 
   const handleServerClick = (server: DiscoverServer) => {
