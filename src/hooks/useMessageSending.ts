@@ -17,6 +17,7 @@ import {
   formatMessageForIrc,
 } from "../lib/messageFormatter";
 import { splitLongMessage } from "../lib/messageProtocol";
+import { showOwnPrivateMessage } from "../lib/ownPrivateMessage";
 import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
 import { routeOutgoingPM } from "../store/handlers/e2eeOutbound";
@@ -378,27 +379,14 @@ export function useMessageSending({
             `${localReplyTo?.msgid ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} ` : ""}PRIVMSG ${target} :\u0001ACTION ${actionMessage}\u0001`,
           );
         }
-        // Non-echo fallback: servers without echo-message won't reflect our
-        // ACTION back, so add it locally the same way regular DMs are handled.
-        if (
-          selectedPrivateChat &&
-          currentUser &&
-          !ircClient.hasCapability(selectedServerId, "echo-message")
-        ) {
-          const { addMessage } = useStore.getState();
-          const outgoingMessage: Message = {
-            id: uuidv4(),
-            content: `\u0001ACTION ${actionMessage}\u0001`,
-            timestamp: new Date(),
-            userId: currentUser.username || currentUser.id,
-            channelId: selectedPrivateChat.id,
-            serverId: selectedServerId,
-            type: "message" as const,
-            reactions: [],
-            replyMessage: localReplyTo,
-            mentioned: [],
-          };
-          addMessage(outgoingMessage);
+        if (selectedPrivateChat && currentUser) {
+          showOwnPrivateMessage(
+            selectedServerId,
+            selectedPrivateChat,
+            currentUser,
+            `\u0001ACTION ${actionMessage}\u0001`,
+            localReplyTo,
+          );
         }
       } else if (commandName === "away") {
         const message = args.join(" ");
@@ -700,27 +688,14 @@ export function useMessageSending({
         sendRegularMessage(cleanedText, target);
       }
 
-      // Only needed for servers that won't echo our outgoing DM back.
-      if (
-        selectedPrivateChat &&
-        currentUser &&
-        !ircClient.hasCapability(selectedServerId, "echo-message")
-      ) {
-        const outgoingMessage: Message = {
-          id: uuidv4(),
-          content: cleanedText,
-          timestamp: new Date(),
-          userId: currentUser.username || currentUser.id,
-          channelId: selectedPrivateChat.id,
-          serverId: selectedServerId,
-          type: "message" as const,
-          reactions: [],
-          replyMessage: localReplyTo,
-          mentioned: [],
-        };
-
-        const { addMessage } = useStore.getState();
-        addMessage(outgoingMessage);
+      if (selectedPrivateChat && currentUser) {
+        showOwnPrivateMessage(
+          selectedServerId,
+          selectedPrivateChat,
+          currentUser,
+          cleanedText,
+          localReplyTo,
+        );
       }
     },
     [

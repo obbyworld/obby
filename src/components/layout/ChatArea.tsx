@@ -71,6 +71,7 @@ import {
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
+import { showOwnPrivateMessage } from "../../lib/ownPrivateMessage";
 import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
 import {
@@ -1461,19 +1462,13 @@ export const ChatArea: React.FC<{
           `${replyTags}PRIVMSG ${target} :${line}`,
         );
         if (selectedPrivateChat && currentUser) {
-          const outgoing = {
-            id: uuidv4(),
-            content: line,
-            timestamp: new Date(),
-            userId: currentUser.username || currentUser.id,
-            channelId: selectedPrivateChat.id,
-            serverId: selectedServerId,
-            type: "message" as const,
-            reactions: [],
-            replyMessage: replyTo,
-            mentioned: [],
-          };
-          useStore.getState().addMessage(outgoing);
+          showOwnPrivateMessage(
+            selectedServerId,
+            selectedPrivateChat,
+            currentUser,
+            line,
+            replyTo,
+          );
         }
       }
     }
@@ -1557,30 +1552,14 @@ export const ChatArea: React.FC<{
     }
 
     ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${url}`);
-
-    // A channel echoes our own line back, and so does a private message once
-    // the server negotiates echo-message, so we only place a local copy where
-    // nothing is coming back to place it for us.
-    if (
-      selectedPrivateChat &&
-      currentUser &&
-      !ircClient.hasCapability(selectedServerId, "echo-message")
-    ) {
-      const outgoingMessage = {
-        id: uuidv4(),
-        content: url,
-        timestamp: new Date(),
-        userId: currentUser.username || currentUser.id,
-        channelId: selectedPrivateChat.id,
-        serverId: selectedServerId,
-        type: "message" as const,
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-      };
-
-      const { addMessage } = useStore.getState();
-      addMessage(outgoingMessage);
+    if (selectedPrivateChat && currentUser) {
+      showOwnPrivateMessage(
+        selectedServerId,
+        selectedPrivateChat,
+        currentUser,
+        url,
+        null,
+      );
     }
   };
 
