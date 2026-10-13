@@ -76,3 +76,29 @@ describe("the account we are logged in to", () => {
     expect(client.getCurrentUser(SERVER)?.account).toBeUndefined();
   });
 });
+
+describe("reconnecting a server whose socket is still open", () => {
+  it("closes and silences the old socket so only one session stays live", () => {
+    const { client, socket, internals } = connectedClient();
+    const oldOnclose = socket.onclose;
+
+    void client
+      .connect(
+        "srv",
+        "wss://irc.test",
+        443,
+        "me",
+        undefined,
+        undefined,
+        undefined,
+        SERVER,
+      )
+      .catch(() => {});
+
+    expect(socket.close).toHaveBeenCalled();
+    expect(socket.onclose).toBeNull();
+    expect(socket.onmessage).toBeNull();
+    expect(oldOnclose).not.toHaveBeenCalled();
+    expect(internals.sockets.get(SERVER)).not.toBe(socket);
+  });
+});

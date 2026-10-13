@@ -885,6 +885,7 @@ export class IRCClient implements IRCClientContext {
         };
         this.servers.set(server.id, server);
       }
+      this.closeReplacedSocket(server.id);
       this.sockets.set(server.id, socket);
       this.serverConnectParams.set(server.id, {
         name,
@@ -1270,6 +1271,17 @@ export class IRCClient implements IRCClientContext {
         this.dropDeadSocket(serverId, socket);
       }, timeoutMs),
     );
+  }
+
+  // We silence the old socket before closing it, so a reconnect never leaves a second live session under one server.
+  private closeReplacedSocket(serverId: string): void {
+    const old = this.sockets.get(serverId);
+    if (!old) return;
+    old.onopen = null;
+    old.onmessage = null;
+    old.onerror = null;
+    old.onclose = null;
+    old.close();
   }
 
   // A socket whose network died, as after the machine slept, can take minutes
