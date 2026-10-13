@@ -51,12 +51,14 @@ const FileInputField: React.FC<{
 };
 
 // We save on blur, so each text setting is written once after the user finishes typing.
+// A field with isComplete saves as soon as the draft is complete and never saves an incomplete one.
 export const TextDraftInput: React.FC<{
   value: string;
   onCommit: (value: string) => void;
+  isComplete?: (draft: string) => boolean;
   placeholder?: string;
   disabled?: boolean;
-}> = ({ value, onCommit, placeholder, disabled }) => {
+}> = ({ value, onCommit, isComplete, placeholder, disabled }) => {
   const [draft, setDraft] = useState(value);
   useEffect(() => setDraft(value), [value]);
   return (
@@ -65,13 +67,44 @@ export const TextDraftInput: React.FC<{
       value={draft}
       placeholder={placeholder}
       disabled={disabled}
-      onChange={(e) => setDraft(e.target.value)}
+      onChange={(e) => {
+        const next = e.target.value;
+        setDraft(next);
+        if (isComplete?.(next) && next !== value) onCommit(next);
+      }}
       onBlur={() => {
-        if (draft !== value) onCommit(draft);
+        if (draft !== value && (isComplete?.(draft) ?? true)) onCommit(draft);
       }}
     />
   );
 };
+
+const isCompleteColor = (color: string) =>
+  color === "" || /^#[0-9a-f]{6}$/i.test(color);
+
+const ColorField: React.FC<{
+  value: string;
+  onChange: (value: SettingValue) => void;
+  placeholder?: string;
+  disabled: boolean;
+}> = ({ value, onChange, placeholder, disabled }) => (
+  <div className="flex items-center gap-2">
+    <input
+      type="color"
+      value={value || "#000000"}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="w-10 h-9 shrink-0 rounded-lg border-none cursor-pointer bg-transparent disabled:opacity-50"
+    />
+    <TextDraftInput
+      value={value}
+      onCommit={onChange}
+      isComplete={isCompleteColor}
+      placeholder={placeholder ?? "#000000"}
+      disabled={disabled}
+    />
+  </div>
+);
 
 export interface SettingRendererProps {
   setting: SettingDefinition;
@@ -214,22 +247,12 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
 
     case "color":
       return (
-        <div className="flex items-center gap-2">
-          <input
-            type="color"
-            value={(value as string) || "#000000"}
-            onChange={(e) => onChange(e.target.value)}
-            disabled={disabled}
-            className="w-10 h-9 shrink-0 rounded-lg border-none cursor-pointer bg-transparent disabled:opacity-50"
-          />
-          <TextInput
-            className="field-input"
-            value={value as string}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder ?? "#000000"}
-            disabled={disabled}
-          />
-        </div>
+        <ColorField
+          value={(value as string) ?? ""}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
       );
 
     case "range":

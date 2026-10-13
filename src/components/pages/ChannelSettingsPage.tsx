@@ -86,8 +86,15 @@ const FLAG_LETTERS = [
 ];
 const VALUE_LETTERS = ["l", "k", "H", "L", "F", "f"];
 const UNSET_NEEDS_ARG = new Set(["k", "H", "L", "F", "f"]);
-// We send advanced modes in a fixed order, so the MODE line stays the same every time.
-const ADVANCED_MODE_ORDER = [
+// We send modes in a fixed order, so the MODE line stays the same every time.
+const MODE_SEND_ORDER = [
+  "l",
+  "i",
+  "k",
+  "m",
+  "s",
+  "t",
+  "n",
   "c",
   "C",
   "D",
@@ -226,6 +233,8 @@ const EmptyRow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 const AUTOSAVE_DELAY_MS = 400;
+// We pass the avatar size token as a value, since Lingui reads a literal {size} as its own placeholder.
+const sizeToken = "{size}";
 
 const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
   page,
@@ -242,11 +251,11 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
   const [modes, setModes] = useState<ChannelMode[]>([]);
   const [loading, setLoading] = useState(false);
   const originalModesRef = useRef<ParsedModes>({});
-  // Changes apply on their own: a text field when it loses focus, a switch or
-  // a named mode as soon as it changes.
-  const applyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scheduleApplyRef = useRef<() => void>(() => {});
-  const pendingApplyRef = useRef<(() => Promise<void>) | null>(null);
+  const modeFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flushModesRef = useRef<() => Promise<void>>(async () => {});
+  const flushAllRef = useRef<() => void>(() => {});
+  const queuedModesRef = useRef(new Set<string>());
+  const sentValuesRef = useRef(new Map<string, string | boolean>());
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const addTimeout = useCallback((fn: () => void, delay: number) => {
     const t = setTimeout(fn, delay);
@@ -269,39 +278,54 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
   const [isAdding, setIsAdding] = useState(false);
   const [removingMasks, setRemovingMasks] = useState(new Set<string>());
 
-  const [channelAvatar, setChannelAvatar] = useState("");
-  const [channelDisplayName, setChannelDisplayName] = useState("");
-  const [channelTopic, setChannelTopic] = useState("");
-  // We store the pack URL under the draft/emoji channel metadata key, as the spec requires.
-  const [channelEmojiPack, setChannelEmojiPack] = useState("");
-  const [newChannelName, setNewChannelName] = useState("");
+  // We keep only the user's edits here, keyed by field or mode letter, and show the server's value for everything else.
+  const [draft, setDraft] = useState<Record<string, string | boolean>>({});
   const [renameReason, setRenameReason] = useState("");
-  const [isApplyingChanges, setIsApplyingChanges] = useState(false);
-
   const [pendingNamedModes, setPendingNamedModes] = useState<
     Record<string, { sign: "+" | "-"; param?: string }>
   >({});
-
   const [isFloodModalOpen, setIsFloodModalOpen] = useState(false);
 
-  const [flags, setFlags] = useState<Record<string, boolean>>({});
-  // biome-ignore lint/correctness/useExhaustiveDependencies: a switch or named mode change is the trigger; text waits for its blur
-  useEffect(() => scheduleApplyRef.current(), [flags, pendingNamedModes]);
   useEffect(
     () => () => {
-      if (!applyTimerRef.current) return;
-      clearTimeout(applyTimerRef.current);
-      void pendingApplyRef.current?.();
+      if (modeFlushTimerRef.current) clearTimeout(modeFlushTimerRef.current);
+      flushAllRef.current();
     },
     [],
   );
-  const [values, setValues] = useState<Record<string, string>>({});
-  const flag = (letter: string) => flags[letter] === true;
-  const value = (letter: string) => values[letter] ?? "";
-  const setFlag = (letter: string, on: boolean) =>
-    setFlags((prev) => ({ ...prev, [letter]: on }));
-  const setValue = (letter: string, next: string) =>
-    setValues((prev) => ({ ...prev, [letter]: next }));
+
+  const liveModes = parseCurrentChannelModes(
+    channel?.modes || "",
+    channel?.modeArgs || [],
+    server?.chanmodes,
+  );
+  const serverText: Record<string, string> = {
+    topic: channel?.topic || "",
+    avatar: channel?.metadata?.avatar?.value || "",
+    "display-name": channel?.metadata?.["display-name"]?.value || "",
+    "draft/emoji": channel?.metadata?.["draft/emoji"]?.value || "",
+    name: channel?.name || "",
+  };
+  const text = (key: string) =>
+    (draft[key] as string | undefined) ?? serverText[key];
+  const flag = (letter: string) =>
+    (draft[letter] as boolean | undefined) ?? letter in liveModes;
+  const value = (letter: string) =>
+    (draft[letter] as string | undefined) ?? displayValue(liveModes, letter);
+  const edit = (key: string, next: string | boolean) =>
+    setDraft((prev) => ({ ...prev, [key]: next }));
+  const queueModes = (...keys: string[]) => {
+    for (const key of keys) queuedModesRef.current.add(key);
+    if (modeFlushTimerRef.current) clearTimeout(modeFlushTimerRef.current);
+    modeFlushTimerRef.current = setTimeout(() => {
+      modeFlushTimerRef.current = null;
+      void flushModesRef.current();
+    }, AUTOSAVE_DELAY_MS);
+  };
+  const setFlag = (letter: string, on: boolean) => {
+    edit(letter, on);
+    queueModes(letter);
+  };
 
   const currentUser = ircClient.getCurrentUser(serverId);
   const currentUserInChannel = channel?.users.find(
@@ -355,39 +379,20 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
     setModes(parsedModes);
   }, []);
 
-  const loadCurrentChannelModes = useCallback(
-    (resetOriginal = false) => {
-      const currentServer = useStore
-        .getState()
-        .servers.find((s) => s.id === serverId);
-      const currentChannel = currentServer?.channels.find(
-        (c) => c.name === channelName,
-      );
-      if (!currentChannel) return;
-
-      const parsedModes = parseCurrentChannelModes(
-        currentChannel.modes || "",
-        currentChannel.modeArgs || [],
-        currentServer?.chanmodes,
-      );
-      if (resetOriginal) originalModesRef.current = parsedModes;
-
-      setFlags(
-        Object.fromEntries(
-          FLAG_LETTERS.map((letter) => [letter, letter in parsedModes]),
-        ),
-      );
-      setValues(
-        Object.fromEntries(
-          VALUE_LETTERS.map((letter) => [
-            letter,
-            displayValue(parsedModes, letter),
-          ]),
-        ),
-      );
-    },
-    [serverId, channelName],
-  );
+  const loadCurrentChannelModes = useCallback(() => {
+    const currentServer = useStore
+      .getState()
+      .servers.find((s) => s.id === serverId);
+    const currentChannel = currentServer?.channels.find(
+      (c) => c.name === channelName,
+    );
+    if (!currentChannel) return;
+    originalModesRef.current = parseCurrentChannelModes(
+      currentChannel.modes || "",
+      currentChannel.modeArgs || [],
+      currentServer?.chanmodes,
+    );
+  }, [serverId, channelName]);
 
   const refreshLists = useCallback(() => {
     clearLists();
@@ -407,7 +412,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
       ?.channels.find((c) => c.name === channelName);
     if (updatedChannel) {
       parseChannelModes(updatedChannel);
-      loadCurrentChannelModes(true);
+      loadCurrentChannelModes();
     }
   }, [serverId, channelName, parseChannelModes, loadCurrentChannelModes]);
 
@@ -505,56 +510,31 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
     }
   };
 
-  const applyGeneralChanges = async () => {
-    setIsApplyingChanges(true);
-    try {
-      if (channelTopic !== (channel?.topic || "")) {
-        ircClient.setTopic(serverId, channelName, channelTopic);
-      }
+  const isPendingSend = (key: string, next: string | boolean | undefined) =>
+    next !== undefined && sentValuesRef.current.get(key) !== next;
 
-      if (channelAvatar !== (channel?.metadata?.avatar?.value || "")) {
-        await metadataSet(
-          serverId,
-          channelName,
-          "avatar",
-          channelAvatar || undefined,
-        );
-      }
+  const commitText = async (key: string, next = draft[key] as string) => {
+    if (!isPendingSend(key, next)) return;
+    const wanted = key === "draft/emoji" ? next.trim() : next;
+    if (wanted === serverText[key]) return;
+    sentValuesRef.current.set(key, next);
+    if (key === "topic") ircClient.setTopic(serverId, channelName, wanted);
+    else await metadataSet(serverId, channelName, key, wanted || undefined);
+  };
 
-      if (
-        channelDisplayName !==
-        (channel?.metadata?.["display-name"]?.value || "")
-      ) {
-        await metadataSet(
-          serverId,
-          channelName,
-          "display-name",
-          channelDisplayName || undefined,
-        );
-      }
-
-      if (
-        channelEmojiPack !== (channel?.metadata?.["draft/emoji"]?.value || "")
-      ) {
-        await metadataSet(
-          serverId,
-          channelName,
-          "draft/emoji",
-          channelEmojiPack.trim() || undefined,
-        );
-      }
-
-      if (newChannelName.trim() && newChannelName.trim() !== channel?.name) {
-        ircClient.renameChannel(
-          serverId,
-          channelName,
-          newChannelName.trim(),
-          renameReason.trim() || undefined,
-        );
-      }
-    } finally {
-      setIsApplyingChanges(false);
-    }
+  const commitRename = () => {
+    const typedName = draft.name as string | undefined;
+    if (typedName === undefined || !isPendingSend("name", typedName)) return;
+    const newName = typedName.trim();
+    if (!newName || newName === channel?.name) return;
+    sentValuesRef.current.set("name", typedName);
+    ircClient.renameChannel(
+      serverId,
+      channelName,
+      newName,
+      renameReason.trim() || undefined,
+    );
+    setRenameReason("");
   };
 
   const sendModeEdits = async (edits: Array<ModeEdit | null>) => {
@@ -572,60 +552,49 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
     originalModesRef.current = next;
   };
 
-  const applySettingsChanges = async () => {
-    setIsApplyingChanges(true);
-    try {
-      const original = originalModesRef.current;
-      await sendModeEdits([
-        valueEdit("l", value("l").trim(), original),
-        flagEdit("i", flag("i"), original),
-        valueEdit("k", value("k").trim(), original),
-        flagEdit("m", flag("m"), original),
-        flagEdit("s", flag("s"), original),
-        flagEdit("t", flag("t"), original),
-        flagEdit("n", flag("n"), original),
-      ]);
-    } finally {
-      setIsApplyingChanges(false);
-    }
-  };
-
-  const applyAdvancedChanges = async () => {
-    setIsApplyingChanges(true);
-    try {
-      const original = originalModesRef.current;
-      await sendModeEdits(
-        ADVANCED_MODE_ORDER.map((letter) => {
-          if (VALUE_LETTERS.includes(letter)) {
-            const wanted = value(letter).trim();
-            return valueEdit(
-              letter,
-              letter === "f" && wanted === "Default" ? "" : wanted,
-              original,
-            );
-          }
+  flushModesRef.current = async () => {
+    const queued = queuedModesRef.current;
+    queuedModesRef.current = new Set();
+    const original = originalModesRef.current;
+    const letters = MODE_SEND_ORDER.filter(
+      (letter) => queued.has(letter) && draft[letter] !== undefined,
+    );
+    for (const letter of letters)
+      sentValuesRef.current.set(letter, draft[letter]);
+    await sendModeEdits(
+      letters.map((letter) => {
+        if (!VALUE_LETTERS.includes(letter)) {
           return flagEdit(letter, flag(letter), original);
-        }),
-      );
-    } finally {
-      setIsApplyingChanges(false);
-    }
+        }
+        const wanted = value(letter).trim();
+        return valueEdit(
+          letter,
+          letter === "f" && wanted === "Default" ? "" : wanted,
+          original,
+        );
+      }),
+    );
+    const items = Object.entries(pendingNamedModes).map(([name, change]) => ({
+      sign: change.sign,
+      name,
+      param: change.param,
+    }));
+    if (!queued.has("named-modes") || !items.length || !server) return;
+    ircClient.sendNamedMode(serverId, channelName, items, server.namedModes);
+    setPendingNamedModes({});
   };
 
-  const applyNamedModesAdvancedChanges = async () => {
-    if (!server || !channel) return;
-    const items: Array<{ sign: "+" | "-"; name: string; param?: string }> = [];
-    for (const [name, change] of Object.entries(pendingNamedModes)) {
-      items.push({ sign: change.sign, name, param: change.param });
+  // We send every edit still waiting when the page closes, so nothing typed is lost.
+  flushAllRef.current = () => {
+    for (const key of Object.keys(serverText)) {
+      if (key === "name") commitRename();
+      else void commitText(key);
     }
-    if (!items.length) return;
-    setIsApplyingChanges(true);
-    try {
-      ircClient.sendNamedMode(serverId, channelName, items, server.namedModes);
-      setPendingNamedModes({});
-    } finally {
-      setIsApplyingChanges(false);
-    }
+    for (const key of Object.keys(draft))
+      if (!(key in serverText)) queuedModesRef.current.add(key);
+    if (Object.keys(pendingNamedModes).length)
+      queuedModesRef.current.add("named-modes");
+    void flushModesRef.current();
   };
 
   useEffect(() => () => clearPendingTimeouts(), [clearPendingTimeouts]);
@@ -638,15 +607,19 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
     }
   }, [channelName, fetchChannelModes]);
 
+  // A server update settles what we sent, so we drop those edits and show the server's value again.
   useEffect(() => {
     if (!channel) return;
-    setChannelAvatar(channel.metadata?.avatar?.value || "");
-    setChannelDisplayName(channel.metadata?.["display-name"]?.value || "");
-    setChannelEmojiPack(channel.metadata?.["draft/emoji"]?.value || "");
-    setChannelTopic(channel.topic || "");
-    setNewChannelName(channel.name);
-    setRenameReason("");
-    loadCurrentChannelModes(true);
+    const sent = sentValuesRef.current;
+    if (sent.size > 0) {
+      sentValuesRef.current = new Map();
+      setDraft((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(([key, next]) => sent.get(key) !== next),
+        ),
+      );
+    }
+    loadCurrentChannelModes();
   }, [channel, loadCurrentChannelModes]);
 
   if (!channel) {
@@ -672,15 +645,16 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
     floodRules: Array<FloodRule & { id: string }>,
     seconds: number,
   ) => {
-    setValue("F", newFloodProfile);
+    edit("F", newFloodProfile);
     const rulesString = floodRules
       .map(
         (rule) =>
           `${rule.amount}${rule.type}${rule.action ? `#${rule.action}` : ""}${rule.time ? `:${rule.time}` : ""}`,
       )
       .join(",");
-    setValue("f", rulesString ? `[${rulesString}]:${seconds}` : "Default");
+    edit("f", rulesString ? `[${rulesString}]:${seconds}` : "Default");
     setIsFloodModalOpen(false);
+    queueModes("F", "f");
   };
 
   const generalSection = (
@@ -693,8 +667,9 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         >
           <input
             type="text"
-            value={channelTopic}
-            onChange={(e) => setChannelTopic(e.target.value)}
+            value={text("topic")}
+            onChange={(e) => edit("topic", e.target.value)}
+            onBlur={() => void commitText("topic")}
             placeholder={t`Welcome to the channel!`}
             className="field-input w-full"
           />
@@ -704,14 +679,17 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           title={t`Avatar`}
           description={
             server?.filehost
-              ? t`Upload an image or enter a URL. Use {size} in the URL for dynamic sizing.`
-              : t`Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg`
+              ? t`Upload an image or enter a URL. Use ${sizeToken} in the URL for dynamic sizing.`
+              : t`Enter a URL. Use ${sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/${sizeToken}/channel.jpg`
           }
         >
           {server?.filehost ? (
             <AvatarUpload
-              currentAvatarUrl={channelAvatar}
-              onAvatarUrlChange={setChannelAvatar}
+              currentAvatarUrl={text("avatar")}
+              onAvatarUrlChange={(url) => {
+                edit("avatar", url);
+                void commitText("avatar", url);
+              }}
               serverId={serverId}
               channelName={channelName}
             />
@@ -719,14 +697,15 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <div className="flex flex-col gap-3">
               <input
                 type="text"
-                value={channelAvatar}
-                onChange={(e) => setChannelAvatar(e.target.value)}
-                placeholder={t`https://example.com/avatar/{size}/channel.jpg`}
+                value={text("avatar")}
+                onChange={(e) => edit("avatar", e.target.value)}
+                onBlur={() => void commitText("avatar")}
+                placeholder={t`https://example.com/avatar/${sizeToken}/channel.jpg`}
                 className="field-input w-full"
               />
-              {channelAvatar && isAbsoluteHttpUrl(channelAvatar) && (
+              {isAbsoluteHttpUrl(text("avatar")) && (
                 <img
-                  src={channelAvatar.replace("{size}", "64")}
+                  src={text("avatar").replace("{size}", "64")}
                   alt={t`Channel avatar preview`}
                   className="w-16 h-16 rounded-full object-cover"
                   onError={(e) => {
@@ -744,8 +723,9 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           field={
             <input
               type="text"
-              value={channelDisplayName}
-              onChange={(e) => setChannelDisplayName(e.target.value)}
+              value={text("display-name")}
+              onChange={(e) => edit("display-name", e.target.value)}
+              onBlur={() => void commitText("display-name")}
               placeholder={t`General Support Channel`}
               className="field-input w-full"
             />
@@ -758,8 +738,9 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           field={
             <input
               type="url"
-              value={channelEmojiPack}
-              onChange={(e) => setChannelEmojiPack(e.target.value)}
+              value={text("draft/emoji")}
+              onChange={(e) => edit("draft/emoji", e.target.value)}
+              onBlur={() => void commitText("draft/emoji")}
               placeholder="https://example.com/emoji/channel/general.json"
               className="field-input w-full"
             />
@@ -772,11 +753,18 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           title={t`Channel name`}
           description={t`Rename this channel. Everyone sees the new name.`}
         >
-          <div className="flex flex-col gap-2">
+          {/* We rename once focus leaves both fields, so the reason goes with it. */}
+          <div
+            className="flex flex-col gap-2"
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null))
+                commitRename();
+            }}
+          >
             <input
               type="text"
-              value={newChannelName}
-              onChange={(e) => setNewChannelName(e.target.value)}
+              value={text("name")}
+              onChange={(e) => edit("name", e.target.value)}
               autoComplete="off"
               autoCapitalize="none"
               autoCorrect="off"
@@ -819,7 +807,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <input
               type="number"
               value={value("l")}
-              onChange={(e) => setValue("l", e.target.value)}
+              onChange={(e) => edit("l", e.target.value)}
+              onBlur={() => queueModes("l")}
               placeholder={t`No limit`}
               min="1"
               className="field-input w-full"
@@ -841,7 +830,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <input
               type="password"
               value={value("k")}
-              onChange={(e) => setValue("k", e.target.value)}
+              onChange={(e) => edit("k", e.target.value)}
+              onBlur={() => queueModes("k")}
               placeholder={t`No key`}
               className="field-input w-full"
             />
@@ -919,12 +909,13 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
               <Switch
                 checked={checked}
                 label={label}
-                onChange={(next) =>
+                onChange={(next) => {
                   stageNamedMode(
                     spec.name,
                     next === live.set ? null : { sign: next ? "+" : "-" },
-                  )
-                }
+                  );
+                  queueModes("named-modes");
+                }}
               />
             }
           />
@@ -957,6 +948,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
                   stageNamedMode(spec.name, { sign: "+", param: v });
                 }
               }}
+              onBlur={() => queueModes("named-modes")}
               placeholder={placeholder}
               className="field-input w-full"
             />
@@ -1018,7 +1010,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         >
           <select
             value={value("F")}
-            onChange={(e) => setValue("F", e.target.value)}
+            onChange={(e) => edit("F", e.target.value)}
+            onBlur={() => queueModes("F")}
             className="field-input w-full"
           >
             <option value="">
@@ -1050,7 +1043,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <input
               type="text"
               value={value("f")}
-              onChange={(e) => setValue("f", e.target.value)}
+              onChange={(e) => edit("f", e.target.value)}
+              onBlur={() => queueModes("f")}
               placeholder={t`Default`}
               className="field-input flex-1 min-w-0"
             />
@@ -1194,7 +1188,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <input
               type="text"
               value={value("H")}
-              onChange={(e) => setValue("H", e.target.value)}
+              onChange={(e) => edit("H", e.target.value)}
+              onBlur={() => queueModes("H")}
               placeholder={t`e.g., 100:1440`}
               className="field-input w-full"
             />
@@ -1208,7 +1203,8 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
             <input
               type="text"
               value={value("L")}
-              onChange={(e) => setValue("L", e.target.value)}
+              onChange={(e) => edit("L", e.target.value)}
+              onBlur={() => queueModes("L")}
               placeholder={t`#overflow`}
               className="field-input w-full"
             />
@@ -1224,17 +1220,23 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
       bans: {
         placeholder: t`Add ban mask (e.g., nick!*@*, *!*@host.com)`,
         add: t`Add ban`,
-        empty: t`No bans yet, add one above`,
+        empty: userHasOpPermission
+          ? t`No bans yet, add one above`
+          : t`No bans yet, ask a channel operator to add one`,
       },
       exceptions: {
         placeholder: t`Add exception mask (e.g., nick!*@*, *!*@host.com)`,
         add: t`Add exception`,
-        empty: t`No exceptions yet, add one above`,
+        empty: userHasOpPermission
+          ? t`No exceptions yet, add one above`
+          : t`No exceptions yet, ask a channel operator to add one`,
       },
       invites: {
         placeholder: t`Add invitation mask (e.g., nick!*@*, *!*@host.com)`,
         add: t`Add invitation`,
-        empty: t`No invitations yet, add one above`,
+        empty: userHasOpPermission
+          ? t`No invitations yet, add one above`
+          : t`No invitations yet, ask a channel operator to add one`,
       },
     }[listSection];
     const masks = modes.filter((mode) => mode.type === type);
@@ -1242,30 +1244,37 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
 
     return (
       <>
+        {!userHasOpPermission && masks.length > 0 && (
+          <p className="text-sm text-discord-text-muted px-1">
+            <Trans>Ask a channel operator to change this list.</Trans>
+          </p>
+        )}
         <SettingGroup>
-          <div className="flex items-center gap-2 px-4 py-3">
-            <input
-              type="text"
-              value={newMask}
-              onChange={(e) => setNewMask(e.target.value)}
-              placeholder={copy.placeholder}
-              className="field-input flex-1 min-w-0"
-            />
-            <button
-              type="button"
-              onClick={() => canAdd && addMode(type, newMask.trim())}
-              disabled={!canAdd}
-              aria-label={copy.add}
-              title={copy.add}
-              className="button-primary w-9 h-9 shrink-0 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isAdding ? (
-                <FaSpinner className="animate-spin" size={14} />
-              ) : (
-                <FaPlus size={14} />
-              )}
-            </button>
-          </div>
+          {userHasOpPermission && (
+            <div className="flex items-center gap-2 px-4 py-3">
+              <input
+                type="text"
+                value={newMask}
+                onChange={(e) => setNewMask(e.target.value)}
+                placeholder={copy.placeholder}
+                className="field-input flex-1 min-w-0"
+              />
+              <button
+                type="button"
+                onClick={() => canAdd && addMode(type, newMask.trim())}
+                disabled={!canAdd}
+                aria-label={copy.add}
+                title={copy.add}
+                className="button-primary w-9 h-9 shrink-0 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAdding ? (
+                  <FaSpinner className="animate-spin" size={14} />
+                ) : (
+                  <FaPlus size={14} />
+                )}
+              </button>
+            </div>
+          )}
           {loading ? (
             <EmptyRow>
               <Trans>Loading channel modes...</Trans>
@@ -1312,93 +1321,77 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
                       </>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    {editing ? (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => saveEdit(type, mode.mask, editValue)}
-                          className="icon-button w-10 h-10 rounded-lg"
-                          aria-label={t`Save`}
-                          title={t`Save`}
-                        >
-                          <FaCheck size={13} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={cancelEditing}
-                          className="icon-button w-10 h-10 rounded-lg"
-                          aria-label={t`Cancel`}
-                          title={t`Cancel`}
-                        >
-                          <FaTimes size={13} />
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingMask(mode.mask);
-                            setEditValue(mode.mask);
-                          }}
-                          className="icon-button w-10 h-10 rounded-lg"
-                          aria-label={t`Edit`}
-                          title={t`Edit`}
-                        >
-                          <FaEdit size={13} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeMode(type, mode.mask)}
-                          disabled={removing}
-                          className="icon-button w-10 h-10 rounded-lg"
-                          aria-label={t`Remove`}
-                          title={t`Remove`}
-                        >
-                          {removing ? (
-                            <FaSpinner className="animate-spin" size={13} />
-                          ) : (
-                            <FaTrash size={13} />
-                          )}
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  {userHasOpPermission && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      {editing ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => saveEdit(type, mode.mask, editValue)}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Save`}
+                            title={t`Save`}
+                          >
+                            <FaCheck size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelEditing}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Cancel`}
+                            title={t`Cancel`}
+                          >
+                            <FaTimes size={13} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingMask(mode.mask);
+                              setEditValue(mode.mask);
+                            }}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Edit`}
+                            title={t`Edit`}
+                          >
+                            <FaEdit size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeMode(type, mode.mask)}
+                            disabled={removing}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Remove`}
+                            title={t`Remove`}
+                          >
+                            {removing ? (
+                              <FaSpinner className="animate-spin" size={13} />
+                            ) : (
+                              <FaTrash size={13} />
+                            )}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })
           )}
         </SettingGroup>
-        <p className="text-xs text-discord-text-muted px-1">
-          <Trans>
-            Use wildcards: * matches any sequence, ? matches any single
-            character. Examples: nick!*@*, *!*@host.com, *!*user@*
-          </Trans>
-        </p>
+        {userHasOpPermission && (
+          <p className="text-xs text-discord-text-muted px-1">
+            <Trans>
+              Use wildcards: * matches any sequence, ? matches any single
+              character. Examples: nick!*@*, *!*@host.com, *!*user@*
+            </Trans>
+          </p>
+        )}
       </>
     );
   };
-
-  const applyActiveSection = (() => {
-    if (activeId === "general") return applyGeneralChanges;
-    if (activeId === "settings") return applySettingsChanges;
-    if (activeId !== "advanced") return null;
-    return server?.namedModes?.supported
-      ? applyNamedModesAdvancedChanges
-      : applyAdvancedChanges;
-  })();
-  const scheduleApply = () => {
-    if (!applyActiveSection) return;
-    if (applyTimerRef.current) clearTimeout(applyTimerRef.current);
-    const apply = applyActiveSection;
-    pendingApplyRef.current = apply;
-    applyTimerRef.current = setTimeout(() => {
-      applyTimerRef.current = null;
-      void apply();
-    }, AUTOSAVE_DELAY_MS);
-  };
-  scheduleApplyRef.current = scheduleApply;
 
   const body = (() => {
     if (isListSection(activeId)) return renderMaskList(activeId);
@@ -1418,9 +1411,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         startOnSection={!!page.section}
         columns={!isListSection(activeId)}
       >
-        <div onBlur={scheduleApply} className="contents">
-          {body}
-        </div>
+        {body}
       </PageShell>
       <FloodSettingsModal
         isOpen={isFloodModalOpen}

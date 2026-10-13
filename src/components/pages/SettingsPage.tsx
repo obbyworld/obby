@@ -108,7 +108,32 @@ const groupBySubcategory = (
 
 const PROFILE_SAVE_DELAY_MS = 600;
 
+// Profile drafts and oper fields belong to one server, so we remount the
+// content when the selected server changes and keep only the section.
 const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
+  const selectedServerId = useStore((s) => s.ui.selectedServerId);
+  const [activeSection, setActiveSection] = useState<SettingsSection>(
+    page.section ?? "profile",
+  );
+  useEffect(() => {
+    setActiveSection(page.section ?? "profile");
+  }, [page.section]);
+  return (
+    <SettingsContent
+      key={selectedServerId ?? ""}
+      page={page}
+      activeSection={activeSection}
+      setActiveSection={setActiveSection}
+    />
+  );
+};
+
+const SettingsContent: React.FC<
+  PageProps<"settings"> & {
+    activeSection: SettingsSection;
+    setActiveSection: (section: SettingsSection) => void;
+  }
+> = ({ page, activeSection, setActiveSection }) => {
   const {
     servers,
     ui,
@@ -120,20 +145,15 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
     updateGlobalSettings,
     openPage,
     openProfile,
+    currentUser: storeCurrentUser,
   } = useStore();
-
-  const [activeSection, setActiveSection] = useState<SettingsSection>(
-    page.section ?? "profile",
-  );
-  useEffect(() => {
-    setActiveSection(page.section ?? "profile");
-  }, [page.section]);
 
   const { i18n } = useLingui();
   const [profileDraft, setProfileDraft] = useState<Record<string, string>>({});
   // Profile fields go to the server, so we send them shortly after the last
   // change and once more when the page closes with one still pending.
   const profileSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sentProfileRef = useRef<Record<string, string>>({});
   useEffect(
     () => () => {
       if (!profileSaveTimer.current) return;
@@ -161,7 +181,9 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
       ? (currentServer.channels
           .flatMap((channel) => channel.users)
           .find((u) => u.username === ircCurrentUser.username) ??
-        ircCurrentUser)
+        (storeCurrentUser?.username === ircCurrentUser.username
+          ? storeCurrentUser
+          : ircCurrentUser))
       : null;
   const supportsMetadata = currentServer
     ? serverSupportsMetadata(currentServer.id)
@@ -192,27 +214,41 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
     }, PROFILE_SAVE_DELAY_MS);
   };
 
+  // We keep a sent draft on screen until the server echoes it back, and we never send the same value twice.
   const saveProfile = () => {
     if (!currentServer) return;
-    const nickname = profileValue("profile.nickname");
-    if (nickname && nickname !== current["profile.nickname"]) {
-      changeNick(currentServer.id, nickname);
-    }
-    const realname = profileValue("profile.realname");
-    if (realname && realname !== current["profile.realname"]) {
-      setName(currentServer.id, realname);
-    }
-    if (!supportsMetadata) return;
-    for (const [id, key] of Object.entries(METADATA_KEYS)) {
-      const value = profileValue(id);
-      if (value === current[id]) continue;
-      // We send a bare SET for an empty value, since IRCv3 uses that form to delete the key.
-      sendRaw(
-        currentServer.id,
-        value ? `METADATA * SET ${key} :${value}` : `METADATA * SET ${key}`,
-      );
+    for (const [id, value] of Object.entries(profileDraft)) {
+      if (value === current[id] || value === sentProfileRef.current[id])
+        continue;
+      sentProfileRef.current[id] = value;
+      if (id === "profile.nickname") {
+        if (value) changeNick(currentServer.id, value);
+      } else if (id === "profile.realname") {
+        if (value) setName(currentServer.id, value);
+      } else if (supportsMetadata) {
+        const key = METADATA_KEYS[id];
+        // We send a bare SET for an empty value, since IRCv3 uses that form to delete the key.
+        sendRaw(
+          currentServer.id,
+          value ? `METADATA * SET ${key} :${value}` : `METADATA * SET ${key}`,
+        );
+      }
     }
   };
+
+  const echoedIds = Object.keys(profileDraft).filter(
+    (id) => profileDraft[id] === current[id],
+  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we prune only when the set of echoed fields changes
+  useEffect(() => {
+    if (echoedIds.length === 0) return;
+    setProfileDraft((draft) =>
+      Object.fromEntries(
+        Object.entries(draft).filter(([id]) => !echoedIds.includes(id)),
+      ),
+    );
+    for (const id of echoedIds) delete sentProfileRef.current[id];
+  }, [echoedIds.join()]);
 
   const saveProfileRef = useRef(saveProfile);
   saveProfileRef.current = saveProfile;

@@ -17,6 +17,9 @@ vi.mock("../../src/store", () => {
         host: "irc.example.com",
         port: 6697,
         nickname: "tester",
+        password: "stored-server-pass",
+        saslPassword: "c3RvcmVk",
+        saslEnabled: true,
       },
     ]),
   };
@@ -75,5 +78,78 @@ describe("ServerSettingsPage", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Server host is required",
     );
+  });
+
+  test("keeps the stored passwords when the user saves another field", () => {
+    serverState.updateServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1" }}
+      />,
+    );
+    const nickname = screen.getByDisplayValue("tester");
+
+    fireEvent.change(nickname, { target: { value: "tester2" } });
+    fireEvent.focusOut(nickname);
+
+    const saved = serverState.updateServer.mock.calls[0][1];
+    expect(saved).not.toHaveProperty("password");
+    expect(saved).not.toHaveProperty("saslPassword");
+    expect(saved).not.toHaveProperty("saslEnabled");
+  });
+
+  test("forgets the stored passwords when the user asks", () => {
+    serverState.updateServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Forget passwords" }));
+
+    expect(serverState.updateServer).toHaveBeenCalledWith(
+      "server1",
+      expect.objectContaining({
+        password: undefined,
+        saslPassword: undefined,
+        saslEnabled: false,
+      }),
+    );
+  });
+
+  test("drops the stored passwords when the host moves to another network", () => {
+    serverState.updateServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1" }}
+      />,
+    );
+    const host = screen.getByDisplayValue("irc.example.com");
+
+    fireEvent.change(host, { target: { value: "irc.other.net" } });
+    fireEvent.focusOut(host);
+
+    const saved = serverState.updateServer.mock.calls[0][1];
+    expect(saved).toHaveProperty("password", undefined);
+    expect(saved).toHaveProperty("saslPassword", undefined);
+    expect(saved.saslEnabled).toBe(false);
+  });
+
+  test("keeps the stored passwords when only the host spelling changes", () => {
+    serverState.updateServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1" }}
+      />,
+    );
+    const host = screen.getByDisplayValue("irc.example.com");
+
+    fireEvent.change(host, { target: { value: "wss://IRC.example.com:443" } });
+    fireEvent.focusOut(host);
+
+    const saved = serverState.updateServer.mock.calls[0][1];
+    expect(saved).not.toHaveProperty("password");
+    expect(saved).not.toHaveProperty("saslPassword");
   });
 });
