@@ -1031,8 +1031,6 @@ msgstr "Peruuta vastaus"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Peruuta lataus"
 
@@ -1362,7 +1360,6 @@ msgstr "Koodi hyväksytty."
 msgid "Code Snippets"
 msgstr "Koodinpätkät"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Poistu koko näytöstä"
 msgid "Exit spotlight"
 msgstr "Poistu spotlight-tilasta"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

@@ -1031,8 +1031,6 @@ msgstr "답장 취소"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "업로드 취소"
 
@@ -1362,7 +1360,6 @@ msgstr "코드가 확인되었습니다."
 msgid "Code Snippets"
 msgstr "코드 스니펫"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "전체 화면 종료"
 msgid "Exit spotlight"
 msgstr "스포트라이트 종료"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

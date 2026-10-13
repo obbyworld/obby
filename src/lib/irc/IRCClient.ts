@@ -1445,7 +1445,7 @@ export class IRCClient implements IRCClientContext {
   }
 
   // We prefix a bare name with the server's first channel type, so `/join foo` reaches a channel the server allows.
-  withChannelPrefix(serverId: string, name: string): string {
+  private withChannelPrefix(serverId: string, name: string): string {
     const chantypes =
       this.isupportValues.get(serverId)?.get("CHANTYPES") ?? "#&";
     if (!chantypes || chantypes.includes(name[0])) return name;
@@ -1453,15 +1453,16 @@ export class IRCClient implements IRCClientContext {
   }
 
   leaveChannel(serverId: string, channelName: string): void {
-    if (!this.servers.has(serverId)) return;
-    this.sendRaw(serverId, `PART ${channelName}`);
-    this.forgetChannel(serverId, channelName);
+    if (this.servers.has(serverId))
+      this.sendRaw(serverId, `PART ${channelName}`);
   }
 
   forgetChannel(serverId: string, channelName: string): void {
     const server = this.servers.get(serverId);
     if (server)
-      server.channels = server.channels.filter((c) => c.name !== channelName);
+      server.channels = server.channels.filter(
+        (c) => c.name.toLowerCase() !== channelName.toLowerCase(),
+      );
   }
 
   sendMessage(serverId: string, channelId: string, content: string): void {

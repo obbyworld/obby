@@ -1031,8 +1031,6 @@ msgstr "Anulează răspunsul"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Anulează încărcarea"
 
@@ -1362,7 +1360,6 @@ msgstr "Cod acceptat."
 msgid "Code Snippets"
 msgstr "Fragmente de cod"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Ieși din ecran complet"
 msgid "Exit spotlight"
 msgstr "Ieși din evidențiere"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

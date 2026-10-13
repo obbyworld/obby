@@ -1031,8 +1031,6 @@ msgstr "Antwort abbrechen"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Upload abbrechen"
 
@@ -1362,7 +1360,6 @@ msgstr "Code akzeptiert."
 msgid "Code Snippets"
 msgstr "Code-Schnipsel"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Vollbild beenden"
 msgid "Exit spotlight"
 msgstr "Spotlight beenden"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

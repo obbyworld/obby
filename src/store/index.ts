@@ -33,7 +33,6 @@ import type {
   User,
   WhoisData,
 } from "../types";
-import { markFreshJoin } from "./freshJoins";
 import { registerAllHandlers } from "./handlers";
 import { readyProcessedServers } from "./handlers/connection";
 import {
@@ -65,6 +64,7 @@ import {
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
+import { markPendingJoin } from "./pendingJoins";
 import type {
   AppPage,
   ChannelOrderMap,
@@ -1690,18 +1690,19 @@ const useStore = create<AppState>((set, get) => ({
   joinChannel: (serverId, channelName) => {
     const channel = ircClient.joinChannel(serverId, channelName);
     if (channel) {
+      const isSameChannel = (name: string) =>
+        name.toLowerCase() === channel.name.toLowerCase();
       set((state) => {
         const updatedServers = state.servers.map((server) => {
           if (server.id === serverId) {
             // Check if channel already exists in store
-            const existingChannel = server.channels.find(
-              (c) => c.name.toLowerCase() === channel.name.toLowerCase(),
+            const existingChannel = server.channels.find((c) =>
+              isSameChannel(c.name),
             );
             if (existingChannel) {
               // Channel already exists, don't add duplicate
               return server;
             }
-            markFreshJoin(serverId, channel.name);
             return {
               ...server,
               channels: [...server.channels, channel],
@@ -1714,10 +1715,17 @@ const useStore = create<AppState>((set, get) => ({
         const currentServer = state.servers.find((s) => s.id === serverId);
         const isBouncerSession =
           !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
-        if (!isBouncerSession) {
+        const isNewRow = !currentServer?.channels.some((c) =>
+          isSameChannel(c.name),
+        );
+        if (isBouncerSession) {
+          if (isNewRow) markPendingJoin(serverId, channel.name);
+        } else {
           const savedServers = loadSavedServers();
           const savedServer = savedServers.find((s) => s.id === serverId);
-          if (savedServer && !savedServer.channels.includes(channel.name)) {
+          if (savedServer && !savedServer.channels.some(isSameChannel)) {
+            // We track only channels this join adds to the saved list, so a refused autojoin keeps the channels the user saved.
+            markPendingJoin(serverId, channel.name);
             savedServer.channels.push(channel.name);
             saveServersToLocalStorage(savedServers);
           }
@@ -1754,6 +1762,8 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   forgetChannel: (serverId, channelName) => {
+    const isForgotten = (name: string) =>
+      name.toLowerCase() === channelName.toLowerCase();
     ircClient.forgetChannel(serverId, channelName);
     set((state) => {
       const updatedServers = state.servers.map((server) => {
@@ -1761,7 +1771,7 @@ const useStore = create<AppState>((set, get) => ({
           return {
             ...server,
             channels: server.channels.filter(
-              (channel) => channel.name !== channelName,
+              (channel) => !isForgotten(channel.name),
             ),
           };
         }
@@ -1776,8 +1786,9 @@ const useStore = create<AppState>((set, get) => ({
         const savedServers = loadSavedServers();
         const savedServer = savedServers.find((s) => s.id === serverId);
         if (savedServer) {
-          savedServer.channels =
-            currentServer?.channels.map((c) => c.name) || [];
+          savedServer.channels = savedServer.channels.filter(
+            (name) => !isForgotten(name),
+          );
           saveServersToLocalStorage(savedServers);
         }
       }
@@ -1786,14 +1797,14 @@ const useStore = create<AppState>((set, get) => ({
       const currentOrder = state.channelOrder[serverId] || [];
       const newChannelOrder = {
         ...state.channelOrder,
-        [serverId]: currentOrder.filter((name) => name !== channelName),
+        [serverId]: currentOrder.filter((name) => !isForgotten(name)),
       };
       saveChannelOrder(newChannelOrder);
 
       // Clear selection if the left channel was the selected one
       const currentSelection = getServerSelection(state, serverId);
       const server = state.servers.find((s) => s.id === serverId);
-      const leftChannel = server?.channels.find((c) => c.name === channelName);
+      const leftChannel = server?.channels.find((c) => isForgotten(c.name));
 
       let updatedUI = state.ui;
       if (

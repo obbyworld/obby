@@ -1031,8 +1031,6 @@ msgstr "Скасувати відповідь"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Скасувати завантаження"
 
@@ -1362,7 +1360,6 @@ msgstr "Код прийнято."
 msgid "Code Snippets"
 msgstr "Фрагменти коду"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Вийти з повноекранного режиму"
 msgid "Exit spotlight"
 msgstr "Вийти з режиму виділення"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

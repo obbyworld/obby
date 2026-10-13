@@ -1031,8 +1031,6 @@ msgstr "Antwoord annuleren"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Upload annuleren"
 
@@ -1362,7 +1360,6 @@ msgstr "Code geaccepteerd."
 msgid "Code Snippets"
 msgstr "Codefragmenten"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Volledig scherm verlaten"
 msgid "Exit spotlight"
 msgstr "Spotlight verlaten"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

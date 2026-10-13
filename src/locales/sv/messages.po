@@ -1031,8 +1031,6 @@ msgstr "Avbryt svar"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Avbryt uppladdning"
 
@@ -1362,7 +1360,6 @@ msgstr "Koden godkändes."
 msgid "Code Snippets"
 msgstr "Kodsnuttar"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Avsluta helskärm"
 msgid "Exit spotlight"
 msgstr "Lämna spotlight"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

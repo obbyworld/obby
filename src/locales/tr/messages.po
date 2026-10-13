@@ -1031,8 +1031,6 @@ msgstr "Yanıtı iptal et"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Yüklemeyi iptal et"
 
@@ -1362,7 +1360,6 @@ msgstr "Kod kabul edildi."
 msgid "Code Snippets"
 msgstr "Kod Parçacıkları"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Tam ekrandan çık"
 msgid "Exit spotlight"
 msgstr "Öne çıkarmayı durdur"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

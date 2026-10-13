@@ -1031,8 +1031,6 @@ msgstr "Zrušit odpověď"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Zrušit nahrávání"
 
@@ -1362,7 +1360,6 @@ msgstr "Kód přijat."
 msgid "Code Snippets"
 msgstr "Úryvky kódu"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Ukončit celou obrazovku"
 msgid "Exit spotlight"
 msgstr "Ukončit zvýraznění"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

@@ -1031,8 +1031,6 @@ msgstr "返信をキャンセル"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "アップロードをキャンセル"
 
@@ -1362,7 +1360,6 @@ msgstr "コードを確認しました。"
 msgid "Code Snippets"
 msgstr "コードスニペット"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "全画面表示を終了"
 msgid "Exit spotlight"
 msgstr "スポットライトを終了"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

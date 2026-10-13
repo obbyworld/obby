@@ -1031,8 +1031,6 @@ msgstr "Отменить ответ"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Отменить загрузку"
 
@@ -1362,7 +1360,6 @@ msgstr "Код принят."
 msgid "Code Snippets"
 msgstr "Фрагменты кода"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Выйти из полноэкранного режима"
 msgid "Exit spotlight"
 msgstr "Выйти из режима выделения"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx

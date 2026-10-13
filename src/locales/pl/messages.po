@@ -1031,8 +1031,6 @@ msgstr "Anuluj odpowiedź"
 
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
-#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Anuluj wysyłanie"
 
@@ -1362,7 +1360,6 @@ msgstr "Kod zaakceptowany."
 msgid "Code Snippets"
 msgstr "Fragmenty kodu"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2329,7 +2326,6 @@ msgstr "Wyjdź z pełnego ekranu"
 msgid "Exit spotlight"
 msgstr "Zakończ wyróżnienie"
 
-#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
