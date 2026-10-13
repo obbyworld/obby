@@ -55,7 +55,12 @@ import {
 } from "./handlers/otr";
 import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
-import { isAppInFront, MAX_MESSAGES_PER_CHANNEL } from "./helpers";
+import {
+  ensureUrlFormat,
+  isAppInFront,
+  MAX_MESSAGES_PER_CHANNEL,
+  normalizeHost,
+} from "./helpers";
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
@@ -121,23 +126,48 @@ export function rememberMsgIds(set: Set<string>, ids: string[]): Set<string> {
   return next;
 }
 
-// Helper function to normalize host for comparison (extract hostname from URL or return as-is)
-function normalizeHost(host: string): string {
-  if (host.includes("://")) {
-    // Extract hostname from URL format
-    const withoutProtocol = host.replace(/^(irc|ircs|wss):\/\//, "");
-    return withoutProtocol.split(":")[0]; // Get just hostname, strip port if present
-  }
-  return host;
+// We connect a saved server under its own id, so servers that share an address stay apart.
+function connectSavedServer(
+  connect: AppState["connect"],
+  config: ServerConfig,
+): Promise<Server> {
+  const urlHost = ensureUrlFormat(config.host, config.port);
+  return connect(
+    config.name || normalizeHost(urlHost),
+    urlHost,
+    config.port,
+    config.nickname,
+    config.saslEnabled,
+    config.password,
+    config.saslAccountName,
+    config.saslPassword,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    config.id,
+  );
 }
 
-// Helper function to ensure host is in URL format
-function ensureUrlFormat(host: string, port: number): string {
-  if (host.includes("://")) {
-    return host; // Already in URL format
-  }
-  // Convert old hostname-only format to URL — always wss://
-  return `wss://${host}:${port}`;
+// We log a bouncer network in with its bouncer's saved host and credentials, then bind it to its network.
+function connectBouncerChild(
+  childId: string,
+  netid: string,
+  name: string,
+  savedParent: ServerConfig,
+): Promise<Server> {
+  ircClient.setPendingBouncerBind(childId, netid);
+  return ircClient.connect(
+    name,
+    ensureUrlFormat(savedParent.host, savedParent.port),
+    savedParent.port,
+    savedParent.nickname,
+    savedParent.password,
+    savedParent.saslAccountName,
+    savedParent.saslPassword,
+    childId,
+  );
 }
 
 // Types for batch event processing
@@ -750,6 +780,7 @@ export interface AppState {
     registerPassword?: string,
     isNewServer?: boolean,
     oauthConfig?: ServerOAuthConfig,
+    serverId?: string,
   ) => Promise<Server>;
   disconnect: (serverId: string) => void;
   joinChannel: (serverId: string, channelName: string) => void;
@@ -1341,14 +1372,23 @@ const useStore = create<AppState>((set, get) => ({
     registerPassword,
     isNewServer,
     oauthConfig,
+    serverId,
   ) => {
-    // Check if already connected to this server
     const state = get();
+    // One network can hold several accounts, so a saved server is the same
+    // one only when the address and the login both match.
+    const existingSavedServer = serverId
+      ? loadSavedServers().find((s) => s.id === serverId)
+      : loadSavedServers().find(
+          (s) =>
+            normalizeHost(s.host) === normalizeHost(host) &&
+            s.port === port &&
+            s.nickname === nickname &&
+            (s.saslAccountName ?? "") === (saslAccountName ?? ""),
+        );
+    const targetId = serverId ?? existingSavedServer?.id;
     const existingServer = state.servers.find(
-      (s) =>
-        normalizeHost(s.host) === normalizeHost(host) &&
-        s.port === port &&
-        s.isConnected,
+      (s) => s.id === targetId && s.isConnected,
     );
     if (existingServer) {
       if (isNewServer) get().selectServer(existingServer.id);
@@ -1361,10 +1401,9 @@ const useStore = create<AppState>((set, get) => ({
       connectionError: null,
     });
 
-    const knownServer = state.servers.find(
-      (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-    );
-    const newServerId = isNewServer && !knownServer ? uuidv4() : undefined;
+    const knownServer = state.servers.find((s) => s.id === targetId);
+    const newServerId =
+      isNewServer && !knownServer ? (targetId ?? uuidv4()) : undefined;
     if (newServerId) {
       set((state) => ({
         servers: [
@@ -1386,12 +1425,6 @@ const useStore = create<AppState>((set, get) => ({
     }
 
     try {
-      // Look up saved server to get its ID
-      const existingSavedServers: ServerConfig[] = loadSavedServers();
-      const existingSavedServer = existingSavedServers.find(
-        (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-      );
-
       // Auth-handler reads OAuth out of localStorage when SASL fires, so
       // persist any caller-supplied oauth config BEFORE opening the
       // socket -- otherwise the first SASL turn would race past it.
@@ -1426,18 +1459,9 @@ const useStore = create<AppState>((set, get) => ({
       // Ensure host is in URL format for storage
       const urlHost = ensureUrlFormat(host, port);
 
-      // Find existing server using normalized comparison
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port,
-      );
+      const savedServer = savedServers.find((s) => s.id === server.id);
       const channelsToJoin = savedServer?.channels || [];
-
-      // Remove existing server entry using normalized comparison
-      const updatedServers = savedServers.filter(
-        (s) =>
-          normalizeHost(s.host) !== normalizeHost(urlHost) || s.port !== port,
-      );
+      const updatedServers = savedServers.filter((s) => s.id !== server.id);
 
       updatedServers.push({
         id: server.id,
@@ -1464,9 +1488,7 @@ const useStore = create<AppState>((set, get) => ({
 
       set((state) => {
         const existingServerIndex = state.servers.findIndex(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(server.host) &&
-            s.port === port,
+          (s) => s.id === server.id,
         );
         if (existingServerIndex !== -1) {
           const updatedServers = [...state.servers];
@@ -1491,10 +1513,7 @@ const useStore = create<AppState>((set, get) => ({
       const isLocalhost = host === "localhost" || host === "127.0.0.1";
       if (isLocalhost) {
         const savedServers = loadSavedServers();
-        const serverConfig = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-        );
+        const serverConfig = savedServers.find((s) => s.id === server.id);
 
         // Only show warning if not already skipped
         if (!serverConfig?.skipLocalhostWarning) {
@@ -1545,8 +1564,7 @@ const useStore = create<AppState>((set, get) => ({
 
       set((state) => {
         const existingServerIndex = state.servers.findIndex(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(host) && s.port === port,
+          (s) => s.id === (targetId ?? newServerId),
         );
         if (existingServerIndex !== -1) {
           // Update existing server to disconnected
@@ -1689,19 +1707,13 @@ const useStore = create<AppState>((set, get) => ({
           return server;
         });
 
-        // Skip for bouncer sessions: savedServer lookup is host:port-keyed
-        // and a soju bouncer's parent + every bound child share that.
+        // We skip bouncer sessions because the bouncer rejoins their channels itself.
         const currentServer = state.servers.find((s) => s.id === serverId);
         const isBouncerSession =
           !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
         if (!isBouncerSession) {
           const savedServers = loadSavedServers();
-          const savedServer = savedServers.find(
-            (s) =>
-              normalizeHost(s.host) ===
-                normalizeHost(currentServer?.host || "") &&
-              s.port === currentServer?.port,
-          );
+          const savedServer = savedServers.find((s) => s.id === serverId);
           if (savedServer && !savedServer.channels.includes(channel.name)) {
             savedServer.channels.push(channel.name);
             saveServersToLocalStorage(savedServers);
@@ -1755,12 +1767,7 @@ const useStore = create<AppState>((set, get) => ({
         !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
       if (!isBouncerSession) {
         const savedServers = loadSavedServers();
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) ===
-              normalizeHost(currentServer?.host || "") &&
-            s.port === currentServer?.port,
-        );
+        const savedServer = savedServers.find((s) => s.id === serverId);
         if (savedServer) {
           savedServer.channels =
             currentServer?.channels.map((c) => c.name) || [];
@@ -2524,11 +2531,7 @@ const useStore = create<AppState>((set, get) => ({
 
       if (!isBouncerSession) {
         const savedServers = loadSavedServers();
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(server.host) &&
-            s.port === server.port,
-        );
+        const savedServer = savedServers.find((s) => s.id === serverId);
         if (savedServer) {
           savedServer.channels = channelNames;
           saveServersToLocalStorage(savedServers);
@@ -3008,24 +3011,11 @@ const useStore = create<AppState>((set, get) => ({
 
     const connectionPromises: Promise<unknown>[] = [];
     for (const savedServer of parents) {
-      const {
-        id,
-        name,
-        host,
-        port,
-        nickname,
-        password,
-        saslEnabled,
-        saslAccountName,
-        saslPassword,
-      } = savedServer;
+      const { id, name, host, port } = savedServer;
 
       const urlHost = ensureUrlFormat(host, port);
 
-      const existingServer = get().servers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port,
-      );
+      const existingServer = get().servers.find((s) => s.id === id);
 
       if (!existingServer) {
         const connectingServer: Server = {
@@ -3048,21 +3038,15 @@ const useStore = create<AppState>((set, get) => ({
         }));
       }
 
-      let connectionPromise: Promise<unknown> = get().connect(
-        name || normalizeHost(urlHost),
-        urlHost,
-        port,
-        nickname,
-        saslEnabled,
-        password,
-        saslAccountName,
-        saslPassword,
+      let connectionPromise: Promise<unknown> = connectSavedServer(
+        get().connect,
+        savedServer,
       );
       connectionPromise = connectionPromise.catch((error) => {
         console.error(`Failed to reconnect to server ${urlHost}`, error);
         set((state) => ({
           servers: state.servers.map((s) =>
-            normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port
+            s.id === id
               ? { ...s, connectionState: "disconnected" as const }
               : s,
           ),
@@ -3099,11 +3083,8 @@ const useStore = create<AppState>((set, get) => ({
     try {
       // Get saved server config to get credentials
       const savedServers = loadSavedServers();
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(server.host) &&
-          s.port === server.port,
-      );
+      const configId = server.bouncerServerId ?? serverId;
+      const savedServer = savedServers.find((s) => s.id === configId);
 
       if (!savedServer) {
         console.error(`No saved configuration found for server ${serverId}`, {
@@ -3114,19 +3095,16 @@ const useStore = create<AppState>((set, get) => ({
         throw new Error(`No saved configuration found for server ${serverId}`);
       }
 
-      // Ensure host is in URL format (handles old hostname-only entries)
-      const urlHost = ensureUrlFormat(savedServer.host, savedServer.port);
-
-      await get().connect(
-        savedServer.name || normalizeHost(savedServer.host),
-        urlHost, // Use full URL
-        savedServer.port,
-        savedServer.nickname,
-        savedServer.saslEnabled,
-        savedServer.password,
-        savedServer.saslAccountName,
-        savedServer.saslPassword,
-      );
+      if (server.bouncerServerId && server.bouncerNetid) {
+        await connectBouncerChild(
+          serverId,
+          server.bouncerNetid,
+          server.name,
+          savedServer,
+        );
+      } else {
+        await connectSavedServer(get().connect, savedServer);
+      }
     } catch (error) {
       console.error(`Failed to reconnect to server ${serverId}`, error);
       // Update server state back to disconnected
@@ -4275,25 +4253,8 @@ const useStore = create<AppState>((set, get) => ({
       return { servers: [...state.servers, seed] };
     });
 
-    // Queue the BIND so the next CAP END for this new connection
-    // emits `BOUNCER BIND <netid>` first.
-    ircClient.setPendingBouncerBind(childId, netid);
-
-    // The in-memory Server.host is stripped to a bare hostname during
-    // the original parent connect, which loses the protocol + path for
-    // WSS URLs (e.g. wss://obby.t3ks.com:6662/socket -> obby.t3ks.com).
-    // Use the persisted savedParent.host instead so the child landing
-    // on the same listener actually opens /socket, not the bare root.
-    return ircClient.connect(
-      friendly,
-      savedParent.host,
-      savedParent.port,
-      savedParent.nickname,
-      savedParent.password,
-      savedParent.saslAccountName,
-      savedParent.saslPassword,
-      childId,
-    );
+    // We connect with the persisted parent host, since the in-memory one lost its protocol and path.
+    return connectBouncerChild(childId, netid, friendly, savedParent);
   },
 
   sendRaw: (serverId, command) => {

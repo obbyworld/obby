@@ -1126,6 +1126,30 @@ describe("removing a server", () => {
       expect(replayedContents("srv2")).toEqual([]);
     });
 
+    it("keeps the history of another account on the same network apart", async () => {
+      const configs = [
+        { id: SERVER, host: "irc.test", port: 6667, nickname: "alice" },
+        { id: "srv2", host: "irc.test", port: 6667, nickname: "bob" },
+        { id: "srv3", host: "irc.test", port: 6667, nickname: "Alice" },
+      ];
+      vi.mocked(window.localStorage.getItem).mockImplementation((key) =>
+        key === "savedServers" ? JSON.stringify(configs) : null,
+      );
+      await removeKeepingHistory();
+
+      w.addServer("srv2", "irc.test");
+      connect("srv2");
+      await w.drain();
+      expect(await w.db.hasServerHistory("srv2")).toBe(false);
+
+      w.addServer("srv3", "irc.test");
+      connect("srv3");
+      await vi.waitFor(async () =>
+        expect(await w.db.hasServerHistory("srv3")).toBe(true),
+      );
+      vi.mocked(window.localStorage.getItem).mockReset();
+    });
+
     it("leaves nothing to adopt after we delete the history", async () => {
       await seedDisk();
       await askToRemove();

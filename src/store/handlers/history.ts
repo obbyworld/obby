@@ -60,6 +60,7 @@ import {
   serverSupportsChathistory,
 } from "../helpers";
 import type { AppState } from "../index";
+import * as storage from "../localStorage";
 
 export const BYTES_PER_MB = 1_000_000;
 const PRUNE_EVERY_WRITES = 200;
@@ -128,6 +129,29 @@ function serverAddress(
 ): string {
   const address = `${normalizeHost(server.host).toLowerCase()}:${server.port}`;
   return server.bouncerNetid ? `${address}/${server.bouncerNetid}` : address;
+}
+
+// We add the login to the address, so two accounts on one network never take each other's history.
+function serverLoginAddress(
+  server: Pick<
+    Server,
+    "id" | "host" | "port" | "bouncerNetid" | "bouncerServerId"
+  >,
+): string {
+  const configId = server.bouncerServerId ?? server.id;
+  const config = storage.servers.load().find((c) => c.id === configId);
+  const login = (
+    config?.saslAccountName ||
+    config?.nickname ||
+    ""
+  ).toLowerCase();
+  return `${serverAddress(server)}#${login}`;
+}
+
+// We fall back to the bare address for history parked before logins were part of it.
+async function adoptHistoryForServer(server: Server): Promise<void> {
+  if (await adoptParkedHistory(serverLoginAddress(server), server.id)) return;
+  await adoptParkedHistory(serverAddress(server), server.id);
 }
 
 function loadedCandidates(
@@ -215,7 +239,7 @@ export function settleSavedHistory(
 ): Promise<void> {
   return shouldDelete
     ? deleteServerHistory(server.id)
-    : parkServerHistory(server.id, serverAddress(server));
+    : parkServerHistory(server.id, serverLoginAddress(server));
 }
 
 const conversationKey = (serverId: string, target: string) =>
@@ -641,7 +665,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       const server =
         store.getState().servers.find((s) => s.id === serverId) ??
         ircClient.servers.get(serverId);
-      if (server) void adoptParkedHistory(serverAddress(server), serverId);
+      if (server) void adoptHistoryForServer(server);
       return;
     }
     ircClient.clearDiskOnlyBatches(serverId);

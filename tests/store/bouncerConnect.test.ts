@@ -1,27 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import useStore, { type AppState } from "../../src/store";
+import {
+  installLocalStorageBacking,
+  lsBacking,
+} from "../fixtures/localStorageBacking";
 
 const BOUNCER_ID = "ctl-bouncer-1";
-
-// localStorage is globally mocked in tests/setup.ts; back it with a
-// real Map per test so storage.servers.load() / save() actually round
-// trip.
-const lsBacking = new Map<string, string>();
-function installLocalStorageBacking() {
-  lsBacking.clear();
-  vi.mocked(window.localStorage.getItem).mockImplementation(
-    (k: string) => lsBacking.get(k) ?? null,
-  );
-  vi.mocked(window.localStorage.setItem).mockImplementation(
-    (k: string, v: string) => {
-      lsBacking.set(k, v);
-    },
-  );
-  vi.mocked(window.localStorage.removeItem).mockImplementation((k: string) => {
-    lsBacking.delete(k);
-  });
-}
 
 function seedParentServer() {
   installLocalStorageBacking();

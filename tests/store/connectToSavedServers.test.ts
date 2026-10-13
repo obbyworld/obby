@@ -2,25 +2,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import useStore, { type AppState } from "../../src/store";
+import {
+  installLocalStorageBacking,
+  lsBacking,
+} from "../fixtures/localStorageBacking";
 
 const PARENT_ID = "p-1";
 const CHILD_ID = "c-1";
-
-const lsBacking = new Map<string, string>();
-function installLocalStorageBacking() {
-  lsBacking.clear();
-  vi.mocked(window.localStorage.getItem).mockImplementation(
-    (k: string) => lsBacking.get(k) ?? null,
-  );
-  vi.mocked(window.localStorage.setItem).mockImplementation(
-    (k: string, v: string) => {
-      lsBacking.set(k, v);
-    },
-  );
-  vi.mocked(window.localStorage.removeItem).mockImplementation((k: string) => {
-    lsBacking.delete(k);
-  });
-}
 
 function seedParentAndChild() {
   installLocalStorageBacking();

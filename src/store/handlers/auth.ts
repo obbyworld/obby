@@ -21,7 +21,6 @@ import {
   chunkSaslPayload,
 } from "../../lib/saslFrames";
 import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
-import { normalizeHost } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
@@ -542,11 +541,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
         const hasLowLinkSecurity = linkSecurityValue < 2;
         const savedServers = storage.servers.load();
         const serverConfig = currentServer
-          ? savedServers.find(
-              (s) =>
-                normalizeHost(s.host) === normalizeHost(currentServer.host) &&
-                s.port === currentServer.port,
-            )
+          ? savedServers.find((s) => s.id === serverId)
           : undefined;
         const shouldWarnLinkSecurity =
           hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
