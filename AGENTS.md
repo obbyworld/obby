@@ -7,18 +7,27 @@ and share-sheet. The web build also runs standalone via Docker/Nginx.
 
 ---
 
-## Commands — run these every time
+## The CI gate: run before every push
 
-```bash
-npm run format; npm run fix:unsafe; npm run test; npm run build
-npx lefthook run pre-commit --commands check --all-files && git diff --exit-code
-```
+CI ([`workflow.yaml`](.github/workflows/workflow.yaml)) runs these, and all must pass. Each one ends
+with `git diff --exit-code`, so a hook that rewrites a file fails the job:
 
-- `format` / `fix:unsafe` — Biome lint + format (pre-commit hook does this automatically)
-- `test`: Vitest. Read the exit code: an unhandled error fails the run (and CI) while every test passes
-- `build` — TypeScript compile + Vite bundle (must be clean)
-- The `lefthook` line is the CI Biome job. Only `biome check` sorts imports, so it catches drift `format` misses
-- Changes under `src-tauri/` also run `npm run rust:fmt` and `npm run rust:clippy`
+| Command                                                                    | What it checks                      |
+| -------------------------------------------------------------------------- | ----------------------------------- |
+| `npx lefthook run pre-commit --commands check --all-files`                 | Biome lint, format and import order |
+| `npx lefthook run pre-commit --commands i18n --all-files`                  | Lingui catalogs extracted, compiled |
+| `npx lefthook run pre-commit --commands docs-format,docs-lint --all-files` | Prettier and markdownlint on docs   |
+| `npx lefthook run pre-commit --commands rust-fmt,rust-clippy --all-files`  | `src-tauri/` and the plugins        |
+| `npm run test`                                                             | Vitest                              |
+
+- Read `npm run test`'s exit code: an unhandled error fails the run while every test passes.
+- Only `biome check` sorts imports, so `npm run format` alone leaves drift the Biome job catches.
+
+CI does not run these, so run them yourself when the change touches them:
+
+- `npm run build` (`tsc -b` and Vite). A type error passes every CI job above.
+- swift-format, for the Swift plugin sources (macOS only, through the pre-commit hook).
+- A native app build (`npx tauri build`), for anything under `src-tauri/`.
 
 ---
 
@@ -55,7 +64,7 @@ src/
     ircClient.ts            # Singleton: `export default new IRCClient()`  ← all imports point here
     mediaProbe.ts           # HEAD/GET probing (see URL Safety below)
     mediaUtils.ts           # Media type detection + trust logic
-    settings/               # Settings definitions and helpers
+    settings/               # Every user setting: add one in definitions/; the settings page and search read the registry
   store/
     index.ts                # Zustand store: state shape + all action methods
     handlers/               # Store-side IRC event subscriptions (one file per domain)
@@ -124,8 +133,10 @@ into `create()` — direct mutation of `state` inside `setState` will silently n
 Servers differ from the spec and from each other (UnrealIRCd/ObbyIRCd, Ergo, InspIRCd, bouncers).
 Write the code for what they actually send:
 
-- Read server behaviour from ISUPPORT: channel prefixes from `CHANTYPES`, history page size from `CHATHISTORY`.
+- Read server behaviour from ISUPPORT (`IRCClient` keeps the values per server): history page size from `CHATHISTORY`, channel prefixes from `CHANTYPES`.
+- A channel name starts with any character in `CHANTYPES` (`#`, `&`, `+`, `!`, …). Test it against that set, never against `#` alone. A `#` the user types (a completion trigger, a URL fragment) stays a literal character.
 - Compare channel names and nicks case-insensitively.
+- A field the server has not sent yet is `undefined`, a different state from its empty or zero value (`readMarker === undefined` means the server has not answered). Gate on whether the field arrived.
 - With `echo-message`, the server's echo is the copy of our own message we show.
 - A `CAP` reply can span several lines, each marked `*` until the last one. Decide on the merged
   capability set after the final line.
@@ -272,7 +283,7 @@ for WKWebView's `IntersectionObserver`.
 
 ---
 
-## Menus, panels and touch
+## UI conventions
 
 - Temporary activity (uploads, media playback, bot workflows) lives in the strip under the chat header, one line per row with details behind an expand control. The end of the chat and the composer stay clear.
 - Each action has one entry point. Before adding a button, check whether the menu or toolbar beside it already offers the action.
