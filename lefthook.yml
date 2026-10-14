@@ -43,7 +43,7 @@ pre-commit:
         fi
     docs-lint:
       glob: "*.md"
-      # Lints all markdown via the npm script so .markdownlintignore is honored.
+      # We lint every tracked markdown file through the npm script, so git's ignore rules apply.
       run: npm run docs:lint
     rust-fmt:
       glob: "src-tauri/**/*.rs"
