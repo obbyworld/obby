@@ -14,7 +14,7 @@ import {
   type RecorderEnv,
   withReplayTags,
 } from "../../../src/lib/history/historyLines";
-import { parseMessageTags } from "../../../src/lib/ircUtils";
+import { KNOWN_CHANTYPES, parseMessageTags } from "../../../src/lib/ircUtils";
 
 const NOW = Date.parse("2024-05-01T12:00:00.000Z");
 const NOW_ISO = new Date(NOW).toISOString();
@@ -51,6 +51,7 @@ function setup(overrides: Partial<RecorderEnv> = {}) {
     ownNick: () => "me",
     isOpenConversation: () => true,
     hasChathistory: () => false,
+    chantypes: () => KNOWN_CHANTYPES,
     isEncryptedPm: () => false,
     now: () => NOW,
     ...overrides,

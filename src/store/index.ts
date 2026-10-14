@@ -7,7 +7,6 @@ import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
-import { isChannelTarget } from "../lib/ircUtils";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
 import { recordPlace, recordSearch } from "../lib/search/recents";
@@ -1201,7 +1200,9 @@ export function resolveCallReturnTarget(
     if (privateChat) return { type: "privateChat", id: privateChat.id };
   }
 
-  const firstText = server.channels.find((c) => c.name.startsWith("#"));
+  const firstText = server.channels.find(
+    (c) => classifyChannelName(c.name) === "text",
+  );
   return firstText ? { type: "channel", id: firstText.id } : null;
 }
 
@@ -3483,7 +3484,7 @@ const useStore = create<AppState>((set, get) => ({
       get().selectChannel(channel.id, { navigate: true });
       return channel.id;
     }
-    if (isChannelTarget(target)) return null;
+    if (ircClient.isChannel(serverId, target)) return null;
     const findPrivateChat = () =>
       findServer()?.privateChats?.find(
         (pc) => pc.username.toLowerCase() === lower,

@@ -159,7 +159,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("WHO_END", ({ serverId, mask }) => {
-    if (!mask?.startsWith("#")) return;
+    if (!mask || !ircClient.isChannel(serverId, mask)) return;
     const server = store.getState().servers.find((s) => s.id === serverId);
     if (!server) return;
     const channel = server.channels.find(

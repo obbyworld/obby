@@ -134,7 +134,7 @@ Servers differ from the spec and from each other (UnrealIRCd/ObbyIRCd, Ergo, Ins
 Write the code for what they actually send:
 
 - Read server behaviour from ISUPPORT (`IRCClient` keeps the values per server): history page size from `CHATHISTORY`, channel prefixes from `CHANTYPES`.
-- A channel name starts with any character in `CHANTYPES` (`#`, `&`, `+`, `!`, …). Test it against that set, never against `#` alone. A `#` the user types (a completion trigger, a URL fragment) stays a literal character.
+- A channel name starts with any character in `CHANTYPES` (`#`, `&`, `+`, `!`, …). Test it with `ircClient.isChannel(serverId, name)`, or `isChannelTarget(name)` where no server is known, never against `#` alone. A `#` the user types (a completion trigger, a URL fragment) stays a literal character.
 - Compare channel names and nicks case-insensitively.
 - A field the server has not sent yet is `undefined`, a different state from its empty or zero value (`readMarker === undefined` means the server has not answered). Gate on whether the field arrived.
 - With `echo-message`, the server's echo is the copy of our own message we show.

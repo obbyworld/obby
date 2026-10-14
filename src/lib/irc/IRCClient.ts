@@ -14,7 +14,7 @@ import type {
   WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
-import { isChannelTarget, parseMessageTags } from "../ircUtils";
+import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
 import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
@@ -1444,12 +1444,18 @@ export class IRCClient implements IRCClientContext {
       : CHATHISTORY_PAGE_SIZE;
   }
 
+  chantypes(serverId: string): string {
+    return chantypesOf(this.isupportValues.get(serverId));
+  }
+
+  isChannel(serverId: string, name: string | undefined | null): boolean {
+    return isChannelTarget(name, this.chantypes(serverId));
+  }
+
   // We prefix a bare name with the server's first channel type, so `/join foo` reaches a channel the server allows.
   private withChannelPrefix(serverId: string, name: string): string {
-    const chantypes =
-      this.isupportValues.get(serverId)?.get("CHANTYPES") ?? "#&";
-    if (!chantypes || chantypes.includes(name[0])) return name;
-    return `${chantypes[0]}${name}`;
+    if (this.isChannel(serverId, name)) return name;
+    return `${this.chantypes(serverId)[0]}${name}`;
   }
 
   leaveChannel(serverId: string, channelName: string): void {
@@ -1579,7 +1585,7 @@ export class IRCClient implements IRCClientContext {
     // have us in it), JOIN first so the typing TAGMSG lands instead
     // of getting bounced with 401.
     const server = this.servers.get(serverId);
-    if (server && isChannelTarget(target)) {
+    if (server && this.isChannel(serverId, target)) {
       const ch = server.channels.find((c) => c.name === target);
       if (
         ch &&
@@ -1826,11 +1832,7 @@ export class IRCClient implements IRCClientContext {
   ): void {
     if (!items.length) return;
 
-    const isChannelTarget =
-      target.startsWith("#") ||
-      target.startsWith("^") ||
-      target.startsWith("$");
-    const list = isChannelTarget
+    const list = this.isChannel(serverId, target)
       ? (registry?.channelModes ?? [])
       : (registry?.userModes ?? []);
 

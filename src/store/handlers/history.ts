@@ -46,7 +46,7 @@ import {
 } from "../../lib/history/historySearch";
 import { containsLink, plainText } from "../../lib/history/searchFields";
 import ircClient from "../../lib/ircClient";
-import { isChannelTarget, parseMessageTags } from "../../lib/ircUtils";
+import { parseMessageTags } from "../../lib/ircUtils";
 import type {
   SearchPage,
   SearchQuery,
@@ -256,6 +256,7 @@ function recorderFor(
       ownNick: () => ircClient.getNick(serverId),
       hasChathistory: () =>
         serverSupportsChathistory(store.getState(), serverId),
+      chantypes: () => ircClient.chantypes(serverId),
       isOpenConversation: (target) =>
         findConversation(store, serverId, target) !== undefined,
       isEncryptedPm: (nick) =>
@@ -831,7 +832,7 @@ export function showSavedHistory(
   const key = conversationKey(serverId, target);
   if (
     !isEnabled(store) ||
-    (isChannelTarget(target) &&
+    (ircClient.isChannel(serverId, target) &&
       serverSupportsChathistory(store.getState(), serverId))
   )
     return;
@@ -990,7 +991,7 @@ export async function loadOlderMessages(
         serverId,
         target,
         plan.before,
-        isChannelTarget(target)
+        ircClient.isChannel(serverId, target)
           ? diskFirstFill(store, serverId, target, oldestTime, plan.gap)
           : plan.gap && { gap: plan.gap },
       );

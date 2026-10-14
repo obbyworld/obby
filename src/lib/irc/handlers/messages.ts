@@ -1,7 +1,13 @@
 import type { WhoisSession } from "../../../types";
-import { isChannelTarget } from "../../ircUtils";
+import { chantypesOf, isChannelTarget } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 import { getNickFromNuh, getTimestampFromTags } from "../utils";
+
+const isChannelOn = (
+  ctx: IRCClientContext,
+  serverId: string,
+  name: string | undefined,
+) => isChannelTarget(name, chantypesOf(ctx.isupportValues.get(serverId)));
 
 // Labeled-response wraps every multi-line server reply (e.g. PRIVMSG-to-away,
 // where the server emits both 301 RPL_AWAY and the echo) in a batch whose
@@ -29,7 +35,7 @@ export function handlePrivmsg(
   mtags: Record<string, string> | undefined,
 ): void {
   const target = parv[0];
-  const isChannel = isChannelTarget(target);
+  const isChannel = isChannelOn(ctx, serverId, target);
   const sender = getNickFromNuh(source);
   const message = parv.slice(1).join(" ");
 
@@ -97,7 +103,7 @@ export function handleNotice(
   mtags: Record<string, string> | undefined,
 ): void {
   const target = parv[0];
-  const isChannel = isChannelTarget(target);
+  const isChannel = isChannelOn(ctx, serverId, target);
   const sender = getNickFromNuh(source);
   const message = parv.slice(1).join(" ");
 
@@ -268,7 +274,7 @@ export function handleBatch(
           batch.batchTags ||
           (batch.batchMsgId ? { msgid: batch.batchMsgId } : undefined),
         sender,
-        channelName: isChannelTarget(target) ? target : undefined,
+        channelName: isChannelOn(ctx, serverId, target) ? target : undefined,
         target,
         message: combinedMessage,
         lines: batch.messages,

@@ -172,14 +172,14 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
         // final PRIVMSG arrives so the row reads as the bot's answer
         // (with the workflow pill alongside) without ever jumping
         // position in the chat list.
-        const channel = target.startsWith("#")
-          ? state.servers
+        const isPmTarget = !ircClient.isChannel(serverId, target);
+        const channel = isPmTarget
+          ? undefined
+          : state.servers
               .find((s) => s.id === serverId)
               ?.channels.find(
                 (c) => c.name.toLowerCase() === target.toLowerCase(),
-              )
-          : undefined;
-        const isPmTarget = !target.startsWith("#");
+              );
 
         if (!channel && !isPmTarget) {
           return { aiWorkflows };

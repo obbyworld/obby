@@ -11,6 +11,8 @@ import useStore from "../../../src/store";
 vi.mock("../../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    isChannel: (_serverId: string, name?: string) =>
+      !!name && "#&+!^$".includes(name[0]),
     on: vi.fn(),
     getCurrentUser: vi.fn(() => ({ id: "u1", username: "tester" })),
     getNick: vi.fn(() => "tester"),

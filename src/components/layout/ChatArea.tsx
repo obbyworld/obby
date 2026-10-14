@@ -1238,7 +1238,9 @@ export const ChatArea: React.FC<{
       info = await fetchUploadInfo(filehostUrl);
       // Serialised because waitForAuthToken resolves on the first matching
       // TOKEN_GENERATE event -- parallel mints would race for the reply.
-      const scope = target.startsWith("#") ? `channel:${target}` : undefined;
+      const scope = ircClient.isChannel(selectedServerId, target)
+        ? `channel:${target}`
+        : undefined;
       for (let i = 0; i < files.length; i++) {
         ircClient.requestToken(selectedServerId, "filehost", scope);
         const tok = await waitForAuthToken(selectedServerId, "filehost");

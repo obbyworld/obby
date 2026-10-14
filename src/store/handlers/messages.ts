@@ -8,7 +8,6 @@ import { e2eeSessionKey, expectsProtection } from "../../lib/e2ee/session";
 import { isLocalReplay } from "../../lib/history/historyLines";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
-import { isChannelTarget } from "../../lib/ircUtils";
 import {
   playNotificationSound,
   shouldPlayNotificationSound,
@@ -1516,7 +1515,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       let key: string;
       let user: User;
 
-      const isChannel = isChannelTarget(channelName);
+      const isChannel = ircClient.isChannel(response.serverId, channelName);
       if (isChannel) {
         const channel = server.channels.find(
           (c) => c.name.toLowerCase() === channelName.toLowerCase(),
@@ -1649,7 +1648,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       if (!server) return;
 
       let channel: Channel | PrivateChat | undefined;
-      const isChannel = isChannelTarget(channelName);
+      const isChannel = ircClient.isChannel(response.serverId, channelName);
       if (isChannel) {
         channel = server.channels.find(
           (c) => c.name.toLowerCase() === channelName.toLowerCase(),
@@ -1696,7 +1695,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       if (!server) return;
 
       let channel: Channel | PrivateChat | undefined;
-      const isChannel = isChannelTarget(channelName);
+      const isChannel = ircClient.isChannel(response.serverId, channelName);
       if (isChannel) {
         channel = server.channels.find(
           (c) => c.name.toLowerCase() === channelName.toLowerCase(),
@@ -1736,7 +1735,7 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       if (!server) return;
 
       let channel: Channel | PrivateChat | undefined;
-      const isChannel = isChannelTarget(channelName);
+      const isChannel = ircClient.isChannel(response.serverId, channelName);
       if (isChannel) {
         channel = server.channels.find(
           (c) => c.name.toLowerCase() === channelName.toLowerCase(),
@@ -1796,7 +1795,10 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       const server = state.servers.find((s) => s.id === serverId);
       if (!server) return {};
       const lowered = target.toLowerCase();
-      const channel: Channel | PrivateChat | undefined = isChannelTarget(target)
+      const channel: Channel | PrivateChat | undefined = ircClient.isChannel(
+        serverId,
+        target,
+      )
         ? server.channels.find((c) => c.name.toLowerCase() === lowered)
         : server.privateChats?.find(
             (pc) => pc.username.toLowerCase() === lowered,

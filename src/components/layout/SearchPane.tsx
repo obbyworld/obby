@@ -14,6 +14,7 @@ import { FaChevronLeft, FaTimes } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { escapeRegExp } from "../../lib/escapeRegExp";
 import type { HistoryGap } from "../../lib/history/historyDb";
+import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
 import {
   type JumpResult,
@@ -83,7 +84,8 @@ function chatLabel(server: Server | undefined, target: string): string {
   const lower = target.toLowerCase();
   const channel = server?.channels.find((c) => c.name.toLowerCase() === lower);
   if (channel) return channel.name;
-  if (isChannelTarget(target)) return target;
+  if (isChannelTarget(target, server && ircClient.chantypes(server.id)))
+    return target;
   const peer =
     server?.privateChats?.find((pc) => pc.username.toLowerCase() === lower)
       ?.username ?? target;

@@ -22,6 +22,7 @@ function makeCtx(): TestCtx {
     rateLimitedServers: new Map(),
     capNegotiationComplete: new Map(),
     activeBatches: new Map(),
+    isupportValues: new Map(),
     sendRaw: vi.fn(),
     // biome-ignore lint/suspicious/noExplicitAny: test helper needs generic signature
     triggerEvent(event: string, data: any) {
