@@ -2043,6 +2043,9 @@ export class IRCClient implements IRCClientContext {
           lineAfterTags = line.substring(spaceIndex + 1);
         }
       }
+      // Servers without server-time leave the time to us, so we stamp one
+      // receive time that the chat and the saved history both read.
+      if (!mtags?.time) mtags = { ...mtags, time: new Date().toISOString() };
 
       // Parse IRC message properly handling colon-prefixed trailing parameter
       const spaceIndex = lineAfterTags.indexOf(" :");
