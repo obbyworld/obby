@@ -57,7 +57,7 @@ export const MAX_MESSAGES_PER_CHANNEL = 1500;
 export const messageTime = (message: Message) =>
   new Date(message.timestamp).getTime();
 
-const isChatMessage = (message: Message) =>
+export const isChatMessage = (message: Message) =>
   message.type === "message" || message.type === undefined;
 
 // The newest message we hold for a chat, counting live messages a history
@@ -83,14 +83,16 @@ export function firstUnreadMessageId(
   readUpTo: number,
   ownNick: string | undefined,
 ): string | undefined {
-  const own = ownNick?.toLowerCase();
-  return messages.find((message) => isUnread(message, readUpTo, own))?.id;
+  return messages.find((message) => isUnread(message, readUpTo, ownNick))?.id;
 }
 
-const isUnread = (message: Message, readUpTo: number, own?: string) =>
+export const isOwnMessage = (message: Message, ownNick: string | undefined) =>
+  !!ownNick && message.userId.toLowerCase() === ownNick.toLowerCase();
+
+const isUnread = (message: Message, readUpTo: number, ownNick?: string) =>
   isChatMessage(message) &&
   messageTime(message) > readUpTo &&
-  message.userId.toLowerCase() !== own;
+  !isOwnMessage(message, ownNick);
 
 export type UnreadCounts = {
   unreadCount: number;
@@ -106,19 +108,18 @@ export function countUnread(
   ownNick: string | undefined,
   isPrivate: boolean,
 ): UnreadCounts {
-  const own = ownNick?.toLowerCase();
   const counted = new Set<string>();
   let unreadCount = 0;
   let mentionCount = 0;
   for (const message of messages) {
     const id = message.msgid ?? message.id;
-    if (counted.has(id) || !isUnread(message, readUpTo, own)) continue;
+    if (counted.has(id) || !isUnread(message, readUpTo, ownNick)) continue;
     counted.add(id);
     unreadCount += 1;
     if (
       isPrivate ||
       message.mentioned.length > 0 ||
-      (own !== undefined && message.replyMessage?.userId.toLowerCase() === own)
+      (!!message.replyMessage && isOwnMessage(message.replyMessage, ownNick))
     )
       mentionCount += 1;
   }

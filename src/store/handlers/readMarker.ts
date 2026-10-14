@@ -13,6 +13,7 @@ import {
   type UnreadCounts,
 } from "../helpers";
 import type { AppState } from "../index";
+import { findConversation } from "./history";
 
 // We wait for a burst of messages to settle before telling the server, so a
 // busy channel costs one MARKREAD a second at most.
@@ -311,4 +312,13 @@ export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
 
   if (typeof document !== "undefined")
     document.addEventListener("visibilitychange", scheduleMarkRead);
+
+  // Sending a message means the user has read the chat, so we mark it read
+  // at once, even when they switch away or scroll up right after.
+  ircClient.on("rawLine", ({ serverId, direction, line }) => {
+    if (direction !== "tx") return;
+    const target = /^(?:@\S+ )?PRIVMSG (\S+) :/.exec(line)?.[1];
+    const chat = target && findConversation(store, serverId, target);
+    if (chat) markChatRead(store, serverId, chat.channelId);
+  });
 }

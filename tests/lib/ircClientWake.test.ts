@@ -78,8 +78,23 @@ describe("the account we are logged in to", () => {
 });
 
 describe("reconnecting a server whose socket is still open", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("closes and silences the old socket so only one session stays live", () => {
     const { client, socket, internals } = connectedClient();
+    // We stub WebSocket so the reconnect opens no real socket that fails after the test ends.
+    vi.stubGlobal(
+      "WebSocket",
+      class {
+        static CONNECTING = 0;
+        static OPEN = 1;
+        readyState = 0;
+        send() {}
+        close() {}
+      },
+    );
     const oldOnclose = socket.onclose;
 
     void client

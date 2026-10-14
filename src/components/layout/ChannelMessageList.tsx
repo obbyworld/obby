@@ -33,6 +33,8 @@ import {
 } from "../../store/handlers/history";
 import {
   firstUnreadMessageId,
+  isChatMessage,
+  isOwnMessage,
   messageTime,
   serverTracksReadMarker,
 } from "../../store/helpers";
@@ -448,23 +450,27 @@ export const ChannelMessageList = forwardRef<
     const isAwayFromPresent =
       isScrolledUp || isDetached || isPositioningOnUnread;
     // Messages that land while the user watches the bottom are read as they
-    // arrive, so they never start a new line.
+    // arrive, so they never start a new line. We also clear the line when the
+    // user sends a message, since sending means they have read the chat.
     const [watchedMessages, setWatchedMessages] = useState(channelMessages);
     if (watchedMessages !== channelMessages) {
       setWatchedMessages(channelMessages);
       const newest = channelMessages.at(-1);
+      const ownNick = ircClient.getNick(serverId);
+      const hasJustSent =
+        !!newest &&
+        newest.id !== watchedMessages.at(-1)?.id &&
+        isChatMessage(newest) &&
+        isOwnMessage(newest, ownNick);
       if (
         isActive &&
         opening.step === "open" &&
         opening.after != null &&
         newest &&
-        !isAwayFromPresent &&
-        isAppFocused &&
-        !firstUnreadMessageId(
-          watchedMessages,
-          opening.after,
-          ircClient.getNick(serverId),
-        )
+        (hasJustSent ||
+          (!isAwayFromPresent &&
+            isAppFocused &&
+            !firstUnreadMessageId(watchedMessages, opening.after, ownNick)))
       )
         setOpening({
           ...opening,
@@ -956,12 +962,20 @@ export const ChannelMessageList = forwardRef<
                 return (
                   <Fragment key={message.id}>
                     {message.id === firstUnreadId && (
+                      // We draw the line over the boundary with no height of its own, so the messages stay put when it comes and goes.
+                      // Above the first row there is nothing to overlap, so there it takes its own height.
                       <div
                         data-unread-line
-                        className="flex items-center gap-2 px-4 my-1 text-xs font-semibold text-discord-red"
+                        className={`relative z-[5] pointer-events-none ${originalIndex === 0 ? "h-5" : "h-0"}`}
                       >
-                        <span className="hairline flex-1 bg-discord-red/70" />
-                        <Trans>New messages</Trans>
+                        <div
+                          className={`absolute inset-x-4 -translate-y-1/2 flex items-center gap-2 text-xs font-semibold text-discord-red ${originalIndex === 0 ? "top-1/2" : "top-0"}`}
+                        >
+                          <span className="hairline flex-1 bg-discord-red/70" />
+                          <span className="px-1 rounded bg-discord-dark-200">
+                            <Trans>New messages</Trans>
+                          </span>
+                        </div>
                       </div>
                     )}
                     <MessageItem

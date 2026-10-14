@@ -519,7 +519,7 @@ function settleGap(
   );
 }
 
-function findConversation(
+export function findConversation(
   store: StoreApi<AppState>,
   serverId: string,
   target: string,

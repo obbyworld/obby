@@ -172,6 +172,26 @@ describe("read markers", () => {
     );
   });
 
+  it("marks the chat read when the user sends to it, even while scrolled up", async () => {
+    const { useStore, ircClient, markreadSet, channel } = await boot({
+      selected: true,
+    });
+    useStore.setState((state) => ({
+      ui: { ...state.ui, isChatAwayFromPresent: true },
+    }));
+
+    ircClient.triggerEvent("rawLine", {
+      serverId: SERVER,
+      direction: "tx",
+      line: "PRIVMSG #chan :on it",
+    });
+
+    const newest = new Date(BASE + 3000).toISOString();
+    expect(channel().readMarker).toBe(newest);
+    expect(channel().unreadCount).toBe(0);
+    expect(markreadSet).toHaveBeenCalledWith(SERVER, "#chan", newest);
+  });
+
   it("waits for the stored marker before sending its own", async () => {
     vi.useFakeTimers();
     const { useStore, markreadSet } = await boot({ selected: true });
