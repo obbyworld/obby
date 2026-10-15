@@ -634,7 +634,6 @@ export class IRCClient implements IRCClientContext {
   currentUsers: Map<string, User | null> = new Map(); // Per-server current users
   private saslMechanisms: Map<string, string[]> = new Map();
   private capLsAccumulated: Map<string, Set<string>> = new Map();
-  private offeredCapabilities: Map<string, Set<string>> = new Map();
   private saslEnabled: Map<string, boolean> = new Map();
   private saslCredentials: Map<string, { username: string; password: string }> =
     new Map();
@@ -2187,7 +2186,6 @@ export class IRCClient implements IRCClientContext {
     }
 
     if (isFinal) {
-      this.offeredCapabilities.set(serverId, new Set(accumulated));
       // Now request the caps we want from the accumulated list
       const capsToRequest: string[] = [];
       const saslEnabled = this.saslEnabled.get(serverId) ?? false;
@@ -2397,11 +2395,6 @@ export class IRCClient implements IRCClientContext {
     return parseMultilineLimits(
       this.servers.get(serverId)?.capabilityValues?.["draft/multiline"],
     );
-  }
-
-  /** Whether the server listed `cap` in CAP LS, whether or not we asked for it. */
-  offersCapability(serverId: string, cap: string): boolean {
-    return this.offeredCapabilities.get(serverId)?.has(cap) ?? false;
   }
 
   hasCapability(serverId: string, cap: string): boolean {

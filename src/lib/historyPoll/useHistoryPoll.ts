@@ -17,8 +17,6 @@ export function useHistoryPoll(): void {
     let since = Date.now();
     const live: LiveServerState = {
       nickOf: (serverId) => ircClient.getNick(serverId),
-      offersCapability: (serverId, cap) =>
-        ircClient.offersCapability(serverId, cap),
       hasCapability: (serverId, cap) => ircClient.hasCapability(serverId, cap),
     };
     const sync = (state: AppState) => {

@@ -38,32 +38,19 @@ const settings = () => ({
 
 const live = (overrides: Partial<LiveServerState> = {}): LiveServerState => ({
   nickOf: () => undefined,
-  offersCapability: () => false,
   hasCapability: () => true,
   ...overrides,
 });
 
 describe("history poll config", () => {
-  it("only polls servers that keep messages for us and have no web push", () => {
-    const noPush = live().offersCapability;
+  it("only polls servers that keep messages for us", () => {
+    expect(needsHistoryPoll(server({ persistenceEffective: "ON" }))).toBe(true);
+    expect(needsHistoryPoll(server({ bouncerNetid: "7" }))).toBe(true);
+    expect(needsHistoryPoll(server({ persistenceEffective: "OFF" }))).toBe(
+      false,
+    );
     expect(
-      needsHistoryPoll(server({ persistenceEffective: "ON" }), noPush),
-    ).toBe(true);
-    expect(needsHistoryPoll(server({ bouncerNetid: "7" }), noPush)).toBe(true);
-    expect(
-      needsHistoryPoll(server({ persistenceEffective: "OFF" }), noPush),
-    ).toBe(false);
-    expect(
-      needsHistoryPoll(
-        server({ isBouncerControl: true, bouncerNetid: "7" }),
-        noPush,
-      ),
-    ).toBe(false);
-    expect(
-      needsHistoryPoll(
-        server({ bouncerNetid: "7" }),
-        (_, cap) => cap === "soju.im/webpush",
-      ),
+      needsHistoryPoll(server({ isBouncerControl: true, bouncerNetid: "7" })),
     ).toBe(false);
   });
 

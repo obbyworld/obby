@@ -13,8 +13,6 @@ import { isTauriMobile } from "../platformUtils";
 /** Android runs periodic work at most this often; iOS decides on its own. */
 const HISTORY_POLL_INTERVAL_MINUTES = 15;
 
-const WEB_PUSH_CAPABILITIES = ["draft/webpush", "soju.im/webpush"];
-
 export interface HistoryPollServer {
   id: string;
   address: string;
@@ -35,7 +33,6 @@ export interface HistoryPollConfig {
 
 export interface LiveServerState {
   nickOf: (serverId: string) => string | undefined;
-  offersCapability: (serverId: string, capability: string) => boolean;
   hasCapability: (serverId: string, capability: string) => boolean;
 }
 
@@ -56,14 +53,9 @@ export function isHistoryPollDecided(
 }
 
 // We only poll servers that keep history for us, so other servers never see us
-// come and go, and we leave servers with web push to their own notifications.
-export function needsHistoryPoll(
-  server: Server,
-  offersCapability: LiveServerState["offersCapability"],
-): boolean {
+// come and go. The app webviews have no Push API, so web push servers need it too.
+export function needsHistoryPoll(server: Server): boolean {
   if (server.isBouncerControl) return false;
-  if (WEB_PUSH_CAPABILITIES.some((cap) => offersCapability(server.id, cap)))
-    return false;
   return server.persistenceEffective === "ON" || !!server.bouncerNetid;
 }
 
@@ -98,7 +90,7 @@ export function historyPollConfigFor(
   if (!areChatNotificationsOn(settings)) return null;
   const entries: HistoryPollServer[] = [];
   for (const server of servers) {
-    if (!needsHistoryPoll(server, live.offersCapability)) continue;
+    if (!needsHistoryPoll(server)) continue;
     const configId = server.bouncerServerId ?? server.id;
     const config = saved.find((s) => s.id === configId);
     if (!config) continue;
