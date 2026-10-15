@@ -177,6 +177,7 @@ function notePeerMessage(
     message,
     body,
     isHistorical: false,
+    isEncrypted: true,
   });
 }
 

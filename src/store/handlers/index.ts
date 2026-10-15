@@ -5,6 +5,7 @@ import { registerBatchHandlers } from "./batches";
 import { registerBotToolsHandlers } from "./botTools";
 import { registerBouncerHandlers } from "./bouncer";
 import { registerChannelHandlers } from "./channels";
+import { registerNotificationPermission } from "./chatNotifications";
 import { registerConnectionHandlers } from "./connection";
 import { registerE2EEHandlers } from "./e2ee";
 import { registerHistoryHandlers } from "./history";
@@ -42,4 +43,5 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerE2EEHandlers(store);
   registerServerReplyHandlers(store);
   registerHistoryHandlers(store);
+  registerNotificationPermission(store);
 }

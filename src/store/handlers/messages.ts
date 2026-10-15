@@ -12,11 +12,7 @@ import {
   playNotificationSound,
   shouldPlayNotificationSound,
 } from "../../lib/notificationSounds";
-import {
-  checkForMention,
-  extractMentions,
-  showMentionNotification,
-} from "../../lib/notifications";
+import { checkForMention, extractMentions } from "../../lib/notifications";
 import type { Channel, Message, PrivateChat, User } from "../../types";
 import {
   generateDeterministicId,
@@ -31,6 +27,7 @@ import {
 } from "../helpers";
 import { type AppState, rememberMsgId, rememberMsgIds } from "../index";
 import { bufferChathistoryMessage, bufferHistoryEdit } from "./batches";
+import { notifyChatMessage } from "./chatNotifications";
 import { handleInboundObby } from "./e2ee";
 import { confirmEncryptedEcho } from "./e2eeConversation";
 import { handleInboundOtr } from "./otr";
@@ -208,29 +205,19 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
         if (
           !isActiveChannel &&
-          response.sender !== currentServerUser?.username &&
-          !isHistoricalMessage
-        ) {
-          // Show browser notification for mentions
-          if (hasMention && currentState.globalSettings.enableNotifications) {
-            showMentionNotification(
-              server.id,
-              channelName,
-              response.sender,
-              message,
-              (serverId, msg) => {
-                // Fallback: Add a NOTE standard reply notification
-                store.getState().addGlobalNotification({
-                  type: "note",
-                  command: "MENTION",
-                  code: "HIGHLIGHT",
-                  message: msg,
-                  serverId,
-                });
-              },
-            );
-          }
-        }
+          !isOwnMessage &&
+          !isHistoricalMessage &&
+          hasMention
+        )
+          notifyChatMessage(store, {
+            serverId: server.id,
+            target: channelName,
+            sender: response.sender,
+            text: message,
+            isPrivate: false,
+            time: new Date(timestamp).getTime(),
+            msgid: mtags?.msgid,
+          });
 
         // If message has bot tag, mark user as bot (skip for historical — live messages will set this)
         if (!isHistoricalMessage && mtags?.bot !== undefined) {
@@ -500,28 +487,16 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             channel.id &&
           multilineCurrentState.ui.selectedServerId === server.id;
 
-        if (!isActiveChannel && !isOwnMessage) {
-          if (
-            hasMention &&
-            multilineCurrentState.globalSettings.enableNotifications
-          ) {
-            showMentionNotification(
-              server.id,
-              channelName ?? "",
-              sender,
-              message,
-              (serverId, msg) => {
-                store.getState().addGlobalNotification({
-                  type: "note",
-                  command: "MENTION",
-                  code: "HIGHLIGHT",
-                  message: msg,
-                  serverId,
-                });
-              },
-            );
-          }
-        }
+        if (!isActiveChannel && !isOwnMessage && hasMention)
+          notifyChatMessage(store, {
+            serverId: server.id,
+            target: channel.name,
+            sender,
+            text: message,
+            isPrivate: false,
+            time: new Date(timestamp).getTime(),
+            msgid: newMessage.msgid,
+          });
 
         const soundState = store.getState();
         if (

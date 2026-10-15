@@ -1,9 +1,6 @@
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
-import {
-  closeMentionNotification,
-  privateMessageNotificationName,
-} from "../../lib/notifications";
+import { closeChatNotification } from "../../lib/notifications";
 import type { Channel, PrivateChat, Server } from "../../types";
 import {
   countUnread,
@@ -110,6 +107,7 @@ export function markChatRead(
   joinedWithoutMarker.delete(key);
   const marker = new Date(newest).toISOString();
   setReadMarker(store, serverId, chatId, marker);
+  closeChatNotification(serverId, targetOf(chat));
   if (tracks) ircClient.markreadSet(serverId, targetOf(chat), marker);
 }
 
@@ -238,13 +236,7 @@ export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
       ...(server?.channels ?? []),
       ...(server?.privateChats ?? []),
     ].find((c) => eqIC(targetOf(c), target));
-    if (chat && chat.unreadCount === 0) {
-      closeMentionNotification(serverId, target);
-      closeMentionNotification(
-        serverId,
-        privateMessageNotificationName(target),
-      );
-    }
+    if (chat && chat.unreadCount === 0) closeChatNotification(serverId, target);
   });
 
   const setRefused = (serverId: string, readMarkerRefused: boolean) =>

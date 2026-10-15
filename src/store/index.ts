@@ -1332,6 +1332,7 @@ const useStore = create<AppState>((set, get) => ({
     // Ignore list
     ignoreList: ["HistServ!*@*"],
     keepHistory: true,
+    closeToTray: true,
     historyLimitMb: 500,
     // Hosted chat mode settings
     nickname: "",
