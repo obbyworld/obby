@@ -1,0 +1,66 @@
+# swift-rs 1.0.8 from crates.io plus the Xcode 27 fix in
+# https://github.com/Brendonovich/swift-rs/pull/82 (src-rs/build.rs,
+# globalize_cdecl_symbols). We can drop this copy once a release includes it.
+
+[package]
+edition = "2021"
+name = "swift-rs"
+version = "1.0.8"
+authors = ["The swift-rs contributors"]
+build = "src-rs/test-build.rs"
+exclude = [
+    "/src-swift",
+    "*.swift",
+]
+autolib = false
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+description = "Call Swift from Rust with ease!"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Brendonovich/swift-rs"
+
+[package.metadata."docs.rs"]
+all-features = true
+rustdoc-args = [
+    "--cfg",
+    "docsrs",
+]
+
+[features]
+build = [
+    "serde",
+    "serde_json",
+]
+default = []
+
+[lib]
+name = "swift_rs"
+path = "src-rs/lib.rs"
+
+[[test]]
+name = "test_bindings"
+path = "tests/test_bindings.rs"
+
+[dependencies.base64]
+version = "0.21.0"
+
+[dependencies.serde]
+version = "1.0"
+features = ["derive"]
+optional = true
+
+[dependencies.serde_json]
+version = "1.0"
+optional = true
+
+[dev-dependencies.serial_test]
+version = "0.10"
+
+[build-dependencies.serde]
+version = "1.0"
+features = ["derive"]
+
+[build-dependencies.serde_json]
+version = "1.0"
