@@ -27,7 +27,7 @@ object BackgroundNotices {
       val notice = notices.getJSONObject(index)
       val id = notice.getInt("id")
       val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-        .setSmallIcon(context.applicationInfo.icon)
+        .setSmallIcon(smallIcon(context))
         .setContentTitle(notice.optString("title"))
         .setContentText(notice.optString("body"))
         .setStyle(NotificationCompat.BigTextStyle().bigText(notice.optString("body")))
@@ -41,6 +41,12 @@ object BackgroundNotices {
         return
       }
     }
+  }
+
+  // The same monochrome icon the app sets for the notification plugin.
+  private fun smallIcon(context: Context): Int {
+    val id = context.resources.getIdentifier("ic_notification", "drawable", context.packageName)
+    return if (id != 0) id else context.applicationInfo.icon
   }
 
   private fun tapIntent(context: Context, id: Int, notice: JSONObject): PendingIntent? {
