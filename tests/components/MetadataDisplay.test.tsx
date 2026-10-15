@@ -167,6 +167,7 @@ describe("Metadata Display Features", () => {
       typingUsers: {},
       globalSettings: {
         enableNotifications: true,
+        notificationsOffered: true,
         notificationSound: "pop",
         notificationVolume: 0.8,
         enableNotificationSounds: true,

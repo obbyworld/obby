@@ -32,6 +32,7 @@ import {
 } from "./lib/notifications";
 import { isTauri, isTauriDesktop } from "./lib/platformUtils";
 import useStore, { type AppState, loadSavedServers } from "./store";
+import { offerNotificationsOnce } from "./store/handlers/chatNotifications";
 import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
 
@@ -219,6 +220,7 @@ const App: React.FC = () => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
     void handleNotificationTaps(openNotificationTarget);
+    offerNotificationsOnce(useStore);
     initializeEnvSettings(toggleAddServerModal, joinChannel);
     connectToSavedServers();
 

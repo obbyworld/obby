@@ -1316,6 +1316,7 @@ const useStore = create<AppState>((set, get) => ({
   },
   globalSettings: {
     enableNotifications: false,
+    notificationsOffered: false,
     notificationSound: "/sounds/notif1.mp3",
     enableNotificationSounds: true,
     notificationVolume: 0.4, // 40% volume by default

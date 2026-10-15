@@ -23,7 +23,10 @@ import {
   showChatNotification,
 } from "../../src/lib/notifications";
 import useStore from "../../src/store";
-import { notifyChatMessage } from "../../src/store/handlers/chatNotifications";
+import {
+  notifyChatMessage,
+  offerNotificationsOnce,
+} from "../../src/store/handlers/chatNotifications";
 
 const mention: ChatNotification = {
   serverId: "s1",
@@ -201,5 +204,33 @@ describe("notifying a chat message", () => {
     notifyChatMessage(useStore, mention);
     await settle();
     expect(useStore.getState().globalNotifications).toHaveLength(1);
+  });
+});
+
+describe("offering notifications in the app", () => {
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+
+  it("asks once at launch and turns them on when allowed", async () => {
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    plugin.isPermissionGranted.mockResolvedValue(false);
+    plugin.requestPermission.mockImplementationOnce(async () => {
+      plugin.isPermissionGranted.mockResolvedValue(true);
+      return "granted";
+    });
+    useStore.setState((state) => ({
+      globalSettings: {
+        ...state.globalSettings,
+        enableNotifications: false,
+        notificationsOffered: false,
+      },
+    }));
+
+    offerNotificationsOnce(useStore);
+    await settle();
+    offerNotificationsOnce(useStore);
+    await settle();
+
+    expect(plugin.requestPermission).toHaveBeenCalledTimes(1);
+    expect(useStore.getState().globalSettings.enableNotifications).toBe(true);
   });
 });

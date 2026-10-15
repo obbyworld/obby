@@ -6,6 +6,7 @@ import {
   requestChatNotificationPermission,
   showChatNotification,
 } from "../../lib/notifications";
+import { isTauri } from "../../lib/platformUtils";
 import type { AppState } from "../index";
 
 // We ask for permission inside the toggle's click so browsers accept the request.
@@ -29,6 +30,18 @@ export function registerNotificationPermission(
         serverId: store.getState().ui.selectedServerId ?? "",
       });
     });
+  });
+}
+
+// The apps ask once at launch; browsers accept the request only from a click.
+export function offerNotificationsOnce(store: StoreApi<AppState>): void {
+  const { globalSettings, updateGlobalSettings } = store.getState();
+  if (!isTauri() || globalSettings.notificationsOffered) return;
+  updateGlobalSettings({ notificationsOffered: true });
+  if (globalSettings.enableNotifications) return;
+  void requestChatNotificationPermission().then((isGranted) => {
+    if (isGranted)
+      store.getState().updateGlobalSettings({ enableNotifications: true });
   });
 }
 
