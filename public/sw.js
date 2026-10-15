@@ -87,13 +87,16 @@ async function pushContext() {
 function parseIrcLine(line) {
   let rest = line;
   let msgid = null;
+  let time = null;
   if (rest.startsWith("@")) {
     const sp = rest.indexOf(" ");
     if (sp === -1) return null;
     const tags = rest.slice(1, sp);
     for (const t of tags.split(";")) {
       const eq = t.indexOf("=");
-      if (eq !== -1 && t.slice(0, eq) === "msgid") msgid = t.slice(eq + 1);
+      if (eq === -1) continue;
+      if (t.slice(0, eq) === "msgid") msgid = t.slice(eq + 1);
+      if (t.slice(0, eq) === "time") time = Date.parse(t.slice(eq + 1));
     }
     rest = rest.slice(sp + 1);
   }
@@ -110,7 +113,14 @@ function parseIrcLine(line) {
     text = rest.slice(trailingIdx + 2);
   }
   const parts = head.split(" ");
-  return { msgid, nick, command: parts[0], target: parts[1] || "", text };
+  return {
+    msgid,
+    time,
+    nick,
+    command: parts[0],
+    target: parts[1] || "",
+    text,
+  };
 }
 
 function isChannelTarget(target) {
@@ -184,7 +194,7 @@ self.addEventListener("push", (event) => {
         data: {
           serverId,
           target: chat,
-          time: Date.now(),
+          time: Number.isNaN(parsed.time) ? Date.now() : (parsed.time ?? Date.now()),
           msgid: parsed.msgid ?? undefined,
         },
       });
