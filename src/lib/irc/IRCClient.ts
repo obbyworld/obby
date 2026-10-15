@@ -767,9 +767,7 @@ export class IRCClient implements IRCClientContext {
     // obbyircd vendor cap. Without REQ'ing it the server won't emit
     // the INVITELINK protocol even if it advertises support in CAP LS.
     "obby.world/invitation",
-    // soju.im/webpush: lets us register a browser PushManager
-    // subscription with the server so DMs/highlights wake the device
-    // via the platform push service even when the tab is closed.
+    "draft/webpush",
     "soju.im/webpush",
     // Note: unrealircd.org/link-security is informational only, don't request it
   ];

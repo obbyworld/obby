@@ -2217,10 +2217,6 @@ msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: http
 msgstr "Ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Enable Notifications"
-msgstr ""
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Ange kontonamn..."
 
@@ -5073,10 +5069,6 @@ msgstr "Visa kommentarer"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Visa kommentarer ({commentCount})"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show desktop notifications for mentions and DMs. On servers that support push (soju.im/webpush) this also wakes this device when the app is closed."
-msgstr ""
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Show in bots menu"

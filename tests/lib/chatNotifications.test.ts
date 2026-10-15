@@ -165,6 +165,20 @@ describe("showing a chat notification", () => {
     );
   });
 
+  it("routes a web push tap that opened a new window", async () => {
+    const target = { serverId: "s1", target: "#dev", time: 1, msgid: "m1" };
+    window.history.pushState(
+      null,
+      "",
+      `/?obbyNotification=${encodeURIComponent(JSON.stringify(target))}`,
+    );
+    const open = vi.fn();
+    await handleNotificationTaps(open);
+
+    expect(open).toHaveBeenCalledWith(target);
+    expect(window.location.search).toBe("");
+  });
+
   it("routes a native tap to the chat in its extra data", async () => {
     (window as { __TAURI__?: unknown }).__TAURI__ = {};
     const open = vi.fn();

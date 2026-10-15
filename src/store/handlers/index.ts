@@ -18,6 +18,7 @@ import { registerReadMarkerHandlers } from "./readMarker";
 import { registerServerReplyHandlers } from "./serverReplies";
 import { registerTicTacToeHandlers } from "./tictactoe";
 import { registerUserHandlers } from "./users";
+import { registerWebPushHandlers } from "./webPush";
 import { registerWhoisHandlers } from "./whois";
 
 export function registerAllHandlers(store: StoreApi<AppState>): void {
@@ -44,4 +45,5 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerServerReplyHandlers(store);
   registerHistoryHandlers(store);
   registerNotificationPermission(store);
+  registerWebPushHandlers(store);
 }

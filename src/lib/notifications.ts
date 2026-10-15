@@ -304,7 +304,10 @@ export async function handleNotificationTaps(
     route(target);
   };
   openTarget = route;
-  if (!isTauri()) return;
+  if (!isTauri()) {
+    handleServiceWorkerTaps(open);
+    return;
+  }
   if (isTauriMobile()) await handleMobileLaunchTaps(open);
   if (isTauriAndroid())
     await createChannel({
@@ -315,6 +318,28 @@ export async function handleNotificationTaps(
   await onAction(({ actionId, notification }) => {
     if (actionId === "tap") open(notification?.extra);
   });
+}
+
+const NOTIFICATION_QUERY = "obbyNotification";
+
+// The service worker shows web push notifications; a click reaches us as a
+// message, or as a query parameter on the window it opened.
+function handleServiceWorkerTaps(
+  open: (extra?: Record<string, unknown> | null) => void,
+): void {
+  navigator.serviceWorker?.addEventListener("message", (event) => {
+    if (event.data?.type === "obby-notification-tap") open(event.data.target);
+  });
+  const url = new URL(window.location.href);
+  const tapped = url.searchParams.get(NOTIFICATION_QUERY);
+  if (tapped === null) return;
+  url.searchParams.delete(NOTIFICATION_QUERY);
+  window.history.replaceState(null, "", url);
+  try {
+    open(JSON.parse(tapped));
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+  }
 }
 
 // The mobile plugin keeps the tap that launched the app, since the

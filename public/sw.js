@@ -53,10 +53,36 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// --- soju.im/webpush ---------------------------------------------------
-// The server (via the hosted-backend) sends exactly one IRC message as
-// the encrypted push payload: no trailing CRLF, tags dropped except
-// msgid. We parse the minimum needed to render a notification.
+// --- web push (draft/webpush, soju.im/webpush) -------------------------
+// The server sends exactly one IRC message as the encrypted push payload:
+// no trailing CRLF, tags dropped except msgid. The page tells us which server
+// owns the subscription and how to word titles, since we have no catalog.
+
+const CONTEXT_CACHE = "obby-push-context";
+const CONTEXT_URL = "/__obby-push-context";
+const BODY_LIMIT = 200;
+const E2EE_BODY_MARKER = "?obe2ee:";
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type !== "obby-push-context") return;
+  event.waitUntil(
+    caches
+      .open(CONTEXT_CACHE)
+      .then((cache) =>
+        cache.put(CONTEXT_URL, new Response(JSON.stringify(event.data))),
+      ),
+  );
+});
+
+async function pushContext() {
+  try {
+    const cache = await caches.open(CONTEXT_CACHE);
+    const response = await cache.match(CONTEXT_URL);
+    return response ? await response.json() : null;
+  } catch {
+    return null;
+  }
+}
 
 function parseIrcLine(line) {
   let rest = line;
@@ -87,25 +113,29 @@ function parseIrcLine(line) {
   return { msgid, nick, command: parts[0], target: parts[1] || "", text };
 }
 
-// Network name for the notification context.  The hosted build is
-// single-network, so the manifest's name is the network ("Obby").
-// Cached after first read; the SW may be killed between pushes, so the
-// fetch is cheap and falls back to "" on failure.
-let cachedNetworkName = null;
-async function getNetworkName() {
-  if (cachedNetworkName !== null) return cachedNetworkName;
-  try {
-    const res = await fetch("/manifest.webmanifest", { cache: "force-cache" });
-    const m = await res.json();
-    cachedNetworkName = m.name || m.short_name || "";
-  } catch {
-    cachedNetworkName = "";
-  }
-  return cachedNetworkName;
+function isChannelTarget(target) {
+  return !!target && "#&^$+!".includes(target.charAt(0));
 }
 
-function isChannelTarget(target) {
-  return !!target && "#&^$".includes(target.charAt(0));
+// What the sender said as notification text, or null for a CTCP other than /me.
+function readableText(text, nick, encryptedBody) {
+  if (text === E2EE_BODY_MARKER || text.startsWith("?OTR"))
+    return encryptedBody;
+  if (text.startsWith("\x01")) {
+    const ctcp = text.replace(/^\x01|\x01$/g, "");
+    return ctcp.startsWith("ACTION ") ? `* ${nick} ${ctcp.slice(7)}` : null;
+  }
+  return text;
+}
+
+function plainBody(text) {
+  const plain = text
+    .replace(/\x03(\d{1,2}(,\d{1,2})?)?/g, "")
+    .replace(/[\x02\x0f\x11\x16\x1d\x1e\x1f]/g, "")
+    .trim();
+  return plain.length > BODY_LIMIT
+    ? `${plain.slice(0, BODY_LIMIT - 1)}…`
+    : plain;
 }
 
 self.addEventListener("push", (event) => {
@@ -119,38 +149,43 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     (async () => {
       const parsed = parseIrcLine(raw);
-      if (!parsed || !parsed.nick) return;
+      if (!parsed?.nick) return;
+      if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return;
 
-      // If a client window is focused, the in-app notifier already
-      // surfaces this message -- don't double-notify.
+      // A focused window shows this message itself.
       const wins = await self.clients.matchAll({
         type: "window",
         includeUncontrolled: true,
       });
       if (wins.some((c) => c.focused)) return;
 
-      const network = await getNetworkName();
-      const channel = isChannelTarget(parsed.target);
+      const context = await pushContext();
+      const encryptedBody = context?.encryptedBody ?? "New encrypted message";
+      const text = readableText(parsed.text, parsed.nick, encryptedBody);
+      if (text === null) return;
 
-      // Channel highlight: "alice in #weather"; DM: "alice".
-      // The network name is appended as context when known.
-      let title = channel
-        ? `${parsed.nick} in ${parsed.target}`
+      const isChannel = isChannelTarget(parsed.target);
+      const chat = isChannel ? parsed.target : parsed.nick;
+      const title = isChannel
+        ? (context?.channelTitle ?? "{sender} in {target}")
+            .replace("{sender}", parsed.nick)
+            .replace("{target}", parsed.target)
         : parsed.nick;
-      if (network) title += ` · ${network}`;
+      const serverId = context?.serverId ?? "";
 
       await self.registration.showNotification(title, {
-        body: parsed.text || "",
+        body: plainBody(text),
         icon: "/pwa/icon-192.png",
         badge: "/pwa/icon-192.png",
-        // Group by conversation: per-channel for highlights, per-sender
-        // for DMs -- so repeats collapse instead of stacking endlessly.
-        tag: channel ? `hl-${parsed.target}` : `pm-${parsed.nick}`,
+        // The page tags its own notifications the same way, so one chat keeps
+        // one notification whichever side showed it.
+        tag: `${serverId}:${chat.toLowerCase()}`,
         renotify: true,
         data: {
-          nick: parsed.nick,
-          target: parsed.target,
-          network,
+          serverId,
+          target: chat,
+          time: Date.now(),
+          msgid: parsed.msgid ?? undefined,
         },
       });
     })(),
@@ -159,14 +194,18 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  const target = event.notification.data;
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((wins) => {
-        for (const c of wins) {
-          if ("focus" in c) return c.focus();
+        const win = wins.find((c) => "focus" in c);
+        if (win) {
+          win.postMessage({ type: "obby-notification-tap", target });
+          return win.focus();
         }
-        if (self.clients.openWindow) return self.clients.openWindow("/");
+        const query = encodeURIComponent(JSON.stringify(target));
+        return self.clients.openWindow(`/?obbyNotification=${query}`);
       }),
   );
 });
