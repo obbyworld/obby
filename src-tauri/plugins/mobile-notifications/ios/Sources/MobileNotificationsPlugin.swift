@@ -40,7 +40,11 @@ enum BackgroundCheck {
     let minutes = max(UserDefaults.standard.integer(forKey: intervalKey), 15)
     let request = BGAppRefreshTaskRequest(identifier: backgroundTaskId)
     request.earliestBeginDate = Date(timeIntervalSinceNow: TimeInterval(minutes * 60))
-    try? BGTaskScheduler.shared.submit(request)
+    do {
+      try BGTaskScheduler.shared.submit(request)
+    } catch {
+      NSLog("ObbyBackground: could not schedule the check: %@", error.localizedDescription)
+    }
   }
 
   static func run(_ task: BGAppRefreshTask) {
@@ -51,7 +55,6 @@ enum BackgroundCheck {
     DispatchQueue.global(qos: .utility).async(execute: work)
   }
 
-  /// Runs one check and posts what it found.
   static func check() {
     guard let config = UserDefaults.standard.string(forKey: configKey) else { return }
     let state = UserDefaults.standard.string(forKey: stateKey) ?? "{}"
@@ -63,6 +66,9 @@ enum BackgroundCheck {
       let data = outcome.data(using: .utf8),
       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
     else { return }
+    for error in json["errors"] as? [String] ?? [] {
+      NSLog("ObbyBackground: %@", error)
+    }
     if let newState = json["state"],
       let stateData = try? JSONSerialization.data(withJSONObject: newState)
     {
@@ -98,6 +104,7 @@ struct NoticeTarget: Codable {
     guard let serverId = extra["serverId"] as? String,
       let target = extra["target"] as? String,
       let time = (extra["time"] as? NSNumber)?.doubleValue
+        ?? (extra["time"] as? String).flatMap(Double.init)
     else { return nil }
     self.serverId = serverId
     self.target = target
@@ -115,9 +122,7 @@ class ConfigureArgs: Decodable {
   let intervalMinutes: Int
 }
 
-/// Takes over notification taps from the notification plugin, whose handler
-/// only knows notifications it posted in the running process, and keeps the
-/// tap that launched the app until the web app asks for it.
+// We handle taps here because the notification plugin only knows notifications from the running process.
 class MobileNotificationsPlugin: Plugin, UNUserNotificationCenterDelegate {
   private var launchTarget: NoticeTarget?
   private weak var previousDelegate: UNUserNotificationCenterDelegate?
@@ -135,11 +140,6 @@ class MobileNotificationsPlugin: Plugin, UNUserNotificationCenterDelegate {
     if args.config == nil {
       BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: backgroundTaskId)
     }
-    invoke.resolve()
-  }
-
-  @objc public func runNow(_ invoke: Invoke) throws {
-    DispatchQueue.global(qos: .utility).async { BackgroundCheck.check() }
     invoke.resolve()
   }
 

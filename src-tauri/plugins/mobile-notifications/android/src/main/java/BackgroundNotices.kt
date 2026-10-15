@@ -1,11 +1,8 @@
 package world.obby.notifications
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import app.tauri.plugin.JSObject
@@ -19,13 +16,13 @@ private const val NOTIFICATION_ID_KEY = "NotificationId"
 private const val NOTIFICATION_OBJECT_KEY = "LocalNotficationObject"
 private const val ACTION_KEY = "NotificationUserAction"
 private const val TAP_ACTION = "tap"
+// The app creates this channel, with its translated name, before it configures the check.
 private const val CHANNEL_ID = "messages"
 
 object BackgroundNotices {
   fun post(context: Context, notices: JSONArray) {
     val manager = NotificationManagerCompat.from(context)
     if (!manager.areNotificationsEnabled()) return
-    ensureChannel(context)
     for (index in 0 until notices.length()) {
       val notice = notices.getJSONObject(index)
       val id = notice.getInt("id")
@@ -56,15 +53,6 @@ object BackgroundNotices {
     intent.putExtra(NOTIFICATION_OBJECT_KEY, notice.toString())
     val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     return PendingIntent.getActivity(context, id, intent, flags)
-  }
-
-  private fun ensureChannel(context: Context) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-    val manager = context.getSystemService(NotificationManager::class.java) ?: return
-    if (manager.getNotificationChannel(CHANNEL_ID) != null) return
-    manager.createNotificationChannel(
-      NotificationChannel(CHANNEL_ID, "Messages", NotificationManager.IMPORTANCE_HIGH)
-    )
   }
 
   /** The chat a tapped notification points at, from the intent that opened us. */

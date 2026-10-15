@@ -171,16 +171,16 @@ const chatKey = (serverId: string, target: string) =>
 
 // One id per chat, so a new message in the same chat replaces its notification.
 export function notificationIdFor(serverId: string, target: string): number {
+  const key = chatKey(serverId, target);
   let hash = 0;
-  for (const char of chatKey(serverId, target))
-    hash = (Math.imul(hash, 31) + char.charCodeAt(0)) | 0;
+  for (let index = 0; index < key.length; index++)
+    hash = (Math.imul(hash, 31) + key.charCodeAt(index)) | 0;
   return hash;
 }
 
 export function notificationTitle(notification: ChatNotification): string {
-  return notification.isPrivate
-    ? notification.sender
-    : t`${notification.sender} in ${notification.target}`;
+  const { sender, target } = notification;
+  return notification.isPrivate ? sender : t`${sender} in ${target}`;
 }
 
 export function notificationBody(text: string): string {
@@ -214,7 +214,8 @@ export async function showChatNotification(
       body,
       group: chatKey(notification.serverId, notification.target),
       channelId: isTauriAndroid() ? ANDROID_MESSAGES_CHANNEL : undefined,
-      extra: { ...target },
+      // iOS drops a notification whose extra data holds anything but strings.
+      extra: { ...target, time: String(target.time) },
     });
     return true;
   }
@@ -247,12 +248,24 @@ export function closeChatNotification(serverId: string, target: string): void {
     removeActive([{ id: notificationIdFor(serverId, target) }]).catch(() => {});
 }
 
-const isNotificationTarget = (
-  extra: Record<string, unknown> | undefined,
-): extra is NotificationTarget =>
-  typeof extra?.serverId === "string" &&
-  typeof extra.target === "string" &&
-  typeof extra.time === "number";
+// We post the time as a string and the background check posts it as a number.
+function parseNotificationTarget(
+  extra: Record<string, unknown> | null | undefined,
+): NotificationTarget | null {
+  const time = Number(extra?.time);
+  if (
+    typeof extra?.serverId !== "string" ||
+    typeof extra.target !== "string" ||
+    !Number.isFinite(time)
+  )
+    return null;
+  return {
+    serverId: extra.serverId,
+    target: extra.target,
+    time,
+    msgid: typeof extra.msgid === "string" ? extra.msgid : undefined,
+  };
+}
 
 /** Routes a tapped notification to its chat. We register the native listener
  *  before the first notification goes out, since desktop only reports taps on
@@ -263,14 +276,16 @@ export async function handleNotificationTaps(
   // A cold start on Android can report one tap twice, once per plugin.
   let lastKey = "";
   let lastAt = 0;
-  const open = (target: NotificationTarget) => {
+  const open = (extra: Record<string, unknown> | null | undefined) => {
+    const target = parseNotificationTarget(extra);
+    if (!target) return;
     const key = `${target.serverId}:${target.target}:${target.msgid ?? target.time}`;
     if (key === lastKey && Date.now() - lastAt < TAP_REPEAT_MS) return;
     lastKey = key;
     lastAt = Date.now();
     route(target);
   };
-  openTarget = open;
+  openTarget = route;
   if (!isTauri()) return;
   if (isTauriMobile()) await handleMobileLaunchTaps(open);
   if (isTauriAndroid())
@@ -280,8 +295,7 @@ export async function handleNotificationTaps(
       importance: Importance.High,
     });
   await onAction(({ actionId, notification }) => {
-    const extra = notification?.extra;
-    if (actionId === "tap" && isNotificationTarget(extra)) open(extra);
+    if (actionId === "tap") open(notification?.extra);
   });
 }
 
@@ -289,17 +303,16 @@ export async function handleNotificationTaps(
 // notification plugin reports it before our listener exists, and on iOS it
 // reports every tap.
 async function handleMobileLaunchTaps(
-  open: (target: NotificationTarget) => void,
+  open: (extra: Record<string, unknown> | null | undefined) => void,
 ): Promise<void> {
-  const launched = await invoke<{ target: NotificationTarget | null }>(
+  const launched = await invoke<{ target: Record<string, unknown> | null }>(
     "plugin:mobile-notifications|take_launch_target",
-  ).catch(() => null);
-  if (launched?.target) open(launched.target);
-  await addPluginListener(
-    "mobile-notifications",
-    "notificationTapped",
-    (target: NotificationTarget) => open(target),
-  );
+  ).catch((error) => {
+    console.warn("could not read the notification that opened the app", error);
+    return null;
+  });
+  open(launched?.target);
+  await addPluginListener("mobile-notifications", "notificationTapped", open);
 }
 
 /** Asks the platform for permission to show notifications. */

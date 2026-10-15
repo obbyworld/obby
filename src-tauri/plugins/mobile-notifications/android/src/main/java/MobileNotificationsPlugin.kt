@@ -48,12 +48,6 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
   }
 
   @Command
-  fun runNow(invoke: Invoke) {
-    BackgroundScheduler.runOnce(activity)
-    invoke.resolve()
-  }
-
-  @Command
   fun takeLaunchTarget(invoke: Invoke) {
     val result = JSObject()
     result.put("target", launchTarget)
@@ -62,7 +56,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
   }
 }
 
-/** Whether the app is on screen; the live connection covers it then. */
+// We skip the background check while the app is on screen, since the live connection covers it.
 object AppVisibility {
   @Volatile var isInForeground = false
 }

@@ -54,16 +54,6 @@ async fn configure<R: Runtime>(
 }
 
 #[tauri::command]
-async fn run_now<R: Runtime>(_app: tauri::AppHandle<R>) -> Result<(), String> {
-    #[cfg(mobile)]
-    _app.state::<Native<R>>()
-        .0
-        .run_mobile_plugin::<Value>("runNow", ())
-        .map_err(|e| e.to_string())?;
-    Ok(())
-}
-
-#[tauri::command]
 async fn take_launch_target<R: Runtime>(_app: tauri::AppHandle<R>) -> Result<Value, String> {
     #[cfg(mobile)]
     return _app
@@ -83,11 +73,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         obby_register_background_check()
     };
     Builder::new("mobile-notifications")
-        .invoke_handler(tauri::generate_handler![
-            configure,
-            run_now,
-            take_launch_target
-        ])
+        .invoke_handler(tauri::generate_handler![configure, take_launch_target])
         .setup(|_app, _api| {
             #[cfg(target_os = "android")]
             let handle = _api

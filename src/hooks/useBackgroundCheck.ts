@@ -22,7 +22,7 @@ export function useBackgroundCheck(): void {
           (serverId) => ircClient.getNick(serverId),
           since,
         ),
-      ).catch(() => {});
+      ).catch((error) => console.warn("background check config failed", error));
     const onVisibility = () => {
       if (document.visibilityState !== "hidden") return;
       since = Date.now();

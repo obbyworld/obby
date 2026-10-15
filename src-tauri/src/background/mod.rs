@@ -1,7 +1,5 @@
-//! The background message check the mobile apps run while Obby is closed: a
-//! short IRC session per server that keeps history, the same notification rule
-//! the app uses, and the notifications to post. It needs no webview or Tauri
-//! runtime, since Android starts it in a fresh process.
+//! The message check the mobile apps run while Obby is closed. Android runs it
+//! in a fresh process, so it depends on tokio alone.
 
 mod irc;
 mod text;
@@ -12,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use tokio::time::{Duration, Instant};
 
 use irc::HistoryMessage;
-use text::{addresses_name, chat_key, matches_mask, notification_id, strip_formatting, truncate};
+use text::{addresses_name, chat_key, is_ignored, notification_id, strip_formatting, truncate};
 
 const SESSION_TIMEOUT: Duration = Duration::from_secs(12);
 const TOTAL_BUDGET: Duration = Duration::from_secs(25);
@@ -107,19 +105,25 @@ fn is_encrypted(text: &str) -> bool {
     text == E2EE_BODY_MARKER || text.starts_with("?OTR")
 }
 
-/// The ACTION text of a `/me`, or None for any other CTCP.
-fn readable_text(text: &str, sender: &str) -> Option<String> {
+enum Spoken<'a> {
+    Said(&'a str),
+    Action(&'a str),
+}
+
+/// What the sender said, or None for a CTCP other than `/me`.
+fn spoken(text: &str) -> Option<Spoken<'_>> {
     let Some(ctcp) = text.strip_prefix('\x01') else {
-        return Some(text.to_string());
+        return Some(Spoken::Said(text));
     };
-    let ctcp = ctcp.trim_end_matches('\x01');
-    ctcp.strip_prefix("ACTION ")
-        .map(|action| format!("* {sender} {action}"))
+    ctcp.trim_end_matches('\x01')
+        .strip_prefix("ACTION ")
+        .map(Spoken::Action)
 }
 
 /// The notifications for one server: one per chat with its newest message,
 /// following the app's rule (private messages and mentions from others,
-/// skipping ignored senders and what we already notified).
+/// skipping ignored senders, what we already notified, and anything we
+/// answered in that chat).
 fn notices_for(
     server: &ServerConfig,
     own_nick: &str,
@@ -127,11 +131,24 @@ fn notices_for(
     strings: &Strings,
     notified: &[String],
 ) -> (Vec<Notice>, Vec<String>) {
+    let is_ours = |message: &HistoryMessage| {
+        let sender = message.sender();
+        sender.eq_ignore_ascii_case(own_nick) || sender.eq_ignore_ascii_case(&server.nick)
+    };
+    let mut answered_at: HashMap<String, i64> = HashMap::new();
+    for message in messages.iter().filter(|m| is_ours(m)) {
+        let latest = answered_at.entry(message.chat.to_lowercase()).or_default();
+        *latest = (*latest).max(message.time);
+    }
     let mut newest: HashMap<String, (&HistoryMessage, String)> = HashMap::new();
     let mut fresh_msgids = Vec::new();
     for message in messages {
-        let sender = message.source.split('!').next().unwrap_or("");
-        if sender.eq_ignore_ascii_case(own_nick) || sender.eq_ignore_ascii_case(&server.nick) {
+        let sender = message.sender();
+        if is_ours(message)
+            || answered_at
+                .get(&message.chat.to_lowercase())
+                .is_some_and(|&at| message.time <= at)
+        {
             continue;
         }
         if message
@@ -141,22 +158,20 @@ fn notices_for(
         {
             continue;
         }
-        if server
-            .ignore_list
-            .iter()
-            .any(|mask| matches_mask(mask, &message.source))
-        {
+        if is_ignored(&server.ignore_list, &message.source) {
             continue;
         }
-        let Some(text) = readable_text(&message.text, sender) else {
-            continue;
+        let (said, text) = match spoken(&message.text) {
+            Some(Spoken::Said(said)) => (said, said.to_string()),
+            Some(Spoken::Action(action)) => (action, format!("* {sender} {action}")),
+            None => continue,
         };
         let is_mention = message.is_private
-            || addresses_name(&text, own_nick)
+            || addresses_name(said, own_nick)
             || server
                 .custom_mentions
                 .iter()
-                .any(|mention| addresses_name(&text, mention));
+                .any(|mention| addresses_name(said, mention));
         if !is_mention {
             continue;
         }
@@ -179,7 +194,7 @@ fn notices_for(
     let mut notices: Vec<Notice> = newest
         .into_values()
         .map(|(message, body)| {
-            let sender = message.source.split('!').next().unwrap_or("");
+            let sender = message.sender();
             let title = if message.is_private {
                 sender.to_string()
             } else {
@@ -221,11 +236,11 @@ pub async fn check(config: Config, mut state: State, now: i64) -> Outcome {
         let remembered = state.servers.entry(server.id.clone()).or_default();
         let since = remembered.since.max(server.since);
         match irc::fetch_history(server, since, now, deadline).await {
-            Ok(messages) => {
+            Ok(history) => {
                 let (found, msgids) = notices_for(
                     server,
-                    &server.nick,
-                    &messages,
+                    &history.nick,
+                    &history.messages,
                     &config.strings,
                     &remembered.notified,
                 );
@@ -391,6 +406,18 @@ mod tests {
         ];
         let (notices, _) = notices_for(&server(), "max", &messages, &strings(), &["m3".into()]);
         assert!(notices.is_empty());
+    }
+
+    #[test]
+    fn skips_what_we_answered_on_another_session() {
+        let messages = vec![
+            message("bob", "bob", "are you there?", 1, true),
+            message("bob", "max", "yes", 2, true),
+            message("#dev", "alice", "max: ping", 3, false),
+        ];
+        let (notices, _) = notices_for(&server(), "max", &messages, &strings(), &[]);
+        let targets: Vec<&str> = notices.iter().map(|n| n.extra.target.as_str()).collect();
+        assert_eq!(targets, vec!["#dev"]);
     }
 
     #[test]

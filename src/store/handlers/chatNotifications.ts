@@ -8,9 +8,7 @@ import {
 } from "../../lib/notifications";
 import type { AppState } from "../index";
 
-// Turning notifications on asks the system for permission; we run inside the
-// toggle's click so browsers accept the request, and we switch back off when
-// the user declines.
+// We ask for permission inside the toggle's click so browsers accept the request.
 export function registerNotificationPermission(
   store: StoreApi<AppState>,
 ): void {

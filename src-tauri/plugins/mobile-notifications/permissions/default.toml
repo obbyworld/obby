@@ -1,3 +1,7 @@
 [default]
-description = "Lets the app configure the background message check and read the notification that launched it."
-permissions = ["allow-configure", "allow-run-now", "allow-take-launch-target"]
+description = "Lets the app configure the background message check, read the notification that launched it and hear about later taps."
+permissions = [
+  "allow-configure",
+  "allow-take-launch-target",
+  "allow-register-listener",
+]

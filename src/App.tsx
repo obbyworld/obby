@@ -1,4 +1,3 @@
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import type React from "react";
 import { useEffect, useRef } from "react";
@@ -21,6 +20,7 @@ import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useDesktopTray } from "./hooks/useDesktopTray";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
+import { showMainWindow } from "./lib/desktopTray";
 import { whenHistoryIdle } from "./lib/history/historyDb";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
@@ -36,12 +36,7 @@ import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
 
 async function openNotificationTarget(target: NotificationTarget) {
-  if (isTauriDesktop()) {
-    const window = getCurrentWindow();
-    await window.unminimize();
-    await window.show();
-    await window.setFocus();
-  }
+  if (isTauriDesktop()) await showMainWindow();
   const result = target.msgid ? await jumpToMessage(target) : null;
   if (!result?.ok) useStore.getState().openChat(target.serverId, target.target);
 }

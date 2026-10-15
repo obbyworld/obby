@@ -25,9 +25,8 @@ export interface BackgroundConfig {
   strings: { channelTitle: string; encryptedBody: string };
 }
 
-/** A server keeps messages for us while we are away: ObbyIRCd persistence, or
- *  a soju network. Only those get a background session, so plain servers never
- *  see us come and go. */
+// We only open background sessions to servers that keep history for us, so
+// other servers never see us come and go.
 export function keepsHistoryForUs(server: Server): boolean {
   if (server.isBouncerControl) return false;
   return server.persistenceEffective === "ON" || !!server.bouncerNetid;
@@ -36,7 +35,8 @@ export function keepsHistoryForUs(server: Server): boolean {
 function addressOf(saved: ServerConfig): string {
   if (!saved.host.includes("://")) return `wss://${saved.host}:${saved.port}`;
   try {
-    const url = new URL(saved.host);
+    // The app upgrades ws:// too, so the password never crosses in cleartext.
+    const url = new URL(saved.host.replace(/^ws:\/\//, "wss://"));
     if (!url.port && saved.port) url.port = String(saved.port);
     return url.toString().replace(/\/$/, "");
   } catch {
@@ -66,9 +66,12 @@ export function backgroundConfigFor(
   const entries: BackgroundServer[] = [];
   for (const server of servers) {
     if (!keepsHistoryForUs(server)) continue;
-    const config = saved.find((s) => s.id === server.id);
+    const configId = server.bouncerServerId ?? server.id;
+    const config = saved.find((s) => s.id === configId);
     if (!config) continue;
-    const account = config.saslEnabled ? config.saslAccountName : undefined;
+    const account = config.saslEnabled
+      ? config.saslAccountName || config.nickname
+      : undefined;
     entries.push({
       id: server.id,
       address: addressOf(config),
@@ -103,14 +106,9 @@ export async function configureBackgroundCheck(
   if (!isTauriMobile()) return;
   const payload = config ? JSON.stringify(config) : null;
   if (payload === lastSent) return;
-  lastSent = payload;
   await invoke("plugin:mobile-notifications|configure", {
     config: payload,
     intervalMinutes: BACKGROUND_INTERVAL_MINUTES,
   });
-}
-
-/** Runs a check right away, for testing. */
-export function runBackgroundCheckNow(): Promise<void> {
-  return invoke("plugin:mobile-notifications|run_now");
+  lastSent = payload;
 }

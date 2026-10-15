@@ -750,6 +750,7 @@ export class IRCClient implements IRCClientContext {
     "draft/named-modes",
     "labeled-response",
     "draft/read-marker",
+    "draft/persistence",
     "obsidianirc/cmdslist",
     // soju.im/bouncer-networks: multi-network bouncer discovery. The
     // -notify variant gives us live add/change/del pushes without

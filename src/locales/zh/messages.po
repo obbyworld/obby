@@ -232,6 +232,15 @@ msgstr "{safeName} 在服务器上已不存在。"
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} 已在服务器上被更改，因此无法解密。"
 
+#: src/lib/backgroundCheck.ts
+#: src/lib/notifications.ts
+msgid "{sender} in {target}"
+msgstr "{sender}（{target}）"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} mentioned you in {target}: {body}"
+msgstr "{sender} 在 {target} 中提到了你：{body}"
+
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} 重新启动了加密。在你接受之前，这个对话不会加密。"
@@ -239,6 +248,10 @@ msgstr "{sender} 重新启动了加密。在你接受之前，这个对话不会
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. Wait a moment before you send a message."
 msgstr "{sender} 已重新启动加密。请稍等片刻再发送消息。"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} sent you a message: {body}"
+msgstr "{sender} 给你发了一条消息：{body}"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -582,6 +595,10 @@ msgstr "之后"
 msgid "Album"
 msgstr "相册"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Alerts"
+msgstr "提醒"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
@@ -621,6 +638,10 @@ msgstr "在设置中允许访问麦克风以讲话"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Allow microphone access to record sound."
 msgstr "允许访问麦克风以录制声音。"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "Allow notifications for Obby in your system settings to turn them on"
+msgstr "请在系统设置中允许 Obby 发送通知以开启此功能"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Allow Obby under Screen Recording in System Settings, then record again."
@@ -1351,6 +1372,10 @@ msgstr "关闭查看器"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "关闭工作流"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
+msgstr "关闭窗口后 Obby 仍在系统托盘中保持连接，通知会继续送达"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -2873,6 +2898,10 @@ msgstr "保留凭据"
 msgid "Keep passwords"
 msgstr "保留密码"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep Running in the Tray"
+msgstr "在托盘中保持运行"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "所有人离开后保留频道。只有 IRCop 可以设置。"
@@ -3250,6 +3279,7 @@ msgstr "给某人发消息"
 
 #: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
+#: src/lib/notifications.ts
 msgid "Messages"
 msgstr "消息"
 
@@ -3409,6 +3439,11 @@ msgstr "网络名称"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Networks on {0}"
 msgstr "{0} 上的网络"
+
+#: src/lib/backgroundCheck.ts
+#: src/store/handlers/privateChatArrival.ts
+msgid "New encrypted message"
+msgstr "新的加密消息"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -4195,6 +4230,10 @@ msgstr "退出了 ({reason})"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "退出消息"
+
+#: src/lib/desktopTray.ts
+msgid "Quit Obby"
+msgstr "退出 Obby"
 
 #: src/components/message/EventMessage.tsx
 msgid "Quit the server"
@@ -5018,6 +5057,10 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "短代码必须匹配 [A-Za-z0-9._-]+。"
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
+msgstr "当你没有在看对应聊天时，为私信和提及显示系统通知"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "显示所有事件"
 
@@ -5065,6 +5108,14 @@ msgstr "显示我的扬声器"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "显示昵称变更"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show Notifications"
+msgstr "显示通知"
+
+#: src/lib/desktopTray.ts
+msgid "Show Obby"
+msgstr "显示 Obby"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Show or hide the channel list sidebar"

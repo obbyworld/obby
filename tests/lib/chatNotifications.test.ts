@@ -84,6 +84,11 @@ describe("chat notification content", () => {
       notificationIdFor("s2", "#dev"),
     );
   });
+
+  it("matches the id the background check gives the same chat", () => {
+    expect(notificationIdFor("s1", "#Dev")).toBe(441242862);
+    expect(notificationIdFor("s1", "#\u{1F3AE}")).toBe(-953827591);
+  });
 });
 
 describe("showing a chat notification", () => {
@@ -119,7 +124,11 @@ describe("showing a chat notification", () => {
         id: notificationIdFor("s1", "#dev"),
         title: "alice in #dev",
         group: "s1:#dev",
-        extra: expect.objectContaining({ serverId: "s1", target: "#dev" }),
+        extra: expect.objectContaining({
+          serverId: "s1",
+          target: "#dev",
+          time: String(mention.time),
+        }),
       }),
     );
     closeChatNotification("s1", "#dev");
@@ -134,12 +143,17 @@ describe("showing a chat notification", () => {
     await handleNotificationTaps(open);
     const [listener] = plugin.onAction.mock.calls[0];
 
-    listener({ actionId: "tap", notification: { extra: { ...mention } } });
+    const extra = { ...mention, time: String(mention.time) };
+    listener({ actionId: "tap", notification: { extra } });
     listener({ actionId: "tap", notification: { extra: {} } });
 
     expect(open).toHaveBeenCalledTimes(1);
     expect(open).toHaveBeenCalledWith(
-      expect.objectContaining({ serverId: "s1", target: "#dev" }),
+      expect.objectContaining({
+        serverId: "s1",
+        target: "#dev",
+        time: mention.time,
+      }),
     );
   });
 });

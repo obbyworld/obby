@@ -8,13 +8,14 @@ use tokio::time::{timeout_at, Instant};
 use tokio_tungstenite::tungstenite::Message as WsMessage;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
 
-use super::text::{parse_iso_time, parse_line, Line};
+use super::text::{iso_time, parse_iso_time, parse_line, Line};
 use super::ServerConfig;
 use crate::socket::{connect_tcp, parse_address, tls_handshake, AsyncStream};
 
-const WANTED_CAPS: [&str; 6] = [
+const WANTED_CAPS: [&str; 7] = [
     "sasl",
     "draft/chathistory",
+    "draft/read-marker",
     "server-time",
     "message-tags",
     "batch",
@@ -22,7 +23,6 @@ const WANTED_CAPS: [&str; 6] = [
 ];
 const TARGETS_LIMIT: usize = 50;
 const HISTORY_LIMIT: usize = 100;
-const MAX_TARGETS: usize = 20;
 
 /// A PRIVMSG from history, with the chat it belongs to.
 #[derive(Debug, Clone, PartialEq)]
@@ -33,6 +33,18 @@ pub struct HistoryMessage {
     pub time: i64,
     pub msgid: Option<String>,
     pub is_private: bool,
+}
+
+impl HistoryMessage {
+    pub fn sender(&self) -> &str {
+        self.source.split('!').next().unwrap_or("")
+    }
+}
+
+/// What one session found: our nick there and the messages since the last check.
+pub struct History {
+    pub nick: String,
+    pub messages: Vec<HistoryMessage>,
 }
 
 enum Conn {
@@ -245,7 +257,7 @@ impl Session {
         loop {
             let line = self.next().await?;
             if line.command == "FAIL" && line.param(0) == "CHATHISTORY" {
-                return Ok(lines);
+                return Err(format!("history refused: {}", line.params.join(" ")));
             }
             if line.command == "BATCH" {
                 let reference = line.param(0);
@@ -263,17 +275,78 @@ impl Session {
             }
         }
     }
+
+    /// When we last read `target` on any session, from the server's read marker.
+    async fn read_marker(&mut self, target: &str) -> Result<Option<i64>, String> {
+        self.send(&format!("MARKREAD {target}")).await?;
+        loop {
+            let line = self.next().await?;
+            if line.command == "MARKREAD" && line.param(0).eq_ignore_ascii_case(target) {
+                return Ok(line
+                    .param(1)
+                    .strip_prefix("timestamp=")
+                    .and_then(parse_iso_time));
+            }
+            if line.command == "FAIL" && line.param(0) == "MARKREAD" {
+                return Ok(None);
+            }
+        }
+    }
+
+    /// Every PRIVMSG in `target` after `since`, page by page.
+    async fn messages_after(
+        &mut self,
+        target: &str,
+        since: i64,
+        is_private: bool,
+    ) -> Result<Vec<HistoryMessage>, String> {
+        let mut messages: Vec<HistoryMessage> = Vec::new();
+        let mut after = since;
+        loop {
+            let request = format!(
+                "CHATHISTORY AFTER {target} timestamp={} {HISTORY_LIMIT}",
+                iso_time(after)
+            );
+            let page = self.batch(&request).await?;
+            let page_start = after;
+            let mut is_last_page = page.len() < HISTORY_LIMIT;
+            for line in page {
+                let Some(time) = line.tags.get("time").and_then(|t| parse_iso_time(t)) else {
+                    continue;
+                };
+                after = after.max(time);
+                let msgid = line.tags.get("msgid").cloned();
+                let is_repeat = msgid.is_some() && messages.iter().any(|m| m.msgid == msgid);
+                if line.command != "PRIVMSG" || is_repeat {
+                    continue;
+                }
+                messages.push(HistoryMessage {
+                    chat: target.to_string(),
+                    source: line.source.clone(),
+                    text: line.param(1).to_string(),
+                    time,
+                    msgid,
+                    is_private,
+                });
+            }
+            is_last_page |= after == page_start;
+            if is_last_page {
+                return Ok(messages);
+            }
+        }
+    }
 }
 
-/// Logs in without joining anything, reads what arrived since `since`, and
-/// drops the connection. We send no QUIT: on a persistent account it would end
-/// the always-on presence along with this session.
+/// Logs in without joining anything, reads what arrived since `since` and
+/// was not read on another session, and drops the connection. We send no QUIT:
+/// on a persistent account it would end the always-on presence along with this
+/// session.
 pub async fn fetch_history(
     server: &ServerConfig,
     since: i64,
     now: i64,
     deadline: Instant,
-) -> Result<Vec<HistoryMessage>, String> {
+) -> Result<History, String> {
     let conn = timeout_at(deadline, Conn::open(&server.address))
         .await
         .map_err(|_| "timed out connecting".to_string())??;
@@ -288,10 +361,10 @@ pub async fn fetch_history(
         return Err("server offers no chat history".into());
     }
 
-    let since_iso = super::text::iso_time(since);
     let targets_request = format!(
-        "CHATHISTORY TARGETS timestamp={since_iso} timestamp={} {TARGETS_LIMIT}",
-        super::text::iso_time(now)
+        "CHATHISTORY TARGETS timestamp={} timestamp={} {TARGETS_LIMIT}",
+        iso_time(since),
+        iso_time(now)
     );
     let targets: Vec<String> = session
         .batch(&targets_request)
@@ -300,7 +373,6 @@ pub async fn fetch_history(
         .filter(|line| line.command == "CHATHISTORY" && line.param(0) == "TARGETS")
         .map(|line| line.param(1).to_string())
         .filter(|target| !target.is_empty())
-        .take(MAX_TARGETS)
         .collect();
 
     let mut messages = Vec::new();
@@ -309,23 +381,20 @@ pub async fn fetch_history(
             .chars()
             .next()
             .is_some_and(|first| session.chantypes.contains(first));
-        let request = format!("CHATHISTORY AFTER {target} timestamp={since_iso} {HISTORY_LIMIT}");
-        for line in session.batch(&request).await? {
-            if line.command != "PRIVMSG" {
-                continue;
-            }
-            let Some(time) = line.tags.get("time").and_then(|t| parse_iso_time(t)) else {
-                continue;
-            };
-            messages.push(HistoryMessage {
-                chat: target.clone(),
-                source: line.source.clone(),
-                text: line.param(1).to_string(),
-                time,
-                msgid: line.tags.get("msgid").cloned(),
-                is_private,
-            });
-        }
+        let read_up_to = if acked.contains("draft/read-marker") {
+            session.read_marker(&target).await?
+        } else {
+            None
+        };
+        let unread_since = since.max(read_up_to.unwrap_or(since));
+        messages.extend(
+            session
+                .messages_after(&target, unread_since, is_private)
+                .await?,
+        );
     }
-    Ok(messages)
+    Ok(History {
+        nick: session.nick,
+        messages,
+    })
 }

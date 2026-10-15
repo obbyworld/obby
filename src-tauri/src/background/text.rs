@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use chrono::{DateTime, SecondsFormat};
+
 /// One IRC line split into its parts.
 #[derive(Debug, Default, PartialEq)]
 pub struct Line {
@@ -12,10 +14,6 @@ pub struct Line {
 impl Line {
     pub fn param(&self, index: usize) -> &str {
         self.params.get(index).map(String::as_str).unwrap_or("")
-    }
-
-    pub fn nick(&self) -> &str {
-        self.source.split('!').next().unwrap_or("")
     }
 }
 
@@ -142,80 +140,29 @@ pub fn chat_key(server_id: &str, target: &str) -> String {
     format!("{}:{}", server_id, target.to_lowercase())
 }
 
-fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
-    let year = if month <= 2 { year - 1 } else { year };
-    let era = year.div_euclid(400);
-    let year_of_era = year - era * 400;
-    let day_of_year = (153 * ((month + 9) % 12) + 2) / 5 + day - 1;
-    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
-    era * 146_097 + day_of_era - 719_468
-}
-
-fn civil_from_days(days: i64) -> (i64, i64, i64) {
-    let days = days + 719_468;
-    let era = days.div_euclid(146_097);
-    let day_of_era = days - era * 146_097;
-    let year_of_era =
-        (day_of_era - day_of_era / 1460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
-    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
-    let month_index = (5 * day_of_year + 2) / 153;
-    let day = day_of_year - (153 * month_index + 2) / 5 + 1;
-    let month = if month_index < 10 {
-        month_index + 3
-    } else {
-        month_index - 9
-    };
-    let year = year_of_era + era * 400 + i64::from(month <= 2);
-    (year, month, day)
-}
-
-/// `2026-10-15T09:30:00.123Z` from milliseconds since the epoch.
 pub fn iso_time(ms: i64) -> String {
-    let days = ms.div_euclid(86_400_000);
-    let in_day = ms.rem_euclid(86_400_000);
-    let (year, month, day) = civil_from_days(days);
-    format!(
-        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
-        year,
-        month,
-        day,
-        in_day / 3_600_000,
-        in_day / 60_000 % 60,
-        in_day / 1000 % 60,
-        in_day % 1000
-    )
+    DateTime::from_timestamp_millis(ms)
+        .unwrap_or_default()
+        .to_rfc3339_opts(SecondsFormat::Millis, true)
 }
 
-/// Milliseconds since the epoch from an IRCv3 server-time value.
 pub fn parse_iso_time(value: &str) -> Option<i64> {
-    let (date, time) = value.trim_end_matches('Z').split_once('T')?;
-    let mut date_parts = date.split('-').map(str::parse::<i64>);
-    let (year, month, day) = (
-        date_parts.next()?.ok()?,
-        date_parts.next()?.ok()?,
-        date_parts.next()?.ok()?,
-    );
-    let (clock, fraction) = time.split_once('.').unwrap_or((time, "0"));
-    let mut clock_parts = clock.split(':').map(str::parse::<i64>);
-    let (hour, minute, second) = (
-        clock_parts.next()?.ok()?,
-        clock_parts.next()?.ok()?,
-        clock_parts.next()?.ok()?,
-    );
-    let millis: i64 = format!("{:0<3}", &fraction[..fraction.len().min(3)])
-        .parse()
-        .ok()?;
-    Some(
-        days_from_civil(year, month, day) * 86_400_000
-            + hour * 3_600_000
-            + minute * 60_000
-            + second * 1000
-            + millis,
-    )
+    DateTime::parse_from_rfc3339(value)
+        .ok()
+        .map(|time| time.timestamp_millis())
 }
 
-/// Whether `source` (nick!user@host) matches an ignore mask with `*` and `?`.
-pub fn matches_mask(mask: &str, source: &str) -> bool {
+/// Whether an ignore mask matches the sender, who may arrive as a bare nick.
+pub fn is_ignored(masks: &[String], source: &str) -> bool {
+    let hostmask = if source.contains('!') {
+        source.to_string()
+    } else {
+        format!("{source}!*@*")
+    };
+    masks.iter().any(|mask| matches_mask(mask, &hostmask))
+}
+
+fn matches_mask(mask: &str, source: &str) -> bool {
     let mask: Vec<char> = mask.to_lowercase().chars().collect();
     let text: Vec<char> = source.to_lowercase().chars().collect();
     let (mut m, mut t) = (0, 0);
@@ -249,7 +196,7 @@ mod tests {
             "@time=2026-10-15T09:30:00.123Z;msgid=abc :alice!a@h PRIVMSG #dev :hi there",
         );
         assert_eq!(line.tags["msgid"], "abc");
-        assert_eq!(line.nick(), "alice");
+        assert_eq!(line.source, "alice!a@h");
         assert_eq!(line.command, "PRIVMSG");
         assert_eq!(line.params, vec!["#dev", "hi there"]);
         assert_eq!(parse_line("PING :x").params, vec!["x"]);
@@ -275,12 +222,9 @@ mod tests {
 
     #[test]
     fn matches_the_web_notification_id() {
-        // Values from notificationIdFor in src/lib/notifications.ts.
-        assert_eq!(notification_id("s1", "#Dev"), notification_id("s1", "#dev"));
-        assert_eq!(
-            notification_id("", ""),
-            ":".encode_utf16().next().unwrap() as i32
-        );
+        // tests/lib/chatNotifications.test.ts pins the same values for the web side.
+        assert_eq!(notification_id("s1", "#Dev"), 441242862);
+        assert_eq!(notification_id("s1", "#\u{1F3AE}"), -953827591);
     }
 
     #[test]
@@ -295,5 +239,6 @@ mod tests {
         assert!(matches_mask("HistServ!*@*", "histserv!h@services"));
         assert!(matches_mask("*!*@spam.example", "bob!b@spam.example"));
         assert!(!matches_mask("alice!*@*", "bob!b@h"));
+        assert!(is_ignored(&["HistServ!*@*".into()], "HistServ"));
     }
 }

@@ -1,11 +1,10 @@
 package world.obby.notifications
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -13,7 +12,6 @@ import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import org.json.JSONObject
 
-/** The Rust check, linked from the app library. */
 object BackgroundCheck {
   init {
     System.loadLibrary("app_lib")
@@ -43,7 +41,6 @@ object BackgroundStore {
 
 object BackgroundScheduler {
   private const val PERIODIC = "obby-background-check"
-  private const val ONCE = "obby-background-check-now"
 
   private val online = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
@@ -54,11 +51,6 @@ object BackgroundScheduler {
     ).setConstraints(online).build()
     WorkManager.getInstance(context)
       .enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.UPDATE, request)
-  }
-
-  fun runOnce(context: Context) {
-    val request = OneTimeWorkRequestBuilder<BackgroundCheckWorker>().setConstraints(online).build()
-    WorkManager.getInstance(context).enqueueUniqueWork(ONCE, ExistingWorkPolicy.REPLACE, request)
   }
 
   fun cancel(context: Context) {
@@ -74,6 +66,9 @@ class BackgroundCheckWorker(context: Context, params: WorkerParameters) : Worker
     val outcome = JSONObject(
       BackgroundCheck.nativeCheck(config, BackgroundStore.state(context), System.currentTimeMillis())
     )
+    outcome.optJSONArray("errors")?.let { errors ->
+      for (index in 0 until errors.length()) Log.w("ObbyBackground", errors.getString(index))
+    }
     outcome.optJSONObject("state")?.let { BackgroundStore.saveState(context, it.toString()) }
     outcome.optJSONArray("notices")?.let { BackgroundNotices.post(context, it) }
     return Result.success()

@@ -85,6 +85,24 @@ describe("background check config", () => {
     expect(config?.servers[0].nick).toBe("max");
   });
 
+  it("logs a soju network in with its bouncer's saved login", () => {
+    const config = backgroundConfigFor(
+      [server({ id: "child", bouncerServerId: "s1", bouncerNetid: "7" })],
+      [saved({ saslAccountName: "", host: "ws://bnc.example.com" })],
+      settings(),
+      () => undefined,
+      0,
+    );
+    expect(config?.servers[0]).toEqual(
+      expect.objectContaining({
+        id: "child",
+        bouncerNetid: "7",
+        account: "max",
+        address: "wss://bnc.example.com:6697",
+      }),
+    );
+  });
+
   it("turns off while notifications are off or the bell is muted", () => {
     const servers = [server({ persistenceEffective: "ON" })];
     expect(

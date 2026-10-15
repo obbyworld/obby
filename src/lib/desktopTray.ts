@@ -65,15 +65,20 @@ export async function showMainWindow(): Promise<void> {
 }
 
 let tray: TrayIcon | null = null;
+let trayCreation: Promise<void> | null = null;
 let baseIcon: Image | null = null;
 const dottedIcons = new Map<UnreadLevel, Image>();
 
-/** Creates the tray icon with its menu, and hides the window on close while
- *  `shouldCloseToTray` says so. */
-export async function createDesktopTray(
+/** Creates the tray icon with its menu once per app, and hides the window on
+ *  close while `shouldCloseToTray` says so. */
+export function createDesktopTray(
   shouldCloseToTray: () => boolean,
 ): Promise<void> {
-  if (tray) return;
+  trayCreation ??= buildTray(shouldCloseToTray);
+  return trayCreation;
+}
+
+async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
   baseIcon = await defaultWindowIcon();
   const menu = await Menu.new({
     items: [

@@ -232,8 +232,13 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
-        builder = builder.plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
-            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+        // Opening the app again brings back a window we hid to the tray.
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.unminimize();
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
         }));
     }
 
@@ -248,7 +253,7 @@ pub fn run() {
     {
         builder = builder.plugin(tauri_plugin_haptics::init());
         builder = builder.plugin(tauri_plugin_geolocation::init());
-        // After the notification plugin, so on iOS ours wraps its delegate.
+        // We register this after the notification plugin so our iOS delegate wraps its delegate.
         builder = builder.plugin(tauri_plugin_mobile_notifications::init());
     }
 
