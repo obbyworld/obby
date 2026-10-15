@@ -1,0 +1,299 @@
+use std::collections::HashMap;
+
+/// One IRC line split into its parts.
+#[derive(Debug, Default, PartialEq)]
+pub struct Line {
+    pub tags: HashMap<String, String>,
+    pub source: String,
+    pub command: String,
+    pub params: Vec<String>,
+}
+
+impl Line {
+    pub fn param(&self, index: usize) -> &str {
+        self.params.get(index).map(String::as_str).unwrap_or("")
+    }
+
+    pub fn nick(&self) -> &str {
+        self.source.split('!').next().unwrap_or("")
+    }
+}
+
+fn unescape_tag_value(value: &str) -> String {
+    let mut out = String::with_capacity(value.len());
+    let mut chars = value.chars();
+    while let Some(c) = chars.next() {
+        if c != '\\' {
+            out.push(c);
+            continue;
+        }
+        match chars.next() {
+            Some(':') => out.push(';'),
+            Some('s') => out.push(' '),
+            Some('r') => out.push('\r'),
+            Some('n') => out.push('\n'),
+            Some(other) => out.push(other),
+            None => {}
+        }
+    }
+    out
+}
+
+pub fn parse_line(raw: &str) -> Line {
+    let mut rest = raw.trim_end_matches(['\r', '\n']);
+    let mut line = Line::default();
+    if let Some(tagged) = rest.strip_prefix('@') {
+        let (tags, after) = tagged.split_once(' ').unwrap_or((tagged, ""));
+        for tag in tags.split(';').filter(|t| !t.is_empty()) {
+            let (key, value) = tag.split_once('=').unwrap_or((tag, ""));
+            line.tags.insert(key.to_string(), unescape_tag_value(value));
+        }
+        rest = after.trim_start();
+    }
+    if let Some(sourced) = rest.strip_prefix(':') {
+        let (source, after) = sourced.split_once(' ').unwrap_or((sourced, ""));
+        line.source = source.to_string();
+        rest = after.trim_start();
+    }
+    let (head, trailing) = match rest.split_once(" :") {
+        Some((head, trailing)) => (head, Some(trailing)),
+        None => (rest, None),
+    };
+    let mut words = head.split(' ').filter(|w| !w.is_empty());
+    line.command = words.next().unwrap_or("").to_ascii_uppercase();
+    line.params = words.map(str::to_string).collect();
+    if let Some(trailing) = trailing {
+        line.params.push(trailing.to_string());
+    }
+    line
+}
+
+/// A nick may be made of RFC 2812 nick characters plus the dash; a name is
+/// only addressed when nothing on either side could be part of a longer name.
+fn is_nick_char(c: char) -> bool {
+    c.is_ascii_alphanumeric() || "[]\\`_^{}|-".contains(c)
+}
+
+pub fn addresses_name(content: &str, name: &str) -> bool {
+    let needle: Vec<char> = name.trim().to_lowercase().chars().collect();
+    if needle.is_empty() {
+        return false;
+    }
+    let haystack: Vec<char> = content.to_lowercase().chars().collect();
+    if haystack.len() < needle.len() {
+        return false;
+    }
+    (0..=haystack.len() - needle.len()).any(|at| {
+        haystack[at..at + needle.len()] == needle[..]
+            && (at == 0 || !is_nick_char(haystack[at - 1]))
+            && haystack
+                .get(at + needle.len())
+                .map_or(true, |&after| !is_nick_char(after))
+    })
+}
+
+pub fn strip_formatting(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut chars = text.chars().peekable();
+    while let Some(c) = chars.next() {
+        match c {
+            '\x03' => {
+                for _ in 0..2 {
+                    if chars.peek().is_some_and(char::is_ascii_digit) {
+                        chars.next();
+                    }
+                }
+                if chars.peek() == Some(&',') {
+                    chars.next();
+                    for _ in 0..2 {
+                        if chars.peek().is_some_and(char::is_ascii_digit) {
+                            chars.next();
+                        }
+                    }
+                }
+            }
+            '\x02' | '\x1d' | '\x1f' | '\x1e' | '\x16' | '\x11' | '\x0f' => {}
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
+pub fn truncate(text: &str, limit: usize) -> String {
+    if text.chars().count() <= limit {
+        return text.to_string();
+    }
+    let mut cut: String = text.chars().take(limit - 1).collect();
+    cut.push('…');
+    cut
+}
+
+/// The same id the web app computes, so a chat keeps one notification whichever
+/// side posted it: Java's String.hashCode over the UTF-16 units of the key.
+pub fn notification_id(server_id: &str, target: &str) -> i32 {
+    chat_key(server_id, target)
+        .encode_utf16()
+        .fold(0i32, |hash, unit| {
+            hash.wrapping_mul(31).wrapping_add(unit as i32)
+        })
+}
+
+pub fn chat_key(server_id: &str, target: &str) -> String {
+    format!("{}:{}", server_id, target.to_lowercase())
+}
+
+fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
+    let year = if month <= 2 { year - 1 } else { year };
+    let era = year.div_euclid(400);
+    let year_of_era = year - era * 400;
+    let day_of_year = (153 * ((month + 9) % 12) + 2) / 5 + day - 1;
+    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
+    era * 146_097 + day_of_era - 719_468
+}
+
+fn civil_from_days(days: i64) -> (i64, i64, i64) {
+    let days = days + 719_468;
+    let era = days.div_euclid(146_097);
+    let day_of_era = days - era * 146_097;
+    let year_of_era =
+        (day_of_era - day_of_era / 1460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
+    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
+    let month_index = (5 * day_of_year + 2) / 153;
+    let day = day_of_year - (153 * month_index + 2) / 5 + 1;
+    let month = if month_index < 10 {
+        month_index + 3
+    } else {
+        month_index - 9
+    };
+    let year = year_of_era + era * 400 + i64::from(month <= 2);
+    (year, month, day)
+}
+
+/// `2026-10-15T09:30:00.123Z` from milliseconds since the epoch.
+pub fn iso_time(ms: i64) -> String {
+    let days = ms.div_euclid(86_400_000);
+    let in_day = ms.rem_euclid(86_400_000);
+    let (year, month, day) = civil_from_days(days);
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
+        year,
+        month,
+        day,
+        in_day / 3_600_000,
+        in_day / 60_000 % 60,
+        in_day / 1000 % 60,
+        in_day % 1000
+    )
+}
+
+/// Milliseconds since the epoch from an IRCv3 server-time value.
+pub fn parse_iso_time(value: &str) -> Option<i64> {
+    let (date, time) = value.trim_end_matches('Z').split_once('T')?;
+    let mut date_parts = date.split('-').map(str::parse::<i64>);
+    let (year, month, day) = (
+        date_parts.next()?.ok()?,
+        date_parts.next()?.ok()?,
+        date_parts.next()?.ok()?,
+    );
+    let (clock, fraction) = time.split_once('.').unwrap_or((time, "0"));
+    let mut clock_parts = clock.split(':').map(str::parse::<i64>);
+    let (hour, minute, second) = (
+        clock_parts.next()?.ok()?,
+        clock_parts.next()?.ok()?,
+        clock_parts.next()?.ok()?,
+    );
+    let millis: i64 = format!("{:0<3}", &fraction[..fraction.len().min(3)])
+        .parse()
+        .ok()?;
+    Some(
+        days_from_civil(year, month, day) * 86_400_000
+            + hour * 3_600_000
+            + minute * 60_000
+            + second * 1000
+            + millis,
+    )
+}
+
+/// Whether `source` (nick!user@host) matches an ignore mask with `*` and `?`.
+pub fn matches_mask(mask: &str, source: &str) -> bool {
+    let mask: Vec<char> = mask.to_lowercase().chars().collect();
+    let text: Vec<char> = source.to_lowercase().chars().collect();
+    let (mut m, mut t) = (0, 0);
+    let (mut star, mut star_t) = (None, 0);
+    while t < text.len() {
+        if m < mask.len() && (mask[m] == '?' || mask[m] == text[t]) {
+            m += 1;
+            t += 1;
+        } else if m < mask.len() && mask[m] == '*' {
+            star = Some(m);
+            star_t = t;
+            m += 1;
+        } else if let Some(at) = star {
+            m = at + 1;
+            star_t += 1;
+            t = star_t;
+        } else {
+            return false;
+        }
+    }
+    mask[m..].iter().all(|&c| c == '*')
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_tags_source_and_trailing() {
+        let line = parse_line(
+            "@time=2026-10-15T09:30:00.123Z;msgid=abc :alice!a@h PRIVMSG #dev :hi there",
+        );
+        assert_eq!(line.tags["msgid"], "abc");
+        assert_eq!(line.nick(), "alice");
+        assert_eq!(line.command, "PRIVMSG");
+        assert_eq!(line.params, vec!["#dev", "hi there"]);
+        assert_eq!(parse_line("PING :x").params, vec!["x"]);
+        assert_eq!(parse_line("@a=b\\sc :s CMD").tags["a"], "b c");
+    }
+
+    #[test]
+    fn addresses_a_name_only_as_a_whole_word() {
+        assert!(addresses_name("max: are you there", "max"));
+        assert!(addresses_name("ping @Max!", "max"));
+        assert!(!addresses_name("maximum effort", "max"));
+        assert!(!addresses_name("", "max"));
+    }
+
+    #[test]
+    fn strips_formatting_and_cuts_long_text() {
+        assert_eq!(
+            strip_formatting("\x0304,01red\x0f \x02bold\x02"),
+            "red bold"
+        );
+        assert_eq!(truncate(&"x".repeat(300), 200).chars().count(), 200);
+    }
+
+    #[test]
+    fn matches_the_web_notification_id() {
+        // Values from notificationIdFor in src/lib/notifications.ts.
+        assert_eq!(notification_id("s1", "#Dev"), notification_id("s1", "#dev"));
+        assert_eq!(
+            notification_id("", ""),
+            ":".encode_utf16().next().unwrap() as i32
+        );
+    }
+
+    #[test]
+    fn round_trips_server_time() {
+        let ms = parse_iso_time("2026-10-15T09:30:00.123Z").unwrap();
+        assert_eq!(iso_time(ms), "2026-10-15T09:30:00.123Z");
+        assert_eq!(parse_iso_time("1970-01-01T00:00:00Z"), Some(0));
+    }
+
+    #[test]
+    fn matches_ignore_masks() {
+        assert!(matches_mask("HistServ!*@*", "histserv!h@services"));
+        assert!(matches_mask("*!*@spam.example", "bob!b@spam.example"));
+        assert!(!matches_mask("alice!*@*", "bob!b@h"));
+    }
+}

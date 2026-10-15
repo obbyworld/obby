@@ -2,6 +2,8 @@ use std::{collections::HashMap, sync::Arc};
 use tauri::{webview::PageLoadEvent, Manager};
 use tokio::sync::Mutex;
 
+#[cfg(any(mobile, test))]
+mod background;
 mod overlay;
 mod screen_record;
 #[cfg(target_os = "windows")]
@@ -240,10 +242,14 @@ pub fn run() {
         builder = builder.plugin(tauri_plugin_ios_keyboard::init());
     }
 
+    builder = builder.plugin(tauri_plugin_notification::init());
+
     #[cfg(any(target_os = "ios", target_os = "android"))]
     {
         builder = builder.plugin(tauri_plugin_haptics::init());
         builder = builder.plugin(tauri_plugin_geolocation::init());
+        // After the notification plugin, so on iOS ours wraps its delegate.
+        builder = builder.plugin(tauri_plugin_mobile_notifications::init());
     }
 
     #[cfg(target_os = "android")]
@@ -255,7 +261,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(

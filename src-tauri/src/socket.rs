@@ -2,7 +2,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tauri::{Emitter, State};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
 use tokio::net::{lookup_host, TcpStream};
 use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio::task;
@@ -190,7 +190,7 @@ async fn write_task<W>(
 
 // Networks with a dead IPv6 route drop our SYNs silently, so we try IPv4
 // first and give each address its own timeout to reach the next one.
-async fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
+pub(crate) async fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
     let mut addresses: Vec<_> = lookup_host((host, port))
         .await
         .map_err(|e| format!("Failed to resolve {}:{}: {}", host, port, e))?
@@ -213,6 +213,59 @@ async fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
     Err(last_error)
 }
 
+pub(crate) trait AsyncStream: AsyncRead + AsyncWrite + Unpin + Send {}
+impl<T: AsyncRead + AsyncWrite + Unpin + Send> AsyncStream for T {}
+
+// Android has no system TLS we can reach from Rust, so it verifies against the
+// bundled webpki roots; the other platforms use the OS trust store.
+pub(crate) async fn tls_handshake(
+    host: &str,
+    tcp_stream: TcpStream,
+) -> Result<Box<dyn AsyncStream>, String> {
+    let timed_out = || {
+        format!(
+            "TLS handshake timed out after {}s ({})",
+            TLS_HANDSHAKE_TIMEOUT.as_secs(),
+            host
+        )
+    };
+
+    #[cfg(not(target_os = "android"))]
+    {
+        let connector = TlsConnector::from(
+            NativeTlsConnector::builder()
+                .build()
+                .map_err(|e| format!("Failed to create TLS connector: {}", e))?,
+        );
+        let tls_stream = timeout(TLS_HANDSHAKE_TIMEOUT, connector.connect(host, tcp_stream))
+            .await
+            .map_err(|_| timed_out())?
+            .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        Ok(Box::new(tls_stream))
+    }
+
+    #[cfg(target_os = "android")]
+    {
+        let root_store = rustls::RootCertStore {
+            roots: webpki_roots::TLS_SERVER_ROOTS.to_vec(),
+        };
+        let config = rustls::ClientConfig::builder()
+            .with_root_certificates(root_store)
+            .with_no_client_auth();
+        let connector = TlsConnector::from(StdArc::new(config));
+        let server_name = ServerName::try_from(host.to_string())
+            .map_err(|_| format!("Invalid DNS name: {}", host))?;
+        let tls_stream = timeout(
+            TLS_HANDSHAKE_TIMEOUT,
+            connector.connect(server_name, tcp_stream),
+        )
+        .await
+        .map_err(|_| timed_out())?
+        .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        Ok(Box::new(tls_stream))
+    }
+}
+
 /// Connect to IRC server with real TCP/TLS implementation
 #[tauri::command]
 pub async fn connect(
@@ -232,89 +285,19 @@ pub async fn connect(
 
     // Handle TLS if needed
     if use_tls {
-        // Create TLS connection based on platform
-        #[cfg(not(target_os = "android"))]
-        {
-            let connector = TlsConnector::from(
-                NativeTlsConnector::builder()
-                    .build()
-                    .map_err(|e| format!("Failed to create TLS connector: {}", e))?,
-            );
+        let tls_stream = tls_handshake(&host, tcp_stream).await?;
+        let (reader, writer) = tokio::io::split(tls_stream);
 
-            let tls_stream = timeout(TLS_HANDSHAKE_TIMEOUT, connector.connect(&host, tcp_stream))
-                .await
-                .map_err(|_| {
-                    format!(
-                        "TLS handshake timed out after {}s ({})",
-                        TLS_HANDSHAKE_TIMEOUT.as_secs(),
-                        host
-                    )
-                })?
-                .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        let client_id_read = client_id.clone();
+        let app_handle_read = app_handle.clone();
+        let state_clone = state.0.clone();
+        task::spawn(async move {
+            read_task(client_id_read, reader, app_handle_read, state_clone).await;
+        });
 
-            // Split the TLS stream using tokio::io::split
-            let (reader, writer) = tokio::io::split(tls_stream);
-
-            // Spawn read task
-            let client_id_read = client_id.clone();
-            let app_handle_read = app_handle.clone();
-            let state_clone = state.0.clone();
-            task::spawn(async move {
-                read_task(client_id_read, reader, app_handle_read, state_clone).await;
-            });
-
-            // Spawn write task
-            task::spawn(async move {
-                write_task(writer, write_rx, shutdown_rx).await;
-            });
-        }
-
-        #[cfg(target_os = "android")]
-        {
-            // Create rustls config with webpki roots
-            let root_store = rustls::RootCertStore {
-                roots: webpki_roots::TLS_SERVER_ROOTS.to_vec(),
-            };
-
-            let config = rustls::ClientConfig::builder()
-                .with_root_certificates(root_store)
-                .with_no_client_auth();
-
-            let connector = TlsConnector::from(StdArc::new(config));
-
-            let server_name = ServerName::try_from(host.clone())
-                .map_err(|_| format!("Invalid DNS name: {}", host))?;
-
-            let tls_stream = timeout(
-                TLS_HANDSHAKE_TIMEOUT,
-                connector.connect(server_name, tcp_stream),
-            )
-            .await
-            .map_err(|_| {
-                format!(
-                    "TLS handshake timed out after {}s ({})",
-                    TLS_HANDSHAKE_TIMEOUT.as_secs(),
-                    host
-                )
-            })?
-            .map_err(|e| format!("TLS handshake failed: {}", e))?;
-
-            // Split the TLS stream using tokio::io::split
-            let (reader, writer) = tokio::io::split(tls_stream);
-
-            // Spawn read task
-            let client_id_read = client_id.clone();
-            let app_handle_read = app_handle.clone();
-            let state_clone = state.0.clone();
-            task::spawn(async move {
-                read_task(client_id_read, reader, app_handle_read, state_clone).await;
-            });
-
-            // Spawn write task
-            task::spawn(async move {
-                write_task(writer, write_rx, shutdown_rx).await;
-            });
-        }
+        task::spawn(async move {
+            write_task(writer, write_rx, shutdown_rx).await;
+        });
     } else {
         // Plain TCP - use into_split for owned halves
         let (reader, writer) = tcp_stream.into_split();
@@ -360,7 +343,7 @@ pub async fn connect(
 }
 
 /// Parse address string to extract protocol, host, and port
-fn parse_address(address: &str) -> Result<(bool, String, u16), String> {
+pub(crate) fn parse_address(address: &str) -> Result<(bool, String, u16), String> {
     if let Some(stripped) = address.strip_prefix("ircs://") {
         let (host, port) = parse_host_port(stripped, 6697)?;
         Ok((true, host, port))

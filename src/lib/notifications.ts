@@ -1,4 +1,5 @@
 import { t } from "@lingui/core/macro";
+import { addPluginListener, invoke } from "@tauri-apps/api/core";
 import {
   createChannel,
   Importance,
@@ -11,7 +12,7 @@ import {
 import type { GlobalSettings } from "../store";
 import type { User } from "../types";
 import { stripIrcFormatting } from "./messageFormatter";
-import { isTauri, isTauriAndroid } from "./platformUtils";
+import { isTauri, isTauriAndroid, isTauriMobile } from "./platformUtils";
 
 /**
  * Check if the browser Notification API is supported
@@ -163,6 +164,7 @@ export type NotificationTarget = Pick<
 
 export const ANDROID_MESSAGES_CHANNEL = "messages";
 const BODY_LIMIT = 200;
+const TAP_REPEAT_MS = 3000;
 
 const chatKey = (serverId: string, target: string) =>
   `${serverId}:${target.toLowerCase()}`;
@@ -256,10 +258,21 @@ const isNotificationTarget = (
  *  before the first notification goes out, since desktop only reports taps on
  *  notifications shown while a listener existed. */
 export async function handleNotificationTaps(
-  open: (target: NotificationTarget) => void,
+  route: (target: NotificationTarget) => void,
 ): Promise<void> {
+  // A cold start on Android can report one tap twice, once per plugin.
+  let lastKey = "";
+  let lastAt = 0;
+  const open = (target: NotificationTarget) => {
+    const key = `${target.serverId}:${target.target}:${target.msgid ?? target.time}`;
+    if (key === lastKey && Date.now() - lastAt < TAP_REPEAT_MS) return;
+    lastKey = key;
+    lastAt = Date.now();
+    route(target);
+  };
   openTarget = open;
   if (!isTauri()) return;
+  if (isTauriMobile()) await handleMobileLaunchTaps(open);
   if (isTauriAndroid())
     await createChannel({
       id: ANDROID_MESSAGES_CHANNEL,
@@ -270,6 +283,23 @@ export async function handleNotificationTaps(
     const extra = notification?.extra;
     if (actionId === "tap" && isNotificationTarget(extra)) open(extra);
   });
+}
+
+// The mobile plugin keeps the tap that launched the app, since the
+// notification plugin reports it before our listener exists, and on iOS it
+// reports every tap.
+async function handleMobileLaunchTaps(
+  open: (target: NotificationTarget) => void,
+): Promise<void> {
+  const launched = await invoke<{ target: NotificationTarget | null }>(
+    "plugin:mobile-notifications|take_launch_target",
+  ).catch(() => null);
+  if (launched?.target) open(launched.target);
+  await addPluginListener(
+    "mobile-notifications",
+    "notificationTapped",
+    (target: NotificationTarget) => open(target),
+  );
 }
 
 /** Asks the platform for permission to show notifications. */
