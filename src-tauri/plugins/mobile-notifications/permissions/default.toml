@@ -1,7 +1,7 @@
 [default]
-description = "Lets the app configure the background message check, read the notification that launched it and hear about later taps."
+description = "Lets the app configure the history poll, read the notification that launched it and hear about later taps."
 permissions = [
-  "allow-configure",
+  "allow-configure-history-poll",
   "allow-take-launch-target",
   "allow-register-listener",
 ]

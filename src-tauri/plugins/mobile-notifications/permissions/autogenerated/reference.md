@@ -1,10 +1,10 @@
 ## Default Permission
 
-Lets the app configure the background message check, read the notification that launched it and hear about later taps.
+Lets the app configure the history poll, read the notification that launched it and hear about later taps.
 
 #### This default permission set includes the following:
 
-- `allow-configure`
+- `allow-configure-history-poll`
 - `allow-take-launch-target`
 - `allow-register-listener`
 
@@ -20,12 +20,12 @@ Lets the app configure the background message check, read the notification that 
 <tr>
 <td>
 
-`mobile-notifications:allow-configure`
+`mobile-notifications:allow-configure-history-poll`
 
 </td>
 <td>
 
-Enables the configure command without any pre-configured scope.
+Enables the configure_history_poll command without any pre-configured scope.
 
 </td>
 </tr>
@@ -33,12 +33,12 @@ Enables the configure command without any pre-configured scope.
 <tr>
 <td>
 
-`mobile-notifications:deny-configure`
+`mobile-notifications:deny-configure-history-poll`
 
 </td>
 <td>
 
-Denies the configure command without any pre-configured scope.
+Denies the configure_history_poll command without any pre-configured scope.
 
 </td>
 </tr>

@@ -232,7 +232,7 @@ msgstr "{safeName} більше недоступний на сервері."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} було змінено на сервері, тому його не можна розшифрувати."
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} в {target}"
@@ -3440,7 +3440,7 @@ msgstr "Назва мережі"
 msgid "Networks on {0}"
 msgstr "Мережі на {0}"
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/store/handlers/privateChatArrival.ts
 msgid "New encrypted message"
 msgstr "Нове зашифроване повідомлення"

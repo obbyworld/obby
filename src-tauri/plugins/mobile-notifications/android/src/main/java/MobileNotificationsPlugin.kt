@@ -10,7 +10,7 @@ import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
 
 @InvokeArg
-class ConfigureArgs {
+class ConfigureHistoryPollArgs {
   var config: String? = null
   var intervalMinutes: Long = 15
 }
@@ -21,7 +21,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
 
   override fun load(webView: WebView) {
     super.load(webView)
-    launchTarget = BackgroundNotices.tappedTarget(activity.intent)
+    launchTarget = HistoryPollNotices.tappedTarget(activity.intent)
   }
 
   override fun onResume() {
@@ -35,14 +35,14 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
   }
 
   @Command
-  fun configure(invoke: Invoke) {
-    val args = invoke.parseArgs(ConfigureArgs::class.java)
+  fun configureHistoryPoll(invoke: Invoke) {
+    val args = invoke.parseArgs(ConfigureHistoryPollArgs::class.java)
     val config = args.config
-    BackgroundStore.saveConfig(activity, config)
+    HistoryPollStore.saveConfig(activity, config)
     if (config == null) {
-      BackgroundScheduler.cancel(activity)
+      HistoryPollScheduler.cancel(activity)
     } else {
-      BackgroundScheduler.schedule(activity, args.intervalMinutes)
+      HistoryPollScheduler.schedule(activity, args.intervalMinutes)
     }
     invoke.resolve()
   }
@@ -56,7 +56,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
   }
 }
 
-// We skip the background check while the app is on screen, since the live connection covers it.
+// We skip the history poll while the app is on screen, since the live connection covers it.
 object AppVisibility {
   @Volatile var isInForeground = false
 }

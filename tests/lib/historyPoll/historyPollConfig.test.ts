@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-  backgroundConfigFor,
-  keepsHistoryForUs,
-} from "../../src/lib/backgroundCheck";
-import useStore from "../../src/store";
-import type { Server, ServerConfig } from "../../src/types";
+  historyPollConfigFor,
+  type LiveServerState,
+  needsHistoryPoll,
+} from "../../../src/lib/historyPoll/historyPollConfig";
+import useStore from "../../../src/store";
+import type { Server, ServerConfig } from "../../../src/types";
 
 const server = (overrides: Partial<Server>) =>
   ({
@@ -34,29 +35,45 @@ const settings = () => ({
   customMentions: ["stream"],
 });
 
-describe("background check config", () => {
-  it("only covers servers that keep messages for us", () => {
-    expect(keepsHistoryForUs(server({ persistenceEffective: "ON" }))).toBe(
-      true,
-    );
-    expect(keepsHistoryForUs(server({ bouncerNetid: "7" }))).toBe(true);
-    expect(keepsHistoryForUs(server({ persistenceEffective: "OFF" }))).toBe(
-      false,
-    );
+const live = (overrides: Partial<LiveServerState> = {}): LiveServerState => ({
+  nickOf: () => undefined,
+  offersCapability: () => false,
+  ...overrides,
+});
+
+describe("history poll config", () => {
+  it("only polls servers that keep messages for us and have no web push", () => {
+    const noPush = live().offersCapability;
     expect(
-      keepsHistoryForUs(server({ isBouncerControl: true, bouncerNetid: "7" })),
+      needsHistoryPoll(server({ persistenceEffective: "ON" }), noPush),
+    ).toBe(true);
+    expect(needsHistoryPoll(server({ bouncerNetid: "7" }), noPush)).toBe(true);
+    expect(
+      needsHistoryPoll(server({ persistenceEffective: "OFF" }), noPush),
+    ).toBe(false);
+    expect(
+      needsHistoryPoll(
+        server({ isBouncerControl: true, bouncerNetid: "7" }),
+        noPush,
+      ),
+    ).toBe(false);
+    expect(
+      needsHistoryPoll(
+        server({ bouncerNetid: "7" }),
+        (_, cap) => cap === "soju.im/webpush",
+      ),
     ).toBe(false);
   });
 
   it("carries the address, login and mention words for each such server", () => {
-    const config = backgroundConfigFor(
+    const config = historyPollConfigFor(
       [
         server({ persistenceEffective: "ON" }),
         server({ id: "plain", persistenceEffective: "OFF" }),
       ],
       [saved({}), saved({ id: "plain" })],
       settings(),
-      () => "max_",
+      live({ nickOf: () => "max_" }),
       1000,
     );
     expect(config?.servers).toEqual([
@@ -74,11 +91,11 @@ describe("background check config", () => {
   });
 
   it("keeps a WebSocket address as it is saved", () => {
-    const config = backgroundConfigFor(
+    const config = historyPollConfigFor(
       [server({ persistenceEffective: "ON" })],
       [saved({ host: "wss://irc.example.com", port: 443 })],
       settings(),
-      () => undefined,
+      live(),
       0,
     );
     expect(config?.servers[0].address).toBe("wss://irc.example.com");
@@ -86,11 +103,11 @@ describe("background check config", () => {
   });
 
   it("logs a soju network in with its bouncer's saved login", () => {
-    const config = backgroundConfigFor(
+    const config = historyPollConfigFor(
       [server({ id: "child", bouncerServerId: "s1", bouncerNetid: "7" })],
       [saved({ saslAccountName: "", host: "ws://bnc.example.com" })],
       settings(),
-      () => undefined,
+      live(),
       0,
     );
     expect(config?.servers[0]).toEqual(
@@ -106,20 +123,20 @@ describe("background check config", () => {
   it("turns off while notifications are off or the bell is muted", () => {
     const servers = [server({ persistenceEffective: "ON" })];
     expect(
-      backgroundConfigFor(
+      historyPollConfigFor(
         servers,
         [saved({})],
         { ...settings(), enableNotifications: false },
-        () => undefined,
+        live(),
         0,
       ),
     ).toBeNull();
     expect(
-      backgroundConfigFor(
+      historyPollConfigFor(
         servers,
         [saved({})],
         { ...settings(), notificationVolume: 0 },
-        () => undefined,
+        live(),
         0,
       ),
     ).toBeNull();

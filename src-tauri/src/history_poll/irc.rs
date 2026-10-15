@@ -309,7 +309,8 @@ impl Session {
             );
             let page = self.batch(&request).await?;
             let page_start = after;
-            let mut is_last_page = page.len() < HISTORY_LIMIT;
+            // Servers cap pages below what we ask for, so only an empty page ends the history.
+            let is_last_page = page.is_empty();
             for line in page {
                 let Some(time) = line.tags.get("time").and_then(|t| parse_iso_time(t)) else {
                     continue;
@@ -329,8 +330,7 @@ impl Session {
                     is_private,
                 });
             }
-            is_last_page |= after == page_start;
-            if is_last_page {
+            if is_last_page || after == page_start {
                 return Ok(messages);
             }
         }

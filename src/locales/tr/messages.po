@@ -232,7 +232,7 @@ msgstr "{safeName} artık sunucuda yok."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} sunucuda değiştirildi, bu yüzden şifresi çözülemiyor."
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{target} içinde {sender}"
@@ -3440,7 +3440,7 @@ msgstr "Ağ Adı"
 msgid "Networks on {0}"
 msgstr "{0} üzerindeki ağlar"
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/store/handlers/privateChatArrival.ts
 msgid "New encrypted message"
 msgstr "Yeni şifreli mesaj"

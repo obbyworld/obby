@@ -1,28 +1,32 @@
 import { useEffect } from "react";
+import useStore, { type AppState, loadSavedServers } from "../../store";
+import ircClient from "../ircClient";
+import { isTauriMobile } from "../platformUtils";
 import {
-  backgroundConfigFor,
-  configureBackgroundCheck,
-} from "../lib/backgroundCheck";
-import ircClient from "../lib/ircClient";
-import { isTauriMobile } from "../lib/platformUtils";
-import useStore, { type AppState, loadSavedServers } from "../store";
+  configureHistoryPoll,
+  historyPollConfigFor,
+} from "./historyPollConfig";
 
-/** Keeps the mobile background check pointed at the servers that keep history
- *  for us, from the moment the app last watched them live. */
-export function useBackgroundCheck(): void {
+/** Keeps the mobile history poll pointed at the servers that need it, from the
+ *  moment the app last watched them live. */
+export function useHistoryPoll(): void {
   useEffect(() => {
     if (!isTauriMobile()) return;
     let since = Date.now();
     const sync = (state: AppState) =>
-      void configureBackgroundCheck(
-        backgroundConfigFor(
+      void configureHistoryPoll(
+        historyPollConfigFor(
           state.servers,
           loadSavedServers(),
           state.globalSettings,
-          (serverId) => ircClient.getNick(serverId),
+          {
+            nickOf: (serverId) => ircClient.getNick(serverId),
+            offersCapability: (serverId, cap) =>
+              ircClient.offersCapability(serverId, cap),
+          },
           since,
         ),
-      ).catch((error) => console.warn("background check config failed", error));
+      ).catch((error) => console.warn("history poll config failed", error));
     const onVisibility = () => {
       if (document.visibilityState !== "hidden") return;
       since = Date.now();

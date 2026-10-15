@@ -15,13 +15,13 @@ import QuickActions from "./components/ui/QuickActions";
 import { RemoveServerConfirmModal } from "./components/ui/RemoveServerConfirmModal";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
-import { useBackgroundCheck } from "./hooks/useBackgroundCheck";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useDesktopTray } from "./hooks/useDesktopTray";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
 import { showMainWindow } from "./lib/desktopTray";
 import { whenHistoryIdle } from "./lib/history/historyDb";
+import { useHistoryPoll } from "./lib/historyPoll/useHistoryPoll";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isChannelTarget } from "./lib/ircUtils";
@@ -36,8 +36,39 @@ import { offerNotificationsOnce } from "./store/handlers/chatNotifications";
 import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
 
+const CHAT_READY_TIMEOUT_MS = 30_000;
+
+function isChatReady(
+  state: AppState,
+  { serverId, target }: NotificationTarget,
+) {
+  const server = state.servers.find((s) => s.id === serverId);
+  if (!server?.isConnected) return false;
+  if (!ircClient.isChannel(serverId, target)) return true;
+  const lower = target.toLowerCase();
+  return server.channels.some((c) => c.name.toLowerCase() === lower);
+}
+
+// A tap can launch the app, so we wait for the server to connect and rejoin
+// the chat before we open it.
+function whenChatReady(target: NotificationTarget): Promise<void> {
+  return new Promise((resolve) => {
+    if (isChatReady(useStore.getState(), target)) return resolve();
+    const finish = () => {
+      unsubscribe();
+      clearTimeout(timer);
+      resolve();
+    };
+    const unsubscribe = useStore.subscribe((state) => {
+      if (isChatReady(state, target)) finish();
+    });
+    const timer = setTimeout(finish, CHAT_READY_TIMEOUT_MS);
+  });
+}
+
 async function openNotificationTarget(target: NotificationTarget) {
   if (isTauriDesktop()) await showMainWindow();
+  await whenChatReady(target);
   const result = target.msgid ? await jumpToMessage(target) : null;
   if (!result?.ok) useStore.getState().openChat(target.serverId, target.target);
 }
@@ -213,7 +244,7 @@ const App: React.FC = () => {
   useConnectionResilience();
   useChannelTabSwitching();
   useDesktopTray();
-  useBackgroundCheck();
+  useHistoryPoll();
 
   const hasInitialized = useRef(false);
   useEffect(() => {

@@ -232,7 +232,7 @@ msgstr "{safeName} ist auf dem Server nicht mehr verfügbar."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} wurde auf dem Server geändert und kann daher nicht entschlüsselt werden."
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} in {target}"
@@ -3440,7 +3440,7 @@ msgstr "Netzwerkname"
 msgid "Networks on {0}"
 msgstr "Netzwerke auf {0}"
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/store/handlers/privateChatArrival.ts
 msgid "New encrypted message"
 msgstr "Neue verschlüsselte Nachricht"

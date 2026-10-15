@@ -12,7 +12,7 @@ import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import org.json.JSONObject
 
-object BackgroundCheck {
+object HistoryPollNative {
   init {
     System.loadLibrary("app_lib")
   }
@@ -20,8 +20,8 @@ object BackgroundCheck {
   @JvmStatic external fun nativeCheck(config: String, state: String, now: Long): String
 }
 
-object BackgroundStore {
-  private const val PREFERENCES = "obby_background_check"
+object HistoryPollStore {
+  private const val PREFERENCES = "obby_history_poll"
 
   private fun preferences(context: Context) =
     context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
@@ -39,14 +39,14 @@ object BackgroundStore {
   }
 }
 
-object BackgroundScheduler {
-  private const val PERIODIC = "obby-background-check"
+object HistoryPollScheduler {
+  private const val PERIODIC = "obby-history-poll"
 
   private val online = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
   // Android runs periodic work at most every 15 minutes, and later in Doze.
   fun schedule(context: Context, intervalMinutes: Long) {
-    val request = PeriodicWorkRequestBuilder<BackgroundCheckWorker>(
+    val request = PeriodicWorkRequestBuilder<HistoryPollWorker>(
       intervalMinutes.coerceAtLeast(15), TimeUnit.MINUTES
     ).setConstraints(online).build()
     WorkManager.getInstance(context)
@@ -58,19 +58,19 @@ object BackgroundScheduler {
   }
 }
 
-class BackgroundCheckWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+class HistoryPollWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
   override fun doWork(): Result {
     val context = applicationContext
-    val config = BackgroundStore.config(context) ?: return Result.success()
+    val config = HistoryPollStore.config(context) ?: return Result.success()
     if (AppVisibility.isInForeground) return Result.success()
     val outcome = JSONObject(
-      BackgroundCheck.nativeCheck(config, BackgroundStore.state(context), System.currentTimeMillis())
+      HistoryPollNative.nativeCheck(config, HistoryPollStore.state(context), System.currentTimeMillis())
     )
     outcome.optJSONArray("errors")?.let { errors ->
-      for (index in 0 until errors.length()) Log.w("ObbyBackground", errors.getString(index))
+      for (index in 0 until errors.length()) Log.w("ObbyHistoryPoll", errors.getString(index))
     }
-    outcome.optJSONObject("state")?.let { BackgroundStore.saveState(context, it.toString()) }
-    outcome.optJSONArray("notices")?.let { BackgroundNotices.post(context, it) }
+    outcome.optJSONObject("state")?.let { HistoryPollStore.saveState(context, it.toString()) }
+    outcome.optJSONArray("notices")?.let { HistoryPollNotices.post(context, it) }
     return Result.success()
   }
 }

@@ -1,13 +1,17 @@
+// History poll: the fallback for servers without web push. While the mobile app
+// is closed, it logs in now and then and posts notifications for what arrived.
 import { t } from "@lingui/core/macro";
 import { invoke } from "@tauri-apps/api/core";
-import type { GlobalSettings } from "../store/types";
-import type { Server, ServerConfig } from "../types";
-import { isTauriMobile } from "./platformUtils";
+import type { GlobalSettings } from "../../store/types";
+import type { Server, ServerConfig } from "../../types";
+import { isTauriMobile } from "../platformUtils";
 
 /** Android runs periodic work at most this often; iOS decides on its own. */
-export const BACKGROUND_INTERVAL_MINUTES = 15;
+export const HISTORY_POLL_INTERVAL_MINUTES = 15;
 
-export interface BackgroundServer {
+const WEB_PUSH_CAPABILITIES = ["draft/webpush", "soju.im/webpush"];
+
+export interface HistoryPollServer {
   id: string;
   address: string;
   nick: string;
@@ -20,15 +24,25 @@ export interface BackgroundServer {
   since: number;
 }
 
-export interface BackgroundConfig {
-  servers: BackgroundServer[];
+export interface HistoryPollConfig {
+  servers: HistoryPollServer[];
   strings: { channelTitle: string; encryptedBody: string };
 }
 
-// We only open background sessions to servers that keep history for us, so
-// other servers never see us come and go.
-export function keepsHistoryForUs(server: Server): boolean {
+export interface LiveServerState {
+  nickOf: (serverId: string) => string | undefined;
+  offersCapability: (serverId: string, capability: string) => boolean;
+}
+
+// We only poll servers that keep history for us, so other servers never see us
+// come and go, and we leave servers with web push to their own notifications.
+export function needsHistoryPoll(
+  server: Server,
+  offersCapability: LiveServerState["offersCapability"],
+): boolean {
   if (server.isBouncerControl) return false;
+  if (WEB_PUSH_CAPABILITIES.some((cap) => offersCapability(server.id, cap)))
+    return false;
   return server.persistenceEffective === "ON" || !!server.bouncerNetid;
 }
 
@@ -53,19 +67,19 @@ function decodedPassword(saved: ServerConfig): string | undefined {
   }
 }
 
-/** The background check config, or null when nothing should be checked. */
-export function backgroundConfigFor(
+/** The history poll config, or null when nothing needs polling. */
+export function historyPollConfigFor(
   servers: Server[],
   saved: ServerConfig[],
   settings: GlobalSettings,
-  nickOf: (serverId: string) => string | undefined,
+  live: LiveServerState,
   since: number,
-): BackgroundConfig | null {
+): HistoryPollConfig | null {
   if (!settings.enableNotifications || settings.notificationVolume <= 0)
     return null;
-  const entries: BackgroundServer[] = [];
+  const entries: HistoryPollServer[] = [];
   for (const server of servers) {
-    if (!keepsHistoryForUs(server)) continue;
+    if (!needsHistoryPoll(server, live.offersCapability)) continue;
     const configId = server.bouncerServerId ?? server.id;
     const config = saved.find((s) => s.id === configId);
     if (!config) continue;
@@ -75,7 +89,7 @@ export function backgroundConfigFor(
     entries.push({
       id: server.id,
       address: addressOf(config),
-      nick: nickOf(server.id) ?? config.nickname,
+      nick: live.nickOf(server.id) ?? config.nickname,
       account: account || undefined,
       password: account ? decodedPassword(config) : undefined,
       serverPassword: config.password || undefined,
@@ -99,16 +113,16 @@ export function backgroundConfigFor(
 
 let lastSent: string | null | undefined;
 
-/** Hands the config to the native background check, skipping repeats. */
-export async function configureBackgroundCheck(
-  config: BackgroundConfig | null,
+/** Hands the config to the native history poll, skipping repeats. */
+export async function configureHistoryPoll(
+  config: HistoryPollConfig | null,
 ): Promise<void> {
   if (!isTauriMobile()) return;
   const payload = config ? JSON.stringify(config) : null;
   if (payload === lastSent) return;
-  await invoke("plugin:mobile-notifications|configure", {
+  await invoke("plugin:mobile-notifications|configure_history_poll", {
     config: payload,
-    intervalMinutes: BACKGROUND_INTERVAL_MINUTES,
+    intervalMinutes: HISTORY_POLL_INTERVAL_MINUTES,
   });
   lastSent = payload;
 }

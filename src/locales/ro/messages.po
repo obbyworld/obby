@@ -232,7 +232,7 @@ msgstr "{safeName} nu mai este disponibil pe server."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} a fost modificat pe server, deci nu poate fi decriptat."
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} în {target}"
@@ -3440,7 +3440,7 @@ msgstr "Nume rețea"
 msgid "Networks on {0}"
 msgstr "Rețele pe {0}"
 
-#: src/lib/backgroundCheck.ts
+#: src/lib/historyPoll/historyPollConfig.ts
 #: src/store/handlers/privateChatArrival.ts
 msgid "New encrypted message"
 msgstr "Mesaj criptat nou"

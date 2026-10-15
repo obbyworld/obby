@@ -19,7 +19,7 @@ private const val TAP_ACTION = "tap"
 // The app creates this channel, with its translated name, before it configures the check.
 private const val CHANNEL_ID = "messages"
 
-object BackgroundNotices {
+object HistoryPollNotices {
   fun post(context: Context, notices: JSONArray) {
     val manager = NotificationManagerCompat.from(context)
     if (!manager.areNotificationsEnabled()) return

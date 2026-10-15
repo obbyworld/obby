@@ -1,5 +1,6 @@
-//! The message check the mobile apps run while Obby is closed. Android runs it
-//! in a fresh process, so it depends on tokio alone.
+//! History poll: the fallback for servers without web push. The mobile apps run
+//! it while Obby is closed; Android starts it in a fresh process, so it depends
+//! on tokio alone.
 
 mod irc;
 mod text;
@@ -290,7 +291,7 @@ pub fn check_json(config: &str, state: &str, now: i64) -> String {
 
 #[cfg(target_os = "android")]
 #[no_mangle]
-pub extern "system" fn Java_world_obby_notifications_BackgroundCheck_nativeCheck<'local>(
+pub extern "system" fn Java_world_obby_notifications_HistoryPollNative_nativeCheck<'local>(
     mut env: jni::JNIEnv<'local>,
     _class: jni::objects::JClass<'local>,
     config: jni::objects::JString<'local>,
@@ -310,10 +311,10 @@ pub extern "system" fn Java_world_obby_notifications_BackgroundCheck_nativeCheck
 
 /// # Safety
 /// `config` and `state` must be valid NUL-terminated strings. The caller frees
-/// the result with `obby_background_free`.
+/// the result with `obby_history_poll_free`.
 #[cfg(target_os = "ios")]
 #[no_mangle]
-pub unsafe extern "C" fn obby_background_check(
+pub unsafe extern "C" fn obby_history_poll_check(
     config: *const std::ffi::c_char,
     state: *const std::ffi::c_char,
     now: i64,
@@ -334,10 +335,10 @@ pub unsafe extern "C" fn obby_background_check(
 }
 
 /// # Safety
-/// `value` must come from `obby_background_check`.
+/// `value` must come from `obby_history_poll_check`.
 #[cfg(target_os = "ios")]
 #[no_mangle]
-pub unsafe extern "C" fn obby_background_free(value: *mut std::ffi::c_char) {
+pub unsafe extern "C" fn obby_history_poll_free(value: *mut std::ffi::c_char) {
     if !value.is_null() {
         drop(std::ffi::CString::from_raw(value));
     }
