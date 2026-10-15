@@ -9,6 +9,7 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import { isLinux } from "../lib/platformUtils";
 import { recordPlace, recordSearch } from "../lib/search/recents";
 import { serializeSearchQuery } from "../lib/search/searchQuery";
 import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
@@ -1316,7 +1317,6 @@ const useStore = create<AppState>((set, get) => ({
   },
   globalSettings: {
     enableNotifications: false,
-    notificationsOffered: false,
     notificationSound: "/sounds/notif1.mp3",
     enableNotificationSounds: true,
     notificationVolume: 0.4, // 40% volume by default
@@ -1333,7 +1333,8 @@ const useStore = create<AppState>((set, get) => ({
     // Ignore list
     ignoreList: ["HistServ!*@*"],
     keepHistory: true,
-    closeToTray: true,
+    // Some Linux desktops never show a tray icon, so closing quits there by default.
+    closeToTray: !isLinux,
     historyLimitMb: 500,
     // Hosted chat mode settings
     nickname: "",

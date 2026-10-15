@@ -8,17 +8,16 @@ import {
 import { isTauriDesktop } from "../lib/platformUtils";
 import useStore, { type AppState } from "../store";
 
-/** Keeps a tray icon on desktop that shows whether anything is unread. */
 export function useDesktopTray(): void {
   useEffect(() => {
     if (!isTauriDesktop()) return;
-    let shown = "";
+    let shownKey = "";
     const update = (state: AppState) => {
       const { unread, mentions } = unreadTotals(state.servers);
       const level = unreadLevel(unread, mentions);
       const key = `${level}:${mentions}`;
-      if (key === shown) return;
-      shown = key;
+      if (key === shownKey) return;
+      shownKey = key;
       void showUnreadState(level, mentions);
     };
     void createDesktopTray(

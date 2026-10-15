@@ -16,7 +16,6 @@ const DOT_COLORS: Record<
   mention: [242, 63, 67],
 };
 
-/** The icon's RGBA pixels with a solid dot in the top right corner. */
 export function withDot(
   rgba: Uint8Array,
   width: number,
@@ -37,7 +36,6 @@ export function withDot(
   return dotted;
 }
 
-/** Unread messages and mentions across every chat on every server. */
 export function unreadTotals(servers: Server[]): {
   unread: number;
   mentions: number;

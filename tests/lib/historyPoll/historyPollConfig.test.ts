@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   historyPollConfigFor,
+  isHistoryPollDecided,
   type LiveServerState,
   needsHistoryPoll,
 } from "../../../src/lib/historyPoll/historyPollConfig";
@@ -38,6 +39,7 @@ const settings = () => ({
 const live = (overrides: Partial<LiveServerState> = {}): LiveServerState => ({
   nickOf: () => undefined,
   offersCapability: () => false,
+  hasCapability: () => true,
   ...overrides,
 });
 
@@ -140,5 +142,28 @@ describe("history poll config", () => {
         0,
       ),
     ).toBeNull();
+  });
+
+  it("waits until each server has told us whether it keeps history", () => {
+    const connected = { isConnected: true };
+    expect(isHistoryPollDecided([server(connected)], live())).toBe(false);
+    expect(
+      isHistoryPollDecided(
+        [server({ ...connected, persistenceEffective: "OFF" })],
+        live(),
+      ),
+    ).toBe(true);
+    expect(
+      isHistoryPollDecided(
+        [server(connected)],
+        live({ hasCapability: () => false }),
+      ),
+    ).toBe(true);
+    expect(
+      isHistoryPollDecided(
+        [server({ persistenceEffective: "ON", isConnected: false })],
+        live(),
+      ),
+    ).toBe(false);
   });
 });

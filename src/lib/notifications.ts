@@ -145,6 +145,11 @@ export const extractMentions = (
   return mentions;
 };
 
+// The bell silences notifications along with the sound, so one switch quiets the app.
+export function areChatNotificationsOn(settings: GlobalSettings): boolean {
+  return settings.enableNotifications && settings.notificationVolume > 0;
+}
+
 export interface ChatNotification {
   serverId: string;
   /** The channel name, or the nick of a private chat. */
@@ -156,13 +161,12 @@ export interface ChatNotification {
   msgid?: string;
 }
 
-/** Where a tapped notification takes the user. */
 export type NotificationTarget = Pick<
   ChatNotification,
   "serverId" | "target" | "time" | "msgid"
 >;
 
-export const ANDROID_MESSAGES_CHANNEL = "messages";
+const ANDROID_MESSAGES_CHANNEL = "messages";
 const ANDROID_NOTIFICATION_ICON = "ic_notification";
 const BODY_LIMIT = 200;
 const TAP_REPEAT_MS = 3000;
@@ -179,9 +183,16 @@ export function notificationIdFor(serverId: string, target: string): number {
   return hash;
 }
 
-export function notificationTitle(notification: ChatNotification): string {
-  const { sender, target } = notification;
-  return notification.isPrivate ? sender : t`${sender} in ${target}`;
+export function notificationTitle({
+  sender,
+  target,
+  isPrivate,
+}: Pick<ChatNotification, "sender" | "target" | "isPrivate">): string {
+  return isPrivate ? sender : t`${sender} in ${target}`;
+}
+
+export function encryptedNotificationText(): string {
+  return t`New encrypted message`;
 }
 
 export function notificationBody(text: string): string {
@@ -252,7 +263,7 @@ export function closeChatNotification(serverId: string, target: string): void {
 
 // We post the time as a string and the background check posts it as a number.
 function parseNotificationTarget(
-  extra: Record<string, unknown> | null | undefined,
+  extra?: Record<string, unknown> | null,
 ): NotificationTarget | null {
   const time = Number(extra?.time);
   if (
@@ -278,7 +289,7 @@ export async function handleNotificationTaps(
   // A cold start on Android can report one tap twice, once per plugin.
   let lastKey = "";
   let lastAt = 0;
-  const open = (extra: Record<string, unknown> | null | undefined) => {
+  const open = (extra?: Record<string, unknown> | null) => {
     const target = parseNotificationTarget(extra);
     if (!target) return;
     const key = `${target.serverId}:${target.target}:${target.msgid ?? target.time}`;
@@ -305,7 +316,7 @@ export async function handleNotificationTaps(
 // notification plugin reports it before our listener exists, and on iOS it
 // reports every tap.
 async function handleMobileLaunchTaps(
-  open: (extra: Record<string, unknown> | null | undefined) => void,
+  open: (extra?: Record<string, unknown> | null) => void,
 ): Promise<void> {
   const launched = await invoke<{ target: Record<string, unknown> | null }>(
     "plugin:mobile-notifications|take_launch_target",
@@ -317,7 +328,6 @@ async function handleMobileLaunchTaps(
   await addPluginListener("mobile-notifications", "notificationTapped", open);
 }
 
-/** Asks the platform for permission to show notifications. */
 export async function requestChatNotificationPermission(): Promise<boolean> {
   if (isTauri())
     return (

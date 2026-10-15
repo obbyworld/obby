@@ -209,8 +209,19 @@ describe("notifying a chat message", () => {
 
 describe("offering notifications in the app", () => {
   const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+  const saved = new Map<string, string>();
 
-  it("asks once at launch and turns them on when allowed", async () => {
+  beforeEach(() => {
+    saved.clear();
+    vi.mocked(localStorage.getItem).mockImplementation(
+      (key) => saved.get(key) ?? null,
+    );
+    vi.mocked(localStorage.setItem).mockImplementation((key, value) => {
+      saved.set(key, value);
+    });
+  });
+
+  it("asks once on a fresh install and turns them on when allowed", async () => {
     (window as { __TAURI__?: unknown }).__TAURI__ = {};
     plugin.isPermissionGranted.mockResolvedValue(false);
     plugin.requestPermission.mockImplementationOnce(async () => {
@@ -221,16 +232,30 @@ describe("offering notifications in the app", () => {
       globalSettings: {
         ...state.globalSettings,
         enableNotifications: false,
-        notificationsOffered: false,
       },
     }));
 
     offerNotificationsOnce(useStore);
-    await settle();
+    await vi.waitFor(() =>
+      expect(useStore.getState().globalSettings.enableNotifications).toBe(true),
+    );
     offerNotificationsOnce(useStore);
     await settle();
 
     expect(plugin.requestPermission).toHaveBeenCalledTimes(1);
-    expect(useStore.getState().globalSettings.enableNotifications).toBe(true);
+  });
+
+  it("keeps the choice of someone who already has saved settings", async () => {
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    saved.set("globalSettings", JSON.stringify({ enableNotifications: false }));
+    useStore.setState((state) => ({
+      globalSettings: { ...state.globalSettings, enableNotifications: false },
+    }));
+
+    offerNotificationsOnce(useStore);
+    await settle();
+
+    expect(plugin.requestPermission).not.toHaveBeenCalled();
+    expect(useStore.getState().globalSettings.enableNotifications).toBe(false);
   });
 });

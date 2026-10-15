@@ -232,7 +232,6 @@ msgstr "{safeName} ei ole enää saatavilla palvelimella."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "Tiedostoa {safeName} muutettiin palvelimella, joten sitä ei voi purkaa."
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} kanavalla {target}"
@@ -3440,8 +3439,7 @@ msgstr "Verkon nimi"
 msgid "Networks on {0}"
 msgstr "Verkot palvelimella {0}"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Uusi salattu viesti"
 

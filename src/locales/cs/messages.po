@@ -232,7 +232,6 @@ msgstr "{safeName} už na serveru není k dispozici."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "Soubor {safeName} byl na serveru změněn, proto ho nelze dešifrovat."
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} v {target}"
@@ -3440,8 +3439,7 @@ msgstr "Název sítě"
 msgid "Networks on {0}"
 msgstr "Sítě na {0}"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Nová šifrovaná zpráva"
 

@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import type { StoreApi } from "zustand";
 import {
+  areChatNotificationsOn,
   type ChatNotification,
   notificationBody,
   requestChatNotificationPermission,
@@ -8,6 +9,7 @@ import {
 } from "../../lib/notifications";
 import { isTauri } from "../../lib/platformUtils";
 import type { AppState } from "../index";
+import { settings as settingsStorage } from "../localStorage";
 
 // We ask for permission inside the toggle's click so browsers accept the request.
 export function registerNotificationPermission(
@@ -33,30 +35,20 @@ export function registerNotificationPermission(
   });
 }
 
-// The apps ask once at launch; browsers accept the request only from a click.
+// The apps ask on a fresh install only, so we keep whatever an existing user
+// chose; browsers accept the request only from a click.
 export function offerNotificationsOnce(store: StoreApi<AppState>): void {
-  const { globalSettings, updateGlobalSettings } = store.getState();
-  if (!isTauri() || globalSettings.notificationsOffered) return;
-  updateGlobalSettings({ notificationsOffered: true });
-  if (globalSettings.enableNotifications) return;
+  if (!isTauri() || "enableNotifications" in settingsStorage.load()) return;
   void requestChatNotificationPermission().then((isGranted) => {
-    if (isGranted)
-      store.getState().updateGlobalSettings({ enableNotifications: true });
+    store.getState().updateGlobalSettings({ enableNotifications: isGranted });
   });
 }
 
-// The bell silences notifications along with the sound, so one switch quiets
-// the app.
 export function notifyChatMessage(
   store: StoreApi<AppState>,
   notification: ChatNotification,
 ): void {
-  const { globalSettings } = store.getState();
-  if (
-    !globalSettings.enableNotifications ||
-    globalSettings.notificationVolume <= 0
-  )
-    return;
+  if (!areChatNotificationsOn(store.getState().globalSettings)) return;
   void showChatNotification(notification).then((isShown) => {
     if (isShown) return;
     const { sender, target, isPrivate, serverId } = notification;

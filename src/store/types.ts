@@ -54,7 +54,6 @@ export type ChannelFoldersMap = Record<string, ChannelFolder[]>;
 
 export interface GlobalSettings {
   enableNotifications: boolean;
-  notificationsOffered: boolean;
   notificationSound: string;
   enableNotificationSounds: boolean;
   notificationVolume: number;

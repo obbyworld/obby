@@ -4,13 +4,13 @@
 // inside either one: an encrypted conversation has to be as noticeable as a
 // plaintext one.
 
-import { t } from "@lingui/core/macro";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import {
   playNotificationSound,
   shouldPlayNotificationSound,
 } from "../../lib/notificationSounds";
+import { encryptedNotificationText } from "../../lib/notifications";
 import type { Message } from "../../types";
 import { getViewedSelection } from "../helpers";
 import type { AppState } from "../index";
@@ -68,7 +68,7 @@ export function notePrivateMessageArrived(
     target: sender,
     sender,
     // We keep decrypted text out of the system's notification center.
-    text: arrival.isEncrypted ? t`New encrypted message` : body,
+    text: arrival.isEncrypted ? encryptedNotificationText() : body,
     isPrivate: true,
     time: new Date(arrival.message.timestamp).getTime(),
     msgid: arrival.message.msgid,

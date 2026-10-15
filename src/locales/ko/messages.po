@@ -232,7 +232,6 @@ msgstr "{safeName} 파일이 서버에 더 이상 없습니다."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName}이(가) 서버에서 변경되어 복호화할 수 없습니다."
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{target}의 {sender}"
@@ -3440,8 +3439,7 @@ msgstr "네트워크 이름"
 msgid "Networks on {0}"
 msgstr "{0}의 네트워크"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "새 암호화된 메시지"
 

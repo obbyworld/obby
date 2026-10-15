@@ -1,13 +1,17 @@
-// History poll: the fallback for servers without web push. While the mobile app
-// is closed, it logs in now and then and posts notifications for what arrived.
-import { t } from "@lingui/core/macro";
+// We poll history from the mobile apps only as the fallback for servers without
+// web push; deleting this folder and the native history poll removes it.
 import { invoke } from "@tauri-apps/api/core";
 import type { GlobalSettings } from "../../store/types";
 import type { Server, ServerConfig } from "../../types";
+import {
+  areChatNotificationsOn,
+  encryptedNotificationText,
+  notificationTitle,
+} from "../notifications";
 import { isTauriMobile } from "../platformUtils";
 
 /** Android runs periodic work at most this often; iOS decides on its own. */
-export const HISTORY_POLL_INTERVAL_MINUTES = 15;
+const HISTORY_POLL_INTERVAL_MINUTES = 15;
 
 const WEB_PUSH_CAPABILITIES = ["draft/webpush", "soju.im/webpush"];
 
@@ -32,6 +36,23 @@ export interface HistoryPollConfig {
 export interface LiveServerState {
   nickOf: (serverId: string) => string | undefined;
   offersCapability: (serverId: string, capability: string) => boolean;
+  hasCapability: (serverId: string, capability: string) => boolean;
+}
+
+// Until a server has logged in and told us whether it keeps history, we keep
+// the last config, so a launch without network never cancels the poll.
+export function isHistoryPollDecided(
+  servers: Server[],
+  live: LiveServerState,
+): boolean {
+  return servers.every(
+    (server) =>
+      server.isConnected &&
+      (server.isBouncerControl ||
+        !!server.bouncerNetid ||
+        server.persistenceEffective !== undefined ||
+        !live.hasCapability(server.id, "draft/persistence")),
+  );
 }
 
 // We only poll servers that keep history for us, so other servers never see us
@@ -49,7 +70,7 @@ export function needsHistoryPoll(
 function addressOf(saved: ServerConfig): string {
   if (!saved.host.includes("://")) return `wss://${saved.host}:${saved.port}`;
   try {
-    // The app upgrades ws:// too, so the password never crosses in cleartext.
+    // We upgrade ws:// to wss:// as the live connection does.
     const url = new URL(saved.host.replace(/^ws:\/\//, "wss://"));
     if (!url.port && saved.port) url.port = String(saved.port);
     return url.toString().replace(/\/$/, "");
@@ -67,7 +88,6 @@ function decodedPassword(saved: ServerConfig): string | undefined {
   }
 }
 
-/** The history poll config, or null when nothing needs polling. */
 export function historyPollConfigFor(
   servers: Server[],
   saved: ServerConfig[],
@@ -75,8 +95,7 @@ export function historyPollConfigFor(
   live: LiveServerState,
   since: number,
 ): HistoryPollConfig | null {
-  if (!settings.enableNotifications || settings.notificationVolume <= 0)
-    return null;
+  if (!areChatNotificationsOn(settings)) return null;
   const entries: HistoryPollServer[] = [];
   for (const server of servers) {
     if (!needsHistoryPoll(server, live.offersCapability)) continue;
@@ -100,20 +119,21 @@ export function historyPollConfigFor(
     });
   }
   if (entries.length === 0) return null;
-  const sender = "{sender}";
-  const target = "{target}";
   return {
     servers: entries,
     strings: {
-      channelTitle: t`${sender} in ${target}`,
-      encryptedBody: t`New encrypted message`,
+      channelTitle: notificationTitle({
+        sender: "{sender}",
+        target: "{target}",
+        isPrivate: false,
+      }),
+      encryptedBody: encryptedNotificationText(),
     },
   };
 }
 
 let lastSent: string | null | undefined;
 
-/** Hands the config to the native history poll, skipping repeats. */
 export async function configureHistoryPoll(
   config: HistoryPollConfig | null,
 ): Promise<void> {

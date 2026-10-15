@@ -232,7 +232,6 @@ msgstr "{safeName} 在服务器上已不存在。"
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} 已在服务器上被更改，因此无法解密。"
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender}（{target}）"
@@ -3440,8 +3439,7 @@ msgstr "网络名称"
 msgid "Networks on {0}"
 msgstr "{0} 上的网络"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "新的加密消息"
 

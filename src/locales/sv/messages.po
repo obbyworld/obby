@@ -232,7 +232,6 @@ msgstr "{safeName} är inte längre tillgänglig på servern."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} ändrades på servern och kan därför inte dekrypteras."
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} i {target}"
@@ -3440,8 +3439,7 @@ msgstr "Nätverksnamn"
 msgid "Networks on {0}"
 msgstr "Nätverk på {0}"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Nytt krypterat meddelande"
 

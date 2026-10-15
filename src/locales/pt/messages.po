@@ -232,7 +232,6 @@ msgstr "{safeName} já não está disponível no servidor."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} foi alterado no servidor, por isso não pode ser descriptografado."
 
-#: src/lib/historyPoll/historyPollConfig.ts
 #: src/lib/notifications.ts
 msgid "{sender} in {target}"
 msgstr "{sender} em {target}"
@@ -3440,8 +3439,7 @@ msgstr "Nome da Rede"
 msgid "Networks on {0}"
 msgstr "Redes em {0}"
 
-#: src/lib/historyPoll/historyPollConfig.ts
-#: src/store/handlers/privateChatArrival.ts
+#: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Nova mensagem criptografada"
 
