@@ -28,6 +28,7 @@ import { setSpotlight } from "../../../src/lib/voiceSpotlight";
 vi.mock("../../../src/store", () => {
   const state = {
     servers: [],
+    ui: { isNarrowView: false },
     selectChannel: mocks.selectChannel,
     selectPrivateChat: mocks.selectPrivateChat,
   };
