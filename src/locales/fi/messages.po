@@ -4680,10 +4680,6 @@ msgstr "Näytä kanavan tiedot"
 msgid "See profile"
 msgstr "Näytä profiili"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "Näytä palvelimen ilmoitukset"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"

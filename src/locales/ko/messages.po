@@ -4680,10 +4680,6 @@ msgstr "채널 정보 보기"
 msgid "See profile"
 msgstr "프로필 보기"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "서버 알림 보기"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
