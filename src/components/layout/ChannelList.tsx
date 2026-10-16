@@ -43,10 +43,10 @@ import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriDesktop, isTauriMobile } from "../../lib/platformUtils";
 import { getLiveVoiceCalls, subscribeLiveVoiceCalls } from "../../lib/voice";
-import useStore from "../../store";
+import useStore, { type AppState } from "../../store";
 import { useChannelFolders } from "../../store/channelFolders";
 import type { ChannelFolder } from "../../store/types";
-import type { Channel } from "../../types";
+import type { Channel, User } from "../../types";
 import InviteUserModal from "../ui/InviteUserModal";
 import Menu from "../ui/Menu";
 import AddChannelRow from "./AddChannelRow";
@@ -58,6 +58,25 @@ import NetworkMenu from "./NetworkMenu";
 import PrivateChatRow from "./PrivateChatRow";
 import StartPrivateChatRow from "./StartPrivateChatRow";
 import UserPanel, { type PresenceStatus } from "./UserPanel";
+
+// The store keeps one currentUser for whichever server updated it last, so we
+// use it only when it carries our nick on the selected server.
+export function panelUser(
+  state: AppState,
+  serverId: string,
+  ircCurrentUser: User,
+): User {
+  if (state.currentUser?.username === ircCurrentUser.username)
+    return state.currentUser;
+  const server = state.servers.find((s) => s.id === serverId);
+  for (const channel of server?.channels ?? []) {
+    const user = channel.users.find(
+      (u) => u.username === ircCurrentUser.username,
+    );
+    if (user) return user;
+  }
+  return ircCurrentUser;
+}
 
 export const ChannelList: React.FC = () => {
   const {
@@ -101,48 +120,10 @@ export const ChannelList: React.FC = () => {
   const currentUser = useStore(
     useShallow((state) => {
       if (!selectedServerId) return null;
-
-      // Get the current user's username from IRCClient
       const ircCurrentUser = ircClient.getCurrentUser(selectedServerId);
-      if (!ircCurrentUser) return null;
-
-      // If we have a currentUser in the store that matches this server's current user, use it (it has modes)
-      if (
-        state.currentUser &&
-        state.currentUser.username === ircCurrentUser.username
-      ) {
-        return state.currentUser;
-      }
-
-      // Otherwise, try to find user in channels for metadata and merge with store currentUser if available
-      const selectedServer = state.servers.find(
-        (s) => s.id === selectedServerId,
-      );
-      if (!selectedServer) return state.currentUser || ircCurrentUser;
-
-      // Look for the user in any channel
-      for (const channel of selectedServer.channels) {
-        const userWithMetadata = channel.users.find(
-          (u) => u.username === ircCurrentUser.username,
-        );
-        if (userWithMetadata) {
-          // If we have currentUser in store, merge its modes and IRC op status with the channel user's metadata
-          if (
-            state.currentUser &&
-            state.currentUser.username === userWithMetadata.username
-          ) {
-            return {
-              ...userWithMetadata,
-              modes: state.currentUser.modes,
-              isIrcOp: state.currentUser.isIrcOp,
-            };
-          }
-          return userWithMetadata;
-        }
-      }
-
-      // If not found in channels, return store currentUser or IRC user
-      return state.currentUser || ircCurrentUser;
+      return ircCurrentUser
+        ? panelUser(state, selectedServerId, ircCurrentUser)
+        : null;
     }),
   );
 
