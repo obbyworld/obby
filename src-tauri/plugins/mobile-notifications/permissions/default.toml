@@ -1,7 +1,8 @@
 [default]
-description = "Lets the app configure the history poll, read the notification that launched it and hear about later taps."
+description = "Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps."
 permissions = [
   "allow-configure-history-poll",
   "allow-take-launch-target",
+  "allow-show-notification",
   "allow-register-listener",
 ]

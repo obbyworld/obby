@@ -12,6 +12,11 @@ const plugin = vi.hoisted(() => ({
   Importance: { High: 4 },
 }));
 vi.mock("@tauri-apps/plugin-notification", () => plugin);
+const core = vi.hoisted(() => ({
+  invoke: vi.fn(async () => {}),
+  addPluginListener: vi.fn(async () => ({ unregister: vi.fn() })),
+}));
+vi.mock("@tauri-apps/api/core", () => core);
 
 import {
   type ChatNotification,
@@ -62,6 +67,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
   delete (window as { __TAURI__?: unknown }).__TAURI__;
 });
@@ -138,6 +144,22 @@ describe("showing a chat notification", () => {
     expect(plugin.removeActive).toHaveBeenCalledWith([
       { id: notificationIdFor("s1", "#dev") },
     ]);
+  });
+
+  it("posts through the mobile plugin on Android so a tap carries the chat", async () => {
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Linux; Android 16",
+    );
+    expect(await showChatNotification(mention)).toBe(true);
+    expect(plugin.sendNotification).not.toHaveBeenCalled();
+    expect(core.invoke).toHaveBeenCalledWith(
+      "plugin:mobile-notifications|show_notification",
+      expect.objectContaining({
+        id: notificationIdFor("s1", "#dev"),
+        extra: expect.objectContaining({ serverId: "s1", target: "#dev" }),
+      }),
+    );
   });
 
   it("routes a native tap to the chat in its extra data", async () => {

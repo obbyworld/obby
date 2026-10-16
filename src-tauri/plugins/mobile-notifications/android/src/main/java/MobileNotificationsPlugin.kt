@@ -8,6 +8,7 @@ import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
+import org.json.JSONArray
 
 @InvokeArg
 class ConfigureHistoryPollArgs {
@@ -21,7 +22,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
 
   override fun load(webView: WebView) {
     super.load(webView)
-    launchTarget = HistoryPollNotices.tappedTarget(activity.intent)
+    launchTarget = ChatNotices.tappedTarget(activity.intent)
   }
 
   override fun onResume() {
@@ -44,6 +45,13 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     } else {
       HistoryPollScheduler.schedule(activity, args.intervalMinutes)
     }
+    invoke.resolve()
+  }
+
+  // The notification plugin leaves the chat out of its tap intent, so we post live notifications too.
+  @Command
+  fun showNotification(invoke: Invoke) {
+    ChatNotices.post(activity, JSONArray().put(invoke.getArgs()))
     invoke.resolve()
   }
 

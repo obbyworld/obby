@@ -70,7 +70,7 @@ class HistoryPollWorker(context: Context, params: WorkerParameters) : Worker(con
       for (index in 0 until errors.length()) Log.w("ObbyHistoryPoll", errors.getString(index))
     }
     outcome.optJSONObject("state")?.let { HistoryPollStore.saveState(context, it.toString()) }
-    outcome.optJSONArray("notices")?.let { HistoryPollNotices.post(context, it) }
+    outcome.optJSONArray("notices")?.let { ChatNotices.post(context, it) }
     return Result.success()
   }
 }

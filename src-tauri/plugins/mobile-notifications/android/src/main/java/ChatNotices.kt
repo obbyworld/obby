@@ -19,7 +19,7 @@ private const val TAP_ACTION = "tap"
 // The app creates this channel, with its translated name, before it configures the check.
 private const val CHANNEL_ID = "messages"
 
-object HistoryPollNotices {
+object ChatNotices {
   fun post(context: Context, notices: JSONArray) {
     val manager = NotificationManagerCompat.from(context)
     if (!manager.areNotificationsEnabled()) return
@@ -43,7 +43,7 @@ object HistoryPollNotices {
     }
   }
 
-  // The same monochrome icon the app sets for the notification plugin.
+  // Android draws the small icon as a mask, so we use the app's monochrome notification icon.
   private fun smallIcon(context: Context): Int {
     val id = context.resources.getIdentifier("ic_notification", "drawable", context.packageName)
     return if (id != 0) id else context.applicationInfo.icon

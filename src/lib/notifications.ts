@@ -167,7 +167,6 @@ export type NotificationTarget = Pick<
 >;
 
 const ANDROID_MESSAGES_CHANNEL = "messages";
-const ANDROID_NOTIFICATION_ICON = "ic_notification";
 const BODY_LIMIT = 200;
 const TAP_REPEAT_MS = 3000;
 
@@ -220,16 +219,17 @@ export async function showChatNotification(
   };
   if (isTauri()) {
     if (!(await isPermissionGranted())) return false;
-    sendNotification({
+    const native = {
       id: notificationIdFor(notification.serverId, notification.target),
       title,
       body,
       group: chatKey(notification.serverId, notification.target),
-      channelId: isTauriAndroid() ? ANDROID_MESSAGES_CHANNEL : undefined,
-      icon: isTauriAndroid() ? ANDROID_NOTIFICATION_ICON : undefined,
       // iOS drops a notification whose extra data holds anything but strings.
       extra: { ...target, time: String(target.time) },
-    });
+    };
+    if (isTauriAndroid())
+      await invoke("plugin:mobile-notifications|show_notification", native);
+    else sendNotification(native);
     return true;
   }
   const shown = showBrowserNotification(title, {

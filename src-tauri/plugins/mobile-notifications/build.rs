@@ -1,6 +1,7 @@
 const COMMANDS: &[&str] = &[
     "configure_history_poll",
     "take_launch_target",
+    "show_notification",
     "register_listener",
 ];
 

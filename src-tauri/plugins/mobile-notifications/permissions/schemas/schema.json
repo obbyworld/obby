@@ -319,6 +319,18 @@
           "markdownDescription": "Denies the register_listener command without any pre-configured scope."
         },
         {
+          "description": "Enables the show_notification command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-show-notification",
+          "markdownDescription": "Enables the show_notification command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the show_notification command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-show-notification",
+          "markdownDescription": "Denies the show_notification command without any pre-configured scope."
+        },
+        {
           "description": "Enables the take_launch_target command without any pre-configured scope.",
           "type": "string",
           "const": "allow-take-launch-target",
@@ -331,10 +343,10 @@
           "markdownDescription": "Denies the take_launch_target command without any pre-configured scope."
         },
         {
-          "description": "Lets the app configure the history poll, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-register-listener`",
+          "description": "Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Lets the app configure the history poll, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-register-listener`"
+          "markdownDescription": "Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`"
         }
       ]
     }
