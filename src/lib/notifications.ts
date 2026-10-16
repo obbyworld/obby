@@ -12,7 +12,12 @@ import {
 import type { GlobalSettings } from "../store";
 import type { User } from "../types";
 import { stripIrcFormatting } from "./messageFormatter";
-import { isTauri, isTauriAndroid, isTauriMobile } from "./platformUtils";
+import {
+  isTauri,
+  isTauriAndroid,
+  isTauriIOS,
+  isTauriMobile,
+} from "./platformUtils";
 
 /**
  * Check if the browser Notification API is supported
@@ -328,10 +333,25 @@ async function handleMobileLaunchTaps(
   await addPluginListener("mobile-notifications", "notificationTapped", open);
 }
 
+const PERMISSION_POLL_MS = 1000;
+
+// iOS refuses a request while an earlier page's prompt is still open, so we wait for that answer.
+async function iosPermissionAfterOpenPrompt(): Promise<boolean> {
+  while (
+    (await invoke<boolean | null>(
+      "plugin:notification|is_permission_granted",
+    )) === null
+  )
+    await new Promise((resolve) => setTimeout(resolve, PERMISSION_POLL_MS));
+  return (await requestPermission()) === "granted";
+}
+
 export async function requestChatNotificationPermission(): Promise<boolean> {
-  if (isTauri())
-    return (
-      (await isPermissionGranted()) || (await requestPermission()) === "granted"
-    );
-  return (await requestNotificationPermission()) === "granted";
+  if (!isTauri()) return (await requestNotificationPermission()) === "granted";
+  if (
+    (await isPermissionGranted()) ||
+    (await requestPermission()) === "granted"
+  )
+    return true;
+  return isTauriIOS() && iosPermissionAfterOpenPrompt();
 }

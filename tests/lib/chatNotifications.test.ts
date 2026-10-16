@@ -267,6 +267,31 @@ describe("offering notifications in the app", () => {
     expect(plugin.requestPermission).toHaveBeenCalledTimes(1);
   });
 
+  it("turns them on when the user allows a prompt left open from before a reload on iOS", async () => {
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue("iPhone");
+    plugin.isPermissionGranted.mockResolvedValue(false);
+    plugin.requestPermission
+      .mockResolvedValueOnce("denied")
+      .mockResolvedValueOnce("granted");
+    core.invoke
+      .mockResolvedValueOnce(null as never)
+      .mockResolvedValueOnce(true as never);
+    useStore.setState((state) => ({
+      globalSettings: { ...state.globalSettings, enableNotifications: false },
+    }));
+
+    offerNotificationsOnce(useStore);
+
+    await vi.waitFor(
+      () =>
+        expect(useStore.getState().globalSettings.enableNotifications).toBe(
+          true,
+        ),
+      { timeout: 3000 },
+    );
+  });
+
   it("keeps the choice of someone who already has saved settings", async () => {
     (window as { __TAURI__?: unknown }).__TAURI__ = {};
     saved.set("globalSettings", JSON.stringify({ enableNotifications: false }));
