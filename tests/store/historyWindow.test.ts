@@ -211,6 +211,28 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     expect(w.sent.at(-1)).toMatch(/^CHATHISTORY LATEST #chan \* /);
   });
 
+  it("keeps the chat loading while saved rows show and the newest page is still coming", async () => {
+    const w = await boot(["draft/chathistory", "message-tags"]);
+    await w.save(60);
+    w.ircClient.requestChathistoryLatest(SERVER, "#chan");
+    w.ircClient.triggerEvent("CHATHISTORY_LOADING", {
+      serverId: SERVER,
+      channelName: "#chan",
+      isLoading: true,
+    });
+
+    await w.history.loadOlderMessages(w.useStore, SERVER, "#chan", timeOf(60));
+    await vi.waitFor(() => expect(w.shown().length).toBeGreaterThan(0));
+    expect(w.channel().isLoadingHistory).toBe(true);
+
+    w.feed(
+      ":irc.test BATCH +n1 chathistory #chan",
+      line(60).replace("@", "@batch=n1;"),
+      ":irc.test BATCH -n1",
+    );
+    await vi.waitFor(() => expect(w.channel().isLoadingHistory).toBe(false));
+  });
+
   it("keeps a live message out of the window, saves it and counts it unread", async () => {
     const w = await boot();
     await w.save(300);

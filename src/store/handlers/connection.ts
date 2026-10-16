@@ -6,6 +6,7 @@ import type { PrivateChat } from "../../types";
 import {
   generateDeterministicId,
   getServerSelection,
+  serverSupportsChathistory,
   serverSupportsMetadata,
   setServerSelection,
 } from "../helpers";
@@ -338,6 +339,12 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         for (const ch of reconnectedServer.channels) {
           if (!ch.chathistoryRequested) {
             ircClient.requestChathistoryLatest(serverId, ch.name);
+            if (serverSupportsChathistory(store.getState(), serverId))
+              ircClient.triggerEvent("CHATHISTORY_LOADING", {
+                serverId,
+                channelName: ch.name,
+                isLoading: true,
+              });
           }
         }
       }, 50);

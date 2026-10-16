@@ -576,17 +576,23 @@ export const ChannelMessageList = forwardRef<
         );
         return;
       }
-      setOpening({ ...opening, step: "open" });
       const line = container.querySelector<HTMLElement>("[data-unread-line]");
-      if (!line) return;
-      const top =
-        line.getBoundingClientRect().top -
-        container.getBoundingClientRect().top +
-        container.scrollTop;
-      if (top >= container.scrollHeight - container.clientHeight) return;
+      // The server page we wait for can still bring the unread messages.
+      if (!line && isLoadingHistory) return;
+      const top = line
+        ? line.getBoundingClientRect().top -
+          container.getBoundingClientRect().top +
+          container.scrollTop
+        : 0;
+      const isLineAtEnd =
+        top >= container.scrollHeight - container.clientHeight;
+      // A window loads the rows below the line next, so we wait for them.
+      if (line && isLineAtEnd && isDetached && !isOverdue) return;
+      setOpening({ ...opening, step: "open" });
+      if (!line || isLineAtEnd) return;
       container.scrollTop = Math.max(0, top - UNREAD_LINE_MARGIN_PX);
       resizeObserverPrevSHRef.current = container.scrollHeight;
-      holdRow(line);
+      holdRow(line, { keepsOffset: true });
       // The bottom detection can still deliver what it saw before we moved,
       // so we have it look again once those reports are out.
       requestAnimationFrame(() =>
@@ -633,7 +639,11 @@ export const ChannelMessageList = forwardRef<
           setIsFetchingMore(false);
           if (channelMessages[0]?.id === oldestAtFetchRef.current)
             emptyOlderPageAtRef.current = oldestAtFetchRef.current;
-        } else if (!isDetachedRef.current && !isHoldingRef.current) {
+        } else if (
+          !isDetachedRef.current &&
+          !isHoldingRef.current &&
+          wasAtBottomRef.current
+        ) {
           scrollToBottom();
           wasAtBottomRef.current = true;
         }
@@ -741,7 +751,6 @@ export const ChannelMessageList = forwardRef<
       const container = messagesContainerRef.current;
       const inner = messagesInnerRef.current;
       if (!inner || !container) return;
-      resizeObserverPrevSHRef.current = container.scrollHeight;
       let prevClientWidth = container.clientWidth;
       const observer = new ResizeObserver(() => {
         if (container.clientHeight === 0) return;
@@ -756,9 +765,10 @@ export const ChannelMessageList = forwardRef<
         const widthChanged = currentClientWidth !== prevClientWidth;
         prevClientWidth = currentClientWidth;
         const prevSH = resizeObserverPrevSHRef.current;
+        // A list that shrank has already pulled the scroll back to its end.
         const wasAtPrevBottom =
           container.scrollTop + container.clientHeight >=
-          prevSH - SCROLL_TOLERANCE;
+          Math.min(prevSH, container.scrollHeight) - SCROLL_TOLERANCE;
         resizeObserverPrevSHRef.current = container.scrollHeight;
         if (isHoldingRef.current) {
           keepHeldRowInPlace();
@@ -866,13 +876,28 @@ export const ChannelMessageList = forwardRef<
       });
     };
 
+    const isTopSkeletonInView = (container: HTMLElement) => {
+      const skeleton = hasMoreMessages
+        ? messagesInnerRef.current?.firstElementChild
+        : null;
+      return (
+        !!skeleton &&
+        skeleton.getBoundingClientRect().bottom >
+          container.getBoundingClientRect().top
+      );
+    };
+
     const loadNearEdgesRef = useRef(() => {});
     loadNearEdgesRef.current = () => {
       const container = messagesContainerRef.current;
       if (!container || container.clientHeight === 0) return;
       // Rows added below never move the held row, so we load newer ones while holding.
       if (isScrolledToBottom(container, LOAD_AHEAD_PX)) loadNewer();
-      if (isHoldingRef.current) return;
+      if (isHoldingRef.current) {
+        // Rows landing above leave the held row in place, so we fill the placeholders in view.
+        if (isTopSkeletonInView(container)) loadOlder();
+        return;
+      }
       if (
         container.scrollTop < LOAD_AHEAD_PX &&
         (!isScrolledToBottom(container) ||

@@ -5,6 +5,7 @@ import { ChannelMessageList } from "../../../src/components/layout/ChannelMessag
 import useStore from "../../../src/store";
 import {
   loadNewerMessages,
+  loadOlderMessages,
   showMessagesFromReadMarker,
 } from "../../../src/store/handlers/history";
 import type { Message, Server } from "../../../src/types";
@@ -31,6 +32,7 @@ vi.mock("../../../src/store/handlers/history", async (importOriginal) => ({
   >()),
   showMessagesFromReadMarker: vi.fn(),
   loadNewerMessages: vi.fn(),
+  loadOlderMessages: vi.fn(async () => true),
 }));
 
 const KEY = "s1-pm1";
@@ -188,5 +190,160 @@ describe("ChannelMessageList window below a held row", () => {
     fireEvent.scroll(list);
 
     expect(loadNewerMessages).toHaveBeenCalledWith(useStore, "s1", "alice");
+  });
+});
+
+describe("ChannelMessageList late history", () => {
+  const observers: ResizeObserverCallback[] = [];
+  const readRows = (count: number) =>
+    Array.from({ length: count }, (_, i) => message(`read-${i}`, i - count));
+  const latestObserver = () => observers[observers.length - 2];
+
+  beforeEach(() => {
+    observers.length = 0;
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          observers.push(callback);
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    markerPage.mockReset();
+    markerPage.mockReturnValue(new Promise(() => {}));
+    vi.mocked(loadOlderMessages).mockReset();
+    vi.mocked(loadOlderMessages).mockResolvedValue(true);
+    vi.mocked(loadNewerMessages).mockResolvedValue();
+    useStore.setState((state) => ({
+      servers: [server(false)],
+      messages: { [KEY]: readRows(30) },
+      historyWindows: {},
+      ui: { ...state.ui, isAppFocused: true, isChatAwayFromPresent: false },
+    }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it("keeps the placeholders past the wait while the newest page can still bring unread messages", () => {
+    vi.useFakeTimers();
+    useStore.setState({ servers: [server(true)] });
+    const { container } = render(<ChannelMessageList {...props} />);
+
+    act(() => vi.advanceTimersByTime(5000));
+    expect(container.querySelector(".sticky")).not.toBeNull();
+    expect(isAwayFromPresent()).toBe(true);
+
+    act(() =>
+      useStore.setState({
+        servers: [server(false)],
+        messages: { [KEY]: [...readRows(30), message("new-1", 5)] },
+      }),
+    );
+    expect(container.querySelector(".sticky")).toBeNull();
+    expect(container.querySelector("[data-unread-line]")).not.toBeNull();
+  });
+
+  it("waits in a window until the messages after the line arrive", () => {
+    vi.useFakeTimers();
+    useStore.setState({
+      messages: { [KEY]: [...readRows(30), message("new-1", 5)] },
+      historyWindows: {
+        [KEY]: { until: Date.parse(at(5)), present: [], jumpId: 1 },
+      },
+    });
+    const { container } = render(<ChannelMessageList {...props} />);
+    expect(container.querySelector(".sticky")).not.toBeNull();
+
+    act(() => vi.advanceTimersByTime(4000));
+    expect(container.querySelector(".sticky")).toBeNull();
+  });
+
+  it("keeps the reading position when an older page lands after the wait", () => {
+    vi.useFakeTimers();
+    const { container } = render(<ChannelMessageList {...props} />);
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 0);
+    fireEvent.scroll(list);
+    expect(loadOlderMessages).toHaveBeenCalled();
+    act(() => useStore.setState({ servers: [server(true)] }));
+
+    act(() => vi.advanceTimersByTime(11_000));
+    act(() =>
+      useStore.setState({
+        servers: [server(false)],
+        messages: { [KEY]: [message("older", -60), ...readRows(30)] },
+      }),
+    );
+
+    expect(list.scrollTop).toBe(0);
+  });
+
+  it("keeps the new messages line where it opened when rows land above it", () => {
+    const unread = Array.from({ length: 30 }, (_, i) =>
+      message(`new-${i}`, i + 1),
+    );
+    useStore.setState({
+      servers: [server(true)],
+      messages: { [KEY]: [...readRows(30), ...unread] },
+    });
+    const { container } = render(<ChannelMessageList {...props} />);
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 0, 3000);
+    const line = list.querySelector("[data-unread-line]") as HTMLElement;
+    line.getBoundingClientRect = () => ({ top: 1000 }) as DOMRect;
+    act(() => useStore.setState({ servers: [server(false)] }));
+    expect(list.scrollTop).toBe(952);
+
+    Object.defineProperty(line, "offsetTop", {
+      configurable: true,
+      value: 500,
+    });
+    observers[observers.length - 1]([], {} as ResizeObserver);
+
+    expect(list.scrollTop).toBe(1452);
+  });
+
+  it("loads older pages around a held row while placeholders show above it", () => {
+    const { container } = render(<ChannelMessageList {...props} />);
+    act(() => useStore.getState().revealMessage("read-20"));
+    vi.mocked(loadOlderMessages).mockClear();
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 0);
+    const skeleton = list.querySelector('[aria-hidden="true"]') as HTMLElement;
+    skeleton.getBoundingClientRect = () => ({ bottom: 200 }) as DOMRect;
+
+    fireEvent.scroll(list);
+
+    expect(loadOlderMessages).toHaveBeenCalled();
+  });
+
+  it("follows the end of a list that shrank", () => {
+    const { container } = render(<ChannelMessageList {...props} />);
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 400, 1000);
+    latestObserver()([], {} as ResizeObserver);
+
+    setGeometry(list, 200, 800);
+    latestObserver()([], {} as ResizeObserver);
+
+    expect(list.scrollTop).toBe(800);
+  });
+
+  it("follows the end when the list grows as loading restarts the size watch", () => {
+    const { container } = render(<ChannelMessageList {...props} />);
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 400, 1000);
+    latestObserver()([], {} as ResizeObserver);
+
+    setGeometry(list, 400, 1150);
+    act(() => useStore.setState({ servers: [server(true)] }));
+    observers[observers.length - 1]([], {} as ResizeObserver);
+
+    expect(list.scrollTop).toBe(1150);
   });
 });

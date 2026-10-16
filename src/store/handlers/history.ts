@@ -97,6 +97,12 @@ function isGapBeingFilled(serverId: string, target: string, gapId: number) {
   );
 }
 
+export function isServerPageComing(serverId: string, target: string): boolean {
+  return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
+    (request) => request.kind === "latest" || !request.fill?.isDiskOnly,
+  );
+}
+
 function requestPageBefore(
   serverId: string,
   target: string,

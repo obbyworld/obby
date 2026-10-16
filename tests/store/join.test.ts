@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
@@ -177,6 +177,39 @@ describe("readyProcessedServers — reconnect guard", () => {
     });
 
     expect(readyProcessedServers.has("srv-1")).toBe(false);
+  });
+
+  it("shows a rejoined channel loading until its newest page arrives", () => {
+    vi.useFakeTimers();
+    vi.spyOn(storage.servers, "load").mockReturnValue([
+      { id: "srv-1", channels: [] } as unknown as ReturnType<
+        typeof storage.servers.load
+      >[number],
+    ]);
+    useStore.setState((state) => ({
+      servers: state.servers.map((s) => ({
+        ...s,
+        capabilities: ["draft/chathistory"],
+      })),
+    }));
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+
+    ircClient.triggerEvent("ready", {
+      serverId: "srv-1",
+      serverName: "TestServer",
+      nickname: "me",
+    });
+    vi.advanceTimersByTime(50);
+
+    expect(sendRaw).toHaveBeenCalledWith(
+      "srv-1",
+      expect.stringMatching(/^CHATHISTORY LATEST #test /),
+    );
+    expect(useStore.getState().servers[0].channels[0].isLoadingHistory).toBe(
+      true,
+    );
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("does not clear on connect (only on disconnect)", () => {

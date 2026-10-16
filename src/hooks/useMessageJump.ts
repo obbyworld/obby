@@ -39,13 +39,21 @@ export function useMessageJump({
   const heldRowRef = useRef<HTMLElement | null>(null);
   const heldTopRef = useRef(0);
   const heldHeightRef = useRef(0);
+  const heldOffsetRef = useRef<number | null>(null);
   const [isHolding, setIsHolding] = useState(false);
   const jumpMessageId = useStore((state) => state.ui.messageJump?.messageId);
 
-  const hold = (row: HTMLElement | null) => {
+  const hold = (
+    row: HTMLElement | null,
+    { keepsOffset = false }: { keepsOffset?: boolean } = {},
+  ) => {
     isHoldingRef.current = true;
     heldRowRef.current = row;
     if (row) heldTopRef.current = row.offsetTop;
+    heldOffsetRef.current =
+      keepsOffset && row
+        ? row.offsetTop - (containerRef.current?.scrollTop ?? 0)
+        : null;
     heldHeightRef.current = containerRef.current?.clientHeight ?? 0;
     wasAtBottomRef.current = false;
     setIsHolding(true);
@@ -71,7 +79,8 @@ export function useMessageJump({
       return;
     heldTopRef.current = row.offsetTop;
     heldHeightRef.current = container.clientHeight;
-    centerRow(container, row, "auto");
+    if (heldOffsetRef.current === null) centerRow(container, row, "auto");
+    else container.scrollTop = row.offsetTop - heldOffsetRef.current;
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: a new window id is a new jump

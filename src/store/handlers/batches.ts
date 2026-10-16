@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import type { StoreApi } from "zustand";
+import { LOCAL_BATCH_PREFIX } from "../../lib/history/historyLines";
 import ircClient from "../../lib/ircClient";
 import type { Message } from "../../types";
 import {
@@ -12,6 +13,7 @@ import {
   withReaction,
 } from "../helpers";
 import { type AppState, rememberMsgIds } from "../index";
+import { isServerPageComing } from "./history";
 
 // Chathistory messages are buffered here (outside the store) to avoid one
 // store.setState per incoming PRIVMSG.  Only flushed at BATCH_END.
@@ -253,6 +255,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
     // call sets isLoadingHistory=false, but the outer callback then returns stale servers
     // state (isLoadingHistory still true), overwriting the inner change.
     let chathistoryChannelName: string | null = null;
+    let isServerPageStillComing = false;
 
     store.setState((state) => {
       const serverBatches = state.activeBatches[serverId];
@@ -321,6 +324,11 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
 
       if (batch.type === "chathistory" && batch.parameters?.[0]) {
         const channelName = batch.parameters[0];
+        // A server page we asked for may still come, so saved rows leave the chat loading.
+        isServerPageStillComing =
+          batchId.startsWith(LOCAL_BATCH_PREFIX) &&
+          isServerPageComing(serverId, channelName);
+        if (isServerPageStillComing) chathistoryChannelName = null;
         const server = state.servers.find((s) => s.id === serverId);
         const channel = server?.channels.find(
           (c) => c.name.toLowerCase() === channelName.toLowerCase(),
@@ -388,7 +396,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
                   return {
                     ...ch,
                     hasMoreHistory: pending.length > 0,
-                    isLoadingHistory: false,
+                    isLoadingHistory: isServerPageStillComing,
                   };
                 }),
               };
