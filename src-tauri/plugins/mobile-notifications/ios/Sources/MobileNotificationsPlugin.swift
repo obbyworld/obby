@@ -67,8 +67,11 @@ class MobileNotificationsPlugin: Plugin, UNUserNotificationCenterDelegate {
           UNUserNotificationCenterDelegate.userNotificationCenter(
             _:willPresent:withCompletionHandler:)))
     {
-      previous.userNotificationCenter?(
-        center, willPresent: notification, withCompletionHandler: completionHandler)
+      // The notification plugin answers with the deprecated .alert, which iOS 26 no longer shows as a banner, so we ask for one.
+      previous.userNotificationCenter?(center, willPresent: notification) { options in
+        completionHandler(
+          options.contains(.alert) ? options.subtracting(.alert).union([.banner, .list]) : options)
+      }
       return
     }
     completionHandler([.banner, .sound])
