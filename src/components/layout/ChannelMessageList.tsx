@@ -291,6 +291,17 @@ export const ChannelMessageList = forwardRef<
       resizeObserverPrevSHRef.current = 0;
     }, [channelKey]);
 
+    // Whether we moved the scroll to put the anchored row back where it was.
+    const keepAnchoredRow = (): boolean => {
+      const container = messagesContainerRef.current;
+      const anchor = droppedRowsAnchorRef.current;
+      droppedRowsAnchorRef.current = null;
+      const anchorTop = anchor && rowTop(anchor.id);
+      if (!container || !anchor || anchorTop == null) return false;
+      container.scrollTop += anchorTop - anchor.top;
+      return true;
+    };
+
     const rowTop = (id: string): number | null => {
       const container = messagesContainerRef.current;
       const row = container && findMessageRow(container, id);
@@ -365,6 +376,16 @@ export const ChannelMessageList = forwardRef<
     const serverHasMore =
       (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
+    // The DOM still shows the top skeleton during this render, so we measure
+    // the first row here to keep it in place once the skeleton goes.
+    const [hadMoreMessages, setHadMoreMessages] = useState(hasMoreMessages);
+    if (hadMoreMessages !== hasMoreMessages) {
+      setHadMoreMessages(hasMoreMessages);
+      const firstId = displayedMessages[0]?.id;
+      const top = !hasMoreMessages && firstId ? rowTop(firstId) : null;
+      if (firstId && top !== null)
+        droppedRowsAnchorRef.current = { id: firstId, top };
+    }
 
     const eventGroups = useMemo(
       () => groupConsecutiveEvents(displayedMessages),
@@ -760,16 +781,15 @@ export const ChannelMessageList = forwardRef<
         resizeObserverPrevSHRef.current = newHeight;
       }
 
-      const anchor = droppedRowsAnchorRef.current;
-      droppedRowsAnchorRef.current = null;
-      const anchorTop = anchor && rowTop(anchor.id);
-      if (anchor && anchorTop != null) {
-        container.scrollTop += anchorTop - anchor.top;
-        resizeObserverPrevSHRef.current = newHeight;
-      }
+      if (keepAnchoredRow()) resizeObserverPrevSHRef.current = newHeight;
 
       prevScrollHeightRef.current = newHeight;
     }, [displayedMessages]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the top skeleton goes; refs are stable
+    useLayoutEffect(() => {
+      keepAnchoredRow();
+    }, [hasMoreMessages]);
 
     // Re-stick to bottom when inner message content grows (media/audio previews loading).
     // Uses prevScrollHeight instead of wasAtBottomRef to avoid stale-flag race where the
@@ -1001,7 +1021,11 @@ export const ChannelMessageList = forwardRef<
             <MessageSkeletons isFilling />
           ) : (
             <div ref={messagesInnerRef} className="flex-grow flex flex-col">
-              {hasMoreMessages && <MessageSkeletons isFilling />}
+              {hasMoreMessages ? (
+                <MessageSkeletons isFilling />
+              ) : (
+                <div className="grow" />
+              )}
               {eventGroups.map((group) => {
                 if (group.type === "eventGroup") {
                   const firstId = group.messages[0]?.id || "";
