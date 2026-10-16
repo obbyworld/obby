@@ -638,6 +638,7 @@ export interface AppState {
   }[];
   // Problems a server reported since the user last opened its notices.
   serverAlerts: Record<string, number>;
+  unreadServerNotices: Record<string, boolean>;
   rawLog: Record<
     string,
     {
@@ -1231,6 +1232,7 @@ const useStore = create<AppState>((set, get) => ({
   typingTimers: {},
   globalNotifications: [],
   serverAlerts: {},
+  unreadServerNotices: {},
   channelList: {},
   channelListBuffer: {},
   channelListFilters: {},
@@ -2104,6 +2106,12 @@ const useStore = create<AppState>((set, get) => ({
           ...state.messages,
           [channelKey]: cappedMessages,
         },
+        ...(message.channelId === "server-notices" && {
+          unreadServerNotices: {
+            ...state.unreadServerNotices,
+            [message.serverId]: true,
+          },
+        }),
       };
     });
   },

@@ -49,8 +49,6 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     }),
   );
 
-  // The connection strip already tells the user a link closed, so the
-  // server's own wording only goes to its notices.
   ircClient.on("serverError", ({ serverId, message }) =>
     reportServerReply(store, {
       serverId,
@@ -58,7 +56,6 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       command: "ERROR",
       code: "SERVER_ERROR",
       message,
-      isQuiet: true,
     }),
   );
 

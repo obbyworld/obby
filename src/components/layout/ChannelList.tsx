@@ -279,6 +279,9 @@ export const ChannelList: React.FC = () => {
   const serverAlertCount = useStore((s) =>
     selectedServerId ? (s.serverAlerts[selectedServerId] ?? 0) : 0,
   );
+  const hasUnreadServerNotices = useStore(
+    (s) => !!selectedServerId && !!s.unreadServerNotices[selectedServerId],
+  );
 
   const applyChannelDrop = (
     ids: string[],
@@ -667,13 +670,18 @@ export const ChannelList: React.FC = () => {
                 <span className="truncate font-medium flex-1">
                   <Trans>Server Notices</Trans>
                 </span>
-                {serverAlertCount > 0 && (
+                {serverAlertCount > 0 ? (
                   <span
                     className="min-w-5 h-5 px-1.5 rounded-full bg-discord-red text-white text-xs font-semibold flex items-center justify-center"
                     title={t`Open Server Notices to see what went wrong`}
                   >
                     {serverAlertCount}
                   </span>
+                ) : (
+                  hasUnreadServerNotices &&
+                  selectedChannelId !== "server-notices" && (
+                    <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                  )
                 )}
               </div>
             </div>
