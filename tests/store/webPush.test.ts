@@ -78,6 +78,21 @@ describe("web push registration", () => {
     });
   });
 
+  it("registers once the user allows the prompt the switch opened", () => {
+    vi.useFakeTimers();
+    const notification = { permission: "default" };
+    vi.stubGlobal("Notification", notification);
+    turnNotificationsOn();
+    expect(webpush.registerWebPush).not.toHaveBeenCalled();
+
+    notification.permission = "granted";
+    vi.advanceTimersByTime(1000);
+    expect(webpush.registerWebPush).toHaveBeenCalledWith("push-1", "BKey", {
+      nick: "me",
+    });
+    vi.useRealTimers();
+  });
+
   it("unregisters when the bell mutes notifications", () => {
     turnNotificationsOn();
     useStore.setState((state) => ({

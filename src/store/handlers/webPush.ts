@@ -11,6 +11,9 @@ import {
 } from "../../lib/webpush";
 import { type AppState, loadSavedServers } from "../index";
 
+const PROMPT_POLL_MS = 500;
+const PROMPT_WAIT_MS = 120_000;
+
 // The app webviews have no Push API, so only the browser build subscribes.
 // We register once per connection, key or switch flip, since servers may
 // expire subscriptions a client stops renewing, and the VAPID key arrives in
@@ -22,23 +25,10 @@ export function registerWebPushHandlers(store: StoreApi<AppState>): void {
   const dropRemoved = () =>
     void dropRemovedServersPush(loadSavedServers().map((server) => server.id));
   dropRemoved();
-  store.subscribe((state, previous) => {
-    if (
-      state.servers === previous.servers &&
-      state.globalSettings === previous.globalSettings
-    )
-      return;
+  const applyPushState = (state: AppState) => {
     const isOn =
       areChatNotificationsOn(state.globalSettings) &&
       globalThis.Notification?.permission === "granted";
-    if (state.servers.length < previous.servers.length) {
-      dropRemoved();
-      for (const serverId of applied.keys()) {
-        if (state.servers.some((server) => server.id === serverId)) continue;
-        applied.delete(serverId);
-        sentContext.delete(serverId);
-      }
-    }
     for (const server of state.servers) {
       if (!server.isConnected || !server.vapidKey) {
         applied.delete(server.id);
@@ -72,5 +62,40 @@ export function registerWebPushHandlers(store: StoreApi<AppState>): void {
         },
       );
     }
+  };
+  store.subscribe((state, previous) => {
+    if (
+      state.servers === previous.servers &&
+      state.globalSettings === previous.globalSettings
+    )
+      return;
+    if (state.servers.length < previous.servers.length) {
+      dropRemoved();
+      for (const serverId of applied.keys()) {
+        if (state.servers.some((server) => server.id === serverId)) continue;
+        applied.delete(serverId);
+        sentContext.delete(serverId);
+      }
+    }
+    applyPushState(state);
+    if (
+      areChatNotificationsOn(state.globalSettings) &&
+      !areChatNotificationsOn(previous.globalSettings)
+    )
+      applyOnceAnswered();
   });
+  // The switch flips before the user answers the permission prompt, and not
+  // every browser reports the answer as an event, so we look until it lands.
+  let answerTimer: ReturnType<typeof setInterval> | undefined;
+  const applyOnceAnswered = () => {
+    clearInterval(answerTimer);
+    const startedAt = Date.now();
+    answerTimer = setInterval(() => {
+      const permission = globalThis.Notification?.permission;
+      if (permission === "default" && Date.now() - startedAt < PROMPT_WAIT_MS)
+        return;
+      clearInterval(answerTimer);
+      if (permission === "granted") applyPushState(store.getState());
+    }, PROMPT_POLL_MS);
+  };
 }
