@@ -41,7 +41,6 @@ import {
 import type { Message as MessageType } from "../../types";
 import { CollapsedEventMessage } from "../message/CollapsedEventMessage";
 import { MessageItem } from "../message/MessageItem";
-import LoadingSpinner from "../ui/LoadingSpinner";
 import { ScrollToBottomButton } from "../ui/ScrollToBottomButton";
 import { MessageSkeletons } from "../ui/SkeletonRow";
 
@@ -879,6 +878,7 @@ export const ChannelMessageList = forwardRef<
     }, [
       displayedMessages,
       isLoadingHistory,
+      hasMoreMessages,
       isFetchingMore,
       isLoadingNewer,
       isActive,
@@ -916,25 +916,19 @@ export const ChannelMessageList = forwardRef<
           }}
         >
           {isPositioningOnUnread && (
-            <div className="sticky top-0 z-10 h-0">
-              <div className="h-screen bg-discord-dark-200">
-                <MessageSkeletons />
+            <div className="sticky top-0 z-20 h-0">
+              <div className="h-screen flex flex-col bg-discord-dark-200">
+                <MessageSkeletons isFilling />
               </div>
             </div>
           )}
           {isLoadingHistory &&
           !isFetchingMore &&
           channelMessages.length === 0 ? (
-            <div className="flex-grow flex items-center justify-center">
-              <LoadingSpinner
-                size="lg"
-                text="Loading chat history..."
-                className="text-discord-text-muted"
-              />
-            </div>
+            <MessageSkeletons isFilling />
           ) : (
-            <div ref={messagesInnerRef} className="flex flex-col">
-              {hasMoreMessages && <MessageSkeletons />}
+            <div ref={messagesInnerRef} className="flex-grow flex flex-col">
+              {hasMoreMessages && <MessageSkeletons isFilling />}
               {eventGroups.map((group) => {
                 if (group.type === "eventGroup") {
                   const firstId = group.messages[0]?.id || "";
