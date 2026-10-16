@@ -334,16 +334,18 @@ async function handleMobileLaunchTaps(
 }
 
 const PERMISSION_POLL_MS = 1000;
+const PERMISSION_POLL_ATTEMPTS = 60;
 
 // iOS refuses a request while an earlier page's prompt is still open, so we wait for that answer.
 async function iosPermissionAfterOpenPrompt(): Promise<boolean> {
-  while (
-    (await invoke<boolean | null>(
+  for (let attempt = 0; attempt < PERMISSION_POLL_ATTEMPTS; attempt++) {
+    const isGranted = await invoke<boolean | null>(
       "plugin:notification|is_permission_granted",
-    )) === null
-  )
+    );
+    if (isGranted !== null) return isGranted;
     await new Promise((resolve) => setTimeout(resolve, PERMISSION_POLL_MS));
-  return (await requestPermission()) === "granted";
+  }
+  return false;
 }
 
 export async function requestChatNotificationPermission(): Promise<boolean> {

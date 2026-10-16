@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 const jump = vi.hoisted(() => ({
   jumpToMessage: vi.fn(async () => ({ ok: true })),
@@ -19,7 +19,15 @@ const serverWith = (isLoadingHistory: boolean) =>
     },
   ] as unknown as Server[];
 
+const initialState = useStore.getState();
+
 describe("opening a tapped notification", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    jump.jumpToMessage.mockClear();
+    useStore.setState(initialState, true);
+  });
+
   it("jumps once the chat has loaded the history that holds the message", async () => {
     useStore.setState({ servers: serverWith(true) });
 
@@ -42,7 +50,6 @@ describe("opening a tapped notification", () => {
 
   it("jumps once the page is visible", async () => {
     useStore.setState({ servers: serverWith(false) });
-    jump.jumpToMessage.mockClear();
     const visibility = vi
       .spyOn(document, "visibilityState", "get")
       .mockReturnValue("hidden");
@@ -61,6 +68,5 @@ describe("opening a tapped notification", () => {
     await opening;
 
     expect(jump.jumpToMessage).toHaveBeenCalled();
-    visibility.mockRestore();
   });
 });

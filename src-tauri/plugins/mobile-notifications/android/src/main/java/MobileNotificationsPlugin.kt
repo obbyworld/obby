@@ -23,6 +23,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
   override fun load(webView: WebView) {
     super.load(webView)
     launchTarget = ChatNotices.tappedTarget(activity.intent)
+    ChatNotices.consumeTap(activity.intent)
   }
 
   @Command

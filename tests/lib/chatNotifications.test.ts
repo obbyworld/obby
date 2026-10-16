@@ -13,7 +13,7 @@ const plugin = vi.hoisted(() => ({
 }));
 vi.mock("@tauri-apps/plugin-notification", () => plugin);
 const core = vi.hoisted(() => ({
-  invoke: vi.fn(async () => {}),
+  invoke: vi.fn(async (_command: string, _args?: unknown) => {}),
   addPluginListener: vi.fn(async () => ({ unregister: vi.fn() })),
 }));
 vi.mock("@tauri-apps/api/core", () => core);
@@ -67,7 +67,10 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.restoreAllMocks();
+  core.invoke.mockReset();
+  core.invoke.mockImplementation(async () => {});
   vi.unstubAllGlobals();
   delete (window as { __TAURI__?: unknown }).__TAURI__;
 });
@@ -221,6 +224,19 @@ describe("notifying a chat message", () => {
     expect(FakeNotification.instances).toHaveLength(0);
   });
 
+  it("logs a notification the Android plugin fails to post", async () => {
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
+      "Linux; Android 16",
+    );
+    core.invoke.mockRejectedValueOnce(new Error("no activity") as never);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    notifyChatMessage(useStore, mention);
+
+    await vi.waitFor(() => expect(warn).toHaveBeenCalled());
+  });
+
   it("falls back to an in-app note without permission", async () => {
     FakeNotification.permission = "denied";
     notifyChatMessage(useStore, mention);
@@ -267,13 +283,17 @@ describe("offering notifications in the app", () => {
     expect(plugin.requestPermission).toHaveBeenCalledTimes(1);
   });
 
+  const permissionChecks = () =>
+    core.invoke.mock.calls.filter(
+      ([command]) => command === "plugin:notification|is_permission_granted",
+    ).length;
+
   it("turns them on when the user allows a prompt left open from before a reload on iOS", async () => {
+    vi.useFakeTimers();
     (window as { __TAURI__?: unknown }).__TAURI__ = {};
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue("iPhone");
     plugin.isPermissionGranted.mockResolvedValue(false);
-    plugin.requestPermission
-      .mockResolvedValueOnce("denied")
-      .mockResolvedValueOnce("granted");
+    plugin.requestPermission.mockResolvedValueOnce("denied");
     core.invoke
       .mockResolvedValueOnce(null as never)
       .mockResolvedValueOnce(true as never);
@@ -282,14 +302,27 @@ describe("offering notifications in the app", () => {
     }));
 
     offerNotificationsOnce(useStore);
+    await vi.advanceTimersByTimeAsync(1000);
 
-    await vi.waitFor(
-      () =>
-        expect(useStore.getState().globalSettings.enableNotifications).toBe(
-          true,
-        ),
-      { timeout: 3000 },
-    );
+    expect(useStore.getState().globalSettings.enableNotifications).toBe(true);
+  });
+
+  it("stops waiting for an iOS prompt that stays open", async () => {
+    vi.useFakeTimers();
+    (window as { __TAURI__?: unknown }).__TAURI__ = {};
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue("iPhone");
+    plugin.isPermissionGranted.mockResolvedValue(false);
+    plugin.requestPermission.mockResolvedValueOnce("denied");
+    core.invoke.mockImplementation(async () => null as never);
+    useStore.setState((state) => ({
+      globalSettings: { ...state.globalSettings, enableNotifications: true },
+    }));
+
+    offerNotificationsOnce(useStore);
+    await vi.advanceTimersByTimeAsync(120_000);
+
+    expect(permissionChecks()).toBe(60);
+    expect(useStore.getState().globalSettings.enableNotifications).toBe(false);
   });
 
   it("keeps the choice of someone who already has saved settings", async () => {

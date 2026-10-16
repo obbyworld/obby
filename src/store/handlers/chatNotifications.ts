@@ -49,18 +49,22 @@ export function notifyChatMessage(
   notification: ChatNotification,
 ): void {
   if (!areChatNotificationsOn(store.getState().globalSettings)) return;
-  void showChatNotification(notification).then((isShown) => {
-    if (isShown) return;
-    const { sender, target, isPrivate, serverId } = notification;
-    const body = notificationBody(notification.text);
-    store.getState().addGlobalNotification({
-      type: "note",
-      command: isPrivate ? "PRIVMSG" : "MENTION",
-      code: isPrivate ? "DM" : "HIGHLIGHT",
-      message: isPrivate
-        ? t`${sender} sent you a message: ${body}`
-        : t`${sender} mentioned you in ${target}: ${body}`,
-      serverId,
-    });
-  });
+  void showChatNotification(notification)
+    .then((isShown) => {
+      if (isShown) return;
+      const { sender, target, isPrivate, serverId } = notification;
+      const body = notificationBody(notification.text);
+      store.getState().addGlobalNotification({
+        type: "note",
+        command: isPrivate ? "PRIVMSG" : "MENTION",
+        code: isPrivate ? "DM" : "HIGHLIGHT",
+        message: isPrivate
+          ? t`${sender} sent you a message: ${body}`
+          : t`${sender} mentioned you in ${target}: ${body}`,
+        serverId,
+      });
+    })
+    .catch((error) =>
+      console.warn("could not show a chat notification", error),
+    );
 }

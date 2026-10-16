@@ -64,6 +64,8 @@ object ChatNotices {
   /** The chat a tapped notification points at, from the intent that opened us. */
   fun tappedTarget(intent: Intent?): JSObject? {
     if (intent?.getStringExtra(ACTION_KEY) != TAP_ACTION) return null
+    // Reopening from recents replays the intent that first started the task, a tap long handled.
+    if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return null
     val json = intent.getStringExtra(NOTIFICATION_OBJECT_KEY) ?: return null
     return try {
       val extra = JSONObject(json).optJSONObject("extra") ?: return null
@@ -71,5 +73,11 @@ object ChatNotices {
     } catch (_: JSONException) {
       null
     }
+  }
+
+  fun consumeTap(intent: Intent?) {
+    intent?.removeExtra(ACTION_KEY)
+    intent?.removeExtra(NOTIFICATION_OBJECT_KEY)
+    intent?.removeExtra(NOTIFICATION_ID_KEY)
   }
 }
