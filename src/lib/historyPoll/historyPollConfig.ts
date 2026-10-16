@@ -5,8 +5,7 @@ import type { GlobalSettings } from "../../store/types";
 import type { Server, ServerConfig } from "../../types";
 import {
   areChatNotificationsOn,
-  encryptedNotificationText,
-  notificationTitle,
+  backgroundNotificationStrings,
 } from "../notifications";
 import { isTauriMobile } from "../platformUtils";
 
@@ -114,14 +113,7 @@ export function historyPollConfigFor(
   if (entries.length === 0) return null;
   return {
     servers: entries,
-    strings: {
-      channelTitle: notificationTitle({
-        sender: "{sender}",
-        target: "{target}",
-        isPrivate: false,
-      }),
-      encryptedBody: encryptedNotificationText(),
-    },
+    strings: backgroundNotificationStrings(),
   };
 }
 

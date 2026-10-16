@@ -11,6 +11,7 @@
 // growth.
 
 const NAV_CACHE = "obby-hosted-nav-v1";
+const CONTEXT_CACHE = "obby-push-context";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -22,7 +23,9 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((names) =>
         Promise.all(
-          names.filter((name) => name !== NAV_CACHE).map((name) => caches.delete(name)),
+          names
+            .filter((name) => name !== NAV_CACHE && name !== CONTEXT_CACHE)
+            .map((name) => caches.delete(name)),
         ),
       )
       .then(() => self.clients.claim()),
@@ -53,35 +56,60 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// --- web push (draft/webpush, soju.im/webpush) -------------------------
-// The server sends exactly one IRC message as the encrypted push payload:
-// no trailing CRLF, tags dropped except msgid. The page tells us which server
-// owns the subscription and how to word titles, since we have no catalog.
+// Web push (draft/webpush, soju.im/webpush). Each server registers this
+// worker under its own scope, and the server sends one IRC message per push
+// with only the msgid tag. The page sends us its wording, since we have no
+// catalog, plus the server's channel prefixes, our nick and the ignore list.
 
-const CONTEXT_CACHE = "obby-push-context";
-const CONTEXT_URL = "/__obby-push-context";
 const BODY_LIMIT = 200;
 const E2EE_BODY_MARKER = "?obe2ee:";
+const CONTEXT_URL = new URL("__obby-push-context", self.registration.scope).href;
+const shownByPage = new Set();
+
+function serverIdOfScope() {
+  const [, prefix, id] = new URL(self.registration.scope).pathname.split("/");
+  return prefix === "push" && id ? decodeURIComponent(id) : null;
+}
+
+function isPushContext(context) {
+  return (
+    typeof context?.channelTitle === "string" &&
+    typeof context.encryptedBody === "string" &&
+    typeof context.chantypes === "string" &&
+    typeof context.nick === "string" &&
+    Array.isArray(context.ignoreList) &&
+    context.ignoreList.every((pattern) => typeof pattern === "string")
+  );
+}
 
 self.addEventListener("message", (event) => {
-  if (event.data?.type !== "obby-push-context") return;
+  if (!(event.source instanceof WindowClient)) return;
+  const data = event.data;
+  if (data?.type === "obby-shown" && typeof data.msgid === "string") {
+    shownByPage.add(data.msgid);
+    if (shownByPage.size > 200) shownByPage.delete(shownByPage.values().next().value);
+    return;
+  }
+  if (data?.type !== "obby-push-context" || !isPushContext(data.context)) return;
   event.waitUntil(
     caches
       .open(CONTEXT_CACHE)
       .then((cache) =>
-        cache.put(CONTEXT_URL, new Response(JSON.stringify(event.data))),
+        cache.put(CONTEXT_URL, new Response(JSON.stringify(data.context))),
       ),
   );
 });
 
 async function pushContext() {
-  try {
-    const cache = await caches.open(CONTEXT_CACHE);
-    const response = await cache.match(CONTEXT_URL);
-    return response ? await response.json() : null;
-  } catch {
-    return null;
-  }
+  const cache = await caches.open(CONTEXT_CACHE);
+  const response = await cache.match(CONTEXT_URL);
+  return response ? response.json() : null;
+}
+
+function unescapeTagValue(value) {
+  return value.replace(/\\(.?)/g, (_, c) =>
+    ({ ":": ";", s: " ", r: "\r", n: "\n", "\\": "\\" })[c] ?? c,
+  );
 }
 
 function parseIrcLine(line) {
@@ -91,40 +119,43 @@ function parseIrcLine(line) {
   if (rest.startsWith("@")) {
     const sp = rest.indexOf(" ");
     if (sp === -1) return null;
-    const tags = rest.slice(1, sp);
-    for (const t of tags.split(";")) {
-      const eq = t.indexOf("=");
+    for (const tag of rest.slice(1, sp).split(";")) {
+      const eq = tag.indexOf("=");
       if (eq === -1) continue;
-      if (t.slice(0, eq) === "msgid") msgid = t.slice(eq + 1);
-      if (t.slice(0, eq) === "time") time = Date.parse(t.slice(eq + 1));
+      const value = unescapeTagValue(tag.slice(eq + 1));
+      if (tag.slice(0, eq) === "msgid") msgid = value;
+      if (tag.slice(0, eq) === "time") time = Date.parse(value);
     }
     rest = rest.slice(sp + 1);
   }
   if (!rest.startsWith(":")) return null;
   const sp = rest.indexOf(" ");
   if (sp === -1) return null;
-  const nick = rest.slice(1, sp).split("!")[0];
+  const source = rest.slice(1, sp);
   rest = rest.slice(sp + 1);
   const trailingIdx = rest.indexOf(" :");
-  let head = rest;
-  let text = "";
-  if (trailingIdx !== -1) {
-    head = rest.slice(0, trailingIdx);
-    text = rest.slice(trailingIdx + 2);
-  }
-  const parts = head.split(" ");
+  const params =
+    trailingIdx === -1
+      ? rest.split(" ")
+      : [...rest.slice(0, trailingIdx).split(" "), rest.slice(trailingIdx + 2)];
   return {
     msgid,
     time,
-    nick,
-    command: parts[0],
-    target: parts[1] || "",
-    text,
+    source,
+    nick: source.split("!")[0],
+    command: params[0]?.toUpperCase(),
+    target: params[1] ?? "",
+    text: params[2] ?? "",
   };
 }
 
-function isChannelTarget(target) {
-  return !!target && "#&^$+!".includes(target.charAt(0));
+function matchesIgnorePattern(hostmask, pattern) {
+  const regex = pattern
+    .toLowerCase()
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*/g, ".*")
+    .replace(/\?/g, ".");
+  return new RegExp(`^${regex}$`).test(hostmask.toLowerCase());
 }
 
 // What the sender said as notification text, or null for a CTCP other than /me.
@@ -133,6 +164,7 @@ function readableText(text, nick, encryptedBody) {
     return encryptedBody;
   if (text.startsWith("\x01")) {
     const ctcp = text.replace(/^\x01|\x01$/g, "");
+    if (ctcp === "ACTION") return `* ${nick}`;
     return ctcp.startsWith("ACTION ") ? `* ${nick} ${ctcp.slice(7)}` : null;
   }
   return text;
@@ -140,7 +172,7 @@ function readableText(text, nick, encryptedBody) {
 
 function plainBody(text) {
   const plain = text
-    .replace(/\x03(\d{1,2}(,\d{1,2})?)?/g, "")
+    .replace(/\x03\d{0,2}(,\d{0,2})?/g, "")
     .replace(/[\x02\x0f\x11\x16\x1d\x1e\x1f]/g, "")
     .trim();
   return plain.length > BODY_LIMIT
@@ -148,40 +180,47 @@ function plainBody(text) {
     : plain;
 }
 
+async function closeChatNotifications(tag) {
+  for (const shown of await self.registration.getNotifications({ tag }))
+    shown.close();
+}
+
 self.addEventListener("push", (event) => {
-  if (!event.data) return;
-  let raw;
-  try {
-    raw = event.data.text();
-  } catch {
-    return;
-  }
+  const serverId = serverIdOfScope();
+  if (!event.data || !serverId) return;
+  const parsed = parseIrcLine(event.data.text());
+  if (!parsed?.nick) return;
+  if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return;
+  if (parsed.msgid && shownByPage.has(parsed.msgid)) return;
   event.waitUntil(
     (async () => {
-      const parsed = parseIrcLine(raw);
-      if (!parsed?.nick) return;
-      if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return;
+      const context = await pushContext();
+      const chantypes = context?.chantypes || "#&";
+      const isChannel = chantypes.includes(parsed.target.charAt(0));
+      const chat = isChannel ? parsed.target : parsed.nick;
+      const tag = `${serverId}:${chat.toLowerCase()}`;
+      // Our own message from another client means we already read that chat.
+      if (context?.nick && parsed.nick.toLowerCase() === context.nick.toLowerCase())
+        return closeChatNotifications(isChannel ? tag : `${serverId}:${parsed.target.toLowerCase()}`);
+      if (context?.ignoreList.some((pattern) => matchesIgnorePattern(parsed.source, pattern)))
+        return;
 
       // A focused window shows this message itself.
-      const wins = await self.clients.matchAll({
+      const windows = await self.clients.matchAll({
         type: "window",
         includeUncontrolled: true,
       });
-      if (wins.some((c) => c.focused)) return;
+      if (windows.some((client) => client.focused)) return;
 
-      const context = await pushContext();
       const encryptedBody = context?.encryptedBody ?? "New encrypted message";
       const text = readableText(parsed.text, parsed.nick, encryptedBody);
       if (text === null) return;
-
-      const isChannel = isChannelTarget(parsed.target);
-      const chat = isChannel ? parsed.target : parsed.nick;
       const title = isChannel
-        ? (context?.channelTitle ?? "{sender} in {target}")
-            .replace("{sender}", parsed.nick)
-            .replace("{target}", parsed.target)
+        ? (context?.channelTitle ?? "{sender} in {target}").replace(
+            /\{(sender|target)\}/g,
+            (_, field) => (field === "sender" ? parsed.nick : parsed.target),
+          )
         : parsed.nick;
-      const serverId = context?.serverId ?? "";
 
       await self.registration.showNotification(title, {
         body: plainBody(text),
@@ -189,7 +228,7 @@ self.addEventListener("push", (event) => {
         badge: "/pwa/icon-192.png",
         // The page tags its own notifications the same way, so one chat keeps
         // one notification whichever side showed it.
-        tag: `${serverId}:${chat.toLowerCase()}`,
+        tag,
         renotify: true,
         data: {
           serverId,
@@ -208,8 +247,8 @@ self.addEventListener("notificationclick", (event) => {
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then((wins) => {
-        const win = wins.find((c) => "focus" in c);
+      .then((windows) => {
+        const win = windows.find((client) => "focus" in client);
         if (win) {
           win.postMessage({ type: "obby-notification-tap", target });
           return win.focus();

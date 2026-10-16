@@ -1,45 +1,16 @@
-// Web push (draft/webpush, soju.im/webpush): when a server offers push and a
-// VAPID= ISUPPORT key, we subscribe this browser with PushManager and hand
-// the subscription to the server with WEBPUSH REGISTER, so the server can
-// wake the device while the tab is closed. public/sw.js shows what arrives.
-
 import ircClient from "./ircClient";
-import { encryptedNotificationText, notificationTitle } from "./notifications";
+import { backgroundNotificationStrings } from "./notifications";
+import { findPushRegistration, pushScope } from "./pushRegistration";
+import { b64uDecode, b64uEncode } from "./sasl/webauthn";
 
 const WEB_PUSH_CAPABILITIES = ["draft/webpush", "soju.im/webpush"];
 
-// VAPID keys are URL-safe base64 (RFC 4648 §5).  PushManager wants the
-// applicationServerKey as a raw Uint8Array of the decoded bytes.
-function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
-  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
-  const normalised = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(normalised);
-  // Allocate an explicit ArrayBuffer so the result is
-  // Uint8Array<ArrayBuffer> (not ...<ArrayBufferLike>), which is what
-  // PushManager's applicationServerKey BufferSource type requires.
-  const out = new Uint8Array(new ArrayBuffer(raw.length));
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
-
-// PushSubscription.getKey() returns raw bytes; the WEBPUSH protocol wants
-// them URL-safe base64 (unpadded), matching the VAPID convention.
-function bufToBase64Url(buf: ArrayBuffer | null): string {
-  if (!buf) return "";
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  for (const b of bytes) bin += String.fromCharCode(b);
-  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
-function pushSupported(): boolean {
-  return (
-    typeof navigator !== "undefined" &&
-    "serviceWorker" in navigator &&
-    typeof window !== "undefined" &&
-    "PushManager" in window &&
-    "Notification" in window
-  );
+export interface PushContext {
+  channelTitle: string;
+  encryptedBody: string;
+  chantypes: string;
+  nick: string;
+  ignoreList: string[];
 }
 
 export function hasWebPush(serverId: string): boolean {
@@ -48,106 +19,117 @@ export function hasWebPush(serverId: string): boolean {
   );
 }
 
-// Only some web builds register the service worker, so we look it up
-// without waiting for one that may never come.
-async function pushRegistration(): Promise<ServiceWorkerRegistration | null> {
-  if (!pushSupported()) return null;
-  return (await navigator.serviceWorker.getRegistration()) ?? null;
+export function pushContextFor(
+  serverId: string,
+  ignoreList: string[],
+): PushContext {
+  return {
+    ...backgroundNotificationStrings(),
+    chantypes: ircClient.chantypes(serverId),
+    nick: ircClient.getNick(serverId) ?? "",
+    ignoreList,
+  };
 }
 
-// The worker has no translation catalog and no idea which server a push came
-// from, so we tell it whenever the subscription changes hands.
-function sendPushContext(
+function isPushSupported(): boolean {
+  return (
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
+}
+
+function whenActive(
   registration: ServiceWorkerRegistration,
-  serverId: string,
-): void {
-  registration.active?.postMessage({
-    type: "obby-push-context",
-    serverId,
-    channelTitle: notificationTitle({
-      sender: "{sender}",
-      target: "{target}",
-      isPrivate: false,
-    }),
-    encryptedBody: encryptedNotificationText(),
+): Promise<ServiceWorker> {
+  if (registration.active) return Promise.resolve(registration.active);
+  const pending = registration.installing ?? registration.waiting;
+  return new Promise((resolve, reject) => {
+    const failed = new DOMException(
+      "push worker failed to install",
+      "InvalidStateError",
+    );
+    if (!pending) return reject(failed);
+    pending.addEventListener("statechange", () => {
+      if (pending.state === "activated") resolve(pending);
+      if (pending.state === "redundant") reject(failed);
+    });
   });
 }
 
-// Track which (server, endpoint) pairs we've already REGISTERed this
-// session so a reconnect or a repeated `ready` doesn't spam the command.
-const registered = new Set<string>();
+// Only builds that register the app's own service worker offer push.
+async function pushRegistrationFor(
+  serverId: string,
+): Promise<ServiceWorkerRegistration | null> {
+  if (!isPushSupported() || !(await navigator.serviceWorker.getRegistration()))
+    return null;
+  const registration = await navigator.serviceWorker.register("/sw.js", {
+    scope: pushScope(serverId),
+  });
+  await whenActive(registration);
+  return registration;
+}
 
-/**
- * Subscribe to push for `serverId` using `vapidKey`, then send
- * WEBPUSH REGISTER. No-ops when push is unsupported, permission is
- * not granted, or we've already registered this endpoint with this server.
- */
+function isSameKey(subscription: PushSubscription, vapidKey: string): boolean {
+  const existing = subscription.options.applicationServerKey;
+  if (!existing) return false;
+  const have = new Uint8Array(existing);
+  const want = b64uDecode(vapidKey);
+  return have.length === want.length && have.every((b, i) => b === want[i]);
+}
+
+export function sendPushContext(serverId: string, context: PushContext): void {
+  void findPushRegistration(serverId).then((registration) =>
+    registration?.active?.postMessage({ type: "obby-push-context", context }),
+  );
+}
+
+/** Returns false when the browser could not subscribe, so the caller retries. */
 export async function registerWebPush(
   serverId: string,
   vapidKey: string,
-): Promise<void> {
-  if (!vapidKey || Notification.permission !== "granted") return;
+  context: PushContext,
+): Promise<boolean> {
+  if (Notification.permission !== "granted") return false;
   try {
-    const registration = await pushRegistration();
-    if (!registration) return;
-    let sub = await registration.pushManager.getSubscription();
-
-    // If a subscription exists but was minted against a different VAPID
-    // key (server rotated keys, or this device subscribed to another
-    // network), it won't decrypt our pushes -- resubscribe.
-    if (sub) {
-      const existingKey = sub.options?.applicationServerKey;
-      if (existingKey) {
-        const want = urlBase64ToUint8Array(vapidKey);
-        const have = new Uint8Array(existingKey as ArrayBuffer);
-        const same =
-          have.length === want.length && have.every((b, i) => b === want[i]);
-        if (!same) {
-          await sub.unsubscribe();
-          sub = null;
-        }
-      }
+    const registration = await pushRegistrationFor(serverId);
+    if (!registration) return true;
+    let subscription = await registration.pushManager.getSubscription();
+    if (subscription && !isSameKey(subscription, vapidKey)) {
+      await subscription.unsubscribe();
+      subscription = null;
     }
-
-    if (!sub) {
-      sub = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
-    }
-
-    const endpoint = sub.endpoint;
-    const p256dh = bufToBase64Url(sub.getKey("p256dh"));
-    const auth = bufToBase64Url(sub.getKey("auth"));
-    if (!endpoint || !p256dh || !auth) return;
-
-    sendPushContext(registration, serverId);
-    const dedupeKey = `${serverId} ${endpoint}`;
-    if (registered.has(dedupeKey)) return;
-    registered.add(dedupeKey);
-
+    subscription ??= await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: b64uDecode(vapidKey),
+    });
+    const p256dh = subscription.getKey("p256dh");
+    const auth = subscription.getKey("auth");
+    if (!p256dh || !auth) return false;
+    registration.active?.postMessage({ type: "obby-push-context", context });
     ircClient.sendRaw(
       serverId,
-      `WEBPUSH REGISTER ${endpoint} p256dh=${p256dh};auth=${auth}`,
+      `WEBPUSH REGISTER ${subscription.endpoint} p256dh=${b64uEncode(p256dh)};auth=${b64uEncode(auth)}`,
     );
-  } catch (err) {
-    console.warn("[webpush] subscribe/register failed:", err);
+    return true;
+  } catch (error) {
+    if (!(error instanceof DOMException || error instanceof TypeError))
+      throw error;
+    console.warn("[webpush] subscribe/register failed:", error);
+    return false;
   }
 }
 
-/**
- * Tear down this device's push subscription and tell the server to drop
- * it. Used when the user turns notifications off.
- */
-export async function unregisterWebPush(serverId: string): Promise<void> {
-  try {
-    const registration = await pushRegistration();
-    const sub = await registration?.pushManager.getSubscription();
-    if (!sub) return;
-    ircClient.sendRaw(serverId, `WEBPUSH UNREGISTER ${sub.endpoint}`);
-    registered.delete(`${serverId} ${sub.endpoint}`);
-    await sub.unsubscribe();
-  } catch (err) {
-    console.warn("[webpush] unregister failed:", err);
-  }
+/** Drops this browser's subscription for the server, and tells the server
+ *  while we are still connected to it. */
+export async function unregisterWebPush(
+  serverId: string,
+  isConnected: boolean,
+): Promise<void> {
+  const registration = await findPushRegistration(serverId);
+  if (!registration) return;
+  const subscription = await registration.pushManager.getSubscription();
+  if (subscription && isConnected)
+    ircClient.sendRaw(serverId, `WEBPUSH UNREGISTER ${subscription.endpoint}`);
+  await registration.unregister();
 }

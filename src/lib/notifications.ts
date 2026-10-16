@@ -18,6 +18,7 @@ import {
   isTauriIOS,
   isTauriMobile,
 } from "./platformUtils";
+import { closePushNotifications, markShownByPage } from "./pushRegistration";
 
 /**
  * Check if the browser Notification API is supported
@@ -199,6 +200,21 @@ export function encryptedNotificationText(): string {
   return t`New encrypted message`;
 }
 
+/** The wording a background notifier needs, since it has no catalog. */
+export function backgroundNotificationStrings(): {
+  channelTitle: string;
+  encryptedBody: string;
+} {
+  return {
+    channelTitle: notificationTitle({
+      sender: "{sender}",
+      target: "{target}",
+      isPrivate: false,
+    }),
+    encryptedBody: encryptedNotificationText(),
+  };
+}
+
 export function notificationBody(text: string): string {
   const plain = stripIrcFormatting(text).trim();
   return plain.length > BODY_LIMIT
@@ -245,6 +261,7 @@ export async function showChatNotification(
   if (!shown) return false;
   const key = chatKey(notification.serverId, notification.target);
   webNotifications.set(key, shown);
+  markShownByPage(notification.serverId, notification.msgid);
   shown.onclick = () => {
     window.focus();
     openTarget?.(target);
@@ -262,6 +279,7 @@ export function closeChatNotification(serverId: string, target: string): void {
   const key = chatKey(serverId, target);
   webNotifications.get(key)?.close();
   webNotifications.delete(key);
+  if (!isTauri()) closePushNotifications(serverId, key);
   if (isTauri())
     removeActive([{ id: notificationIdFor(serverId, target) }]).catch(() => {});
 }

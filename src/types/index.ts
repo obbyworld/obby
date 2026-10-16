@@ -134,8 +134,7 @@ export interface Server {
   namedModes?: NamedModes;
   // draft/EMOJI ISUPPORT: URL to the network-wide pack document.
   emojiPackUrl?: string;
-  // soju.im/webpush VAPID public key (URL-safe base64 P-256), from the
-  // VAPID= ISUPPORT token.  Present only on servers that support push.
+  // VAPID= ISUPPORT: the key browsers subscribe to web push with.
   vapidKey?: string;
   // draft/persistence state (populated from PERSISTENCE STATUS replies).
   // `preference` is what the user has explicitly set on this account
