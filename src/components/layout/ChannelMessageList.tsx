@@ -66,6 +66,7 @@ type Opening =
       step: "placing" | "loading" | "open";
       after: number | null;
       hasFetched: boolean;
+      isOverdue?: boolean;
     };
 
 // Stable empty array — prevents selector from returning a new [] on every render
@@ -296,43 +297,10 @@ export const ChannelMessageList = forwardRef<
         : null;
     };
 
-    // We grow the window during render: grown one commit later, slice(-N)
-    // would drop the top rows for a commit and remount them all.
     const [trackedList, setTrackedList] = useState({
       messages: channelMessages,
       jumpId: windowJumpId,
     });
-    if (
-      trackedList.messages !== channelMessages ||
-      trackedList.jumpId !== windowJumpId
-    ) {
-      setTrackedList({ messages: channelMessages, jumpId: windowJumpId });
-      const previous = trackedList.messages;
-      const delta = channelMessages.length - previous.length;
-      const isFirstChanged = channelMessages[0]?.id !== previous[0]?.id;
-      const isSameWindow = trackedList.jumpId === windowJumpId;
-      // The DOM still shows the dropped rows during this render, so we measure
-      // here. The first kept row gains a date header, so we anchor on the next.
-      const anchorId = channelMessages[1]?.id;
-      if (
-        isSameWindow &&
-        isDetached &&
-        delta < 0 &&
-        isFirstChanged &&
-        anchorId
-      ) {
-        const top = rowTop(anchorId);
-        if (top !== null) droppedRowsAnchorRef.current = { id: anchorId, top };
-      }
-      if (
-        isSameWindow &&
-        previous.length > 0 &&
-        delta > 0 &&
-        (isFirstChanged || isScrolledUp || isDetached)
-      )
-        setVisibleMessageCount((prev) => prev + delta);
-    }
-
     const displayedMessages = useMemo(
       () => channelMessages.slice(-visibleMessageCount),
       [channelMessages, visibleMessageCount],
@@ -354,6 +322,41 @@ export const ChannelMessageList = forwardRef<
       windowJumpId,
       wasAtBottomRef,
     });
+
+    // We grow the window during render: grown one commit later, slice(-N)
+    // would drop the top rows for a commit and remount them all.
+    if (
+      trackedList.messages !== channelMessages ||
+      trackedList.jumpId !== windowJumpId
+    ) {
+      setTrackedList({ messages: channelMessages, jumpId: windowJumpId });
+      const previous = trackedList.messages;
+      const delta = channelMessages.length - previous.length;
+      const isFirstChanged = channelMessages[0]?.id !== previous[0]?.id;
+      const isSameWindow = trackedList.jumpId === windowJumpId;
+      // A window that joins the present keeps its top row, so it is still the same list.
+      const isSameList = isSameWindow || !isFirstChanged;
+      // The DOM still shows the dropped rows during this render, so we measure
+      // here. The first kept row gains a date header, so we anchor on the next.
+      const anchorId = channelMessages[1]?.id;
+      if (
+        isSameWindow &&
+        isDetached &&
+        delta < 0 &&
+        isFirstChanged &&
+        anchorId
+      ) {
+        const top = rowTop(anchorId);
+        if (top !== null) droppedRowsAnchorRef.current = { id: anchorId, top };
+      }
+      if (
+        isSameList &&
+        previous.length > 0 &&
+        delta > 0 &&
+        (isFirstChanged || isScrolledUp || isDetached || isHoldingRef.current)
+      )
+        setVisibleMessageCount((prev) => prev + delta);
+    }
 
     const locallyHidden = channelMessages.length > displayedMessages.length;
     const serverHasMore =
@@ -419,6 +422,7 @@ export const ChannelMessageList = forwardRef<
           : { step: "open", after: null, hasFetched: false },
       );
     const unreadAfter = opening.step === "marker" ? null : opening.after;
+    const isOverdue = opening.step !== "marker" && opening.isOverdue === true;
 
     const firstUnreadId = useMemo(
       () =>
@@ -439,8 +443,7 @@ export const ChannelMessageList = forwardRef<
       Number.isFinite(unreadAfter) &&
       !isDetached &&
       hasMoreMessages &&
-      !!oldestLoaded &&
-      messageTime(oldestLoaded) > unreadAfter;
+      (!oldestLoaded || messageTime(oldestLoaded) > unreadAfter);
     const isPositioningOnUnread =
       isActive &&
       (opening.step === "placing" || opening.step === "loading") &&
@@ -521,38 +524,49 @@ export const ChannelMessageList = forwardRef<
       return () => clearTimeout(timer);
     }, [isActive, opening.step, isServerConnected]);
 
+    // Late history can hold the chat back, so after a while we place the
+    // unread line with the rows that have arrived and keep unseen ones unread.
     useEffect(() => {
-      if (!isPositioningOnUnread) return;
+      if (!isActive || opening.step !== "placing" || isOverdue) return;
       const timer = setTimeout(
         () =>
-          setOpening((o) => (o.step === "marker" ? o : { ...o, step: "open" })),
+          setOpening((o) =>
+            o.step === "placing" ? { ...o, isOverdue: true } : o,
+          ),
         UNREAD_POSITIONING_LIMIT_MS,
       );
       return () => clearTimeout(timer);
-    }, [isPositioningOnUnread]);
+    }, [isActive, opening.step, isOverdue]);
 
+    // We ask once per opening, also when React runs the effect twice, and drop
+    // the page if the user has moved on before it arrives.
+    const markerPageRequestRef = useRef<Opening | null>(null);
     // biome-ignore lint/correctness/useExhaustiveDependencies: the marker, the loaded rows and loading decide when to ask
     useEffect(() => {
-      if (!needsMarkerPage || isLoadingHistory || !historyTarget) return;
+      if (!needsMarkerPage || !historyTarget) return;
       if (opening.step !== "placing" || opening.after == null) return;
-      const { after } = opening;
-      setOpening({ step: "loading", after, hasFetched: true });
+      if (isLoadingHistory && !isOverdue) return;
+      if (markerPageRequestRef.current === opening) return;
+      const request = opening;
+      markerPageRequestRef.current = request;
+      setOpening({ ...opening, step: "loading", hasFetched: true });
       showMessagesFromReadMarker(
         useStore,
         serverId,
         historyTarget,
-        after,
+        opening.after,
+        () => markerPageRequestRef.current === request,
       ).finally(() =>
         setOpening((o) =>
           o.step === "loading" ? { ...o, step: "placing" } : o,
         ),
       );
-    }, [needsMarkerPage, isLoadingHistory]);
+    }, [needsMarkerPage, isLoadingHistory, isOverdue]);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and the opening step decide when to look
     useLayoutEffect(() => {
       if (!isActive || opening.step !== "placing") return;
-      if (isLoadingHistory || needsMarkerPage) return;
+      if ((isLoadingHistory && !isOverdue) || needsMarkerPage) return;
       const container = messagesContainerRef.current;
       if (!container) return;
       const index = channelMessages.findIndex((m) => m.id === firstUnreadId);
@@ -645,8 +659,11 @@ export const ChannelMessageList = forwardRef<
       const wasDetached = wasDetachedRef.current;
       wasDetachedRef.current = isDetached;
       if (isDetached || !wasDetached) return;
-      releaseJump();
+      const hasJoinedPresent =
+        channelMessages[0]?.id === prevFirstMsgIdRef.current;
       resetWindowTracking();
+      if (hasJoinedPresent && isHoldingRef.current) return;
+      releaseJump();
       setVisibleMessageCount(DEFAULT_VISIBLE_MESSAGE_COUNT);
       wasAtBottomRef.current = true;
       scrollToBottom();
@@ -853,6 +870,8 @@ export const ChannelMessageList = forwardRef<
     loadNearEdgesRef.current = () => {
       const container = messagesContainerRef.current;
       if (!container || container.clientHeight === 0) return;
+      // Rows added below never move the held row, so we load newer ones while holding.
+      if (isScrolledToBottom(container, LOAD_AHEAD_PX)) loadNewer();
       if (isHoldingRef.current) return;
       if (
         container.scrollTop < LOAD_AHEAD_PX &&
@@ -860,7 +879,6 @@ export const ChannelMessageList = forwardRef<
           container.scrollHeight <= container.clientHeight)
       )
         loadOlder();
-      if (isScrolledToBottom(container, LOAD_AHEAD_PX)) loadNewer();
     };
 
     useEffect(() => {
@@ -1010,6 +1028,12 @@ export const ChannelMessageList = forwardRef<
           isVisible={isScrolledUp || isDetached}
           onClick={() => {
             releaseJump();
+            markerPageRequestRef.current = null;
+            setOpening((o) =>
+              o.step === "placing" || o.step === "loading"
+                ? { ...o, step: "open" }
+                : o,
+            );
             if (isDetached && historyTarget)
               showPresent(useStore, serverId, historyTarget);
             else scrollToBottom();

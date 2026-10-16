@@ -447,8 +447,76 @@ async function rowsAboveGap(
   return gap ? rows.filter((row) => row.time >= gap.to) : rows;
 }
 
-// Rows on disk older than the oldest message on screen. Messages can share a
-// millisecond, so we read past the ones on screen and skip them by msgid.
+type OlderEdge = {
+  time: number;
+  readCount: number;
+  isRead: (row: HistoryRow) => boolean;
+};
+
+// A replayed page can hold only hidden rows (from ignored users), which leaves
+// the oldest message on screen as it was, so we remember how far back we read.
+const readBackTo = new Map<
+  string,
+  { oldestShownId: string | undefined; time: number; rowIds: Set<number> }
+>();
+
+function readBackEdge(
+  store: StoreApi<AppState>,
+  key: string,
+): OlderEdge | undefined {
+  const readBack = readBackTo.get(key);
+  if (readBack?.oldestShownId !== store.getState().messages[key]?.[0]?.id)
+    return undefined;
+  return (
+    readBack && {
+      time: readBack.time,
+      readCount: readBack.rowIds.size,
+      isRead: (row) => readBack.rowIds.has(row.id),
+    }
+  );
+}
+
+// Where the next older page starts. Messages can share a millisecond, so we
+// read past the rows already read there and skip them.
+function olderEdge(
+  store: StoreApi<AppState>,
+  key: string,
+): OlderEdge | undefined {
+  const readBack = readBackEdge(store, key);
+  if (readBack) return readBack;
+  const messages = store.getState().messages[key] ?? [];
+  if (messages.length === 0) return undefined;
+  const oldest = messageTime(messages[0]);
+  const sameMs = messages.filter((m) => messageTime(m) === oldest);
+  const shown = new Set(
+    sameMs.flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
+  );
+  return {
+    time: oldest,
+    readCount: sameMs.length,
+    isRead: (row) => !!row.msgid && shown.has(row.msgid),
+  };
+}
+
+function rememberReadBack(
+  store: StoreApi<AppState>,
+  key: string,
+  rows: HistoryRow[],
+) {
+  const time = rows[0].time;
+  const previous = readBackTo.get(key);
+  const rowIds = new Set(
+    rows.filter((row) => row.time === time).map((row) => row.id),
+  );
+  if (previous?.time === time) for (const id of previous.rowIds) rowIds.add(id);
+  readBackTo.set(key, {
+    oldestShownId: store.getState().messages[key]?.[0]?.id,
+    time,
+    rowIds,
+  });
+}
+
+// Rows on disk older than the oldest message on screen.
 async function olderDiskRows(
   store: StoreApi<AppState>,
   serverId: string,
@@ -456,10 +524,8 @@ async function olderDiskRows(
   limit: number,
 ): Promise<HistoryRow[]> {
   const conversation = findConversation(store, serverId, target);
-  const messages = conversation
-    ? (store.getState().messages[conversation.key] ?? [])
-    : [];
-  if (messages.length === 0)
+  const edge = conversation && olderEdge(store, conversation.key);
+  if (!edge)
     return rowsAboveGap(
       store,
       serverId,
@@ -467,25 +533,18 @@ async function olderDiskRows(
       Number.POSITIVE_INFINITY,
       await newestEventRows(serverId, target.toLowerCase(), limit),
     );
-  const oldest = new Date(messages[0].timestamp).getTime();
-  const sameMs = messages.filter(
-    (m) => new Date(m.timestamp).getTime() === oldest,
-  );
-  const shown = new Set(
-    sameMs.flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
-  );
   const rows = await eventRowsBefore(
     serverId,
     target.toLowerCase(),
-    oldest,
-    limit + sameMs.length,
+    edge.time,
+    limit + edge.readCount,
   );
   return rowsAboveGap(
     store,
     serverId,
     target,
-    oldest,
-    rows.filter((row) => !row.msgid || !shown.has(row.msgid)).slice(-limit),
+    edge.time,
+    rows.filter((row) => !edge.isRead(row)).slice(-limit),
   );
 }
 
@@ -750,6 +809,7 @@ export async function showMessagesFromReadMarker(
   serverId: string,
   target: string,
   marker: number,
+  isCurrent: () => boolean = () => true,
 ): Promise<boolean> {
   if (!isEnabled(store)) return false;
   const lower = target.toLowerCase();
@@ -767,8 +827,9 @@ export async function showMessagesFromReadMarker(
     serverId,
     target,
     firstUnread.time,
+    isCurrent,
   );
-  if (shown !== "loaded") return false;
+  if (shown !== "loaded" || !isCurrent()) return false;
   // The last read message is gone from both the server and this device, so
   // we say messages before the first unread one may be missing.
   const [stillSaved] = await eventRowsBefore(serverId, lower, marker + 1, 1);
@@ -907,8 +968,18 @@ async function replayOlderDiskPage(
   serverId: string,
   target: string,
 ): Promise<number> {
+  const conversation = findConversation(store, serverId, target);
   const rows = await olderDiskRows(store, serverId, target, HISTORY_PAGE_SIZE);
+  if (!conversation || rows.length === 0) return 0;
+  const oldestShown = () =>
+    store.getState().messages[conversation.key]?.[0]?.id;
+  const wasOldest = oldestShown();
   await replayRows(store, serverId, target, rows);
+  rememberReadBack(store, conversation.key, rows);
+  // Nothing on the page showed, so we keep reading back until something does
+  // or the history ends.
+  if (oldestShown() === wasOldest)
+    await loadOlderMessages(store, serverId, target, rows[0].time);
   return rows.length;
 }
 
@@ -975,16 +1046,20 @@ export async function loadOlderMessages(
   }
   setLoading(serverId, target, true);
   try {
+    const conversation = findConversation(store, serverId, target);
+    const readBack = conversation && readBackEdge(store, conversation.key);
+    const before = Math.min(oldestTime, readBack?.time ?? oldestTime);
     const [olderRow] = await olderDiskRows(store, serverId, target, 1);
     const plan = planLoadMore({
-      oldestTime,
+      oldestTime: before,
       newestOlderRowTime: olderRow?.time,
       gaps: await gapsFor(serverId, target.toLowerCase()),
       hasChathistory: serverHasChathistory,
     });
     if (plan.kind === "disk") {
-      await replayOlderDiskPage(store, serverId, target);
-      return true;
+      if (await replayOlderDiskPage(store, serverId, target)) return true;
+      setLoading(serverId, target, false);
+      return false;
     }
     if (plan.kind === "server") {
       const isSent = requestPageBefore(
@@ -992,7 +1067,7 @@ export async function loadOlderMessages(
         target,
         plan.before,
         ircClient.isChannel(serverId, target)
-          ? diskFirstFill(store, serverId, target, oldestTime, plan.gap)
+          ? diskFirstFill(store, serverId, target, before, plan.gap)
           : plan.gap && { gap: plan.gap },
       );
       if (!isSent) setLoading(serverId, target, false);
@@ -1139,15 +1214,22 @@ export async function loadNewerMessages(
       await loadNewerMessages(store, serverId, target);
     return;
   }
+  const isSameWindow = () => {
+    const current = store.getState().historyWindows[conversation.key];
+    return current?.until === window.until && current.jumpId === window.jumpId;
+  };
   if (rows.length < WINDOW_ROWS && !hole) {
-    showPresent(store, serverId, target);
+    if (!isSameWindow()) return;
+    joinWindowToPresent(store, conversation.key);
+    if (rows.length) await replayRows(store, serverId, target, rows);
+    if (serverSupportsChathistory(store.getState(), serverId))
+      ircClient.requestChathistoryLatest(serverId, target);
     return;
   }
   const newest = rows[rows.length - 1];
   await replayRows(store, serverId, target, rows, () => {
     const current = store.getState().historyWindows[conversation.key];
-    if (current?.until !== window.until || current.jumpId !== window.jumpId)
-      return false;
+    if (!current || !isSameWindow()) return false;
     store.setState((state) => ({
       historyWindows: {
         ...state.historyWindows,
@@ -1202,6 +1284,22 @@ export function showPresent(
     ircClient.requestChathistoryLatest(serverId, target);
   else if (window.present.length === 0 && isEnabled(store))
     void replayNewestPage(store, serverId, target);
+}
+
+// A window paged down to the present joins it below, so the rows on screen stay.
+function joinWindowToPresent(store: StoreApi<AppState>, key: string) {
+  store.setState((state) => {
+    const window = state.historyWindows[key];
+    if (!window) return {};
+    const { [key]: _, ...others } = state.historyWindows;
+    return {
+      historyWindows: others,
+      messages: {
+        ...state.messages,
+        [key]: joinPresent(state.messages[key] ?? [], window.present),
+      },
+    };
+  });
 }
 
 function joinPresent(present: Message[], arrived: Message[]): Message[] {

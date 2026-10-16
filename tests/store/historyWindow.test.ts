@@ -153,7 +153,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
     expect(w.window()?.present.map((m) => m.msgid)).toEqual(ids(1900, 1999));
   });
 
-  it("pages newer rows from the bottom until it reaches the present", async () => {
+  it("pages newer rows from the bottom until it joins the present", async () => {
     const w = await boot();
     await w.save(400);
     await w.showNewest();
@@ -169,7 +169,7 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
 
     await w.pageNewer();
     expect(w.window()).toBeUndefined();
-    expect(w.shown()).toEqual(ids(300, 399));
+    await vi.waitFor(() => expect(w.shown()).toEqual(ids(51, 399)));
   });
 
   it("drops the oldest messages while paging newer and loads them back above", async () => {
@@ -589,6 +589,136 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
       expect(w.sent.at(-1)).toBe(
         `CHATHISTORY BEFORE #chan timestamp=${iso(275)} 50`,
       );
+    });
+  });
+
+  describe("pages from ignored users", () => {
+    const iso = (index: number) => new Date(timeOf(index)).toISOString();
+    const noisyPage = (id: string, from: number, count: number) => [
+      `:irc.test BATCH +${id} chathistory #chan`,
+      ...Array.from({ length: count }, (_, index) =>
+        line(from + index, "#chan", "noisy").replace("@", `@batch=${id};`),
+      ),
+      `:irc.test BATCH -${id}`,
+    ];
+    const feedSaved = async (
+      w: Awaited<ReturnType<typeof boot>>,
+      lines: string[],
+    ) => {
+      w.feed(...lines);
+      await vi.waitFor(
+        async () =>
+          expect(
+            await w.db.newestEventRows(SERVER, "#chan", lines.length + 1),
+          ).toHaveLength(lines.length),
+        { timeout: WRITE_TIMEOUT_MS },
+      );
+    };
+    const range = (from: number, to: number, nick: string) =>
+      Array.from({ length: to - from + 1 }, (_, index) =>
+        line(from + index, "#chan", nick),
+      );
+
+    it("keeps reading saved pages back until a message shows", async () => {
+      const w = await boot();
+      await feedSaved(w, [
+        ...range(0, 9, "alice"),
+        ...range(10, 109, "noisy"),
+        line(110, "#chan", "tester"),
+      ]);
+      w.useStore.getState().addToIgnoreList("noisy!*@*");
+      w.useStore.setState((state) => ({
+        messages: { [KEY]: state.messages[KEY].slice(-1) },
+      }));
+      expect(w.shown()).toEqual(["m110"]);
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(110),
+      );
+
+      await vi.waitFor(() => expect(w.shown()).toEqual([...ids(0, 9), "m110"]));
+    });
+
+    it("keeps asking the server past them until it sends an empty page", async () => {
+      const w = await boot(["draft/chathistory", "message-tags"]);
+      await feedSaved(w, [line(100, "#chan", "tester")]);
+      w.useStore.getState().addToIgnoreList("noisy!*@*");
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(100),
+      );
+      expect(w.sent.at(-1)).toBe(
+        `CHATHISTORY BEFORE #chan timestamp=${iso(100)} 50`,
+      );
+
+      w.feed(...noisyPage("p1", 50, 50));
+      await vi.waitFor(() =>
+        expect(w.sent.at(-1)).toBe(
+          `CHATHISTORY BEFORE #chan timestamp=${iso(50)} 50`,
+        ),
+      );
+      w.feed(...noisyPage("p2", 0, 50));
+      await vi.waitFor(() =>
+        expect(w.sent.at(-1)).toBe(
+          `CHATHISTORY BEFORE #chan timestamp=${iso(0)} 50`,
+        ),
+      );
+      expect(w.channel().hasMoreHistory).toBe(true);
+
+      w.feed(...noisyPage("p3", 0, 0));
+      await vi.waitFor(() => expect(w.channel().hasMoreHistory).toBe(false));
+      expect(w.channel().isLoadingHistory).toBe(false);
+      expect(w.shown()).toEqual(["m100"]);
+    });
+
+    it("joins the present past newer pages that show nothing and keeps the rows on screen", async () => {
+      const w = await boot();
+      await feedSaved(w, [
+        ...range(0, 99, "alice"),
+        ...range(100, 249, "noisy"),
+        line(250, "#chan", "tester"),
+      ]);
+      w.useStore.getState().addToIgnoreList("noisy!*@*");
+      w.useStore.setState({ messages: {} });
+
+      await w.history.showSavedMessagesAround(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(60),
+      );
+      expect(w.window()).toBeDefined();
+      expect(w.shown()).toEqual(ids(11, 99));
+
+      while (w.window()) await w.pageNewer();
+
+      await vi.waitFor(() =>
+        expect(w.shown()).toEqual([...ids(11, 99), "m250"]),
+      );
+    });
+
+    it("drops a read marker page the user has moved on from", async () => {
+      const w = await boot();
+      await feedSaved(w, range(0, 199, "alice"));
+      w.useStore.setState({ messages: {} });
+
+      expect(
+        await w.history.showMessagesFromReadMarker(
+          w.useStore,
+          SERVER,
+          "#chan",
+          timeOf(50),
+          () => false,
+        ),
+      ).toBe(false);
+      expect(w.window()).toBeUndefined();
+      expect(w.shown()).toEqual([]);
     });
   });
 });
