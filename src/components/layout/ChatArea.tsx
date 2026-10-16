@@ -996,21 +996,19 @@ export const ChatArea: React.FC<{
 
   // Keep-alive: maintain last 3 visited channels in an LRU list so their message list
   // DOMs are preserved with display:none (scroll position + media elements stay alive).
-  useEffect(() => {
-    if (!channelKey || !selectedServerId) return;
-    setAliveChannels((prev) => {
-      const filtered = prev.filter((c) => c.key !== channelKey);
-      return [
+  // We update it during render so a newly opened chat mounts its list on the first frame.
+  if (channelKey && selectedServerId && aliveChannels[0]?.key !== channelKey)
+    setAliveChannels((prev) =>
+      [
         {
           key: channelKey,
           serverId: selectedServerId,
           channelId: selectedChannelId,
           privateChatId: selectedPrivateChatId,
         },
-        ...filtered,
-      ].slice(0, 3);
-    });
-  }, [channelKey, selectedServerId, selectedChannelId, selectedPrivateChatId]);
+        ...prev.filter((c) => c.key !== channelKey),
+      ].slice(0, 3),
+    );
 
   // An embed pauses when we switch channels and keeps its position, so the
   // next visit shows it where it stopped; HTML5 video and audio keep playing
