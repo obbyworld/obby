@@ -1,3 +1,4 @@
+import type { GlobalSettings } from "../store/types";
 import ircClient from "./ircClient";
 import { backgroundNotificationStrings } from "./notifications";
 import { findPushRegistration, pushScope } from "./pushRegistration";
@@ -10,6 +11,7 @@ export interface PushContext {
   encryptedBody: string;
   chantypes: string;
   nick: string;
+  customMentions: string[];
   ignoreList: string[];
 }
 
@@ -21,12 +23,16 @@ export function hasWebPush(serverId: string): boolean {
 
 export function pushContextFor(
   serverId: string,
-  ignoreList: string[],
+  {
+    customMentions,
+    ignoreList,
+  }: Pick<GlobalSettings, "customMentions" | "ignoreList">,
 ): PushContext {
   return {
     ...backgroundNotificationStrings(),
     chantypes: ircClient.chantypes(serverId),
     nick: ircClient.getNick(serverId) ?? "",
+    customMentions,
     ignoreList,
   };
 }

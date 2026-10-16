@@ -16,7 +16,10 @@ interface Shown {
 
 const source = readFileSync("public/sw.js", "utf8");
 
-function loadWorker(scope = "https://chat.example/push/srv-1/") {
+function loadWorker(
+  scope = "https://chat.example/push/srv-1/",
+  windows: { focused: boolean }[] = [],
+) {
   const listeners: Record<string, Listener> = {};
   const shown: Shown[] = [];
   const closed: string[] = [];
@@ -27,7 +30,7 @@ function loadWorker(scope = "https://chat.example/push/srv-1/") {
       listeners[type] = listener;
     },
     skipWaiting() {},
-    clients: { claim: async () => {}, matchAll: async () => [] },
+    clients: { claim: async () => {}, matchAll: async () => windows },
     registration: {
       scope,
       showNotification: async (title: string, options: Shown["options"]) => {
@@ -71,7 +74,8 @@ function loadWorker(scope = "https://chat.example/push/srv-1/") {
     dispatch("message", { data, source: new WindowClient() });
   const push = (line: string) =>
     dispatch("push", { data: { text: () => line } });
-  return { shown, closed, post, push };
+  const quiet = () => shown.filter((s) => s.options.tag === "obby-quiet");
+  return { shown, closed, post, push, quiet };
 }
 
 const context = {
@@ -79,6 +83,7 @@ const context = {
   encryptedBody: "Nouveau message chiffré",
   chantypes: "#&",
   nick: "Pushy",
+  customMentions: ["release"],
   ignoreList: ["troll!*@*"],
 };
 
@@ -115,9 +120,35 @@ describe("push service worker", () => {
     expect(worker.shown[0].options.tag).toBe("srv-1:&a$'");
   });
 
+  // Each skipped push shows one silent notification and closes it at once.
+  const expectQuiet = (w: ReturnType<typeof loadWorker>) => {
+    expect(w.shown).toHaveLength(1);
+    expect(w.quiet()[0].options.silent).toBe(true);
+    expect(w.closed).toContain("obby-quiet");
+  };
+
   it("stays quiet for ignored users", async () => {
     await worker.push(":troll!t@h PRIVMSG pushy :hey");
-    expect(worker.shown).toHaveLength(0);
+    expectQuiet(worker);
+  });
+
+  it("shows a channel message that mentions us or a custom mention", async () => {
+    await worker.push(":alice!a@h PRIVMSG #dev :the release is out");
+    expect(worker.shown[0].title).toBe("alice dans #dev");
+  });
+
+  it("stays quiet for channel talk that does not mention us", async () => {
+    await worker.push(":alice!a@h PRIVMSG #dev :pushyfoo said hi");
+    expectQuiet(worker);
+  });
+
+  it.each([
+    ["a CTCP other than ACTION", ":alice!a@h PRIVMSG pushy :\x01VERSION\x01"],
+    ["another command", ":alice!a@h TAGMSG pushy"],
+    ["an unreadable line", "garbage"],
+  ])("stays quiet for %s", async (_, line) => {
+    await worker.push(line);
+    expectQuiet(worker);
   });
 
   it("silently replaces the notification the page already showed", async () => {
@@ -133,8 +164,8 @@ describe("push service worker", () => {
 
   it("clears the chat when our own message arrives from another client", async () => {
     await worker.push(":PUSHY!p@h PRIVMSG Alice :on my way");
-    expect(worker.shown).toHaveLength(0);
-    expect(worker.closed).toEqual(["srv-1:alice"]);
+    expectQuiet(worker);
+    expect(worker.closed).toEqual(["srv-1:alice", "obby-quiet"]);
   });
 
   it("shows encrypted bodies as the page's wording", async () => {
@@ -142,9 +173,16 @@ describe("push service worker", () => {
     expect(worker.shown[0].options.body).toBe("Nouveau message chiffré");
   });
 
+  it("stays quiet while a window of the app is focused", async () => {
+    const focusedWorker = loadWorker(undefined, [{ focused: true }]);
+    await focusedWorker.post({ type: "obby-push-context", context });
+    await focusedWorker.push(":alice!a@h PRIVMSG pushy :hi");
+    expectQuiet(focusedWorker);
+  });
+
   it("ignores pushes on the app's own registration", async () => {
     const appWorker = loadWorker("https://chat.example/");
     await appWorker.push(":alice!a@h PRIVMSG pushy :hi");
-    expect(appWorker.shown).toHaveLength(0);
+    expectQuiet(appWorker);
   });
 });

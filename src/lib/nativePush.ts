@@ -8,7 +8,6 @@ export type NativePushMode = Exclude<PushMethod, "poll">;
 
 export interface NativePushContext extends PushContext {
   serverId: string;
-  customMentions: string[];
 }
 
 export interface PushStatus {

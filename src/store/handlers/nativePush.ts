@@ -19,11 +19,7 @@ function nativePushContext(
   serverId: string,
   settings: GlobalSettings,
 ): NativePushContext {
-  return {
-    ...pushContextFor(serverId, settings.ignoreList),
-    serverId,
-    customMentions: settings.customMentions,
-  };
+  return { ...pushContextFor(serverId, settings), serverId };
 }
 
 // The Android app registers a UnifiedPush endpoint (its embedded FCM

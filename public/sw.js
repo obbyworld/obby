@@ -59,7 +59,8 @@ self.addEventListener("fetch", (event) => {
 // Web push (draft/webpush, soju.im/webpush). Each server registers this
 // worker under its own scope, and the server sends one IRC message per push
 // with only the msgid tag. The page sends us its wording, since we have no
-// catalog, plus the server's channel prefixes, our nick and the ignore list.
+// catalog, plus the server's channel prefixes, our nick, custom mentions and
+// the ignore list.
 
 const BODY_LIMIT = 200;
 const E2EE_BODY_MARKER = "?obe2ee:";
@@ -77,8 +78,9 @@ function isPushContext(context) {
     typeof context.encryptedBody === "string" &&
     typeof context.chantypes === "string" &&
     typeof context.nick === "string" &&
-    Array.isArray(context.ignoreList) &&
-    context.ignoreList.every((pattern) => typeof pattern === "string")
+    [context.ignoreList, context.customMentions].every(
+      (list) => Array.isArray(list) && list.every((item) => typeof item === "string"),
+    )
   );
 }
 
@@ -185,63 +187,102 @@ async function closeChatNotifications(tag) {
     shown.close();
 }
 
-self.addEventListener("push", (event) => {
-  const serverId = serverIdOfScope();
-  if (!event.data || !serverId) return;
-  const parsed = parseIrcLine(event.data.text());
-  if (!parsed?.nick) return;
-  if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return;
-  // Chrome requires every push to show a notification, so we quietly replace
-  // the one the page already showed for this message.
-  const isShownByPage = !!parsed.msgid && shownByPage.has(parsed.msgid);
-  event.waitUntil(
-    (async () => {
-      const context = await pushContext();
-      const chantypes = context?.chantypes || "#&";
-      const isChannel = chantypes.includes(parsed.target.charAt(0));
-      const chat = isChannel ? parsed.target : parsed.nick;
-      const tag = `${serverId}:${chat.toLowerCase()}`;
-      // Our own message from another client means we already read that chat.
-      if (context?.nick && parsed.nick.toLowerCase() === context.nick.toLowerCase())
-        return closeChatNotifications(isChannel ? tag : `${serverId}:${parsed.target.toLowerCase()}`);
-      if (context?.ignoreList.some((pattern) => matchesIgnorePattern(parsed.source, pattern)))
-        return;
+// A nick is made of RFC 2812 nick characters plus the dash, so a name is only
+// addressed when nothing on either side could be part of a longer name.
+const NICK_CHARACTER = /[A-Za-z0-9[\]\\`_^{}|-]/;
 
-      // A focused window shows this message itself.
-      const windows = await self.clients.matchAll({
-        type: "window",
-        includeUncontrolled: true,
-      });
-      if (windows.some((client) => client.focused)) return;
+function addressesName(content, name) {
+  const needle = name.trim().toLowerCase();
+  if (!needle) return false;
+  const haystack = content.toLowerCase();
+  for (let at = haystack.indexOf(needle); at !== -1; at = haystack.indexOf(needle, at + 1)) {
+    const before = haystack[at - 1];
+    const after = haystack[at + needle.length];
+    if (
+      (before === undefined || !NICK_CHARACTER.test(before)) &&
+      (after === undefined || !NICK_CHARACTER.test(after))
+    )
+      return true;
+  }
+  return false;
+}
 
-      const encryptedBody = context?.encryptedBody ?? "New encrypted message";
-      const text = readableText(parsed.text, parsed.nick, encryptedBody);
-      if (text === null) return;
-      const title = isChannel
-        ? (context?.channelTitle ?? "{sender} in {target}").replace(
-            /\{(sender|target)\}/g,
-            (_, field) => (field === "sender" ? parsed.nick : parsed.target),
-          )
-        : parsed.nick;
-
-      await self.registration.showNotification(title, {
-        body: plainBody(text),
-        icon: "/pwa/icon-192.png",
-        badge: "/pwa/icon-192.png",
-        // The page tags its own notifications the same way, so one chat keeps
-        // one notification whichever side showed it.
-        tag,
-        renotify: !isShownByPage,
-        silent: isShownByPage,
-        data: {
-          serverId,
-          target: chat,
-          time: Number.isNaN(parsed.time) ? Date.now() : (parsed.time ?? Date.now()),
-          msgid: parsed.msgid ?? undefined,
-        },
-      });
-    })(),
+function mentionsUs(text, context) {
+  return [context?.nick ?? "", ...(context?.customMentions ?? [])].some((name) =>
+    addressesName(text, name),
   );
+}
+
+// Browsers count a push on a userVisibleOnly subscription that shows nothing
+// against the site, so we show and close a silent one for each push we skip.
+const QUIET_TAG = "obby-quiet";
+
+async function showQuietly() {
+  await self.registration.showNotification("Obby", { tag: QUIET_TAG, silent: true });
+  await closeChatNotifications(QUIET_TAG);
+}
+
+// Resolves to whether we showed the push as a notification.
+async function showPush(event) {
+  const serverId = serverIdOfScope();
+  if (!event.data || !serverId) return false;
+  const parsed = parseIrcLine(event.data.text());
+  if (!parsed?.nick) return false;
+  if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return false;
+  // We quietly replace the notification the page already showed for this message.
+  const isShownByPage = !!parsed.msgid && shownByPage.has(parsed.msgid);
+  const context = await pushContext();
+  const chantypes = context?.chantypes || "#&";
+  const isChannel = chantypes.includes(parsed.target.charAt(0));
+  const chat = isChannel ? parsed.target : parsed.nick;
+  const tag = `${serverId}:${chat.toLowerCase()}`;
+  // Our own message from another client means we already read that chat.
+  if (context?.nick && parsed.nick.toLowerCase() === context.nick.toLowerCase()) {
+    await closeChatNotifications(isChannel ? tag : `${serverId}:${parsed.target.toLowerCase()}`);
+    return false;
+  }
+  if (context?.ignoreList.some((pattern) => matchesIgnorePattern(parsed.source, pattern)))
+    return false;
+  if (isChannel && !mentionsUs(parsed.text, context)) return false;
+
+  // A focused window shows this message itself.
+  const windows = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+  if (windows.some((client) => client.focused)) return false;
+
+  const encryptedBody = context?.encryptedBody ?? "New encrypted message";
+  const text = readableText(parsed.text, parsed.nick, encryptedBody);
+  if (text === null) return false;
+  const title = isChannel
+    ? (context?.channelTitle ?? "{sender} in {target}").replace(
+        /\{(sender|target)\}/g,
+        (_, field) => (field === "sender" ? parsed.nick : parsed.target),
+      )
+    : parsed.nick;
+
+  await self.registration.showNotification(title, {
+    body: plainBody(text),
+    icon: "/pwa/icon-192.png",
+    badge: "/pwa/icon-192.png",
+    // The page tags its own notifications the same way, so one chat keeps
+    // one notification whichever side showed it.
+    tag,
+    renotify: !isShownByPage,
+    silent: isShownByPage,
+    data: {
+      serverId,
+      target: chat,
+      time: Number.isNaN(parsed.time) ? Date.now() : (parsed.time ?? Date.now()),
+      msgid: parsed.msgid ?? undefined,
+    },
+  });
+  return true;
+}
+
+self.addEventListener("push", (event) => {
+  event.waitUntil(showPush(event).then((isShown) => isShown || showQuietly()));
 });
 
 self.addEventListener("notificationclick", (event) => {

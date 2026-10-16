@@ -42,10 +42,7 @@ export function registerWebPushHandlers(store: StoreApi<AppState>): void {
         continue;
       }
       if (!hasWebPush(server.id)) continue;
-      const context = pushContextFor(
-        server.id,
-        state.globalSettings.ignoreList,
-      );
+      const context = pushContextFor(server.id, state.globalSettings);
       const wanted = `${isOn}:${server.vapidKey}`;
       if (applied.get(server.id) === wanted) {
         const contextJson = JSON.stringify(context);

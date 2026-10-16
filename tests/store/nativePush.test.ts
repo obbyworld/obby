@@ -94,7 +94,7 @@ describe("native push registration", () => {
       "push-1",
       "BKey",
       "fcm",
-      { nick: "me", serverId: "push-1", customMentions: [] },
+      { nick: "me", serverId: "push-1" },
       "PushNet",
     );
 
