@@ -53,9 +53,9 @@ export function isHistoryPollDecided(
 }
 
 // We only poll servers that keep history for us, so other servers never see us
-// come and go. The app webviews have no Push API, so web push servers need it too.
+// come and go, and skip servers that already push to this device.
 export function needsHistoryPoll(server: Server): boolean {
-  if (server.isBouncerControl) return false;
+  if (server.isBouncerControl || server.pushEndpoint) return false;
   return server.persistenceEffective === "ON" || !!server.bouncerNetid;
 }
 

@@ -79,7 +79,8 @@ export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
               closedAppDelivery({
                 platform: currentPlatform(),
                 areNotificationsOn: areChatNotificationsOn(globalSettings),
-                hasPushRegistration: pushServerIds.has(server.id),
+                hasPushRegistration:
+                  pushServerIds.has(server.id) || !!server.pushEndpoint,
                 needsHistoryPoll: needsHistoryPoll(server),
                 keepsRunningInTray: globalSettings.closeToTray,
               }),

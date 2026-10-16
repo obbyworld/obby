@@ -865,6 +865,10 @@ msgstr "네트워크 목록으로 돌아가기"
 msgid "Back to Settings"
 msgstr "설정으로 돌아가기"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "백그라운드 확인만"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "호스트마스크로 {username} 차단 (동일 IP/호스트에서 재입장 방지)"
@@ -1217,6 +1221,10 @@ msgstr "채팅"
 msgid "Chats and networks"
 msgstr "채팅 및 네트워크"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "약 15분마다 새 메시지 확인"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "다른 파일 형식을 선택하세요. 파일 호스트가 {ext} 파일을 허용하지 않습니다."
@@ -1245,9 +1253,17 @@ msgstr "안전한 비밀번호를 선택하세요"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "더 작은 파일을 선택하세요. 이 파일은 파일 호스트에 비해 너무 큽니다."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "배포자 선택"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "파일 선택"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Obby가 닫혀 있을 때 메시지를 받는 방법을 선택하세요. 웹 푸시가 없는 서버는 항상 백그라운드 확인을 사용합니다."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "이 네트워크를 삭제할까요?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "삭제됨"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "ntfy 등 선택한 배포자 앱을 통해 즉시 전달"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Google Play 서비스를 통해 즉시 전달"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "닫혀 있을 때 전달"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "{name}(으)로 이동"
 msgid "Go to reply"
 msgstr "답장으로 이동"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "이모지 삽입"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "설치"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "ntfy 같은 UnifiedPush 배포자를 설치한 다음 UnifiedPush를 다시 선택하세요"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "사용하려면 Google Play 서비스를 설치하세요"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "단어를 입력해 메시지 검색"
 msgid "Undeafen"
 msgstr "헤드셋 음소거 해제"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "무시 해제"
@@ -5825,6 +5869,10 @@ msgstr "무시할 사용자 및 패턴"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "사용자:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "{currentName} 사용 중"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

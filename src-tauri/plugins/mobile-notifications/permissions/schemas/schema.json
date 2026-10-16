@@ -307,6 +307,30 @@
           "markdownDescription": "Denies the configure_history_poll command without any pre-configured scope."
         },
         {
+          "description": "Enables the pick_push_distributor command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-pick-push-distributor",
+          "markdownDescription": "Enables the pick_push_distributor command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the pick_push_distributor command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-pick-push-distributor",
+          "markdownDescription": "Denies the pick_push_distributor command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the push_status command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-push-status",
+          "markdownDescription": "Enables the push_status command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the push_status command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-push-status",
+          "markdownDescription": "Denies the push_status command without any pre-configured scope."
+        },
+        {
           "description": "Enables the register_listener command without any pre-configured scope.",
           "type": "string",
           "const": "allow-register-listener",
@@ -317,6 +341,18 @@
           "type": "string",
           "const": "deny-register-listener",
           "markdownDescription": "Denies the register_listener command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the register_push command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-register-push",
+          "markdownDescription": "Enables the register_push command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the register_push command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-register-push",
+          "markdownDescription": "Denies the register_push command without any pre-configured scope."
         },
         {
           "description": "Enables the show_notification command without any pre-configured scope.",
@@ -343,10 +379,22 @@
           "markdownDescription": "Denies the take_launch_target command without any pre-configured scope."
         },
         {
-          "description": "Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`",
+          "description": "Enables the unregister_push command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-unregister-push",
+          "markdownDescription": "Enables the unregister_push command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the unregister_push command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-unregister-push",
+          "markdownDescription": "Denies the unregister_push command without any pre-configured scope."
+        },
+        {
+          "description": "Lets the app register for push, configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`\n- `allow-push-status`\n- `allow-pick-push-distributor`\n- `allow-register-push`\n- `allow-unregister-push`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`"
+          "markdownDescription": "Lets the app register for push, configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.\n#### This default permission set includes:\n\n- `allow-configure-history-poll`\n- `allow-take-launch-target`\n- `allow-show-notification`\n- `allow-register-listener`\n- `allow-push-status`\n- `allow-pick-push-distributor`\n- `allow-register-push`\n- `allow-unregister-push`"
         }
       ]
     }

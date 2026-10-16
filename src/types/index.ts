@@ -136,6 +136,8 @@ export interface Server {
   emojiPackUrl?: string;
   // VAPID= ISUPPORT: the key browsers subscribe to web push with.
   vapidKey?: string;
+  // The push endpoint the Android app registered with this server.
+  pushEndpoint?: string;
   // draft/persistence state (populated from PERSISTENCE STATUS replies).
   // `preference` is what the user has explicitly set on this account
   // (ON/OFF) or DEFAULT meaning "follow the server-wide default".

@@ -1,6 +1,6 @@
 ## Default Permission
 
-Lets the app configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.
+Lets the app register for push, configure the history poll, post chat notifications, read the notification that launched it and hear about later taps.
 
 #### This default permission set includes the following:
 
@@ -8,6 +8,10 @@ Lets the app configure the history poll, post chat notifications, read the notif
 - `allow-take-launch-target`
 - `allow-show-notification`
 - `allow-register-listener`
+- `allow-push-status`
+- `allow-pick-push-distributor`
+- `allow-register-push`
+- `allow-unregister-push`
 
 ## Permission Table
 
@@ -47,6 +51,58 @@ Denies the configure_history_poll command without any pre-configured scope.
 <tr>
 <td>
 
+`mobile-notifications:allow-pick-push-distributor`
+
+</td>
+<td>
+
+Enables the pick_push_distributor command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:deny-pick-push-distributor`
+
+</td>
+<td>
+
+Denies the pick_push_distributor command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:allow-push-status`
+
+</td>
+<td>
+
+Enables the push_status command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:deny-push-status`
+
+</td>
+<td>
+
+Denies the push_status command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
 `mobile-notifications:allow-register-listener`
 
 </td>
@@ -66,6 +122,32 @@ Enables the register_listener command without any pre-configured scope.
 <td>
 
 Denies the register_listener command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:allow-register-push`
+
+</td>
+<td>
+
+Enables the register_push command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:deny-register-push`
+
+</td>
+<td>
+
+Denies the register_push command without any pre-configured scope.
 
 </td>
 </tr>
@@ -118,6 +200,32 @@ Enables the take_launch_target command without any pre-configured scope.
 <td>
 
 Denies the take_launch_target command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:allow-unregister-push`
+
+</td>
+<td>
+
+Enables the unregister_push command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:deny-unregister-push`
+
+</td>
+<td>
+
+Denies the unregister_push command without any pre-configured scope.
 
 </td>
 </tr>

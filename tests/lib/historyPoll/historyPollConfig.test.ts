@@ -52,6 +52,11 @@ describe("history poll config", () => {
     expect(
       needsHistoryPoll(server({ isBouncerControl: true, bouncerNetid: "7" })),
     ).toBe(false);
+    expect(
+      needsHistoryPoll(
+        server({ persistenceEffective: "ON", pushEndpoint: "https://push" }),
+      ),
+    ).toBe(false);
   });
 
   it("carries the address, login and mention words for each such server", () => {

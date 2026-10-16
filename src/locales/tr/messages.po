@@ -865,6 +865,10 @@ msgstr "Ağ listesine dön"
 msgid "Back to Settings"
 msgstr "Ayarlara dön"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Yalnızca arka plan denetimi"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "{username} kullanıcısını host maskesiyle yasakla (aynı IP/host'tan yeniden katılmasını engeller)"
@@ -1217,6 +1221,10 @@ msgstr "Sohbet"
 msgid "Chats and networks"
 msgstr "Sohbetler ve ağlar"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Yeni mesajları yaklaşık 15 dakikada bir denetle"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Farklı bir dosya türü seçin. Dosya sunucusu {ext} dosyalarını kabul etmiyor."
@@ -1245,9 +1253,17 @@ msgstr "Güvenli bir şifre seçin"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Daha küçük bir dosya seçin. Bu dosya, dosya sunucusu için çok büyük."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Dağıtıcı seç"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Dosya seç"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Obby kapalıyken mesajların sana nasıl ulaşacağını seç. Web push desteği olmayan sunucular her zaman arka plan denetimini kullanır."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "Bu ağ silinsin mi?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "silindi"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "ntfy gibi seçtiğin bir dağıtıcı uygulamayla hemen teslim et"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Google Play hizmetleriyle hemen teslim et"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Kapalıyken teslim"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "{name} kanalına git"
 msgid "Go to reply"
 msgstr "Yanıta git"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "Emoji ekle"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Yükle"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "ntfy gibi bir UnifiedPush dağıtıcısı yükle, ardından UnifiedPush’u yeniden seç"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Bunu kullanmak için Google Play hizmetlerini yükle"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "Mesajlarda aramak için kelime yaz"
 msgid "Undeafen"
 msgstr "Sesi aç"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Kullanıcıyı yoksaymayı bırak"
@@ -5825,6 +5869,10 @@ msgstr "Engellenecek kullanıcılar ve desenler"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Kullanıcılar:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "{currentName} kullanılıyor"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

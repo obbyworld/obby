@@ -865,6 +865,10 @@ msgstr "Takaisin verkkoluetteloon"
 msgid "Back to Settings"
 msgstr "Takaisin asetuksiin"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Vain taustatarkistus"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Estä {username} hostmaskin perusteella (estää liittymisen samasta IP-osoitteesta/hostista)"
@@ -1217,6 +1221,10 @@ msgstr "Keskustelu"
 msgid "Chats and networks"
 msgstr "Keskustelut ja verkot"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Tarkista uudet viestit noin 15 minuutin välein"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Valitse toinen tiedostotyyppi. Tiedostopalvelin ei hyväksy {ext}-tiedostoja."
@@ -1245,9 +1253,17 @@ msgstr "Valitse turvallinen salasana"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Valitse pienempi tiedosto. Tämä on liian suuri tiedostopalvelimelle."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Valitse jakelija"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Valitse tiedosto"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Valitse, miten viestit tavoittavat sinut, kun Obby on suljettu. Palvelimet ilman web pushia käyttävät aina taustatarkistusta."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "Poistetaanko tämä verkko?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "poistettu"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "Toimita heti valitsemasi jakelusovelluksen kautta, esimerkiksi ntfy"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Toimita heti Google Play -palveluiden kautta"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Toimitus sovelluksen ollessa suljettu"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "Siirry kanavalle {name}"
 msgid "Go to reply"
 msgstr "Siirry vastaukseen"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "Lisää emoji"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Asenna"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "Asenna UnifiedPush-jakelija, kuten ntfy, ja valitse sitten UnifiedPush uudelleen"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Asenna Google Play -palvelut käyttääksesi tätä"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "Kirjoita sanoja hakeaksesi viesteistä"
 msgid "Undeafen"
 msgstr "Poista kuuntelun mykistys"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Lopeta käyttäjän hylkääminen"
@@ -5825,6 +5869,10 @@ msgstr "Estettävät käyttäjät ja mallit"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Käyttäjät:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "Käytössä {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

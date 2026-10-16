@@ -865,6 +865,10 @@ msgstr "返回網路清單"
 msgid "Back to Settings"
 msgstr "返回設定"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "僅背景檢查"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "通过 hostmask 封禁 {username}（阻止其从相同 IP/主机重新加入）"
@@ -1217,6 +1221,10 @@ msgstr "聊天"
 msgid "Chats and networks"
 msgstr "聊天和網路"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "大約每 15 分鐘檢查一次新訊息"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "請選擇其他檔案類型。檔案主機不接受 {ext} 檔案。"
@@ -1245,9 +1253,17 @@ msgstr "选择一个安全密码"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "請選擇較小的檔案。這個檔案對檔案主機來說太大。"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "選擇分發器"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "選擇檔案"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "選擇 Obby 關閉時如何接收訊息。不支援網頁推播的伺服器一律使用背景檢查。"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "刪除此網路？"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "已刪除"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "透過你選擇的分發器應用程式（例如 ntfy）立即送達"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "透過 Google Play 服務立即送達"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "關閉時的訊息送達"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "前往 {name}"
 msgid "Go to reply"
 msgstr "前往回覆"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "插入表情"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "安裝"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "請安裝 ntfy 等 UnifiedPush 分發器，然後再次選擇 UnifiedPush"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "請安裝 Google Play 服務以使用此選項"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "輸入關鍵字搜尋訊息"
 msgid "Undeafen"
 msgstr "取消屏蔽聲音"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "取消忽略使用者"
@@ -5825,6 +5869,10 @@ msgstr "要忽略的使用者和模式"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "用戶："
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "正在使用 {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

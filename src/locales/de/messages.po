@@ -865,6 +865,10 @@ msgstr "Zurück zur Netzwerkliste"
 msgid "Back to Settings"
 msgstr "Zurück zu den Einstellungen"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Nur Hintergrundprüfung"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "{username} per hostmask sperren (verhindert erneutes Beitreten von derselben IP/Host)"
@@ -1217,6 +1221,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chats und Netzwerke"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Etwa alle 15 Minuten nach neuen Nachrichten suchen"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Wähle einen anderen Dateityp. Der Dateihost akzeptiert keine {ext}-Dateien."
@@ -1245,9 +1253,17 @@ msgstr "Sicheres Passwort wählen"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Wähle eine kleinere Datei. Diese ist zu groß für den Dateihost."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Verteiler wählen"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Datei auswählen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Wähle, wie Nachrichten dich erreichen, während Obby geschlossen ist. Server ohne Web-Push nutzen immer die Hintergrundprüfung."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "Dieses Netzwerk löschen?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "gelöscht"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "Sofort über eine Verteiler-App deiner Wahl zustellen, zum Beispiel ntfy"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Sofort über die Google Play-Dienste zustellen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Zustellung bei geschlossener App"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "Zu {name} wechseln"
 msgid "Go to reply"
 msgstr "Zur Antwort gehen"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "Emoji einfügen"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Installieren"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "Installiere einen UnifiedPush-Verteiler wie ntfy und wähle dann erneut UnifiedPush"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Installiere die Google Play-Dienste, um dies zu nutzen"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "Gib Wörter ein, um Nachrichten zu durchsuchen"
 msgid "Undeafen"
 msgstr "Ton einschalten"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Nutzer nicht mehr ignorieren"
@@ -5825,6 +5869,10 @@ msgstr "Zu ignorierende Benutzer und Muster"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Benutzer:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "{currentName} wird verwendet"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

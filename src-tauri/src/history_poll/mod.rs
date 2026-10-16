@@ -3,21 +3,17 @@
 //! on tokio alone.
 
 mod irc;
-mod text;
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use tokio::time::{Duration, Instant};
 
-use irc::HistoryMessage;
-use text::{addresses_name, chat_key, is_ignored, notification_id, strip_formatting, truncate};
+use crate::chat_notice::{notices_for, Notice, Recipient, Strings};
 
 const SESSION_TIMEOUT: Duration = Duration::from_secs(12);
 const TOTAL_BUDGET: Duration = Duration::from_secs(25);
-const BODY_LIMIT: usize = 200;
 const REMEMBERED_MSGIDS: usize = 200;
-const E2EE_BODY_MARKER: &str = "?obe2ee:";
 
 /// What the app hands over while it runs: the servers that keep history and
 /// how to word the notifications.
@@ -47,15 +43,6 @@ pub struct ServerConfig {
     pub since: i64,
 }
 
-/// Translated text, since the native side has no translation catalog.
-#[derive(Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Strings {
-    /// `{sender}` and `{target}` are filled in.
-    pub channel_title: String,
-    pub encrypted_body: String,
-}
-
 /// What a check remembers for the next one.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -72,154 +59,12 @@ pub struct ServerState {
     pub notified: Vec<String>,
 }
 
-/// A notification for the platform to post, shaped like the notification
-/// plugin's options so a tap reaches the app the same way.
-#[derive(Debug, Clone, Serialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct Notice {
-    pub id: i32,
-    pub title: String,
-    pub body: String,
-    pub group: String,
-    pub extra: NoticeTarget,
-}
-
-#[derive(Debug, Clone, Serialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct NoticeTarget {
-    pub server_id: String,
-    pub target: String,
-    pub time: i64,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub msgid: Option<String>,
-}
-
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Outcome {
     pub notices: Vec<Notice>,
     pub state: State,
     pub errors: Vec<String>,
-}
-
-fn is_encrypted(text: &str) -> bool {
-    text == E2EE_BODY_MARKER || text.starts_with("?OTR")
-}
-
-enum Spoken<'a> {
-    Said(&'a str),
-    Action(&'a str),
-}
-
-/// What the sender said, or None for a CTCP other than `/me`.
-fn spoken(text: &str) -> Option<Spoken<'_>> {
-    let Some(ctcp) = text.strip_prefix('\x01') else {
-        return Some(Spoken::Said(text));
-    };
-    ctcp.trim_end_matches('\x01')
-        .strip_prefix("ACTION ")
-        .map(Spoken::Action)
-}
-
-/// The notifications for one server: one per chat with its newest message,
-/// following the app's rule (private messages and mentions from others,
-/// skipping ignored senders, what we already notified, and anything we
-/// answered in that chat).
-fn notices_for(
-    server: &ServerConfig,
-    own_nick: &str,
-    messages: &[HistoryMessage],
-    strings: &Strings,
-    notified: &[String],
-) -> (Vec<Notice>, Vec<String>) {
-    let is_ours = |message: &HistoryMessage| {
-        let sender = message.sender();
-        sender.eq_ignore_ascii_case(own_nick) || sender.eq_ignore_ascii_case(&server.nick)
-    };
-    let mut answered_at: HashMap<String, i64> = HashMap::new();
-    for message in messages.iter().filter(|m| is_ours(m)) {
-        let latest = answered_at.entry(message.chat.to_lowercase()).or_default();
-        *latest = (*latest).max(message.time);
-    }
-    let mut newest: HashMap<String, (&HistoryMessage, String)> = HashMap::new();
-    let mut fresh_msgids = Vec::new();
-    for message in messages {
-        let sender = message.sender();
-        if is_ours(message)
-            || answered_at
-                .get(&message.chat.to_lowercase())
-                .is_some_and(|&at| message.time <= at)
-        {
-            continue;
-        }
-        if message
-            .msgid
-            .as_ref()
-            .is_some_and(|id| notified.contains(id))
-        {
-            continue;
-        }
-        if is_ignored(&server.ignore_list, &message.source) {
-            continue;
-        }
-        let (said, text) = match spoken(&message.text) {
-            Some(Spoken::Said(said)) => (said, said.to_string()),
-            Some(Spoken::Action(action)) => (action, format!("* {sender} {action}")),
-            None => continue,
-        };
-        let is_mention = message.is_private
-            || addresses_name(said, own_nick)
-            || server
-                .custom_mentions
-                .iter()
-                .any(|mention| addresses_name(said, mention));
-        if !is_mention {
-            continue;
-        }
-        if let Some(id) = &message.msgid {
-            fresh_msgids.push(id.clone());
-        }
-        let body = if is_encrypted(&message.text) {
-            strings.encrypted_body.clone()
-        } else {
-            text
-        };
-        let key = chat_key(&server.id, &message.chat);
-        let is_newer = newest
-            .get(&key)
-            .map_or(true, |(current, _)| message.time >= current.time);
-        if is_newer {
-            newest.insert(key, (message, body));
-        }
-    }
-    let mut notices: Vec<Notice> = newest
-        .into_values()
-        .map(|(message, body)| {
-            let sender = message.sender();
-            let title = if message.is_private {
-                sender.to_string()
-            } else {
-                strings
-                    .channel_title
-                    .replace("{sender}", sender)
-                    .replace("{target}", &message.chat)
-            };
-            Notice {
-                id: notification_id(&server.id, &message.chat),
-                title,
-                body: truncate(strip_formatting(&body).trim(), BODY_LIMIT),
-                group: chat_key(&server.id, &message.chat),
-                extra: NoticeTarget {
-                    server_id: server.id.clone(),
-                    target: message.chat.clone(),
-                    time: message.time,
-                    msgid: message.msgid.clone(),
-                },
-            }
-        })
-        .collect();
-    notices.sort_by_key(|notice| notice.extra.time);
-    (notices, fresh_msgids)
 }
 
 /// Checks every server once and returns the notifications to post and the
@@ -238,8 +83,14 @@ pub async fn check(config: Config, mut state: State, now: i64) -> Outcome {
         let since = remembered.since.max(server.since);
         match irc::fetch_history(server, since, now, deadline).await {
             Ok(history) => {
+                let recipient = Recipient {
+                    server_id: &server.id,
+                    nick: &server.nick,
+                    custom_mentions: &server.custom_mentions,
+                    ignore_list: &server.ignore_list,
+                };
                 let (found, msgids) = notices_for(
-                    server,
+                    &recipient,
                     &history.nick,
                     &history.messages,
                     &config.strings,
@@ -347,94 +198,6 @@ pub unsafe extern "C" fn obby_history_poll_free(value: *mut std::ffi::c_char) {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn server() -> ServerConfig {
-        ServerConfig {
-            id: "s1".into(),
-            address: "ircs://irc.example:6697".into(),
-            nick: "max".into(),
-            account: Some("max".into()),
-            password: Some("secret".into()),
-            server_password: None,
-            bouncer_netid: None,
-            custom_mentions: vec!["stream".into()],
-            ignore_list: vec!["spam!*@*".into()],
-            since: 0,
-        }
-    }
-
-    fn strings() -> Strings {
-        Strings {
-            channel_title: "{sender} in {target}".into(),
-            encrypted_body: "New encrypted message".into(),
-        }
-    }
-
-    fn message(chat: &str, from: &str, text: &str, time: i64, private: bool) -> HistoryMessage {
-        HistoryMessage {
-            chat: chat.into(),
-            source: format!("{from}!u@h"),
-            text: text.into(),
-            time,
-            msgid: Some(format!("m{time}")),
-            is_private: private,
-        }
-    }
-
-    #[test]
-    fn notifies_private_messages_and_mentions_once_per_chat() {
-        let messages = vec![
-            message("#dev", "alice", "max: look at this", 1, false),
-            message("#dev", "alice", "max: and this", 2, false),
-            message("#dev", "bob", "nothing for you", 3, false),
-            message("bob", "bob", "hey there", 4, true),
-        ];
-        let (notices, msgids) = notices_for(&server(), "max", &messages, &strings(), &[]);
-        assert_eq!(notices.len(), 2);
-        assert_eq!(notices[0].title, "alice in #dev");
-        assert_eq!(notices[0].body, "max: and this");
-        assert_eq!(notices[1].title, "bob");
-        assert_eq!(notices[1].id, notification_id("s1", "bob"));
-        assert_eq!(msgids, vec!["m1", "m2", "m4"]);
-    }
-
-    #[test]
-    fn skips_our_own_ignored_and_already_notified_messages() {
-        let messages = vec![
-            message("#dev", "max", "max: talking to myself", 1, false),
-            message("#dev", "spam", "max: buy now", 2, false),
-            message("#dev", "alice", "the stream is up", 3, false),
-        ];
-        let (notices, _) = notices_for(&server(), "max", &messages, &strings(), &["m3".into()]);
-        assert!(notices.is_empty());
-    }
-
-    #[test]
-    fn skips_what_we_answered_on_another_session() {
-        let messages = vec![
-            message("bob", "bob", "are you there?", 1, true),
-            message("bob", "max", "yes", 2, true),
-            message("#dev", "alice", "max: ping", 3, false),
-        ];
-        let (notices, _) = notices_for(&server(), "max", &messages, &strings(), &[]);
-        let targets: Vec<&str> = notices.iter().map(|n| n.extra.target.as_str()).collect();
-        assert_eq!(targets, vec!["#dev"]);
-    }
-
-    #[test]
-    fn hides_encrypted_text_and_reads_actions() {
-        let messages = vec![
-            message("bob", "bob", "?OTR:AAQD", 1, true),
-            message("#dev", "alice", "\x01ACTION waves at max\x01", 2, false),
-            message("#dev", "carol", "\x01VERSION\x01", 3, false),
-        ];
-        let (notices, _) = notices_for(&server(), "max", &messages, &strings(), &[]);
-        let bodies: Vec<&str> = notices.iter().map(|n| n.body.as_str()).collect();
-        assert_eq!(
-            bodies,
-            vec!["New encrypted message", "* alice waves at max"]
-        );
-    }
 
     #[test]
     fn rejects_a_bad_config_with_an_error() {

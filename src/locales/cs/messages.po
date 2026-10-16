@@ -865,6 +865,10 @@ msgstr "Zpět na seznam sítí"
 msgid "Back to Settings"
 msgstr "Zpět na nastavení"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Pouze kontrola na pozadí"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Zabanovat {username} podle masky hostitele (zabrání opětovnému připojení ze stejné IP/hostitele)"
@@ -1217,6 +1221,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chaty a sítě"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Kontrolovat nové zprávy přibližně každých 15 minut"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Vyberte jiný typ souboru. Úložiště souborů nepřijímá soubory {ext}."
@@ -1245,9 +1253,17 @@ msgstr "Zvolte bezpečné heslo"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Vyberte menší soubor. Tento je pro úložiště souborů příliš velký."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Vybrat distributora"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Vybrat soubor"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Vyberte, jak k vám zprávy dorazí, když je Obby zavřené. Servery bez web push vždy používají kontrolu na pozadí."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "Smazat tuto síť?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "smazáno"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "Doručovat okamžitě přes distribuční aplikaci, kterou si vyberete, například ntfy"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Doručovat okamžitě přes služby Google Play"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Doručování při zavřené aplikaci"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "Přejít na {name}"
 msgid "Go to reply"
 msgstr "Jít na odpověď"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "Vložit emoji"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Instalovat"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "Nainstalujte distributora UnifiedPush, například ntfy, a pak znovu vyberte UnifiedPush"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Pro použití nainstalujte služby Google Play"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "Pište slova pro hledání ve zprávách"
 msgid "Undeafen"
 msgstr "Zapnout poslech"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Přestat ignorovat uživatele"
@@ -5825,6 +5869,10 @@ msgstr "Uživatelé a vzory k ignorování"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Uživatelé:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "Používá se {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

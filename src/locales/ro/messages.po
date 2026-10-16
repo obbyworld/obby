@@ -865,6 +865,10 @@ msgstr "Înapoi la lista de rețele"
 msgid "Back to Settings"
 msgstr "Înapoi la setări"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Doar verificare în fundal"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Banează {username} după hostmask (împiedică reconectarea de pe același IP/host)"
@@ -1217,6 +1221,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Conversații și rețele"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Verifică mesajele noi cam la fiecare 15 minute"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Alege alt tip de fișier. Gazda de fișiere nu acceptă fișiere {ext}."
@@ -1245,9 +1253,17 @@ msgstr "Alege o parolă sigură"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Alege un fișier mai mic. Acesta este prea mare pentru gazda de fișiere."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Alege distribuitorul"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Alege fișier"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Alege cum îți ajung mesajele cât timp Obby este închis. Serverele fără web push folosesc mereu verificarea în fundal."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1850,6 +1866,18 @@ msgstr "Ștergi această rețea?"
 #: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "șters"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "Livrează imediat printr-o aplicație distribuitor aleasă de tine, cum ar fi ntfy"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Livrează imediat prin serviciile Google Play"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Livrare cu aplicația închisă"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -2579,6 +2607,10 @@ msgstr "Mergi la {name}"
 msgid "Go to reply"
 msgstr "Mergeți la răspuns"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2743,6 +2775,14 @@ msgstr "Inserează emoji"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Instalează"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "Instalează un distribuitor UnifiedPush, cum ar fi ntfy, apoi selectează din nou UnifiedPush"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Instalează serviciile Google Play pentru a folosi această opțiune"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Instant, even with Obby closed"
@@ -5675,6 +5715,10 @@ msgstr "Scrie cuvinte pentru a căuta în mesaje"
 msgid "Undeafen"
 msgstr "Activează sunetul"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Nu mai ignora utilizatorul"
@@ -5825,6 +5869,10 @@ msgstr "Utilizatori și modele de ignorat"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Utilizatori:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "Se folosește {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx

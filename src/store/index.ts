@@ -1335,6 +1335,7 @@ const useStore = create<AppState>((set, get) => ({
     keepHistory: true,
     // Some Linux desktops never show a tray icon, so closing quits there by default.
     closeToTray: !isLinux,
+    pushMethod: "fcm",
     historyLimitMb: 500,
     // Hosted chat mode settings
     nickname: "",
