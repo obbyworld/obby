@@ -265,6 +265,7 @@ export function handleLoggedIn(
 ): void {
   const user = ctx.currentUsers.get(serverId);
   if (user) ctx.currentUsers.set(serverId, { ...user, account: parv[2] });
+  ctx.triggerEvent("LOGGED_IN", { serverId, account: parv[2] });
 }
 
 export function handleLoggedOut(
@@ -275,6 +276,7 @@ export function handleLoggedOut(
 ): void {
   const user = ctx.currentUsers.get(serverId);
   if (user) ctx.currentUsers.set(serverId, { ...user, account: undefined });
+  ctx.triggerEvent("LOGGED_OUT", { serverId });
   handleSaslSuccess(ctx, serverId, source, parv);
 }
 

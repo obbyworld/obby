@@ -46,6 +46,8 @@ const DEAD_SOCKET_CLOSE_WAIT_MS = 2_000;
 
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
+  LOGGED_IN: BaseIRCEvent & { account: string };
+  LOGGED_OUT: BaseIRCEvent;
   connectionStateChange: BaseIRCEvent & {
     serverId: string;
     connectionState: ConnectionState;

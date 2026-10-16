@@ -59,6 +59,7 @@ const server = (isLoadingHistory: boolean): Server => ({
   port: 6697,
   isConnected: true,
   capabilities: ["draft/read-marker"],
+  account: "me",
   channels: [],
   users: [],
   privateChats: [

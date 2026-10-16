@@ -59,6 +59,7 @@ async function boot({
             port: 6667,
             isConnected: true,
             capabilities: ["draft/read-marker"],
+            account: "me",
             privateChats: [],
             channels: [
               {
@@ -267,6 +268,53 @@ describe("read markers", () => {
     }));
     vi.advanceTimersByTime(1000);
     expect(markreadSet).not.toHaveBeenCalled();
+  });
+
+  it("keeps markers local until the connection logs in, then asks for the stored ones", async () => {
+    vi.useFakeTimers();
+    const { useStore, ircClient, markreadSet, channel } = await boot({
+      selected: true,
+    });
+    const markreadGet = vi
+      .spyOn(ircClient, "markreadGet")
+      .mockImplementation(() => {});
+    useStore.setState((state) => ({
+      servers: state.servers.map((server) => ({
+        ...server,
+        account: undefined,
+        privateChats: [
+          {
+            id: "pm-bob",
+            username: "bob",
+            serverId: SERVER,
+            unreadCount: 0,
+            isMentioned: false,
+          },
+        ],
+      })),
+    }));
+    ircClient.triggerEvent("parsedLine", {
+      serverId: SERVER,
+      line: ":irc.test 001 tester :Welcome",
+      command: "001",
+      source: "irc.test",
+      parv: ["tester", "Welcome"],
+      mtags: undefined,
+    });
+    useStore.setState((state) => ({
+      messages: {
+        ...state.messages,
+        [KEY]: [...state.messages[KEY], message(4)],
+      },
+    }));
+    vi.advanceTimersByTime(1000);
+    expect(markreadSet).not.toHaveBeenCalled();
+    expect(markreadGet).not.toHaveBeenCalled();
+    expect(channel().unreadCount).toBe(0);
+
+    ircClient.triggerEvent("LOGGED_IN", { serverId: SERVER, account: "me" });
+    expect(markreadGet).toHaveBeenCalledWith(SERVER, "#chan");
+    expect(markreadGet).toHaveBeenCalledWith(SERVER, "bob");
   });
 
   it("leaves the marker alone while the app is hidden", async () => {

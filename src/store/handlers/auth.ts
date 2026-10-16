@@ -120,6 +120,17 @@ function clearSession(serverId: string) {
 }
 
 export function registerAuthHandlers(store: StoreApi<AppState>): void {
+  const setAccount = (serverId: string, account: string | undefined) =>
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, account } : server,
+      ),
+    }));
+  ircClient.on("LOGGED_IN", ({ serverId, account }) =>
+    setAccount(serverId, account),
+  );
+  ircClient.on("LOGGED_OUT", ({ serverId }) => setAccount(serverId, undefined));
+
   ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
     if (capabilities?.startsWith("draft/metadata")) {
       const currentSubs =

@@ -482,6 +482,7 @@ describe("New messages line", () => {
     isConnected: true,
     connectionState: "connected",
     capabilities: ["draft/read-marker"],
+    account: "me",
     channels: [],
     users: [],
     privateChats: [

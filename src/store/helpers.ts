@@ -137,6 +137,7 @@ export function serverTracksReadMarker(
   const server = state.servers.find((s) => s.id === serverId);
   return (
     !!server?.capabilities?.includes("draft/read-marker") &&
+    !!server.account &&
     !server.readMarkerRefused
   );
 }

@@ -270,6 +270,16 @@ export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
     registeredAt.set(serverId, mtags?.time ?? new Date().toISOString());
     startMissingMarkers(store);
   });
+  // Markers need an account, so a login after the welcome is when we first
+  // learn where the user left off.
+  ircClient.on("LOGGED_IN", ({ serverId }) => {
+    const state = store.getState();
+    const server = state.servers.find((s) => s.id === serverId);
+    if (!server || !registeredAt.has(serverId)) return;
+    if (!serverTracksReadMarker(state, serverId)) return;
+    for (const chat of [...server.channels, ...(server.privateChats ?? [])])
+      ircClient.markreadGet(serverId, targetOf(chat));
+  });
 
   let timer: ReturnType<typeof setTimeout> | undefined;
   // We tell the server how far the user has read whenever they look at a

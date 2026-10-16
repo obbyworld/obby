@@ -110,6 +110,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          account: connectionState === "connected" ? server.account : undefined,
           saslFailed:
             connectionState === "connecting" ? false : server.saslFailed,
         };
