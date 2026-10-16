@@ -37,11 +37,25 @@ function whenChatReady(target: NotificationTarget): Promise<void> {
   });
 }
 
+// A tap wakes the app while its page is still hidden, and a hidden page drops the scroll to the message.
+function whenVisible(): Promise<void> {
+  return new Promise((resolve) => {
+    if (document.visibilityState === "visible") return resolve();
+    const onChange = () => {
+      if (document.visibilityState !== "visible") return;
+      document.removeEventListener("visibilitychange", onChange);
+      resolve();
+    };
+    document.addEventListener("visibilitychange", onChange);
+  });
+}
+
 export async function openNotificationTarget(
   target: NotificationTarget,
 ): Promise<void> {
   if (isTauriDesktop()) await showMainWindow();
   await whenChatReady(target);
+  await whenVisible();
   const result = target.msgid ? await jumpToMessage(target) : null;
   if (!result?.ok) useStore.getState().openChat(target.serverId, target.target);
 }

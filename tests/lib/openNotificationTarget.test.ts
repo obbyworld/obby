@@ -39,4 +39,28 @@ describe("opening a tapped notification", () => {
       expect.objectContaining({ msgid: "m1" }),
     );
   });
+
+  it("jumps once the page is visible", async () => {
+    useStore.setState({ servers: serverWith(false) });
+    jump.jumpToMessage.mockClear();
+    const visibility = vi
+      .spyOn(document, "visibilityState", "get")
+      .mockReturnValue("hidden");
+
+    const opening = openNotificationTarget({
+      serverId: "s1",
+      target: "#dev",
+      time: 1,
+      msgid: "m1",
+    });
+    await new Promise((resolve) => setTimeout(resolve));
+    expect(jump.jumpToMessage).not.toHaveBeenCalled();
+
+    visibility.mockReturnValue("visible");
+    document.dispatchEvent(new Event("visibilitychange"));
+    await opening;
+
+    expect(jump.jumpToMessage).toHaveBeenCalled();
+    visibility.mockRestore();
+  });
 });
