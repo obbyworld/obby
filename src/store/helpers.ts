@@ -69,7 +69,11 @@ export function newestMessageTime(
   const messages = state.historyWindows[key]?.present ?? state.messages[key];
   let newest: number | undefined;
   for (const message of messages ?? []) {
-    const time = messageTime(message);
+    if (message.status) continue;
+    // Our own lines keep their send time, so we read the server's from the echo.
+    const time = message.tags?.time
+      ? Date.parse(message.tags.time)
+      : messageTime(message);
     if (isChatMessage(message) && !Number.isNaN(time))
       newest = newest === undefined ? time : Math.max(newest, time);
   }

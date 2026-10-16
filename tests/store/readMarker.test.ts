@@ -192,6 +192,47 @@ describe("read markers", () => {
     expect(markreadSet).toHaveBeenCalledWith(SERVER, "#chan", newest);
   });
 
+  it("marks our own line read at the time the server stored it, never at the time we sent it", async () => {
+    const { useStore, ircClient, markreadSet } = await boot({
+      selected: true,
+    });
+    const serverTime = new Date(BASE + 9000).toISOString();
+    const sending = {
+      ...message(5, "tester"),
+      timestamp: new Date(BASE + 8000),
+      status: "pending",
+    } as Message;
+    useStore.setState((state) => ({
+      ui: { ...state.ui, isChatAwayFromPresent: true },
+      messages: { ...state.messages, [KEY]: [...state.messages[KEY], sending] },
+    }));
+    const sendLine = {
+      serverId: SERVER,
+      direction: "tx" as const,
+      line: "PRIVMSG #chan :on it",
+    };
+
+    ircClient.triggerEvent("rawLine", sendLine);
+    expect(markreadSet).toHaveBeenLastCalledWith(
+      SERVER,
+      "#chan",
+      new Date(BASE + 3000).toISOString(),
+    );
+
+    useStore.setState((state) => ({
+      messages: {
+        ...state.messages,
+        [KEY]: state.messages[KEY].map((m) =>
+          m.id === "m5"
+            ? { ...m, status: undefined, tags: { time: serverTime } }
+            : m,
+        ),
+      },
+    }));
+    ircClient.triggerEvent("rawLine", sendLine);
+    expect(markreadSet).toHaveBeenLastCalledWith(SERVER, "#chan", serverTime);
+  });
+
   it("waits for the stored marker before sending its own", async () => {
     vi.useFakeTimers();
     const { useStore, markreadSet } = await boot({ selected: true });

@@ -76,7 +76,7 @@ type GapFill = {
   gap?: HistoryGap;
   pagesLeft?: number;
   isDiskOnly?: boolean;
-  onSettled?: (isSaved: boolean) => void;
+  onSettled?: (isSaved: boolean, page?: HistoryPage) => void;
 };
 
 type PendingRequest =
@@ -382,7 +382,7 @@ async function saveHistoryPage(
       if (pagesLeft !== undefined)
         settleGap(store, serverId, target, gap, pagesLeft);
     }
-    request.fill.onSettled?.(true);
+    request.fill.onSettled?.(true, page);
   }
   await refreshHasMore(store, serverId, target, page.size > 0);
 }
@@ -1009,10 +1009,15 @@ function diskFirstFill(
   return {
     gap,
     isDiskOnly: true,
-    onSettled: (isSaved) => {
+    onSettled: (isSaved, page) => {
       void (async () => {
         if (isSaved && (await replayOlderDiskPage(store, serverId, target)))
           return;
+        // A page of lines we never show, like typing notices, can have history behind it.
+        if (isSaved && page?.oldest !== undefined && page.oldest < oldestTime) {
+          await loadOlderMessages(store, serverId, target, page.oldest);
+          return;
+        }
         setLoading(serverId, target, false);
         await showLostGaps(
           store,

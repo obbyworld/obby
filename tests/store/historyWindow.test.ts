@@ -677,6 +677,36 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
       expect(w.shown()).toEqual(["m100"]);
     });
 
+    it("asks on past a page of typing notices until the history ends", async () => {
+      const w = await boot(["draft/chathistory", "message-tags"]);
+      await feedSaved(w, [line(100, "#chan", "tester")]);
+
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(100),
+      );
+      w.feed(
+        ":irc.test BATCH +t1 chathistory #chan",
+        ...[90, 95].map(
+          (index) =>
+            `@batch=t1;+typing=active;msgid=t${index};time=${iso(index)} :tester!u@h TAGMSG #chan`,
+        ),
+        ":irc.test BATCH -t1",
+      );
+      await vi.waitFor(() =>
+        expect(w.sent.at(-1)).toBe(
+          `CHATHISTORY BEFORE #chan timestamp=${iso(90)} 50`,
+        ),
+      );
+
+      w.feed(...noisyPage("p1", 0, 0));
+      await vi.waitFor(() => expect(w.channel().hasMoreHistory).toBe(false));
+      expect(w.channel().isLoadingHistory).toBe(false);
+      expect(w.shown()).toEqual(["m100"]);
+    });
+
     it("joins the present past newer pages that show nothing and keeps the rows on screen", async () => {
       const w = await boot();
       await feedSaved(w, [
