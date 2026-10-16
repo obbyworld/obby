@@ -22,6 +22,7 @@ import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
+import { isJumping } from "../../lib/jumpToMessage";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
 import useStore from "../../store";
 import {
@@ -321,6 +322,7 @@ export const ChannelMessageList = forwardRef<
     );
     const {
       isHoldingRef,
+      isHoldingRow,
       isHoldingJump,
       holdRow,
       releaseJump,
@@ -371,6 +373,9 @@ export const ChannelMessageList = forwardRef<
       )
         setVisibleMessageCount((prev) => prev + delta);
     }
+    // A jump that lands while the chat opens, like a notification tap at launch, keeps its row.
+    const isJumpTakingOver = () =>
+      isJumping() || !!useStore.getState().ui.messageJump || isHoldingRow();
 
     const locallyHidden = channelMessages.length > displayedMessages.length;
     const serverHasMore =
@@ -593,6 +598,7 @@ export const ChannelMessageList = forwardRef<
       if (!needsMarkerPage || !historyTarget) return;
       if (opening.step !== "placing" || opening.after == null) return;
       if (isLoadingHistory && !isOverdue) return;
+      if (isJumpTakingOver()) return;
       if (markerPageRequestRef.current === opening) return;
       const request = opening;
       markerPageRequestRef.current = request;
@@ -602,7 +608,7 @@ export const ChannelMessageList = forwardRef<
         serverId,
         historyTarget,
         opening.after,
-        () => markerPageRequestRef.current === request,
+        () => markerPageRequestRef.current === request && !isJumpTakingOver(),
       ).finally(() =>
         setOpening((o) =>
           o.step === "loading" ? { ...o, step: "placing" } : o,
@@ -613,6 +619,10 @@ export const ChannelMessageList = forwardRef<
     // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and the opening step decide when to look
     useLayoutEffect(() => {
       if (!isActive || opening.step !== "placing") return;
+      if (isJumpTakingOver()) {
+        setOpening({ ...opening, step: "open", hasGivenUp: false });
+        return;
+      }
       const isWaitingForHistory = isLoadingHistory && !hasGivenUp;
       if ((isWaitingForHistory && !isOverdue) || needsMarkerPage) return;
       const container = messagesContainerRef.current;

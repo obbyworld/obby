@@ -15,11 +15,13 @@ function isChatReady(
   if (!server?.isConnected) return false;
   if (!ircClient.isChannel(serverId, target)) return true;
   const lower = target.toLowerCase();
-  return server.channels.some((c) => c.name.toLowerCase() === lower);
+  return server.channels.some(
+    (c) => c.name.toLowerCase() === lower && !c.isLoadingHistory,
+  );
 }
 
-// A tap can launch the app, so we wait for the server to connect and rejoin
-// the chat before we open it.
+// A tap can launch the app, so we wait for the server to connect, rejoin the
+// chat and load its history, which brings the message we were not here for.
 function whenChatReady(target: NotificationTarget): Promise<void> {
   return new Promise((resolve) => {
     if (isChatReady(useStore.getState(), target)) return resolve();
