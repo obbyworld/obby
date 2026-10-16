@@ -132,9 +132,14 @@ export async function configureHistoryPoll(
   if (!isTauriMobile()) return;
   const payload = config ? JSON.stringify(config) : null;
   if (payload === lastSent) return;
+  const previous = lastSent;
+  // Startup changes the store many times before the first call returns, so we mark the payload sent up front.
+  lastSent = payload;
   await invoke("plugin:mobile-notifications|configure_history_poll", {
     config: payload,
     intervalMinutes: HISTORY_POLL_INTERVAL_MINUTES,
+  }).catch((error) => {
+    lastSent = previous;
+    throw error;
   });
-  lastSent = payload;
 }

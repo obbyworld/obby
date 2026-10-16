@@ -1,5 +1,6 @@
 package world.obby.notifications
 
+import android.app.ActivityManager
 import android.content.Context
 import android.util.Log
 import androidx.work.Constraints
@@ -62,7 +63,7 @@ class HistoryPollWorker(context: Context, params: WorkerParameters) : Worker(con
   override fun doWork(): Result {
     val context = applicationContext
     val config = HistoryPollStore.config(context) ?: return Result.success()
-    if (AppVisibility.isInForeground) return Result.success()
+    if (isAppOnScreen()) return Result.success()
     val outcome = JSONObject(
       HistoryPollNative.nativeCheck(config, HistoryPollStore.state(context), System.currentTimeMillis())
     )
@@ -72,5 +73,12 @@ class HistoryPollWorker(context: Context, params: WorkerParameters) : Worker(con
     outcome.optJSONObject("state")?.let { HistoryPollStore.saveState(context, it.toString()) }
     outcome.optJSONArray("notices")?.let { ChatNotices.post(context, it) }
     return Result.success()
+  }
+
+  // The live connection covers an app on screen, and the process importance shows that before the plugins load.
+  private fun isAppOnScreen(): Boolean {
+    val process = ActivityManager.RunningAppProcessInfo()
+    ActivityManager.getMyMemoryState(process)
+    return process.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
   }
 }

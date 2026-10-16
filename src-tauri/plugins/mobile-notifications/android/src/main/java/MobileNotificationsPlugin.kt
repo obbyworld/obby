@@ -25,16 +25,6 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     launchTarget = ChatNotices.tappedTarget(activity.intent)
   }
 
-  override fun onResume() {
-    super.onResume()
-    AppVisibility.isInForeground = true
-  }
-
-  override fun onPause() {
-    super.onPause()
-    AppVisibility.isInForeground = false
-  }
-
   @Command
   fun configureHistoryPoll(invoke: Invoke) {
     val args = invoke.parseArgs(ConfigureHistoryPollArgs::class.java)
@@ -62,9 +52,4 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     launchTarget = null
     invoke.resolve(result)
   }
-}
-
-// We skip the history poll while the app is on screen, since the live connection covers it.
-object AppVisibility {
-  @Volatile var isInForeground = false
 }
