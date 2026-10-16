@@ -132,8 +132,14 @@ describe("history poll config", () => {
   });
 
   it("waits until each server has told us whether it keeps history", () => {
-    const connected = { isConnected: true };
+    const connected = { isConnected: true, account: "max" };
     expect(isHistoryPollDecided([server(connected)], live())).toBe(false);
+    expect(
+      isHistoryPollDecided(
+        [server({ ...connected, account: undefined })],
+        live(),
+      ),
+    ).toBe(true);
     expect(
       isHistoryPollDecided(
         [server({ ...connected, persistenceEffective: "OFF" })],

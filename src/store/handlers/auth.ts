@@ -805,11 +805,25 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  // We ask once registration is done, since the server only answers
-  // PERSISTENCE GET after login and a slow network can take seconds to get there.
-  ircClient.on("ready", ({ serverId }) => {
-    if (ircClient.hasCapability(serverId, "draft/persistence"))
+  // Persistence needs an account, so we ask once registration is done and the
+  // connection is logged in, whichever comes last.
+  const registeredServers = new Set<string>();
+  const askPersistence = (serverId: string) => {
+    const server = store.getState().servers.find((s) => s.id === serverId);
+    if (
+      server?.account &&
+      registeredServers.has(serverId) &&
+      ircClient.hasCapability(serverId, "draft/persistence")
+    )
       ircClient.persistenceGet(serverId);
+  };
+  ircClient.on("ready", ({ serverId }) => {
+    registeredServers.add(serverId);
+    askPersistence(serverId);
+  });
+  ircClient.on("LOGGED_IN", ({ serverId }) => askPersistence(serverId));
+  ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
+    if (connectionState !== "connected") registeredServers.delete(serverId);
   });
   // obsidianirc/cmdslist: maintain a lowercase set of invocable
   // commands per server.  Additions and removals can arrive in the

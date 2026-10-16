@@ -48,6 +48,7 @@ export function isHistoryPollDecided(
       (server.isBouncerControl ||
         !!server.bouncerNetid ||
         server.persistenceEffective !== undefined ||
+        !server.account ||
         !live.hasCapability(server.id, "draft/persistence")),
   );
 }
