@@ -52,29 +52,28 @@ const message = (id: string, minute: number): Message => ({
   mentioned: [],
 });
 
-const server = (isLoadingHistory: boolean) =>
-  ({
-    id: "s1",
-    name: "s1",
-    host: "irc.example",
-    port: 6697,
-    isConnected: true,
-    capabilities: ["draft/read-marker"],
-    channels: [],
-    users: [],
-    privateChats: [
-      {
-        id: "pm1",
-        username: "alice",
-        serverId: "s1",
-        unreadCount: 0,
-        isMentioned: false,
-        readMarker: at(0),
-        hasMoreHistory: true,
-        isLoadingHistory,
-      },
-    ],
-  }) as unknown as Server;
+const server = (isLoadingHistory: boolean): Server => ({
+  id: "s1",
+  name: "s1",
+  host: "irc.example",
+  port: 6697,
+  isConnected: true,
+  capabilities: ["draft/read-marker"],
+  channels: [],
+  users: [],
+  privateChats: [
+    {
+      id: "pm1",
+      username: "alice",
+      serverId: "s1",
+      unreadCount: 0,
+      isMentioned: false,
+      readMarker: at(0),
+      hasMoreHistory: true,
+      isLoadingHistory,
+    },
+  ],
+});
 
 const props = {
   channelKey: KEY,
@@ -141,7 +140,7 @@ describe("ChannelMessageList opening on the read marker", () => {
     expect(markerPage).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps waiting for a late marker page and leaves the unread messages unread", () => {
+  it("stops waiting for a marker page that never lands and leaves the unread messages unread", () => {
     vi.useFakeTimers();
     useStore.setState({ servers: [server(true)] });
     const { container } = render(<ChannelMessageList {...props} />);
@@ -149,10 +148,19 @@ describe("ChannelMessageList opening on the read marker", () => {
 
     act(() => vi.advanceTimersByTime(4000));
     expect(markerPage).toHaveBeenCalledTimes(1);
-
-    act(() => vi.advanceTimersByTime(20_000));
-    expect(isAwayFromPresent()).toBe(true);
+    act(() => vi.advanceTimersByTime(15_000));
     expect(container.querySelector(".sticky")).not.toBeNull();
+
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 0, 3000);
+    const line = list.querySelector("[data-unread-line]") as HTMLElement;
+    line.getBoundingClientRect = () => ({ top: 1000 }) as DOMRect;
+    act(() => vi.advanceTimersByTime(1000));
+    act(() => vi.advanceTimersByTime(50));
+
+    expect(container.querySelector(".sticky")).toBeNull();
+    expect(list.scrollTop).toBe(952);
+    expect(isAwayFromPresent()).toBe(true);
   });
 
   it("drops a marker page that lands after the user went to the bottom", () => {
@@ -246,6 +254,28 @@ describe("ChannelMessageList late history", () => {
     );
     expect(container.querySelector(".sticky")).toBeNull();
     expect(container.querySelector("[data-unread-line]")).not.toBeNull();
+  });
+
+  it("opens after a while when the newest page never lands and places the line once it does", () => {
+    vi.useFakeTimers();
+    useStore.setState({ servers: [server(true)] });
+    const { container } = render(<ChannelMessageList {...props} />);
+
+    act(() => vi.advanceTimersByTime(20_000));
+    expect(container.querySelector(".sticky")).toBeNull();
+
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 400, 3000);
+    act(() =>
+      useStore.setState({
+        messages: { [KEY]: [...readRows(30), message("new-1", 5)] },
+      }),
+    );
+    act(() => vi.advanceTimersByTime(50));
+
+    expect(list.querySelector("[data-unread-line]")).not.toBeNull();
+    expect(list.scrollTop).toBe(352);
+    expect(isAwayFromPresent()).toBe(true);
   });
 
   it("waits in a window until the messages after the line arrive", () => {

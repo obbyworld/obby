@@ -664,6 +664,48 @@ describe("history windows", { timeout: 2 * WRITE_TIMEOUT_MS }, () => {
       await vi.waitFor(() => expect(w.shown()).toEqual([...ids(0, 9), "m110"]));
     });
 
+    it("reads a user's saved rows again once they are unignored", async () => {
+      const w = await boot();
+      await feedSaved(w, [
+        ...range(0, 49, "noisy"),
+        line(50, "#chan", "tester"),
+      ]);
+      w.useStore.getState().addToIgnoreList("noisy!*@*");
+      w.useStore.setState((state) => ({
+        messages: { [KEY]: state.messages[KEY].slice(-1) },
+      }));
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(50),
+      );
+      expect(w.shown()).toEqual(["m50"]);
+
+      w.useStore.getState().removeFromIgnoreList("noisy!*@*");
+      await w.history.loadOlderMessages(
+        w.useStore,
+        SERVER,
+        "#chan",
+        timeOf(50),
+      );
+
+      await vi.waitFor(() => expect(w.shown()).toEqual(ids(0, 50)));
+    });
+
+    it("stops showing a pending page as loading when the connection drops", async () => {
+      const w = await boot(["draft/chathistory", "message-tags"]);
+      w.ircClient.loadLatestHistory(SERVER, "#chan");
+      expect(w.channel().isLoadingHistory).toBe(true);
+
+      w.ircClient.triggerEvent("connectionStateChange", {
+        serverId: SERVER,
+        connectionState: "disconnected",
+      });
+
+      expect(w.channel().isLoadingHistory).toBe(false);
+    });
+
     it("keeps asking the server past them until it sends an empty page", async () => {
       const w = await boot(["draft/chathistory", "message-tags"]);
       await feedSaved(w, [line(100, "#chan", "tester")]);

@@ -21,8 +21,7 @@ export const SkeletonRow: React.FC<{
 const SKELETON_ROW_IDS = [0, 1, 2];
 const FILL_ROW_IDS = Array.from({ length: 30 }, (_, id) => id);
 
-/** With isFilling, the rows past the first three take whatever height is left
- *  in a column flex parent, so a chat still loading shows no bare space. */
+// We fill the rest of the parent with isFilling so a loading chat shows no bare space.
 export const MessageSkeletons: React.FC<{
   rowClassName?: string;
   avatarClassName?: string;

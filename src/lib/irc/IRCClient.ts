@@ -1340,14 +1340,7 @@ export class IRCClient implements IRCClientContext {
 
       this.sendRaw(serverId, `JOIN ${channelName}`);
 
-      // soju bouncer control sessions have no real channels — treat as cap-less.
-      const wantsChathistory =
-        !server.isBouncerControl &&
-        !!server.capabilities?.includes("draft/chathistory");
-
-      if (wantsChathistory) {
-        this.requestChathistoryLatest(serverId, channelName);
-      }
+      const wantsChathistory = this.hasChathistory(serverId);
 
       const channel: Channel = {
         id: generateDeterministicId(serverId, channelName),
@@ -1366,13 +1359,7 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      if (wantsChathistory) {
-        this.triggerEvent("CHATHISTORY_LOADING", {
-          serverId,
-          channelName,
-          isLoading: true,
-        });
-      } else {
+      if (!this.loadLatestHistory(serverId, channelName)) {
         // No CHATHISTORY support (or it's the bouncer control session) --
         // the LOADING(false) callback that normally fires WHO will never
         // run. Send it now.
@@ -1426,11 +1413,33 @@ export class IRCClient implements IRCClientContext {
     return true;
   }
 
-  requestChathistoryLatest(serverId: string, target: string): void {
+  // soju bouncer control sessions have no real channels, so we treat them as cap-less.
+  private hasChathistory(serverId: string): boolean {
+    const server = this.servers.get(serverId);
+    return (
+      !!server &&
+      !server.isBouncerControl &&
+      !!server.capabilities?.includes("draft/chathistory")
+    );
+  }
+
+  requestChathistoryLatest(serverId: string, target: string): boolean {
+    if (!this.hasChathistory(serverId)) return false;
     this.sendRaw(
       serverId,
       `CHATHISTORY LATEST ${target} * ${this.chathistoryPageSize(serverId)}`,
     );
+    return true;
+  }
+
+  loadLatestHistory(serverId: string, target: string): boolean {
+    if (!this.requestChathistoryLatest(serverId, target)) return false;
+    this.triggerEvent("CHATHISTORY_LOADING", {
+      serverId,
+      channelName: target,
+      isLoading: true,
+    });
+    return true;
   }
 
   // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means

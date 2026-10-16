@@ -504,6 +504,18 @@ function olderEdge(
   };
 }
 
+function forgetRemovedReadBacks(state: AppState) {
+  const keys = new Set(
+    state.servers.flatMap((server) =>
+      [...server.channels, ...(server.privateChats ?? [])].map(
+        (chat) => `${server.id}-${chat.id}`,
+      ),
+    ),
+  );
+  for (const key of readBackTo.keys())
+    if (!keys.has(key)) readBackTo.delete(key);
+}
+
 function rememberReadBack(
   store: StoreApi<AppState>,
   key: string,
@@ -690,9 +702,13 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       void persistHistoryAction(store, serverId, action);
   });
 
-  store.subscribe(() => {
+  store.subscribe((state, previous) => {
     const update = moveArrivalsToPresent(store.getState());
     if (update) store.setState(update);
+    if (state.globalSettings.ignoreList !== previous.globalSettings.ignoreList)
+      readBackTo.clear();
+    else if (readBackTo.size > 0 && state.servers !== previous.servers)
+      forgetRemovedReadBacks(state);
   });
 
   ircClient.on("rawLine", ({ serverId, direction, line }) => {
@@ -740,6 +756,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       for (const request of queue)
         if (request.kind !== "latest") request.fill?.onSettled?.(false);
       pendingRequests.delete(key);
+      setLoading(serverId, key.slice(serverId.length + 1), false);
     }
   });
 }

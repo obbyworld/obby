@@ -51,6 +51,8 @@ const LOAD_AHEAD_PX = 800;
 const OLDER_PAGE_TIMEOUT_MS = 10_000;
 // How long a chat may stay behind placeholders while it finds its unread line.
 const UNREAD_POSITIONING_LIMIT_MS = 4000;
+// How long a chat may wait for history at all before it opens without it.
+const UNREAD_POSITIONING_GIVE_UP_MS = 20_000;
 // How long a chat waits for its read marker before opening at the bottom.
 const READ_MARKER_WAIT_MS = 3000;
 // The room left above the "New messages" line when a chat opens on it.
@@ -67,6 +69,7 @@ type Opening =
       after: number | null;
       hasFetched: boolean;
       isOverdue?: boolean;
+      hasGivenUp?: boolean;
     };
 
 // Stable empty array — prevents selector from returning a new [] on every render
@@ -423,6 +426,7 @@ export const ChannelMessageList = forwardRef<
       );
     const unreadAfter = opening.step === "marker" ? null : opening.after;
     const isOverdue = opening.step !== "marker" && opening.isOverdue === true;
+    const hasGivenUp = opening.step !== "marker" && opening.hasGivenUp === true;
 
     const firstUnreadId = useMemo(
       () =>
@@ -435,10 +439,15 @@ export const ChannelMessageList = forwardRef<
             ),
       [channelMessages, unreadAfter, serverId],
     );
+    // A page that lands after we opened without it can still bring unread
+    // messages, so we place their line before the user reads past them.
+    if (opening.step === "open" && hasGivenUp && firstUnreadId)
+      setOpening({ ...opening, step: "placing" });
     const oldestLoaded = channelMessages[0];
     const needsMarkerPage =
       opening.step === "placing" &&
       !opening.hasFetched &&
+      !hasGivenUp &&
       unreadAfter != null &&
       Number.isFinite(unreadAfter) &&
       !isDetached &&
@@ -472,6 +481,7 @@ export const ChannelMessageList = forwardRef<
         (hasJustSent ||
           (!isAwayFromPresent &&
             isAppFocused &&
+            !hasGivenUp &&
             !firstUnreadMessageId(watchedMessages, opening.after, ownNick)))
       )
         setOpening({
@@ -538,6 +548,22 @@ export const ChannelMessageList = forwardRef<
       return () => clearTimeout(timer);
     }, [isActive, opening.step, isOverdue]);
 
+    // A dropped connection or an unanswered request can leave history loading
+    // for good, so we stop waiting and keep whatever arrives later unread.
+    useEffect(() => {
+      if (!isPositioningOnUnread || hasGivenUp) return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) =>
+            o.step === "placing" || o.step === "loading"
+              ? { ...o, step: "placing", isOverdue: true, hasGivenUp: true }
+              : o,
+          ),
+        UNREAD_POSITIONING_GIVE_UP_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isPositioningOnUnread, hasGivenUp]);
+
     // We ask once per opening, also when React runs the effect twice, and drop
     // the page if the user has moved on before it arrives.
     const markerPageRequestRef = useRef<Opening | null>(null);
@@ -566,7 +592,8 @@ export const ChannelMessageList = forwardRef<
     // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and the opening step decide when to look
     useLayoutEffect(() => {
       if (!isActive || opening.step !== "placing") return;
-      if ((isLoadingHistory && !isOverdue) || needsMarkerPage) return;
+      const isWaitingForHistory = isLoadingHistory && !hasGivenUp;
+      if ((isWaitingForHistory && !isOverdue) || needsMarkerPage) return;
       const container = messagesContainerRef.current;
       if (!container) return;
       const index = channelMessages.findIndex((m) => m.id === firstUnreadId);
@@ -578,7 +605,7 @@ export const ChannelMessageList = forwardRef<
       }
       const line = container.querySelector<HTMLElement>("[data-unread-line]");
       // The server page we wait for can still bring the unread messages.
-      if (!line && isLoadingHistory) return;
+      if (!line && isWaitingForHistory) return;
       const top = line
         ? line.getBoundingClientRect().top -
           container.getBoundingClientRect().top +
@@ -588,7 +615,11 @@ export const ChannelMessageList = forwardRef<
         top >= container.scrollHeight - container.clientHeight;
       // A window loads the rows below the line next, so we wait for them.
       if (line && isLineAtEnd && isDetached && !isOverdue) return;
-      setOpening({ ...opening, step: "open" });
+      setOpening({
+        ...opening,
+        step: "open",
+        hasGivenUp: hasGivenUp && !firstUnreadId,
+      });
       if (!line || isLineAtEnd) return;
       container.scrollTop = Math.max(0, top - UNREAD_LINE_MARGIN_PX);
       resizeObserverPrevSHRef.current = container.scrollHeight;
@@ -645,7 +676,6 @@ export const ChannelMessageList = forwardRef<
           wasAtBottomRef.current
         ) {
           scrollToBottom();
-          wasAtBottomRef.current = true;
         }
       }
       wasLoadingHistoryRef.current = isLoadingHistory;
