@@ -40,6 +40,12 @@ object PushStore {
     preferences(context).edit().putString(instance, registration?.toString()).apply()
   }
 
+  // A new endpoint can come while no page listens, so the page reads it on its next registration.
+  fun saveEndpoint(context: Context, instance: String, endpoint: JSONObject?) {
+    val registration = registration(context, instance) ?: return
+    save(context, instance, registration.put("endpoint", endpoint))
+  }
+
   fun register(context: Context, instance: String) {
     val registration = registration(context, instance) ?: return
     UnifiedPush.register(
@@ -61,8 +67,7 @@ object PushDistributors {
   fun isFcmAvailable(context: Context): Boolean =
     UnifiedPush.getDistributors(context).contains(context.packageName)
 
-  /** Saves the distributor the mode asks for, or returns false when none is installed. */
-  fun use(context: Context, mode: PushMode): Boolean {
+  fun saveDistributorFor(context: Context, mode: PushMode): Boolean {
     val saved = UnifiedPush.getSavedDistributor(context)
     val wanted = when (mode) {
       PushMode.FCM -> context.packageName.takeIf { isFcmAvailable(context) }
@@ -84,11 +89,13 @@ object PushDistributors {
 class ObbyPushService : PushService() {
   override fun onNewEndpoint(endpoint: PushEndpoint, instance: String) {
     val keys = endpoint.pubKeySet ?: return
-    val event = JSObject()
+    val saved = JSONObject()
+      .put("endpoint", endpoint.url)
+      .put("p256dh", keys.pubKey)
+      .put("auth", keys.auth)
+    PushStore.saveEndpoint(this, instance, saved)
+    val event = JSObject(saved.toString())
     event.put("serverId", instance)
-    event.put("endpoint", endpoint.url)
-    event.put("p256dh", keys.pubKey)
-    event.put("auth", keys.auth)
     MobileNotificationsPlugin.current?.trigger("pushEndpoint", event)
   }
 
@@ -103,14 +110,16 @@ class ObbyPushService : PushService() {
 
   override fun onRegistrationFailed(reason: FailedReason, instance: String) {
     Log.w(TAG, "registration failed for $instance: $reason")
-    unregistered(instance)
+    unregistered(instance, isFailed = true)
   }
 
-  override fun onUnregistered(instance: String) = unregistered(instance)
+  override fun onUnregistered(instance: String) = unregistered(instance, isFailed = false)
 
-  private fun unregistered(instance: String) {
+  private fun unregistered(instance: String, isFailed: Boolean) {
+    PushStore.saveEndpoint(this, instance, null)
     val event = JSObject()
     event.put("serverId", instance)
+    event.put("isFailed", isFailed)
     MobileNotificationsPlugin.current?.trigger("pushUnregistered", event)
   }
 }

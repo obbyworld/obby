@@ -5,7 +5,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 type Listener = (event: Record<string, unknown>) => void;
 interface Shown {
   title: string;
-  options: { body: string; tag: string; data: Record<string, unknown> };
+  options: {
+    body: string;
+    tag: string;
+    renotify: boolean;
+    silent: boolean;
+    data: Record<string, unknown>;
+  };
 }
 
 const source = readFileSync("public/sw.js", "utf8");
@@ -109,11 +115,20 @@ describe("push service worker", () => {
     expect(worker.shown[0].options.tag).toBe("srv-1:&a$'");
   });
 
-  it("stays quiet for ignored users and messages the page already showed", async () => {
+  it("stays quiet for ignored users", async () => {
     await worker.push(":troll!t@h PRIVMSG pushy :hey");
+    expect(worker.shown).toHaveLength(0);
+  });
+
+  it("silently replaces the notification the page already showed", async () => {
     await worker.post({ type: "obby-shown", msgid: "seen" });
     await worker.push("@msgid=seen :alice!a@h PRIVMSG pushy :hey");
-    expect(worker.shown).toHaveLength(0);
+    expect(worker.shown).toHaveLength(1);
+    expect(worker.shown[0].options).toMatchObject({
+      tag: "srv-1:alice",
+      renotify: false,
+      silent: true,
+    });
   });
 
   it("clears the chat when our own message arrives from another client", async () => {

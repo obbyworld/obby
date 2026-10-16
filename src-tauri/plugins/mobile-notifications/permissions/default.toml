@@ -9,4 +9,5 @@ permissions = [
   "allow-pick-push-distributor",
   "allow-register-push",
   "allow-unregister-push",
+  "allow-push-instances",
 ]

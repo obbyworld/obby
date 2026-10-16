@@ -9,6 +9,7 @@ import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSArray
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
+import java.lang.ref.WeakReference
 import org.json.JSONArray
 import org.json.JSONObject
 import org.unifiedpush.android.connector.UnifiedPush
@@ -36,8 +37,10 @@ class UnregisterPushArgs {
 @TauriPlugin
 class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activity) {
   companion object {
-    // The push service reports endpoints here while the app is open.
-    @Volatile var current: MobileNotificationsPlugin? = null
+    // The push service reports endpoints here while the app is open, and a
+    // closed activity must not keep its plugin alive.
+    @Volatile private var currentRef: WeakReference<MobileNotificationsPlugin>? = null
+    val current: MobileNotificationsPlugin? get() = currentRef?.get()
   }
 
   private var launchTarget: JSObject? = null
@@ -46,7 +49,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     super.load(webView)
     launchTarget = ChatNotices.tappedTarget(activity.intent)
     ChatNotices.consumeTap(activity.intent)
-    current = this
+    currentRef = WeakReference(this)
   }
 
   @Command
@@ -85,7 +88,7 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     val before = UnifiedPush.getSavedDistributor(activity)
     UnifiedPush.tryPickDistributor(activity) { isPicked ->
       if (!isPicked || UnifiedPush.getSavedDistributor(activity) == activity.packageName)
-        PushDistributors.use(activity, PushMode.UNIFIEDPUSH)
+        PushDistributors.saveDistributorFor(activity, PushMode.UNIFIEDPUSH)
       if (UnifiedPush.getSavedDistributor(activity) != before)
         for (instance in PushStore.instances(activity)) PushStore.register(activity, instance)
       invoke.resolve(pushStatusResult())
@@ -97,18 +100,23 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     val args = invoke.parseArgs(RegisterPushArgs::class.java)
     val mode = if (args.mode == "unifiedpush") PushMode.UNIFIEDPUSH else PushMode.FCM
     val result = JSObject()
-    if (!PushDistributors.use(activity, mode)) {
+    if (!PushDistributors.saveDistributorFor(activity, mode)) {
       result.put("isRegistered", false)
       invoke.resolve(result)
       return
     }
+    val endpoint = PushStore.registration(activity, args.serverId)
+      ?.takeIf { it.optString("vapidKey") == args.vapidKey }
+      ?.optJSONObject("endpoint")
     val registration = JSONObject()
       .put("vapidKey", args.vapidKey)
       .put("label", args.label)
       .put("context", args.context)
+      .put("endpoint", endpoint)
     PushStore.save(activity, args.serverId, registration)
     PushStore.register(activity, args.serverId)
     result.put("isRegistered", true)
+    result.put("endpoint", endpoint?.let { JSObject(it.toString()) })
     invoke.resolve(result)
   }
 
@@ -118,6 +126,13 @@ class MobileNotificationsPlugin(private val activity: Activity) : Plugin(activit
     UnifiedPush.unregister(activity, args.serverId)
     PushStore.save(activity, args.serverId, null)
     invoke.resolve()
+  }
+
+  @Command
+  fun pushInstances(invoke: Invoke) {
+    val instances = JSArray()
+    for (instance in PushStore.instances(activity)) instances.put(instance)
+    invoke.resolve(JSObject().put("instances", instances))
   }
 
   private fun pushStatusResult(): JSObject {

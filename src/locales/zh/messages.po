@@ -2408,6 +2408,10 @@ msgstr "展开成员列表"
 msgid "Expand workflow"
 msgstr "展开工作流"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Obby 关闭期间，预计最多延迟 15 分钟"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "扩展资料不可用"
@@ -2586,6 +2590,10 @@ msgstr "通用支持频道"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "有人说出你关注的词时收到通知。"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "即使 Obby 已关闭，也能即时收到"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "请安装 ntfy 等 UnifiedPush 分发器，然后再次选择 UnifiedPus
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "请安装 Google Play 服务以使用此选项"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "即时送达，即使 Obby 已关闭"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "取消置顶此私信对话"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "取消停用"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Obby 关闭期间最多延迟 15 分钟"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

@@ -12,6 +12,7 @@ Lets the app register for push, configure the history poll, post chat notificati
 - `allow-pick-push-distributor`
 - `allow-register-push`
 - `allow-unregister-push`
+- `allow-push-instances`
 
 ## Permission Table
 
@@ -70,6 +71,32 @@ Enables the pick_push_distributor command without any pre-configured scope.
 <td>
 
 Denies the pick_push_distributor command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:allow-push-instances`
+
+</td>
+<td>
+
+Enables the push_instances command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-notifications:deny-push-instances`
+
+</td>
+<td>
+
+Denies the push_instances command without any pre-configured scope.
 
 </td>
 </tr>

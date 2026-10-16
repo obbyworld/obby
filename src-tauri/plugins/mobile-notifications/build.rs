@@ -6,6 +6,7 @@ const COMMANDS: &[&str] = &[
     "pick_push_distributor",
     "register_push",
     "unregister_push",
+    "push_instances",
     "register_listener",
 ];
 

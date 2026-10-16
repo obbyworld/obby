@@ -9,16 +9,28 @@ const native = vi.hoisted(() => ({
         auth: string;
       }) => void)
     | undefined,
-  registerNativePush: vi.fn(async () => true),
-  unregisterNativePush: vi.fn(async () => {}),
+  unregisteredHandler: undefined as
+    | ((event: { serverId: string; isFailed?: boolean }) => void)
+    | undefined,
+  registerNativePush: vi.fn(
+    async (): Promise<{
+      isRegistered: boolean;
+      endpoint?: { endpoint: string; p256dh: string; auth: string };
+    }> => ({ isRegistered: true }),
+  ),
+  unregisterNativePush: vi.fn(async (_serverId: string) => {}),
+  pushInstances: vi.fn(async (): Promise<string[]> => []),
 }));
 vi.mock("../../src/lib/nativePush", () => ({
   registerNativePush: native.registerNativePush,
   unregisterNativePush: native.unregisterNativePush,
+  pushInstances: native.pushInstances,
   onPushEndpoint: async (handler: typeof native.endpointHandler) => {
     native.endpointHandler = handler;
   },
-  onPushUnregistered: async () => {},
+  onPushUnregistered: async (handler: typeof native.unregisteredHandler) => {
+    native.unregisteredHandler = handler;
+  },
 }));
 vi.mock("../../src/lib/webpush", () => ({
   hasWebPush: () => true,
@@ -64,6 +76,7 @@ describe("native push registration", () => {
     sendRaw.mockClear();
     native.registerNativePush.mockClear();
     native.unregisterNativePush.mockClear();
+    native.pushInstances.mockClear();
     useStore.setState((state) => ({
       servers: [],
       globalSettings: {
@@ -130,5 +143,56 @@ describe("native push registration", () => {
     );
     expect(native.unregisterNativePush).toHaveBeenCalledWith("push-1");
     expect(useStore.getState().servers[0].pushEndpoint).toBeUndefined();
+  });
+
+  it("drops device registrations of servers that are gone or no longer want push", async () => {
+    native.pushInstances.mockResolvedValue(["push-1", "removed-1"]);
+    native.unregisterNativePush.mockClear();
+    useStore.setState({ servers: [pushServer] });
+    await vi.waitFor(() =>
+      expect(native.unregisterNativePush).toHaveBeenCalledWith("removed-1"),
+    );
+    expect(native.unregisterNativePush).not.toHaveBeenCalledWith("push-1");
+
+    useStore.setState((state) => ({
+      globalSettings: { ...state.globalSettings, enableNotifications: false },
+    }));
+    await vi.waitFor(() =>
+      expect(native.unregisterNativePush).toHaveBeenCalledWith("push-1"),
+    );
+    native.pushInstances.mockResolvedValue([]);
+  });
+
+  it("hands the server an endpoint the device got while the app was closed", async () => {
+    native.registerNativePush.mockResolvedValueOnce({
+      isRegistered: true,
+      endpoint: { endpoint: "https://ntfy.sh/saved", p256dh: "P", auth: "A" },
+    });
+    useStore.setState({ servers: [pushServer] });
+
+    await vi.waitFor(() =>
+      expect(sendRaw).toHaveBeenCalledWith(
+        "push-1",
+        "WEBPUSH REGISTER https://ntfy.sh/saved p256dh=P;auth=A",
+      ),
+    );
+    expect(useStore.getState().servers[0].pushEndpoint).toBe(
+      "https://ntfy.sh/saved",
+    );
+  });
+
+  it("takes the endpoint back and registers again once the distributor drops it", () => {
+    useStore.setState({ servers: [pushServer] });
+    deliver("https://ntfy.sh/up123");
+    sendRaw.mockClear();
+    native.registerNativePush.mockClear();
+
+    native.unregisteredHandler?.({ serverId: "push-1" });
+
+    expect(sendRaw).toHaveBeenCalledWith(
+      "push-1",
+      "WEBPUSH UNREGISTER https://ntfy.sh/up123",
+    );
+    expect(native.registerNativePush).toHaveBeenCalledTimes(1);
   });
 });

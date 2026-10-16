@@ -2408,6 +2408,10 @@ msgstr "멤버 목록 펼치기"
 msgid "Expand workflow"
 msgstr "워크플로우 확장"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Obby가 닫혀 있는 동안 최대 15분 지연을 예상하세요"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "확장 프로필을 사용할 수 없습니다"
@@ -2586,6 +2590,10 @@ msgstr "일반 지원 채널"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "팔로우하는 단어를 누군가 말하면 알림을 받으세요."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Obby가 닫혀 있어도 즉시 받으세요"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "ntfy 같은 UnifiedPush 배포자를 설치한 다음 UnifiedPush를 다
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "사용하려면 Google Play 서비스를 설치하세요"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Obby가 닫혀 있어도 즉시"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "이 비공개 메시지 대화 고정 해제"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "정지 해제"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Obby가 닫혀 있는 동안 최대 15분 지연"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

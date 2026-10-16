@@ -50,11 +50,11 @@ export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
       case "off":
         return t`Turn on Show Notifications to get any`;
       case "instant":
-        return t`Instant, even with Obby closed`;
+        return t`Get them instantly, even with Obby closed`;
       case "tray":
         return t`Keep Obby in the tray to get them`;
       case "periodic-check":
-        return t`Up to 15 minutes late while Obby is closed`;
+        return t`Expect them up to 15 minutes late while Obby is closed`;
       case "background-only":
         return t`Leave Obby in the background to get them, since swiping it away stops them`;
       case "while-open":

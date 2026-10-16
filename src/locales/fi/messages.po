@@ -2408,6 +2408,10 @@ msgstr "Laajenna jäsenlista"
 msgid "Expand workflow"
 msgstr "Laajenna työnkulku"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Odota enintään 15 minuutin viivettä, kun Obby on suljettu"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Laajennettu profiili ei ole saatavilla"
@@ -2586,6 +2590,10 @@ msgstr "Yleinen tukikanava"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Saat ilmoituksen, kun joku sanoo seuraamasi sanat."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Saa ne heti, vaikka Obby olisi suljettu"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "Asenna UnifiedPush-jakelija, kuten ntfy, ja valitse sitten UnifiedPush u
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Asenna Google Play -palvelut käyttääksesi tätä"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Heti, vaikka Obby olisi suljettu"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Irrota tämä yksityisviestiketju"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Poista jäädytys"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Enintään 15 minuuttia myöhässä, kun Obby on suljettu"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

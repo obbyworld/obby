@@ -2408,6 +2408,10 @@ msgstr "Expandera medlemslistan"
 msgid "Expand workflow"
 msgstr "Expandera arbetsflöde"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Räkna med upp till 15 minuters fördröjning när Obby är stängt"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Utökad profil är inte tillgänglig"
@@ -2586,6 +2590,10 @@ msgstr "Allmän supportkanal"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Få en avisering när någon säger orden du följer."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Få dem direkt, även när Obby är stängt"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "Installera en UnifiedPush-distributör som ntfy och välj sedan UnifiedP
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Installera Google Play-tjänster för att använda detta"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Direkt, även när Obby är stängt"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Lossa den här privata meddelandekonversationen"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Återaktivera"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Upp till 15 minuter försenade när Obby är stängt"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

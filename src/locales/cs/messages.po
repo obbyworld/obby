@@ -2408,6 +2408,10 @@ msgstr "Rozbalit seznam členů"
 msgid "Expand workflow"
 msgstr "Rozbalit workflow"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Počítejte se zpožděním až 15 minut, když je Obby zavřené"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Rozšířený profil není dostupný"
@@ -2586,6 +2590,10 @@ msgstr "Obecný podpůrný kanál"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Dostávejte upozornění, když někdo napíše sledovaná slova."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Dostávejte je okamžitě, i když je Obby zavřené"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "Nainstalujte distributora UnifiedPush, například ntfy, a pak znovu vyb
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Pro použití nainstalujte služby Google Play"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Okamžitě, i když je Obby zavřené"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Odepnout tuto soukromou konverzaci"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Zrušit pozastavení"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Se zpožděním až 15 minut, když je Obby zavřené"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

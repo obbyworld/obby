@@ -22,6 +22,15 @@ export async function dropRemovedServersPush(
       await registration.unregister();
 }
 
+// An earlier build subscribed on the app's own worker, whose pushes now show nothing.
+export async function dropRootPushSubscription(): Promise<void> {
+  if (!("serviceWorker" in navigator)) return;
+  const root = new URL("/", location.origin).href;
+  const registration = await navigator.serviceWorker.getRegistration(root);
+  if (registration?.scope !== root) return;
+  await (await registration.pushManager?.getSubscription())?.unsubscribe();
+}
+
 export async function findPushRegistration(
   serverId: string,
 ): Promise<ServiceWorkerRegistration | undefined> {

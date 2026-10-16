@@ -31,28 +31,40 @@ export const pushStatus = () =>
 export const pickPushDistributor = () =>
   invoke<PushStatus>(`plugin:${PLUGIN}|pick_push_distributor`);
 
-/** Resolves false when the mode has no distributor on this device. The
- *  endpoint arrives later through `onPushEndpoint`. */
-export async function registerNativePush(
+export interface NativePushRegistration {
+  /** False when the mode has no distributor on this device. */
+  isRegistered: boolean;
+  /** The last endpoint the distributor gave, also while no page listened.
+   *  A new one arrives later through `onPushEndpoint`. */
+  endpoint?: Omit<PushEndpoint, "serverId"> | null;
+}
+
+export const registerNativePush = (
   serverId: string,
   vapidKey: string,
   mode: NativePushMode,
   context: NativePushContext,
   label: string,
-): Promise<boolean> {
-  const { isRegistered } = await invoke<{ isRegistered: boolean }>(
-    `plugin:${PLUGIN}|register_push`,
-    { serverId, vapidKey, mode, context: JSON.stringify(context), label },
-  );
-  return isRegistered;
-}
+) =>
+  invoke<NativePushRegistration>(`plugin:${PLUGIN}|register_push`, {
+    serverId,
+    vapidKey,
+    mode,
+    context: JSON.stringify(context),
+    label,
+  });
 
 export const unregisterNativePush = (serverId: string) =>
   invoke<void>(`plugin:${PLUGIN}|unregister_push`, { serverId });
+
+/** The servers this device keeps a push registration for. */
+export const pushInstances = async () =>
+  (await invoke<{ instances: string[] }>(`plugin:${PLUGIN}|push_instances`))
+    .instances;
 
 export const onPushEndpoint = (handler: (endpoint: PushEndpoint) => void) =>
   addPluginListener(PLUGIN, "pushEndpoint", handler);
 
 export const onPushUnregistered = (
-  handler: (event: { serverId: string }) => void,
+  handler: (event: { serverId: string; isFailed?: boolean }) => void,
 ) => addPluginListener(PLUGIN, "pushUnregistered", handler);

@@ -191,7 +191,9 @@ self.addEventListener("push", (event) => {
   const parsed = parseIrcLine(event.data.text());
   if (!parsed?.nick) return;
   if (parsed.command !== "PRIVMSG" && parsed.command !== "NOTICE") return;
-  if (parsed.msgid && shownByPage.has(parsed.msgid)) return;
+  // Chrome requires every push to show a notification, so we quietly replace
+  // the one the page already showed for this message.
+  const isShownByPage = !!parsed.msgid && shownByPage.has(parsed.msgid);
   event.waitUntil(
     (async () => {
       const context = await pushContext();
@@ -229,7 +231,8 @@ self.addEventListener("push", (event) => {
         // The page tags its own notifications the same way, so one chat keeps
         // one notification whichever side showed it.
         tag,
-        renotify: true,
+        renotify: !isShownByPage,
+        silent: isShownByPage,
         data: {
           serverId,
           target: chat,

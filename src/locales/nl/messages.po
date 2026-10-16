@@ -2408,6 +2408,10 @@ msgstr "Ledenlijst uitvouwen"
 msgid "Expand workflow"
 msgstr "Werkstroom uitvouwen"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Verwacht ze tot 15 minuten later terwijl Obby gesloten is"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Uitgebreid profiel niet beschikbaar"
@@ -2586,6 +2590,10 @@ msgstr "Algemeen ondersteuningskanaal"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Krijg een melding als iemand de woorden zegt die je volgt."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Ontvang ze direct, ook als Obby gesloten is"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "Installeer een UnifiedPush-distributeur zoals ntfy en selecteer daarna o
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Installeer Google Play-services om dit te gebruiken"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Direct, ook als Obby gesloten is"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Dit privéberichtgesprek losmaken"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Opschorting opheffen"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Tot 15 minuten vertraagd terwijl Obby gesloten is"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

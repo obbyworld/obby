@@ -2407,6 +2407,10 @@ msgstr "Expand member list"
 msgid "Expand workflow"
 msgstr "Expand workflow"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Expect them up to 15 minutes late while Obby is closed"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Extended profile unavailable"
@@ -2585,6 +2589,10 @@ msgstr "General Support Channel"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Get notified when someone says the words you follow."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Get them instantly, even with Obby closed"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2782,10 +2790,6 @@ msgstr "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Install Google Play services to use this"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Instant, even with Obby closed"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5757,10 +5761,6 @@ msgstr "Unpin this private message conversation"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Unsuspend"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Up to 15 minutes late while Obby is closed"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

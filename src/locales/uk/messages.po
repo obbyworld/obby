@@ -2408,6 +2408,10 @@ msgstr "Розгорнути список учасників"
 msgid "Expand workflow"
 msgstr "Розгорнути робочий процес"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Очікуйте затримку до 15 хвилин, поки Obby закрито"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Розширений профіль недоступний"
@@ -2586,6 +2590,10 @@ msgstr "Загальний канал підтримки"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Отримуйте сповіщення, коли хтось пише відстежувані слова."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Отримуйте їх миттєво, навіть коли Obby закрито"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "Установіть дистриб’ютор UnifiedPush, наприк
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Установіть сервіси Google Play, щоб використовувати цей варіант"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Миттєво, навіть коли Obby закрито"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Відкріпити цю приватну розмову"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Відновити"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Із затримкою до 15 хвилин, поки Obby закрито"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

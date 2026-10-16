@@ -2408,6 +2408,10 @@ msgstr "Üye listesini genişlet"
 msgid "Expand workflow"
 msgstr "İş akışını genişlet"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Obby kapalıyken 15 dakikaya kadar gecikme bekleyin"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Genişletilmiş profil kullanılamıyor"
@@ -2586,6 +2590,10 @@ msgstr "Genel Destek Kanalı"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Biri takip ettiğin kelimeleri söylediğinde bildirim al."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Obby kapalıyken bile anında alın"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "ntfy gibi bir UnifiedPush dağıtıcısı yükle, ardından UnifiedPush�
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "Bunu kullanmak için Google Play hizmetlerini yükle"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Obby kapalıyken bile anında"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "Bu özel mesaj konuşmasının sabitlemesini kaldır"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Askıdan al"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Obby kapalıyken 15 dakikaya kadar gecikmeli"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

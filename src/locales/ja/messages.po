@@ -2408,6 +2408,10 @@ msgstr "メンバーリストを展開"
 msgid "Expand workflow"
 msgstr "ワークフローを展開"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Obby を閉じている間は最大 15 分の遅れを見込んでください"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "拡張プロフィールは利用できません"
@@ -2586,6 +2590,10 @@ msgstr "一般サポートチャンネル"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "フォロー中の言葉が発言されたら通知を受け取りましょう。"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Obby を閉じていてもすぐに受け取ってください"
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2783,10 +2791,6 @@ msgstr "ntfyなどのUnifiedPushディストリビューターをインストー
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install Google Play services to use this"
 msgstr "使用するにはGoogle Play開発者サービスをインストールしてください"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Instant, even with Obby closed"
-msgstr "Obby を閉じていても即時に届きます"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -5758,10 +5762,6 @@ msgstr "このプライベートメッセージの会話のピン留めを解除
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "停止を解除"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Up to 15 minutes late while Obby is closed"
-msgstr "Obby を閉じている間は最大 15 分遅れます"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."

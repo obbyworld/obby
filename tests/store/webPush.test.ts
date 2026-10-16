@@ -10,6 +10,7 @@ const webpush = vi.hoisted(() => ({
 vi.mock("../../src/lib/webpush", () => webpush);
 vi.mock("../../src/lib/pushRegistration", () => ({
   dropRemovedServersPush: vi.fn(async () => {}),
+  dropRootPushSubscription: vi.fn(async () => {}),
 }));
 
 import useStore from "../../src/store";

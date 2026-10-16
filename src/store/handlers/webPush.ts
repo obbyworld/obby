@@ -1,7 +1,10 @@
 import type { StoreApi } from "zustand";
 import { areChatNotificationsOn } from "../../lib/notifications";
 import { isTauri } from "../../lib/platformUtils";
-import { dropRemovedServersPush } from "../../lib/pushRegistration";
+import {
+  dropRemovedServersPush,
+  dropRootPushSubscription,
+} from "../../lib/pushRegistration";
 import {
   hasWebPush,
   pushContextFor,
@@ -25,6 +28,9 @@ export function registerWebPushHandlers(store: StoreApi<AppState>): void {
   const dropRemoved = () =>
     void dropRemovedServersPush(loadSavedServers().map((server) => server.id));
   dropRemoved();
+  void dropRootPushSubscription().catch((error) =>
+    console.warn("[webpush] could not drop the old subscription:", error),
+  );
   const applyPushState = (state: AppState) => {
     const isOn =
       areChatNotificationsOn(state.globalSettings) &&
