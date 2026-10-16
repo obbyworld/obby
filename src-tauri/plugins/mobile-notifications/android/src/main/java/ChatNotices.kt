@@ -20,11 +20,24 @@ private const val TAP_ACTION = "tap"
 private const val CHANNEL_ID = "messages"
 
 object ChatNotices {
+  // A message can reach us twice while the app runs in the background, so we alert for each msgid once.
+  private val postedMsgids = LinkedHashSet<String>()
+
+  @Synchronized
+  private fun isFirstPost(notice: JSONObject): Boolean {
+    val msgid = notice.optJSONObject("extra")?.optString("msgid").orEmpty()
+    if (msgid.isEmpty()) return true
+    if (!postedMsgids.add(msgid)) return false
+    if (postedMsgids.size > 500) postedMsgids.remove(postedMsgids.first())
+    return true
+  }
+
   fun post(context: Context, notices: JSONArray) {
     val manager = NotificationManagerCompat.from(context)
     if (!manager.areNotificationsEnabled()) return
     for (index in 0 until notices.length()) {
       val notice = notices.getJSONObject(index)
+      if (!isFirstPost(notice)) continue
       val id = notice.getInt("id")
       val builder = NotificationCompat.Builder(context, CHANNEL_ID)
         .setSmallIcon(smallIcon(context))
