@@ -2,6 +2,7 @@ import { msg } from "@lingui/core/macro";
 import { CallCameraField } from "../../../components/ui/settings/CallCameraField";
 import { CallMicrophoneField } from "../../../components/ui/settings/CallMicrophoneField";
 import { CallSpeakerField } from "../../../components/ui/settings/CallSpeakerField";
+import { ClosedAppDeliveryField } from "../../../components/ui/settings/ClosedAppDeliveryField";
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
 import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
@@ -249,6 +250,27 @@ const notificationSettings: SettingDefinition[] = [
     searchKeywords: ["custom", "mention", "highlight", "keyword"],
     priority: 4,
     customComponent: CustomMentionsField,
+  },
+  {
+    id: "notifications.whenClosed",
+    key: "closedAppDelivery",
+    category: "notifications",
+    subcategory: "When Closed",
+    title: msg`Notifications While Obby Is Closed`,
+    description: msg`How each server's notifications reach you once you close Obby`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: [
+      "closed",
+      "background",
+      "push",
+      "web push",
+      "offline",
+      "instant",
+      "delay",
+    ],
+    priority: 5,
+    customComponent: ClosedAppDeliveryField,
   },
 ];
 

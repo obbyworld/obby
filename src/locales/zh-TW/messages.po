@@ -479,6 +479,10 @@ msgstr "新增憑證以啟用 2FA"
 msgid "Add a reaction"
 msgstr "新增表情回應"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Add a server to see how its notifications reach you"
+msgstr "新增伺服器以查看其通知如何送達"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "添加词语或短语..."
@@ -2645,6 +2649,10 @@ msgid "Hostname:"
 msgstr "主機名："
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "How each server's notifications reach you once you close Obby"
+msgstr "關閉 Obby 後各伺服器的通知如何送達"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
 msgstr "https://example.com"
 
@@ -2735,6 +2743,10 @@ msgstr "插入表情"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "安裝"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Instant, even with Obby closed"
+msgstr "即時送達，即使 Obby 已關閉"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2893,6 +2905,14 @@ msgstr "在此裝置上保留聊天歷史"
 msgid "Keep credentials"
 msgstr "保留憑證"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby in the tray to get them"
+msgstr "請將 Obby 保留在系統匣中以接收通知"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby open to get them"
+msgstr "請保持 Obby 開啟以接收通知"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "保留密碼"
@@ -2958,6 +2978,10 @@ msgstr "离开频道"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "頻道留空可建立一般網路邀請。描述僅供您自己記錄使用——只有您能在此清單中看到。"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Leave Obby in the background to get them, since swiping it away stops them"
+msgstr "請讓 Obby 在背景執行以接收通知，滑掉應用程式會停止通知"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3738,6 +3762,10 @@ msgstr "通知聲音"
 #: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "通知"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications While Obby Is Closed"
+msgstr "Obby 關閉時的通知"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5610,6 +5638,10 @@ msgstr "開啟「在此裝置上保留聊天歷史」即可開始儲存"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "開啟「連線時執行 OPER」，以便每次連線時都以已儲存的名稱與密碼傳送 OPER，或使用下方的「執行 OPER」。"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Turn on Show Notifications to get any"
+msgstr "開啟「顯示通知」以接收通知"
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "開啟相機以重試"
@@ -5682,6 +5714,10 @@ msgstr "取消置顶此私信对话"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "取消停用"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Up to 15 minutes late while Obby is closed"
+msgstr "Obby 關閉期間最多延遲 15 分鐘"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
@@ -5995,6 +6031,10 @@ msgstr "这意味着："
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "你正在做什麼"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "When Closed"
+msgstr "關閉時"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

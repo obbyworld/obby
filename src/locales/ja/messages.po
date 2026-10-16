@@ -479,6 +479,10 @@ msgstr "2FA を有効にするには認証情報を追加してください"
 msgid "Add a reaction"
 msgstr "リアクションを追加"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Add a server to see how its notifications reach you"
+msgstr "サーバーを追加して、通知の届き方を確認してください"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "単語またはフレーズを追加..."
@@ -2645,6 +2649,10 @@ msgid "Hostname:"
 msgstr "ホスト名："
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "How each server's notifications reach you once you close Obby"
+msgstr "Obby を閉じた後の各サーバーの通知の届き方"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
 msgstr "https://example.com"
 
@@ -2735,6 +2743,10 @@ msgstr "絵文字を挿入"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "インストール"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Instant, even with Obby closed"
+msgstr "Obby を閉じていても即時に届きます"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2893,6 +2905,14 @@ msgstr "チャット履歴をこのデバイスに保存する"
 msgid "Keep credentials"
 msgstr "認証情報を保持"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby in the tray to get them"
+msgstr "受け取るには Obby をトレイに常駐させてください"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby open to get them"
+msgstr "受け取るには Obby を開いたままにしてください"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "パスワードを保持"
@@ -2958,6 +2978,10 @@ msgstr "チャンネルを退出"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "チャンネルを空欄にすると、汎用のネットワーク招待になります。説明はあなた専用の記録で、このリストで自分にのみ表示されます。"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Leave Obby in the background to get them, since swiping it away stops them"
+msgstr "受け取るには Obby をバックグラウンドに残してください。スワイプで閉じると届かなくなります"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3738,6 +3762,10 @@ msgstr "通知音"
 #: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "通知"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications While Obby Is Closed"
+msgstr "Obby を閉じているときの通知"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5610,6 +5638,10 @@ msgstr "保存を始めるには「チャット履歴をこのデバイスに保
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "接続時に OPER をオンにすると、保存済みの名前とパスワードで毎回 OPER を送信します。または下の OPER を実行を使ってください。"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Turn on Show Notifications to get any"
+msgstr "受け取るには「通知を表示」をオンにしてください"
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "もう一度試すにはカメラをオンにしてください"
@@ -5682,6 +5714,10 @@ msgstr "このプライベートメッセージの会話のピン留めを解除
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "停止を解除"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Up to 15 minutes late while Obby is closed"
+msgstr "Obby を閉じている間は最大 15 分遅れます"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
@@ -5995,6 +6031,10 @@ msgstr "これが意味すること："
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "あなたの行動"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "When Closed"
+msgstr "閉じているとき"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

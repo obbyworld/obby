@@ -479,6 +479,10 @@ msgstr "Додайте облікові дані, щоб увімкнути 2FA"
 msgid "Add a reaction"
 msgstr "Додати реакцію"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Add a server to see how its notifications reach you"
+msgstr "Додайте сервер, щоб побачити, як до вас надходять його сповіщення"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Додати слово або фразу..."
@@ -2645,6 +2649,10 @@ msgid "Hostname:"
 msgstr "Хост:"
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "How each server's notifications reach you once you close Obby"
+msgstr "Як до вас надходять сповіщення кожного сервера після закриття Obby"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
 msgstr "https://example.com"
 
@@ -2735,6 +2743,10 @@ msgstr "Вставити емодзі"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Встановити"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Instant, even with Obby closed"
+msgstr "Миттєво, навіть коли Obby закрито"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2893,6 +2905,14 @@ msgstr "Зберігати історію чатів на цьому прист�
 msgid "Keep credentials"
 msgstr "Зберегти облікові дані"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby in the tray to get them"
+msgstr "Залиште Obby в системному треї, щоб отримувати їх"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby open to get them"
+msgstr "Тримайте Obby відкритим, щоб отримувати їх"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Зберегти паролі"
@@ -2958,6 +2978,10 @@ msgstr "Покинути канал"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Залиште поле каналу порожнім для загального запрошення в мережу. Опис призначений лише для ваших записів — видимий лише вам у цьому списку."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Leave Obby in the background to get them, since swiping it away stops them"
+msgstr "Залиште Obby у фоні, щоб отримувати їх: якщо змахнути застосунок, вони перестануть надходити"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3738,6 +3762,10 @@ msgstr "Звук сповіщення"
 #: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "Сповіщення"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications While Obby Is Closed"
+msgstr "Сповіщення, коли Obby закрито"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5610,6 +5638,10 @@ msgstr "Увімкніть «Зберігати історію чатів», щ�
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Увімкніть «OPER під час підключення», щоб надсилати збережені ім'я та пароль як OPER при кожному підключенні, або скористайтеся «Стати оператором» нижче."
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Turn on Show Notifications to get any"
+msgstr "Увімкніть «Показувати сповіщення», щоб отримувати їх"
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Увімкніть камеру, щоб повторити"
@@ -5682,6 +5714,10 @@ msgstr "Відкріпити цю приватну розмову"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Відновити"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Up to 15 minutes late while Obby is closed"
+msgstr "Із затримкою до 15 хвилин, поки Obby закрито"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
@@ -5995,6 +6031,10 @@ msgstr "Що це означає:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Що ви робите"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "When Closed"
+msgstr "Після закриття"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

@@ -478,6 +478,10 @@ msgstr "Add a credential to enable 2FA"
 msgid "Add a reaction"
 msgstr "Add a reaction"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Add a server to see how its notifications reach you"
+msgstr "Add a server to see how its notifications reach you"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Add a word or phrase..."
@@ -2644,6 +2648,10 @@ msgid "Hostname:"
 msgstr "Hostname:"
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "How each server's notifications reach you once you close Obby"
+msgstr "How each server's notifications reach you once you close Obby"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
 msgstr "https://example.com"
 
@@ -2734,6 +2742,10 @@ msgstr "Insert emoji"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Install"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Instant, even with Obby closed"
+msgstr "Instant, even with Obby closed"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2892,6 +2904,14 @@ msgstr "Keep chat history on this device"
 msgid "Keep credentials"
 msgstr "Keep credentials"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby in the tray to get them"
+msgstr "Keep Obby in the tray to get them"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby open to get them"
+msgstr "Keep Obby open to get them"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Keep passwords"
@@ -2957,6 +2977,10 @@ msgstr "Leave channel"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Leave Obby in the background to get them, since swiping it away stops them"
+msgstr "Leave Obby in the background to get them, since swiping it away stops them"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3737,6 +3761,10 @@ msgstr "Notification Sound"
 #: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "Notifications"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications While Obby Is Closed"
+msgstr "Notifications While Obby Is Closed"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5609,6 +5637,10 @@ msgstr "Turn on Keep chat history to start saving"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Turn on Show Notifications to get any"
+msgstr "Turn on Show Notifications to get any"
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Turn the camera on to try again"
@@ -5681,6 +5713,10 @@ msgstr "Unpin this private message conversation"
 #: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Unsuspend"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Up to 15 minutes late while Obby is closed"
+msgstr "Up to 15 minutes late while Obby is closed"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
@@ -5994,6 +6030,10 @@ msgstr "What this means:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "What you're doing"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "When Closed"
+msgstr "When Closed"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
