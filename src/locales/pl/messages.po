@@ -3177,17 +3177,17 @@ msgstr "Wzmianki o"
 msgid "Message"
 msgstr "Wiadomość"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "Wiadomość {0}"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "Wiadomość {0} (Enter, aby przejść do nowej linii, Shift+Enter, aby wysłać)"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "Wiadomość {0} (Shift+Enter, aby przejść do nowej linii)"
