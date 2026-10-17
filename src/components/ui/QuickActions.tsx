@@ -5,12 +5,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FaCog,
   FaHashtag,
+  FaMicrophone,
   FaSearch,
   FaServer,
   FaTimes,
   FaUser,
 } from "react-icons/fa";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
+import {
+  classifyChannelName,
+  voiceDisplayName,
+} from "../../lib/channelMentions";
 import { fuzzyMatch } from "../../lib/fuzzySearch";
 import ircClient from "../../lib/ircClient";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
@@ -102,7 +107,7 @@ const QuickActions: React.FC = () => {
             results.push({
               type: "channel",
               id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
+              title: voiceDisplayName(channel.name),
               description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
               serverId: server.id,
               score: 1000 + channel.unreadCount,
@@ -113,7 +118,7 @@ const QuickActions: React.FC = () => {
             results.push({
               type: "channel",
               id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
+              title: voiceDisplayName(channel.name),
               description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
               serverId: server.id,
               score: 500 + channel.unreadCount,
@@ -284,7 +289,7 @@ const QuickActions: React.FC = () => {
           results.push({
             type: "channel",
             id: `channel-${server.id}-${channel.id}`,
-            title: channel.name,
+            title: voiceDisplayName(channel.name),
             description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
             serverId: server.id,
             score: channelMatch.score + scoreAdjustment,
@@ -652,13 +657,25 @@ const QuickActions: React.FC = () => {
                     case "setting":
                       return <FaCog className="mr-3" />;
                     case "channel":
-                      return <FaHashtag className="mr-3" />;
+                      return classifyChannelName(
+                        (result.data as Channel).name,
+                      ) === "voice" ? (
+                        <FaMicrophone className="mr-3" />
+                      ) : (
+                        <FaHashtag className="mr-3" />
+                      );
                     case "dm":
                       return <FaUser className="mr-3" />;
                     case "server":
                       return <FaServer className="mr-3" />;
                     case "join-channel":
-                      return <FaHashtag className="mr-3" />;
+                      return classifyChannelName(
+                        (result.data as { channelName: string }).channelName,
+                      ) === "voice" ? (
+                        <FaMicrophone className="mr-3" />
+                      ) : (
+                        <FaHashtag className="mr-3" />
+                      );
                     case "start-dm":
                       return <FaUser className="mr-3" />;
                     case "ui-toggle":
