@@ -1,5 +1,8 @@
 import { t } from "@lingui/core/macro";
-import { classifyChannelName } from "../../../lib/channelMentions";
+import {
+  classifyChannelName,
+  voiceDisplayName,
+} from "../../../lib/channelMentions";
 import { fuzzyMatch } from "../../../lib/fuzzySearch";
 import type { QuickActionResult } from "./types";
 
@@ -21,7 +24,7 @@ export interface JoinChannelResultsParams {
 function joinTitle(channelName: string): string {
   switch (classifyChannelName(channelName)) {
     case "voice":
-      return t`Join voice channel ${channelName}`;
+      return t`Join voice channel ${{ channelName: voiceDisplayName(channelName) }}`;
     case "stream":
       return t`Join stream ${channelName}`;
     default:

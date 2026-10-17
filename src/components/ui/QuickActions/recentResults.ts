@@ -1,3 +1,4 @@
+import { voiceDisplayName } from "../../../lib/channelMentions";
 import type { RecentPlace } from "../../../lib/search/recents";
 import { serializeSearchQuery } from "../../../lib/search/searchQuery";
 import { isScopeOnServers, scopeLabel } from "../../../lib/search/searchScope";
@@ -69,7 +70,7 @@ export function buildUnreadResults(
       results.push({
         type: "channel",
         id: `channel-${server.id}-${channel.id}`,
-        title: channel.name,
+        title: voiceDisplayName(channel.name),
         description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
         serverId: server.id,
         score:
