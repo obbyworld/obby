@@ -4,6 +4,7 @@ import type React from "react";
 import { type ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import { findTextField } from "../focus";
 import { stopTouchOutsideMap } from "../leafletMap";
 
@@ -50,6 +51,14 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const isTouch = useIsTouchInput();
+  const swipeRef = useSwipeToDismiss(onClose);
+  const setModal = useCallback(
+    (el: HTMLDivElement | null) => {
+      modalRef.current = el;
+      swipeRef(el);
+    },
+    [swipeRef],
+  );
   const titleId = useId();
 
   useEffect(() => {
@@ -132,7 +141,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           onClick={closeOnClickOutside ? onClose : undefined}
         />
         <div
-          ref={modalRef}
+          ref={setModal}
           tabIndex={-1}
           role="dialog"
           aria-modal="true"
