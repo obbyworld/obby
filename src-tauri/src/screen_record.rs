@@ -210,6 +210,28 @@ pub fn region_recording_supported() -> bool {
     has_binary("ffmpeg")
 }
 
+#[cfg(target_os = "macos")]
+#[link(name = "CoreGraphics", kind = "framework")]
+extern "C" {
+    fn CGPreflightScreenCaptureAccess() -> bool;
+    fn CGRequestScreenCaptureAccess() -> bool;
+}
+
+/// True when this app may record the screen. On macOS `screencapture` records
+/// as us, so we ask before drawing anything; the system shows its own prompt
+/// only the first time and answers false silently after that.
+#[tauri::command]
+pub fn screen_recording_allowed() -> bool {
+    #[cfg(target_os = "macos")]
+    // SAFETY: both calls take no arguments and only read or request the
+    // Screen Recording permission of this process.
+    unsafe {
+        CGPreflightScreenCaptureAccess() || CGRequestScreenCaptureAccess()
+    }
+    #[cfg(not(target_os = "macos"))]
+    true
+}
+
 #[tauri::command]
 pub fn start_region_recording(
     state: tauri::State<'_, RecorderState>,

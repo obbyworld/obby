@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { StoreApi } from "zustand";
+import * as storage from "../../src/store/localStorage";
 import {
   _peekWhoReplyBatcher,
   _resetWhoReplyBatcher,
@@ -171,5 +172,18 @@ describe("whoReplyBatcher", () => {
     const snap = store.snapshot();
     expect(snap.servers[0].channels[0].users[0].username).toBe("alice");
     expect(snap.servers[0].channels[1].users[0].username).toBe("bob");
+  });
+
+  test("new members take metadata already fetched for them", () => {
+    const store = makeMockStore();
+    storage.metadata.save({
+      s1: { mattf: { "display-name": { value: "Matt", visibility: "*" } } },
+    });
+    bufferWhoReply(store, "s1", "#room", { nick: "mattf" });
+    flushWhoReplies(store, "s1", "#room");
+    expect(store.snapshot().servers[0].channels[0].users[0].metadata).toEqual({
+      "display-name": { value: "Matt", visibility: "*" },
+    });
+    storage.metadata.save({});
   });
 });

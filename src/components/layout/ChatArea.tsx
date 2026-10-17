@@ -52,6 +52,7 @@ import {
 } from "../../lib/e2ee/media";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
 import { locationSharingSupported } from "../../lib/geolocation";
+import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
@@ -72,7 +73,10 @@ import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
-import { regionRecordingSupported } from "../../lib/screenRecorder";
+import {
+  regionRecordingSupported,
+  screenRecordingAllowed,
+} from "../../lib/screenRecorder";
 import {
   focusMainWindow,
   type SelectedRegion,
@@ -119,6 +123,7 @@ import MemberPicker from "../ui/MemberPicker";
 import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import PluginsScreen from "../ui/PluginsScreen";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
 import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
@@ -248,6 +253,7 @@ export const ChatArea: React.FC<{
     files: File[];
     caption: string;
     links: string[];
+    replyTo: MessageType | null;
     reason: PlainUploadReason;
     // The upload path reads the current selection, so the conversation the
     // warning was raised about is pinned here. Otherwise a confirmation aimed
@@ -320,6 +326,22 @@ export const ChatArea: React.FC<{
   const channelListRefs = useRef<Map<string, ChannelMessageListHandle | null>>(
     new Map(),
   );
+  // The lists are memoized and React.memo also compares refs, so each list
+  // keeps one ref callback for its lifetime.
+  const listRefCallbacks = useRef(
+    new Map<string, (handle: ChannelMessageListHandle | null) => void>(),
+  );
+  const listRefFor = (key: string) => {
+    let callback = listRefCallbacks.current.get(key);
+    if (!callback) {
+      callback = (handle) => {
+        if (handle) channelListRefs.current.set(key, handle);
+        else channelListRefs.current.delete(key);
+      };
+      listRefCallbacks.current.set(key, callback);
+    }
+    return callback;
+  };
   // lineHeight/padding are static CSS values — cache them after first read to avoid
   // getComputedStyle on every keystroke, which forces layout flush on mobile WebView.
   const textareaMetricsRef = useRef<{
@@ -657,6 +679,13 @@ export const ChatArea: React.FC<{
     }
   }, [selectedFormatting, isFormattingInitialized]);
 
+  const homeView = useStore((state) => state.ui.homeView);
+  const searchHitMessageId = useStore((state) =>
+    state.ui.sidePane?.kind === "search"
+      ? state.ui.sidePane.hitMessageId
+      : undefined,
+  );
+
   // Get selected server and channel/private chat - memoized to prevent re-renders
   const selectedServer = useMemo(
     () => servers.find((s) => s.id === selectedServerId),
@@ -744,12 +773,22 @@ export const ChatArea: React.FC<{
 
   const describeRecordingFailure = (failure: RecordingFailure): string =>
     failure === "screen-gone"
-      ? t`That screen is no longer there.`
+      ? t`That screen is no longer available. Choose another screen.`
       : t`The recording could not be made.`;
 
   // The rectangle is drawn on the desktop first, then the screen it sits on is
   // captured and cropped to it.
   const startRegionRecording = async () => {
+    if (!(await screenRecordingAllowed())) {
+      useStore.getState().addGlobalNotification({
+        type: "warn",
+        command: "RECORD SCREEN",
+        code: "SCREEN_PERMISSION",
+        message: t`Allow Obby under Screen Recording in System Settings, then record again.`,
+        serverId: selectedServerId ?? "",
+      });
+      return;
+    }
     const selection = await selectScreenRegion();
     if (!selection) return;
     await focusMainWindow();
@@ -976,9 +1015,7 @@ export const ChatArea: React.FC<{
             .isAtBottom ?? false;
         navWasActiveRef.current = true;
       }
-      const el = document.querySelector(
-        `[data-message-id="${navHighlightedMsgId}"]`,
-      );
+      const el = findMessageRow(document, navHighlightedMsgId);
       el?.scrollIntoView({ block: "nearest", behavior: "instant" });
     } else if (navWasActiveRef.current) {
       if (wasAtBottomBeforeNavRef.current) {
@@ -1128,15 +1165,19 @@ export const ChatArea: React.FC<{
         // thumbnails stay alive until an upload is known to have started and
         // an upload that never starts hands the words and the files back.
         const held = attachments;
+        const replyTo = localReplyTo;
         updateAttachments(channelKey, () => NO_ATTACHMENTS);
-        void handleFilesUpload(files, caption, links).then((outcome) => {
-          if (outcome === "failed") {
-            updateAttachments(channelKey, () => held);
-            applyText(caption);
-            return;
-          }
-          for (const attachment of held) releasePreview(attachment);
-        });
+        void handleFilesUpload(files, caption, links, replyTo).then(
+          (outcome) => {
+            if (outcome === "failed") {
+              updateAttachments(channelKey, () => held);
+              applyText(caption);
+              setLocalReplyTo(replyTo);
+              return;
+            }
+            for (const attachment of held) releasePreview(attachment);
+          },
+        );
       } else {
         if (sendMessage([caption, ...links].join(" ")) === "withheld") return;
         clearAttachments();
@@ -1167,6 +1208,7 @@ export const ChatArea: React.FC<{
     files: File[],
     caption: string,
     links: string[],
+    replyTo: MessageType | null,
     confirmedForNick: string | null = null,
   ): Promise<UploadOutcome> => {
     if (!selectedServerId || files.length === 0) return "failed";
@@ -1175,7 +1217,9 @@ export const ChatArea: React.FC<{
     const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
     const filehostUrl = selectedServer?.filehost;
     if (!tokenlessEndpoint && !filehostUrl) {
-      reportUploadFailure(t`This server has nowhere to put a file.`);
+      reportUploadFailure(
+        t`This server has no file host. Connect to a server with a file host to upload files.`,
+      );
       return "failed";
     }
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
@@ -1204,7 +1248,7 @@ export const ChatArea: React.FC<{
           console.error(
             "draft/authtoken: server did not return a filehost token",
           );
-          reportUploadFailure(t`The file host would not let this through.`);
+          reportUploadFailure(t`The file host refused the upload. Try again.`);
           return "failed";
         }
         tokens.push(tok);
@@ -1232,7 +1276,7 @@ export const ChatArea: React.FC<{
           ? t`File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted.`
           : blockedStatus === "error"
             ? t`File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted.`
-            : t`File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption.`,
+            : t`File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted.`,
       );
       return "failed";
     }
@@ -1249,6 +1293,7 @@ export const ChatArea: React.FC<{
         files,
         caption,
         links,
+        replyTo,
         reason: encryptHere ? "too-large" : "scheme",
         nick: target,
       });
@@ -1338,7 +1383,7 @@ export const ChatArea: React.FC<{
             updateJob(job.id, {
               status: "failed",
               error: media
-                ? t`This host does not accept ${CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is.`
+                ? t`This file host refuses ${CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted.`
                 : validationError,
             });
             return null;
@@ -1408,7 +1453,13 @@ export const ChatArea: React.FC<{
           line,
         ) !== "none";
       if (!encrypted) {
-        ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
+        const replyTags = replyTo?.msgid
+          ? `@+reply=${replyTo.msgid};+draft/reply=${replyTo.msgid} `
+          : "";
+        ircClient.sendRaw(
+          selectedServerId,
+          `${replyTags}PRIVMSG ${target} :${line}`,
+        );
         if (selectedPrivateChat && currentUser) {
           const outgoing = {
             id: uuidv4(),
@@ -1419,7 +1470,7 @@ export const ChatArea: React.FC<{
             serverId: selectedServerId,
             type: "message" as const,
             reactions: [],
-            replyMessage: null,
+            replyMessage: replyTo,
             mentioned: [],
           };
           useStore.getState().addMessage(outgoing);
@@ -2141,7 +2192,8 @@ export const ChatArea: React.FC<{
                 <BlankPage />
               </div>
             ))}
-          {!selectedServer && <DiscoverGrid />}
+          {!selectedServer &&
+            (homeView === "plugins" ? <PluginsScreen /> : <DiscoverGrid />)}
 
           {/* Keep-alive channel message lists — last 3 channels stay in DOM with
               display:none to preserve scroll position across channel switches.
@@ -2175,10 +2227,7 @@ export const ChatArea: React.FC<{
                     }
                   >
                     <ChannelMessageList
-                      ref={(handle) => {
-                        if (handle) channelListRefs.current.set(key, handle);
-                        else channelListRefs.current.delete(key);
-                      }}
+                      ref={listRefFor(key)}
                       channelKey={key}
                       initialScrollState={savedScrollState}
                       serverId={aServerId}
@@ -2191,6 +2240,9 @@ export const ChatArea: React.FC<{
                         isKeyActive
                           ? (navHighlightedMsgId ?? undefined)
                           : undefined
+                      }
+                      searchHitMessageId={
+                        isKeyActive ? searchHitMessageId : undefined
                       }
                       onUsernameContextMenu={handleUsernameClick}
                       onIrcLinkClick={handleIrcLinkClick}
@@ -2211,7 +2263,7 @@ export const ChatArea: React.FC<{
           {/* Input area */}
           {(selectedChannel || selectedPrivateChat) && (
             <div
-              className={`${!isNarrowView && "px-4"} relative chat-input-area`}
+              className={`${isNarrowView ? "" : "px-4"} relative chat-input-area`}
             >
               {selectedPrivateChat && selectedServerId && (
                 <E2EERequestBanner
@@ -2264,6 +2316,9 @@ export const ChatArea: React.FC<{
                 <div className="relative flex flex-nowrap items-end pr-2">
                   <button
                     ref={plusButtonRef}
+                    aria-label={t`Attach`}
+                    aria-haspopup="menu"
+                    aria-expanded={showPlusMenu}
                     className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
                     onClick={() => setShowPlusMenu((prev) => !prev)}
                   >
@@ -2326,7 +2381,7 @@ export const ChatArea: React.FC<{
                     onSendClick={handleSendMessage}
                     showSendButton={isNativeMobile}
                     hideEmoji={isNativeMobile}
-                    hasText={hasText}
+                    canSend={hasText || attachments.length > 0}
                   />
                 </div>
               </div>
@@ -2759,9 +2814,9 @@ export const ChatArea: React.FC<{
           reason={pendingPlainUpload.reason}
           nick={pendingPlainUpload.nick}
           onConfirm={() => {
-            const { files, caption, links, nick } = pendingPlainUpload;
+            const { files, caption, links, replyTo, nick } = pendingPlainUpload;
             setPendingPlainUpload(null);
-            void handleFilesUpload(files, caption, links, nick);
+            void handleFilesUpload(files, caption, links, replyTo, nick);
           }}
           onCancel={() => setPendingPlainUpload(null)}
         />

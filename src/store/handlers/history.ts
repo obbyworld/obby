@@ -6,6 +6,7 @@ import {
   appendRows,
   deleteGap,
   deleteMessage,
+  deleteMessagesMissingFromPage,
   deleteServerHistory,
   eventRowsAfter,
   eventRowsBefore,
@@ -44,7 +45,7 @@ import {
 } from "../../lib/history/historySearch";
 import { containsLink, plainText } from "../../lib/history/searchFields";
 import ircClient from "../../lib/ircClient";
-import { parseMessageTags } from "../../lib/ircUtils";
+import { isChannelTarget, parseMessageTags } from "../../lib/ircUtils";
 import type {
   SearchPage,
   SearchQuery,
@@ -272,6 +273,14 @@ async function saveHistoryPage(
     ?.shift();
   const inserted = rows.length ? await saveRows(store, rows) : [];
   for (const msgid of redacts) await deleteMessage(key, target, msgid);
+  if (page.oldest !== undefined && page.newest !== undefined)
+    await deleteMessagesMissingFromPage(
+      key,
+      target,
+      page.oldest,
+      page.newest,
+      page.msgids,
+    );
   if (request?.kind === "latest") {
     const decision = decideAfterLatest({
       newestStoredTime: await request.newestStoredTime,
@@ -631,8 +640,9 @@ export function fillGapsForSearch(
   };
 }
 
-// On a server without history our disk is the only source, so we show its
-// newest page the first time a chat is opened in this session.
+// Our disk is the only source on a server without history, and for private
+// chats on servers that keep channel history only, so we show its newest page
+// the first time such a chat is opened in this session.
 export function showSavedHistory(
   store: StoreApi<AppState>,
   serverId: string,
@@ -641,7 +651,8 @@ export function showSavedHistory(
   const key = conversationKey(serverId, target);
   if (
     !isEnabled(store) ||
-    serverSupportsChathistory(store.getState(), serverId)
+    (isChannelTarget(target) &&
+      serverSupportsChathistory(store.getState(), serverId))
   )
     return;
   if (shownConversations.has(key)) return;
@@ -774,6 +785,7 @@ export async function loadOlderMessages(
 }
 
 const WINDOW_ROWS = 50;
+const WINDOW_KEEP_MESSAGES = 300;
 let jumpCounter = 0;
 
 export type SavedJump = "loaded" | "not-saved" | "not-found";
@@ -786,6 +798,7 @@ export async function showSavedMessagesAround(
   serverId: string,
   target: string,
   time: number,
+  isCurrentJump: () => boolean = () => true,
 ): Promise<SavedJump> {
   if (!isEnabled(store)) return "not-saved";
   const lower = target.toLowerCase();
@@ -803,13 +816,17 @@ export async function showSavedMessagesAround(
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return "not-found";
   if (after.length < WINDOW_ROWS) {
-    showPresent(store, serverId, target);
-    await replayRows(store, serverId, target, rows);
+    await replayRows(store, serverId, target, rows, () => {
+      if (!isCurrentJump()) return false;
+      showPresent(store, serverId, target);
+      return true;
+    });
     return "loaded";
   }
   const newest = rows[rows.length - 1];
   const jumpId = ++jumpCounter;
   await replayRows(store, serverId, target, rows, () => {
+    if (!isCurrentJump()) return false;
     store.setState((state) => ({
       messages: { ...state.messages, [conversation.key]: [] },
       historyWindows: {
@@ -877,6 +894,24 @@ export async function loadNewerMessages(
     }));
     return true;
   });
+  if (dropOldestInWindow(store, conversation.key))
+    await refreshHasMore(store, serverId, target, false);
+}
+
+// We cap a window at WINDOW_KEEP_MESSAGES while paging newer, and the chat list
+// corrects its scroll position for the dropped rows.
+function dropOldestInWindow(store: StoreApi<AppState>, key: string): boolean {
+  const { messages, historyWindows } = store.getState();
+  const shown = messages[key] ?? [];
+  if (!historyWindows[key] || shown.length <= WINDOW_KEEP_MESSAGES)
+    return false;
+  store.setState((state) => ({
+    messages: {
+      ...state.messages,
+      [key]: (state.messages[key] ?? []).slice(-WINDOW_KEEP_MESSAGES),
+    },
+  }));
+  return true;
 }
 
 // On a chathistory server we ask for the newest page as on join, so messages

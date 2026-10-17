@@ -45,19 +45,19 @@ const UnencryptedUploadConfirmModal: React.FC<
           <p className="text-discord-text-normal">
             {reason === "scheme" ? (
               <Trans>
-                Your messages with {nick} are encrypted with OTR, which carries
-                text only. These files would be sent in the clear.
+                Your messages with {nick} are encrypted with OTR, which encrypts
+                text only. These files will be sent unencrypted.
               </Trans>
             ) : affected.length === files.length ? (
               <Trans>
                 Your messages with {nick} are encrypted. These files are too
-                large to encrypt and would be sent in the clear.
+                large to encrypt and will be sent unencrypted.
               </Trans>
             ) : (
               <Trans>
                 Your messages with {nick} are encrypted. {affected.length} of{" "}
-                {files.length} files are too large to encrypt and would be sent
-                in the clear. The rest stay encrypted.
+                {files.length} files are too large to encrypt and will be sent
+                unencrypted. The other files will be sent encrypted.
               </Trans>
             )}
           </p>
@@ -83,15 +83,15 @@ const UnencryptedUploadConfirmModal: React.FC<
             <p className="text-sm text-yellow-200">
               {reason === "scheme" ? (
                 <Trans>
-                  The file host stores it readable, and anyone who obtains the
-                  link can open it. Switch to Obby encryption to send files
+                  The file host can read these files, and anyone with the link
+                  can open them. Switch to Obby encryption to send files
                   encrypted.
                 </Trans>
               ) : (
                 <Trans>
-                  Files above {formatFileSize(MAX_ENCRYPTABLE_BYTES)} are sent
-                  as-is. The file host stores it readable, and anyone who
-                  obtains the link can open it.
+                  Files larger than {formatFileSize(MAX_ENCRYPTABLE_BYTES)} are
+                  sent unencrypted. The file host can read them, and anyone with
+                  the link can open them.
                 </Trans>
               )}
             </p>

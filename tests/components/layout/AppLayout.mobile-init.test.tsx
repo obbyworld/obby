@@ -24,6 +24,7 @@ describe("AppLayout - Mobile Initial Load", () => {
     useStore.setState({
       servers: [],
       ui: {
+        messageJump: null,
         selectedServerId: null,
         isNarrowView: true,
         mobileViewActiveColumn: "serverList",

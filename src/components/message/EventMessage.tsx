@@ -1,4 +1,4 @@
-import { Trans, useLingui } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import ircClient from "../../lib/ircClient";
@@ -25,7 +25,6 @@ export const EventMessage: React.FC<EventMessageProps> = ({
   onUsernameContextMenu,
 }) => {
   const { t, i18n } = useLingui();
-  const [showTooltip, setShowTooltip] = useState(false);
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   const mediaSettings = mediaLevelToSettings(
@@ -60,26 +59,25 @@ export const EventMessage: React.FC<EventMessageProps> = ({
     );
   };
 
-  const handleMouseEnter = () => {
-    setShowTooltip(true);
-  };
-
-  const handleMouseLeave = () => {
-    setShowTooltip(false);
-  };
-
   const username = message.userId;
   const displayName =
     messageUser?.metadata?.["display-name"]?.value || username;
   const userColor = messageUser?.metadata?.color?.value || "#888888";
   const isCurrentUser = currentUser?.username === username;
   const displayText = isCurrentUser ? t`You` : displayName;
+  const eventHint = {
+    join: t`Joined the channel`,
+    part: t`Left the channel`,
+    quit: t`Quit the server`,
+    nick: t`Changed nickname`,
+    mode: t`Changed channel modes`,
+    kick: t`Was kicked from the channel`,
+  }[message.type as string];
 
   return (
     <div
       className="group relative flex items-center px-4 py-1 mt-2 hover:bg-discord-dark-500 transition-colors duration-75"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      title={eventHint}
     >
       {/* Small event avatar that expands on individual hover */}
       <div className="flex-shrink-0 mr-3">
@@ -125,20 +123,6 @@ export const EventMessage: React.FC<EventMessageProps> = ({
       <div className="opacity-70 transition-opacity text-xs text-discord-text-muted ml-2">
         {formatTime(new Date(message.timestamp))}
       </div>
-
-      {/* Tooltip for future collapsing functionality */}
-      {showTooltip && (
-        <div className="absolute bottom-full left-12 mb-1 px-2 py-1 bg-discord-dark-100 text-white text-xs rounded shadow-lg z-10 whitespace-nowrap">
-          {message.type === "join" && <Trans>Joined the channel</Trans>}
-          {message.type === "part" && <Trans>Left the channel</Trans>}
-          {message.type === "quit" && <Trans>Quit the server</Trans>}
-          {message.type === "nick" && <Trans>Changed nickname</Trans>}
-          {message.type === "mode" && <Trans>Changed channel modes</Trans>}
-          {message.type === "kick" && (
-            <Trans>Was kicked from the channel</Trans>
-          )}
-        </div>
-      )}
     </div>
   );
 };

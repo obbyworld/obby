@@ -1,9 +1,10 @@
 import type React from "react";
-import { useMemo, useRef, useState } from "react";
-import { type CompletionRange, useCompletion } from "../../hooks/useCompletion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useCompletion } from "../../hooks/useCompletion";
 import {
   appendSearchToken,
   parseSearchInput,
+  removeSearchFilter,
   toggleSearchToken,
 } from "../../lib/search/searchQuery";
 import { resolveInScope } from "../../lib/search/searchScope";
@@ -21,9 +22,12 @@ interface SearchDraftOptions {
   // Completions are off while the input searches something other than messages.
   isMessageSearch?: boolean;
   keysActive?: boolean;
-  // Scope picks and filter toggles run the search straight away.
-  submitsOnChange?: boolean;
+  // The results pane searches as the reader types, picks a scope or toggles a filter.
+  isInPane?: boolean;
 }
+
+const LIVE_SEARCH_MS = 250;
+const COMPLETION_ACCEPT_KEYS = ["Enter", "Tab"];
 
 export function useSearchDraft({
   initialText = "",
@@ -31,23 +35,30 @@ export function useSearchDraft({
   inputRef,
   isMessageSearch = true,
   keysActive = true,
-  submitsOnChange = false,
+  isInPane = false,
 }: SearchDraftOptions) {
   const servers = useStore((s) => s.servers);
   const openSearchResults = useStore((s) => s.openSearchResults);
   const [text, setText] = useState(initialText);
   const [caret, setCaret] = useState(initialText.length);
-  const [scope, setScopeState] = useState(initialScope);
+  const [baseScope, setBaseScope] = useState(initialScope);
   const [isScopeMenuOpen, setIsScopeMenuOpen] = useState(false);
   const textRef = useRef(text);
   textRef.current = text;
+  const searchedTextRef = useRef(initialText);
 
-  const submit = (nextText = text, nextScope = scope) =>
-    openSearchResults(
-      parseSearchInput(nextText, nextScope, (value) =>
-        resolveInScope(servers, nextScope, value),
-      ),
+  const parse = (nextText: string, chipScope: SearchScope) =>
+    parseSearchInput(nextText, chipScope, (value) =>
+      resolveInScope(servers, chipScope, value),
     );
+
+  const submit = (nextText = text, nextScope = baseScope, isLive = false) => {
+    searchedTextRef.current = nextText;
+    openSearchResults(parse(nextText, nextScope), {
+      isLive,
+      isPaneKept: isInPane,
+    });
+  };
 
   const replaceText = (next: string, nextCaret = next.length) => {
     setText(next);
@@ -58,35 +69,23 @@ export function useSearchDraft({
     });
   };
 
-  const setScope = (next: SearchScope, nextText = textRef.current) => {
-    setScopeState(next);
-    if (submitsOnChange) submit(nextText, next);
+  // A typed `in:` names the scope, so the chip shows it and a pick from the
+  // chip menu replaces it.
+  const scope = parse(text, baseScope).scope;
+  const setScope = (next: SearchScope) => {
+    const rest = removeSearchFilter(textRef.current, "in");
+    if (rest !== textRef.current) replaceText(rest);
+    setBaseScope(next);
+    if (isInPane) submit(rest, next, true);
   };
-
-  const pickScopeRef =
-    useRef<(next: SearchScope, range: CompletionRange) => void>(null);
-  const pickScope = (next: SearchScope, range: CompletionRange) => {
-    const current = textRef.current;
-    const rest = `${current.slice(0, range.start)}${current.slice(range.end)}`
-      .replace(/\s+/g, " ")
-      .trimStart();
-    replaceText(rest, Math.min(range.start, rest.length));
-    setScope(next, rest);
-  };
-  pickScopeRef.current = pickScope;
 
   const savedNicks = useSavedSenders();
   const providers = useMemo(
     () =>
       isMessageSearch
-        ? messageSearchProviders(
-            servers,
-            scope,
-            (next, range) => pickScopeRef.current?.(next, range),
-            savedNicks,
-          )
+        ? messageSearchProviders(servers, baseScope, savedNicks)
         : [],
-    [isMessageSearch, servers, scope, savedNicks],
+    [isMessageSearch, servers, baseScope, savedNicks],
   );
 
   const completion = useCompletion({
@@ -95,13 +94,26 @@ export function useSearchDraft({
     caret,
     onReplace: replaceText,
     keysActive: keysActive && !isScopeMenuOpen,
+    acceptKeys: COMPLETION_ACCEPT_KEYS,
   });
 
   const toggleToken = (token: string) => {
     const next = toggleSearchToken(text, token);
     replaceText(next);
-    if (submitsOnChange) submit(next);
+    if (isInPane) submit(next, baseScope, true);
   };
+
+  // We wait while the completion list is open, since a half-typed filter matches nothing.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: submit reads the latest scope and servers on each render
+  useEffect(() => {
+    if (!isInPane || completion.isOpen) return;
+    if (text.trim() === searchedTextRef.current.trim()) return;
+    const timer = setTimeout(
+      () => submit(text, baseScope, true),
+      LIVE_SEARCH_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [isInPane, text, completion.isOpen]);
 
   const inputProps = {
     value: text,

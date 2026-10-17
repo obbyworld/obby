@@ -133,6 +133,15 @@ describe("text", () => {
     expect(await ids({ text: "deploy sunday" })).toEqual([]);
   });
 
+  it("matches a one letter last word, which the index never holds", async () => {
+    await db.appendRows([
+      message({ id: "n7", time: 5, text: "deploy 7 done" }),
+      message({ id: "n8", time: 6, text: "deploy 8 done" }),
+    ]);
+    expect(await ids({ text: "deploy 7" })).toEqual(["n7"]);
+    expect(await ids({ text: "8" })).toEqual(["n8"]);
+  });
+
   it("finds a long id as the last word and as an earlier word", async () => {
     const sha = "3f9a1c0be27d4e5f8a6b9c0d1e2f3a4b5c6d7e8f";
     await db.appendRows([
@@ -206,6 +215,23 @@ describe("filters", () => {
       "b1",
     ]);
     expect(await ids({ after: 3 })).toEqual(["e1", "d1"]);
+  });
+});
+
+describe("mentions of a person", () => {
+  it("finds the whole nick in other people's messages, not their own lines", async () => {
+    await db.appendRows([
+      message({ id: "v1", time: 1, text: "Valware: are you there" }),
+      message({ id: "v2", time: 2, text: "ask @valware about it" }),
+      message({ id: "v3", time: 3, text: "valwares plural is not him" }),
+      message({ id: "v4", time: 4, text: "my own line", nick: "Valware" }),
+      message({ id: "v5", time: 5, text: "the [bot] knows", nick: "bob" }),
+      message({ id: "v6", time: 6, text: "valware deploy now" }),
+    ]);
+
+    expect(await ids({ mentions: "Valware" })).toEqual(["v6", "v2", "v1"]);
+    expect(await ids({ mentions: "valware", text: "dep" })).toEqual(["v6"]);
+    expect(await ids({ mentions: "[bot]" })).toEqual(["v5"]);
   });
 });
 

@@ -103,6 +103,10 @@ export function queryTermsOf(text: string): QueryTerms {
   return prefix ? { exact, prefix } : { exact };
 }
 
+// The index holds no word shorter than MIN_TERM, so a shorter half-typed word
+// is only checked on the rows other filters find.
+export const isIndexedPrefix = (prefix: string) => prefix.length >= MIN_TERM;
+
 export function matchesTerms(text: string, query: QueryTerms): boolean {
   if (!query.prefix) return true;
   const words = wordsOf(text);

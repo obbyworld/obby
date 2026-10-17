@@ -1,10 +1,18 @@
 /**
  * Hook for managing message reactions and reaction modal
  */
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import ircClient from "../lib/ircClient";
 import useStore from "../store";
+import {
+  updateMessageByMsgid,
+  withoutReaction,
+  withReaction,
+} from "../store/helpers";
 import type { Message, Server, User } from "../types";
+
+const messageKey = (message: Message) =>
+  `${message.serverId}-${message.channelId}`;
 
 interface ReactionModalState {
   isOpen: boolean;
@@ -32,8 +40,11 @@ export function useReactions({
   selectedServerId,
   currentUser,
 }: UseReactionsOptions): UseReactionsReturn {
-  const { servers } = useStore();
   const set = useStore.setState;
+  // We read the user through a ref so the callbacks keep one identity and
+  // every memoized message row does not re-render when the user object changes.
+  const currentUserRef = useRef(currentUser);
+  currentUserRef.current = currentUser;
 
   const [reactionModal, setReactionModal] = useState<ReactionModalState>({
     isOpen: false,
@@ -67,7 +78,9 @@ export function useReactions({
     (
       message: Message,
     ): { server: Server | undefined; target: string | undefined } => {
-      const server = servers.find((s) => s.id === message.serverId);
+      const server = useStore
+        .getState()
+        .servers.find((s) => s.id === message.serverId);
       if (!server) return { server: undefined, target: undefined };
 
       const channel = server.channels.find((c) => c.id === message.channelId);
@@ -78,7 +91,7 @@ export function useReactions({
       );
       return { server, target: privateChat?.username };
     },
-    [servers],
+    [],
   );
 
   /**
@@ -117,46 +130,16 @@ export function useReactions({
           ircClient.sendRaw(server.id, tagMsg);
         }
 
-        // Optimistically update the message
-        if (reactionModal.message) {
-          const message = reactionModal.message;
-          set((state) => {
-            const key = `${message.serverId}-${message.channelId}`;
-            const messages = state.messages[key];
-            if (messages) {
-              const msgIndex = messages.findIndex((m) => m.id === message.id);
-              if (msgIndex !== -1) {
-                const updatedMessage = { ...messages[msgIndex] };
-                if (existingReaction) {
-                  // Remove the reaction
-                  updatedMessage.reactions = updatedMessage.reactions.filter(
-                    (r) =>
-                      !(
-                        r.emoji === emoji && r.userId === currentUser?.username
-                      ),
-                  );
-                } else {
-                  // Add the reaction
-                  updatedMessage.reactions = [
-                    ...updatedMessage.reactions,
-                    { emoji, userId: currentUser?.username || "" },
-                  ];
-                }
-                return {
-                  messages: {
-                    ...state.messages,
-                    [key]: [
-                      ...messages.slice(0, msgIndex),
-                      updatedMessage,
-                      ...messages.slice(msgIndex + 1),
-                    ],
-                  },
-                };
-              }
-            }
-            return state;
-          });
-        }
+        const message = reactionModal.message;
+        const { msgid } = message;
+        const userId = currentUser?.username ?? "";
+        const toggle = existingReaction ? withoutReaction : withReaction;
+        if (msgid)
+          set((state) =>
+            updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
+              toggle(m, emoji, userId),
+            ),
+          );
       }
     },
     [
@@ -172,7 +155,8 @@ export function useReactions({
    */
   const directReaction = useCallback(
     (emoji: string, message: Message) => {
-      if (!message.msgid || !selectedServerId) return;
+      const { msgid } = message;
+      if (!msgid || !selectedServerId) return;
 
       const { server, target } = findServerAndTarget(message);
 
@@ -180,41 +164,14 @@ export function useReactions({
         const tagMsg = `@+draft/react=${emoji};+reply=${message.msgid};+draft/reply=${message.msgid} TAGMSG ${target}`;
         ircClient.sendRaw(server.id, tagMsg);
 
-        // Optimistically update the message
-        set((state) => {
-          const key = `${message.serverId}-${message.channelId}`;
-          const messages = state.messages[key];
-          if (messages) {
-            const msgIndex = messages.findIndex((m) => m.id === message.id);
-            if (msgIndex !== -1) {
-              const updatedMessage = { ...messages[msgIndex] };
-              // Check if user already reacted
-              const existingReactionIndex = updatedMessage.reactions.findIndex(
-                (r) => r.emoji === emoji && r.userId === currentUser?.username,
-              );
-              if (existingReactionIndex === -1) {
-                updatedMessage.reactions = [
-                  ...updatedMessage.reactions,
-                  { emoji, userId: currentUser?.username || "" },
-                ];
-                return {
-                  messages: {
-                    ...state.messages,
-                    [key]: [
-                      ...messages.slice(0, msgIndex),
-                      updatedMessage,
-                      ...messages.slice(msgIndex + 1),
-                    ],
-                  },
-                };
-              }
-            }
-          }
-          return state;
-        });
+        set((state) =>
+          updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
+            withReaction(m, emoji, currentUserRef.current?.username ?? ""),
+          ),
+        );
       }
     },
-    [selectedServerId, findServerAndTarget, currentUser],
+    [selectedServerId, findServerAndTarget],
   );
 
   /**
@@ -222,7 +179,8 @@ export function useReactions({
    */
   const unreact = useCallback(
     (emoji: string, message: Message) => {
-      if (!message.msgid || !selectedServerId) return;
+      const { msgid } = message;
+      if (!msgid || !selectedServerId) return;
 
       const { server, target } = findServerAndTarget(message);
 
@@ -230,36 +188,14 @@ export function useReactions({
         const tagMsg = `@+draft/unreact=${emoji};+reply=${message.msgid};+draft/reply=${message.msgid} TAGMSG ${target}`;
         ircClient.sendRaw(server.id, tagMsg);
 
-        // Optimistically update the message
-        set((state) => {
-          const key = `${message.serverId}-${message.channelId}`;
-          const messages = state.messages[key];
-          if (messages) {
-            const msgIndex = messages.findIndex((m) => m.id === message.id);
-            if (msgIndex !== -1) {
-              const updatedMessage = { ...messages[msgIndex] };
-              // Remove the reaction
-              updatedMessage.reactions = updatedMessage.reactions.filter(
-                (r) =>
-                  !(r.emoji === emoji && r.userId === currentUser?.username),
-              );
-              return {
-                messages: {
-                  ...state.messages,
-                  [key]: [
-                    ...messages.slice(0, msgIndex),
-                    updatedMessage,
-                    ...messages.slice(msgIndex + 1),
-                  ],
-                },
-              };
-            }
-          }
-          return state;
-        });
+        set((state) =>
+          updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
+            withoutReaction(m, emoji, currentUserRef.current?.username ?? ""),
+          ),
+        );
       }
     },
-    [selectedServerId, findServerAndTarget, currentUser],
+    [selectedServerId, findServerAndTarget],
   );
 
   return {

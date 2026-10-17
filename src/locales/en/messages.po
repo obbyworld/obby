@@ -21,10 +21,6 @@ msgstr "Obby - Bringing IRC to the future"
 msgid "— open in viewer"
 msgstr "— open in viewer"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(handled by Obby)"
-msgstr "(handled by Obby)"
-
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -34,6 +30,10 @@ msgstr "(inherit)"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(not set)"
 msgstr "(not set)"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "(run by Obby)"
+msgstr "(run by Obby)"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
@@ -145,8 +145,8 @@ msgid "{count}+ results"
 msgstr "{count}+ results"
 
 #: src/components/layout/SearchPane.tsx
-msgid "{countLabel} · newest first · {scopeName}"
-msgstr "{countLabel} · newest first · {scopeName}"
+msgid "{countLabel} in {scopeName}"
+msgstr "{countLabel} in {scopeName}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -197,8 +197,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} ended encryption."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
-msgstr "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
+msgid "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
+msgstr "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -209,8 +209,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} wants to start an encrypted chat"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
-msgstr "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
+msgid "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
+msgstr "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -233,16 +233,16 @@ msgid "{safeName} is no longer available on the server."
 msgstr "{safeName} is no longer available on the server."
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} was changed on the server, so it no longer decrypts."
-msgstr "{safeName} was changed on the server, so it no longer decrypts."
-
-#: src/store/handlers/e2ee.ts
-msgid "{sender} restarted encryption, so this conversation is being set up again."
-msgstr "{sender} restarted encryption, so this conversation is being set up again."
+msgid "{safeName} was changed on the server, so it cannot be decrypted."
+msgstr "{safeName} was changed on the server, so it cannot be decrypted."
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} restarted encryption. This conversation stays unencrypted until you accept."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. Wait a moment before you send a message."
+msgstr "{sender} restarted encryption. Wait a moment before you send a message."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -626,6 +626,10 @@ msgstr "Allow microphone access in settings to talk"
 msgid "Allow microphone access to record sound."
 msgstr "Allow microphone access to record sound."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Allow Obby under Screen Recording in System Settings, then record again."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -690,6 +694,7 @@ msgstr "Ask the server admin to advertise a backend URL (draft/authtoken or obby
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -920,6 +925,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Bot Builder"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Bot Commands"
@@ -954,6 +963,11 @@ msgstr "Browser does not expose WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "by {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1135,6 +1149,10 @@ msgstr "Channel properties"
 msgid "Channel settings"
 msgstr "Channel settings"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Channel Stats"
+
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
 msgstr "Channel to join (#name)"
@@ -1165,10 +1183,6 @@ msgstr "Channels"
 #: src/components/pages/SettingsPage.tsx
 msgid "Chat"
 msgstr "Chat"
-
-#: src/components/ui/settings/HistoryUsageField.tsx
-msgid "Chat to start saving history"
-msgstr "Chat to start saving history"
 
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
@@ -1337,6 +1351,10 @@ msgstr "Close workflow"
 msgid "Code accepted."
 msgstr "Code accepted."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Code Snippets"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1359,9 +1377,17 @@ msgstr "Color"
 msgid "Color & Formatting"
 msgstr "Color & Formatting"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Coming soon"
+
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "Command provided by the IRC server"
+
+#: src/components/chat/completionProviders.tsx
+msgid "Command run by Obby"
+msgstr "Command run by Obby"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
@@ -1578,8 +1604,8 @@ msgid "Could not find this message"
 msgstr "Could not find this message"
 
 #: src/lib/geolocation.ts
-msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
-msgstr "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgid "Could not find your location in time. Try again somewhere with a clearer view of the sky."
+msgstr "Could not find your location in time. Try again somewhere with a clearer view of the sky."
 
 #: src/lib/geolocation.ts
 msgid "Could not get your location."
@@ -1592,6 +1618,11 @@ msgstr "Could not load GIFs. Search again to retry."
 #: src/lib/mediaUpload.ts
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Could not reach the file host. Check your connection and try again."
+
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Could not set the new password: {0}"
+msgstr "Could not set the new password: {0}"
 
 #. placeholder {0}: p.code
 #: src/components/ui/ChangePasswordModal.tsx
@@ -1720,10 +1751,6 @@ msgstr "Default Nickname"
 msgid "Delay joins (+D)"
 msgstr "Delay joins (+D)"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Delay showing joins until someone speaks"
-msgstr "Delay showing joins until someone speaks"
-
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -1791,6 +1818,10 @@ msgstr "Description (optional, e.g. \"Beta testers Q3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Description (optional)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Design your own colors and share them as themes."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2003,10 +2034,6 @@ msgstr "Embed"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/pages/EmojiPacksPage.tsx
-msgid "Empty pack. Add some emoji."
-msgstr "Empty pack. Add some emoji."
-
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
@@ -2137,6 +2164,10 @@ msgid "Enter a channel name for channel-scoped packs."
 msgstr "Enter a channel name for channel-scoped packs."
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+msgstr "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 
@@ -2238,6 +2269,10 @@ msgstr "Enter your account name. We'll email a 6-digit recovery code to the veri
 msgid "esc to close"
 msgstr "esc to close"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Event Planner"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Events"
@@ -2326,8 +2361,8 @@ msgid "Fetching missed messages…"
 msgstr "Fetching missed messages…"
 
 #: src/components/layout/ChatArea.tsx
-msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
-msgstr "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
+msgid "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
+msgstr "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
 
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
@@ -2343,8 +2378,8 @@ msgstr "Filehost image"
 
 #. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
-msgstr "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
+msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
+msgstr "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -2353,10 +2388,6 @@ msgstr "Filter bad words (+G)"
 #: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "Filter members…"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Filter out bad words with <censored>"
-msgstr "Filter out bad words with <censored>"
 
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Filters"
@@ -2430,6 +2461,10 @@ msgstr "Forgot password"
 msgid "Forgot password?"
 msgstr "Forgot password?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Format text"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -2465,6 +2500,10 @@ msgstr "General"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "General Support Channel"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Get notified when someone says the words you follow."
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
@@ -2502,10 +2541,6 @@ msgstr "GZ-Line (Global Z-Line)"
 msgid "Halfop"
 msgstr "Halfop"
 
-#: src/components/chat/completionProviders.tsx
-msgid "Handled by Obby before being sent"
-msgstr "Handled by Obby before being sent"
-
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Has link"
@@ -2517,6 +2552,10 @@ msgstr "Hide comments"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Hide the channel from LIST and NAMES."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide users who join until they send a message"
+msgstr "Hide users who join until they send a message"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2626,11 +2665,6 @@ msgstr "Image {0} of {1}"
 msgid "Image preview"
 msgstr "Image preview"
 
-#. Search filter chip: messages in a chat or network
-#: src/components/search/SearchQueryBar.tsx
-msgid "In"
-msgstr "In"
-
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
 msgstr "in call"
@@ -2651,6 +2685,10 @@ msgstr "Input"
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
 msgstr "Insert emoji"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Install"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2814,8 +2852,12 @@ msgid "Keep credentials"
 msgstr "Keep credentials"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Keep the channel when it empties. Only IRCops can set this."
-msgstr "Keep the channel when it empties. Only IRCops can set this."
+msgid "Keep the channel after everyone leaves. Only IRCops can set this."
+msgstr "Keep the channel after everyone leaves. Only IRCops can set this."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Keyword Alerts"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2926,6 +2968,10 @@ msgstr "Link with {0}"
 msgid "Live"
 msgstr "Live"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Live Translate"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Load earlier messages saved on this device"
@@ -3000,6 +3046,10 @@ msgstr "Low Link Security (Level {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Lower hand"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Make simple bots that answer commands, with no code."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3104,6 +3154,10 @@ msgstr "Members"
 msgid "Members — {0}"
 msgstr "Members — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Mention someone"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3112,6 +3166,11 @@ msgstr "Mentions"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Mentions & replies"
 msgstr "Mentions & replies"
+
+#. Search filter: messages that mention a person
+#: src/components/search/messageSearchProviders.tsx
+msgid "Mentions of"
+msgstr "Mentions of"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
@@ -3160,8 +3219,8 @@ msgid "Message not sent: encryption stopped working. End encryption to send unen
 msgstr "Message not sent: encryption stopped working. End encryption to send unencrypted."
 
 #: src/store/handlers/e2eeOutbound.ts
-msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
-msgstr "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
+msgid "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
+msgstr "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
 
 #: src/components/ui/BlankPage.tsx
 msgid "Message of the day"
@@ -3388,8 +3447,8 @@ msgid "Nickname"
 msgstr "Nickname"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Nickname '{nick}' already in use, retrying with '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Nickname “{nick}” already in use, retrying with “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -3505,8 +3564,8 @@ msgid "no message"
 msgstr "no message"
 
 #: src/components/layout/SearchPane.tsx
-msgid "No messages match. Widen the scope or change filters"
-msgstr "No messages match. Widen the scope or change filters"
+msgid "No messages match. Search more chats or change the filters"
+msgstr "No messages match. Search more chats or change the filters"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3527,6 +3586,10 @@ msgstr "No oper credentials yet. Enter a name and password."
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "No packs yet. Create one to start."
 msgstr "No packs yet. Create one to start."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "No plugins found."
 
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -3811,10 +3874,6 @@ msgstr "Optional crash reports to improve the app"
 msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 msgstr "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "OTR does not encrypt files, sent as-is"
-msgstr "OTR does not encrypt files, sent as-is"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Output"
 msgstr "Output"
@@ -3862,6 +3921,10 @@ msgstr "Password updated. You can now log in."
 msgid "Passwords don't match."
 msgstr "Passwords don't match."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Paste code with syntax highlighting and line numbers."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Pattern already exists"
@@ -3893,6 +3956,7 @@ msgstr "pending"
 
 #: src/components/layout/StartPrivateChatRow.tsx
 #: src/components/search/messageSearchProviders.tsx
+#: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "People"
 msgstr "People"
@@ -3920,8 +3984,8 @@ msgid "Pick a password (3 characters or more)."
 msgstr "Pick a password (3 characters or more)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Pick a preset flood protection profile. UnrealIRCd only."
-msgstr "Pick a preset flood protection profile. UnrealIRCd only."
+msgid "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
+msgstr "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
@@ -3984,6 +4048,11 @@ msgstr "Please enter a username"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Please wait..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Plugins"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4134,6 +4203,10 @@ msgstr "reacted to this message"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Read all"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Read every message in your own language."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4296,6 +4369,10 @@ msgstr "Remove credential"
 msgid "remove every attachment"
 msgstr "remove every attachment"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Remove from folder"
+msgstr "Remove from folder"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Remove pattern"
@@ -4339,6 +4416,10 @@ msgstr "Render markdown formatting in messages"
 #: src/components/layout/NetworkMenu.tsx
 msgid "Reorder list"
 msgstr "Reorder list"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Replace bad words with <censored>"
+msgstr "Replace bad words with <censored>"
 
 #: src/components/layout/SearchPane.tsx
 msgid "Replies"
@@ -4434,6 +4515,10 @@ msgstr "Save"
 msgid "Save failed: {msg}"
 msgstr "Save failed: {msg}"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+msgstr "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save settings"
 msgstr "Save settings"
@@ -4463,9 +4548,9 @@ msgstr "Saving..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
-msgstr "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Schedule meetups and remind the channel before they start."
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4478,6 +4563,7 @@ msgstr "Scroll to bottom"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Search"
 
@@ -4499,6 +4585,7 @@ msgid "Search emojis..."
 msgstr "Search emojis..."
 
 #: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
 msgid "Search failed"
 msgstr "Search failed"
 
@@ -4511,6 +4598,8 @@ msgid "Search GIFs..."
 msgstr "Search GIFs..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Search messages"
 
@@ -4522,6 +4611,14 @@ msgstr "Search messages for \"{query}\""
 #: src/components/ui/QuickActions.tsx
 msgid "Search messages, filter with from: in: has:link"
 msgstr "Search messages, filter with from: in: has:link"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Search more chats"
+msgstr "Search more chats"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Search plugins..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4535,6 +4632,7 @@ msgstr "Searching in {label}"
 msgid "Searching..."
 msgstr "Searching..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/layout/SearchPane.tsx
 msgid "Searching…"
 msgstr "Searching…"
@@ -4581,14 +4679,14 @@ msgstr "See channel info"
 msgid "See profile"
 msgstr "See profile"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "See server notices"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "See viewers"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "See who talks most and when your channel is busy."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4636,6 +4734,10 @@ msgstr "Send an action / emote"
 msgid "Send Invite"
 msgstr "Send Invite"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Send message"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Send Message"
@@ -4643,6 +4745,10 @@ msgstr "Send Message"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Send OPER with the name and password above now."
 msgstr "Send OPER with the name and password above now."
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Send or receive a message to start saving history"
+msgstr "Send or receive a message to start saving history"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4660,10 +4766,6 @@ msgstr "Send Typing Notifications"
 msgid "Send unencrypted"
 msgstr "Send unencrypted"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Send users here when they can't join. Leave empty to disable."
-msgstr "Send users here when they can't join. Leave empty to disable."
-
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Sending"
@@ -4671,6 +4773,14 @@ msgstr "Sending"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Sending…"
 msgstr "Sending…"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because OTR encrypts text only"
+msgstr "Sent unencrypted because OTR encrypts text only"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because the file is too large to encrypt"
+msgstr "Sent unencrypted because the file is too large to encrypt"
 
 #: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4792,8 +4902,8 @@ msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "Set how many seconds to count flood activity before the counters reset"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Set how much history to keep. The oldest messages go first."
-msgstr "Set how much history to keep. The oldest messages go first."
+msgid "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
+msgstr "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4814,11 +4924,6 @@ msgstr "Set the topic shown for this channel. Everyone can see it."
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Set yourself away"
-
-#. placeholder {0}: p.code
-#: src/components/ui/PasswordRecoveryModal.tsx
-msgid "SETPASS failed: {0}"
-msgstr "SETPASS failed: {0}"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4944,16 +5049,16 @@ msgid "Show search results"
 msgstr "Show search results"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show the MOTD"
-msgstr "Show the MOTD"
+msgid "Show the message of the day"
+msgstr "Show the message of the day"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Show video"
 msgstr "Show video"
 
 #: src/components/pages/TwoFactorPage.tsx
-msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
-msgstr "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
+msgid "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
+msgstr "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -5031,6 +5136,10 @@ msgstr "Start private message on {0}"
 msgid "Start recording"
 msgstr "Start recording"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Start talking once the dot turns red"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Start video"
@@ -5049,14 +5158,6 @@ msgstr "Status"
 msgid "Status Messages"
 msgstr "Status Messages"
 
-#: src/lib/voiceErrors.ts
-msgid "Stay here while we rejoin. The server limits how often you can rejoin."
-msgstr "Stay here while we rejoin. The server limits how often you can rejoin."
-
-#: src/components/voice/VoiceDock.tsx
-msgid "Step off stream"
-msgstr "Step off stream"
-
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -5073,6 +5174,10 @@ msgstr "Stop recording"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
 msgstr "Stop sharing"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop streaming"
+msgstr "Stop streaming"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
@@ -5107,8 +5212,8 @@ msgid "Strip mIRC color codes from messages"
 msgstr "Strip mIRC color codes from messages"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Strongest, but only with other Obby users"
-msgstr "Strongest, but only with other Obby users"
+msgid "Strongest encryption. Works only with other Obby users"
+msgstr "Strongest encryption. Works only with other Obby users"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Suspend"
@@ -5129,10 +5234,6 @@ msgstr "System"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "System default"
-
-#: src/components/layout/ChannelContextMenu.tsx
-msgid "Take out of folder"
-msgstr "Take out of folder"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5156,24 +5257,24 @@ msgid "That device is not available right now."
 msgstr "That device is not available right now."
 
 #: src/components/layout/ChatArea.tsx
-msgid "That screen is no longer there."
-msgstr "That screen is no longer there."
+msgid "That screen is no longer available. Choose another screen."
+msgstr "That screen is no longer available. Choose another screen."
 
 #: src/lib/voiceErrors.ts
-msgid "The call server refused that. Try again in a moment."
-msgstr "The call server refused that. Try again in a moment."
+msgid "The call server refused the request. Try again in a moment."
+msgstr "The call server refused the request. Try again in a moment."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "The connection to <0>{serverName}</0> has the following security concerns:"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
-msgstr "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
+msgid "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
+msgstr "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
 
 #: src/components/layout/ChatArea.tsx
-msgid "The file host would not let this through."
-msgstr "The file host would not let this through."
+msgid "The file host refused the upload. Try again."
+msgstr "The file host refused the upload. Try again."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
@@ -5199,6 +5300,10 @@ msgstr "The server refused your join. Check the channel modes and try again."
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "The user will receive an invitation to join {channelName}."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Theme Studio"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
 msgstr "This browser cannot record audio."
@@ -5213,32 +5318,32 @@ msgid "This chat"
 msgstr "This chat"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
+msgid "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "This command takes no parameters."
 
 #: src/lib/geolocation.ts
-msgid "This device could not get a location fix right now."
-msgstr "This device could not get a location fix right now."
+msgid "This device could not find your location right now. Try again in a moment."
+msgstr "This device could not find your location right now. Try again in a moment."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "This field is required"
 
+#: src/components/layout/ChatArea.tsx
+msgid "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+msgstr "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "This file isn't encrypted. Anyone with the link can open it."
-
-#: src/components/layout/ChatArea.tsx
-msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
-msgstr "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
@@ -5257,6 +5362,14 @@ msgstr "This many people registered through this link"
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by a member of staff"
+msgstr "This message has been deleted by a member of staff"
+
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by the sender"
+msgstr "This message has been deleted by the sender"
+
 #: src/components/ui/GlobalNotifications.tsx
 msgid "This message is no longer saved"
 msgstr "This message is no longer saved"
@@ -5269,6 +5382,10 @@ msgstr "This message wasn't encrypted. It may come from another of their clients
 msgid "This network"
 msgstr "This network"
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "This pack has no emoji yet. Add one above."
+msgstr "This pack has no emoji yet. Add one above."
+
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
@@ -5278,8 +5395,8 @@ msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>
 msgstr "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 
 #: src/components/layout/ChatArea.tsx
-msgid "This server has nowhere to put a file."
-msgstr "This server has nowhere to put a file."
+msgid "This server has no file host. Connect to a server with a file host to upload files."
+msgstr "This server has no file host. Connect to a server with a file host to upload files."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -5349,10 +5466,6 @@ msgstr "Toggle Member List"
 msgid "Toggle Notifications"
 msgstr "Toggle Notifications"
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "Too large to encrypt, sent unencrypted"
-msgstr "Too large to encrypt, sent unencrypted"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "tool"
@@ -5385,6 +5498,10 @@ msgstr "truncated"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Trusted Sources"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Try again"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."
@@ -5712,6 +5829,10 @@ msgstr "Volume"
 msgid "Volume for {0}"
 msgstr "Volume for {0}"
 
+#: src/lib/voiceErrors.ts
+msgid "Wait here to rejoin. The server limits how often you can rejoin."
+msgstr "Wait here to rejoin. The server limits how often you can rejoin."
+
 #. placeholder {0}: open.opponent
 #: src/components/ui/TicTacToeModal.tsx
 msgid "Waiting for {0} to accept…"
@@ -5799,10 +5920,6 @@ msgstr "Whisper to a user in the current channel context"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
 msgstr "Wide - Broader protection scope"
-
-#: src/components/layout/SearchPane.tsx
-msgid "Widen the scope"
-msgstr "Widen the scope"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
@@ -5920,18 +6037,18 @@ msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Your messages could be intercepted when relayed between servers"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
-msgstr "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
+msgid "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
+msgstr "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
 
 #. placeholder {0}: affected.length
 #. placeholder {1}: files.length
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
-msgstr "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
+msgstr "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
-msgstr "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+msgstr "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

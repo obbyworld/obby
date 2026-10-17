@@ -6,6 +6,7 @@ import {
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
+import { useShallow } from "zustand/react/shallow";
 import AppLayout from "./components/layout/AppLayout";
 import { ServerNoticesPopup } from "./components/message/ServerNoticesPopup";
 import PrivacyPolicy from "./components/PrivacyPolicy";
@@ -21,10 +22,11 @@ import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
+import { whenHistoryIdle } from "./lib/history/historyDb";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isTauri } from "./lib/platformUtils";
-import useStore, { loadSavedServers } from "./store";
+import useStore, { type AppState, loadSavedServers } from "./store";
 import type { ConnectionDetails } from "./store/types";
 
 const askPermissions = async () => {
@@ -120,26 +122,59 @@ const initializeEnvSettings = (
 
 const FOCUS_KEY_GRACE_MS = 300;
 
+const collectServerNotices = (state: AppState) =>
+  Object.values(state.messages)
+    .flat()
+    .filter((message) => message.type === "notice" && message.jsonLogData)
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
+
 const App: React.FC = () => {
   const {
     toggleAddServerModal,
     toggleQuickActions,
-    ui: {
-      isAddServerModalOpen,
-      isServerNoticesPopupOpen,
-      quickActions,
-      linkSecurityWarnings,
-      prefillServerDetails,
-    },
+    isAddServerModalOpen,
+    isServerNoticesPopupOpen,
+    quickActions,
     joinChannel,
     selectChannel,
     connectToSavedServers,
     toggleServerNoticesPopup,
-    messages,
     isConnecting,
-    servers,
     hasConnectedToSavedServers,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      toggleAddServerModal: state.toggleAddServerModal,
+      toggleQuickActions: state.toggleQuickActions,
+      isAddServerModalOpen: state.ui.isAddServerModalOpen,
+      isServerNoticesPopupOpen: state.ui.isServerNoticesPopupOpen,
+      quickActions: state.ui.quickActions,
+      joinChannel: state.joinChannel,
+      selectChannel: state.selectChannel,
+      connectToSavedServers: state.connectToSavedServers,
+      toggleServerNoticesPopup: state.toggleServerNoticesPopup,
+      isConnecting: state.isConnecting,
+      hasConnectedToSavedServers: state.hasConnectedToSavedServers,
+    })),
+  );
+  const hasEveryServerFailed = useStore(
+    (state) =>
+      state.servers.length > 0 &&
+      !state.servers.some(
+        (s) =>
+          s.isConnected ||
+          s.connectionState === "connecting" ||
+          s.connectionState === "reconnecting",
+      ),
+  );
+  // We only gather notices while the popup is open: this walks every message.
+  const serverNotices = useStore(
+    useShallow((state) =>
+      state.ui.isServerNoticesPopupOpen ? collectServerNotices(state) : [],
+    ),
+  );
 
   // The composer is the only drop target. Anywhere else the webview follows the
   // file and replaces the app, which a native window offers no way back from.
@@ -152,15 +187,6 @@ const App: React.FC = () => {
       window.removeEventListener("drop", cancel);
     };
   }, []);
-
-  // Collect all server notices from all channels
-  const serverNotices = Object.values(messages)
-    .flat()
-    .filter((message) => message.type === "notice" && message.jsonLogData)
-    .sort(
-      (a, b) =>
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-    );
 
   // Handlers for popup interactions
   const handleUsernameContextMenu = (
@@ -230,18 +256,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!__HIDE_SERVER_LIST__) return;
     if (!hasConnectedToSavedServers) return;
-    if (isAddServerModalOpen) return;
-    if (servers.length === 0) return;
-    // Wait until every server has settled (not still connecting/reconnecting)
-    if (
-      servers.some(
-        (s) =>
-          s.connectionState === "connecting" ||
-          s.connectionState === "reconnecting",
-      )
-    )
-      return;
-    if (servers.some((s) => s.isConnected)) return;
+    if (isAddServerModalOpen || !hasEveryServerFailed) return;
 
     const firstSaved = loadSavedServers()[0];
     toggleAddServerModal(
@@ -260,11 +275,23 @@ const App: React.FC = () => {
         : null,
     );
   }, [
-    servers,
+    hasEveryServerFailed,
     hasConnectedToSavedServers,
     isAddServerModalOpen,
     toggleAddServerModal,
   ]);
+
+  // With the server list hidden, removing the only server leaves nothing to
+  // pick, so we reload into the welcome prompt once its saved history is
+  // deleted or parked.
+  const hasServers = useStore((state) => state.servers.length > 0);
+  const hadServersRef = useRef(false);
+  useEffect(() => {
+    if (!__HIDE_SERVER_LIST__) return;
+    if (hasServers) hadServersRef.current = true;
+    else if (hadServersRef.current)
+      void whenHistoryIdle().then(() => window.location.reload());
+  }, [hasServers]);
 
   // Handle deeplinks
   useEffect(() => {

@@ -96,6 +96,7 @@ describe("AppLayout Swipe Navigation", () => {
       servers: [mockServer],
       currentUser: { id: "user1", username: "testuser", isOnline: true },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -163,7 +164,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should change to chatView when swiping left", () => {
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
       expect(container).toBeTruthy();
 
@@ -202,7 +203,7 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       act(() => {
@@ -241,7 +242,7 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       act(() => {
@@ -272,7 +273,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should not change page when swipe is below threshold", () => {
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       const initialColumn = useStore.getState().ui.mobileViewActiveColumn;
@@ -338,7 +339,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should not render swipe container on desktop", () => {
       renderAppLayout();
       const swipeContainer = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
       expect(swipeContainer).toBeFalsy();
     });

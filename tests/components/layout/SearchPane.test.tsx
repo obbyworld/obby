@@ -72,6 +72,16 @@ function openPane(query: Partial<SearchQuery> = {}, isNarrowView = false) {
             messages: [],
             users: [{ id: "u1", username: "alice", isOnline: true }],
           },
+          {
+            id: "chan2",
+            name: "#random",
+            isPrivate: false,
+            serverId: "server1",
+            unreadCount: 0,
+            isMentioned: false,
+            messages: [],
+            users: [],
+          },
         ],
         privateChats: [],
       },
@@ -85,6 +95,7 @@ function openPane(query: Partial<SearchQuery> = {}, isNarrowView = false) {
       },
       sidePane: {
         kind: "search",
+        session: 1,
         query: { text: "deploy", scope: chatScope, ...query },
       },
     },
@@ -93,6 +104,10 @@ function openPane(query: Partial<SearchQuery> = {}, isNarrowView = false) {
 }
 
 const currentPane = () => useStore.getState().ui.sidePane;
+const searchedText = () => {
+  const pane = currentPane();
+  return pane?.kind === "search" ? pane.query.text : undefined;
+};
 const currentQuery = () => {
   const pane = currentPane();
   return pane?.kind === "search" ? pane.query : undefined;
@@ -112,7 +127,7 @@ describe("SearchPane", () => {
     expect(row).toHaveTextContent("#general");
     expect(row).toHaveTextContent("1 minute ago");
     expect(screen.getByText("deploy").tagName).toBe("MARK");
-    expect(screen.getByText(/1 result · newest first · #general/)).toBeTruthy();
+    expect(screen.getByText("1 result in #general")).toBeTruthy();
   });
 
   it("holds a place for missed messages while fetching them and searches again once they arrive", async () => {
@@ -159,7 +174,7 @@ describe("SearchPane", () => {
       });
     openPane();
 
-    expect(await screen.findByText("1+ results · newest first · #general"));
+    expect(await screen.findByText("1+ results in #general"));
     fireEvent.click(screen.getByRole("button", { name: "Load more results" }));
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
@@ -179,10 +194,10 @@ describe("SearchPane", () => {
 
     expect(
       await screen.findByText(
-        "No messages match. Widen the scope or change filters",
+        "No messages match. Search more chats or change the filters",
       ),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Widen the scope" }));
+    fireEvent.click(screen.getByRole("button", { name: "Search more chats" }));
 
     expect(currentQuery()?.scope).toEqual({
       kind: "network",
@@ -286,6 +301,23 @@ describe("SearchPane", () => {
     );
   });
 
+  it("remembers the message an opened hit landed on until another one opens", async () => {
+    search.mockResolvedValue({ hits: [hit(), hit({ nick: "bob" })] });
+    vi.mocked(jumpToMessage)
+      .mockResolvedValueOnce({ ok: true, messageId: "m1" })
+      .mockResolvedValueOnce({ ok: true, messageId: "m2" });
+    openPane();
+
+    fireEvent.click(await screen.findByText("alice"));
+    await waitFor(() =>
+      expect(currentPane()).toMatchObject({ hitMessageId: "m1" }),
+    );
+    fireEvent.click(screen.getByText("bob"));
+    await waitFor(() =>
+      expect(currentPane()).toMatchObject({ hitMessageId: "m2" }),
+    );
+  });
+
   it("keeps the results and shows a translated toast when a jump fails", async () => {
     vi.mocked(jumpToMessage).mockResolvedValueOnce({
       ok: false,
@@ -380,6 +412,90 @@ describe("SearchPane", () => {
 
     fireEvent.keyDown(input, { key: "Escape" });
     expect(currentPane()).toBeNull();
+  });
+
+  it("searches as you type and keeps the same pane and input", async () => {
+    search.mockResolvedValue({ hits: [hit()] });
+    openPane();
+    const input = screen.getByRole("combobox");
+    await screen.findByText("1 result in #general");
+
+    fireEvent.change(input, { target: { value: "deploy fine" } });
+
+    await waitFor(() => expect(searchedText()).toBe("deploy fine"));
+    expect(screen.getByRole("combobox")).toBe(input);
+    expect(search).toHaveBeenLastCalledWith(
+      useStore,
+      expect.objectContaining({ text: "deploy fine" }),
+      expect.anything(),
+    );
+  });
+
+  it("waits while a filter is half typed", async () => {
+    search.mockResolvedValue({ hits: [hit()] });
+    openPane();
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+
+    fireEvent.change(input, { target: { value: "from:al" } });
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(searchedText()).toBe("deploy");
+  });
+
+  it("completes in: with Tab, keeps the words and moves the chip", async () => {
+    search.mockResolvedValue({ hits: [hit()] });
+    openPane();
+    const input = screen.getByRole("combobox") as HTMLInputElement;
+    const chip = screen.getByRole("button", { name: "Choose where to search" });
+    fireEvent.focus(input);
+
+    fireEvent.change(input, { target: { value: "deploy in:#ran" } });
+    expect(input).toHaveAttribute("aria-expanded", "true");
+    fireEvent.keyDown(input, { key: "Tab" });
+
+    await waitFor(() => expect(input.value).toBe("deploy in:#random "));
+    expect(chip).toHaveTextContent("#random");
+    await waitFor(() =>
+      expect(currentQuery()).toEqual({
+        text: "deploy",
+        scope: { kind: "chat", serverId: "server1", target: "#random" },
+      }),
+    );
+  });
+
+  it("replaces a typed in: when a place is picked from the chip", async () => {
+    search.mockResolvedValue({ hits: [hit()] });
+    openPane({ text: "deploy" });
+    const input = screen.getByRole("combobox") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "deploy in:#random" } });
+    await waitFor(() =>
+      expect(currentQuery()?.scope).toMatchObject({ target: "#random" }),
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Choose where to search" }),
+    );
+    fireEvent.click(screen.getByRole("menuitem", { name: /Everywhere/ }));
+
+    expect(input.value).toBe("deploy");
+    await waitFor(() =>
+      expect(currentQuery()).toEqual({
+        text: "deploy",
+        scope: { kind: "everywhere" },
+      }),
+    );
+  });
+
+  it("keeps searching while an in: names no chat yet", async () => {
+    search.mockResolvedValue({ hits: [hit()] });
+    openPane();
+    const input = screen.getByRole("combobox");
+
+    fireEvent.change(input, { target: { value: "deploy in:#nowhere" } });
+
+    await waitFor(() => expect(search).toHaveBeenCalledTimes(2));
+    expect(currentQuery()).toEqual({ text: "deploy", scope: chatScope });
   });
 
   it("closes and clears the results", async () => {

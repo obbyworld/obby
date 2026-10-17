@@ -55,6 +55,10 @@ export async function regionRecordingSupported(): Promise<boolean> {
   return invoke<boolean>("region_recording_supported").catch(() => false);
 }
 
+export function screenRecordingAllowed(): Promise<boolean> {
+  return invoke<boolean>("screen_recording_allowed").catch(() => false);
+}
+
 export function startRegionRecording(
   rect: DesktopRect,
   crop: DesktopRect,

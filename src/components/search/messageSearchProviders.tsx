@@ -17,6 +17,7 @@ import {
   type ScopeTarget,
   scopeServerId,
   scopeTargets,
+  scopeToken,
 } from "../../lib/search/searchScope";
 import type { SearchScope } from "../../lib/search/searchTypes";
 import { listSavedSenders } from "../../store/handlers/history";
@@ -38,6 +39,18 @@ function tokenMatcher(keys: readonly string[]) {
       ? { query: token.value, start: token.start, end: token.end }
       : null;
   };
+}
+
+// A value typed out in full is done, so we close the list and Enter searches.
+function unlessTyped<T>(
+  items: readonly T[],
+  query: string,
+  nameOf: (item: T) => string,
+): readonly T[] {
+  const typed = query.replace(/^@/, "").toLowerCase();
+  return items.some((item) => nameOf(item).toLowerCase() === typed)
+    ? []
+    : items;
 }
 
 function datePresets(): DatePreset[] {
@@ -91,21 +104,30 @@ export function useSavedSenders(): string[] {
   return nicks;
 }
 
-export function messageSearchProviders(
-  servers: Server[],
-  scope: SearchScope,
-  onPickScope: (scope: SearchScope, range: CompletionRange) => void,
-  savedNicks: readonly string[] = [],
-): CompletionProvider<SearchCompletionItem>[] {
-  const fromProvider: CompletionProvider<string> = {
-    title: <Trans>People</Trans>,
-    match: tokenMatcher(["from"]),
+function personProvider(
+  key: "from" | "mentions",
+  nicks: () => string[],
+): CompletionProvider<string> {
+  return {
+    title:
+      key === "from" ? (
+        <Trans>People</Trans>
+      ) : (
+        <Trans comment="Search filter: messages that mention a person">
+          Mentions of
+        </Trans>
+      ),
+    match: tokenMatcher([key]),
     getItems: (query) =>
-      bestMatches(
-        nicksInScope(servers, scope, savedNicks),
-        query.replace(/^@/, ""),
+      unlessTyped(
+        bestMatches(
+          nicks(),
+          query.replace(/^@/, ""),
+          (nick) => nick,
+          MAX_ITEMS,
+        ),
+        query,
         (nick) => nick,
-        MAX_ITEMS,
       ),
     getKey: (nick) => nick,
     renderItem: (nick) => (
@@ -114,18 +136,30 @@ export function messageSearchProviders(
         <span className="truncate">{nick}</span>
       </>
     ),
-    accept: (nick) => `from:${nick} `,
+    accept: (nick) => `${key}:${nick} `,
   };
+}
+
+export function messageSearchProviders(
+  servers: Server[],
+  scope: SearchScope,
+  savedNicks: readonly string[] = [],
+): CompletionProvider<SearchCompletionItem>[] {
+  const nicks = () => nicksInScope(servers, scope, savedNicks);
 
   const inProvider: CompletionProvider<ScopeTarget> = {
     title: <Trans>Chats and networks</Trans>,
     match: tokenMatcher(["in"]),
     getItems: (query) =>
-      bestMatches(
-        scopeTargets(servers),
+      unlessTyped(
+        bestMatches(
+          scopeTargets(servers),
+          query,
+          (target) => target.label,
+          MAX_ITEMS,
+        ),
         query,
-        (target) => target.label,
-        MAX_ITEMS,
+        (target) => scopeToken(target.label),
       ),
     getKey: (target) =>
       `${target.scope.kind}-${scopeServerId(target.scope)}-${target.label}`,
@@ -140,11 +174,15 @@ export function messageSearchProviders(
         <span className="row-meta truncate">{target.description}</span>
       </>
     ),
-    accept: (target, range) => onPickScope(target.scope, range),
+    accept: (target) => `in:${scopeToken(target.label)} `,
   };
 
   return [
-    fromProvider,
+    personProvider("from", nicks),
+    personProvider("mentions", () => [
+      "me",
+      ...nicks().filter((nick) => nick.toLowerCase() !== "me"),
+    ]),
     inProvider,
     dateProvider("after"),
     dateProvider("before"),

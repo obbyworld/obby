@@ -57,6 +57,70 @@ export const MAX_MESSAGES_PER_CHANNEL = 1500;
 export const messageTime = (message: Message) =>
   new Date(message.timestamp).getTime();
 
+const replaceAt = <T>(list: T[], index: number, item: T): T[] =>
+  list.map((existing, i) => (i === index ? item : existing));
+
+// A detached chat keeps its newest messages in the window's present, so we
+// look there too. `update` returns null to leave the message as it is.
+// A redacted message keeps who removed it as a code, and the row translates it.
+export const REDACTED_BY_TAG = "obby-redacted-by";
+
+export function withReaction(
+  message: Message,
+  emoji: string,
+  userId: string,
+): Message | null {
+  return message.reactions.some((r) => r.emoji === emoji && r.userId === userId)
+    ? null
+    : { ...message, reactions: [...message.reactions, { emoji, userId }] };
+}
+
+export function withoutReaction(
+  message: Message,
+  emoji: string,
+  userId: string,
+): Message | null {
+  const reactions = message.reactions.filter(
+    (r) => !(r.emoji === emoji && r.userId === userId),
+  );
+  return reactions.length === message.reactions.length
+    ? null
+    : { ...message, reactions };
+}
+
+export function updateMessageByMsgid(
+  state: Pick<AppState, "messages" | "historyWindows">,
+  key: string,
+  msgid: string,
+  update: (message: Message) => Message | null,
+): Partial<AppState> {
+  const shown = state.messages[key] ?? [];
+  const index = shown.findIndex((m) => m.msgid === msgid);
+  if (index >= 0) {
+    const next = update(shown[index]);
+    return next
+      ? {
+          messages: { ...state.messages, [key]: replaceAt(shown, index, next) },
+        }
+      : {};
+  }
+  const window = state.historyWindows[key];
+  const presentIndex =
+    window?.present.findIndex((m) => m.msgid === msgid) ?? -1;
+  if (!window || presentIndex < 0) return {};
+  const next = update(window.present[presentIndex]);
+  if (!next) return {};
+  return {
+    historyWindows: {
+      ...state.historyWindows,
+      [key]: {
+        ...window,
+        present: replaceAt(window.present, presentIndex, next),
+      },
+    },
+  };
+}
+
 // Older messages past the cap would push themselves straight out again, so we
 // drop the newest end instead and keep it as the present of a history window.
 export function capMergedMessages(
@@ -66,8 +130,9 @@ export function capMergedMessages(
 ): { messages: Message[]; window?: HistoryWindow } {
   const isOlder =
     existing.length > 0 && messageTime(merged[0]) < messageTime(existing[0]);
-  if (merged.length <= MAX_MESSAGES_PER_CHANNEL || !isOlder)
-    return { messages: merged.slice(-MAX_MESSAGES_PER_CHANNEL) };
+  if (merged.length <= MAX_MESSAGES_PER_CHANNEL || (!isOlder && window))
+    return { messages: merged };
+  if (!isOlder) return { messages: merged.slice(-MAX_MESSAGES_PER_CHANNEL) };
   const kept = merged.slice(0, MAX_MESSAGES_PER_CHANNEL);
   return {
     messages: kept,

@@ -34,7 +34,7 @@ export const CallMicrophoneField: React.FC<SettingComponentProps> = ({
 
   const [micError, setMicError] = useState<string | null>(null);
   const [meterStream, setMeterStream] = useState<MediaStream | null>(null);
-  const micLevel = useMicLevelMeter(meterStream);
+  const { level: micLevel } = useMicLevelMeter(meterStream);
 
   const mountedRef = useRef(true);
   const genRef = useRef(0);

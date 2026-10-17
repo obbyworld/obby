@@ -22,10 +22,6 @@ msgstr "Obby - Přinášíme IRC do budoucnosti"
 msgid "— open in viewer"
 msgstr "— otevřít v prohlížeči"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(handled by Obby)"
-msgstr "(zpracovává Obby)"
-
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -35,6 +31,10 @@ msgstr "(zděděno)"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(not set)"
 msgstr "(nenastaveno)"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "(run by Obby)"
+msgstr "(spravuje Obby)"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
@@ -146,8 +146,8 @@ msgid "{count}+ results"
 msgstr "{count}+ výsledků"
 
 #: src/components/layout/SearchPane.tsx
-msgid "{countLabel} · newest first · {scopeName}"
-msgstr "{countLabel} · nejnovější první · {scopeName}"
+msgid "{countLabel} in {scopeName}"
+msgstr "{countLabel} v {scopeName}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -198,8 +198,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} ukončil(a) šifrování."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
-msgstr "{nick} posílá šifrované zprávy, které toto zařízení neumí přečíst. Než půjdou otevřít, musí se šifrování spustit znovu."
+msgid "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
+msgstr "{nick} posílá šifrované zprávy, které toto zařízení nedokáže dešifrovat. Spusťte šifrování znovu, abyste je přečetli."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -210,8 +210,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} chce zahájit šifrovaný chat"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
-msgstr "Klíč pro šifrování uživatele {nick} se změnil. To se stane na novém zařízení a stejně vypadá i útočník. Porovnejte nový otisk s uživatelem {nick} jinde než v tomto chatu a potom jej přijměte."
+msgid "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
+msgstr "Šifrovací klíč uživatele {nick} se změnil. Stává se to, když {nick} použije nové zařízení, ale také když chat zachytí útočník. Porovnejte nový otisk s uživatelem {nick} mimo tento chat a pak ho přijměte."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -234,16 +234,16 @@ msgid "{safeName} is no longer available on the server."
 msgstr "{safeName} už na serveru není k dispozici."
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} was changed on the server, so it no longer decrypts."
-msgstr "{safeName} byl na serveru změněn, takže už ho nelze dešifrovat."
-
-#: src/store/handlers/e2ee.ts
-msgid "{sender} restarted encryption, so this conversation is being set up again."
-msgstr "{sender} restartoval šifrování, takže se tato konverzace nastavuje znovu."
+msgid "{safeName} was changed on the server, so it cannot be decrypted."
+msgstr "Soubor {safeName} byl na serveru změněn, proto ho nelze dešifrovat."
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} restartoval šifrování. Dokud to nepřijmete, zůstává tato konverzace nešifrovaná."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. Wait a moment before you send a message."
+msgstr "{sender} znovu spustil(a) šifrování. Chvíli počkejte, než odešlete zprávu."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -627,6 +627,10 @@ msgstr "Povolte přístup k mikrofonu v nastavení, abyste mohli mluvit"
 msgid "Allow microphone access to record sound."
 msgstr "Povolte přístup k mikrofonu pro nahrávání zvuku."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Povolte Obby v Nastavení systému v části Nahrávání obrazovky a pak nahrávejte znovu."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -691,6 +695,7 @@ msgstr "Požádejte správce serveru, aby zveřejnil URL backendu (draft/authtok
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -921,6 +926,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Tvůrce botů"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Příkazy bota"
@@ -955,6 +964,11 @@ msgstr "Prohlížeč nepodporuje WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Prohlížeče zobrazí vaše reproduktory, teprve až povolíte přístup k mikrofonu nebo kameře. Nic se nenahrává."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "od {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1136,6 +1150,10 @@ msgstr "Vlastnosti kanálu"
 msgid "Channel settings"
 msgstr "Nastavení kanálu"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Statistiky kanálu"
+
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
 msgstr "Kanál k připojení (#název)"
@@ -1166,10 +1184,6 @@ msgstr "Kanály"
 #: src/components/pages/SettingsPage.tsx
 msgid "Chat"
 msgstr "Chat"
-
-#: src/components/ui/settings/HistoryUsageField.tsx
-msgid "Chat to start saving history"
-msgstr "Začněte chatovat a historie se začne ukládat"
 
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
@@ -1338,6 +1352,10 @@ msgstr "Zavřít workflow"
 msgid "Code accepted."
 msgstr "Kód přijat."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Úryvky kódu"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1360,9 +1378,17 @@ msgstr "Barva"
 msgid "Color & Formatting"
 msgstr "Barva a formátování"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "Již brzy"
+
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "Příkaz poskytnutý IRC serverem"
+
+#: src/components/chat/completionProviders.tsx
+msgid "Command run by Obby"
+msgstr "Příkaz spuštěný Obby"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
@@ -1579,8 +1605,8 @@ msgid "Could not find this message"
 msgstr "Tuto zprávu se nepodařilo najít"
 
 #: src/lib/geolocation.ts
-msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
-msgstr "Nepodařilo se včas určit polohu. Zkuste to znovu na místě s volnějším výhledem na oblohu."
+msgid "Could not find your location in time. Try again somewhere with a clearer view of the sky."
+msgstr "Nepodařilo se včas zjistit vaši polohu. Zkuste to znovu na místě s lepším výhledem na oblohu."
 
 #: src/lib/geolocation.ts
 msgid "Could not get your location."
@@ -1593,6 +1619,11 @@ msgstr "Nepodařilo se načíst GIFy. Zkuste hledat znovu."
 #: src/lib/mediaUpload.ts
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Nepodařilo se spojit se serverem pro soubory. Zkontrolujte připojení a zkuste to znovu."
+
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Could not set the new password: {0}"
+msgstr "Nepodařilo se nastavit nové heslo: {0}"
 
 #. placeholder {0}: p.code
 #: src/components/ui/ChangePasswordModal.tsx
@@ -1721,10 +1752,6 @@ msgstr "Výchozí přezdívka"
 msgid "Delay joins (+D)"
 msgstr "Zpozdit připojení (+D)"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Delay showing joins until someone speaks"
-msgstr "Zobrazit připojení až po promluvě někoho"
-
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -1792,6 +1819,10 @@ msgstr "Popis (volitelné, např. \"Beta testeři Q3\")"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Popis (volitelné)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Navrhněte vlastní barvy a sdílejte je jako motivy."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2004,10 +2035,6 @@ msgstr "Vložit"
 msgid "Emojis"
 msgstr "Emodži"
 
-#: src/components/pages/EmojiPacksPage.tsx
-msgid "Empty pack. Add some emoji."
-msgstr "Prázdný balíček. Přidejte nějaké emoji."
-
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
@@ -2138,6 +2165,10 @@ msgid "Enter a channel name for channel-scoped packs."
 msgstr "Zadejte název kanálu pro balíčky určené pro kanál."
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+msgstr "Zadejte kanál, kam se mají přesměrovat uživatelé, kteří se nemohou připojit do tohoto. Nechte prázdné pro vypnutí."
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Zadejte název s mezerami, emoji nebo symboly. Příkazy IRC stále používají skutečný název ({channelName})."
 
@@ -2239,6 +2270,10 @@ msgstr "Zadejte název svého účtu. Pošleme 6místný kód pro obnovení na o
 msgid "esc to close"
 msgstr "esc pro zavření"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Plánovač akcí"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Události"
@@ -2327,8 +2362,8 @@ msgid "Fetching missed messages…"
 msgstr "Načítání zmeškaných zpráv…"
 
 #: src/components/layout/ChatArea.tsx
-msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
-msgstr "Soubor neodeslán: šifrování se teprve nastavuje. Půjde odeslat, jakmile bude šifrování aktivní, nebo po jeho ukončení."
+msgid "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
+msgstr "Soubor nebyl nahrán: šifrování se ještě nastavuje. Nahrajte ho znovu, až bude šifrování aktivní, nebo ukončete šifrování a nahrajte ho nešifrovaně."
 
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
@@ -2344,8 +2379,8 @@ msgstr "Obrázek z file hostu"
 
 #. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
-msgstr "Soubory větší než {0} se odesílají tak, jak jsou. Souborový hostitel je ukládá čitelné a kdokoli, kdo získá odkaz, je může otevřít."
+msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
+msgstr "Soubory větší než {0} se odesílají nešifrovaně. Hostitel souborů je může číst a otevřít je může kdokoli s odkazem."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -2354,10 +2389,6 @@ msgstr "Filtrovat sprosté výrazy (+G)"
 #: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "Filtrovat členy…"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Filter out bad words with <censored>"
-msgstr "Nahradit sprosté výrazy textem <censored>"
 
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Filters"
@@ -2431,6 +2462,10 @@ msgstr "Zapomenuté heslo"
 msgid "Forgot password?"
 msgstr "Zapomenuté heslo?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Formátovat text"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -2466,6 +2501,10 @@ msgstr "Obecné"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "Obecný podpůrný kanál"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Dostávejte upozornění, když někdo napíše sledovaná slova."
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
@@ -2503,10 +2542,6 @@ msgstr "GZ-Line (globální Z-Line)"
 msgid "Halfop"
 msgstr "Polooperátor"
 
-#: src/components/chat/completionProviders.tsx
-msgid "Handled by Obby before being sent"
-msgstr "Zpracováno Obby než se pošle"
-
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Obsahuje odkaz"
@@ -2518,6 +2553,10 @@ msgstr "Skrýt komentáře"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Skryjte kanál v LIST a NAMES."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide users who join until they send a message"
+msgstr "Skrýt uživatele, kteří se připojí, dokud nepošlou zprávu"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2627,11 +2666,6 @@ msgstr "Obrázek {0} z {1}"
 msgid "Image preview"
 msgstr "Náhled obrázku"
 
-#. Search filter chip: messages in a chat or network
-#: src/components/search/SearchQueryBar.tsx
-msgid "In"
-msgstr "V"
-
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
 msgstr "v hovoru"
@@ -2652,6 +2686,10 @@ msgstr "Vstup"
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
 msgstr "Vložit emoji"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Instalovat"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2815,8 +2853,12 @@ msgid "Keep credentials"
 msgstr "Ponechat údaje"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Keep the channel when it empties. Only IRCops can set this."
-msgstr "Zachovat kanál i po odchodu všech uživatelů. Nastavit to může pouze IRCop."
+msgid "Keep the channel after everyone leaves. Only IRCops can set this."
+msgstr "Ponechat kanál, i když ho všichni opustí. Může to nastavit jen IRCop."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Upozornění na klíčová slova"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2927,6 +2969,10 @@ msgstr "Propojit s {0}"
 msgid "Live"
 msgstr "Živě"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Živý překlad"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Načíst dřívější zprávy uložené v tomto zařízení"
@@ -3001,6 +3047,10 @@ msgstr "Nízká bezpečnost připojení (Úroveň {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Sundat ruku"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Vytvářejte jednoduché boty, kteří odpovídají na příkazy, bez kódu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3105,6 +3155,10 @@ msgstr "Členové"
 msgid "Members — {0}"
 msgstr "Členové — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Zmínit někoho"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3113,6 +3167,11 @@ msgstr "Zmínky"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Mentions & replies"
 msgstr "Zmínky a odpovědi"
+
+#. Search filter: messages that mention a person
+#: src/components/search/messageSearchProviders.tsx
+msgid "Mentions of"
+msgstr "Zmínky o"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
@@ -3161,8 +3220,8 @@ msgid "Message not sent: encryption stopped working. End encryption to send unen
 msgstr "Zpráva nebyla odeslána: šifrování přestalo fungovat. Ukončete šifrování a odešlete nešifrovaně."
 
 #: src/store/handlers/e2eeOutbound.ts
-msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
-msgstr "Zpráva nebyla odeslána: šifrovací klíč se změnil. Ověřte nový klíč nebo ukončete šifrování, než odešlete nešifrovaně."
+msgid "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
+msgstr "Zpráva nebyla odeslána: šifrovací klíč se změnil. Ověřte nový klíč, nebo ukončete šifrování a odešlete ji nešifrovaně."
 
 #: src/components/ui/BlankPage.tsx
 msgid "Message of the day"
@@ -3389,8 +3448,8 @@ msgid "Nickname"
 msgstr "Přezdívka"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Přezdívka '{nick}' je již používána, zkouším s '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Přezdívka “{nick}” je již používána, zkouším s “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -3506,8 +3565,8 @@ msgid "no message"
 msgstr "žádná zpráva"
 
 #: src/components/layout/SearchPane.tsx
-msgid "No messages match. Widen the scope or change filters"
-msgstr "Žádné zprávy neodpovídají. Rozšiřte rozsah nebo změňte filtry"
+msgid "No messages match. Search more chats or change the filters"
+msgstr "Žádné zprávy neodpovídají. Prohledejte více chatů nebo změňte filtry"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3528,6 +3587,10 @@ msgstr "Zatím žádné přihlašovací údaje OPER. Zadejte jméno a heslo."
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "No packs yet. Create one to start."
 msgstr "Zatím žádné balíčky. Vytvořte první."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Žádné pluginy nenalezeny."
 
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -3812,10 +3875,6 @@ msgstr "Volitelné zprávy o pádu pro zlepšení aplikace"
 msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 msgstr "Ostatní otevřené relace tohoto účtu budou v rámci změny odhlášeny. Nastavení dvoufázového ověření, pokud nějaké je, zůstane beze změny."
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "OTR does not encrypt files, sent as-is"
-msgstr "OTR nešifruje soubory, odesláno tak, jak je"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Output"
 msgstr "Výstup"
@@ -3863,6 +3922,10 @@ msgstr "Heslo změněno. Nyní se můžete přihlásit."
 msgid "Passwords don't match."
 msgstr "Hesla se neshodují."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Vkládejte kód se zvýrazněním syntaxe a čísly řádků."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Vzor již existuje"
@@ -3894,6 +3957,7 @@ msgstr "čeká"
 
 #: src/components/layout/StartPrivateChatRow.tsx
 #: src/components/search/messageSearchProviders.tsx
+#: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "People"
 msgstr "Lidé"
@@ -3921,8 +3985,8 @@ msgid "Pick a password (3 characters or more)."
 msgstr "Zvolte heslo (3 a více znaků)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Pick a preset flood protection profile. UnrealIRCd only."
-msgstr "Vyberte předvolený profil ochrany proti záplavě. Pouze UnrealIRCd."
+msgid "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
+msgstr "Vyberte přednastavený profil ochrany proti floodu. Funguje jen na serverech UnrealIRCd."
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
@@ -3985,6 +4049,11 @@ msgstr "Zadejte prosím uživatelské jméno"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Prosím čekejte..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Pluginy"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4135,6 +4204,10 @@ msgstr "reagoval na tuto zprávu"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Přečíst vše"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Čtěte každou zprávu ve svém jazyce."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4297,6 +4370,10 @@ msgstr "Odebrat údaj"
 msgid "remove every attachment"
 msgstr "odebrat všechny přílohy"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Remove from folder"
+msgstr "Odebrat ze složky"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Odebrat vzor"
@@ -4340,6 +4417,10 @@ msgstr "Zobrazovat Markdown formátování ve zprávách"
 #: src/components/layout/NetworkMenu.tsx
 msgid "Reorder list"
 msgstr "Přeuspořádat seznam"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Replace bad words with <censored>"
+msgstr "Nahradit sprostá slova za <censored>"
 
 #: src/components/layout/SearchPane.tsx
 msgid "Replies"
@@ -4435,6 +4516,10 @@ msgstr "Uložit"
 msgid "Save failed: {msg}"
 msgstr "Uložení selhalo: {msg}"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+msgstr "Ukládejte zprávy na tomto zařízení, abyste se mohli vracet dál než do historie serveru. Po vypnutí se nové zprávy přestanou ukládat a už uložené zůstanou. Šifrované soukromé zprávy se nikdy neukládají."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save settings"
 msgstr "Uložit nastavení"
@@ -4464,9 +4549,9 @@ msgstr "Ukládám..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Naskenujte tento QR kód svou autentizační aplikací a potvrďte 6místným kódem, který zobrazí."
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
-msgstr "Procházejte zprávy starší, než kolik uchovává server. Po vypnutí se přestane ukládat a dosud uložené zůstane. Šifrované soukromé zprávy se nikdy neukládají."
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Naplánujte setkání a připomeňte je kanálu předem."
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4479,6 +4564,7 @@ msgstr "Přejít dolů"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Hledat"
 
@@ -4500,6 +4586,7 @@ msgid "Search emojis..."
 msgstr "Hledat emoji..."
 
 #: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
 msgid "Search failed"
 msgstr "Hledání selhalo"
 
@@ -4512,6 +4599,8 @@ msgid "Search GIFs..."
 msgstr "Hledat GIFy..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Hledat ve zprávách"
 
@@ -4523,6 +4612,14 @@ msgstr "Hledat ve zprávách „{query}\""
 #: src/components/ui/QuickActions.tsx
 msgid "Search messages, filter with from: in: has:link"
 msgstr "Hledejte ve zprávách, filtrujte pomocí from: in: has:link"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Search more chats"
+msgstr "Prohledat více chatů"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Hledat pluginy..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4536,6 +4633,7 @@ msgstr "Hledání v {label}"
 msgid "Searching..."
 msgstr "Hledám..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/layout/SearchPane.tsx
 msgid "Searching…"
 msgstr "Hledání…"
@@ -4582,14 +4680,14 @@ msgstr "Zobrazit informace o kanálu"
 msgid "See profile"
 msgstr "Zobrazit profil"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "Zobrazit oznámení serveru"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Zobrazit diváky"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Podívejte se, kdo píše nejvíc a kdy je kanál nejrušnější."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4637,6 +4735,10 @@ msgstr "Odeslat akci / emote"
 msgid "Send Invite"
 msgstr "Odeslat pozvánku"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Odeslat zprávu"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Odeslat zprávu"
@@ -4644,6 +4746,10 @@ msgstr "Odeslat zprávu"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Send OPER with the name and password above now."
 msgstr "Odeslat OPER s výše zadaným jménem a heslem hned."
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Send or receive a message to start saving history"
+msgstr "Odešlete nebo přijměte zprávu, aby se začala ukládat historie"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4661,10 +4767,6 @@ msgstr "Odesílat oznámení o psaní"
 msgid "Send unencrypted"
 msgstr "Odeslat nešifrovaně"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Send users here when they can't join. Leave empty to disable."
-msgstr "Sem přesměrujte uživatele, kteří se nemohou připojit. Ponechte prázdné pro vypnutí."
-
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Odesílání"
@@ -4672,6 +4774,14 @@ msgstr "Odesílání"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Sending…"
 msgstr "Odesílání…"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because OTR encrypts text only"
+msgstr "Odesláno nešifrovaně, protože OTR šifruje jen text"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because the file is too large to encrypt"
+msgstr "Odesláno nešifrovaně, protože soubor je příliš velký na šifrování"
 
 #: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4793,8 +4903,8 @@ msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "Nastavte, kolik sekund se počítá aktivita záplavy, než se počítadla resetují"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Set how much history to keep. The oldest messages go first."
-msgstr "Nastavte, kolik historie se má uchovávat. Nejstarší zprávy se mažou jako první."
+msgid "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
+msgstr "Nastavte, kolik místa na disku může uložená historie zabrat. Po dosažení limitu se nejdřív smažou nejstarší zprávy."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4815,11 +4925,6 @@ msgstr "Nastavte téma zobrazené pro tento kanál. Vidí ho každý."
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Nastavit se jako nepřítomný"
-
-#. placeholder {0}: p.code
-#: src/components/ui/PasswordRecoveryModal.tsx
-msgid "SETPASS failed: {0}"
-msgstr "SETPASS se nezdařil: {0}"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4945,16 +5050,16 @@ msgid "Show search results"
 msgstr "Zobrazit výsledky hledání"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show the MOTD"
-msgstr "Zobrazit MOTD"
+msgid "Show the message of the day"
+msgstr "Zobrazit zprávu dne"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Show video"
 msgstr "Zobrazit video"
 
 #: src/components/pages/TwoFactorPage.tsx
-msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
-msgstr "Přihlaste se u poskytovatele, aby se jeho identita navázala na váš účet a SASL OAUTHBEARER a IRCV3BEARER fungovaly při dalších připojeních."
+msgid "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
+msgstr "Přihlaste se u poskytovatele a propojte ho se svým účtem. Pak se jím budete moci přihlašovat při dalších připojeních (SASL OAUTHBEARER a IRCV3BEARER)."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -5032,6 +5137,10 @@ msgstr "Zahájit soukromou zprávu na {0}"
 msgid "Start recording"
 msgstr "Spustit nahrávání"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Začněte mluvit, až tečka zčervená"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Zapnout video"
@@ -5050,14 +5159,6 @@ msgstr "Stav"
 msgid "Status Messages"
 msgstr "Stavové zprávy"
 
-#: src/lib/voiceErrors.ts
-msgid "Stay here while we rejoin. The server limits how often you can rejoin."
-msgstr "Zůstaňte tady, než se znovu připojíme. Server omezuje, jak často se můžete znovu připojit."
-
-#: src/components/voice/VoiceDock.tsx
-msgid "Step off stream"
-msgstr "Odstoupit z vysílání"
-
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -5074,6 +5175,10 @@ msgstr "Zastavit nahrávání"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
 msgstr "Ukončit sdílení"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop streaming"
+msgstr "Zastavit streamování"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
@@ -5108,8 +5213,8 @@ msgid "Strip mIRC color codes from messages"
 msgstr "Odstranit barevné kódy mIRC ze zpráv"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Strongest, but only with other Obby users"
-msgstr "Nejsilnější, ale pouze s ostatními uživateli Obby"
+msgid "Strongest encryption. Works only with other Obby users"
+msgstr "Nejsilnější šifrování. Funguje jen s dalšími uživateli Obby"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Suspend"
@@ -5130,10 +5235,6 @@ msgstr "Systém"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Výchozí nastavení systému"
-
-#: src/components/layout/ChannelContextMenu.tsx
-msgid "Take out of folder"
-msgstr "Vyjmout ze složky"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5157,24 +5258,24 @@ msgid "That device is not available right now."
 msgstr "Toto zařízení není momentálně dostupné."
 
 #: src/components/layout/ChatArea.tsx
-msgid "That screen is no longer there."
-msgstr "Tato obrazovka už tam není."
+msgid "That screen is no longer available. Choose another screen."
+msgstr "Tato obrazovka už není dostupná. Vyberte jinou obrazovku."
 
 #: src/lib/voiceErrors.ts
-msgid "The call server refused that. Try again in a moment."
-msgstr "Server hovorů to odmítl. Zkuste to za chvíli znovu."
+msgid "The call server refused the request. Try again in a moment."
+msgstr "Server hovorů žádost odmítl. Zkuste to za chvíli znovu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Připojení k <0>{serverName}</0> má následující bezpečnostní problémy:"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
-msgstr "Souborový server jej uloží čitelný a kdokoli, kdo získá odkaz, jej může otevřít. Chcete-li soubory posílat zašifrované, přepněte na šifrování Obby."
+msgid "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
+msgstr "Hostitel souborů tyto soubory může číst a otevřít je může kdokoli s odkazem. Přepněte na šifrování Obby, aby se soubory odesílaly šifrovaně."
 
 #: src/components/layout/ChatArea.tsx
-msgid "The file host would not let this through."
-msgstr "Souborový server to nepropustil."
+msgid "The file host refused the upload. Try again."
+msgstr "Hostitel souborů nahrání odmítl. Zkuste to znovu."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
@@ -5200,6 +5301,10 @@ msgstr "Server odmítl vaše připojení. Zkontrolujte režimy kanálu a zkuste 
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Uživatel obdrží pozvánku k připojení do {channelName}."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Studio motivů"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
 msgstr "Tento prohlížeč neumí nahrávat zvuk."
@@ -5214,32 +5319,32 @@ msgid "This chat"
 msgstr "Tento chat"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr "Tento chat je šifrován nativním schématem Obby. Porovnejte otisky jiným kanálem a poté jej označte jako ověřený."
+msgid "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Tento chat je šifrovaný šifrováním Obby. Porovnejte otisky se svým kontaktem mimo tento chat a pak ho označte jako ověřeného."
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr "Tento chat je šifrován pomocí OTR, kompatibilního s jinými IRC klienty. Porovnejte otisky jiným kanálem a poté jej označte jako ověřený."
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Tento chat je šifrovaný pomocí OTR, kompatibilního s jinými IRC klienty. Porovnejte otisky se svým kontaktem mimo tento chat a pak ho označte jako ověřeného."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tento příkaz nemá žádné parametry."
 
 #: src/lib/geolocation.ts
-msgid "This device could not get a location fix right now."
-msgstr "Tomuto zařízení se nyní nepodařilo určit polohu."
+msgid "This device could not find your location right now. Try again in a moment."
+msgstr "Toto zařízení teď nemohlo zjistit vaši polohu. Zkuste to za chvíli znovu."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "Toto pole je povinné"
 
+#: src/components/layout/ChatArea.tsx
+msgid "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+msgstr "Tento hostitel souborů odmítá soubory {CIPHERTEXT_EXTENSION}, formát, který Obby používá pro šifrované přílohy. Ukončete šifrování a odešlete soubor nešifrovaně."
+
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Tento soubor není šifrovaný. Otevřít ho může kdokoli, kdo má odkaz."
-
-#: src/components/layout/ChatArea.tsx
-msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
-msgstr "Tento server nepřijímá soubory {CIPHERTEXT_EXTENSION}, v nichž se šifrovaná příloha ukládá. Po ukončení šifrování se soubor odešle tak, jak je."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
@@ -5258,6 +5363,14 @@ msgstr "Tolik lidí se zaregistrovalo přes tento odkaz"
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "Tuto zprávu nešlo dešifrovat. Byla zašifrována pro relaci, k níž toto zařízení už nemá klíče."
 
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by a member of staff"
+msgstr "Tuto zprávu smazal člen týmu"
+
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by the sender"
+msgstr "Tuto zprávu smazal odesílatel"
+
 #: src/components/ui/GlobalNotifications.tsx
 msgid "This message is no longer saved"
 msgstr "Tato zpráva už není uložena"
@@ -5270,6 +5383,10 @@ msgstr "Tato zpráva nebyla šifrovaná. Může pocházet z jiného klienta tét
 msgid "This network"
 msgstr "Tato síť"
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "This pack has no emoji yet. Add one above."
+msgstr "Tato sada zatím nemá žádné emoji. Přidejte je výše."
+
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "Tímto se síť odebere z vašeho soju bounceru. Chcete-li ji použít znovu, budete ji muset přidat zpět."
@@ -5279,8 +5396,8 @@ msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>
 msgstr "Tento server nepodporuje pozvánkové odkazy (capability<0>obby.world/invitation</0>není inzerována). Můžete normálně chatovat; tento panel je určen pro sítě poháněné obbyircd."
 
 #: src/components/layout/ChatArea.tsx
-msgid "This server has nowhere to put a file."
-msgstr "Tento server nemá kam soubor uložit."
+msgid "This server has no file host. Connect to a server with a file host to upload files."
+msgstr "Tento server nemá hostitele souborů. Připojte se k serveru s hostitelem souborů, abyste mohli nahrávat soubory."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -5350,10 +5467,6 @@ msgstr "Přepnout seznam členů"
 msgid "Toggle Notifications"
 msgstr "Přepnout oznámení"
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "Too large to encrypt, sent unencrypted"
-msgstr "Příliš velké pro šifrování, odesláno nešifrovaně"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "nástroj"
@@ -5386,6 +5499,10 @@ msgstr "zkráceno"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Důvěryhodné zdroje"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Zkusit znovu"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."
@@ -5713,6 +5830,10 @@ msgstr "Hlasitost"
 msgid "Volume for {0}"
 msgstr "Hlasitost pro {0}"
 
+#: src/lib/voiceErrors.ts
+msgid "Wait here to rejoin. The server limits how often you can rejoin."
+msgstr "Počkejte zde na opětovné připojení. Server omezuje, jak často se můžete znovu připojit."
+
 #. placeholder {0}: open.opponent
 #: src/components/ui/TicTacToeModal.tsx
 msgid "Waiting for {0} to accept…"
@@ -5800,10 +5921,6 @@ msgstr "Šeptat uživateli v kontextu aktuálního kanálu"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
 msgstr "Široký - širší rozsah ochrany"
-
-#: src/components/layout/SearchPane.tsx
-msgid "Widen the scope"
-msgstr "Rozšířit rozsah"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
@@ -5921,18 +6038,18 @@ msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Vaše zprávy mohou být zachyceny při přeposílání mezi servery"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
-msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované pomocí OTR, které přenáší jen text. Tyto soubory by se odeslaly nezašifrované."
+msgid "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
+msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované pomocí OTR, které šifruje jen text. Tyto soubory budou odeslány nešifrovaně."
 
 #. placeholder {0}: affected.length
 #. placeholder {1}: files.length
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
-msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. {0} z {1} souborů je příliš velkých na šifrování a byly by odeslány nešifrovaně. Ostatní zůstanou šifrované."
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
+msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. {0} z {1} souborů je příliš velkých na šifrování a budou odeslány nešifrovaně. Ostatní soubory budou odeslány šifrovaně."
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
-msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. Tyto soubory jsou příliš velké na šifrování a byly by odeslány nešifrovaně."
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. Tyto soubory jsou příliš velké na šifrování a budou odeslány nešifrovaně."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

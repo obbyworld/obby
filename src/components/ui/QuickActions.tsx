@@ -17,7 +17,7 @@ import { widenScope } from "../../lib/search/searchQuery";
 import { currentChatScope, scopeLabel } from "../../lib/search/searchScope";
 import useStore from "../../store";
 import type { QuickActionsMode } from "../../store/types";
-import SearchQueryBar from "../search/SearchQueryBar";
+import SearchQueryBar, { touchHitArea } from "../search/SearchQueryBar";
 import { useSearchDraft } from "../search/useSearchDraft";
 import { buildQuickActionContext } from "./QuickActions/context";
 import { buildGotoResults } from "./QuickActions/gotoResults";
@@ -29,6 +29,7 @@ import {
   MatchedText,
   resultGroupTitle,
   resultIcon,
+  resultTone,
   UnreadIndicator,
 } from "./QuickActions/resultMeta";
 import type { QuickActionResult } from "./QuickActions/types";
@@ -36,7 +37,6 @@ import { useResultActions } from "./QuickActions/useResultActions";
 import SegmentedControl from "./SegmentedControl";
 import { TextInput } from "./TextInput";
 
-const RAIL_WIDTH = __HIDE_SERVER_LIST__ ? "8px" : "72px";
 const keepInputFocus = (e: React.MouseEvent) => e.preventDefault();
 const NO_KEYS: string[] = [];
 
@@ -257,14 +257,15 @@ const QuickActions: React.FC = () => {
         paddingTop: "var(--safe-area-inset-top, 0px)",
       }
     : {
-        top: 8,
-        left: `calc(var(--safe-area-inset-left, 0px) + ${RAIL_WIDTH})`,
-        width: `min(760px, calc(100vw - ${RAIL_WIDTH} - 16px))`,
+        top: "min(12vh, 96px)",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "min(680px, calc(100vw - 32px))",
       };
 
   return (
     <div
-      className={`fixed inset-0 z-50 animate-in fade-in duration-100 ${isSheet ? "" : "bg-black/50"}`}
+      className={`fixed inset-0 z-50 animate-in fade-in duration-100 ${isSheet ? "" : "scrim"}`}
       onClick={close}
     >
       <div
@@ -272,20 +273,20 @@ const QuickActions: React.FC = () => {
         aria-modal="true"
         aria-label={inputLabel}
         className={`absolute flex flex-col overflow-hidden ${
-          isSheet ? "inset-x-0 top-0 bg-discord-dark-200" : "surface-floating"
+          isSheet ? "inset-x-0 top-0 bg-discord-dark-300" : "surface-floating"
         }`}
         style={panelStyle}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className={`flex items-center gap-2 px-2 bar-divider ${isSheet ? "h-14" : "h-12 px-4"}`}
+          className={`flex items-center gap-2 bar-divider h-12 ${isSheet ? "px-1" : "px-4"}`}
         >
           {isSheet ? (
             <button
               type="button"
               onClick={close}
               aria-label={t`Close`}
-              className="icon-button w-11 h-11 rounded-lg"
+              className="icon-button w-10 h-10 rounded-lg"
             >
               <FaArrowLeft />
             </button>
@@ -306,7 +307,9 @@ const QuickActions: React.FC = () => {
                   : undefined
             }
             aria-label={inputLabel}
-            placeholder={inputLabel}
+            placeholder={
+              isSheet ? (isGoto ? t`Search` : t`Search messages`) : inputLabel
+            }
             enterKeyHint="search"
             {...draft.inputProps}
             onKeyDown={handleInputKeyDown}
@@ -330,7 +333,7 @@ const QuickActions: React.FC = () => {
         >
           <SegmentedControl
             className="shrink-0"
-            size={isSheet ? "lg" : "sm"}
+            size="sm"
             value={mode}
             onChange={(next) =>
               useStore.getState().openQuickActions(next, ui.quickActions?.scope)
@@ -386,7 +389,7 @@ const QuickActions: React.FC = () => {
                       {group.results[0].type === "recent-search" && (
                         <button
                           type="button"
-                          className={`row-meta px-2 rounded hover:text-white ${isSheet ? "min-h-11" : ""}`}
+                          className={`row-meta px-2 rounded hover:text-white ${isTouch ? touchHitArea : ""}`}
                           onMouseDown={keepInputFocus}
                           onClick={clearSearches}
                         >
@@ -410,9 +413,11 @@ const QuickActions: React.FC = () => {
                           onMouseMove={() =>
                             !isSelected && setSelectedIndex(index)
                           }
-                          className={`row-interactive gap-3 ${isSheet ? "min-h-12" : ""} ${isSelected ? "row-interactive-active" : ""}`}
+                          className={`row-interactive gap-3 ${isSelected ? "row-interactive-active" : ""}`}
                         >
-                          <span className="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[13px] bg-black/20">
+                          <span
+                            className={`w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[13px] ${isSelected ? "bg-white/20 text-white" : resultTone(result)}`}
+                          >
                             {resultIcon(result)}
                           </span>
                           <span className="flex-1 min-w-0 flex flex-col">
@@ -421,6 +426,7 @@ const QuickActions: React.FC = () => {
                                 <MatchedText
                                   text={result.title}
                                   query={query}
+                                  isSelected={isSelected}
                                 />
                               ) : (
                                 result.title

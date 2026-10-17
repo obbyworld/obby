@@ -53,7 +53,9 @@ describe("HistoryUsageField", () => {
     vi.mocked(usageBytes).mockResolvedValue(0);
     renderField();
     expect(
-      await screen.findByText("Chat to start saving history"),
+      await screen.findByText(
+        "Send or receive a message to start saving history",
+      ),
     ).toBeTruthy();
   });
 
@@ -98,7 +100,9 @@ describe("HistoryUsageField", () => {
     await waitFor(() => expect(clearHistory).toHaveBeenCalledTimes(1));
     expect(clearRecents).toHaveBeenCalledTimes(1);
     expect(
-      await screen.findByText("Chat to start saving history"),
+      await screen.findByText(
+        "Send or receive a message to start saving history",
+      ),
     ).toBeTruthy();
     expect(screen.queryByText("Clear all saved history?")).toBeNull();
   });
