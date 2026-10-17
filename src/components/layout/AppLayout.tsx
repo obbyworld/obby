@@ -18,10 +18,12 @@ import TitleTooltipLayer from "../ui/TitleTooltipLayer";
 import { VoicePipOverlay } from "../voice/VoicePipOverlay";
 import { ChannelList } from "./ChannelList";
 import { ChatArea } from "./ChatArea";
+import { MemberList } from "./MemberList";
 import { PageLayer } from "./PageLayer";
 import { ResizableSidebar } from "./ResizableSidebar";
 import { ServerList } from "./ServerList";
 import { SidePane } from "./SidePane";
+import SwipeBackScreen from "./SwipeBackScreen";
 import { VoiceChannelView } from "./VoiceChannelView";
 
 const PAGE_ORDER: layoutColumn[] = ["serverList", "chatView", "memberList"];
@@ -309,7 +311,16 @@ export const AppLayout: React.FC = () => {
         if (isNarrowView) {
           return (
             <div className="w-full h-full bg-discord-dark-100">
-              <SidePane />
+              {sidePane?.kind === "profile" || sidePane?.kind === "bot" ? (
+                <SwipeBackScreen
+                  under={<MemberList />}
+                  onBack={() => useStore.getState().closeProfile()}
+                >
+                  <SidePane />
+                </SwipeBackScreen>
+              ) : (
+                <SidePane />
+              )}
             </div>
           );
         }
