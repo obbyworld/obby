@@ -3286,17 +3286,17 @@ msgstr "Bahsedilen kişi"
 msgid "Message"
 msgstr "Mesaj"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "{0} için mesaj"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "{0} için mesaj (yeni satır için Enter, göndermek için Shift+Enter)"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "{0} için mesaj (yeni satır için Shift+Enter)"
