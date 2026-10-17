@@ -741,28 +741,30 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           id="channel.display-name"
           title={t`Display name`}
           description={t`Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name (${channelName}).`}
-        >
-          <input
-            type="text"
-            value={channelDisplayName}
-            onChange={(e) => setChannelDisplayName(e.target.value)}
-            placeholder={t`General Support Channel`}
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="text"
+              value={channelDisplayName}
+              onChange={(e) => setChannelDisplayName(e.target.value)}
+              placeholder={t`General Support Channel`}
+              className="field-input w-full"
+            />
+          }
+        />
         <SettingRow
           id="channel.draft/emoji"
           title={t`Custom emoji pack`}
           description={t`Enter the URL of an IRCv3 custom-emoji pack JSON document. Its shortcodes override the network pack in this channel. Leave blank for the network default.`}
-        >
-          <input
-            type="url"
-            value={channelEmojiPack}
-            onChange={(e) => setChannelEmojiPack(e.target.value)}
-            placeholder="https://example.com/emoji/channel/general.json"
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="url"
+              value={channelEmojiPack}
+              onChange={(e) => setChannelEmojiPack(e.target.value)}
+              placeholder="https://example.com/emoji/channel/general.json"
+              className="field-input w-full"
+            />
+          }
+        />
       </SettingGroup>
       <SettingGroup>
         <SettingRow
@@ -813,16 +815,17 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           id="channel.l"
           title={t`Client limit (+l)`}
           description={t`Set the maximum number of users. Leave empty for no limit.`}
-        >
-          <input
-            type="number"
-            value={value("l")}
-            onChange={(e) => setValue("l", e.target.value)}
-            placeholder={t`No limit`}
-            min="1"
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="number"
+              value={value("l")}
+              onChange={(e) => setValue("l", e.target.value)}
+              placeholder={t`No limit`}
+              min="1"
+              className="field-input w-full"
+            />
+          }
+        />
         <FlagRow
           letter="i"
           title={t`Invite-only (+i)`}
@@ -834,15 +837,16 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           id="channel.k"
           title={t`Channel key (+k)`}
           description={t`Set the password needed to join. Leave empty to remove the key.`}
-        >
-          <input
-            type="password"
-            value={value("k")}
-            onChange={(e) => setValue("k", e.target.value)}
-            placeholder={t`No key`}
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="password"
+              value={value("k")}
+              onChange={(e) => setValue("k", e.target.value)}
+              placeholder={t`No key`}
+              className="field-input w-full"
+            />
+          }
+        />
         <FlagRow
           letter="m"
           title={t`Moderated (+m)`}
@@ -939,24 +943,25 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           id={`channel.${spec.name}`}
           title={title}
           description={description}
-        >
-          <input
-            type="text"
-            value={staged?.param ?? live.param ?? ""}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (v === (live.param ?? "")) {
-                stageNamedMode(spec.name, null);
-              } else if (!v) {
-                stageNamedMode(spec.name, { sign: "-" });
-              } else {
-                stageNamedMode(spec.name, { sign: "+", param: v });
-              }
-            }}
-            placeholder={placeholder}
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="text"
+              value={staged?.param ?? live.param ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === (live.param ?? "")) {
+                  stageNamedMode(spec.name, null);
+                } else if (!v) {
+                  stageNamedMode(spec.name, { sign: "-" });
+                } else {
+                  stageNamedMode(spec.name, { sign: "+", param: v });
+                }
+              }}
+              placeholder={placeholder}
+              className="field-input w-full"
+            />
+          }
+        />
       ),
     };
   };
@@ -1185,28 +1190,30 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
           id="channel.H"
           title={t`Channel history (+H)`}
           description={t`Record history as max-lines:max-minutes. Leave empty to disable.`}
-        >
-          <input
-            type="text"
-            value={value("H")}
-            onChange={(e) => setValue("H", e.target.value)}
-            placeholder={t`e.g., 100:1440`}
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="text"
+              value={value("H")}
+              onChange={(e) => setValue("H", e.target.value)}
+              placeholder={t`e.g., 100:1440`}
+              className="field-input w-full"
+            />
+          }
+        />
         <SettingRow
           id="channel.L"
           title={t`Channel link (+L)`}
           description={t`Enter a channel to send users to when they cannot join this one. Leave empty to disable.`}
-        >
-          <input
-            type="text"
-            value={value("L")}
-            onChange={(e) => setValue("L", e.target.value)}
-            placeholder={t`#overflow`}
-            className="field-input w-full"
-          />
-        </SettingRow>
+          field={
+            <input
+              type="text"
+              value={value("L")}
+              onChange={(e) => setValue("L", e.target.value)}
+              placeholder={t`#overflow`}
+              className="field-input w-full"
+            />
+          }
+        />
       </SettingGroup>
     </>
   );
@@ -1409,6 +1416,7 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
         activeSection={activeId}
         onSectionChange={setSectionId}
         startOnSection={!!page.section}
+        columns={!isListSection(activeId)}
       >
         <div onBlur={scheduleApply} className="contents">
           {body}

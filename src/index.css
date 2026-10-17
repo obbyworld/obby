@@ -150,11 +150,46 @@
   .page-card > * {
     @apply rounded-md bg-discord-dark-400/30;
   }
+  .page-body {
+    container-type: inline-size;
+  }
+  .setting-row {
+    container-type: inline-size;
+  }
+  .setting-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
   .field-input {
     @apply w-full bg-discord-dark-400 text-discord-text-normal rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50;
   }
   .status-badge {
     @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
+  }
+}
+
+/* A field sits beside its label once the row has room, and wraps under it on a phone. */
+@container (min-width: 28rem) {
+  .setting-field {
+    flex: 0 0 16rem;
+  }
+}
+
+/* We flow a page's setting groups into two columns once the page is wide enough
+   for both to keep fields beside their labels. */
+@container (min-width: 1100px) {
+  .page-columns {
+    display: block;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+  .page-columns > :not(.contents),
+  .page-columns > .contents > * {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+  .page-columns .page-span {
+    column-span: all;
   }
 }
 

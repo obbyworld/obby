@@ -16,6 +16,7 @@ import type { SettingsSection } from "../../store/types";
 import AvatarUpload from "../ui/AvatarUpload";
 import InvitationsPanel from "../ui/InvitationsPanel";
 import PersistenceSettingsPanel from "../ui/PersistenceSettingsPanel";
+import { ProfileBanner } from "../ui/ProfileBanner";
 import { PageShell } from "../ui/page/PageShell";
 import { SettingGroup, SettingRow, Switch } from "../ui/page/SettingRow";
 import { SettingField, TextDraftInput } from "../ui/settings/SettingRenderer";
@@ -254,6 +255,27 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
       .filter((setting) => supportsMetadata || !(setting.id in METADATA_KEYS));
     return (
       <>
+        {currentServer && currentUser && (
+          <ProfileBanner
+            serverId={currentServer.id}
+            nickname={profileValue("profile.nickname")}
+            displayName={profileValue("profile.displayName")}
+            avatarUrl={profileValue("profile.avatar")}
+            color={profileValue("profile.color")}
+            status={profileValue("profile.status")}
+            actions={
+              <button
+                type="button"
+                onClick={() =>
+                  openProfile(currentServer.id, currentUser.username)
+                }
+                className="h-9 px-3 rounded-lg bg-discord-dark-400 hover:bg-discord-dark-300 text-sm text-discord-text-normal"
+              >
+                <Trans>View profile</Trans>
+              </button>
+            }
+          />
+        )}
         {groupBySubcategory(profileSettings).map(([subcategory, group]) => (
           <SettingGroup
             key={subcategory ?? ""}
@@ -301,19 +323,6 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
             />
           </SettingGroup>
         )}
-        <div className="flex items-center justify-end gap-2 min-h-9">
-          {currentServer && currentUser && (
-            <button
-              type="button"
-              onClick={() =>
-                openProfile(currentServer.id, currentUser.username)
-              }
-              className="h-9 px-3 rounded-lg bg-discord-dark-400 hover:bg-discord-dark-300 text-sm text-discord-text-normal"
-            >
-              <Trans>View profile</Trans>
-            </button>
-          )}
-        </div>
       </>
     );
   };
@@ -481,28 +490,30 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
                 Authenticate as an IRC Operator for administrative access
               </Trans>
             }
-          >
-            <TextDraftInput
-              value={operName}
-              placeholder={t`Enter oper username`}
-              onCommit={(value) => {
-                setOperName(value);
-                updateServer(serverConfig.id, { operUsername: value });
-              }}
-            />
-          </SettingRow>
+            field={
+              <TextDraftInput
+                value={operName}
+                placeholder={t`Enter oper username`}
+                onCommit={(value) => {
+                  setOperName(value);
+                  updateServer(serverConfig.id, { operUsername: value });
+                }}
+              />
+            }
+          />
           <SettingRow
             id="account.operPassword"
             title={<Trans>Oper Password</Trans>}
-          >
-            <TextInput
-              type="password"
-              className="field-input"
-              value={operPassword}
-              onChange={(e) => setOperPassword(e.target.value)}
-              placeholder={t`Enter oper password`}
-            />
-          </SettingRow>
+            field={
+              <TextInput
+                type="password"
+                className="field-input"
+                value={operPassword}
+                onChange={(e) => setOperPassword(e.target.value)}
+                placeholder={t`Enter oper password`}
+              />
+            }
+          />
           <SettingRow
             id="account.operOnConnect"
             title={<Trans>Authenticate on connect</Trans>}
@@ -681,6 +692,7 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
       activeSection={activeSection}
       onSectionChange={(id) => setActiveSection(id as SettingsSection)}
       startOnSection={!!page.section}
+      columns
     >
       {renderSection()}
     </PageShell>

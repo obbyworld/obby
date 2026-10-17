@@ -266,6 +266,13 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
   }
 };
 
+const ONE_LINE_TYPES: SettingDefinition["type"][] = [
+  "text",
+  "number",
+  "select",
+  "color",
+];
+
 export const SettingField: React.FC<{
   setting: SettingDefinition;
   value: SettingValue;
@@ -300,11 +307,27 @@ export const SettingField: React.FC<{
     );
   }
 
-  return (
-    <SettingRow id={setting.id} title={title} description={description}>
-      {renderer}
+  const isOneLine =
+    !setting.customComponent && ONE_LINE_TYPES.includes(setting.type);
+  const below = (error || children) && (
+    <>
       {error && <p className="mt-2 text-xs text-discord-red">{error}</p>}
       {children}
+    </>
+  );
+  return isOneLine ? (
+    <SettingRow
+      id={setting.id}
+      title={title}
+      description={description}
+      field={renderer}
+    >
+      {below}
+    </SettingRow>
+  ) : (
+    <SettingRow id={setting.id} title={title} description={description}>
+      {renderer}
+      {below}
     </SettingRow>
   );
 };
