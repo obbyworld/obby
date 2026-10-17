@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { FaLock, FaLockOpen, FaShieldAlt } from "react-icons/fa";
 import { e2eeSessionKey, isWithholding } from "../../lib/e2ee/session";
 import useStore from "../../store";
-import HeaderOverflowMenu, {
-  type HeaderOverflowMenuItem,
-} from "./HeaderOverflowMenu";
+import Menu, { type MenuItem } from "./Menu";
 
 // The single encryption affordance for a private chat. Driven entirely by the
 // session reducer status (scheme-agnostic), so it serves both the Obby-native
 // and OTR backends. Starting encryption is an explicit choice between the two
 // schemes: a security feature shouldn't hide which guarantees are in force, and
 // each interoperates with different peers. The dropdown reuses the shared
-// HeaderOverflowMenu so it matches the rest of the header's menus.
+// Menu so it matches the rest of the header's menus.
 const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
   serverId,
   nick,
@@ -97,7 +95,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
   const keyChanged = status === "key-changed";
   const locked = established || keyChanged;
 
-  const menuItems: HeaderOverflowMenuItem[] = locked
+  const menuItems: MenuItem[] = locked
     ? [
         {
           id: "verify",
@@ -184,7 +182,7 @@ const E2EELockControl: React.FC<{ serverId: string; nick: string }> = ({
       >
         {verified ? <FaShieldAlt /> : locked ? <FaLock /> : <FaLockOpen />}
       </button>
-      <HeaderOverflowMenu
+      <Menu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
         menuItems={menuItems}

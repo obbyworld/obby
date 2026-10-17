@@ -1,5 +1,8 @@
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useSuggestionKeys } from "../../hooks/useSuggestionKeys";
+import SuggestionList from "./SuggestionList";
 
 interface EmojiItem {
   unified: string;
@@ -25,12 +28,13 @@ interface EmojiAutocompleteDropdownProps {
   onNavigate?: (emoji: string) => void;
 }
 
+const MAX_EMOJIS = 10;
+const CLOSE_KEYS = ["Escape", " "];
+
 export const EmojiAutocompleteDropdown: React.FC<
   EmojiAutocompleteDropdownProps
 > = ({
   isVisible,
-  inputValue,
-  cursorPosition,
   onSelect,
   onClose,
   inputElement,
@@ -39,149 +43,68 @@ export const EmojiAutocompleteDropdown: React.FC<
   onNavigate,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const displayEmojis = emojiMatches.slice(0, 10); // Limit to 10 emojis
+  const displayEmojis = emojiMatches.slice(0, MAX_EMOJIS);
 
   useEffect(() => {
     setSelectedIndex(emojiMatches.length > 0 ? currentMatchIndex : 0);
   }, [currentMatchIndex, emojiMatches.length]);
 
-  useEffect(() => {
-    if (isVisible && displayEmojis.length > 0) {
-      const selectedElement = document.querySelector(
-        `[data-emoji-index="${selectedIndex}"]`,
-      );
-      if (selectedElement) {
-        selectedElement.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-      }
-    }
-  }, [selectedIndex, isVisible, displayEmojis.length]);
+  useSuggestionKeys({
+    isActive: isVisible,
+    count: displayEmojis.length,
+    selectedIndex,
+    onMove: (index) => {
+      setSelectedIndex(index);
+      const item = displayEmojis[index];
+      if (item) onNavigate?.(item.emoji);
+    },
+    onAccept: (index) => {
+      const item = displayEmojis[index];
+      if (item) onSelect(item.emoji);
+      return true;
+    },
+    onClose,
+    closeKeys: CLOSE_KEYS,
+  });
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isVisible || displayEmojis.length === 0) return;
-
-      switch (e.key) {
-        case "ArrowDown": {
-          e.preventDefault();
-          e.stopPropagation();
-          const nextIndex = (selectedIndex + 1) % displayEmojis.length;
-          setSelectedIndex(nextIndex);
-          if (onNavigate && displayEmojis[nextIndex]) {
-            onNavigate(displayEmojis[nextIndex].emoji);
-          }
-          break;
-        }
-        case "ArrowUp": {
-          e.preventDefault();
-          e.stopPropagation();
-          const prevIndex =
-            selectedIndex === 0 ? displayEmojis.length - 1 : selectedIndex - 1;
-          setSelectedIndex(prevIndex);
-          if (onNavigate && displayEmojis[prevIndex]) {
-            onNavigate(displayEmojis[prevIndex].emoji);
-          }
-          break;
-        }
-        case "Enter":
-          e.preventDefault();
-          e.stopPropagation();
-          if (displayEmojis[selectedIndex]) {
-            onSelect(displayEmojis[selectedIndex].emoji);
-          }
-          break;
-        case "Escape":
-        case " ": // Space should also close the dropdown
-          e.preventDefault();
-          e.stopPropagation();
-          onClose();
-          break;
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown, true);
-    return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [isVisible, displayEmojis, selectedIndex, onClose, onNavigate, onSelect]);
-
-  if (!isVisible || displayEmojis.length === 0) {
-    return null;
-  }
-
-  const getPosition = () => {
-    if (!inputElement) {
-      return { top: 100, left: 100 };
-    }
-
-    const inputRect = inputElement.getBoundingClientRect();
-    const dropdownHeight = Math.min(displayEmojis.length * 48 + 32, 240);
-
-    return {
-      top: inputRect.top + window.scrollY - dropdownHeight - 8,
-      left: inputRect.left + window.scrollX,
-    };
-  };
-
-  const position = getPosition();
+  if (!isVisible || displayEmojis.length === 0) return null;
 
   return (
-    <div
-      ref={dropdownRef}
-      className="fixed z-[9999] bg-discord-dark-300 border border-discord-dark-500 rounded-md shadow-xl max-w-xs min-w-48"
-      style={{
-        top: position.top,
-        left: position.left,
-      }}
-    >
-      <div className="py-1 max-h-60 overflow-y-auto">
-        <div className="px-3 py-1 text-xs text-discord-text-muted font-semibold uppercase tracking-wide border-b border-discord-dark-500">
-          Emojis
-        </div>
-        {displayEmojis.map((emojiItem, index) => (
-          <div
-            key={emojiItem.unified}
-            data-emoji-index={index}
-            className={`px-3 py-2 cursor-pointer flex items-center gap-2 transition-colors duration-150 ${
-              index === selectedIndex
-                ? "bg-discord-text-link text-white"
-                : "text-discord-text-normal hover:bg-discord-dark-200 hover:text-white"
-            }`}
-            onClick={() => onSelect(emojiItem.emoji)}
-            onMouseEnter={() => setSelectedIndex(index)}
-          >
-            <div className="text-xl flex-shrink-0 w-6 h-6 flex items-center justify-center">
-              {emojiItem.imageUrl ? (
-                <img
-                  src={emojiItem.imageUrl}
-                  alt={`:${emojiItem.short_names[0]}:`}
-                  className="max-w-full max-h-full object-contain"
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                emojiItem.emoji
-              )}
-            </div>
-            <div className="flex flex-col flex-1 min-w-0">
-              <span className="truncate font-medium text-sm">
-                :{emojiItem.short_names[0]}:
+    <SuggestionList
+      title={<Trans>Emojis</Trans>}
+      items={displayEmojis}
+      getKey={(item) => item.unified}
+      selectedIndex={selectedIndex}
+      onHover={setSelectedIndex}
+      onPick={(item) => onSelect(item.emoji)}
+      anchor={inputElement}
+      renderItem={(item) => (
+        <>
+          <span className="w-6 h-6 shrink-0 flex items-center justify-center text-xl">
+            {item.imageUrl ? (
+              <img
+                src={item.imageUrl}
+                alt={`:${item.short_names[0]}:`}
+                className="max-w-full max-h-full object-contain"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              item.emoji
+            )}
+          </span>
+          <span className="flex-1 min-w-0 flex flex-col">
+            <span className="truncate">:{item.short_names[0]}:</span>
+            {item.short_names.length > 1 && (
+              <span className="row-meta truncate">
+                :{item.short_names.slice(1, 3).join(": :")}:
               </span>
-              {emojiItem.short_names.length > 1 && (
-                <span className="truncate text-xs text-discord-text-muted">
-                  :{emojiItem.short_names.slice(1, 3).join(": :")}:
-                </span>
-              )}
-            </div>
-            <span className="text-xs text-discord-text-muted capitalize flex-shrink-0">
-              {emojiItem.category}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
+            )}
+          </span>
+          <span className="row-meta shrink-0 capitalize">{item.category}</span>
+        </>
+      )}
+    />
   );
 };
 

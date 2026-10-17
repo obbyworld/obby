@@ -3,6 +3,7 @@ import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { getStatusPriority } from "../../lib/channelStatus";
 import ircClient from "../../lib/ircClient";
 import {
   getColorStyle,
@@ -28,33 +29,6 @@ const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   }
 
   return <div className={`w-3 h-3 rounded-full ${bgColor}`} />;
-};
-
-const getStatusPriority = (status?: string): number => {
-  if (!status) return 1;
-  let maxPriority = 1;
-  for (const char of status) {
-    let priority = 1;
-    switch (char) {
-      case "~":
-        priority = 6; // owner
-        break;
-      case "&":
-        priority = 5; // admin
-        break;
-      case "@":
-        priority = 4; // chanop
-        break;
-      case "%":
-        priority = 3; // halfop
-        break;
-      case "+":
-        priority = 2; // voice
-        break;
-    }
-    if (priority > maxPriority) maxPriority = priority;
-  }
-  return maxPriority;
 };
 
 const getStatusChar = (status?: string): string => {
@@ -663,7 +637,6 @@ export const MemberList: React.FC = () => {
         y={userContextMenu.y}
         username={userContextMenu.username}
         serverId={userContextMenu.serverId}
-        channelId={userContextMenu.channelId}
         onClose={handleCloseUserContextMenu}
         onOpenPM={handleOpenPM}
         onOpenProfile={handleOpenProfile}

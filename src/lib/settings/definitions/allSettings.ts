@@ -254,6 +254,18 @@ const preferenceSettings: SettingDefinition[] = [
     priority: 2,
   },
   {
+    id: "preferences.showMotd",
+    key: "showMotd",
+    category: "preferences",
+    subcategory: "Chat",
+    title: msg`Show the MOTD`,
+    description: msg`Post each server's message of the day to Server Notices and its welcome page`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: ["motd", "message of the day", "rules", "welcome"],
+    priority: 3,
+  },
+  {
     id: "preferences.showEvents",
     key: "showEvents",
     category: "preferences",

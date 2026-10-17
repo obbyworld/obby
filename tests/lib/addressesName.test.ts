@@ -39,6 +39,13 @@ describe("addressesName", () => {
     expect(addressesName("ping my-nick now", "my-nick")).toBe(true);
   });
 
+  test("a short name only matches where it stands alone", () => {
+    expect(addressesName("the corporation said no", "Ora")).toBe(false);
+    expect(addressesName("Hey, Ora", "Ora")).toBe(true);
+    expect(addressesName("@ora can you look", "Ora")).toBe(true);
+    expect(addressesName("Let's ask Ora.", "Ora")).toBe(true);
+  });
+
   test("a later occurrence still counts when the first is buried", () => {
     expect(addressesName("mattfoo told mattf about it", "mattf")).toBe(true);
   });

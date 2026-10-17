@@ -271,7 +271,11 @@ const FloodSettingsModal: React.FC<FloodSettingsModalProps> = ({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      role="dialog"
+      aria-modal="true"
+    >
       <div
         className={`bg-discord-dark-400 rounded-lg shadow-xl max-h-[90vh] flex flex-col ${isMobile ? "w-full max-w-md" : "w-full max-w-2xl"}`}
       >

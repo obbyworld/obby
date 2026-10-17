@@ -13,6 +13,7 @@ import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaTimes } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useVoiceCall } from "../../hooks/useVoiceCall";
 import { releaseVoiceClient, type VoiceMember } from "../../lib/voice";
@@ -72,7 +73,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   const [pttOn, setPttOn] = useState(false);
 
   const isNarrow = useMediaQuery();
-  const isTouch = useMediaQuery("(pointer: coarse)");
+  const isTouch = useIsTouchInput();
 
   useEffect(() => {
     if (client) setPttOn(client.isPushToTalk());

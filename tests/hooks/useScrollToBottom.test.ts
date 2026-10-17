@@ -172,6 +172,38 @@ describe("useScrollToBottom", () => {
     );
   });
 
+  function wheelUp() {
+    const call = vi
+      .mocked(mockContainer.addEventListener)
+      .mock.calls.find(([type]) => type === "wheel");
+    const handler = call?.[1] as (e: WheelEvent) => void;
+    act(() => handler({ deltaY: -40 } as WheelEvent));
+  }
+
+  it("keeps the button hidden when an upward wheel cannot scroll anything", () => {
+    setDim(mockContainer, "scrollHeight", 500);
+    setDim(mockContainer, "clientHeight", 500);
+    const { result } = renderHook(() => {
+      const containerRef = useRef(mockContainer);
+      const endElementRef = useRef(mockEndElement);
+      return useScrollToBottom(containerRef, endElementRef);
+    });
+
+    wheelUp();
+    expect(result.current.isScrolledUp).toBe(false);
+  });
+
+  it("shows the button at once when an upward wheel starts in a long buffer", () => {
+    const { result } = renderHook(() => {
+      const containerRef = useRef(mockContainer);
+      const endElementRef = useRef(mockEndElement);
+      return useScrollToBottom(containerRef, endElementRef);
+    });
+
+    wheelUp();
+    expect(result.current.isScrolledUp).toBe(true);
+  });
+
   it("should update isScrolledUp when IntersectionObserver fires", () => {
     const { result } = renderHook(() => {
       const containerRef = useRef(mockContainer);

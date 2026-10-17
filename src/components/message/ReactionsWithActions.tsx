@@ -1,5 +1,5 @@
 import type React from "react";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import type { MessageType } from "../../types";
 import { MessageActions } from "./MessageActions";
 import { MessageReactions } from "./MessageReactions";
@@ -29,7 +29,7 @@ export const ReactionsWithActions: React.FC<ReactionsWithActionsProps> = ({
   canReply = true,
   canOpenMedia = false,
 }) => {
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+  const isTouchDevice = useIsTouchInput();
   const hasReactions = !!message.reactions?.length;
 
   if (!isTouchDevice && hasReactions) {

@@ -2,6 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shared look for menus and floating panels. */
+@layer components {
+  .surface-floating {
+    @apply bg-discord-dark-300 rounded-lg ring-1 ring-black/40 shadow-[0_8px_24px_rgba(0,0,0,0.45)];
+  }
+  .surface-list {
+    @apply p-1.5;
+  }
+  .row-interactive {
+    @apply w-full px-2 py-1.5 rounded text-left text-sm font-medium flex items-center gap-2.5 text-discord-text-normal transition-colors duration-100 outline-none hover:bg-discord-primary hover:text-white focus-visible:bg-discord-primary focus-visible:text-white;
+  }
+  .row-interactive-active {
+    @apply bg-discord-primary text-white;
+  }
+  .row-interactive-danger {
+    @apply text-red-400 hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white;
+  }
+  .row-icon {
+    @apply flex-shrink-0 w-4 flex justify-center opacity-70;
+  }
+  .row-meta {
+    @apply text-xs font-normal text-discord-text-muted;
+  }
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-icon {
+    @apply opacity-100;
+  }
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-meta {
+    @apply text-white;
+  }
+  .divider-soft {
+    @apply my-1.5 mx-1 h-px border-0 bg-white/[0.06];
+  }
+  .chip-action {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-discord-dark-300 text-discord-text-normal ring-1 ring-black/40 shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-colors duration-100 hover:bg-discord-primary hover:text-white disabled:opacity-70 disabled:hover:bg-discord-dark-300 disabled:hover:text-discord-text-normal;
+  }
+  .section-label {
+    @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
+  }
+  .surface-sheet {
+    @apply bg-discord-dark-300 rounded-t-2xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] flex flex-col overflow-hidden;
+  }
+  .sheet-handle {
+    @apply mx-auto mt-2 mb-1 w-9 h-1 shrink-0 rounded-full bg-discord-dark-500;
+  }
+  .sheet-row {
+    @apply w-full min-h-12 flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-white active:bg-discord-dark-400;
+  }
+  .sheet-action {
+    @apply flex-1 h-11 rounded-lg bg-discord-dark-400 text-discord-text-normal text-sm flex items-center justify-center gap-2 active:bg-discord-dark-500;
+  }
+  .icon-button {
+    @apply w-7 h-7 shrink-0 rounded flex items-center justify-center text-discord-text-muted transition-colors duration-100 hover:bg-discord-dark-500/40 hover:text-white focus-visible:outline-none focus-visible:bg-discord-dark-500/40 focus-visible:text-white;
+  }
+  .hairline {
+    @apply h-px shrink-0 bg-white/[0.06];
+  }
+  .code-text {
+    @apply m-0 font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-discord-text-normal;
+  }
+  .code-panel {
+    @apply rounded-md bg-discord-dark-400 overflow-hidden;
+  }
+  .status-badge {
+    @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
+  }
+}
+
+/* We draw the compact-link glyph from an inline SVG mask, which stays offline. */
+.link-compact::before {
+  content: "";
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-right: 0.3em;
+  vertical-align: -0.05em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
 /* Collapsible message styles */
 .collapsible-message .line-clamp {
   display: -webkit-box;

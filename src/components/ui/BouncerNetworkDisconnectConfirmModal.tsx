@@ -30,6 +30,8 @@ export const BouncerNetworkDisconnectConfirmModal: React.FC = () => {
   return createPortal(
     <div
       className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+      role="dialog"
+      aria-modal="true"
       onClick={cancel}
     >
       <div

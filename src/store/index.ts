@@ -1126,7 +1126,6 @@ export interface AppState {
   stopActiveMedia: () => void;
   setMediaInlineVisible: (visible: boolean, currentTime?: number) => void;
   setActiveMediaThumbnail: (url: string, thumbnailUrl: string) => void;
-  toggleNotificationVolume: () => void;
   setIsNarrowView: (isNarrow: boolean) => void;
   showContextMenu: (
     x: number,
@@ -1399,6 +1398,7 @@ const useStore = create<AppState>((set, get) => ({
     mediaVisibilityLevel: 1 as MediaVisibilityLevel,
     // Markdown settings
     enableMarkdownRendering: false,
+    showMotd: true,
     // Status messages
     awayMessage: "",
     quitMessage: "",
@@ -3957,20 +3957,6 @@ const useStore = create<AppState>((set, get) => ({
             ...(currentTime !== undefined ? { currentTime } : {}),
           },
         },
-      };
-    });
-  },
-
-  toggleNotificationVolume: () => {
-    set((state) => {
-      const newVolume = state.globalSettings.notificationVolume > 0 ? 0 : 0.4;
-      const newGlobalSettings = {
-        ...state.globalSettings,
-        notificationVolume: newVolume,
-      };
-      saveGlobalSettingsToLocalStorage(newGlobalSettings);
-      return {
-        globalSettings: newGlobalSettings,
       };
     });
   },

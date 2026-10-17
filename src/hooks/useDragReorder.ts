@@ -4,8 +4,14 @@ import { haptic } from "../lib/haptic";
 interface UseDragReorderConfig<T> {
   items: T[];
   getItemId: (item: T) => string;
-  onReorder: (reorderedIds: string[]) => void;
+  onReorder: (
+    reorderedIds: string[],
+    draggedId: string,
+    targetId: string,
+  ) => void;
   disabled?: boolean;
+  // Drag handles can start on touch at once, since they never scroll the list.
+  touchDelay?: number;
 }
 
 interface UseDragReorderReturn {
@@ -69,6 +75,7 @@ export function useDragReorder<T>({
   getItemId,
   onReorder,
   disabled = false,
+  touchDelay = LONG_PRESS_DELAY,
 }: UseDragReorderConfig<T>): UseDragReorderReturn {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
@@ -181,7 +188,7 @@ export function useDragReorder<T>({
         // On touch: wait for long press before claiming the gesture.
         // This lets the scroll container handle fast swipes normally.
         pressTargetRef.current = target;
-        longPressTimer.current = setTimeout(activateDrag, LONG_PRESS_DELAY);
+        longPressTimer.current = setTimeout(activateDrag, touchDelay);
         // The listener must exist before iOS decides "scroll vs gesture".
         // It only calls preventDefault once hasMoved is true (drag active),
         // so normal scroll is unaffected during the waiting period.
@@ -198,7 +205,7 @@ export function useDragReorder<T>({
         scrollContainerRef.current = findScrollContainer(target);
       }
     },
-    [disabled, items, getItemId, activateDrag],
+    [disabled, items, getItemId, activateDrag, touchDelay],
   );
 
   const handlePointerMove = useCallback(
@@ -323,7 +330,7 @@ export function useDragReorder<T>({
             const reordered = [...items];
             const [removed] = reordered.splice(draggedIndex, 1);
             reordered.splice(targetIndex, 0, removed);
-            onReorder(reordered.map(getItemId));
+            onReorder(reordered.map(getItemId), draggedId, dragOverItemId);
           }
         }
       }

@@ -1,6 +1,12 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { processMarkdownInText, renderMarkdown } from "../../src/lib/ircUtils";
+import {
+  compactUrl,
+  findFirstUrl,
+  makeLinkLabels,
+  processMarkdownInText,
+  renderMarkdown,
+} from "../../src/lib/ircUtils";
 
 function html(node: React.ReactNode): string {
   return renderToStaticMarkup(node as React.ReactElement);
@@ -226,5 +232,110 @@ describe("processMarkdownInText", () => {
     expect(out).toContain("<pre><code");
     expect(out).toContain("block");
     expect(out).toContain("color:#FFFF00");
+  });
+});
+
+describe("processMarkdownInText heading detection", () => {
+  it("keeps a line starting with a channel name out of markdown", () => {
+    const out = html(processMarkdownInText("sure Valware\n#bots", true, true));
+    expect(out).not.toContain("markdown-content");
+  });
+
+  it("still renders a real heading as markdown", () => {
+    const out = html(processMarkdownInText("# Title\nbody", true, true));
+    expect(out).toContain("markdown-content");
+  });
+});
+
+describe("code block escaping", () => {
+  it("renders markup in a fence with an unknown language as text", () => {
+    const out = html(renderMarkdown("```foo\n<img src=http://x>\n```"));
+    expect(out).not.toContain("<img");
+    expect(out).toContain("&lt;img");
+  });
+
+  it("renders numeric-entity markup in a fence as text", () => {
+    const out = html(renderMarkdown("```foo\n&#60;img src=http://x&#62;\n```"));
+    expect(out).not.toContain("<img");
+  });
+});
+
+describe("link labels", () => {
+  const url = "https://github.com/obbyworld/obby/issues/291";
+  const labels = new Map([[url, "Highlights use word barriers"]]);
+
+  it("shows the label in place of a plain link", () => {
+    const out = html(
+      processMarkdownInText(`see ${url}`, true, false, "", labels),
+    );
+    expect(out).toContain("Highlights use word barriers");
+    expect(out).toContain(`href="${url}"`);
+  });
+
+  it("shows the label in place of a markdown autolink", () => {
+    const out = html(
+      processMarkdownInText(`**see** ${url}`, true, true, "", labels),
+    );
+    expect(out).toContain(">Highlights use word barriers</a>");
+  });
+
+  it("shows links without a label compactly", () => {
+    const out = html(
+      processMarkdownInText("see https://www.example.org/x/", true),
+    );
+    expect(out).toContain(">example.org/x</a>");
+    expect(out).toContain('href="https://www.example.org/x/"');
+  });
+
+  it("keeps the text of a link written in markdown", () => {
+    const out = html(
+      processMarkdownInText(
+        "**read** [the docs](https://example.org/d)",
+        true,
+        true,
+      ),
+    );
+    expect(out).toContain(">the docs</a>");
+  });
+});
+
+describe("makeLinkLabels", () => {
+  it("matches a link written with trailing punctuation or emphasis", () => {
+    const labels = makeLinkLabels("https://a.org/b.", "A page");
+    const plain = html(
+      processMarkdownInText("see https://a.org/b.", true, false, "", labels),
+    );
+    const markdown = html(
+      processMarkdownInText("**see** https://a.org/b.", true, true, "", labels),
+    );
+    expect(plain).toContain(">A page</a>");
+    expect(markdown).toContain(">A page</a>");
+  });
+
+  it("keeps a label on one line and caps its length", () => {
+    const label = makeLinkLabels("https://a.org", `x\n${"y".repeat(200)}`).get(
+      "https://a.org",
+    );
+    expect(label).not.toContain("\n");
+    expect(label?.length).toBe(80);
+  });
+});
+
+describe("compactUrl", () => {
+  it("drops the scheme, www and a trailing slash", () => {
+    expect(compactUrl("https://www.example.org/a/b/")).toBe("example.org/a/b");
+    expect(compactUrl("http://example.org/?q=1")).toBe("example.org/?q=1");
+  });
+});
+
+describe("findFirstUrl", () => {
+  it("returns the first web link and skips irc links", () => {
+    expect(
+      findFirstUrl("join ircs://irc.example/#a then https://example.org/b."),
+    ).toBe("https://example.org/b.");
+  });
+
+  it("returns null when there is no web link", () => {
+    expect(findFirstUrl("no links here")).toBeNull();
   });
 });

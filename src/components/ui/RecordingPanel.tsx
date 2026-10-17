@@ -1,7 +1,7 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheck, FaCircle, FaStop, FaTrash } from "react-icons/fa";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMicLevelMeter } from "../../hooks/useMicLevelMeter";
 import {
   pickRecordingFormat,
@@ -71,7 +71,7 @@ export function RecordingPanel({
   maxBytes,
 }: RecordingPanelProps) {
   const { t } = useLingui();
-  const isTouch = useMediaQuery("(pointer: coarse)");
+  const isTouch = useIsTouchInput();
   const globalSettings = useStore((s) => s.globalSettings);
   const updateGlobalSettings = useStore((s) => s.updateGlobalSettings);
 

@@ -258,15 +258,12 @@ export function registerBotToolsHandlers(store: StoreApi<AppState>): void {
           return { aiWorkflows };
         }
 
-        // Terminal-state TAGMSG and the placeholder is still pending
-        // (i.e. the bot didn't tag its final PRIVMSG so the morph path
-        // above never ran).  Remove the empty placeholder so the bot's
-        // untagged reply -- which the CHANMSG handler will append as a
-        // normal row, complete with reply quote -- isn't shadowed by a
-        // stuck "Thinking…" spinner.
+        // A bot that leaves its final PRIVMSG untagged ends the run with
+        // a terminal TAGMSG instead. We keep the row as the run's summary
+        // line, and the untagged reply follows it as its own message.
         if (isTerminal && idx >= 0 && existing[idx].botToolsPending) {
           const updated = existing.slice();
-          updated.splice(idx, 1);
+          updated[idx] = { ...existing[idx], botToolsPending: false };
           return {
             aiWorkflows,
             messages: { ...state.messages, [channelKey]: updated },
