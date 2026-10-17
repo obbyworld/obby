@@ -19,10 +19,10 @@ import {
   FaRobot,
   FaSearch,
   FaThumbtack,
-  FaTimes,
   FaUser,
   FaUserPlus,
 } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import {
   getChannelAvatarUrl,
   getChannelDisplayName,
@@ -30,12 +30,13 @@ import {
 } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriMobile } from "../../lib/platformUtils";
+import { currentChatScope } from "../../lib/search/searchScope";
+import type { SearchScope } from "../../lib/search/searchTypes";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { Channel, PrivateChat, User } from "../../types";
 import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import E2EELockControl from "../ui/E2EELockControl";
 import Menu, { type MenuItem } from "../ui/Menu";
-import { TextInput } from "../ui/TextInput";
 import TopicModal from "../ui/TopicModal";
 
 interface ChatHeaderProps {
@@ -50,15 +51,47 @@ interface ChatHeaderProps {
   globalSettings: {
     notificationVolume: number;
   };
-  searchQuery: string;
   onToggleChanList: () => void;
   onToggleMemberList: () => void;
-  onSearchQueryChange: (query: string) => void;
   onToggleNotificationVolume: () => void;
   onOpenChannelSettings: () => void;
   onOpenInviteUser: () => void;
   onOpenBots: () => void;
 }
+
+const HeaderSearchButton: React.FC<{ scope: SearchScope }> = ({ scope }) => {
+  const { t } = useLingui();
+  const openQuickActions = useStore((state) => state.openQuickActions);
+  const isTouch = useIsTouchInput();
+  const label = t`Search messages`;
+  const open = () => openQuickActions("messages", scope);
+  if (isTouch)
+    return (
+      <button
+        type="button"
+        className="w-11 h-11 shrink-0 flex items-center justify-center text-white"
+        onClick={open}
+        aria-label={label}
+        title={label}
+      >
+        <span className="chip-outline w-8 h-8 justify-center rounded-lg px-0">
+          <FaSearch className="text-sm" />
+        </span>
+      </button>
+    );
+  return (
+    <button
+      type="button"
+      className="chip-outline h-8"
+      onClick={open}
+      aria-label={label}
+      title={label}
+    >
+      <FaSearch className="text-xs" />
+      <Trans>Search</Trans>
+    </button>
+  );
+};
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   selectedChannel,
@@ -70,10 +103,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   isMemberListVisible,
   isNarrowView,
   globalSettings,
-  searchQuery,
   onToggleChanList,
   onToggleMemberList,
-  onSearchQueryChange,
   onToggleNotificationVolume,
   onOpenChannelSettings,
   onOpenInviteUser,
@@ -100,7 +131,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   );
   const nativeMobile = isTauriMobile();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isOverflowMenuOpen, setIsOverflowMenuOpen] = useState(false);
   const overflowButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -272,10 +302,8 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   const hasMedia =
     hasMediaInMessages || Boolean(selectedChannel?.topic?.includes("http"));
 
-  // Reset search expanded state and overflow menu when channel or mobile view changes
   // biome-ignore lint/correctness/useExhaustiveDependencies: Need to reset when channel or page changes
   useEffect(() => {
-    setIsSearchExpanded(false);
     setIsOverflowMenuOpen(false);
   }, [selectedChannelId, mobileViewActiveColumn]);
 
@@ -309,6 +337,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
     );
   }
+
+  const chatScope = currentChatScope(servers, selectedServerId, {
+    selectedChannelId: selectedChannel?.id ?? null,
+    selectedPrivateChatId: selectedPrivateChat?.id ?? null,
+  });
 
   const memberListToggleLabel = isMemberListVisible
     ? t`Collapse member list`
@@ -401,54 +434,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <div className="pl-4 pr-0 md:px-4 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12 relative">
-      {/* Full-width search overlay (narrow view only) */}
-      {isSearchExpanded && (selectedChannel || selectedPrivateChat) && (
-        <div className="md:hidden absolute inset-0 z-10 flex items-center gap-2 px-2 bg-discord-dark-500">
-          {selectedChannel ? (
-            selectedChannel.name.startsWith("^") ? (
-              <FaMicrophone className="text-discord-text-muted text-lg flex-shrink-0" />
-            ) : selectedChannel.name.startsWith("$") ? (
-              <FaDesktop className="text-discord-text-muted text-lg flex-shrink-0" />
-            ) : (
-              <FaHashtag className="text-discord-text-muted text-lg flex-shrink-0" />
-            )
-          ) : (
-            <FaUser className="text-discord-text-muted text-lg flex-shrink-0" />
-          )}
-          <TextInput
-            autoFocus
-            placeholder={t`Search messages…`}
-            value={searchQuery}
-            onChange={(e) => onSearchQueryChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") {
-                setIsSearchExpanded(false);
-                onSearchQueryChange("");
-              }
-            }}
-            className="flex-1 bg-discord-dark-400 text-white text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-discord-text-link min-w-0"
-          />
-          <button
-            className="p-2 text-discord-text-muted hover:text-white flex-shrink-0"
-            onClick={() => {
-              if (searchQuery) {
-                onSearchQueryChange("");
-              } else {
-                // Blur before closing so iOS WKWebView fires will-hide and clears
-                // root.style.position/bottom and data-keyboard-visible properly.
-                // Without this, onMouseDown's preventDefault keeps focus on the input,
-                // the unmount doesn't trigger the native keyboard dismiss sequence,
-                // and data-keyboard-visible stays set — blocking all swipe gestures.
-                (document.activeElement as HTMLElement)?.blur();
-                setIsSearchExpanded(false);
-              }
-            }}
-            onMouseDown={(e) => e.preventDefault()}
-          >
-            <FaTimes />
-          </button>
-        </div>
-      )}
       {/* CHANNELS */}
       {selectedChannel && (
         <div className="flex items-center justify-between w-full gap-2">
@@ -656,34 +641,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   channel={selectedChannel.name}
                 />
               )}
-              {/* Search */}
-              <button
-                className="md:hidden p-2 hover:text-discord-text-normal"
-                onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-                aria-label={t`Toggle search`}
-                title={t`Search`}
-              >
-                <FaSearch />
-              </button>
-
-              <div className="hidden md:block relative">
-                <TextInput
-                  placeholder={t`Search`}
-                  value={searchQuery}
-                  onChange={(e) => onSearchQueryChange(e.target.value)}
-                  className="bg-discord-dark-400 text-discord-text-muted text-sm rounded px-2 py-1 pr-14 w-32 focus:outline-none focus:ring-1 focus:ring-discord-text-link"
-                />
-                {searchQuery && (
-                  <button
-                    className="absolute right-6 top-1.5 text-red-400 hover:text-red-300 text-xs"
-                    onClick={() => onSearchQueryChange("")}
-                    title={t`Clear search`}
-                  >
-                    <FaTimes />
-                  </button>
-                )}
-                <FaSearch className="absolute right-2 top-1.5 text-xs" />
-              </div>
+              <HeaderSearchButton scope={chatScope} />
 
               {/* Overflow menu */}
               <button
@@ -869,14 +827,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   channel={selectedPrivateChat.username}
                 />
               )}
-              <button
-                className="md:hidden p-2 hover:text-discord-text-normal"
-                onClick={() => setIsSearchExpanded(!isSearchExpanded)}
-                aria-label={t`Toggle search`}
-                title={t`Search`}
-              >
-                <FaSearch />
-              </button>
+              <HeaderSearchButton scope={chatScope} />
               <button
                 ref={overflowButtonRef}
                 className="p-2 hover:text-discord-text-normal"
@@ -887,25 +838,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               >
                 <FaEllipsisV />
               </button>
-
-              <div className="hidden md:block relative">
-                <TextInput
-                  placeholder={t`Search`}
-                  value={searchQuery}
-                  onChange={(e) => onSearchQueryChange(e.target.value)}
-                  className="bg-discord-dark-400 text-discord-text-muted text-sm rounded px-2 py-1 pr-14 w-32 focus:outline-none focus:ring-1 focus:ring-discord-text-link"
-                />
-                {searchQuery && (
-                  <button
-                    className="absolute right-6 top-1.5 text-red-400 hover:text-red-300 text-xs"
-                    onClick={() => onSearchQueryChange("")}
-                    title={t`Clear search`}
-                  >
-                    <FaTimes />
-                  </button>
-                )}
-                <FaSearch className="absolute right-2 top-1.5 text-xs" />
-              </div>
             </div>
           )}
         </div>

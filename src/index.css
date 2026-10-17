@@ -40,6 +40,12 @@
   .chip-action {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-discord-dark-300 text-discord-text-normal ring-1 ring-black/40 shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-colors duration-100 hover:bg-discord-primary hover:text-white disabled:opacity-70 disabled:hover:bg-discord-dark-300 disabled:hover:text-discord-text-normal;
   }
+  .chip-outline {
+    @apply inline-flex shrink-0 items-center gap-2 px-3 rounded-full border-2 border-discord-primary text-white font-bold text-sm transition-colors duration-100 hover:bg-discord-primary focus-visible:outline-none focus-visible:bg-discord-primary;
+  }
+  .chip-action-active {
+    @apply bg-discord-primary text-white;
+  }
   .section-label {
     @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
   }
@@ -319,6 +325,13 @@ html {
 
 .message-flash {
   animation: message-flash 2s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-flash {
+    animation: none;
+    background-color: rgba(209, 213, 219, 0.2);
+  }
 }
 
 /* Media visibility level slider */

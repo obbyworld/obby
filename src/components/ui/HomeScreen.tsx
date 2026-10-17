@@ -44,7 +44,7 @@ const NetworkStats: React.FC<{ users: number; channels: number }> = ({
   users,
   channels,
 }) => (
-  <span className="flex items-center gap-3 text-[13px] text-discord-text-muted">
+  <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px] text-discord-text-muted">
     <span className="flex items-center gap-1.5" title={t`Users`}>
       <FaUsers className="w-3 h-3" />
       {users.toLocaleString()}
@@ -205,9 +205,9 @@ const DiscoverGrid = () => {
           />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
         {filteredServers.length > 0 ? (
-          <div className="grid p-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="grid p-4 grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-3">
             {filteredServers.map((server) => (
               <button
                 type="button"
@@ -216,7 +216,7 @@ const DiscoverGrid = () => {
                 onClick={() => handleServerClick(server)}
               >
                 <ServerTile server={server} />
-                <span className="min-w-0 flex flex-col gap-0.5">
+                <span className="min-w-0 flex-1 flex flex-col gap-0.5">
                   <span className="truncate text-[15px] font-semibold">
                     {server.name}
                   </span>

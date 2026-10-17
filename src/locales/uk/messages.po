@@ -54,13 +54,6 @@ msgstr "(призупинено)"
 msgid "(unchanged)"
 msgstr "(без змін)"
 
-#. placeholder {0}: filteredMessages.length
-#. placeholder {1}: import { plural } from "@lingui/core/macro"; import { useLingui } from "@lingui/react/macro"; import type * as React from "react"; import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, } from "react"; import { SCROLL_TOLERANCE, useScrollToBottom, } from "../../hooks/useScrollToBottom"; import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy"; import { groupConsecutiveEvents } from "../../lib/eventGrouping"; import ircClient from "../../lib/ircClient"; import { shouldShowMessageHeader } from "../../lib/messageGrouping"; import useStore from "../../store"; import type { Message as MessageType } from "../../types"; import { CollapsedEventMessage } from "../message/CollapsedEventMessage"; import { MessageItem } from "../message/MessageItem"; import LoadingSpinner from "../ui/LoadingSpinner"; import { ScrollToBottomButton } from "../ui/ScrollToBottomButton"; export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100; // Stable empty array — prevents selector from returning a new [] on every render // when the channel has no messages yet (undefined ?? [] would create a new ref each time). const EMPTY_MESSAGES: import("../../types").Message[] = []; export interface ChannelMessageListHandle { setAtBottom: () => void; scrollToBottom: () => void; getScrollState: () => { scrollTop: number; isAtBottom: boolean; visibleCount: number; }; } interface ChannelMessageListProps { channelKey: string; serverId: string; channelId: string | null; privateChatId: string | null; isActive: boolean; searchQuery: string; isMemberListVisible: boolean; onReply: (msg: MessageType | null) => void; onUsernameContextMenu: ( e: React.MouseEvent, username: string, serverId: string, channelId: string, avatarEl?: Element | null, ) => void; onIrcLinkClick: (url: string) => void; onReactClick: (msg: MessageType, el: Element) => void; onReactionUnreact: (emoji: string, msg: MessageType) => void; onOpenReactionModal: ( msg: MessageType, position: { x: number; y: number }, ) => void; onDirectReaction: (emoji: string, msg: MessageType) => void; onRedactMessage: (msg: MessageType) => void; onOpenProfile: (username: string) => void; joinChannel: (serverId: string, channelName: string) => void; onClearSearch: () => void; highlightedMessageId?: string; // undefined = first visit; null = was at bottom; object = restore to saved position initialScrollState?: { scrollTop: number; visibleCount: number } | null; } export const ChannelMessageList = forwardRef< ChannelMessageListHandle, ChannelMessageListProps >( ( { channelKey, serverId, channelId, privateChatId, isActive, searchQuery, isMemberListVisible, onReply, onUsernameContextMenu, onIrcLinkClick, onReactClick, onReactionUnreact, onOpenReactionModal, onDirectReaction, onRedactMessage, onOpenProfile, joinChannel, onClearSearch, highlightedMessageId, initialScrollState, }, ref, ) => { const { t } = useLingui(); const [visibleMessageCount, setVisibleMessageCount] = useState( initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT, ); // Ref mirror so getScrollState closure always reads the current value without needing it as a dep. const visibleMessageCountRef = useRef(visibleMessageCount); visibleMessageCountRef.current = visibleMessageCount; // Distinguishes initial join (full-screen spinner) from subsequent "load more" (button spinner). const [isFetchingMore, setIsFetchingMore] = useState(false); const isFetchingMoreRef = useRef(false); const messagesEndRef = useRef<HTMLDivElement>(null); const messagesContainerRef = useRef<HTMLDivElement>(null); const messagesInnerRef = useRef<HTMLDivElement>(null); // prev scrollHeight for prepend delta-correction. const prevScrollHeightRef = useRef(0); // Ref mirror of isScrolledUp — lets useLayoutEffect closures read current value // without listing isScrolledUp as a dep (which would re-run effects on every scroll). const isScrolledUpRef = useRef(false); const prevFilteredLengthRef = useRef(0); const prevFirstMsgIdRef = useRef<string | null>(null); // Set by the window-growth layoutEffect (or button handler) when a true prepend is detected. // Consumed by the delta-correction layoutEffect one render later (after visibleCount grows). // Using a flag instead of tracking displayedMessages[0]?.id because slice(-N) slides the // window on every bottom append, changing displayedMessages[0] even for non-prepend renders. const pendingPrependRef = useRef(false); // Shared scrollHeight baseline between the delta-correction layout effect and the inner // ResizeObserver. When scrollTop is corrected after a prepend, we update this so the RO's // "was at bottom" check is not fooled by the adjusted scrollTop vs its stale prevSH. const resizeObserverPrevSHRef = useRef(0); const channelMessages = useStore( useCallback( (state) => state.messages[channelKey] ?? EMPTY_MESSAGES, [channelKey], ), ); const servers = useStore((state) => state.servers); const mobileViewActiveColumn = useStore( (state) => state.ui.mobileViewActiveColumn, ); const channel = useMemo( () => channelId ? (servers .find((s) => s.id === serverId) ?.channels.find((c) => c.id === channelId) ?? null) : null, [servers, serverId, channelId], ); const { isScrolledUp, wasAtBottomRef, scrollToBottom } = useScrollToBottom( messagesContainerRef, messagesEndRef, { channelId: `${channelId || privateChatId}-${isMemberListVisible}` }, ); // Snapshot of the last known scroll position captured while the container was visible. // getScrollState() reads this instead of the live DOM because React commits display:none // before running cleanup effects, collapsing scrollTop/scrollHeight/clientHeight to 0. const lastScrollTopRef = useRef(initialScrollState?.scrollTop ?? 0); useEffect(() => { const container = messagesContainerRef.current; if (!container) return; const onScroll = () => { if (container.clientHeight > 0) lastScrollTopRef.current = container.scrollTop; }; container.addEventListener("scroll", onScroll, { passive: true }); return () => container.removeEventListener("scroll", onScroll); }, []); // Restore scroll position when a keep-alive channel transitions from hidden to visible. // display:none may reset scrollTop to 0; lastScrollTopRef was captured while visible. const prevActiveRef = useRef(isActive); useLayoutEffect(() => { if (isActive && !prevActiveRef.current) { const container = messagesContainerRef.current; if (container && lastScrollTopRef.current > 0) { container.scrollTop = lastScrollTopRef.current; } } prevActiveRef.current = isActive; }, [isActive]); useImperativeHandle(ref, () => ({ setAtBottom: () => { wasAtBottomRef.current = true; }, scrollToBottom, getScrollState: () => ({ scrollTop: lastScrollTopRef.current, isAtBottom: wasAtBottomRef.current, visibleCount: visibleMessageCountRef.current, }), })); const filteredMessages = useMemo(() => { if (!searchQuery.trim()) return channelMessages; const query = searchQuery.toLowerCase(); return channelMessages.filter( (msg) => msg.content.toLowerCase().includes(query) || msg.userId.toLowerCase().includes(query), ); }, [channelMessages, searchQuery]); useEffect(() => { isScrolledUpRef.current = isScrolledUp; // When the user returns to the bottom, shrink the window back to the base so // slice(-N) resumes trimming old messages from the top (memory optimization). // Only shrink if we grew above the base — preserves a sub-default saved visibleCount. if (!isScrolledUp) { setVisibleMessageCount((prev) => prev > DEFAULT_VISIBLE_MESSAGE_COUNT ? DEFAULT_VISIBLE_MESSAGE_COUNT : prev, ); } }, [isScrolledUp]); // Reset ref-tracked windowing state when switching channels. // visibleMessageCount is NOT reset here — useState(initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT) // already initializes it correctly on mount, and this effect runs once on mount for the // same channelKey (each instance is bound to exactly one channel by the parent key={}). // biome-ignore lint/correctness/useExhaustiveDependencies: intentional full reset on channel change useEffect(() => { prevFilteredLengthRef.current = 0; prevFirstMsgIdRef.current = null; prevScrollHeightRef.current = 0; pendingPrependRef.current = false; resizeObserverPrevSHRef.current = 0; }, [channelKey]); const displayedMessages = useMemo(() => { if (searchQuery.trim()) return filteredMessages; return filteredMessages.slice(-visibleMessageCount); }, [filteredMessages, visibleMessageCount, searchQuery]); const locallyHidden = filteredMessages.length > displayedMessages.length; const serverHasMore = channel?.hasMoreHistory === true; const hasMoreMessages = locallyHidden || serverHasMore; const eventGroups = useMemo( () => groupConsecutiveEvents(displayedMessages), [displayedMessages], ); const isLoadingHistory = channel?.isLoadingHistory ?? false; // Scroll to bottom on initial mount, unless a saved position was passed in. // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount only useEffect(() => { const container = messagesContainerRef.current; if (!container) return; if (initialScrollState) { container.scrollTop = initialScrollState.scrollTop; lastScrollTopRef.current = initialScrollState.scrollTop; wasAtBottomRef.current = false; } else { container.scrollTop = container.scrollHeight; lastScrollTopRef.current = container.scrollHeight; wasAtBottomRef.current = true; } }, []); // Scroll to bottom after initial join history loads; clear fetch spinner at batch end. const wasLoadingHistoryRef = useRef(false); // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable via useCallback; refs and setters are stable useLayoutEffect(() => { if (wasLoadingHistoryRef.current && !isLoadingHistory) { if (isFetchingMoreRef.current) { // delta correction for scroll position is handled by useLayoutEffect([displayedMessages]) isFetchingMoreRef.current = false; setIsFetchingMore(false); } else { scrollToBottom(); wasAtBottomRef.current = true; } } wasLoadingHistoryRef.current = isLoadingHistory; }, [isLoadingHistory]); // When older messages are prepended, grow the window so they enter displayedMessages. // When new messages arrive at the bottom while the user is scrolled up, also grow the // window to keep the current top messages visible — slice(-N) otherwise slides the // window forward and hides them, incrementing the "N older messages" counter on every // incoming message. Only let the slice trim from the top when the user is at the bottom // (where auto-scroll handles keeping them current). useLayoutEffect(() => { const newLength = filteredMessages.length; const newFirstId = filteredMessages[0]?.id ?? null; const delta = newLength - prevFilteredLengthRef.current; if (prevFilteredLengthRef.current > 0 && delta > 0) { if (newFirstId !== prevFirstMsgIdRef.current) { // Messages prepended (load-more): signal delta-correction to compensate scrollTop. pendingPrependRef.current = true; setVisibleMessageCount((prev) => prev + delta); } else if (isScrolledUpRef.current) { // Messages appended at bottom while user is scrolled up reading history. // Expand the window to prevent top messages from dropping out of the slice. setVisibleMessageCount((prev) => prev + delta); } } prevFilteredLengthRef.current = newLength; prevFirstMsgIdRef.current = newFirstId; }, [filteredMessages]); // Compensate scrollTop when content is prepended above the viewport. // biome-ignore lint/correctness/useExhaustiveDependencies: runs on every displayedMessages render to capture the resulting scrollHeight; refs are stable useLayoutEffect(() => { const container = messagesContainerRef.current; if (!container) return; // Skip while container is display:none — scrollHeight collapses to 0 and would // poison prevScrollHeightRef, causing a huge spurious delta on the next visible render. if (container.clientHeight === 0) return; const prevHeight = prevScrollHeightRef.current; const newHeight = container.scrollHeight; // Only correct when a true load-more prepend happened (flag set by the window-growth // layoutEffect or button handler). Bottom appends slide the slice(-N) window which also // changes displayedMessages[0] — ID-comparison can't distinguish the two cases. const wasPrepend = pendingPrependRef.current; // Only consume the flag when scrollHeight actually changed — the server-side load-more // path goes through two renders: Render A (filteredMessages grows, visibleCount unchanged, // same displayedMessages content, same scrollHeight) then Render B (visibleCount grows, // new messages enter displayedMessages, scrollHeight grows). The flag must survive Render A // so it's still set when Render B fires the actual correction. if (wasPrepend && newHeight !== prevHeight) { pendingPrependRef.current = false; } if ( isScrolledUpRef.current && prevHeight > 0 && newHeight > prevHeight && wasPrepend ) { const delta = newHeight - prevHeight; container.scrollTop += delta; resizeObserverPrevSHRef.current = newHeight; } prevScrollHeightRef.current = newHeight; }, [displayedMessages]); // Re-stick to bottom when inner message content grows (media/audio previews loading). // Uses prevScrollHeight instead of wasAtBottomRef to avoid stale-flag race where the // ref is true while the user is actively scrolling up. // When the container width changes (member list toggle, window resize), text reflows // and scrollHeight changes; preserve proportional scroll position for scrolled-up users. // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is a stable ref useEffect(() => { const container = messagesContainerRef.current; const inner = messagesInnerRef.current; if (!inner || !container) return; resizeObserverPrevSHRef.current = container.scrollHeight; let prevClientWidth = container.clientWidth; const observer = new ResizeObserver(() => { if (container.clientHeight === 0) return; // Effect may re-initialize while container is display:none (ref=0). // Re-seed with current dimensions and skip — no reliable "was at bottom" data. if (resizeObserverPrevSHRef.current === 0) { resizeObserverPrevSHRef.current = container.scrollHeight; prevClientWidth = container.clientWidth; return; } const currentClientWidth = container.clientWidth; const widthChanged = currentClientWidth !== prevClientWidth; prevClientWidth = currentClientWidth; const prevSH = resizeObserverPrevSHRef.current; const wasAtPrevBottom = container.scrollTop + container.clientHeight >= prevSH - SCROLL_TOLERANCE; resizeObserverPrevSHRef.current = container.scrollHeight; if (wasAtPrevBottom) { scrollToBottom(); } else if (widthChanged && prevSH > 0) { const ratio = container.scrollTop / prevSH; container.scrollTop = Math.round(ratio * container.scrollHeight); } }); observer.observe(inner); return () => observer.disconnect(); }, [isLoadingHistory, channelId, privateChatId]); // Auto-scroll on new messages — skip when this channel is hidden (display:none). // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes useEffect(() => { if (!isActive) return; const isNarrowView = window.matchMedia("(max-width: 768px)").matches; const isChatVisible = !isNarrowView || mobileViewActiveColumn === "chatView"; if (wasAtBottomRef.current && isChatVisible) { scrollToBottom(); } }, [displayedMessages, mobileViewActiveColumn, scrollToBottom, isActive]); return ( <> <div ref={messagesContainerRef} className="flex-grow overflow-y-auto overflow-x-hidden flex flex-col bg-discord-dark-200 text-discord-text-normal relative" // Disable CSS scroll anchoring — it compounds with our useLayoutEffect delta correction causing double-jumps in browser. style={{ overflowAnchor: "none" }} onCopy={(e) => { const root = messagesContainerRef.current; if (!root) return; const markdown = buildMarkdownFromSelection( window.getSelection(), root, ); if (markdown !== null) { e.preventDefault(); e.clipboardData.setData("text/plain", markdown); } }} > {isLoadingHistory && !isFetchingMore ? ( <div className="flex-grow flex items-center justify-center"> <LoadingSpinner size="lg" text="Loading chat history..." className="text-discord-text-muted" /> </div> ) : ( <div ref={messagesInnerRef} className="flex flex-col"> {hasMoreMessages && !searchQuery && ( <div className="flex items-center gap-3 px-4 py-3"> <span className="hairline flex-1" /> <button type="button" onClick={() => { if (locallyHidden) { pendingPrependRef.current = true; setVisibleMessageCount( (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT, ); } else if (serverHasMore && channel && channelId) { const oldest = channelMessages[0]; if (oldest?.timestamp) { const ts = new Date(oldest.timestamp).toISOString(); // WebSocket responses are macrotasks; the click handler's React batch // always commits before the response arrives, so flushSync is unnecessary. isFetchingMoreRef.current = true; setIsFetchingMore(true); ircClient.requestChathistoryBefore( serverId, channel.name, ts, ); } } }} disabled={isFetchingMore} className="chip-action" > {isFetchingMore ? ( <LoadingSpinner size="sm" text="" className="text-discord-text-muted" /> ) : ( <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true" > <path d="M12 19V5M5 12l7-7 7 7" /> </svg> )} {isFetchingMore ? t`Getting more messages...` : locallyHidden ? t`${filteredMessages.length - displayedMessages.length} older messages` : t`Load older messages`} </button> <span className="hairline flex-1" /> </div> )} {searchQuery && ( <div className="flex justify-center items-center gap-2 py-2 bg-discord-dark-300 text-discord-text-muted text-sm"> <span> {plural(filteredMessages.length, { one: t`Found 1 message matching "${searchQuery}"`, other: t`Found ${filteredMessages.length} messages matching "${searchQuery}"`, })} </span> <button type="button" onClick={onClearSearch} className="text-red-400 hover:text-red-300" title={t`Clear search`} > ✕ </button> </div> )} {eventGroups.map((group) => { if (group.type === "eventGroup") { const firstId = group.messages[0]?.id || ""; const lastId = group.messages[group.messages.length - 1]?.id || ""; const groupKey = `group-${firstId}-${lastId}`; return ( <CollapsedEventMessage key={groupKey} eventGroup={group} users={channel?.users || []} onUsernameContextMenu={onUsernameContextMenu} /> ); } const message = group.messages[0]; const originalIndex = channelMessages.findIndex( (m) => m.id === message.id, ); const previousMessage = channelMessages[originalIndex - 1]; const showHeader = shouldShowMessageHeader( previousMessage, message, ); return ( <MessageItem key={message.id} message={message} showDate={ originalIndex === 0 || new Date(message.timestamp).toDateString() !== new Date( channelMessages[originalIndex - 1]?.timestamp, ).toDateString() } showHeader={showHeader} setReplyTo={onReply} isHighlighted={message.id === highlightedMessageId} onUsernameContextMenu={onUsernameContextMenu} onIrcLinkClick={onIrcLinkClick} onReactClick={onReactClick} joinChannel={joinChannel} onReactionUnreact={onReactionUnreact} onOpenReactionModal={onOpenReactionModal} onDirectReaction={onDirectReaction} serverId={serverId} channelId={channelId || undefined} privateChatId={privateChatId || undefined} onRedactMessage={onRedactMessage} onOpenProfile={onOpenProfile} /> ); })} </div> )} <div ref={messagesEndRef} className="h-px" /> </div> <ScrollToBottomButton isVisible={isScrolledUp} onClick={scrollToBottom} /> </> ); }, ); ChannelMessageList.displayName = "ChannelMessageList"; // Wrap with memo so hidden keep-alive channels skip re-renders when their props // haven't changed (e.g. when messageText changes in the input — the only thing // that changes on typing is local state inside ChatArea, not the props we pass here). export const MemoChannelMessageList = memo(ChannelMessageList); 
-#. placeholder {2}: import { plural } from "@lingui/core/macro"; import { useLingui } from "@lingui/react/macro"; import type * as React from "react"; import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState, } from "react"; import { SCROLL_TOLERANCE, useScrollToBottom, } from "../../hooks/useScrollToBottom"; import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy"; import { groupConsecutiveEvents } from "../../lib/eventGrouping"; import ircClient from "../../lib/ircClient"; import { shouldShowMessageHeader } from "../../lib/messageGrouping"; import useStore from "../../store"; import type { Message as MessageType } from "../../types"; import { CollapsedEventMessage } from "../message/CollapsedEventMessage"; import { MessageItem } from "../message/MessageItem"; import LoadingSpinner from "../ui/LoadingSpinner"; import { ScrollToBottomButton } from "../ui/ScrollToBottomButton"; export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100; // Stable empty array — prevents selector from returning a new [] on every render // when the channel has no messages yet (undefined ?? [] would create a new ref each time). const EMPTY_MESSAGES: import("../../types").Message[] = []; export interface ChannelMessageListHandle { setAtBottom: () => void; scrollToBottom: () => void; getScrollState: () => { scrollTop: number; isAtBottom: boolean; visibleCount: number; }; } interface ChannelMessageListProps { channelKey: string; serverId: string; channelId: string | null; privateChatId: string | null; isActive: boolean; searchQuery: string; isMemberListVisible: boolean; onReply: (msg: MessageType | null) => void; onUsernameContextMenu: ( e: React.MouseEvent, username: string, serverId: string, channelId: string, avatarEl?: Element | null, ) => void; onIrcLinkClick: (url: string) => void; onReactClick: (msg: MessageType, el: Element) => void; onReactionUnreact: (emoji: string, msg: MessageType) => void; onOpenReactionModal: ( msg: MessageType, position: { x: number; y: number }, ) => void; onDirectReaction: (emoji: string, msg: MessageType) => void; onRedactMessage: (msg: MessageType) => void; onOpenProfile: (username: string) => void; joinChannel: (serverId: string, channelName: string) => void; onClearSearch: () => void; highlightedMessageId?: string; // undefined = first visit; null = was at bottom; object = restore to saved position initialScrollState?: { scrollTop: number; visibleCount: number } | null; } export const ChannelMessageList = forwardRef< ChannelMessageListHandle, ChannelMessageListProps >( ( { channelKey, serverId, channelId, privateChatId, isActive, searchQuery, isMemberListVisible, onReply, onUsernameContextMenu, onIrcLinkClick, onReactClick, onReactionUnreact, onOpenReactionModal, onDirectReaction, onRedactMessage, onOpenProfile, joinChannel, onClearSearch, highlightedMessageId, initialScrollState, }, ref, ) => { const { t } = useLingui(); const [visibleMessageCount, setVisibleMessageCount] = useState( initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT, ); // Ref mirror so getScrollState closure always reads the current value without needing it as a dep. const visibleMessageCountRef = useRef(visibleMessageCount); visibleMessageCountRef.current = visibleMessageCount; // Distinguishes initial join (full-screen spinner) from subsequent "load more" (button spinner). const [isFetchingMore, setIsFetchingMore] = useState(false); const isFetchingMoreRef = useRef(false); const messagesEndRef = useRef<HTMLDivElement>(null); const messagesContainerRef = useRef<HTMLDivElement>(null); const messagesInnerRef = useRef<HTMLDivElement>(null); // prev scrollHeight for prepend delta-correction. const prevScrollHeightRef = useRef(0); // Ref mirror of isScrolledUp — lets useLayoutEffect closures read current value // without listing isScrolledUp as a dep (which would re-run effects on every scroll). const isScrolledUpRef = useRef(false); const prevFilteredLengthRef = useRef(0); const prevFirstMsgIdRef = useRef<string | null>(null); // Set by the window-growth layoutEffect (or button handler) when a true prepend is detected. // Consumed by the delta-correction layoutEffect one render later (after visibleCount grows). // Using a flag instead of tracking displayedMessages[0]?.id because slice(-N) slides the // window on every bottom append, changing displayedMessages[0] even for non-prepend renders. const pendingPrependRef = useRef(false); // Shared scrollHeight baseline between the delta-correction layout effect and the inner // ResizeObserver. When scrollTop is corrected after a prepend, we update this so the RO's // "was at bottom" check is not fooled by the adjusted scrollTop vs its stale prevSH. const resizeObserverPrevSHRef = useRef(0); const channelMessages = useStore( useCallback( (state) => state.messages[channelKey] ?? EMPTY_MESSAGES, [channelKey], ), ); const servers = useStore((state) => state.servers); const mobileViewActiveColumn = useStore( (state) => state.ui.mobileViewActiveColumn, ); const channel = useMemo( () => channelId ? (servers .find((s) => s.id === serverId) ?.channels.find((c) => c.id === channelId) ?? null) : null, [servers, serverId, channelId], ); const { isScrolledUp, wasAtBottomRef, scrollToBottom } = useScrollToBottom( messagesContainerRef, messagesEndRef, { channelId: `${channelId || privateChatId}-${isMemberListVisible}` }, ); // Snapshot of the last known scroll position captured while the container was visible. // getScrollState() reads this instead of the live DOM because React commits display:none // before running cleanup effects, collapsing scrollTop/scrollHeight/clientHeight to 0. const lastScrollTopRef = useRef(initialScrollState?.scrollTop ?? 0); useEffect(() => { const container = messagesContainerRef.current; if (!container) return; const onScroll = () => { if (container.clientHeight > 0) lastScrollTopRef.current = container.scrollTop; }; container.addEventListener("scroll", onScroll, { passive: true }); return () => container.removeEventListener("scroll", onScroll); }, []); // Restore scroll position when a keep-alive channel transitions from hidden to visible. // display:none may reset scrollTop to 0; lastScrollTopRef was captured while visible. const prevActiveRef = useRef(isActive); useLayoutEffect(() => { if (isActive && !prevActiveRef.current) { const container = messagesContainerRef.current; if (container && lastScrollTopRef.current > 0) { container.scrollTop = lastScrollTopRef.current; } } prevActiveRef.current = isActive; }, [isActive]); useImperativeHandle(ref, () => ({ setAtBottom: () => { wasAtBottomRef.current = true; }, scrollToBottom, getScrollState: () => ({ scrollTop: lastScrollTopRef.current, isAtBottom: wasAtBottomRef.current, visibleCount: visibleMessageCountRef.current, }), })); const filteredMessages = useMemo(() => { if (!searchQuery.trim()) return channelMessages; const query = searchQuery.toLowerCase(); return channelMessages.filter( (msg) => msg.content.toLowerCase().includes(query) || msg.userId.toLowerCase().includes(query), ); }, [channelMessages, searchQuery]); useEffect(() => { isScrolledUpRef.current = isScrolledUp; // When the user returns to the bottom, shrink the window back to the base so // slice(-N) resumes trimming old messages from the top (memory optimization). // Only shrink if we grew above the base — preserves a sub-default saved visibleCount. if (!isScrolledUp) { setVisibleMessageCount((prev) => prev > DEFAULT_VISIBLE_MESSAGE_COUNT ? DEFAULT_VISIBLE_MESSAGE_COUNT : prev, ); } }, [isScrolledUp]); // Reset ref-tracked windowing state when switching channels. // visibleMessageCount is NOT reset here — useState(initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT) // already initializes it correctly on mount, and this effect runs once on mount for the // same channelKey (each instance is bound to exactly one channel by the parent key={}). // biome-ignore lint/correctness/useExhaustiveDependencies: intentional full reset on channel change useEffect(() => { prevFilteredLengthRef.current = 0; prevFirstMsgIdRef.current = null; prevScrollHeightRef.current = 0; pendingPrependRef.current = false; resizeObserverPrevSHRef.current = 0; }, [channelKey]); const displayedMessages = useMemo(() => { if (searchQuery.trim()) return filteredMessages; return filteredMessages.slice(-visibleMessageCount); }, [filteredMessages, visibleMessageCount, searchQuery]); const locallyHidden = filteredMessages.length > displayedMessages.length; const serverHasMore = channel?.hasMoreHistory === true; const hasMoreMessages = locallyHidden || serverHasMore; const eventGroups = useMemo( () => groupConsecutiveEvents(displayedMessages), [displayedMessages], ); const isLoadingHistory = channel?.isLoadingHistory ?? false; // Scroll to bottom on initial mount, unless a saved position was passed in. // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount only useEffect(() => { const container = messagesContainerRef.current; if (!container) return; if (initialScrollState) { container.scrollTop = initialScrollState.scrollTop; lastScrollTopRef.current = initialScrollState.scrollTop; wasAtBottomRef.current = false; } else { container.scrollTop = container.scrollHeight; lastScrollTopRef.current = container.scrollHeight; wasAtBottomRef.current = true; } }, []); // Scroll to bottom after initial join history loads; clear fetch spinner at batch end. const wasLoadingHistoryRef = useRef(false); // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable via useCallback; refs and setters are stable useLayoutEffect(() => { if (wasLoadingHistoryRef.current && !isLoadingHistory) { if (isFetchingMoreRef.current) { // delta correction for scroll position is handled by useLayoutEffect([displayedMessages]) isFetchingMoreRef.current = false; setIsFetchingMore(false); } else { scrollToBottom(); wasAtBottomRef.current = true; } } wasLoadingHistoryRef.current = isLoadingHistory; }, [isLoadingHistory]); // When older messages are prepended, grow the window so they enter displayedMessages. // When new messages arrive at the bottom while the user is scrolled up, also grow the // window to keep the current top messages visible — slice(-N) otherwise slides the // window forward and hides them, incrementing the "N older messages" counter on every // incoming message. Only let the slice trim from the top when the user is at the bottom // (where auto-scroll handles keeping them current). useLayoutEffect(() => { const newLength = filteredMessages.length; const newFirstId = filteredMessages[0]?.id ?? null; const delta = newLength - prevFilteredLengthRef.current; if (prevFilteredLengthRef.current > 0 && delta > 0) { if (newFirstId !== prevFirstMsgIdRef.current) { // Messages prepended (load-more): signal delta-correction to compensate scrollTop. pendingPrependRef.current = true; setVisibleMessageCount((prev) => prev + delta); } else if (isScrolledUpRef.current) { // Messages appended at bottom while user is scrolled up reading history. // Expand the window to prevent top messages from dropping out of the slice. setVisibleMessageCount((prev) => prev + delta); } } prevFilteredLengthRef.current = newLength; prevFirstMsgIdRef.current = newFirstId; }, [filteredMessages]); // Compensate scrollTop when content is prepended above the viewport. // biome-ignore lint/correctness/useExhaustiveDependencies: runs on every displayedMessages render to capture the resulting scrollHeight; refs are stable useLayoutEffect(() => { const container = messagesContainerRef.current; if (!container) return; // Skip while container is display:none — scrollHeight collapses to 0 and would // poison prevScrollHeightRef, causing a huge spurious delta on the next visible render. if (container.clientHeight === 0) return; const prevHeight = prevScrollHeightRef.current; const newHeight = container.scrollHeight; // Only correct when a true load-more prepend happened (flag set by the window-growth // layoutEffect or button handler). Bottom appends slide the slice(-N) window which also // changes displayedMessages[0] — ID-comparison can't distinguish the two cases. const wasPrepend = pendingPrependRef.current; // Only consume the flag when scrollHeight actually changed — the server-side load-more // path goes through two renders: Render A (filteredMessages grows, visibleCount unchanged, // same displayedMessages content, same scrollHeight) then Render B (visibleCount grows, // new messages enter displayedMessages, scrollHeight grows). The flag must survive Render A // so it's still set when Render B fires the actual correction. if (wasPrepend && newHeight !== prevHeight) { pendingPrependRef.current = false; } if ( isScrolledUpRef.current && prevHeight > 0 && newHeight > prevHeight && wasPrepend ) { const delta = newHeight - prevHeight; container.scrollTop += delta; resizeObserverPrevSHRef.current = newHeight; } prevScrollHeightRef.current = newHeight; }, [displayedMessages]); // Re-stick to bottom when inner message content grows (media/audio previews loading). // Uses prevScrollHeight instead of wasAtBottomRef to avoid stale-flag race where the // ref is true while the user is actively scrolling up. // When the container width changes (member list toggle, window resize), text reflows // and scrollHeight changes; preserve proportional scroll position for scrolled-up users. // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is a stable ref useEffect(() => { const container = messagesContainerRef.current; const inner = messagesInnerRef.current; if (!inner || !container) return; resizeObserverPrevSHRef.current = container.scrollHeight; let prevClientWidth = container.clientWidth; const observer = new ResizeObserver(() => { if (container.clientHeight === 0) return; // Effect may re-initialize while container is display:none (ref=0). // Re-seed with current dimensions and skip — no reliable "was at bottom" data. if (resizeObserverPrevSHRef.current === 0) { resizeObserverPrevSHRef.current = container.scrollHeight; prevClientWidth = container.clientWidth; return; } const currentClientWidth = container.clientWidth; const widthChanged = currentClientWidth !== prevClientWidth; prevClientWidth = currentClientWidth; const prevSH = resizeObserverPrevSHRef.current; const wasAtPrevBottom = container.scrollTop + container.clientHeight >= prevSH - SCROLL_TOLERANCE; resizeObserverPrevSHRef.current = container.scrollHeight; if (wasAtPrevBottom) { scrollToBottom(); } else if (widthChanged && prevSH > 0) { const ratio = container.scrollTop / prevSH; container.scrollTop = Math.round(ratio * container.scrollHeight); } }); observer.observe(inner); return () => observer.disconnect(); }, [isLoadingHistory, channelId, privateChatId]); // Auto-scroll on new messages — skip when this channel is hidden (display:none). // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes useEffect(() => { if (!isActive) return; const isNarrowView = window.matchMedia("(max-width: 768px)").matches; const isChatVisible = !isNarrowView || mobileViewActiveColumn === "chatView"; if (wasAtBottomRef.current && isChatVisible) { scrollToBottom(); } }, [displayedMessages, mobileViewActiveColumn, scrollToBottom, isActive]); return ( <> <div ref={messagesContainerRef} className="flex-grow overflow-y-auto overflow-x-hidden flex flex-col bg-discord-dark-200 text-discord-text-normal relative" // Disable CSS scroll anchoring — it compounds with our useLayoutEffect delta correction causing double-jumps in browser. style={{ overflowAnchor: "none" }} onCopy={(e) => { const root = messagesContainerRef.current; if (!root) return; const markdown = buildMarkdownFromSelection( window.getSelection(), root, ); if (markdown !== null) { e.preventDefault(); e.clipboardData.setData("text/plain", markdown); } }} > {isLoadingHistory && !isFetchingMore ? ( <div className="flex-grow flex items-center justify-center"> <LoadingSpinner size="lg" text="Loading chat history..." className="text-discord-text-muted" /> </div> ) : ( <div ref={messagesInnerRef} className="flex flex-col"> {hasMoreMessages && !searchQuery && ( <div className="flex items-center gap-3 px-4 py-3"> <span className="hairline flex-1" /> <button type="button" onClick={() => { if (locallyHidden) { pendingPrependRef.current = true; setVisibleMessageCount( (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT, ); } else if (serverHasMore && channel && channelId) { const oldest = channelMessages[0]; if (oldest?.timestamp) { const ts = new Date(oldest.timestamp).toISOString(); // WebSocket responses are macrotasks; the click handler's React batch // always commits before the response arrives, so flushSync is unnecessary. isFetchingMoreRef.current = true; setIsFetchingMore(true); ircClient.requestChathistoryBefore( serverId, channel.name, ts, ); } } }} disabled={isFetchingMore} className="chip-action" > {isFetchingMore ? ( <LoadingSpinner size="sm" text="" className="text-discord-text-muted" /> ) : ( <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3" aria-hidden="true" > <path d="M12 19V5M5 12l7-7 7 7" /> </svg> )} {isFetchingMore ? t`Getting more messages...` : locallyHidden ? t`${filteredMessages.length - displayedMessages.length} older messages` : t`Load older messages`} </button> <span className="hairline flex-1" /> </div> )} {searchQuery && ( <div className="flex justify-center items-center gap-2 py-2 bg-discord-dark-300 text-discord-text-muted text-sm"> <span> {plural(filteredMessages.length, { one: t`Found 1 message matching "${searchQuery}"`, other: t`Found ${filteredMessages.length} messages matching "${searchQuery}"`, })} </span> <button type="button" onClick={onClearSearch} className="text-red-400 hover:text-red-300" title={t`Clear search`} > ✕ </button> </div> )} {eventGroups.map((group) => { if (group.type === "eventGroup") { const firstId = group.messages[0]?.id || ""; const lastId = group.messages[group.messages.length - 1]?.id || ""; const groupKey = `group-${firstId}-${lastId}`; return ( <CollapsedEventMessage key={groupKey} eventGroup={group} users={channel?.users || []} onUsernameContextMenu={onUsernameContextMenu} /> ); } const message = group.messages[0]; const originalIndex = channelMessages.findIndex( (m) => m.id === message.id, ); const previousMessage = channelMessages[originalIndex - 1]; const showHeader = shouldShowMessageHeader( previousMessage, message, ); return ( <MessageItem key={message.id} message={message} showDate={ originalIndex === 0 || new Date(message.timestamp).toDateString() !== new Date( channelMessages[originalIndex - 1]?.timestamp, ).toDateString() } showHeader={showHeader} setReplyTo={onReply} isHighlighted={message.id === highlightedMessageId} onUsernameContextMenu={onUsernameContextMenu} onIrcLinkClick={onIrcLinkClick} onReactClick={onReactClick} joinChannel={joinChannel} onReactionUnreact={onReactionUnreact} onOpenReactionModal={onOpenReactionModal} onDirectReaction={onDirectReaction} serverId={serverId} channelId={channelId || undefined} privateChatId={privateChatId || undefined} onRedactMessage={onRedactMessage} onOpenProfile={onOpenProfile} /> ); })} </div> )} <div ref={messagesEndRef} className="h-px" /> </div> <ScrollToBottomButton isVisible={isScrolledUp} onClick={scrollToBottom} /> </> ); }, ); ChannelMessageList.displayName = "ChannelMessageList"; // Wrap with memo so hidden keep-alive channels skip re-renders when their props // haven't changed (e.g. when messageText changes in the input — the only thing // that changes on typing is local state inside ChatArea, not the props we pass here). export const MemoChannelMessageList = memo(ChannelMessageList); 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0, plural, one {{1}} other {{2}}}"
-msgstr "{0, plural, one {{1}} other {{2}}}"
-
 #. placeholder {0}: entries.length
 #: src/components/ui/JsonTree.tsx
 msgid "{0, plural, one {# item} other {# items}}"
@@ -120,7 +113,7 @@ msgstr "{0} має бути цілим числом."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} мереж{1} — виберіть одну, щоб приєднатися"
 
-#. placeholder {0}: filteredMessages.length - displayedMessages.length
+#. placeholder {0}: channelMessages.length - displayedMessages.length
 #: src/components/layout/ChannelMessageList.tsx
 msgid "{0} older messages"
 msgstr "{0} старіших повідомлень"
@@ -136,24 +129,6 @@ msgstr "Дивляться: {0}"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} в ефірі · {1} дивляться"
 
-#. placeholder {0}: Math.floor(secs / 86400)
-#: src/components/layout/ProfilePane.tsx
-#: src/components/ui/InvitationsPanel.tsx
-msgid "{0}d ago"
-msgstr "{0} д тому"
-
-#. placeholder {0}: Math.floor(secs / 3600)
-#: src/components/layout/ProfilePane.tsx
-#: src/components/ui/InvitationsPanel.tsx
-msgid "{0}h ago"
-msgstr "{0} год тому"
-
-#. placeholder {0}: Math.floor(secs / 60)
-#: src/components/layout/ProfilePane.tsx
-#: src/components/ui/InvitationsPanel.tsx
-msgid "{0}m ago"
-msgstr "{0} хв тому"
-
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Завантаження 1 файлу} few {Завантаження # файлів} many {Завантаження # файлів} other {Завантаження # файлу}}"
@@ -161,6 +136,18 @@ msgstr "{activeCount, plural, one {Завантаження 1 файлу} few {�
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 раз} few {{c} рази} many {{c} разів} other {{c} рази}}"
+
+#: src/components/layout/SearchPane.tsx
+msgid "{count, plural, one {# result} other {# results}}"
+msgstr "{count, plural, one {# результат} few {# результати} many {# результатів} other {# результату}}"
+
+#: src/components/layout/SearchPane.tsx
+msgid "{count}+ results"
+msgstr "{count}+ результатів"
+
+#: src/components/layout/SearchPane.tsx
+msgid "{countLabel} · newest first · {scopeName}"
+msgstr "{countLabel} · спершу нові · {scopeName}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -181,6 +168,14 @@ msgstr "{inviter} запросив вас приєднатися до {channel}"
 #: src/lib/eventGrouping.ts
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {приєднався} few {приєднався {joinCount} рази} many {приєднався {joinCount} разів} other {приєднався {joinCount} рази}}"
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "{kb} KB used"
+msgstr "Використано {kb} КБ"
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "{mb} MB used"
+msgstr "Використано {mb} МБ"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "{name} · input"
@@ -253,6 +248,10 @@ msgstr "{sender} перезапустив шифрування. Ця розмо�
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "Підключено сесій: {sessionCount}. Увійдіть у цей обліковий запис або попросіть IRC-оператора переглянути їхні дані."
+
+#: src/components/ui/QuickActions.tsx
+msgid "{shortcut} to switch mode"
+msgstr "{shortcut} змінити режим"
 
 #: src/components/message/WorkflowLine.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
@@ -364,6 +363,14 @@ msgstr "Для цього облікового запису зараз обов'
 msgid "6-digit code"
 msgstr "6-значний код"
 
+#: src/components/search/messageSearchProviders.tsx
+msgid "A month ago"
+msgstr "Місяць тому"
+
+#: src/components/search/messageSearchProviders.tsx
+msgid "A week ago"
+msgstr "Тиждень тому"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "Про цю атрибуцію"
@@ -434,7 +441,7 @@ msgstr "Акаунт:"
 msgid "Action"
 msgstr "Дія"
 
-#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Actions"
 msgstr "Дії"
 
@@ -543,6 +550,10 @@ msgstr "Додайте правила, які визначають, за яко�
 msgid "Add Server"
 msgstr "Додати сервер"
 
+#: src/components/ui/SavedHistoryChoice.tsx
+msgid "Add this network again to get its saved chat history back."
+msgstr "Додайте цю мережу знову, щоб повернути її збережену історію чату."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "Додайте вашу першу мережу"
@@ -568,10 +579,15 @@ msgstr "Адмін"
 msgid "Advanced"
 msgstr "Додаткові"
 
+#: src/components/search/messageSearchProviders.tsx
+msgid "After"
+msgstr "Після"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Album"
 msgstr "Альбом"
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "Усі"
@@ -849,6 +865,11 @@ msgstr "Заблокувати користувача (за псевдонімо
 msgid "Bans"
 msgstr "Блокування"
 
+#. Search filter: messages sent before a date
+#: src/components/search/messageSearchProviders.tsx
+msgid "Before"
+msgstr "До"
+
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Biometric / security key"
@@ -904,7 +925,7 @@ msgstr "BOT"
 msgid "Bot Commands"
 msgstr "Команди бота"
 
-#: src/components/ui/SlashCommandPopover.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "Bot in this channel"
 msgstr "Бот у цьому каналі"
 
@@ -971,6 +992,8 @@ msgstr "Не можна видалити останні облікові дан�
 #: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
+#: src/components/ui/RemoveServerConfirmModal.tsx
+#: src/components/ui/settings/HistoryUsageField.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
@@ -1136,13 +1159,21 @@ msgstr "Для каналу"
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/BotsPage.tsx
 #: src/components/ui/HomeScreen.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
 msgstr "Канали"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Chat"
 msgstr "Чат"
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Chat to start saving history"
+msgstr "Почніть спілкуватися, щоб історія почала зберігатися"
+
+#: src/components/search/messageSearchProviders.tsx
+msgid "Chats and networks"
+msgstr "Чати й мережі"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1192,6 +1223,10 @@ msgstr "Оберіть порядок сортування"
 msgid "Choose the microphone, camera, and speaker calls use"
 msgstr "Виберіть мікрофон, камеру й динамік для дзвінків"
 
+#: src/components/search/SearchQueryBar.tsx
+msgid "Choose where to search"
+msgstr "Виберіть, де шукати"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Choose which speaker calls play through"
 msgstr "Виберіть динамік, через який відтворюються дзвінки"
@@ -1207,14 +1242,18 @@ msgstr "Виберіть мікрофон і перегляньте рівень
 #: src/components/pages/RawLogPage.tsx
 #: src/components/pages/RawLogPage.tsx
 #: src/components/ui/AvatarUpload.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Clear"
 msgstr "Очистити"
 
-#: src/components/layout/ChannelMessageList.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-msgid "Clear search"
-msgstr "Очистити пошук"
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Clear all saved history?"
+msgstr "Очистити всю збережену історію?"
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Clear history"
+msgstr "Очистити історію"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
@@ -1241,7 +1280,7 @@ msgstr "Натисніть для копіювання як JSON"
 msgid "Click to jump to message"
 msgstr "Натисніть, щоб перейти до повідомлення"
 
-#: src/components/ui/SlashCommandPopover.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "client"
 msgstr "клієнт"
 
@@ -1261,6 +1300,7 @@ msgstr "Ліміт клієнтів (+l)"
 #: src/components/ui/E2EEVerifyModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
 #: src/components/ui/TicTacToeModal.tsx
 #: src/lib/modal/BaseModal.tsx
 msgid "Close"
@@ -1277,6 +1317,13 @@ msgstr "Закрити розмову"
 #: src/components/layout/ChatArea.tsx
 msgid "Close popped out server notices"
 msgstr "Закрити виспливаючі сповіщення сервера"
+
+#: src/components/layout/ChatArea.tsx
+#: src/components/layout/ChatArea.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
+msgid "Close search"
+msgstr "Закрити пошук"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
@@ -1313,7 +1360,7 @@ msgstr "Колір"
 msgid "Color & Formatting"
 msgstr "Колір і форматування"
 
-#: src/components/ui/SlashCommandPopover.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "Команда, надана сервером IRC"
 
@@ -1527,6 +1574,10 @@ msgstr "Копіювати робочий процес"
 msgid "Could not access the device."
 msgstr "Не вдалося отримати доступ до пристрою."
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Could not find this message"
+msgstr "Не вдалося знайти це повідомлення"
+
 #: src/lib/geolocation.ts
 msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
 msgstr "Не вдалося вчасно визначити місцезнаходження. Спробуйте ще раз там, де небо видно чіткіше."
@@ -1623,6 +1674,11 @@ msgstr "Налаштуйте свій IRC-клієнт"
 msgid "Data Collection"
 msgstr "Збір даних"
 
+#. Search filter chip: messages sent after a date
+#: src/components/search/SearchQueryBar.tsx
+msgid "Date"
+msgstr "Дата"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Deafen"
 msgstr "Вимкнути звук"
@@ -1680,9 +1736,17 @@ msgstr "Видалити"
 msgid "Delete bot {0}? Run /REHASH before you register this nick again."
 msgstr "Видалити бота {0}? Виконайте /REHASH, перш ніж знову зареєструвати цей нік."
 
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Delete every saved message on this device. You cannot undo this."
+msgstr "Видаліть усі повідомлення, збережені на цьому пристрої. Цю дію не можна скасувати."
+
 #: src/components/layout/ChannelList.tsx
 msgid "Delete folder"
 msgstr "Видалити папку"
+
+#: src/components/ui/SavedHistoryChoice.tsx
+msgid "Delete its saved chat history too"
+msgstr "Також видалити його збережену історію чату"
 
 #: src/components/message/MessageActions.tsx
 msgid "Delete message"
@@ -1771,6 +1835,7 @@ msgstr "Видалити"
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
+#: src/components/ui/RemoveServerConfirmModal.tsx
 msgid "Disconnect"
 msgstr "Від'єднатися"
 
@@ -1778,6 +1843,10 @@ msgstr "Від'єднатися"
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "Disconnect <0>{0}</0>?"
 msgstr "Відключити <0>{0}</0>?"
+
+#: src/components/ui/RemoveServerConfirmModal.tsx
+msgid "Disconnect from {name}?"
+msgstr "Відключитися від {name}?"
 
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "Disconnect from soju bouncer?"
@@ -1931,7 +2000,7 @@ msgstr "Електронна пошта:"
 msgid "Embed"
 msgstr "Вбудувати"
 
-#: src/components/ui/EmojiAutocompleteDropdown.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "Emojis"
 msgstr "Емодзі"
 
@@ -2174,6 +2243,11 @@ msgstr "esc закрити"
 msgid "Events"
 msgstr "Події"
 
+#: src/components/search/SearchQueryBar.tsx
+#: src/lib/search/searchScope.ts
+msgid "Everywhere"
+msgstr "Усюди"
+
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
 msgstr "Точне"
@@ -2244,6 +2318,14 @@ msgstr "помилка"
 msgid "Failed to load audio"
 msgstr "Не вдалося завантажити аудіо"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Fetch missed messages"
+msgstr "Завантажити пропущені повідомлення"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Fetching missed messages…"
+msgstr "Завантаження пропущених повідомлень…"
+
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
 msgstr "Файл не завантажено: шифрування ще налаштовується. Він піде, щойно шифрування запрацює, або після його завершення."
@@ -2269,7 +2351,7 @@ msgstr "Файли, більші за {0}, надсилаються як є. Ф�
 msgid "Filter bad words (+G)"
 msgstr "Фільтрувати лайку (+G)"
 
-#: src/components/ui/AutocompleteDropdown.tsx
+#: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "Фільтрувати учасників…"
 
@@ -2289,8 +2371,6 @@ msgstr "Фільтри недоступні на цьому сервері"
 msgid "Find channels"
 msgstr "Знайти канали"
 
-#: src/components/ui/QuickActions.tsx
-#: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions.tsx
 msgid "Find channels, people, settings and actions"
 msgstr "Знайдіть канали, людей, налаштування та дії"
@@ -2351,19 +2431,15 @@ msgstr "Забули пароль"
 msgid "Forgot password?"
 msgstr "Забули пароль?"
 
-#. placeholder {0}: filteredMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Found {0} messages matching \"{searchQuery}\""
-msgstr "Знайдено {0} повідомлень, що відповідають \"{searchQuery}\""
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Found 1 message matching \"{searchQuery}\""
-msgstr "Знайдено 1 повідомлення, що відповідає \"{searchQuery}\""
-
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
 msgstr "від"
+
+#. Search filter chip: messages sent by a person
+#: src/components/search/SearchQueryBar.tsx
+msgid "From"
+msgstr "Від"
 
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgctxt "camera facing"
@@ -2403,6 +2479,10 @@ msgstr "GIF"
 msgid "GitHub:"
 msgstr "GitHub:"
 
+#: src/components/ui/QuickActions.tsx
+msgid "Go to"
+msgstr "Перейти"
+
 #: src/components/message/ChannelLink.tsx
 msgid "Go to {name}"
 msgstr "Перейти до {name}"
@@ -2423,9 +2503,13 @@ msgstr "GZ-Line (глобальна Z-Line)"
 msgid "Halfop"
 msgstr "Напів-оператор"
 
-#: src/components/ui/SlashCommandPopover.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "Handled by Obby before being sent"
 msgstr "Обробляється Obby перед відправленням"
+
+#: src/components/search/SearchQueryBar.tsx
+msgid "Has link"
+msgstr "Має посилання"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -2438,6 +2522,14 @@ msgstr "Приховати канал зі списків LIST та NAMES."
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
 msgstr "Виділяти повідомлення, що вас згадують"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "History"
+msgstr "Історія"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "History disk limit"
+msgstr "Ліміт дискового простору для історії"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ServerList.tsx
@@ -2534,6 +2626,11 @@ msgstr "Зображення {0} з {1}"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Image preview"
 msgstr "Попередній перегляд зображення"
+
+#. Search filter chip: messages in a chat or network
+#: src/components/search/SearchQueryBar.tsx
+msgid "In"
+msgstr "У"
 
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
@@ -2679,6 +2776,10 @@ msgstr "Приєднатися до каналу на {serverName}"
 msgid "Join stream {channelName}"
 msgstr "Приєднатися до трансляції {channelName}"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Join this channel to jump to the message"
+msgstr "Приєднайтеся до цього каналу, щоб перейти до повідомлення"
+
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join voice channel {channelName}"
 msgstr "Приєднатися до голосового каналу {channelName}"
@@ -2701,10 +2802,13 @@ msgstr "приєднався та вийшов"
 msgid "Joined the channel"
 msgstr "Приєднався до каналу"
 
-#: src/components/layout/ProfilePane.tsx
-#: src/components/ui/InvitationsPanel.tsx
-msgid "just now"
-msgstr "щойно"
+#: src/components/layout/ChannelMessageList.tsx
+msgid "Jump to present"
+msgstr "Перейти до теперішнього"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep chat history on this device"
+msgstr "Зберігати історію чатів на цьому пристрої"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
@@ -2824,6 +2928,14 @@ msgid "Live"
 msgstr "В ефірі"
 
 #: src/components/layout/ChannelMessageList.tsx
+msgid "Load earlier messages saved on this device"
+msgstr "Завантажити раніші повідомлення, збережені на цьому пристрої"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Load more results"
+msgstr "Завантажити ще результати"
+
+#: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
 msgstr "Завантажити старіші повідомлення"
 
@@ -2851,6 +2963,7 @@ msgstr "Завантаження мереж з вашого bouncer…"
 msgid "Loading WHOIS data..."
 msgstr "Завантаження даних WHOIS..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Loading…"
@@ -2983,7 +3096,7 @@ msgstr "Медіа"
 msgid "Media Previews"
 msgstr "Попередній перегляд медіа"
 
-#: src/components/ui/AutocompleteDropdown.tsx
+#: src/components/chat/completionProviders.tsx
 msgid "Members"
 msgstr "Члени"
 
@@ -2992,9 +3105,14 @@ msgstr "Члени"
 msgid "Members — {0}"
 msgstr "Учасники — {0}"
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
 msgstr "Згадки"
+
+#: src/components/search/SearchQueryBar.tsx
+msgid "Mentions & replies"
+msgstr "Згадки та відповіді"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
@@ -3014,6 +3132,10 @@ msgstr "Повідомлення {0} (Enter — новий рядок, Shift+Ent
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "Повідомлення {0} (Shift+Enter — новий рядок)"
+
+#: src/components/ui/QuickActions/gotoResults.ts
+msgid "Message {username}"
+msgstr "Написати {username}"
 
 #. placeholder {0}: selectedPrivateChat.username
 #: src/components/layout/ChatArea.tsx
@@ -3053,6 +3175,15 @@ msgstr "Повідомлення при від'єднанні від серве�
 #: src/components/layout/StartPrivateChatRow.tsx
 msgid "message someone"
 msgstr "написати комусь"
+
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
+msgid "Messages"
+msgstr "Повідомлення"
+
+#: src/components/message/SystemMessage.tsx
+msgid "Messages from this time may be missing"
+msgstr "Повідомлення за цей час можуть бути відсутні"
 
 #: src/store/handlers/e2eeConversation.ts
 msgid "Messages with {nick} are now encrypted."
@@ -3178,6 +3309,10 @@ msgstr "Ім'я:"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "network"
 msgstr "мережа"
+
+#: src/lib/search/searchScope.ts
+msgid "Network"
+msgstr "Мережа"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ServerList.tsx
@@ -3369,6 +3504,10 @@ msgstr "Немає медіа у цьому каналі"
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
 msgstr "немає повідомлення"
+
+#: src/components/layout/SearchPane.tsx
+msgid "No messages match. Widen the scope or change filters"
+msgstr "Повідомлень не знайдено. Розширте область або змініть фільтри"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3697,7 +3836,7 @@ msgstr "pack_id та назва обов'язкові."
 msgid "Packs"
 msgstr "Пакети"
 
-#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Pages"
 msgstr "Сторінки"
 
@@ -3754,7 +3893,8 @@ msgid "pending"
 msgstr "очікує"
 
 #: src/components/layout/StartPrivateChatRow.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/search/messageSearchProviders.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "People"
 msgstr "Люди"
 
@@ -3770,6 +3910,10 @@ msgstr "Постійний канал (+P)"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Фото"
+
+#: src/components/search/SearchQueryBar.tsx
+msgid "Pick a chat"
+msgstr "Виберіть чат"
 
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
@@ -3841,6 +3985,10 @@ msgstr "Будь ласка, введіть ім'я користувача"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Будь ласка, зачекайте..."
+
+#: src/components/layout/SearchPane.tsx
+msgid "PM with {peer}"
+msgstr "ПП з {peer}"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -4014,6 +4162,14 @@ msgstr "Причина (необов'язково)"
 msgid "Reasoning"
 msgstr "Міркування"
 
+#: src/components/ui/QuickActions/resultMeta.tsx
+msgid "Recent places"
+msgstr "Нещодавні місця"
+
+#: src/components/ui/QuickActions/resultMeta.tsx
+msgid "Recent searches"
+msgstr "Нещодавні пошуки"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Reconnect"
 msgstr "Перепідключитися"
@@ -4185,6 +4341,10 @@ msgstr "Відображати Markdown-форматування у повідо
 msgid "Reorder list"
 msgstr "Змінити порядок списку"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Replies"
+msgstr "Відповіді"
+
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
@@ -4287,6 +4447,15 @@ msgstr "Зберегти розшифрований файл"
 msgid "Saved"
 msgstr "Збережено"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Saved history"
+msgstr "Збережена історія"
+
+#: src/components/message/MessageHeader.tsx
+#: src/components/message/MessageHeader.tsx
+msgid "Saved on this device"
+msgstr "Збережено на цьому пристрої"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."
 msgstr "Збереження..."
@@ -4294,6 +4463,10 @@ msgstr "Збереження..."
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Скануйте цей QR-код застосунком-автентифікатором, потім підтвердьте 6-значним кодом, який він покаже."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
+msgstr "Прокручуйте далі, ніж зберігає сервер. Якщо вимкнути, збереження припиниться, а вже збережене залишиться. Зашифровані приватні повідомлення ніколи не зберігаються."
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4305,12 +4478,13 @@ msgid "Scroll to bottom"
 msgstr "Прокрутити вниз"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Search"
 msgstr "Пошук"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Search again"
+msgstr "Шукати знову"
 
 #: src/components/pages/BotsPage.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4325,6 +4499,10 @@ msgstr "Пошук каналів..."
 msgid "Search emojis..."
 msgstr "Шукати емодзі..."
 
+#: src/components/layout/SearchPane.tsx
+msgid "Search failed"
+msgstr "Пошук не вдався"
+
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
 msgstr "Знайдіть GIF для початку"
@@ -4334,16 +4512,33 @@ msgid "Search GIFs..."
 msgstr "Пошук GIF..."
 
 #: src/components/layout/ChatHeader.tsx
-msgid "Search messages…"
-msgstr "Пошук повідомлень…"
+msgid "Search messages"
+msgstr "Шукати в повідомленнях"
+
+#: src/components/ui/QuickActions.tsx
+msgid "Search messages for \"{query}\""
+msgstr "Шукати «{query}» у повідомленнях"
+
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Search messages, filter with from: in: has:link"
+msgstr "Шукайте в повідомленнях, фільтруйте через from: in: has:link"
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
 msgstr "Пошук серверів..."
 
+#: src/components/ui/QuickActions.tsx
+msgid "Searching in {label}"
+msgstr "Пошук у {label}"
+
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "Пошук..."
+
+#: src/components/layout/SearchPane.tsx
+msgid "Searching…"
+msgstr "Пошук…"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Secret"
@@ -4413,7 +4608,7 @@ msgstr "Вибрати канал"
 msgid "Select a Network"
 msgstr "Виберіть мережу"
 
-#: src/components/ui/AutocompleteDropdown.tsx
+#: src/components/ui/MemberPicker.tsx
 msgid "Select Member"
 msgstr "Вибрати учасника"
 
@@ -4478,8 +4673,8 @@ msgstr "Надсилання"
 msgid "Sending…"
 msgstr "Надсилання…"
 
+#: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
-#: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "сервер"
 
@@ -4557,12 +4752,12 @@ msgstr "Зв'язок між серверами може використову�
 msgid "Server-wide"
 msgstr "По всьому серверу"
 
+#: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
-#: src/components/ui/SlashCommandPopover.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "Бот на рівні сервера, доступний з будь-якого каналу"
 
-#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Servers"
 msgstr "Сервери"
 
@@ -4596,6 +4791,10 @@ msgstr "Встановлено:"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "Вкажіть, скільки секунд рахувати активність флуду до скидання лічильників"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Set how much history to keep. The oldest messages go first."
+msgstr "Укажіть, скільки історії зберігати. Найстаріші повідомлення видаляються першими."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4638,9 +4837,9 @@ msgstr "Встановлення…"
 
 #: src/components/pages/pageSections.tsx
 #: src/components/pages/SettingsPage.tsx
-#: src/components/ui/QuickActions.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/gotoResults.ts
 #: src/components/ui/QuickActions/pageTargets.ts
+#: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Settings"
 msgstr "Налаштування"
 
@@ -4741,6 +4940,10 @@ msgstr "Показати або приховати бічну панель зі 
 msgid "Show Quits"
 msgstr "Показати виходи"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Show search results"
+msgstr "Показати результати пошуку"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show the MOTD"
 msgstr "Показати MOTD"
@@ -4762,8 +4965,8 @@ msgstr "Не вдалося увійти, ви спілкуєтеся як гі�
 msgid "Signed on"
 msgstr "Час входу"
 
+#: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
-#: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Слеш-команди"
 
@@ -4818,6 +5021,11 @@ msgstr "Розпочати трансляцію на {serverName}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Start a voice channel on {serverName}"
 msgstr "Розпочати голосовий канал на {serverName}"
+
+#. placeholder {0}: server.name
+#: src/components/ui/QuickActions/gotoResults.ts
+msgid "Start private message on {0}"
+msgstr "Почати особисте листування в {0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5001,6 +5209,10 @@ msgstr "Цей браузер не може записувати аудіо."
 msgid "This browser cannot record video."
 msgstr "Цей браузер не може записувати відео."
 
+#: src/components/search/SearchQueryBar.tsx
+msgid "This chat"
+msgstr "Цей чат"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Цей чат зашифровано власною схемою Obby. Порівняйте відбитки іншим каналом, а потім позначте його як перевірений."
@@ -5046,9 +5258,17 @@ msgstr "Стільки людей зареєструвалося через це
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "Це повідомлення не вдалося розшифрувати. Його зашифровано для сеансу, ключів від якого на цьому пристрої більше немає."
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "This message is no longer saved"
+msgstr "Це повідомлення більше не збережено"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 msgid "This message wasn't encrypted. It may come from another of their clients that isn't using encryption."
 msgstr "Це повідомлення не було зашифроване. Можливо, воно надійшло з іншого клієнта цієї особи, який не використовує шифрування."
+
+#: src/components/search/SearchQueryBar.tsx
+msgid "This network"
+msgstr "Ця мережа"
 
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
@@ -5106,6 +5326,10 @@ msgstr "Відбиток TLS-сертифіката"
 msgid "to"
 msgstr "до"
 
+#: src/components/search/messageSearchProviders.tsx
+msgid "Today"
+msgstr "Сьогодні"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
@@ -5125,11 +5349,6 @@ msgstr "Перемкнути список учасників"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Toggle Notifications"
 msgstr "Перемкнути сповіщення"
-
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-msgid "Toggle search"
-msgstr "Перемкнути пошук"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "Too large to encrypt, sent unencrypted"
@@ -5180,6 +5399,10 @@ msgstr "Спробуйте завантажити ще раз. Файлосхо�
 msgid "Turn off media previews."
 msgstr "Вимкнути попередній перегляд медіа."
 
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Turn on Keep chat history to start saving"
+msgstr "Увімкніть «Зберігати історію чатів», щоб почати збереження"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Увімкніть «OPER під час підключення», щоб надсилати збережені ім'я та пароль як OPER при кожному підключенні, або скористайтеся «Стати оператором» нижче."
@@ -5208,6 +5431,10 @@ msgstr "Тип"
 #: src/components/layout/ChatArea.tsx
 msgid "Type a message..."
 msgstr "Введіть повідомлення..."
+
+#: src/components/ui/QuickActions.tsx
+msgid "Type words to search messages"
+msgstr "Введіть слова, щоб шукати в повідомленнях"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Undeafen"
@@ -5574,6 +5801,10 @@ msgstr "Шепнути користувачу в контексті поточн
 msgid "Wide - Broader protection scope"
 msgstr "Широкий - ширша область захисту"
 
+#: src/components/layout/SearchPane.tsx
+msgid "Widen the scope"
+msgstr "Розширити область"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
 msgstr "За замовчуванням буде 'без причини', якщо залишити порожнім"
@@ -5604,6 +5835,10 @@ msgstr "Працює з іншими клієнтами IRC"
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"
 msgstr "Так, видалити"
+
+#: src/components/search/messageSearchProviders.tsx
+msgid "Yesterday"
+msgstr "Учора"
 
 #: src/components/message/CollapsedEventMessage.tsx
 #: src/components/message/EventMessage.tsx

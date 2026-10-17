@@ -33,13 +33,14 @@ import {
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { Message } from "../../types";
+import { nickProvider } from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReactions } from "../message/MessageReactions";
-import AutocompleteDropdown from "./AutocompleteDropdown";
 import ColorPicker from "./ColorPicker";
 import { EmojiPickerInline } from "./EmojiPickerInline";
 import { EmojiPickerModal } from "./EmojiPickerModal";
 import { InputToolbar } from "./InputToolbar";
+import MemberPicker from "./MemberPicker";
 import ReactionModal from "./ReactionModal";
 import { ReactionPopover } from "./ReactionPopover";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
@@ -603,15 +604,11 @@ export function MediaCommentsSidebar({
             onClose={() => setIsEmojiSelectorOpen(false)}
           />
         )}
-        <AutocompleteDropdown
-          users={selectedChannel?.users ?? []}
-          isVisible={showMentionDropdown}
-          inputValue={commentText}
-          cursorPosition={cursorPosition}
+        <MemberPicker
+          provider={nickProvider(selectedChannel?.users ?? [])}
+          isOpen={showMentionDropdown}
           onSelect={handleUsernameSelect}
           onClose={() => setShowMentionDropdown(false)}
-          inputElement={textareaRef.current}
-          isAtButtonTriggered={showMentionDropdown}
           isNarrowView={isMobile}
         />
       </div>

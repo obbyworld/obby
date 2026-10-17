@@ -1,3 +1,5 @@
+import type { RecentPlace } from "../../../lib/search/recents";
+import type { SearchQuery } from "../../../lib/search/searchTypes";
 import type { SettingSearchResult } from "../../../lib/settings/types";
 import type { AppPage } from "../../../store/types";
 import type { Channel, PrivateChat, Server, User } from "../../../types";
@@ -32,10 +34,17 @@ export type QuickActionResultType =
   | "start-dm"
   | "ui-toggle"
   | "ui-modal"
-  | "page";
+  | "page"
+  | "recent-search"
+  | "recent-place"
+  | "search-messages";
 
 export interface JoinChannelData {
   channelName: string;
+}
+
+export interface StartDmData {
+  username: string;
 }
 
 export interface QuickActionResult {
@@ -51,8 +60,11 @@ export interface QuickActionResult {
     | PrivateChat
     | Server
     | JoinChannelData
+    | StartDmData
     | UIActionData
-    | AppPage;
+    | AppPage
+    | SearchQuery
+    | RecentPlace;
 }
 
 export interface QuickActionContext {

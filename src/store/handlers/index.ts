@@ -7,6 +7,7 @@ import { registerBouncerHandlers } from "./bouncer";
 import { registerChannelHandlers } from "./channels";
 import { registerConnectionHandlers } from "./connection";
 import { registerE2EEHandlers } from "./e2ee";
+import { registerHistoryHandlers } from "./history";
 import { registerInvitelinkHandlers } from "./invitelink";
 import { registerMessageHandlers } from "./messages";
 import { registerMetadataHandlers } from "./metadata";
@@ -40,4 +41,5 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerPushBotHandlers(store);
   registerE2EEHandlers(store);
   registerServerReplyHandlers(store);
+  registerHistoryHandlers(store);
 }

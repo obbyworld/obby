@@ -17,6 +17,7 @@ import { Button } from "../../lib/modal/components";
 import { buttonClassName } from "../../lib/modal/components/Button";
 import useStore, { type AppState } from "../../store";
 import { PageShell } from "../ui/page/PageShell";
+import { SkeletonRow } from "../ui/SkeletonRow";
 import { TextInput } from "../ui/TextInput";
 import type { PageProps } from "./PageHost";
 
@@ -66,16 +67,6 @@ const ChannelAvatar: React.FC<{ src: string | null; channel: string }> = ({
     </span>
   );
 };
-
-const SkeletonRow: React.FC = () => (
-  <div aria-hidden="true" className="h-14 flex items-center gap-3 px-3">
-    <span className="w-8 h-8 shrink-0 rounded-lg bg-discord-dark-400 animate-pulse" />
-    <span className="flex-1 min-w-0 flex flex-col gap-1.5">
-      <span className="h-3 w-1/3 rounded bg-discord-dark-400 animate-pulse" />
-      <span className="h-3 w-2/3 rounded bg-discord-dark-400 animate-pulse" />
-    </span>
-  </div>
-);
 
 interface ChannelRowProps {
   channel: ListedChannel;

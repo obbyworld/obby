@@ -75,7 +75,7 @@ describe("ChatArea Tab Completion Integration", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         linkSecurityWarnings: [],
@@ -320,6 +320,49 @@ describe("ChatArea Tab Completion Integration", () => {
       expect.stringContaining("PRIVMSG #general :admin: hello"),
     );
   });
+
+  it("opens the member list on the second Tab, where Enter takes the nick instead of sending", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "hi a");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("hi alice ");
+
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(input).toHaveValue("hi alice ");
+    expect(ircClient.sendRaw).not.toHaveBeenCalledWith(
+      "server1",
+      expect.stringContaining("PRIVMSG"),
+    );
+
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(ircClient.sendRaw).toHaveBeenCalledWith(
+      "server1",
+      expect.stringContaining("PRIVMSG #general :hi alice"),
+    );
+  });
+
+  it("cycles backwards with Shift+Tab", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "a");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("admin: ");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab", shiftKey: true });
+    expect(input).toHaveValue("alice: ");
+  });
+
+  it("completes a slash command name with Tab", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "/joi");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("/join ");
+  });
 });
 
 const makeMsg = (
@@ -363,7 +406,7 @@ describe("ChatArea reply keyboard navigation", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         linkSecurityWarnings: [],

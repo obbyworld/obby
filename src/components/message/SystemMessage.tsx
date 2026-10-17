@@ -1,5 +1,10 @@
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { isE2EEWarningNotice } from "../../lib/e2ee/messageFlags";
+import {
+  HISTORY_GAP_CODE,
+  LOCAL_HISTORY_TAG,
+} from "../../lib/history/historyLines";
 import { processMarkdownInText } from "../../lib/ircUtils";
 import type { MessageType } from "../../types";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
@@ -41,9 +46,15 @@ export const SystemMessage: React.FC<SystemMessageProps> = ({
         <div
           className={`w-1 h-1 rounded-full ${isWarning ? "bg-amber-400" : "bg-discord-text-muted"}`}
         />
-        <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
-          {htmlContent}
-        </EnhancedLinkWrapper>
+        {message.tags?.[LOCAL_HISTORY_TAG] === HISTORY_GAP_CODE ? (
+          <span>
+            <Trans>Messages from this time may be missing</Trans>
+          </span>
+        ) : (
+          <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
+            {htmlContent}
+          </EnhancedLinkWrapper>
+        )}
         <div className="text-xs opacity-70">
           {formatTime(new Date(message.timestamp))}
         </div>
