@@ -92,20 +92,20 @@ msgstr "{0} te ha invitado a jugar."
 msgid "{0} idle"
 msgstr "{0} inactivo"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} es obligatorio."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0} es obligatorio"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} debe ser un número."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0} debe ser un número"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} debe ser un número entero."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0} debe ser un número entero"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*channel*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#canal"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#canal (opcional)"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ para mover"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ para abrir"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount} opciones"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "No se puede quitar tu última credencial 2FA"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Cancelar"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "Cancelar comando"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "Color y formato"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Próximamente"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "Opciones del comando"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line (Z-Line global)"
 msgid "Halfop"
 msgstr "Halfop"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "tiene un valor"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Tiene enlace"
@@ -3534,10 +3545,6 @@ msgstr "Imagen siguiente"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "Página siguiente"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "nick"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "Requiere un nick registrado (+r) para hablar."
 msgid "Require an invite to join."
 msgstr "Requiere invitación para entrar."
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "requerido"
@@ -4607,10 +4613,6 @@ msgstr "Girar 90°"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Reglas"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "Ejecutar"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "Este chat está cifrado con el cifrado de Obby. Compara las huellas con 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "Este chat está cifrado con OTR, compatible con otros clientes IRC. Compara las huellas con tu contacto fuera de este chat y luego márcalo como verificado."
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "Este comando no toma parámetros."
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."

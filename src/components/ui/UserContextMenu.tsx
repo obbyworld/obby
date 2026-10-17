@@ -33,7 +33,6 @@ interface UserContextMenuProps {
   currentUserStatus?: string;
   currentUsername?: string;
   onOpenModerationModal?: (action: ModerationAction) => void;
-  /** Opens the slash-command param modal for a bot command picked from the submenu. */
   onPickBotCommand?: (botNick: string, command: BotCommand) => void;
 }
 

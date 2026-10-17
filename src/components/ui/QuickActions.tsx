@@ -5,6 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { FaArrowLeft, FaSearch, FaTimes } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useSuggestionKeys } from "../../hooks/useSuggestionKeys";
+import { keepInputFocus } from "../../lib/focus";
 import { fuzzyMatch } from "../../lib/fuzzySearch";
 import ircClient from "../../lib/ircClient";
 import { isMac } from "../../lib/platformUtils";
@@ -37,7 +38,6 @@ import { useResultActions } from "./QuickActions/useResultActions";
 import SegmentedControl from "./SegmentedControl";
 import { TextInput } from "./TextInput";
 
-const keepInputFocus = (e: React.MouseEvent) => e.preventDefault();
 const NO_KEYS: string[] = [];
 
 interface ResultGroup {

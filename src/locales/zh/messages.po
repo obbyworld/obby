@@ -92,20 +92,20 @@ msgstr "{0} 邀请你一起玩。"
 msgid "{0} idle"
 msgstr "闲置 {0}"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} 为必填项。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0} 为必填项"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} 必须是数字。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0} 必须是数字"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} 必须是整数。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0} 必须是整数"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*channel*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#channel"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#频道（可选）"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ 移动"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ 打开"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount} 个选项"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "无法删除你的最后一个 2FA 凭据"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "取消"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "取消命令"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "颜色与格式"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "即将推出"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "命令选项"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line（全局 Z-Line）"
 msgid "Halfop"
 msgstr "半管理员"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "已有值"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "包含链接"
@@ -3534,10 +3545,6 @@ msgstr "下一张图片"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "下一页"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "昵称"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "发言需要已注册昵称（+r）。"
 msgid "Require an invite to join."
 msgstr "需要邀请才能加入。"
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "必填"
@@ -4607,10 +4613,6 @@ msgstr "旋转 90°"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "规则"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "运行"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "此聊天使用 Obby 加密。请在此聊天之外与联系人核对指
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "此聊天使用 OTR 加密，与其他 IRC 客户端兼容。请在此聊天之外与联系人核对指纹，然后将其标记为已验证。"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "此命令不需要参数。"
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."

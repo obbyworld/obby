@@ -33,3 +33,6 @@ export function findTopModalDialog(): HTMLElement | null {
   const dialogs = document.querySelectorAll<HTMLElement>(MODAL_SELECTOR);
   return dialogs[dialogs.length - 1] ?? null;
 }
+
+export const keepInputFocus = (e: { preventDefault: () => void }) =>
+  e.preventDefault();

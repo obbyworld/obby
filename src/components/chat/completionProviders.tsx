@@ -273,8 +273,6 @@ export function slashSuggestions(
   return suggestions;
 }
 
-// A bot command that declares options goes to `onPickWithOptions` so its
-// values are entered through typed form fields.
 export function slashProvider(
   commands: readonly SlashSuggestion[],
   onPickWithOptions: (suggestion: SlashSuggestion) => void,
