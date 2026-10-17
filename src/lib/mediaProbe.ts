@@ -1,4 +1,4 @@
-import { detectMediaType, type MediaType } from "./mediaUtils";
+import { detectMediaType, extractHostname, type MediaType } from "./mediaUtils";
 
 export interface ProbeResult {
   type: MediaType;
@@ -18,6 +18,17 @@ function cacheSet(url: string, result: ProbeResult | null): void {
   }
   cache.set(url, result);
   keyOrder.push(url);
+}
+
+// These hosts serve web pages without CORS headers, so no probe could read their content type.
+const HTML_ONLY_HOSTS = ["github.com", "reddit.com", "play.google.com"];
+
+function isHtmlOnlyHost(url: string): boolean {
+  const host = extractHostname(url);
+  return (
+    host !== null &&
+    HTML_ONLY_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))
+  );
 }
 
 /** Returns true if the URL has no detectable type and should be HEAD-probed. */
@@ -165,6 +176,11 @@ async function probeUncached(url: string): Promise<ProbeResult | null> {
     const result = { type: pageType, streamable: false, skipped: false };
     cacheSet(url, result);
     return result;
+  }
+
+  if (isHtmlOnlyHost(url) && detectMediaType(url) === null) {
+    cacheSet(url, null);
+    return null;
   }
 
   // Primary path: HTTP Content-Type is the single source of truth.

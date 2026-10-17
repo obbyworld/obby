@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { probeMediaUrl, shouldProbeUrl } from "../../src/lib/mediaProbe";
 
 vi.mock("../../src/lib/mediaUtils", () => ({
+  extractHostname: (url: string) => new URL(url).hostname,
   detectMediaType: vi.fn((url: string) => {
     if (url.endsWith(".mp4")) return "video";
     if (url.endsWith(".mp3")) return "audio";
@@ -251,6 +252,14 @@ describe("probeMediaUrl", () => {
     } as unknown as Response);
     const result = await probeMediaUrl(uniqueUrl());
     expect(result).toBeNull();
+  });
+
+  test("web page host → null without a request", async () => {
+    const result = await probeMediaUrl(
+      `https://github.com/obbyworld/obby/pull/${Math.random()}`,
+    );
+    expect(result).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   test("network error → null", async () => {

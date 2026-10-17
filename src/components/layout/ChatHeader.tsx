@@ -38,6 +38,7 @@ import type { Channel, PrivateChat, User } from "../../types";
 import { BotToolsHistoryButton } from "../ui/BotToolsHistoryButton";
 import E2EELockControl from "../ui/E2EELockControl";
 import Menu, { type MenuItem } from "../ui/Menu";
+import OperatorKey from "../ui/OperatorKey";
 import TopicModal from "../ui/TopicModal";
 
 interface ChatHeaderProps {
@@ -273,15 +274,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             🤖
           </span>
         )}
-        {isIrcOp && (
-          <span
-            className="inline ml-0.5"
-            style={{ fontSize: "0.9em" }}
-            title={t`IRC Operator`}
-          >
-            🔑
-          </span>
-        )}
+        {isIrcOp && <OperatorKey className="ml-0.5" />}
       </>
     );
   };

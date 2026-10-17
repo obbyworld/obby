@@ -46,7 +46,7 @@ msgstr "(설정됨, 변경하려면 편집)"
 msgid "(stored, leave blank to keep)"
 msgstr "(저장됨, 유지하려면 비워 두세요)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "(suspended)"
 msgstr "(정지됨)"
 
@@ -452,7 +452,7 @@ msgstr "작업"
 msgid "Actions"
 msgstr "작업"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "active"
 msgstr "활성"
 
@@ -603,7 +603,6 @@ msgid "Alerts"
 msgstr "알림"
 
 #: src/components/layout/SearchPane.tsx
-#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "전체"
 
@@ -683,7 +682,7 @@ msgstr "모양"
 msgid "Apply and refresh"
 msgstr "적용하고 새로 고침"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "승인"
@@ -832,6 +831,8 @@ msgstr "자리 비움 메시지"
 msgid "Away:"
 msgstr "자리비움:"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/ui/page/PageShell.tsx
@@ -969,8 +970,7 @@ msgstr "Bot 명령어"
 msgid "Bot in this channel"
 msgstr "이 채널의 봇"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/ui/QuickActions/pageTargets.ts
+#: src/components/layout/BotPane.tsx
 msgid "Bots"
 msgstr "봇"
 
@@ -1109,12 +1109,8 @@ msgstr "닉네임 변경됨"
 msgid "changed the topic to: {topic}"
 msgstr "주제를 변경했습니다: {topic}"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "channel"
-msgstr "채널"
-
-#: src/components/pages/BotsPage.tsx
-msgid "Channel"
 msgstr "채널"
 
 #: src/components/layout/MemberList.tsx
@@ -1129,7 +1125,7 @@ msgstr "채널 아바타 미리보기"
 msgid "Channel behavior"
 msgstr "채널 동작"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Channel bot, only in joined channels"
 msgstr "채널 봇(참여 중인 채널에서만)"
 
@@ -1206,8 +1202,8 @@ msgstr "채널-이름"
 msgid "Channel-scoped"
 msgstr "채널 전용"
 
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1350,6 +1346,8 @@ msgstr "클라이언트"
 msgid "Client limit (+l)"
 msgstr "클라이언트 제한 (+l)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1439,7 +1437,7 @@ msgstr "IRC 서버에서 제공하는 명령어"
 msgid "Command run by Obby"
 msgstr "Obby가 실행한 명령"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Commands are loading…"
 msgstr "명령어를 불러오는 중…"
 
@@ -1457,11 +1455,11 @@ msgstr "댓글 ({commentCount})"
 msgid "complete"
 msgstr "완료"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "config-defined"
 msgstr "설정 정의됨"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "설정으로 정의된 봇입니다. 상태를 변경하려면 obbyircd.conf를 편집하고 /REHASH를 실행하세요."
 
@@ -1801,22 +1799,22 @@ msgstr "기본 닉네임"
 msgid "Delay joins (+D)"
 msgstr "입장 지연 (+D)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "삭제"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot"
 msgstr "봇 삭제"
 
 #. placeholder {0}: bot.nick
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot {0}? Run /REHASH before you register this nick again."
 msgstr "봇 {0}을(를) 삭제하시겠습니까? 이 닉네임을 다시 등록하기 전에 /REHASH를 실행하세요."
 
@@ -1863,7 +1861,7 @@ msgstr "이 메시지를 삭제하시겠습니까? 이 작업은 취소할 수 �
 msgid "Delete this network?"
 msgstr "이 네트워크를 삭제할까요?"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "deleted"
 msgstr "삭제됨"
 
@@ -2574,7 +2572,7 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line (글로벌 밴)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "gateway online"
 msgstr "gateway 온라인"
 
@@ -2846,14 +2844,10 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/PrivateChatRow.tsx
-#: src/components/message/MessageHeader.tsx
 #: src/components/pages/pageSections.tsx
 #: src/components/pages/SettingsPage.tsx
+#: src/components/ui/OperatorKey.tsx
+#: src/components/ui/OperatorKey.tsx
 msgid "IRC Operator"
 msgstr "IRC Operator"
 
@@ -3507,6 +3501,10 @@ msgstr "네트워크 이름"
 msgid "Networks on {0}"
 msgstr "{0}의 네트워크"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New"
+msgstr "새 메시지"
+
 #: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "새 암호화된 메시지"
@@ -3515,10 +3513,6 @@ msgstr "새 암호화된 메시지"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "새 폴더"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "New messages"
-msgstr "새 메시지"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -3598,11 +3592,7 @@ msgstr "아직 밴이 없습니다. 위에서 추가하세요"
 msgid "No bans yet, ask a channel operator to add one"
 msgstr "아직 차단이 없습니다. 추가하려면 채널 운영자에게 요청하세요"
 
-#: src/components/pages/BotsPage.tsx
-msgid "No bots match. Clear the search or change the filter."
-msgstr "일치하는 봇이 없습니다. 검색을 지우거나 필터를 변경하세요."
-
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No bots registered on this network yet."
 msgstr "아직 이 네트워크에 등록된 봇이 없습니다."
 
@@ -3738,7 +3728,7 @@ msgstr "선택된 서버가 없습니다. 먼저 사이드바에서 서버를 �
 msgid "No servers found."
 msgstr "서버를 찾을 수 없습니다."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No slash commands yet"
 msgstr "아직 슬래시 명령이 없습니다"
 
@@ -3831,7 +3821,7 @@ msgstr "Obby - IRC를 미래로"
 msgid "Off"
 msgstr "끄기"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "offline"
 msgstr "오프라인"
 
@@ -3893,10 +3883,6 @@ msgstr "{0} 열기"
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
 msgstr "사용자에게 개인 메시지 열기"
-
-#: src/components/ui/UserContextMenu.tsx
-msgid "Open bots menu"
-msgstr "봇 메뉴 열기"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3997,7 +3983,7 @@ msgstr "OPER 실행"
 msgid "Oper Username"
 msgstr "Oper 사용자 이름"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Operator actions"
 msgstr "운영자 작업"
 
@@ -4089,7 +4075,7 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF 미리보기"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "pending"
 msgstr "대기 중"
 
@@ -4714,11 +4700,6 @@ msgstr "검색"
 msgid "Search again"
 msgstr "다시 검색"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
-msgid "Search bots"
-msgstr "봇 검색"
-
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Search channels..."
 msgstr "채널 검색..."
@@ -4808,10 +4789,6 @@ msgstr "보안 그룹"
 msgid "Security Warning"
 msgstr "보안 경고"
 
-#: src/components/layout/NetworkMenu.tsx
-msgid "See bots"
-msgstr "봇 보기"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
@@ -4836,10 +4813,6 @@ msgstr "누가 가장 많이 말하고 채널이 언제 붐비는지 확인하�
 msgid "Seek"
 msgstr "탐색"
 
-#: src/components/pages/BotsPage.tsx
-msgid "Select a bot to see its commands and management actions."
-msgstr "봇을 선택하면 명령과 관리 작업을 볼 수 있습니다."
-
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
 msgstr "채널 선택"
@@ -4856,7 +4829,7 @@ msgstr "멤버 선택"
 msgid "Select or add a channel to get started."
 msgstr "시작하려면 채널을 선택하거나 추가하세요."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "자가 등록됨"
 
@@ -4926,7 +4899,7 @@ msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "파일이 너무 커서 암호화할 수 없으므로 암호화 없이 전송됨"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "서버"
 
@@ -4999,13 +4972,12 @@ msgstr "서버 설정"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "서버 간 통신에 암호화되지 않은 연결이 사용될 수 있습니다"
 
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "서버 전체"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "모든 채널에서 접근 가능한 서버 전체 봇"
 
@@ -5225,7 +5197,7 @@ msgid "Signed on"
 msgstr "접속 시각"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Slash commands"
 msgstr "슬래시 명령"
 
@@ -5255,7 +5227,7 @@ msgstr "사용자순 정렬"
 msgid "SoundCloud player"
 msgstr "SoundCloud 플레이어"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Source"
 msgstr "소스"
 
@@ -5374,11 +5346,11 @@ msgstr "메시지에서 mIRC 색상 코드 제거"
 msgid "Strongest encryption. Works only with other Obby users"
 msgstr "가장 강력한 암호화입니다. 다른 Obby 사용자와만 작동합니다"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Suspend"
 msgstr "정지"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "suspended"
 msgstr "정지됨"
 
@@ -5645,7 +5617,7 @@ msgstr "주제 설정 시각 이전 (분 전)"
 msgid "Topic:"
 msgstr "주제:"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "전송"
@@ -5759,7 +5731,7 @@ msgstr "비공개 채팅 고정 해제"
 msgid "Unpin this private message conversation"
 msgstr "이 비공개 메시지 대화 고정 해제"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Unsuspend"
 msgstr "정지 해제"
 
@@ -5930,6 +5902,10 @@ msgstr "@{0} 통해"
 msgid "Video"
 msgstr "동영상"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "View Bot"
+msgstr "봇 보기"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "View Channel Topic"
 msgstr "채널 주제 보기"
@@ -6051,7 +6027,7 @@ msgstr "IRC 통신 내용은 서버에 저장되지 않습니다"
 msgid "WebAuthn is not available in this environment."
 msgstr "이 환경에서는 WebAuthn을 사용할 수 없습니다."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Webhook"
 msgstr "Webhook"
 
