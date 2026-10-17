@@ -2,6 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
+import {
+  bufferWhoReply,
+  flushWhoReplies,
+} from "../../src/store/whoReplyBatcher";
 
 function ownChannelEntry() {
   return useStore
@@ -62,5 +66,26 @@ describe("our own away state", () => {
     });
 
     expect(ownChannelEntry()?.isAway).toBe(true);
+  });
+
+  it("shows us away everywhere when another of our sessions goes away", () => {
+    ircClient.triggerEvent("RPL_UNAWAY", { serverId: "srv-1", message: "" });
+    ircClient.triggerEvent("AWAY", {
+      serverId: "srv-1",
+      username: "Me",
+      awayMessage: "brb",
+    });
+
+    expect(useStore.getState().servers[0].isAway).toBe(true);
+    expect(useStore.getState().servers[0].awayMessage).toBe("brb");
+    expect(ownChannelEntry()?.isAway).toBe(true);
+  });
+
+  it("shows us back everywhere when WHO lists us as here", () => {
+    bufferWhoReply(useStore, "srv-1", "#test", { nick: "Me", isAway: false });
+    flushWhoReplies(useStore, "srv-1", "#test");
+
+    expect(useStore.getState().servers[0].isAway).toBe(false);
+    expect(ownChannelEntry()?.isAway).toBe(false);
   });
 });

@@ -81,54 +81,6 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
         return server;
       });
 
-      // Update current user metadata if the target matches any connected user
-      let updatedCurrentUser = state.currentUser;
-      const currentUserForServer = ircClient.getCurrentUser(serverId);
-
-      // Check if this metadata is for the current user on this server
-      if (
-        currentUserForServer &&
-        currentUserForServer.username === resolvedTarget
-      ) {
-        // If this is the first time setting current user or it's for the selected server, update global state
-        if (!updatedCurrentUser || state.ui.selectedServerId === serverId) {
-          const metadata = { ...(currentUserForServer.metadata || {}) };
-          if (value) {
-            metadata[key] = { value, visibility };
-          } else {
-            delete metadata[key];
-          }
-          // Preserve existing isIrcOp and modes when updating currentUser
-          updatedCurrentUser = {
-            ...currentUserForServer,
-            metadata,
-            isIrcOp: state.currentUser?.isIrcOp,
-            modes: state.currentUser?.modes,
-          };
-        }
-        // If there's already a current user but it's for a different server,
-        // still update if this is the selected server or if there's no current user
-        else if (
-          state.currentUser &&
-          state.currentUser.username === resolvedTarget
-        ) {
-          const metadata = { ...(state.currentUser.metadata || {}) };
-          if (value) {
-            metadata[key] = { value, visibility };
-          } else {
-            delete metadata[key];
-          }
-          // Preserve existing isIrcOp and modes when updating currentUser
-          updatedCurrentUser = {
-            ...state.currentUser,
-            metadata,
-            isIrcOp: state.currentUser.isIrcOp,
-            modes: state.currentUser.modes,
-          };
-        }
-      }
-
-      // Save metadata to localStorage
       const savedMetadata = storage.metadata.load();
       if (!savedMetadata[serverId]) {
         savedMetadata[serverId] = {};
@@ -142,6 +94,24 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
         delete savedMetadata[serverId][resolvedTarget][key];
       }
       storage.metadata.save(savedMetadata);
+
+      // We copy our whole profile from the server's metadata cache, since one METADATA line carries one key.
+      let updatedCurrentUser = state.currentUser;
+      const currentUserForServer = ircClient.getCurrentUser(serverId);
+      const isSameUser = state.currentUser?.username === resolvedTarget;
+      if (
+        currentUserForServer?.username === resolvedTarget &&
+        (isSameUser ||
+          !state.currentUser ||
+          state.ui.selectedServerId === serverId)
+      ) {
+        updatedCurrentUser = {
+          ...((isSameUser && state.currentUser) || currentUserForServer),
+          metadata: { ...savedMetadata[serverId][resolvedTarget] },
+          isIrcOp: state.currentUser?.isIrcOp,
+          modes: state.currentUser?.modes,
+        };
+      }
 
       // Update channel metadata cache if this is for a channel
       if (ircClient.isChannel(serverId, resolvedTarget)) {
@@ -542,16 +512,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  ircClient.on(
-    "METADATA_FAIL",
-    ({ serverId, subcommand, code, target, key, retryAfter }) => {
-      // Handle metadata failures
-      console.error(`Metadata ${subcommand} failed: ${code}`, {
-        target,
-        key,
-        retryAfter,
-      });
-      // Could show user notifications here
-    },
-  );
+  ircClient.on("METADATA_FAIL", ({ code, target, key, retryAfter }) => {
+    console.error(`METADATA failed: ${code}`, { target, key, retryAfter });
+  });
 }

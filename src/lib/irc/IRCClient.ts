@@ -166,7 +166,6 @@ export interface EventMap {
     messageIds: string[]; // All message IDs that make up this multiline message
   };
   METADATA_FAIL: BaseIRCEvent & {
-    subcommand: string;
     code: string;
     target?: string;
     key?: string;
