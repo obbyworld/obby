@@ -25,6 +25,7 @@ interface TouchState {
   isDragging: boolean;
   isHorizontal: boolean | null;
   target: HTMLElement | null;
+  ignored: boolean;
 }
 
 export function useSwipeNavigation({
@@ -46,6 +47,7 @@ export function useSwipeNavigation({
     isDragging: false,
     isHorizontal: null,
     target: null,
+    ignored: false,
   });
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -62,12 +64,15 @@ export function useSwipeNavigation({
       isDragging: false,
       isHorizontal: null,
       target: e.target as HTMLElement,
+      // A map or a carousel handles its own dragging, and a modal reaches us
+      // through the React tree even when it renders into its own portal.
+      ignored: !!(e.target as Element).closest?.("[data-no-gesture]"),
     };
   }, []);
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
-      if (isTransitioning) return;
+      if (isTransitioning || touchState.current.ignored) return;
 
       const touch = e.touches[0];
       const deltaX = touch.clientX - touchState.current.startX;
@@ -156,6 +161,7 @@ export function useSwipeNavigation({
       isDragging: false,
       isHorizontal: null,
       target: null,
+      ignored: false,
     };
 
     if (newPage !== currentPage) {

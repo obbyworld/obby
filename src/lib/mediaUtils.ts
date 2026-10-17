@@ -1,4 +1,5 @@
 import type { Message } from "../types/index";
+import { parseLocationShareUrl } from "./geolocation";
 import {
   isAbsoluteHttpUrl,
   isUrlFromFilehost,
@@ -6,7 +7,7 @@ import {
 } from "./ircUtils";
 import { stripIrcFormatting } from "./messageFormatter";
 
-export type MediaType = "image" | "video" | "audio" | "pdf" | "embed";
+export type MediaType = "image" | "video" | "audio" | "pdf" | "embed" | "map";
 
 export interface MediaEntry {
   url: string;
@@ -24,6 +25,7 @@ export const TRUSTED_EMBED_DOMAINS: Record<string, MediaType> = {
   "media.giphy.com": "image",
   "giphy.com": "image",
   "imgur.com": "image",
+  "openstreetmap.org": "map",
 };
 
 /** Extract and normalise the hostname from a URL, stripping a leading www. Returns null on parse failure. */
@@ -66,18 +68,37 @@ function isEmbeddablePath(url: string): boolean {
   }
 }
 
+// Only a link that actually names a position (mlat/mlon) previews as a map --
+// a bare openstreetmap.org homepage or search link gets no card.
+function isLocationSharePath(url: string): boolean {
+  return parseLocationShareUrl(url) !== null;
+}
+
+function matchingTrustedDomain(hostname: string): string | null {
+  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
+    if (hostname === domain || hostname.endsWith(`.${domain}`)) return domain;
+  }
+  return null;
+}
+
+/** Resolves a trusted domain's declared type, applying that type's own
+ *  path gating (an embed needs an embeddable path, a map needs mlat/mlon).
+ *  Caller must already know `hostname` matches a trusted domain. */
+function trustedDomainType(url: string, hostname: string): MediaType | null {
+  const domain = matchingTrustedDomain(hostname);
+  if (!domain) return null;
+  const type = TRUSTED_EMBED_DOMAINS[domain];
+  if (type === "embed" && !isEmbeddablePath(url)) return null;
+  if (type === "map" && !isLocationSharePath(url)) return null;
+  return type;
+}
+
 /** Detect media type from a URL. Returns null if not recognised. */
 export function detectMediaType(url: string): MediaType | null {
   const hostname = extractHostname(url);
   if (hostname === null) return null;
 
-  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
-    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-      const type = TRUSTED_EMBED_DOMAINS[domain];
-      if (type === "embed" && !isEmbeddablePath(url)) return null;
-      return type;
-    }
-  }
+  if (matchingTrustedDomain(hostname)) return trustedDomainType(url, hostname);
 
   const lower = url.toLowerCase().split("?")[0].split("#")[0];
 
@@ -144,14 +165,7 @@ export function canPlayVideoUrl(url: string): boolean {
 function detectTrustedDomainType(url: string): MediaType | null {
   const hostname = extractHostname(url);
   if (hostname === null) return null;
-  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
-    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-      const type = TRUSTED_EMBED_DOMAINS[domain];
-      if (type === "embed" && !isEmbeddablePath(url)) return null;
-      return type;
-    }
-  }
-  return null;
+  return trustedDomainType(url, hostname);
 }
 
 export function isImageLikeUrl(url: string): boolean {

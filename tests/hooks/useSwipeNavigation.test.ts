@@ -67,6 +67,34 @@ describe("useSwipeNavigation", () => {
     expect(result.current).toBeDefined();
   });
 
+  // A map or a carousel handles its own dragging, and a modal reaches this
+  // hook through the React tree even when it renders into its own portal.
+  it("leaves a swipe alone when it starts inside a no-gesture area", () => {
+    const { result } = renderHook(() =>
+      useSwipeNavigation({
+        currentPage: 1,
+        totalPages: 3,
+        onPageChange,
+      }),
+    );
+
+    const start = createTouchEvent("touchstart", 300, 100);
+    (start.target as unknown as { closest: Mock }).closest.mockReturnValue({});
+
+    act(() => {
+      result.current.handleTouchStart(start);
+    });
+    act(() => {
+      result.current.handleTouchMove(createTouchEvent("touchmove", 100, 105));
+    });
+    act(() => {
+      result.current.handleTouchEnd(createTouchEvent("touchend", 100, 105));
+    });
+
+    expect(result.current.offset).toBe(0);
+    expect(onPageChange).not.toHaveBeenCalled();
+  });
+
   describe("Direction locking", () => {
     it("should detect horizontal swipe when horizontal movement is greater", () => {
       const { result } = renderHook(() =>

@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   selectChannel: vi.fn(),
   selectPrivateChat: vi.fn(),
   resolveCallReturnTarget: vi.fn(() => null),
+  setMobileViewActiveColumn: vi.fn(),
 }));
 
 vi.mock("../../../src/hooks/useVoiceCall", () => ({
@@ -25,12 +26,22 @@ vi.mock("../../../src/lib/voice", () => ({
 
 import { setSpotlight } from "../../../src/lib/voiceSpotlight";
 
+const storeState = vi.hoisted(() => ({
+  servers: [] as unknown[],
+  ui: { isNarrowView: false },
+}));
+
 vi.mock("../../../src/store", () => {
   const state = {
-    servers: [],
-    ui: { isNarrowView: false },
+    get servers() {
+      return storeState.servers;
+    },
+    get ui() {
+      return storeState.ui;
+    },
     selectChannel: mocks.selectChannel,
     selectPrivateChat: mocks.selectPrivateChat,
+    setMobileViewActiveColumn: mocks.setMobileViewActiveColumn,
   };
   const useStore = Object.assign(
     vi.fn((selector: (s: typeof state) => unknown) =>
@@ -134,6 +145,7 @@ describe("VoiceChannelView", () => {
     vi.clearAllMocks();
     isNarrow = false;
     isTouch = false;
+    storeState.ui.isNarrowView = false;
     setSpotlight("s1", "^general", null);
   });
 
@@ -226,6 +238,28 @@ describe("VoiceChannelView", () => {
     fireEvent.click(screen.getByRole("button", { name: /Leave call/i }));
 
     expect(mocks.releaseVoiceClient).toHaveBeenCalledWith("s1", "^general");
+  });
+
+  // A narrow layout has no channel list beside the chat, so landing in a
+  // conversation the user was not reading is worse than showing them the list.
+  it("goes back to the channel list when leaving on a narrow layout", () => {
+    storeState.ui.isNarrowView = true;
+    mockCall({
+      state: {
+        phase: "connected",
+        members: {},
+        mode: "voice",
+        role: "streamer",
+        streamers: [],
+      },
+      members: [member("alice")],
+    });
+    render(<VoiceChannelView serverId="s1" channelName="^general" />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Leave call/i }));
+
+    expect(mocks.setMobileViewActiveColumn).toHaveBeenCalledWith("serverList");
+    expect(mocks.selectChannel).toHaveBeenCalledWith(null);
   });
 
   it("shows react but hides screen-share on the narrow/touch layout", () => {

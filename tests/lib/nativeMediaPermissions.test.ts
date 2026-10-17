@@ -16,6 +16,11 @@ describe("native builds can capture media", () => {
     expect(plist).toContain("NSMicrophoneUsageDescription");
   });
 
+  test("iOS declares why it wants the device's location", () => {
+    const plist = read("src-tauri/gen/apple/Obby_iOS/Info.plist");
+    expect(plist).toContain("NSLocationWhenInUseUsageDescription");
+  });
+
   test("macOS declares the same, and entitles itself to the devices", () => {
     const plist = read("src-tauri/Info.plist");
     expect(plist).toContain("NSCameraUsageDescription");
@@ -32,5 +37,13 @@ describe("native builds can capture media", () => {
     );
     expect(manifest).toContain("android.permission.CAMERA");
     expect(manifest).toContain("android.permission.RECORD_AUDIO");
+  });
+
+  test("Android asks for the device's location", () => {
+    const manifest = read(
+      "src-tauri/gen/android/app/src/main/AndroidManifest.xml",
+    );
+    expect(manifest).toContain("android.permission.ACCESS_COARSE_LOCATION");
+    expect(manifest).toContain("android.permission.ACCESS_FINE_LOCATION");
   });
 });

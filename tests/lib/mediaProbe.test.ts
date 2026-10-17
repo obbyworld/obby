@@ -7,6 +7,8 @@ vi.mock("../../src/lib/mediaUtils", () => ({
     if (url.endsWith(".mp3")) return "audio";
     if (url.endsWith(".jpg")) return "image";
     if (url.endsWith(".pdf")) return "pdf";
+    if (url.includes("youtu.be")) return "embed";
+    if (url.includes("openstreetmap.org")) return "map";
     return null;
   }),
 }));
@@ -403,6 +405,22 @@ describe("probeMediaUrl", () => {
     // firstUrl was evicted — should trigger a new fetch
     await probeMediaUrl(firstUrl);
     expect(vi.mocked(fetch).mock.calls.length).toBe(callsBefore + 1);
+  });
+});
+
+describe("pages with no file behind them", () => {
+  test("an embed link resolves without a network request", async () => {
+    const result = await probeMediaUrl("https://youtu.be/dQw4w9WgXcQ");
+    expect(result?.type).toBe("embed");
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
+  });
+
+  test("a map link resolves without a network request", async () => {
+    const result = await probeMediaUrl(
+      "https://www.openstreetmap.org/?mlat=52.5&mlon=13.4",
+    );
+    expect(result?.type).toBe("map");
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
   });
 });
 

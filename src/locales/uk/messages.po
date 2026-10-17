@@ -460,6 +460,8 @@ msgstr "Усі"
 msgid "All Content"
 msgstr "Весь вміст"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Дозволити доступ до камери"
@@ -468,6 +470,7 @@ msgstr "Дозволити доступ до камери"
 msgid "Allow entering multiple lines of text"
 msgstr "Дозволити введення кількох рядків тексту"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Дозволити доступ до мікрофона"
@@ -514,6 +517,10 @@ msgstr "Застосовується..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Затвердити"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Приблизне"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -613,10 +620,14 @@ msgstr "Відсутність:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Назад"
+
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Задня"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -702,6 +713,10 @@ msgstr "Боти (завантаження {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Боти в цій мережі"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Перемкніться на це вікно та спробуйте ще раз."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Переглянути всі канали на сервері"
@@ -714,6 +729,8 @@ msgstr "Браузери показують ваші динаміки лише �
 msgid "Calls"
 msgstr "Дзвінки"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -735,10 +752,11 @@ msgstr "Камера {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -763,6 +781,10 @@ msgstr "Скасувати робочий процес"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "скасовано"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Відцентрувати на вашому місцезнаходженні"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1178,6 +1200,14 @@ msgstr "Копіювати URL"
 msgid "Could not access the device."
 msgstr "Не вдалося отримати доступ до пристрою."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Не вдалося вчасно визначити місцезнаходження. Спробуйте ще раз там, де небо видно чіткіше."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Не вдалося визначити ваше місцезнаходження."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Не вдалося налаштувати шифрування з {nick}."
@@ -1319,10 +1349,13 @@ msgstr "Перевести у глядачі"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Опис (необов'язково, напр. \"Бета-тестувальники Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Назви пристроїв приховані, доки ви не дозволите доступ до камери."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Назви пристроїв приховані, доки ви не дозволите доступ до мікрофона."
@@ -1330,6 +1363,11 @@ msgstr "Назви пристроїв приховані, доки ви не д�
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Вимкнути push-to-talk"
+
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Видалити"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1414,9 +1452,13 @@ msgstr "Не попереджати мене про низький рівень 
 msgid "Download"
 msgstr "Завантажити"
 
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Перетягніть, щоб вибрати, що записати. Escape скасовує."
+
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Перетягніть файли для завантаження"
+msgid "Drop files to attach"
+msgstr "Перетягніть файли сюди, щоб прикріпити"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -1615,6 +1657,10 @@ msgstr "Введіть причину (необов'язково)"
 msgid "Enter username to invite"
 msgstr "Введіть ім'я користувача для запрошення"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Точне"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "ПрикладМЕРЕЖА"
@@ -1695,6 +1741,10 @@ msgstr "Фільтрувати канали..."
 msgid "Filter members…"
 msgstr "Фільтрувати учасників…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Визначення вашого місцезнаходження…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Перше повідомлення для надсилання"
@@ -1721,7 +1771,8 @@ msgstr "Знайдено 1 повідомлення, що відповідає \
 msgid "from"
 msgstr "від"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "Передня"
 
@@ -2140,6 +2191,14 @@ msgstr "Завантаження даних WHOIS..."
 msgid "Local Storage:"
 msgstr "Локальне сховище:"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Місцезнаходження"
+
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "У доступі до місцезнаходження відмовлено. Дозвольте доступ до місцезнаходження в налаштуваннях браузера або системи, потім спробуйте ще раз."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2298,7 +2357,7 @@ msgstr "Мікрофон"
 msgid "Microphone {0}"
 msgstr "Мікрофон {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Рівень мікрофона"
 
@@ -2723,6 +2782,10 @@ msgstr "Відкрити у переглядачі"
 msgid "Open Link"
 msgstr "Відкрити посилання"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Відкрити карту"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Ім'я оператора"
@@ -2809,6 +2872,10 @@ msgstr "очікує"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Постійний"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Фото"
 
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
@@ -2962,6 +3029,22 @@ msgstr "Підняти руку"
 msgid "ran"
 msgstr "виконав"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Досягнуто максимальної тривалості запису, тому запис зупинено."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Досягнуто максимальної тривалості запису. Запис зупинено: надішліть його або видаліть."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Досягнуто ліміту розміру завантаження, тому запис зупинено."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Досягнуто ліміту розміру завантаження. Запис зупинено: надішліть його або видаліть."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3011,6 +3094,30 @@ msgstr "Не вдалося перепідключитися"
 msgid "Reconnect to server"
 msgstr "Перепідключитися до сервера"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Записати аудіо"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Записати екран"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Записати екран"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Записати область екрана"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Записати відеоповідомлення"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Записати голосове повідомлення"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Зменшити фоновий шум мікрофона"
@@ -3052,6 +3159,15 @@ msgstr "Видалити"
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
 msgstr "Видалити {username} з каналу"
+
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "прибрати вкладення"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "прибрати всі вкладення"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
@@ -3098,6 +3214,10 @@ msgstr "Відповів у чаті"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Повідомлення з відповіддю більше не відображається"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Перезняти"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -3267,6 +3387,11 @@ msgstr "Виберіть або додайте канал для початку.
 msgid "self-registered"
 msgstr "самостійно зареєстрований"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Надіслати"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3427,9 +3552,25 @@ msgstr "Налаштування не знайдено"
 msgid "Settings"
 msgstr "Налаштування"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Поділитися"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Поділитися місцезнаходженням"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Демонстрація екрана"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Поділитися своїм місцезнаходженням"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Поділіться своїм місцезнаходженням з {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3562,6 +3703,10 @@ msgstr "Розпочати голосовий канал на {serverName}"
 msgid "Start Private Message"
 msgstr "Почати приватне повідомлення"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Почати запис"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Увімкнути відео"
@@ -3588,8 +3733,14 @@ msgstr "Завершити трансляцію"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Зупинити"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Зупинити запис"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3623,6 +3774,10 @@ msgstr "Призупинити"
 msgid "suspended"
 msgstr "призупинено"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Перемкнути камеру"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Система"
@@ -3630,6 +3785,10 @@ msgstr "Система"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Типове значення системи"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Зробити фото"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3643,6 +3802,10 @@ msgstr "Текстові канали"
 msgid "That device is not available right now."
 msgstr "Цей пристрій зараз недоступний."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Цього екрана більше немає."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "З'єднання з <0>{serverName}</0> має такі проблеми безпеки:"
@@ -3651,6 +3814,10 @@ msgstr "З'єднання з <0>{serverName}</0> має такі проблем�
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Файловий хост зберігає його у відкритому вигляді, і будь-хто, хто отримає посилання, зможе його відкрити. Перейдіть на шифрування Obby, щоб надсилати файли зашифрованими."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Файловий сервер це не пропустив."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC-сервер повідомив, що зв'язки між серверами мають низький рівень безпеки. Це означає, що коли ваші повідомлення передаються між IRC-серверами в мережі, вони можуть бути не належним чином зашифровані або SSL/TLS-сертифікати можуть не перевірятися правильно."
@@ -3658,6 +3825,14 @@ msgstr "IRC-сервер повідомив, що зв'язки між серв�
 #: src/store/handlers/batches.ts
 msgid "The network split and rejoined. ✅"
 msgstr "Мережа розділилась і возз'єдналась. ✅"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Щойно зроблене фото"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Не вдалося зробити запис."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -3675,6 +3850,15 @@ msgstr "Робочий процес, який створив це повідом
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Цей обліковий запис підключено з {sessionCount} сеансів. Дані окремих сеансів розкриваються лише власнику облікового запису або IRC-операторам."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Цей браузер не може записувати аудіо."
+
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Цей браузер не може записувати відео."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Цей чат зашифровано власною схемою Obby. Порівняйте відбитки іншим каналом, а потім позначте його як перевірений."
@@ -3686,6 +3870,10 @@ msgstr "Цей чат зашифровано за допомогою OTR, сум
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Ця команда не приймає параметрів."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Цьому пристрою зараз не вдалося визначити місцезнаходження."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -3731,6 +3919,10 @@ msgstr "Цей сервер не підтримує розширені мета�
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Цей сервер не підтримує запрошувальні посилання (можливість<0>obby.world/invitation</0>не оголошена). Ви все ще можете нормально спілкуватися; ця панель призначена для мереж на основі obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Цьому серверу немає куди покласти файл."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -3876,10 +4068,6 @@ msgstr "Відкріпити цю приватну розмову"
 msgid "Unsuspend"
 msgstr "Відновити"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Завантажити"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Завантажте зображення або вкажіть URL з необов'язковою підстановкою {size} для динамічного розміру"
@@ -3889,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Завантажити аватар"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Завантажити файли"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Завантажити зображення"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Завантажити на файловий хост і надіслати до {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
@@ -4029,6 +4208,7 @@ msgstr "Дуже строгий"
 msgid "via @{0}"
 msgstr "через @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Відео"

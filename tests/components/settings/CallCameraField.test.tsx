@@ -38,6 +38,7 @@ function makeStream() {
   const track = { stop: vi.fn(), kind: "video" } as unknown as MediaStreamTrack;
   return {
     getTracks: () => [track],
+    getVideoTracks: () => [track],
     track,
   } as unknown as MediaStream & { track: MediaStreamTrack };
 }

@@ -22,6 +22,8 @@
 	<string>Obby uses the camera for video calls.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Obby uses the microphone for voice calls.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Obby uses your location to share it in a message you choose to send.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

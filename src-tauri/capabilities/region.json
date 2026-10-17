@@ -1,0 +1,25 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "screen-region",
+  "description": "lets the app put a selection overlay on every screen and mark the area being recorded",
+  "platforms": [
+    "macOS",
+    "windows",
+    "linux"
+  ],
+  "windows": [
+    "main",
+    "region-*"
+  ],
+  "permissions": [
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-available-monitors",
+    "core:window:allow-set-ignore-cursor-events",
+    "core:window:allow-close",
+    "core:window:allow-set-focus",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:window:allow-set-always-on-top"
+  ]
+}

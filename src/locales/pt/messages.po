@@ -460,6 +460,8 @@ msgstr "Todos"
 msgid "All Content"
 msgstr "Todo o Conteúdo"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Permitir acesso à câmera"
@@ -468,6 +470,7 @@ msgstr "Permitir acesso à câmera"
 msgid "Allow entering multiple lines of text"
 msgstr "Permitir inserção de múltiplas linhas de texto"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Permitir acesso ao microfone"
@@ -514,6 +517,10 @@ msgstr "Aplicando..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Aprovar"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Aproximada"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -613,10 +620,14 @@ msgstr "Ausente:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Voltar"
+
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Traseira"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -702,6 +713,10 @@ msgstr "Bots (carregando {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Bots nesta rede"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Traga esta janela para a frente e tente novamente."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Navegar por todos os canais do servidor"
@@ -714,6 +729,8 @@ msgstr "Os navegadores só mostram seus alto-falantes depois que você permite o
 msgid "Calls"
 msgstr "Chamadas"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -735,10 +752,11 @@ msgstr "Câmera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -763,6 +781,10 @@ msgstr "Cancelar workflow"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "cancelado"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Centrar na sua localização"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1178,6 +1200,14 @@ msgstr "Copiar URL"
 msgid "Could not access the device."
 msgstr "Não foi possível acessar o dispositivo."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Não foi possível obter sua localização a tempo. Tente novamente em um local com vista mais livre para o céu."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Não foi possível obter sua localização."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Não foi possível configurar a criptografia com {nick}."
@@ -1319,10 +1349,13 @@ msgstr "Rebaixar para espectador"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descrição (opcional, ex.: \"Beta testers Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Os nomes dos dispositivos ficam ocultos até que você permita o acesso à câmera."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Os nomes dos dispositivos ficam ocultos até que você permita o acesso ao microfone."
@@ -1330,6 +1363,11 @@ msgstr "Os nomes dos dispositivos ficam ocultos até que você permita o acesso 
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Desativar push-to-talk"
+
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Descartar"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1414,9 +1452,13 @@ msgstr "Não me avisar sobre baixa segurança de link para este servidor"
 msgid "Download"
 msgstr "Baixar"
 
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Arraste para escolher o que gravar. Carregue em Escape para cancelar."
+
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Solte os arquivos para enviar"
+msgid "Drop files to attach"
+msgstr "Largue ficheiros aqui para anexar"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -1615,6 +1657,10 @@ msgstr "Digite o motivo (opcional)"
 msgid "Enter username to invite"
 msgstr "Digite o nome de usuário para convidar"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Exata"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "ExemploREDE"
@@ -1695,6 +1741,10 @@ msgstr "Filtrar canais..."
 msgid "Filter members…"
 msgstr "Filtrar membros…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Buscando sua localização…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Primeira mensagem a enviar"
@@ -1721,7 +1771,8 @@ msgstr "Encontrada 1 mensagem correspondente a \"{searchQuery}\""
 msgid "from"
 msgstr "de"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "Frontal"
 
@@ -2140,6 +2191,14 @@ msgstr "Carregando dados WHOIS..."
 msgid "Local Storage:"
 msgstr "Armazenamento local:"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Localização"
+
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "O acesso à localização foi negado. Permita o acesso à localização nas configurações do navegador ou do sistema e tente novamente."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2298,7 +2357,7 @@ msgstr "Microfone"
 msgid "Microphone {0}"
 msgstr "Microfone {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Nível do microfone"
 
@@ -2723,6 +2782,10 @@ msgstr "Abrir no visualizador"
 msgid "Open Link"
 msgstr "Abrir Link"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Abrir mapa"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Nome Oper"
@@ -2809,6 +2872,10 @@ msgstr "pendente"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Permanente"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Foto"
 
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
@@ -2962,6 +3029,22 @@ msgstr "Levantar a mão"
 msgid "ran"
 msgstr "executou"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Duração máxima de gravação atingida, a gravação parou aqui."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Duração máxima de gravação atingida. Gravação interrompida: envie ou descarte."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Limite de tamanho de envio atingido, a gravação parou aqui."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Limite de tamanho de envio atingido. Gravação interrompida: envie ou descarte."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3011,6 +3094,30 @@ msgstr "Falha ao reconectar"
 msgid "Reconnect to server"
 msgstr "Reconectar ao servidor"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Gravar Áudio"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Gravar tela"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Gravar Tela"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Gravar uma área do ecrã"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Gravar mensagem de vídeo"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Gravar mensagem de voz"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Reduzir o ruído de fundo do seu microfone"
@@ -3052,6 +3159,15 @@ msgstr "Remover"
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
 msgstr "Remover {username} do canal"
+
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "remover anexo"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "remover todos os anexos"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
@@ -3098,6 +3214,10 @@ msgstr "Respondido no chat"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "A mensagem de resposta não está mais visível"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Repetir"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -3267,6 +3387,11 @@ msgstr "Selecione ou adicione um canal para começar."
 msgid "self-registered"
 msgstr "auto-registrado"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Enviar"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3427,9 +3552,25 @@ msgstr "Configuração não encontrada"
 msgid "Settings"
 msgstr "Configurações"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Compartilhar"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Compartilhar Localização"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Compartilhar tela"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Compartilhar Sua Localização"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Compartilhar sua localização com {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3562,6 +3703,10 @@ msgstr "Iniciar um canal de voz em {serverName}"
 msgid "Start Private Message"
 msgstr "Iniciar Mensagem Privada"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Iniciar gravação"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Iniciar vídeo"
@@ -3588,8 +3733,14 @@ msgstr "Sair da transmissão"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Parar"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Parar gravação"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3623,6 +3774,10 @@ msgstr "Suspender"
 msgid "suspended"
 msgstr "suspenso"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Mudar de câmara"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Sistema"
@@ -3630,6 +3785,10 @@ msgstr "Sistema"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Padrão do sistema"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Tirar foto"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3643,6 +3802,10 @@ msgstr "Canais de texto"
 msgid "That device is not available right now."
 msgstr "Este dispositivo não está disponível no momento."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Esse ecrã já não existe."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "A conexão com <0>{serverName}</0> apresenta as seguintes preocupações de segurança:"
@@ -3651,6 +3814,10 @@ msgstr "A conexão com <0>{serverName}</0> apresenta as seguintes preocupações
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "O servidor de arquivos guarda o arquivo legível, e qualquer pessoa com o link consegue abri-lo. Mude para a criptografia Obby para enviar arquivos criptografados."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "O servidor de ficheiros recusou."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "O servidor IRC relatou que seus links servidor a servidor têm um nível de segurança baixo. Isso significa que quando suas mensagens são retransmitidas entre servidores IRC na rede, elas podem não estar devidamente criptografadas ou os certificados SSL/TLS podem não ser validados corretamente."
@@ -3658,6 +3825,14 @@ msgstr "O servidor IRC relatou que seus links servidor a servidor têm um nível
 #: src/store/handlers/batches.ts
 msgid "The network split and rejoined. ✅"
 msgstr "A rede se dividiu e reconectou. ✅"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "A foto que acabou de tirar"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Não foi possível fazer a gravação."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -3675,6 +3850,15 @@ msgstr "O workflow que produziu esta mensagem não está mais no estado"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Esta conta está conectada a partir de {sessionCount} sessões. Os detalhes de cada sessão só são divulgados ao titular da conta ou aos operadores de IRC."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Este navegador não consegue gravar áudio."
+
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Este navegador não consegue gravar vídeo."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Esta conversa está criptografada com o esquema nativo do Obby. Compare as impressões digitais por um canal externo e marque como verificada."
@@ -3686,6 +3870,10 @@ msgstr "Esta conversa está criptografada com OTR, compatível com outros client
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Este comando não recebe parâmetros."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Este dispositivo não conseguiu obter sua localização agora."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -3731,6 +3919,10 @@ msgstr "Este servidor não suporta metadados de perfil estendidos (extensão IRC
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Este servidor não suporta links de convite (a capability<0>obby.world/invitation</0>não é anunciada). Você ainda pode conversar normalmente; este painel é para redes baseadas em obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Este servidor não tem onde guardar um ficheiro."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -3876,10 +4068,6 @@ msgstr "Desafixar esta conversa de mensagem privada"
 msgid "Unsuspend"
 msgstr "Reativar"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Carregar"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Faça upload de uma imagem ou forneça uma URL com substituição opcional {size}"
@@ -3889,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Fazer upload do avatar"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Enviar ficheiros"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Enviar Imagem"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Carregar para o servidor de ficheiros e enviar para {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
@@ -4029,6 +4208,7 @@ msgstr "Muito Estrito"
 msgid "via @{0}"
 msgstr "via @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Vídeo"

@@ -51,8 +51,10 @@ export const TopicMediaStrip: React.FC = () => {
 
   const candidates = useMemo(() => {
     if (!topic) return [];
-    return extractMediaFromText(topic).filter((e) =>
-      canShowMedia(e.url, mediaSettings, filehost),
+    // A location link renders as its own inline card, not a strip thumbnail --
+    // so it's left out of this compact attachment list.
+    return extractMediaFromText(topic).filter(
+      (e) => e.type !== "map" && canShowMedia(e.url, mediaSettings, filehost),
     );
   }, [topic, mediaSettings, filehost]);
 

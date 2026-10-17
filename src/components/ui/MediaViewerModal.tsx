@@ -5,6 +5,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import type { Map as LeafletMap } from "leaflet";
 import {
   Fragment,
   lazy,
@@ -20,6 +21,7 @@ import {
   FaDownload,
   FaExternalLinkAlt,
   FaFilm,
+  FaMapMarkerAlt,
   FaMinus,
   FaMusic,
   FaPlus,
@@ -31,7 +33,16 @@ import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
 import type { MediaDescriptor } from "../../lib/e2ee/media";
+import { parseLocationShareUrl } from "../../lib/geolocation";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
+import {
+  clampMapZoom,
+  loadLeaflet,
+  MAP_ATTRIBUTION,
+  MAP_MAX_ZOOM,
+  MAP_MIN_ZOOM,
+  MAP_PIN_SVG,
+} from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -49,11 +60,13 @@ import {
   kindMediaType,
 } from "../../lib/messageAttachments";
 import { openExternalUrl } from "../../lib/openUrl";
+import { TILE_URL_TEMPLATE } from "../../lib/osmTiles";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
-import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -336,7 +349,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             <div className="w-64 h-96 bg-discord-dark-400/50 animate-pulse rounded" />
           }
         >
-          <PdfErrorBoundary onError={() => setUseNativeViewer(true)}>
+          <MediaErrorBoundary onError={() => setUseNativeViewer(true)}>
             <LazyDocument
               file={url}
               options={PDF_OPTIONS}
@@ -352,7 +365,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
                 width={pageWidth}
               />
             </LazyDocument>
-          </PdfErrorBoundary>
+          </MediaErrorBoundary>
         </Suspense>
       </div>
 
@@ -382,6 +395,68 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
           </button>
         </div>
       )}
+    </div>
+  );
+};
+
+/** Interactive OpenStreetMap view. Mounted only while its entry is the one
+ *  currently open, so tiles are never fetched for a map nobody opened. */
+const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const location = parseLocationShareUrl(url);
+  const latitude = location?.latitude;
+  const longitude = location?.longitude;
+  const zoom = location?.zoom;
+
+  useEffect(() => {
+    if (
+      latitude === undefined ||
+      longitude === undefined ||
+      zoom === undefined ||
+      !containerRef.current
+    )
+      return;
+    let cancelled = false;
+    let map: LeafletMap | undefined;
+    loadLeaflet().then((L) => {
+      if (cancelled || !containerRef.current) return;
+      const clampedZoom = clampMapZoom(zoom);
+      map = L.map(containerRef.current, {
+        center: [latitude, longitude],
+        zoom: clampedZoom,
+        minZoom: MAP_MIN_ZOOM,
+        maxZoom: MAP_MAX_ZOOM,
+      });
+      L.tileLayer(TILE_URL_TEMPLATE, {
+        attribution: MAP_ATTRIBUTION,
+        maxZoom: MAP_MAX_ZOOM,
+      }).addTo(map);
+      L.marker([latitude, longitude], {
+        icon: L.divIcon({
+          html: MAP_PIN_SVG,
+          className: "",
+          iconSize: [28, 40],
+          iconAnchor: [14, 40],
+        }),
+      }).addTo(map);
+    });
+    return () => {
+      cancelled = true;
+      map?.remove();
+    };
+  }, [latitude, longitude, zoom]);
+
+  if (!location) return null;
+
+  return (
+    <div
+      data-testid="map-viewer"
+      data-no-gesture=""
+      className="pointer-events-auto rounded overflow-hidden shadow-lg"
+      style={{ width: "min(90vw, 900px)", height: "min(80vh, 640px)" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div ref={containerRef} className="w-full h-full" />
     </div>
   );
 };
@@ -967,6 +1042,11 @@ export function MediaViewerModal({
       } else if (e.touches.length === 1) {
         lastPinchDistRef.current = null;
         hasDraggedRef.current = false;
+        // Map panning owns single-finger drag; swipe-to-navigate must not fire under it.
+        if (currentEntryRef.current?.type === "map") {
+          singleTouchRef.current = null;
+          return;
+        }
         singleTouchRef.current = {
           startX: e.touches[0].clientX,
           startY: e.touches[0].clientY,
@@ -1531,6 +1611,10 @@ export function MediaViewerModal({
                   onRequestOpen={() => setShowWarning(true)}
                 />
               )}
+              {/* Map — interactive Leaflet view, lazy-loaded */}
+              {effectiveType === "map" && (
+                <MapModalViewer key={currentUrl} url={currentUrl} />
+              )}
               {/* Embed (YouTube, Vimeo, etc.) */}
               {effectiveType === "embed" && (
                 <div
@@ -1546,12 +1630,14 @@ export function MediaViewerModal({
                       <div className="w-full h-64 bg-discord-dark-400/50 animate-pulse rounded" />
                     }
                   >
-                    <ReactPlayer
-                      src={currentUrl}
-                      width="100%"
-                      height="100%"
-                      controls
-                    />
+                    <MediaErrorBoundary>
+                      <ReactPlayer
+                        src={currentUrl}
+                        width="100%"
+                        height="100%"
+                        controls
+                      />
+                    </MediaErrorBoundary>
                   </Suspense>
                 </div>
               )}
@@ -1649,6 +1735,11 @@ export function MediaViewerModal({
                           {entry?.type === "pdf" && (
                             <div className="w-full h-full flex items-center justify-center bg-discord-dark-600 text-white/60 text-xs font-bold">
                               PDF
+                            </div>
+                          )}
+                          {entry?.type === "map" && (
+                            <div className="w-full h-full flex items-center justify-center bg-discord-dark-600">
+                              <FaMapMarkerAlt className="text-white/60 text-lg" />
                             </div>
                           )}
                           {entry?.type === "embed" &&
