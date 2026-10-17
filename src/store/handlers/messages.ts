@@ -836,23 +836,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
         };
 
         store.getState().addMessage(newMessage);
-
-        // Play notification sound if appropriate (but not for historical messages)
-        const isHistoricalMessage = mtags?.batch !== undefined;
-        if (!isHistoricalMessage) {
-          const state = store.getState();
-          const serverCurrentUser = ircClient.getCurrentUser(response.serverId);
-          if (
-            shouldPlayNotificationSound(
-              newMessage,
-              serverCurrentUser,
-              state.globalSettings,
-            )
-          ) {
-            playNotificationSound(state.globalSettings);
-          }
-        }
-
         return; // Don't process as a regular PM
       }
 
@@ -1261,24 +1244,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
     }
 
     store.getState().addMessage(newMessage);
-
-    // Play notification sound if appropriate (but not for historical messages)
-    // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
-    const isHistoricalMessage = mtags?.batch !== undefined;
-
-    if (!isHistoricalMessage) {
-      const state = store.getState();
-      const serverCurrentUser = ircClient.getCurrentUser(response.serverId);
-      if (
-        shouldPlayNotificationSound(
-          newMessage,
-          serverCurrentUser,
-          state.globalSettings,
-        )
-      ) {
-        playNotificationSound(state.globalSettings);
-      }
-    }
   });
 
   ircClient.on("USERNOTICE", (response) => {
@@ -1415,25 +1380,6 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
       }
 
       store.getState().addMessage(newMessage);
-
-      // Play notification sound if appropriate (but not for historical messages)
-      // Don't count unread/mentions for historical messages (batch tag indicates chathistory playback)
-      const isHistoricalMessage = mtags?.batch !== undefined;
-
-      if (!isHistoricalMessage) {
-        const state = store.getState();
-        const serverCurrentUser = ircClient.getCurrentUser(response.serverId);
-        if (
-          shouldPlayNotificationSound(
-            newMessage,
-            serverCurrentUser,
-            state.globalSettings,
-          )
-        ) {
-          playNotificationSound(state.globalSettings);
-        }
-      }
-
       return; // Don't process as a user notice
     }
 

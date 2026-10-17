@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { reportServerReply } from "./serverReplies";
 
 function appendMessage(
   store: StoreApi<AppState>,
@@ -877,14 +878,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("FAIL", ({ serverId, command, code, target, message }) => {
-    const state = store.getState();
-    state.addGlobalNotification({
+    reportServerReply(store, {
+      serverId,
       type: "fail",
       command,
       code,
       message,
       target,
-      serverId,
     });
     // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
     // event that normally chains the WHO request will never fire on
@@ -901,84 +901,30 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on(
     "WARN",
-    ({ serverId, command, code, target, context, message }) => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server) return;
-      const selectedId = getCurrentSelection(state).selectedChannelId;
-      const channel =
-        server.channels.find((c) => c.id === selectedId) ?? server.channels[0];
-      if (channel) {
-        const notificationMessage: Message = {
-          ...makeEventMessage(
-            "standard-reply",
-            message,
-            "system",
-            channel.id,
-            serverId,
-            new Date(),
-          ),
-          standardReplyType: "WARN",
-          standardReplyCommand: command,
-          standardReplyCode: code,
-          standardReplyTarget: target,
-          standardReplyContext: context,
-          standardReplyMessage: message,
-        };
-        appendMessage(store, serverId, channel.id, notificationMessage);
-      } else {
-        // No channels yet (pre-join WARN): surface as a global notification
-        // instead of dropping it.
-        state.addGlobalNotification({
-          type: "warn",
-          command,
-          code,
-          message,
-          target,
-          serverId,
-        });
-      }
-    },
+    ({ serverId, command, code, target, context, message }) =>
+      reportServerReply(store, {
+        serverId,
+        type: "warn",
+        command,
+        code,
+        message,
+        target,
+        context,
+      }),
   );
 
   ircClient.on(
     "NOTE",
-    ({ serverId, command, code, target, context, message }) => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server) return;
-      const selectedId = getCurrentSelection(state).selectedChannelId;
-      const channel =
-        server.channels.find((c) => c.id === selectedId) ?? server.channels[0];
-      if (channel) {
-        const notificationMessage: Message = {
-          ...makeEventMessage(
-            "standard-reply",
-            message,
-            "system",
-            channel.id,
-            serverId,
-            new Date(),
-          ),
-          standardReplyType: "NOTE",
-          standardReplyCommand: command,
-          standardReplyCode: code,
-          standardReplyTarget: target,
-          standardReplyContext: context,
-          standardReplyMessage: message,
-        };
-        appendMessage(store, serverId, channel.id, notificationMessage);
-      } else {
-        state.addGlobalNotification({
-          type: "note",
-          command,
-          code,
-          message,
-          target,
-          serverId,
-        });
-      }
-    },
+    ({ serverId, command, code, target, context, message }) =>
+      reportServerReply(store, {
+        serverId,
+        type: "note",
+        command,
+        code,
+        message,
+        target,
+        context,
+      }),
   );
 
   ircClient.on("RENAME", ({ serverId, oldName, newName, reason, user }) => {

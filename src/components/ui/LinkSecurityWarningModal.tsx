@@ -1,7 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   FaArrowDown,
   FaExclamationTriangle,
@@ -9,6 +8,8 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import BaseModal from "../../lib/modal/BaseModal";
+import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import useStore, {
   loadSavedServers,
   saveServersToLocalStorage,
@@ -19,10 +20,13 @@ interface WarningModalProps {
   timestamp: number;
 }
 
-const SingleWarningModal: React.FC<WarningModalProps> = ({
-  serverId,
-  timestamp,
-}) => {
+const playErrorSound = () => {
+  const audio = new Audio("/sounds/error.mp3");
+  audio.volume = 0.3;
+  audio.play().catch(() => {});
+};
+
+const SingleWarningModal: React.FC<WarningModalProps> = ({ serverId }) => {
   const { t } = useLingui();
   const [timerExpired, setTimerExpired] = useState(false);
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
@@ -57,13 +61,8 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
 
     const container = scrollContainerRef.current;
     if (container) {
-      // Check initially
       checkScroll();
-
-      // Add scroll listener
       container.addEventListener("scroll", checkScroll);
-
-      // Check on resize
       const resizeObserver = new ResizeObserver(checkScroll);
       resizeObserver.observe(container);
 
@@ -81,7 +80,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
   if (!server) return null;
 
   const serverName =
-    server.name || serverConfig?.name || server.host || "Unknown Server";
+    server.name || serverConfig?.name || server.host || t`Unknown Server`;
   const securityLevel = server.linkSecurity || 0;
   const isLinkSecurityWarning =
     server.linkSecurity !== undefined && server.linkSecurity < 2;
@@ -102,10 +101,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
   const handleContinue = () => {
     if (!buttonsEnabled) return;
 
-    // Reload saved servers to get the latest data
     const currentSavedServers = loadSavedServers();
-
-    // Update server configuration based on checkboxes
     const updatedServers = currentSavedServers.map((s) => {
       if (s.id === serverId) {
         return {
@@ -118,7 +114,6 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
     });
     saveServersToLocalStorage(updatedServers);
 
-    // Remove this warning from the array
     removeWarning();
 
     // Resume connection by sending CAP END (guarded one-shot so it
@@ -132,23 +127,17 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
   };
 
   const handleCancel = () => {
-    // Disconnect from the server since user cancelled the insecure connection
     const state = useStore.getState();
     state.disconnect(serverId);
 
-    // Remove the server from the server list completely
     const savedServers = loadSavedServers();
-
-    // Remove from localStorage by ID
     const updatedServers = savedServers.filter((s) => s.id !== serverId);
     saveServersToLocalStorage(updatedServers);
 
-    // Remove from state
     useStore.setState((state) => ({
       servers: state.servers.filter((server) => server.id !== serverId),
     }));
 
-    // Remove this warning from the array
     removeWarning();
   };
 
@@ -162,233 +151,172 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
     }
   };
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      // Play error sound when trying to click away
-      try {
-        const audio = new Audio("/sounds/error.mp3");
-        audio.volume = 0.3;
-        audio.play().catch(() => {
-          // Ignore errors if audio can't play
-        });
-      } catch (error) {
-        // Ignore errors
-      }
-      // Don't close the modal
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      // Play error sound when trying to press escape
-      try {
-        const audio = new Audio("/sounds/error.mp3");
-        audio.volume = 0.3;
-        audio.play().catch(() => {
-          // Ignore errors if audio can't play
-        });
-      } catch (error) {
-        // Ignore errors
-      }
-      // Don't close the modal
-    }
-  };
-
   const showScrollButton = hasScrollbar && !isScrolledToBottom;
 
-  return createPortal(
-    <div
-      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 modal-container"
-      onClick={handleBackdropClick}
-      onKeyDown={handleKeyDown}
+  return (
+    <BaseModal
+      isOpen
+      onClose={playErrorSound}
+      showCloseButton={false}
+      maxWidth="md"
+      title={
+        <span className="flex items-center gap-3">
+          <FaExclamationTriangle className="text-yellow-500 text-xl flex-shrink-0" />
+          <Trans>Security Warning</Trans>
+        </span>
+      }
     >
-      <div className="bg-discord-dark-400 rounded-lg shadow-xl border border-discord-dark-300 max-w-md w-full flex flex-col max-h-[90vh] h-[600px]">
-        {/* Header */}
-        <div className="p-4 border-b border-discord-dark-300 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <FaExclamationTriangle className="text-yellow-500 text-xl flex-shrink-0" />
-            <h2 className="text-lg font-semibold text-white">
-              <Trans>Security Warning</Trans>
-            </h2>
-          </div>
-        </div>
+      <div className="relative flex-1 min-h-0 flex flex-col">
+        <ModalBody
+          ref={scrollContainerRef}
+          scrollable
+          className="gap-4 max-h-[60vh]"
+        >
+          <p className="text-discord-text-normal">
+            <Trans>
+              The connection to <strong>{serverName}</strong> has the following
+              security concerns:
+            </Trans>
+          </p>
 
-        {/* Scrollable Content with scroll button */}
-        <div className="relative flex-1">
-          <div
-            ref={scrollContainerRef}
-            className="absolute inset-0 overflow-y-auto p-4 space-y-4"
-          >
-            <p className="text-discord-text-normal">
-              <Trans>
-                The connection to <strong>{serverName}</strong> has the
-                following security concerns:
-              </Trans>
-            </p>
-
-            {/* Security Issues List */}
-            <div className="space-y-3">
-              {isLinkSecurityWarning && (
-                <div className="bg-orange-500 bg-opacity-10 border border-orange-500 border-opacity-30 rounded p-3">
-                  <div className="flex items-start gap-2">
-                    <FaShieldAlt className="text-orange-500 text-sm mt-0.5 flex-shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-semibold text-orange-200">
-                        <Trans>Low Link Security (Level {securityLevel})</Trans>
-                      </p>
-                      <p className="text-xs text-orange-100">
+          <div className="space-y-3">
+            {isLinkSecurityWarning && (
+              <div className="bg-orange-500 bg-opacity-10 border border-orange-500 border-opacity-30 rounded p-3">
+                <div className="flex items-start gap-2">
+                  <FaShieldAlt className="text-orange-500 text-sm mt-0.5 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-orange-200">
+                      <Trans>Low Link Security (Level {securityLevel})</Trans>
+                    </p>
+                    <p className="text-xs text-orange-100">
+                      <Trans>
+                        The IRC server has reported that its server-to-server
+                        links have a low security level. This means that when
+                        your messages are relayed between IRC servers in the
+                        network, they may not be properly encrypted or the
+                        SSL/TLS certificates may not be validated correctly.
+                      </Trans>
+                    </p>
+                    <p className="text-xs text-orange-100">
+                      <strong>
+                        <Trans>What this means:</Trans>
+                      </strong>
+                    </p>
+                    <ul className="text-xs text-orange-100 list-disc list-inside pl-2 space-y-0.5">
+                      <li>
                         <Trans>
-                          The IRC server has reported that its server-to-server
-                          links have a low security level. This means that when
-                          your messages are relayed between IRC servers in the
-                          network, they may not be properly encrypted or the
-                          SSL/TLS certificates may not be validated correctly.
+                          Server-to-server communication may use unencrypted
+                          connections
                         </Trans>
-                      </p>
-                      <p className="text-xs text-orange-100">
-                        <strong>
-                          <Trans>What this means:</Trans>
-                        </strong>
-                      </p>
-                      <ul className="text-xs text-orange-100 list-disc list-inside pl-2 space-y-0.5">
-                        <li>
-                          <Trans>
-                            Server-to-server communication may use unencrypted
-                            connections
-                          </Trans>
-                        </li>
-                        <li>
-                          <Trans>
-                            Server operators on the network could potentially
-                            read your messages
-                          </Trans>
-                        </li>
-                        <li>
-                          <Trans>
-                            Man-in-the-middle attacks on server links are
-                            possible
-                          </Trans>
-                        </li>
-                        <li>
-                          <Trans>
-                            Your messages could be intercepted when relayed
-                            between servers
-                          </Trans>
-                        </li>
-                      </ul>
-                      <p className="text-xs text-orange-100">
+                      </li>
+                      <li>
                         <Trans>
-                          <strong>Risk:</strong> Sensitive information
-                          (messages, private conversations, authentication
-                          details) could be exposed to network administrators or
-                          attackers positioned between IRC servers.
+                          Server operators on the network could potentially read
+                          your messages
                         </Trans>
-                      </p>
-                    </div>
+                      </li>
+                      <li>
+                        <Trans>
+                          Man-in-the-middle attacks on server links are possible
+                        </Trans>
+                      </li>
+                      <li>
+                        <Trans>
+                          Your messages could be intercepted when relayed
+                          between servers
+                        </Trans>
+                      </li>
+                    </ul>
+                    <p className="text-xs text-orange-100">
+                      <Trans>
+                        <strong>Risk:</strong> Sensitive information (messages,
+                        private conversations, authentication details) could be
+                        exposed to network administrators or attackers
+                        positioned between IRC servers.
+                      </Trans>
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {!isLinkSecurityWarning && (
-                <div className="bg-yellow-500 bg-opacity-10 border border-yellow-500 border-opacity-30 rounded p-3">
-                  <p className="text-sm text-yellow-200">
-                    <Trans>
-                      <strong>⚠️ Security Risk!</strong> This connection may be
-                      vulnerable to interception or man-in-the-middle attacks.
-                    </Trans>
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Recommendation */}
-            {isLinkSecurityWarning && (
-              <div className="bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-30 rounded p-3">
-                <p className="text-xs text-blue-200">
+            {!isLinkSecurityWarning && (
+              <div className="bg-yellow-500 bg-opacity-10 border border-yellow-500 border-opacity-30 rounded p-3">
+                <p className="text-sm text-yellow-200">
                   <Trans>
-                    <strong>💡 Recommendation:</strong> Only proceed if you
-                    trust this server and understand the risks. Avoid sharing
-                    sensitive information or passwords over this connection.
+                    <strong>Security Risk!</strong> This connection may be
+                    vulnerable to interception or man-in-the-middle attacks.
                   </Trans>
                 </p>
               </div>
             )}
-
-            {/* Checkboxes for remembering choice */}
-            <div className="space-y-2">
-              {isLinkSecurityWarning && (
-                <label className="flex items-center gap-2 text-sm text-discord-text-muted cursor-pointer hover:text-discord-text-normal">
-                  <input
-                    type="checkbox"
-                    checked={skipLinkSecurityWarning}
-                    onChange={(e) =>
-                      setSkipLinkSecurityWarning(e.target.checked)
-                    }
-                    className="rounded border-discord-dark-200"
-                  />
-                  <span>
-                    <Trans>
-                      Don't warn me about low link security for this server
-                    </Trans>
-                  </span>
-                </label>
-              )}
-            </div>
-
-            {/* Continue Button - Inside scrollable area at bottom */}
-            <div className="pt-2">
-              <button
-                onClick={handleContinue}
-                disabled={!buttonsEnabled}
-                className={`w-full px-4 py-3 rounded font-medium transition-colors flex items-center justify-center gap-2 ${
-                  buttonsEnabled
-                    ? "bg-discord-primary hover:bg-opacity-80 text-white cursor-pointer"
-                    : "bg-discord-primary text-white cursor-not-allowed opacity-50"
-                }`}
-              >
-                {!timerExpired ? (
-                  <>
-                    <FaSpinner className="text-sm animate-spin" />
-                    <span className="font-semibold">
-                      <Trans>Please wait...</Trans>
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <FaShieldAlt className="text-sm" />
-                    <span className="font-semibold">
-                      <Trans>Continue Anyway</Trans>
-                    </span>
-                  </>
-                )}
-              </button>
-            </div>
           </div>
 
-          {/* Scroll to Bottom Button - positioned relative to the scrollable container */}
-          {showScrollButton && (
-            <button
-              onClick={handleScrollToBottom}
-              className="absolute bottom-4 right-4 bg-discord-primary hover:bg-opacity-80 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110 z-10"
-              aria-label={t`Scroll to bottom`}
-            >
-              <FaArrowDown className="text-lg" />
-            </button>
+          {isLinkSecurityWarning && (
+            <div className="bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-30 rounded p-3">
+              <p className="text-xs text-blue-200">
+                <Trans>
+                  <strong>Recommendation:</strong> Only proceed if you trust
+                  this server and understand the risks. Avoid sharing sensitive
+                  information or passwords over this connection.
+                </Trans>
+              </p>
+            </div>
           )}
-        </div>
 
-        {/* Cancel Button - Outside scrollable area, always visible */}
-        <div className="p-4 border-t border-discord-dark-300 flex-shrink-0">
+          {isLinkSecurityWarning && (
+            <label className="flex items-center gap-2 text-sm text-discord-text-muted cursor-pointer hover:text-discord-text-normal">
+              <input
+                type="checkbox"
+                checked={skipLinkSecurityWarning}
+                onChange={(e) => setSkipLinkSecurityWarning(e.target.checked)}
+                className="rounded border-discord-dark-200"
+              />
+              <span>
+                <Trans>
+                  Don't warn me about low link security for this server
+                </Trans>
+              </span>
+            </label>
+          )}
+        </ModalBody>
+
+        {showScrollButton && (
           <button
-            onClick={handleCancel}
-            className="w-full px-4 py-2 rounded transition-colors bg-discord-dark-300 hover:bg-discord-dark-200 text-white cursor-pointer"
+            type="button"
+            onClick={handleScrollToBottom}
+            className="absolute bottom-4 right-4 bg-discord-primary hover:bg-opacity-80 text-white p-3 rounded-full shadow-lg transition-all transform hover:scale-110 z-10"
+            aria-label={t`Scroll to bottom`}
           >
-            <Trans>Cancel Connection</Trans>
+            <FaArrowDown className="text-lg" />
           </button>
-        </div>
+        )}
       </div>
-    </div>,
-    document.body,
+
+      <ModalFooter>
+        <Button variant="secondary" onClick={handleCancel}>
+          <Trans>Cancel Connection</Trans>
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleContinue}
+          disabled={!buttonsEnabled}
+          className="flex items-center gap-2"
+        >
+          {!timerExpired ? (
+            <>
+              <FaSpinner className="text-sm animate-spin" />
+              <Trans>Please wait...</Trans>
+            </>
+          ) : (
+            <>
+              <FaShieldAlt className="text-sm" />
+              <Trans>Continue Anyway</Trans>
+            </>
+          )}
+        </Button>
+      </ModalFooter>
+    </BaseModal>
   );
 };
 

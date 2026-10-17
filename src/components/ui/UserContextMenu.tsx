@@ -57,7 +57,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
     state.servers.find((s) => s.id === serverId),
   );
   const botCommands = server?.botCommands?.[username.toLowerCase()] ?? null;
-  const requestBotsModalOpen = useStore((state) => state.requestBotsModalOpen);
+  const openPage = useStore((state) => state.openPage);
   const ignoreList = useStore((state) => state.globalSettings.ignoreList);
   const addToIgnoreList = useStore((state) => state.addToIgnoreList);
   const removeFromIgnoreList = useStore((state) => state.removeFromIgnoreList);
@@ -98,7 +98,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       id: "bots-menu",
       label: t`Open bots menu`,
       icon: <FaRobot />,
-      onClick: () => requestBotsModalOpen(serverId, username),
+      onClick: () => openPage({ kind: "bots", serverId, botNick: username }),
     },
     ...(botCommands ?? []).map((command, index) => ({
       id: `cmd-${command.name}`,

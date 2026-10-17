@@ -54,11 +54,13 @@ import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
 import type {
+  AppPage,
   ChannelOrderMap,
   ConnectionDetails,
   GlobalSettings,
   layoutColumn,
   MediaVisibilityLevel,
+  ProfilePane,
   UISelections,
 } from "./types";
 
@@ -469,8 +471,8 @@ interface UIState {
     memberList: { isVisible: boolean; width: number };
   };
   isAddServerModalOpen: boolean | undefined;
-  isEditServerModalOpen: boolean;
-  editServerId: string | null;
+  page: AppPage | null;
+  profilePane: ProfilePane | null;
   // Bouncer-network edit hand-off: set by editBouncerNetwork(),
   // consumed by BouncerNetworksPanel on mount to open its inline form
   // on the named netid. Cleared once the panel reads it.
@@ -481,16 +483,12 @@ interface UIState {
     netid: string;
     childServerId: string;
   } | null;
-  isTwoFactorSettingsOpen: boolean;
-  twoFactorSettingsServerId: string | null;
-  isSettingsModalOpen: boolean;
   isQuickActionsOpen: boolean;
   isDarkMode: boolean;
   isNarrowView: boolean;
   isMobileMenuOpen: boolean;
   isMemberListVisible: boolean;
   isChannelListVisible: boolean;
-  isChannelListModalOpen: boolean;
   mobileViewActiveColumn: layoutColumn;
   isServerMenuOpen: boolean;
   contextMenu: {
@@ -505,7 +503,6 @@ interface UIState {
   // bots modal — UserProfileModal sets this to {serverId, botNick}
   // when the user clicks "Show in Bots Menu" and ChatArea picks it up
   // to open the modal pre-selected on that bot.
-  pendingBotsModalOpen: { serverId: string; botNick: string } | null;
   // Cross-component deep-link from the member-list context menu's Bot
   // Commands submenu — clicking a command sets this and ChatArea picks
   // it up to open the slash-command param modal.
@@ -520,27 +517,12 @@ interface UIState {
   // Server notices popup state
   isServerNoticesPopupOpen: boolean;
   serverNoticesPopupMinimized: boolean;
-  // Profile view request - set when we want to open a user profile after closing settings
-  profileViewRequest: { serverId: string; username: string } | null;
   topicModalRequest: { serverId: string; channelId: string } | null;
-  // Settings navigation - for Quick Actions to specify which category and setting to open/highlight
-  settingsNavigation: {
-    category?:
-      | "profile"
-      | "notifications"
-      | "preferences"
-      | "media"
-      | "calls"
-      | "account";
-    highlightedSettingId?: string;
-  } | null;
   // Shimmer effect for newly connected servers
   serverShimmer?: Set<string>; // Set of server IDs that should show shimmer
   // Request focus on chat input (used when closing modals)
   shouldFocusChatInput: boolean;
-  isUserProfileModalOpen: boolean;
   // Request state for ChatArea modals (using request pattern)
-  channelSettingsRequest: { serverId: string; channelId: string } | null;
   inviteUserRequest: { serverId: string; channelId: string } | null;
   // Global media viewer state — kept at root level so resizing never closes it
   openedMedia: {
@@ -654,6 +636,9 @@ export interface AppState {
     serverId: string;
     timestamp: Date;
   }[];
+  // Problems a server reported since the user last opened its notices.
+  serverAlerts: Record<string, number>;
+  unreadServerNotices: Record<string, boolean>;
   rawLog: Record<
     string,
     {
@@ -663,7 +648,6 @@ export interface AppState {
       timestamp: number;
     }[]
   >;
-  rawLogViewerServerId: string | null;
   channelList: Record<
     string,
     { channel: string; userCount: number; topic: string }[]
@@ -890,7 +874,6 @@ export interface AppState {
   twofaDisable: (serverId: string, type: string, data: string) => void;
   submitTotpStepUp: (serverId: string, code: string) => void;
   cancelTotpStepUp: (serverId: string) => void;
-  toggleTwoFactorSettings: (isOpen?: boolean, serverId?: string | null) => void;
   // Tic-tac-toe actions
   tictactoeInvite: (serverId: string, opponent: string) => void;
   tictactoeAccept: (serverId: string, opponent: string) => void;
@@ -997,7 +980,6 @@ export interface AppState {
     target?: string;
     serverId: string;
   }) => void;
-  removeGlobalNotification: (notificationId: string) => void;
   clearGlobalNotifications: () => void;
   appendRawLogLine: (entry: {
     serverId: string;
@@ -1005,8 +987,6 @@ export interface AppState {
     line: string;
   }) => void;
   clearRawLog: (serverId: string) => void;
-  openRawLogViewer: (serverId: string) => void;
-  closeRawLogViewer: () => void;
   selectServer: (
     serverId: string | null,
     options?: { clearSelection?: boolean },
@@ -1036,7 +1016,6 @@ export interface AppState {
     isOpen?: boolean,
     prefillDetails?: ConnectionDetails | null,
   ) => void;
-  toggleEditServerModal: (isOpen?: boolean, serverId?: string | null) => void;
   // Edit a bouncer-bound child server through the BouncerNetworksPanel
   // (parent's inline form) instead of the generic AddServerModal --
   // most ServerConfig fields are unused / inherited from the parent
@@ -1048,26 +1027,15 @@ export interface AppState {
   cancelDisconnectNetwork: () => void;
   confirmDisconnectNetwork: () => void;
   setBouncerGroupAccent: (parentServerId: string, hex: string | null) => void;
-  toggleSettingsModal: (isOpen?: boolean) => void;
+  openPage: (page: AppPage) => void;
+  closePage: () => void;
+  openProfile: (serverId: string, username: string) => void;
+  closeProfile: () => void;
   toggleQuickActions: (isOpen?: boolean) => void;
   requestChatInputFocus: () => void;
   clearChatInputFocus: () => void;
-  toggleUserProfileModal: (isOpen?: boolean) => void;
-  setProfileViewRequest: (serverId: string, username: string) => void;
-  clearProfileViewRequest: () => void;
   setTopicModalRequest: (serverId: string, channelId: string) => void;
   clearTopicModalRequest: () => void;
-  setSettingsNavigation: (navigation: {
-    category?:
-      | "profile"
-      | "notifications"
-      | "preferences"
-      | "media"
-      | "calls"
-      | "account";
-    highlightedSettingId?: string;
-  }) => void;
-  clearSettingsNavigation: () => void;
   toggleDarkMode: () => void;
   toggleMobileMenu: (isOpen?: boolean) => void;
   toggleMemberList: (isVisible?: boolean) => void;
@@ -1076,9 +1044,6 @@ export interface AppState {
     channelList?: { isVisible: boolean; width: number };
     memberList?: { isVisible: boolean; width: number };
   }) => void;
-  toggleChannelListModal: (isOpen?: boolean) => void;
-  requestBotsModalOpen: (serverId: string, botNick: string) => void;
-  clearBotsModalOpenRequest: () => void;
   requestBotCommandPick: (
     serverId: string,
     botNick: string,
@@ -1090,14 +1055,6 @@ export interface AppState {
   toggleTopicModal: (
     isOpen: boolean,
     context?: { serverId: string; channelId: string },
-  ) => void;
-  toggleUserProfileModalWithContext: (
-    isOpen: boolean,
-    context?: { serverId: string; username: string },
-  ) => void;
-  setChannelSettingsRequest: (
-    serverId: string | null,
-    channelId: string | null,
   ) => void;
   setInviteUserRequest: (
     serverId: string | null,
@@ -1266,7 +1223,6 @@ const useStore = create<AppState>((set, get) => ({
   isAddingNewServer: false,
   connectionError: null,
   rawLog: {},
-  rawLogViewerServerId: null,
   messages: {},
   e2eeSessions: {},
   e2eeSelfFingerprint: null,
@@ -1275,6 +1231,8 @@ const useStore = create<AppState>((set, get) => ({
   typingUsers: {},
   typingTimers: {},
   globalNotifications: [],
+  serverAlerts: {},
+  unreadServerNotices: {},
   channelList: {},
   channelListBuffer: {},
   channelListFilters: {},
@@ -1312,14 +1270,11 @@ const useStore = create<AppState>((set, get) => ({
       memberList: { isVisible: true, width: 280 },
     },
     isAddServerModalOpen: false,
-    isEditServerModalOpen: false,
-    isTwoFactorSettingsOpen: false,
-    twoFactorSettingsServerId: null,
-    editServerId: null,
+    page: null,
+    profilePane: null,
     pendingBouncerEdit: null,
     disconnectConfirmTarget: null,
     disconnectNetworkConfirmTarget: null,
-    isSettingsModalOpen: false,
     isQuickActionsOpen: false,
     isDarkMode: true,
     isNarrowView:
@@ -1336,7 +1291,6 @@ const useStore = create<AppState>((set, get) => ({
         : false,
     isChannelListVisible:
       loadUISelections().sidebarPreferences?.channelList.isVisible ?? true,
-    isChannelListModalOpen: false,
     mobileViewActiveColumn: "serverList", // Always start on server/channel list, never auto-navigate to chat
     isServerMenuOpen: false,
     contextMenu: {
@@ -1347,7 +1301,6 @@ const useStore = create<AppState>((set, get) => ({
       itemId: null,
     },
     prefillServerDetails: null,
-    pendingBotsModalOpen: null,
     pendingBotCommandPick: null,
     inputAttachments: [],
     // Link security warning modal state
@@ -1355,16 +1308,10 @@ const useStore = create<AppState>((set, get) => ({
     // Server notices popup state
     isServerNoticesPopupOpen: false,
     serverNoticesPopupMinimized: false,
-    // Profile view request
-    profileViewRequest: null,
     topicModalRequest: null,
-    // Settings navigation
-    settingsNavigation: null,
     // Chat input focus request
     shouldFocusChatInput: false,
-    isUserProfileModalOpen: false,
     // Request state for ChatArea modals
-    channelSettingsRequest: null,
     inviteUserRequest: null,
     openedMedia: null,
     activeMedia: null,
@@ -2159,6 +2106,12 @@ const useStore = create<AppState>((set, get) => ({
           ...state.messages,
           [channelKey]: cappedMessages,
         },
+        ...(message.channelId === "server-notices" && {
+          unreadServerNotices: {
+            ...state.unreadServerNotices,
+            [message.serverId]: true,
+          },
+        }),
       };
     });
   },
@@ -2271,9 +2224,15 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   addGlobalNotification: (notification) => {
+    const isRepeat = get().globalNotifications.some(
+      (n) =>
+        n.serverId === notification.serverId &&
+        n.message === notification.message,
+    );
+    if (isRepeat) return;
     set((state) => ({
       globalNotifications: [
-        ...state.globalNotifications,
+        ...state.globalNotifications.slice(-2),
         {
           id: uuidv4(),
           ...notification,
@@ -2294,14 +2253,6 @@ const useStore = create<AppState>((set, get) => ({
         console.error("Failed to play error sound:", error);
       }
     }
-  },
-
-  removeGlobalNotification: (notificationId) => {
-    set((state) => ({
-      globalNotifications: state.globalNotifications.filter(
-        (n) => n.id !== notificationId,
-      ),
-    }));
   },
 
   clearGlobalNotifications: () => {
@@ -2328,14 +2279,6 @@ const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       rawLog: { ...state.rawLog, [serverId]: [] },
     }));
-  },
-
-  openRawLogViewer: (serverId) => {
-    set(() => ({ rawLogViewerServerId: serverId }));
-  },
-
-  closeRawLogViewer: () => {
-    set(() => ({ rawLogViewerServerId: null }));
   },
 
   selectServer: (serverId, options) => {
@@ -2479,6 +2422,8 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   selectChannel: (channelId, options) => {
+    // Choosing a chat leaves any open page, so the chat shows.
+    if (options?.navigate) get().closePage();
     set((state) => {
       // Special case for server notices
       if (channelId === "server-notices") {
@@ -2717,6 +2662,8 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   selectPrivateChat: (privateChatId, options) => {
+    // Choosing a chat leaves any open page, so the chat shows.
+    if (options?.navigate) get().closePage();
     set((state) => {
       // Find which server this private chat belongs to
       let serverId = state.ui.selectedServerId;
@@ -3437,16 +3384,6 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
-  toggleEditServerModal: (isOpen, serverId = null) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        isEditServerModalOpen: isOpen ?? false,
-        editServerId: serverId,
-      },
-    }));
-  },
-
   editBouncerNetwork: (childServerId) => {
     const state = get();
     const child = state.servers.find((s) => s.id === childServerId);
@@ -3550,24 +3487,38 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
-  toggleTwoFactorSettings: (isOpen, serverId = null) => {
+  openPage: (page) => {
     set((state) => ({
       ui: {
         ...state.ui,
-        isTwoFactorSettingsOpen: isOpen ?? false,
-        twoFactorSettingsServerId: isOpen ? serverId : null,
+        page,
+        isQuickActionsOpen: false,
+        mobileViewActiveColumn: state.ui.isNarrowView
+          ? "chatView"
+          : state.ui.mobileViewActiveColumn,
       },
     }));
   },
 
-  toggleSettingsModal: (isOpen) => {
+  closePage: () => {
+    set((state) => ({ ui: { ...state.ui, page: null } }));
+  },
+
+  openProfile: (serverId, username) => {
     set((state) => ({
       ui: {
         ...state.ui,
-        isSettingsModalOpen:
-          isOpen !== undefined ? isOpen : !state.ui.isSettingsModalOpen,
+        page: null,
+        profilePane: { serverId, username },
+        mobileViewActiveColumn: state.ui.isNarrowView
+          ? "memberList"
+          : state.ui.mobileViewActiveColumn,
       },
     }));
+  },
+
+  closeProfile: () => {
+    set((state) => ({ ui: { ...state.ui, profilePane: null } }));
   },
 
   toggleQuickActions: (isOpen) => {
@@ -3592,35 +3543,6 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
-  toggleUserProfileModal: (isOpen) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        isUserProfileModalOpen:
-          isOpen !== undefined ? isOpen : !state.ui.isUserProfileModalOpen,
-      },
-    }));
-  },
-
-  setProfileViewRequest: (serverId, username) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        profileViewRequest: { serverId, username },
-      },
-    }));
-  },
-
-  clearProfileViewRequest: () => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        profileViewRequest: null,
-        topicModalRequest: null,
-      },
-    }));
-  },
-
   setTopicModalRequest: (serverId, channelId) => {
     set((state) => ({
       ui: {
@@ -3635,24 +3557,6 @@ const useStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         topicModalRequest: null,
-      },
-    }));
-  },
-
-  setSettingsNavigation: (navigation) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        settingsNavigation: navigation,
-      },
-    }));
-  },
-
-  clearSettingsNavigation: () => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        settingsNavigation: null,
       },
     }));
   },
@@ -3761,31 +3665,6 @@ const useStore = create<AppState>((set, get) => ({
     });
   },
 
-  toggleChannelListModal: (isOpen) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        isChannelListModalOpen:
-          isOpen !== undefined ? isOpen : !state.ui.isChannelListModalOpen,
-      },
-    }));
-  },
-
-  requestBotsModalOpen: (serverId, botNick) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        pendingBotsModalOpen: { serverId, botNick },
-      },
-    }));
-  },
-
-  clearBotsModalOpenRequest: () => {
-    set((state) => ({
-      ui: { ...state.ui, pendingBotsModalOpen: null },
-    }));
-  },
-
   requestBotCommandPick: (serverId, botNick, command) => {
     set((state) => ({
       ui: {
@@ -3817,26 +3696,6 @@ const useStore = create<AppState>((set, get) => ({
         ...state.ui,
         isTopicModalOpen: isOpen,
         topicModalContext: isOpen && context ? context : null,
-      },
-    }));
-  },
-
-  toggleUserProfileModalWithContext: (isOpen, context) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        isSettingsModalOpen: isOpen,
-        userProfileModalContext: isOpen && context ? context : null,
-      },
-    }));
-  },
-
-  setChannelSettingsRequest: (serverId, channelId) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        channelSettingsRequest:
-          serverId && channelId ? { serverId, channelId } : null,
       },
     }));
   },

@@ -31,9 +31,9 @@ import {
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
 import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "./EmbedPlayer";
 import { MapPreview } from "./MapPreview";
 
-const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
   import("react-pdf").then((m) => {
     // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
@@ -955,6 +955,7 @@ const EmbedPreview: React.FC<{
   // A provider iframe is the most expensive thing a message can mount, so it
   // stays unbuilt until someone asks for playback.
   const [activated, setActivated] = useState(false);
+  const positionRef = useRef(0);
 
   const { isActive, isPlaying, play } = useMediaController({
     url,
@@ -964,8 +965,17 @@ const EmbedPreview: React.FC<{
     serverId,
     channelId,
     // Remount the iframe when this embed goes from active → inactive so YouTube/Vimeo resets.
-    onExternalStop: () => setPlayerKey((k) => k + 1),
-    inlineVisibility: {},
+    onExternalStop: () => {
+      positionRef.current = 0;
+      setPlayerKey((k) => k + 1);
+    },
+    inlineVisibility: {
+      getPosition: () => {
+        const time = positionRef.current;
+        if (time > 0) setVideoPosition(url, time);
+        return time;
+      },
+    },
   });
 
   // undefined when inactive: leave the iframe uncontrolled so the user can
@@ -993,6 +1003,10 @@ const EmbedPreview: React.FC<{
   }, [embedError, onRenderFailed, url]);
 
   if (embedError) return null;
+
+  // A paused player reports no time, so we seed the position it hands over
+  // with where it starts.
+  positionRef.current = getVideoPosition(url) ?? positionRef.current;
 
   if (!activated) {
     const thumbnailUrl = getEmbedThumbnailUrl(url);
@@ -1041,18 +1055,14 @@ const EmbedPreview: React.FC<{
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
           <MediaErrorBoundary onError={() => setEmbedError(true)}>
-            <ReactPlayer
+            <EmbedPlayer
               key={playerKey}
-              src={url}
-              width="100%"
-              height="100%"
-              controls
+              url={url}
               playing={playing}
-              config={{
-                youtube: { disablekb: 1 },
-                vimeo: { keyboard: false },
+              startAt={positionRef.current}
+              onTime={(time) => {
+                positionRef.current = time;
               }}
-              style={{ borderRadius: "4px", overflow: "hidden" }}
               onPlay={() => {
                 // Guard against spurious onPlay events fired by YouTube.
                 // If the user explicitly paused (isPlaying=false in store), ignore the event.
@@ -1072,6 +1082,7 @@ const EmbedPreview: React.FC<{
               onPause={() => useStore.getState().pauseActiveMedia()}
               onEnded={() => {
                 // Reset player to beginning and pause — prevents YouTube recommendations screen
+                positionRef.current = 0;
                 setPlayerKey((k) => k + 1);
                 useStore.getState().pauseActiveMedia();
               }}

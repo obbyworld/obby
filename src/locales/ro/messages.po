@@ -32,7 +32,21 @@ msgstr "(gestionat de Obby)"
 msgid "(inherit)"
 msgstr "(moștenit)"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "(not set)"
+msgstr "(nesetat)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "(set, edit to change)"
+msgstr "(setat, editați pentru a schimba)"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "(stored, leave blank to keep)"
+msgstr "(salvat, lăsați gol pentru a păstra)"
+
+#: src/components/pages/BotsPage.tsx
 msgid "(suspended)"
 msgstr "(suspendat)"
 
@@ -71,7 +85,7 @@ msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Arată 1 element în plus} few {Arată {1} elemente în plus} other {Arată {1} de elemente în plus}}"
 
 #. placeholder {0}: pack.emoji_count
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "{0} emoji"
 msgstr "{0} emoji"
 
@@ -81,7 +95,7 @@ msgid "{0} has invited you to play."
 msgstr "{0} te-a invitat să joci."
 
 #. placeholder {0}: formatIdle(s.idle)
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "{0} idle"
 msgstr "{0} inactiv"
 
@@ -123,20 +137,20 @@ msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} transmit · {1} urmăresc"
 
 #. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "acum {0}z"
 
 #. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "acum {0}h"
 
 #. placeholder {0}: Math.floor(secs / 60)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "acum {0}min"
 
@@ -148,10 +162,6 @@ msgstr "{activeCount, plural, one {Se încarcă 1 fișier} other {Se încarcă #
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 dată} few {{c} ori} other {{c} ori}}"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "{days} days"
-msgstr "{days} zile"
-
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 încărcare a eșuat} other {# încărcări au eșuat}}"
@@ -159,10 +169,6 @@ msgstr "{failedCount, plural, one {1 încărcare a eșuat} other {# încărcări
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
 msgstr "{hiddenLines, plural, one {# rând suplimentar} few {# rânduri suplimentare} other {# de rânduri suplimentare}}"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "{hours} hours"
-msgstr "{hours} ore"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -175,10 +181,6 @@ msgstr "{inviter} te-a invitat să te alături la {channel}"
 #: src/lib/eventGrouping.ts
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {s-a alăturat} few {s-a alăturat de {joinCount} ori} other {s-a alăturat de {joinCount} ori}}"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "{minutes} minutes"
-msgstr "{minutes} minute"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "{name} · input"
@@ -240,10 +242,6 @@ msgstr "{safeName} nu mai este disponibil pe server."
 msgid "{safeName} was changed on the server, so it no longer decrypts."
 msgstr "{safeName} a fost modificat pe server, așa că nu se mai decriptează."
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "{seconds} seconds"
-msgstr "{seconds} secunde"
-
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption, so this conversation is being set up again."
 msgstr "{sender} a repornit criptarea, așa că această conversație se configurează din nou."
@@ -252,6 +250,10 @@ msgstr "{sender} a repornit criptarea, așa că această conversație se configu
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} a repornit criptarea. Această conversație rămâne necriptată până când accepți."
 
+#: src/components/layout/ProfilePane.tsx
+msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
+msgstr "{sessionCount} sesiuni conectate. Autentificați-vă cu acest cont sau cereți unui operator IRC să vadă detaliile."
+
 #: src/components/message/WorkflowLine.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
 msgstr "{stepCount, plural, one {# pas} few {# pași} other {# de pași}}"
@@ -259,6 +261,10 @@ msgstr "{stepCount, plural, one {# pas} few {# pași} other {# de pași}}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "client {title}"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "{total, plural, one {# channel} other {# channels}}"
+msgstr "{total, plural, one {# canal} few {# canale} other {# de canale}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{totalLines, plural, one {# line} other {# lines}}"
@@ -276,11 +282,11 @@ msgstr "{userCount} utilizatori"
 msgid "{userCount} watching"
 msgstr "{userCount} spectatori"
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -292,18 +298,21 @@ msgstr "#canal"
 msgid "#channel (optional)"
 msgstr "#canal (opțional)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "#new-channel-name"
 msgstr "#new-channel-name"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "#overflow"
 msgstr "#overflow"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-msgid "← Back"
-msgstr "← Înapoi"
+#: src/components/ui/QuickActions.tsx
+msgid "↑ ↓ to move"
+msgstr "↑ ↓ mută"
+
+#: src/components/ui/QuickActions.tsx
+msgid "↵ to open"
+msgstr "↵ deschide"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -336,22 +345,22 @@ msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious
 msgstr "<0>⚠️ Atenție!</0> Deschide numai linkuri din surse de încredere. Linkurile malițioase îți pot compromite securitatea sau confidențialitatea."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
-msgid "<0>⚠️ Security Risk!</0> This connection may be vulnerable to interception or man-in-the-middle attacks."
-msgstr "<0>⚠️ Risc de securitate!</0> Această conexiune poate fi vulnerabilă la interceptare sau atacuri de tip man-in-the-middle."
-
-#: src/components/ui/LinkSecurityWarningModal.tsx
-msgid "<0>💡 Recommendation:</0> Only proceed if you trust this server and understand the risks. Avoid sharing sensitive information or passwords over this connection."
-msgstr "<0>💡 Recomandare:</0> Continuați doar dacă aveți încredere în acest server și înțelegeți riscurile. Evitați să partajați informații sensibile sau parole prin această conexiune."
+msgid "<0>Recommendation:</0> Only proceed if you trust this server and understand the risks. Avoid sharing sensitive information or passwords over this connection."
+msgstr "<0>Recomandare:</0> Continuați doar dacă aveți încredere în acest server și înțelegeți riscurile. Evitați trimiterea de informații sensibile sau parole prin această conexiune."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Risc:</0> Informațiile sensibile (mesaje, conversații private, date de autentificare) pot fi expuse administratorilor de rețea sau atacatorilor poziționați între serverele IRC."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
-msgstr "2FA este impusă în prezent pe acest cont. Eliminarea singurei credențiale înregistrate te-ar bloca la autentificare. Adaugă mai întâi o altă credențială sau dezactivează 2FA mai jos."
+#: src/components/ui/LinkSecurityWarningModal.tsx
+msgid "<0>Security Risk!</0> This connection may be vulnerable to interception or man-in-the-middle attacks."
+msgstr "<0>Risc de securitate!</0> Această conexiune poate fi vulnerabilă la interceptare sau atacuri man-in-the-middle."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA first."
+msgstr "2FA este obligatoriu pentru acest cont. Eliminarea singurei credențiale înregistrate vă va bloca autentificarea. Adăugați mai întâi o altă credențială sau dezactivați mai întâi 2FA."
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "6-digit code"
 msgstr "Cod din 6 cifre"
 
@@ -373,19 +382,32 @@ msgstr "Acceptă conversația criptată"
 msgid "Accept new key"
 msgstr "Acceptă cheia nouă"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Access control"
+msgstr "Control al accesului"
+
 #: src/lib/mediaDevices.ts
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Accesul a fost refuzat. Permiteți accesul la cameră și microfon din setările browserului sau ale sistemului, apoi încercați din nou."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Account"
 msgstr "Cont"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Account name"
+msgstr "Numele contului"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Nume cont"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Account password"
+msgstr "Parola contului"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Password"
@@ -409,46 +431,55 @@ msgstr "Cont:"
 
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ModerationModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Acțiune"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Actions"
+msgstr "Acțiuni"
+
+#: src/components/pages/BotsPage.tsx
 msgid "active"
 msgstr "activ"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Activity"
 msgstr "Activitate"
 
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Add"
 msgstr "Adaugă"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Add a credential"
+msgstr "Adăugați o credențială"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Add a credential to enable 2FA"
 msgstr "Adaugă o credențială pentru a activa 2FA"
+
+#: src/components/ui/ReactionModal.tsx
+msgid "Add a reaction"
+msgstr "Adăugați o reacție"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Adaugă un cuvânt sau o expresie..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
 msgstr "Adaugă o aplicație de autentificare sau o cheie biometrică / de securitate pentru a cere un al doilea factor la autentificare."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Add authenticator app"
-msgstr "Adaugă aplicație de autentificare"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add ban"
+msgstr "Adăugați ban"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Adaugă mască de banare (ex. nick!*@*, *!*@host.com)"
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Add biometric / security key"
-msgstr "Adaugă cheie biometrică / de securitate"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -458,16 +489,24 @@ msgstr "adaugă canal"
 msgid "Add channel"
 msgstr "Adaugă canal"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Add emoji"
 msgstr "Adaugă emoji"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add exception"
+msgstr "Adăugați excepție"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Adaugă mască de excepție (ex. nick!*@*, *!*@host.com)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add invitation"
+msgstr "Adăugați invitație"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add invitation mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Adaugă mască de invitație (ex. nick!*@*, *!*@host.com)"
 
@@ -496,6 +535,10 @@ msgstr "Adaugă reacția {emoji}"
 msgid "Add Rule"
 msgstr "Adaugă regulă"
 
+#: src/components/ui/FloodSettingsModal.tsx
+msgid "Add rules that set which activity to watch and what to do when a threshold is exceeded."
+msgstr "Adăugați reguli care stabilesc ce activitate să urmăriți și ce să faceți când se depășește un prag."
+
 #: src/components/layout/ServerList.tsx
 msgid "Add Server"
 msgstr "Adaugă server"
@@ -505,7 +548,7 @@ msgid "Add your first network"
 msgstr "Adaugă prima ta rețea"
 
 #. placeholder {0}: c.createdAt
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "added {0}"
 msgstr "a adăugat {0}"
 
@@ -513,35 +556,27 @@ msgstr "a adăugat {0}"
 msgid "Additional Details"
 msgstr "Detalii suplimentare"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Additional Information"
-msgstr "Informații suplimentare"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Additional words or phrases to highlight"
 msgstr "Cuvinte sau fraze suplimentare de evidențiat"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Admin"
 msgstr "Admin"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Advanced"
 msgstr "Avansat"
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "Advanced Filters"
-msgstr "Filtre avansate"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Album"
 msgstr "Album"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "Toate"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "All Content"
 msgstr "Tot conținutul"
 
@@ -581,43 +616,35 @@ msgstr "Permite accesul la microfon pentru a înregistra sunet."
 msgid "Already in {0}"
 msgstr "Deja în {0}"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
-msgstr "Afișează și previzualizări de pe YouTube, Vimeo, SoundCloud și servicii similare cunoscute."
+#: src/components/pages/SettingsPage.tsx
+msgid "Also preview YouTube, Vimeo, SoundCloud, and similar known services."
+msgstr "Afișați și previzualizări pentru YouTube, Vimeo, SoundCloud și servicii cunoscute similare."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Alt text (optional)"
 msgstr "Text alternativ (opțional)"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
-msgstr "Nume alternativ pentru afișaj. Poate conține spații, emoji și caractere speciale. Numele real ({channelName}) va fi folosit în continuare pentru comenzile IRC."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Cantitate"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Anonymous Analytics:"
 msgstr "Analize anonime:"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Apply"
-msgstr "Aplică"
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "App"
+msgstr "Aplicație"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Apply Filters & Refresh"
-msgstr "Aplică filtrele și actualizează"
+#: src/components/pages/SettingsPage.tsx
+msgid "Appearance"
+msgstr "Aspect"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Applying..."
-msgstr "Se aplică..."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Apply and refresh"
+msgstr "Aplicați și reîmprospătați"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "Aprobă"
@@ -640,7 +667,11 @@ msgstr "acum este cunoscut ca **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Sigur doriți să ștergeți acest mesaj? Această acțiune nu poate fi anulată."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
+msgstr "Cereți administratorului serverului să anunțe un URL de backend (draft/authtoken sau obby.world/FILEHOST) pentru a gestiona pachetele."
+
+#: src/components/layout/ProfilePane.tsx
 msgid "ASN"
 msgstr "ASN"
 
@@ -653,6 +684,7 @@ msgstr "Atașează"
 msgid "Attachment options"
 msgstr "Opțiuni atașament"
 
+#: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Audio"
 msgstr "Audio"
@@ -661,27 +693,37 @@ msgstr "Audio"
 msgid "Audio position"
 msgstr "Poziție audio"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Audio Processing"
+msgstr "Procesarea audio"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Autentificați-vă ca operator IRC pentru acces administrativ"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate now"
 msgstr "Autentifică-te acum"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate on connect"
 msgstr "Autentifică la conectare"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Authenticated"
 msgstr "Autentificat"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Authenticated Account"
-msgstr "Cont autentificat"
+#: src/components/pages/pageSections.tsx
+msgid "Authentication"
+msgstr "Autentificare"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Authenticator app"
+msgstr "Aplicație de autentificare"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Authenticator app (TOTP)"
 msgstr "Aplicație de autentificare (TOTP)"
 
@@ -709,7 +751,7 @@ msgstr "Autentificare automată ca operator la conectare"
 msgid "Automatically switch to single line for short messages"
 msgstr "Comutare automată la linie unică pentru mesaje scurte"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Avatar"
 msgstr "Avatar"
@@ -720,12 +762,11 @@ msgstr "Previzualizare avatar"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Absent"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Departe de tastatură"
@@ -734,21 +775,20 @@ msgstr "Departe de tastatură"
 msgid "Away message"
 msgstr "Mesaj de absență"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away Message"
 msgstr "Mesaj de absență"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Absent:"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/EditServerModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/ui/page/PageShell.tsx
+#: src/components/ui/page/PageShell.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Înapoi"
 
@@ -757,6 +797,13 @@ msgctxt "camera facing"
 msgid "Back"
 msgstr "Spate"
 
+#. placeholder {0}: channel.name
+#. placeholder {0}: pm.username
+#: src/components/ui/page/PageShell.tsx
+#: src/components/ui/page/PageShell.tsx
+msgid "Back to {0}"
+msgstr "Înapoi la {0}"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
 msgstr "Înapoi la imagine"
@@ -764,6 +811,11 @@ msgstr "Înapoi la imagine"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
 msgstr "Înapoi la lista de rețele"
+
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Back to Settings"
+msgstr "Înapoi la setări"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -793,64 +845,89 @@ msgstr "Banează utilizator (după hostmask)"
 msgid "Ban User (by Nickname)"
 msgstr "Banează utilizator (după poreclă)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Bans"
 msgstr "Banuri"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Biometric / security key"
 msgstr "Cheie biometrică / de securitate"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block color codes (+c)"
+msgstr "Blochează codurile de culoare (+c)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block CTCP commands in the channel"
+msgstr "Blochează comenzile CTCP în canal"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block kicks."
+msgstr "Blochează expulzările."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block messages containing mIRC color codes"
+msgstr "Blochează mesajele cu coduri de culoare mIRC"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block messages from users outside the channel."
+msgstr "Blochează mesajele de la utilizatorii din afara canalului."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block nickname changes."
+msgstr "Blochează schimbările de nickname."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block NOTICE."
+msgstr "Blochează NOTICE."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block the /INVITE command."
+msgstr "Blochează comanda /INVITE."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block the /KNOCK command."
+msgstr "Blochează comanda /KNOCK."
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Bot"
 msgstr "Bot"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "BOT"
 msgstr "BOT"
 
-#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr "Comenzi bot"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Bot hasn't registered any slash commands yet."
-msgstr "Botul nu a înregistrat încă nicio comandă slash."
 
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Bot in this channel"
 msgstr "Bot în acest canal"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
 msgid "Bots"
 msgstr "Boți"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Bots on this network"
-msgstr "Boți pe această rețea"
 
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Adu această fereastră în față și încearcă din nou."
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Browse all channels on the server"
-msgstr "Răsfoiește toate canalele de pe server"
+#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Browse channels"
+msgstr "Răsfoiți canalele"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse Channels"
 msgstr "Răsfoiește canalele"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Browser does not expose WebAuthn"
 msgstr "Browserul nu expune WebAuthn"
 
@@ -858,10 +935,11 @@ msgstr "Browserul nu expune WebAuthn"
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Browserele afișează difuzoarele doar după ce permiteți accesul la microfon sau cameră. Nimic nu este înregistrat."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Calls"
 msgstr "Apeluri"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -873,18 +951,20 @@ msgstr "Cameră"
 msgid "Camera {0}"
 msgstr "Cameră {0}"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
 msgstr "Nu poți elimina ultima credențială 2FA"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -893,10 +973,7 @@ msgstr "Nu poți elimina ultima credențială 2FA"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -924,7 +1001,7 @@ msgstr "anulat"
 msgid "Centre on your location"
 msgstr "Centrează pe locația ta"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Cert FP"
 msgstr "Cert FP"
 
@@ -933,6 +1010,11 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Schimbă culoarea de accent"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Change or reset the password for your account."
+msgstr "Schimbați sau resetați parola contului dvs."
+
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Change password"
@@ -958,12 +1040,11 @@ msgstr "Poreclă schimbată"
 msgid "changed the topic to: {topic}"
 msgstr "a schimbat subiectul la: {topic}"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "channel"
 msgstr "canal"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Channel"
 msgstr "Canal"
 
@@ -971,21 +1052,17 @@ msgstr "Canal"
 msgid "Channel Admin"
 msgstr "Administrator de canal"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Avatar"
-msgstr "Avatar canal"
-
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel avatar preview"
 msgstr "Previzualizare avatar canal"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Channel bot — only in joined channels"
-msgstr "Bot de canal — doar în canalele la care te-ai alăturat"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel behavior"
+msgstr "Comportamentul canalului"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Display Name"
-msgstr "Nume afișat canal"
+#: src/components/pages/BotsPage.tsx
+msgid "Channel bot, only in joined channels"
+msgstr "Bot de canal, doar în canalele la care v-ați alăturat"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Half Operator"
@@ -996,21 +1073,29 @@ msgstr "Semi-operator de canal"
 msgid "Channel has been renamed from {oldName} to {newName} by {user}{0}"
 msgstr "Canalul a fost redenumit din {oldName} în {newName} de {user}{0}"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel history (+H)"
+msgstr "Istoric canal (+H)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Channel Information"
 msgstr "Informații canal"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Key (+k)"
-msgstr "Cheie canal (+k)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel key (+k)"
+msgstr "Cheia canalului (+k)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Name"
-msgstr "Nume canal"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel link (+L)"
+msgstr "Legătura canalului (+L)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Channel Name Mask"
-msgstr "Mască nume canal"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel name"
+msgstr "Numele canalului"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Channel name mask"
+msgstr "Masca numelui canalului"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Operator"
@@ -1020,9 +1105,13 @@ msgstr "Operator de canal"
 msgid "Channel Owner"
 msgstr "Proprietar de canal"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Settings"
-msgstr "Setări canal"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel properties"
+msgstr "Proprietățile canalului"
+
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Channel settings"
+msgstr "Setările canalului"
 
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
@@ -1032,32 +1121,28 @@ msgstr "Canal de intrat (#nume)"
 msgid "Channel to leave (defaults to current)"
 msgstr "Canal de părăsit (implicit cel curent)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Subiect canal"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel won't appear in LIST or NAMES commands"
-msgstr "Canalul nu va apărea în comenzile LIST sau NAMES"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "nume-canal"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Channel-scoped"
 msgstr "Specific canalului"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/ui/HomeScreen.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Channels"
 msgstr "Canale"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Channels on {networkName}"
-msgstr "Canale pe {networkName}"
+#: src/components/pages/SettingsPage.tsx
+msgid "Chat"
+msgstr "Chat"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1076,8 +1161,8 @@ msgid "Choose a file with an extension. The file host does not accept files with
 msgstr "Alege un fișier cu extensie. Gazda de fișiere nu acceptă fișiere fără extensie."
 
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
-msgstr "Alegeți un profil de protecție flood predefinit. Aceste profiluri oferă setări de protecție echilibrate pentru diferite cazuri de utilizare."
+msgid "Choose a predefined flood protection profile for common use cases."
+msgstr "Alegeți un profil predefinit de protecție împotriva inundării pentru cazurile obișnuite."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
@@ -1091,11 +1176,19 @@ msgstr "Alege un fișier mai mic. Acesta este prea mare pentru gazda de fișiere
 msgid "Choose file"
 msgstr "Alege fișier"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Choose how much external media loads in chat."
+msgstr "Alegeți câte media externe se încarcă în chat."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Choose microphone and camera"
 msgstr "Alegeți microfonul și camera"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Choose sort order"
+msgstr "Alegeți ordinea de sortare"
+
+#: src/components/pages/pageSections.tsx
 msgid "Choose the microphone, camera, and speaker calls use"
 msgstr "Alegeți microfonul, camera și difuzorul folosite de apeluri"
 
@@ -1111,8 +1204,9 @@ msgstr "Alegeți camera și previzualizați ce vede"
 msgid "Choose your microphone and preview its input level"
 msgstr "Alegeți microfonul și previzualizați nivelul de intrare"
 
+#: src/components/pages/RawLogPage.tsx
+#: src/components/pages/RawLogPage.tsx
 #: src/components/ui/AvatarUpload.tsx
-#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Șterge"
 
@@ -1143,11 +1237,6 @@ msgstr "Faceți clic pentru a copia"
 msgid "Click to copy as JSON"
 msgstr "Clic pentru copiere ca JSON"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-msgid "Click to join {channel}"
-msgstr "Faceți clic pentru a vă alătura {channel}"
-
 #: src/components/message/MessageReply.tsx
 msgid "Click to jump to message"
 msgstr "Click pentru a sări la mesaj"
@@ -1160,35 +1249,20 @@ msgstr "client"
 msgid "Client"
 msgstr "Client"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Client Limit (+l)"
-msgstr "Limită clienți (+l)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Client limit (+l)"
+msgstr "Limită de clienți (+l)"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BouncerDisconnectConfirmModal.tsx
-#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/RawLogViewer.tsx
-#: src/components/ui/ReactionModal.tsx
+#: src/components/ui/QuickActions.tsx
 #: src/components/ui/TicTacToeModal.tsx
-#: src/components/ui/TicTacToeModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/lib/modal/BaseModal.tsx
 msgid "Close"
 msgstr "Închide"
 
@@ -1199,10 +1273,6 @@ msgstr "Închide comentariile"
 #: src/components/layout/ChannelList.tsx
 msgid "Close conversation"
 msgstr "Închide conversația"
-
-#: src/lib/modal/BaseModal.tsx
-msgid "Close modal"
-msgstr "Închide fereastra"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Close popped out server notices"
@@ -1216,6 +1286,10 @@ msgstr "Închide vizualizatorul"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Închideți fluxul de lucru"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Code accepted."
+msgstr "Cod acceptat."
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -1231,7 +1305,6 @@ msgstr "Restrânge lista de membri"
 msgid "Collapse workflow"
 msgstr "Restrângeți fluxul de lucru"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Color"
 msgstr "Culoare"
@@ -1244,7 +1317,7 @@ msgstr "Culoare și formatare"
 msgid "Command provided by the IRC server"
 msgstr "Comandă furnizată de serverul IRC"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
 msgstr "Se încarcă comenzile…"
 
@@ -1262,23 +1335,27 @@ msgstr "Comentarii ({commentCount})"
 msgid "complete"
 msgstr "completat"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "config-defined"
 msgstr "definit în configurare"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "Bot definit în configurare. Editează obbyircd.conf și folosește /REHASH pentru a schimba starea."
 
-#: src/components/ui/FloodSettingsModal.tsx
-msgid "Configure detailed flood protection rules. Each rule specifies what type of activity to monitor and what action to take when thresholds are exceeded."
-msgstr "Configurați reguli detaliate de protecție flood. Fiecare regulă specifică tipul de activitate de monitorizat și acțiunea de întreprins când pragurile sunt depășite."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Configure"
+msgstr "Configurați"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Configure notification sounds and highlights"
 msgstr "Configurează sunetele de notificare și evidențierile"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Confirm authenticator app"
+msgstr "Confirmați aplicația de autentificare"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Confirm enrolment"
 msgstr "Confirmă înregistrarea"
 
@@ -1287,7 +1364,7 @@ msgstr "Confirmă înregistrarea"
 msgid "Confirm new password"
 msgstr "Confirmă parola nouă"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Confirm remove"
 msgstr "Confirmă eliminarea"
 
@@ -1308,16 +1385,12 @@ msgstr "Conectează o cameră pentru a partaja video"
 msgid "Connect a microphone to talk"
 msgstr "Conectează un microfon pentru a vorbi"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
 
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "connected from {sessionCount} sessions"
-msgstr "conectat din {sessionCount} sesiuni"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "Connected To"
+#: src/components/layout/ProfilePane.tsx
+msgid "Connected to"
 msgstr "Conectat la"
 
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1332,8 +1405,7 @@ msgstr "Se conectează..."
 msgid "Connecting…"
 msgstr "Se conectează…"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Connection"
 msgstr "Conexiune"
 
@@ -1353,23 +1425,23 @@ msgstr "Conexiune: bună"
 msgid "Connection: poor"
 msgstr "Conexiune: slabă"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Contact"
 msgstr "Contact"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Content filtering"
+msgstr "Filtrarea conținutului"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Continue Anyway"
 msgstr "Continuă oricum"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Control how much external media is loaded in chat."
-msgstr "Controlează câte conținuturi media externe sunt încărcate în chat."
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Control how much external media is loaded. Off / Safe / Trusted Sources / All Content."
 msgstr "Controlează câtă media externă se încarcă. Dezactivat / Sigur / Surse de încredere / Tot conținutul."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Control media display and external content"
 msgstr "Controlează afișarea media și conținutul extern"
 
@@ -1380,14 +1452,16 @@ msgstr "Controlează afișarea media și conținutul extern"
 msgid "Copied"
 msgstr "Copiat"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/CopyButton.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Copiază"
 
-#: src/components/ui/RawLogViewer.tsx
+#: src/components/pages/RawLogPage.tsx
+#: src/components/pages/RawLogPage.tsx
 msgid "Copy all"
 msgstr "Copiază tot"
 
@@ -1469,11 +1543,16 @@ msgstr "Nu s-au putut încărca GIF-urile. Caută din nou pentru a reîncerca."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Nu s-a putut contacta gazda de fișiere. Verifică conexiunea și încearcă din nou."
 
+#. placeholder {0}: p.code
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Could not update password: {0}"
+msgstr "Nu s-a putut actualiza parola: {0}"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Criptarea cu {nick} nu a putut fi configurată."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Country"
 msgstr "Țară"
 
@@ -1485,7 +1564,7 @@ msgstr "Creează"
 msgid "Create a new invite link"
 msgstr "Creează un nou link de invitație"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Create and manage your invite links"
 msgstr "Creează și administrează linkurile tale de invitație"
 
@@ -1494,20 +1573,20 @@ msgstr "Creează și administrează linkurile tale de invitație"
 msgid "Create folder"
 msgstr "Creaţi folder"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Create pack"
 msgstr "Creează pachet"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Created After (min ago)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Created after (min ago)"
 msgstr "Creat după (min în urmă)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Created Before (min ago)"
-msgstr "Creat înainte (min în urmă)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Created before (min ago)"
+msgstr "Creat înainte de (min în urmă)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Creating…"
 msgstr "Se creează…"
 
@@ -1515,8 +1594,12 @@ msgstr "Se creează…"
 msgid "Current avatar"
 msgstr "Avatar curent"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Custom emoji pack"
+msgstr "Pachet personalizat de emoji"
+
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Custom emoji packs"
 msgstr "Pachete de emoji personalizate"
 
@@ -1532,11 +1615,11 @@ msgstr "Mențiuni personalizate"
 msgid "Custom notification sound file"
 msgstr "Fișier audio de notificare personalizat"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Customize your IRC client experience"
 msgstr "Personalizează experiența clientului IRC"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Data Collection"
 msgstr "Colectare de date"
 
@@ -1562,7 +1645,7 @@ msgstr "Se decriptează {safeName}…"
 msgid "Deep dive"
 msgstr "Detalii"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Default"
 msgstr "Implicit"
 
@@ -1578,16 +1661,24 @@ msgstr "Mesaj implicit când vă marcați ca absent"
 msgid "Default Nickname"
 msgstr "Pseudonim implicit"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Delay joins (+D)"
+msgstr "Întârzie alăturările (+D)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Delay showing joins until someone speaks"
+msgstr "Afișați alăturările abia când vorbește cineva"
+
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Șterge"
 
 #. placeholder {0}: bot.nick
-#: src/components/ui/BotsModal.tsx
-msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later only after a /REHASH."
-msgstr "Ștergi botul {0}?  Aceasta marchează rândul din baza de date ca șters; reutilizează nick-ul mai târziu doar după un /REHASH."
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot {0}? Run /REHASH before you register this nick again."
+msgstr "Ștergeți botul {0}? Rulați /REHASH înainte de a înregistra din nou acest nickname."
 
 #: src/components/layout/ChannelList.tsx
 msgid "Delete folder"
@@ -1601,11 +1692,11 @@ msgstr "Șterge mesaj"
 msgid "Delete network"
 msgstr "Șterge rețeaua"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Șterge pachetul"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Ștergi pachetul \"{packId}\"? Se șterg și toate emoji-urile din el."
 
@@ -1621,7 +1712,7 @@ msgstr "Ștergeți acest mesaj? Această acțiune nu poate fi anulată."
 msgid "Delete this network?"
 msgstr "Ștergi această rețea?"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "șters"
 
@@ -1634,7 +1725,7 @@ msgstr "Retrogradează la spectator"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Descriere (opțional, ex. „Testeri beta T3”)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Descriere (opțional)"
 
@@ -1648,19 +1739,23 @@ msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la ca
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Numele dispozitivelor sunt ascunse până când permiteți accesul la microfon."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Devices"
+msgstr "Dispozitive"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Disable"
 msgstr "Dezactivează"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
-msgstr "Dezactivează 2FA. Introdu un cod din 6 cifre din oricare dintre aplicațiile de autentificare înregistrate pentru a confirma."
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Disable 2FA"
+msgstr "Dezactivați 2FA"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Dezactivează apăsați pentru a vorbi"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Disabled"
 msgstr "Dezactivat"
 
@@ -1711,16 +1806,15 @@ msgstr "Respinge"
 msgid "Dismiss notification"
 msgstr "Respinge notificarea"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Display"
-msgstr "Afișare"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display all server events in chat"
 msgstr "Afișează toate evenimentele serverului în chat"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Display name"
+msgstr "Nume afișat"
+
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
 msgstr "Nume afișat"
@@ -1784,7 +1878,7 @@ msgstr "Trage fișierele aici pentru a le atașa"
 msgid "e.g. <0>wss://host:port/socket</0>"
 msgstr "ex. <0>wss://host:port/socket</0>"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "e.g., 100:1440"
 msgstr "ex., 100:1440"
 
@@ -1793,8 +1887,9 @@ msgid "Echo Cancellation"
 msgstr "Anulare ecou"
 
 #: src/components/layout/ConnectionStrip.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
 msgstr "Editează"
 
@@ -1804,7 +1899,6 @@ msgid "Edit {0}"
 msgstr "Editează {0}"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Edit Channel"
 msgstr "Editează canalul"
 
@@ -1819,8 +1913,8 @@ msgstr "Editează setările canalului"
 msgid "Edit connection"
 msgstr "Editează conexiunea"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Edit Profile"
+#: src/components/layout/ProfilePane.tsx
+msgid "Edit profile"
 msgstr "Editați profilul"
 
 #: src/components/layout/BouncerServerGroup.tsx
@@ -1829,7 +1923,7 @@ msgstr "Editați profilul"
 msgid "Edit Server"
 msgstr "Editează server"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "Email:"
 
@@ -1841,11 +1935,12 @@ msgstr "Încorporare"
 msgid "Emojis"
 msgstr "Emoji"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Empty pack. Add some emoji."
 msgstr "Pachet gol. Adaugă câteva emoji."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
 msgstr "Activează 2FA"
 
@@ -1877,7 +1972,7 @@ msgstr "Activează notificările"
 msgid "Enable push-to-talk"
 msgstr "Activează apăsați pentru a vorbi"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enabled"
 msgstr "Activat"
 
@@ -1961,23 +2056,38 @@ msgstr "Criptarea cu {nick} a încetat să funcționeze, așa că mesajul nu a f
 msgid "End encryption"
 msgstr "Încheie criptarea"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
 msgstr "Introdu un cod din 6 cifre din oricare dintre aplicațiile de autentificare pentru a dezactiva 2FA."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "Introduceți codul de 6 cifre dintr-una dintre aplicațiile de autentificare înregistrate pentru a confirma."
+
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Enter a channel name for channel-scoped packs."
 msgstr "Introdu un nume de canal pentru pachetele specifice canalului."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
+msgstr "Introduceți un nume cu spații, emoji sau simboluri. Comenzile IRC folosesc în continuare numele real ({channelName})."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
+msgstr "Introduceți un URL. Folosiți {size} în URL pentru dimensionare dinamică. Exemplu: https://example.com/avatar/{size}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Introduceți numele contului..."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
+msgstr "Introduceți un nume de cont pentru autentificare cu SASL PLAIN înainte de a intra în canale. Lăsați gol pentru conectare anonimă."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
 msgstr "Introduceți porecla implicită..."
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter display name"
 msgstr "Introdu numele afișat"
@@ -1986,7 +2096,7 @@ msgstr "Introdu numele afișat"
 msgid "Enter nickname..."
 msgstr "Introduceți porecla..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Enter oper password"
 msgstr "Introdu parola oper"
 
@@ -1994,7 +2104,7 @@ msgstr "Introdu parola oper"
 msgid "Enter oper password..."
 msgstr "Introduceți parola oper..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Enter oper username"
 msgstr "Introdu numele de utilizator oper"
 
@@ -2002,11 +2112,14 @@ msgstr "Introdu numele de utilizator oper"
 msgid "Enter oper username..."
 msgstr "Introduceți numele de utilizator oper..."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter parameters as [rules]:seconds, or build them with Configure."
+msgstr "Introduceți parametrii sub forma [reguli]:secunde sau construiți-i cu Configurați."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter password..."
 msgstr "Introduceți parola..."
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter real name"
 msgstr "Introdu numele real"
@@ -2015,16 +2128,17 @@ msgstr "Introdu numele real"
 msgid "Enter reason (optional)"
 msgstr "Introdu motivul (opțional)"
 
+#. placeholder {0}: pending.account
 #: src/components/ui/TotpStepUpModal.tsx
-msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
-msgstr "Introdu codul din 6 cifre din aplicația de autentificare pentru a finaliza autentificarea ca {account}."
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {0}."
+msgstr "Introduceți codul de 6 cifre din aplicația de autentificare pentru a finaliza autentificarea ca {0}."
 
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Enter the 6-digit code from your authenticator app to finish signing in."
 msgstr "Introdu codul din 6 cifre din aplicația de autentificare pentru a finaliza autentificarea."
 
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/TotpStepUpModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Enter the 6-digit code from your authenticator app."
 msgstr "Introdu codul din 6 cifre din aplicația de autentificare."
 
@@ -2036,6 +2150,14 @@ msgstr "Introdu codul din 6 cifre din e-mail."
 msgid "Enter the account name you want to recover."
 msgstr "Introdu numele contului pe care vrei să îl recuperezi."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Enter the server password only if your network requires one. It is separate from your account password."
+msgstr "Introduceți parola serverului doar dacă rețeaua dvs. o cere. Este separată de parola contului."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter the URL of an IRCv3 custom-emoji pack JSON document. Its shortcodes override the network pack in this channel. Leave blank for the network default."
+msgstr "Introduceți URL-ul unui document JSON cu pachet de emoji personalizat IRCv3. Codurile sale scurte înlocuiesc pachetul rețelei în acest canal. Lăsați gol pentru pachetul implicit al rețelei."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Introdu numele de utilizator de invitat"
@@ -2043,6 +2165,14 @@ msgstr "Introdu numele de utilizator de invitat"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
 msgstr "Introdu numele contului. Vom trimite un cod de recuperare din 6 cifre la adresa de e-mail verificată asociată."
+
+#: src/components/ui/QuickActions.tsx
+msgid "esc to close"
+msgstr "esc pentru a închide"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Events"
+msgstr "Evenimente"
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -2052,13 +2182,13 @@ msgstr "Exactă"
 msgid "ExampleNET"
 msgstr "ExempluRET"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Exceptions"
 msgstr "Excepții"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Exclude Channel Name Mask"
-msgstr "Excludeți masca numelui canalului"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Exclude channel name mask"
+msgstr "Exclude masca numelui canalului"
 
 #: src/components/voice/VoiceVideoBand.tsx
 #: src/components/voice/VoiceVideoBand.tsx
@@ -2096,9 +2226,9 @@ msgstr "Extinde lista de membri"
 msgid "Expand workflow"
 msgstr "Extindeți fluxul de lucru"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Extended Profile"
-msgstr "Profil extins"
+#: src/components/pages/SettingsPage.tsx
+msgid "Extended profile unavailable"
+msgstr "Profilul extins nu este disponibil"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
@@ -2135,17 +2265,35 @@ msgstr "Imagine filehost"
 msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
 msgstr "Fișierele peste {0} sunt trimise ca atare. Gazda le păstrează în clar, iar oricine obține linkul le poate deschide."
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Filter channels..."
-msgstr "Filtrează canale..."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Filter bad words (+G)"
+msgstr "Filtrează cuvintele nepotrivite (+G)"
 
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Filter members…"
 msgstr "Filtrează membri…"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Filter out bad words with <censored>"
+msgstr "Înlocuiește cuvintele nepotrivite cu <censored>"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Filters"
+msgstr "Filtre"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Filters are unavailable on this server"
+msgstr "Filtrele nu sunt disponibile pe acest server"
+
 #: src/components/layout/NetworkMenu.tsx
 msgid "Find channels"
 msgstr "Găsește canale"
+
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Find channels, people, settings and actions"
+msgstr "Căutați canale, persoane, setări și acțiuni"
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
@@ -2155,13 +2303,25 @@ msgstr "Se caută locația ta…"
 msgid "First message to send"
 msgstr "Primul mesaj de trimis"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood parameters (+f)"
+msgstr "Parametri inundare (+f)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood profile (+F)"
+msgstr "Profil inundare (+F)"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Profil flood (+F)"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood protection"
+msgstr "Protecție împotriva inundării"
+
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Flood Protection Settings"
-msgstr "Setări de protecție flood"
+msgid "Flood protection settings"
+msgstr "Setările protecției împotriva inundării"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Fold all"
@@ -2179,9 +2339,17 @@ msgstr "Din motive de securitate, toate sesiunile existente ale acestui cont au 
 msgid "Forfeit"
 msgstr "Renunță"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget credentials"
+msgstr "Uitați credențialele"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Am uitat parola"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forgot password?"
+msgstr "Ați uitat parola?"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2210,19 +2378,16 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line (ban global)"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Gateway connected"
-msgstr "Gateway conectat"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "gateway online"
 msgstr "gateway online"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/pageSections.tsx
 msgid "General"
 msgstr "General"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "Canal general de suport"
 
@@ -2234,7 +2399,7 @@ msgstr "Se încarcă mai multe mesaje..."
 msgid "GIF"
 msgstr "GIF"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "GitHub:"
 msgstr "GitHub:"
 
@@ -2254,7 +2419,7 @@ msgstr "GZ-Line"
 msgid "GZ-Line (Global Z-Line)"
 msgstr "GZ-Line (Z-Line globală)"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
 
@@ -2265,6 +2430,10 @@ msgstr "Procesat de Obby înainte de a fi trimis"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Ascundeți comentariile"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide the channel from LIST and NAMES."
+msgstr "Ascunde canalul din LIST și NAMES."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2280,28 +2449,24 @@ msgstr "Acasă"
 msgid "HOME"
 msgstr "ACASĂ"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Homepage"
 msgstr "Pagină principală"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Host"
 msgstr "Gazdă"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Hostname"
 msgstr "Nume gazdă"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
-
-#: src/components/ui/FloodSettingsModal.tsx
-msgid "How many seconds to monitor for flood activity before resetting counters"
-msgstr "Câte secunde se monitorizează activitatea flood înainte de resetarea contoarelor"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2315,26 +2480,38 @@ msgstr "https://example.com/avatar.jpg"
 msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "https://example.com/avatar/{size}/channel.jpg"
 msgstr "https://example.com/avatar/{size}/channel.jpg"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "I'm Back"
+#: src/components/layout/ProfilePane.tsx
+msgid "I'm back"
 msgstr "M-am întors"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Ident"
 msgstr "Ident"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Identity"
+msgstr "Identitate"
+
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Idle"
 msgstr "Inactiv"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "If {accountName} has a verified email on file, a code has been sent."
+msgstr "Dacă {accountName} are o adresă de e-mail verificată, a fost trimis un cod."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Ignore List"
 msgstr "Listă de ignorați"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Ignore user"
+msgstr "Ignoră utilizatorul"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Ignore User"
@@ -2370,6 +2547,7 @@ msgstr "Info:"
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
 msgstr "Informațiile despre cine a invocat această comandă sunt furnizate de bot, iar expeditorul nu poate fi verificat de server."
 
+#: src/components/pages/SettingsPage.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Input"
 msgstr "Intrare"
@@ -2390,8 +2568,8 @@ msgstr "Format model invalid. Folosiți formatul nick!user@host (caractere wildc
 msgid "Invalid value"
 msgstr "Valoare invalidă"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Invitations"
 msgstr "Invitații"
 
@@ -2420,15 +2598,15 @@ msgstr "Invită utilizator"
 msgid "Invite User to {channelName}"
 msgstr "Invitați utilizatorul în {channelName}"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Invite-Only (+i)"
-msgstr "Doar pe invitație (+i)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Invite-only (+i)"
+msgstr "Doar pe bază de invitație (+i)"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "IP"
 msgstr "IP"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "IRC OP"
 msgstr "IRC OP"
 
@@ -2438,20 +2616,25 @@ msgstr "IRC OP"
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "IRC Operator"
 msgstr "Operator IRC"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "IRC operator only (+O)"
+msgstr "Doar operatori IRC (+O)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator password"
 msgstr "Parola operatorului IRC"
 
-#: src/components/ui/EditServerModal.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "Numele de utilizator al operatorului IRC"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "IRC Servers:"
 msgstr "Servere IRC:"
 
@@ -2461,14 +2644,20 @@ msgid "is now known as **{newNick}**"
 msgstr "acum este cunoscut ca **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Join"
 msgstr "Alătură-te"
 
+#. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Join {0}"
 msgstr "Alătură-te la {0}"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Join {channel}"
+msgstr "Alătură-te la {channel}"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
@@ -2494,7 +2683,8 @@ msgstr "Alătură-te transmisiei {channelName}"
 msgid "Join voice channel {channelName}"
 msgstr "Alătură-te canalului vocal {channelName}"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Joined"
 msgstr "Membru din"
 
@@ -2511,10 +2701,18 @@ msgstr "s-a alăturat și a ieșit"
 msgid "Joined the channel"
 msgstr "S-a alăturat canalului"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "chiar acum"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep credentials"
+msgstr "Păstrați credențialele"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Keep the channel when it empties. Only IRCops can set this."
+msgstr "Păstrați canalul când se golește. Doar IRCops pot seta asta."
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2529,12 +2727,11 @@ msgstr "Kill"
 msgid "Kill User"
 msgstr "Expulzați utilizatorul"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "Limbă"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
 msgstr "Aflați cum gestionăm datele dvs. și vă protejăm confidențialitatea."
 
@@ -2549,6 +2746,10 @@ msgstr "Aflați mai multe despre profiluri →"
 #: src/lib/clientCommands.ts
 msgid "Leave a channel"
 msgstr "Părăsește un canal"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Leave blank to keep the stored credentials"
+msgstr "Lăsați gol pentru a păstra credențialele salvate"
 
 #: src/components/voice/VoiceDock.tsx
 #: src/components/voice/VoicePipOverlay.tsx
@@ -2581,6 +2782,26 @@ msgstr "a părăsit {channelName} ({reason})"
 msgid "Left the channel"
 msgstr "A părăsit canalul"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only clients on secure connections (SSL/TLS) join."
+msgstr "Permiteți alăturarea doar clienților cu conexiune securizată (SSL/TLS)."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only IRC operators join. Only IRCops can set this."
+msgstr "Permiteți alăturarea doar operatorilor IRC. Doar IRCops pot seta asta."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only operators change the topic."
+msgstr "Permiteți schimbarea subiectului doar operatorilor."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only registered users (+r) join."
+msgstr "Permiteți alăturarea doar utilizatorilor înregistrați (+r)."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only users with voice or higher speak."
+msgstr "Permiteți să vorbească doar utilizatorii cu Voice sau mai sus."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Let others know when you are typing"
 msgstr "Anunțați ceilalți când scrieți"
@@ -2589,12 +2810,12 @@ msgstr "Anunțați ceilalți când scrieți"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Link an OAuth identity"
-msgstr "Leagă o identitate OAuth"
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Link"
+msgstr "Legătură"
 
 #. placeholder {0}: p.providerLabel
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Link with {0}"
 msgstr "Leagă cu {0}"
 
@@ -2614,36 +2835,28 @@ msgstr "Încărcați mesaje mai vechi pentru a ajunge la răspuns"
 msgid "Loading"
 msgstr "Se încarcă"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Loading channel modes..."
 msgstr "Se încarcă modurile canalului..."
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "Loading channels..."
-msgstr "Se încarcă canalele..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Loading GIFs..."
 msgstr "Se încarcă GIF-urile..."
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Loading more channels..."
-msgstr "Se încarcă mai multe canale..."
-
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Loading networks from your bouncer…"
 msgstr "Se încarcă rețelele de pe bouncer-ul tău…"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Loading WHOIS data..."
 msgstr "Se încarcă datele WHOIS..."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Loading…"
 msgstr "Se încarcă…"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Local Storage:"
 msgstr "Stocare locală:"
 
@@ -2658,11 +2871,6 @@ msgstr "Accesul la locație a fost refuzat. Permiteți accesul la locație din s
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Conectează-te din nou"
-
-#. placeholder {0}: whoisData.account
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "logged in as {0}"
-msgstr "autentificat ca {0}"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -2693,25 +2901,29 @@ msgstr "Gestionează boții"
 msgid "Manage Bots (loading {botsLoadingCount})"
 msgstr "Gestionează boții (se încarcă {botsLoadingCount})"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage packs"
 msgstr "Gestionează pachetele"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
 msgstr "Gestionează pachetele de emoji la nivel de rețea și specifice canalelor pe care acest server le publică prin draft/EMOJI."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage two-factor authentication"
 msgstr "Gestionează autentificarea în doi pași"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Manage your account and authentication"
 msgstr "Gestionează-ți contul și autentificarea"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Manage your profile information and metadata"
 msgstr "Gestionează informațiile profilului și metadatele"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Manual oper"
+msgstr "OPER manual"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
@@ -2725,6 +2937,10 @@ msgstr "Marchează ca citit"
 msgid "Mark as verified"
 msgstr "Marchează ca verificat"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Mark the channel as private."
+msgstr "Marcați canalul ca privat."
+
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
 msgstr "Marchează-te ca absent"
@@ -2737,9 +2953,9 @@ msgstr "Marchează-te ca revenit"
 msgid "Mark yourself back"
 msgstr "Marchează-te ca revenit"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Max Users"
-msgstr "Utilizatori max."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Max users"
+msgstr "Nr. max. utilizatori"
 
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Maximize"
@@ -2750,10 +2966,6 @@ msgstr "Maximizează"
 msgid "Maximum length is {0}"
 msgstr "Lungimea maximă este {0}"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Maximum number of users allowed in the channel. Leave empty for no limit."
-msgstr "Numărul maxim de utilizatori permis în canal. Lăsați gol pentru fără limită."
-
 #. placeholder {0}: validation.max
 #: src/lib/settings/registry.ts
 msgid "Maximum value is {0}"
@@ -2762,11 +2974,11 @@ msgstr "Valoarea maximă este {0}"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Media"
 msgstr "Media"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "Previzualizări media"
@@ -2780,7 +2992,11 @@ msgstr "Membri"
 msgid "Members — {0}"
 msgstr "Membri — {0}"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Mentions"
+msgstr "Mențiuni"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Message"
 msgstr "Mesaj"
 
@@ -2856,9 +3072,9 @@ msgstr "Microfon {0}"
 msgid "Microphone level"
 msgstr "Nivel microfon"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Min Users"
-msgstr "Utilizatori min."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Min users"
+msgstr "Nr. min. utilizatori"
 
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
@@ -2878,9 +3094,6 @@ msgstr "Valoarea minimă este {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Modal"
 
@@ -2888,9 +3101,13 @@ msgstr "Modal"
 msgid "Moderate User"
 msgstr "Moderează utilizatorul"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Moderated (+m)"
 msgstr "Moderat (+m)"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Modes"
+msgstr "Moduri"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -2905,6 +3122,8 @@ msgstr "Mai mult"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "More actions"
 msgstr "Mai multe acțiuni"
 
@@ -2947,7 +3166,7 @@ msgstr "Dezactivează notificările"
 msgid "Mute or unmute notification sounds"
 msgstr "Activează sau dezactivează sunetele de notificare"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Name (e.g. iPhone)"
 msgstr "Nume (de ex. iPhone)"
 
@@ -2965,9 +3184,14 @@ msgstr "rețea"
 msgid "Network bound through soju bouncer"
 msgstr "Rețea conectată prin bouncer-ul soju"
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Network Log"
-msgstr "Jurnal de rețea"
+#: src/components/pages/RawLogPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Network log"
+msgstr "Jurnalul rețelei"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Network name"
+msgstr "Numele rețelei"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2979,10 +3203,6 @@ msgstr "Nume rețea"
 msgid "Networks on {0}"
 msgstr "Rețele pe {0}"
 
-#: src/components/ui/QuickActions.tsx
-msgid "New DM"
-msgstr "Mesaj direct nou"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
@@ -2991,6 +3211,10 @@ msgstr "folder nou"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Pseudonim nou"
+
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "New pack"
+msgstr "Pachet nou"
 
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
@@ -3022,9 +3246,9 @@ msgstr "nick!user@host (ex., spam*!*@*, *!*@badhost.com)"
 msgid "nickname"
 msgstr "pseudonim"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Nickname"
 msgstr "Poreclă"
@@ -3033,8 +3257,8 @@ msgstr "Poreclă"
 msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
 msgstr "Porecla '{nick}' este deja utilizată, reîncercare cu '{newNick}'"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Nickname is required"
 msgstr "Porecla este obligatorie"
 
@@ -3042,19 +3266,27 @@ msgstr "Porecla este obligatorie"
 msgid "Nickname to message"
 msgstr "Pseudonimul căruia îi scrii"
 
+#: src/components/pages/TwoFactorPage.tsx
+msgid "No 2FA credentials yet. Add one below."
+msgstr "Nu există încă credențiale 2FA. Adăugați una mai jos."
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "No additional data"
 msgstr "Nicio dată suplimentară"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No ban exceptions found"
-msgstr "Nu s-au găsit excepții de banare"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No advanced modes on this server."
+msgstr "Niciun mod avansat pe acest server."
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No bans found"
-msgstr "Nu s-au găsit banuri"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, add one above"
+msgstr "Niciun ban încă, adăugați unul mai sus"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+msgid "No bots match. Clear the search or change the filter."
+msgstr "Niciun bot nu corespunde. Ștergeți căutarea sau schimbați filtrul."
+
+#: src/components/pages/BotsPage.tsx
 msgid "No bots registered on this network yet."
 msgstr "Niciun bot înregistrat pe această rețea încă."
 
@@ -3062,36 +3294,39 @@ msgstr "Niciun bot înregistrat pe această rețea încă."
 msgid "No camera detected."
 msgstr "Nicio cameră detectată."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "No Central Server:"
 msgstr "Fără server central:"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
-msgid "No Changes"
-msgstr "Nicio modificare"
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "No channels found."
-msgstr "Nu s-au găsit canale."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "No channels found. Change the search or filters."
+msgstr "Niciun canal nu a fost găsit. Schimbați căutarea sau filtrele."
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "No comments yet. Be the first!"
 msgstr "Niciun comentariu. Fiți primul!"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No CTCPs (+C)"
+msgstr "Fără CTCP (+C)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "No data"
 msgstr "Fără date"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No External Messages (+n)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, add one above"
+msgstr "Nicio excepție încă, adăugați una mai sus"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No external messages (+n)"
 msgstr "Fără mesaje externe (+n)"
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "No file chosen"
 msgstr "Niciun fișier ales"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No flood profile"
 msgstr "Niciun profil anti-flood"
 
@@ -3103,15 +3338,27 @@ msgstr "Nu s-a găsit niciun GIF. Încearcă o altă căutare."
 msgid "no host set"
 msgstr "niciun host setat"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No invitations found"
-msgstr "Nu s-au găsit invitații"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, add one above"
+msgstr "Nicio invitație încă, adăugați una mai sus"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invites (+V)"
+msgstr "Fără invitații (+V)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No key"
 msgstr "Nicio cheie"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No kicks (+Q)"
+msgstr "Fără expulzări (+Q)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No knocks (+K)"
+msgstr "Fără cereri de intrare (+K)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No limit"
 msgstr "Nicio limită"
 
@@ -3119,11 +3366,7 @@ msgstr "Nicio limită"
 msgid "No media in this channel"
 msgstr "Niciun fișier media în acest canal"
 
-#: src/components/ui/UserSettings.tsx
-msgid "No media previews are loaded."
-msgstr "Nu sunt încărcate previzualizări media."
-
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "no message"
 msgstr "niciun mesaj"
 
@@ -3131,17 +3374,29 @@ msgstr "niciun mesaj"
 msgid "No microphone detected."
 msgstr "Niciun microfon detectat."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-msgid "No packs configured yet."
-msgstr "Nu există încă pachete configurate."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No nick changes (+N)"
+msgstr "Fără schimbări de nickname (+N)"
 
-#: src/components/ui/RawLogViewer.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No notices (+T)"
+msgstr "Fără NOTICE (+T)"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "No oper credentials yet. Enter a name and password."
+msgstr "Nu există încă credențiale OPER. Introduceți un nume și o parolă."
+
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "No packs yet. Create one to start."
+msgstr "Niciun pachet încă. Creați unul pentru a începe."
+
+#: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Niciun trafic IRC brut capturat încă. Încearcă să te conectezi sau să trimiți un mesaj."
 
 #: src/components/ui/QuickActions.tsx
-msgid "No results found"
-msgstr "Niciun rezultat găsit"
+msgid "No results. Try fewer letters"
+msgstr "Niciun rezultat. Încercați mai puține litere"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
@@ -3151,11 +3406,15 @@ msgstr "Niciun server nu este selectat. Alege mai întâi un server din bara lat
 msgid "No servers found."
 msgstr "Niciun server găsit."
 
+#: src/components/pages/BotsPage.tsx
+msgid "No slash commands yet"
+msgstr "Încă nu există comenzi slash"
+
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "No speaker detected."
 msgstr "Niciun difuzor detectat."
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "No topic"
 msgstr "Fără subiect"
 
@@ -3164,8 +3423,8 @@ msgid "No topic set"
 msgstr "Niciun subiect setat"
 
 #: src/components/ui/QuickActions.tsx
-msgid "No unread mentions or messages"
-msgstr "Nicio mențiune sau mesaj necitit"
+msgid "No unread mentions or messages. Type to search"
+msgstr "Nicio mențiune sau mesaj necitit. Scrieți pentru a căuta"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "No upstream networks yet."
@@ -3174,10 +3433,6 @@ msgstr "Încă nu există rețele upstream."
 #: src/components/layout/VoiceChannelView.tsx
 msgid "No viewers yet."
 msgstr "Niciun spectator încă."
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "No WHOIS data available"
-msgstr "Nu există date WHOIS disponibile"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
@@ -3191,7 +3446,7 @@ msgstr "Reducerea zgomotului"
 msgid "None"
 msgstr "Niciunul"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Normal"
 msgstr "Normal"
 
@@ -3204,6 +3459,10 @@ msgstr "Normal – Protecție standard"
 msgid "Not encrypted"
 msgstr "Necriptat"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
+msgstr "Notă: modificarea metadatelor canalului necesită permisiuni de operator (@) sau mai mari. Modificările vor fi vizibile pentru toți utilizatorii care suportă specificația METADATA."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
 msgstr "Notă: serverul returnează același răspuns indiferent dacă contul are sau nu un e-mail verificat, deci o greșeală de scriere nu va fi semnalată aici. Dacă nu primești niciun cod în câteva minute, verifică din nou numele contului."
@@ -3212,45 +3471,42 @@ msgstr "Notă: serverul returnează același răspuns indiferent dacă contul ar
 msgid "Notification Sound"
 msgstr "Sunet de notificare"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "Notificări"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "Identitate OAuth"
+
+#: src/components/pages/pageSections.tsx
+msgid "OAuth2"
+msgstr "OAuth2"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
 msgstr "Obby"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Obby - Bringing IRC to the future"
 msgstr "Obby - Aducând IRC în viitor"
 
-#. placeholder {0}: session.total
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "of {0}"
-msgstr "din {0}"
-
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Off"
 msgstr "Oprit"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "offline"
 msgstr "offline"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
-#: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Deconectat"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "OK"
 msgstr "OK"
 
@@ -3264,38 +3520,35 @@ msgstr "unul dintre:"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Conectat"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
 msgstr "Conectați-vă doar la serverele pe care le alegeți"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Only operators can change the channel topic"
-msgstr "Doar operatorii pot schimba subiectul canalului"
-
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Sunt acceptate numai websocket-uri securizate"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Only users with voice or higher can speak"
-msgstr "Doar utilizatorii cu voice sau mai mult pot vorbi"
 
 #: src/store/handlers/batches.ts
 msgid "Oops! The net split! ⚠️"
 msgstr "Oops! Rețeaua s-a împărțit! ⚠️"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Op"
 msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
 msgstr "Deschide"
+
+#. placeholder {0}: channel.channel
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Open {0}"
+msgstr "Deschide {0}"
 
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
@@ -3304,10 +3557,6 @@ msgstr "Deschide un mesaj privat către un utilizator"
 #: src/components/ui/UserContextMenu.tsx
 msgid "Open bots menu"
 msgstr "Deschide meniu boti"
-
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Open channel configuration settings"
-msgstr "Deschide setările de configurare ale canalului"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3353,6 +3602,11 @@ msgstr "Deschide opțiunile de rețea"
 msgid "Open private chat"
 msgstr "Deschide chat privat"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "Deschide Notificările serverului ca să vezi ce nu a mers"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Deschide setările"
@@ -3361,32 +3615,57 @@ msgstr "Deschide setările"
 msgid "Open workflow"
 msgstr "Deschide fluxul de lucru"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper credentials"
+msgstr "Credențiale OPER"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper name"
+msgstr "Numele OPER"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Nume oper"
 
-#: src/components/ui/EditServerModal.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 msgid "Oper name and password are required"
 msgstr "Numele oper și parola sunt obligatorii"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper on connect"
+msgstr "OPER la conectare"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper on Connect"
 msgstr "Oper la conectare"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper password"
+msgstr "Parola OPER"
+
+#: src/components/pages/SettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper Password"
 msgstr "Parolă oper"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper up"
+msgstr "Autentificați-vă ca OPER"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper Username"
 msgstr "Nume utilizator operator"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Operator actions"
 msgstr "Acțiuni de operator"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Operator password"
+msgstr "Parola operatorului"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Rapoarte opționale de erori pentru îmbunătățirea aplicației"
 
@@ -3402,29 +3681,43 @@ msgstr "OTR nu criptează fișiere, trimis ca atare"
 msgid "Output"
 msgstr "Ieșire"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Owner"
 msgstr "Proprietar"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "pack_id (e.g. team-mascots)"
 msgstr "pack_id (de ex. team-mascots)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "pack_id and name are required."
 msgstr "pack_id și name sunt obligatorii."
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "Packs"
+msgstr "Pachete"
+
+#: src/components/ui/QuickActions.tsx
+msgid "Pages"
+msgstr "Pagini"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Parolă"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Password required to join the channel. Leave empty to remove the key."
-msgstr "Parolă necesară pentru a intra în canal. Lăsați gol pentru a elimina cheia."
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Password reset complete"
 msgstr "Resetarea parolei s-a încheiat"
+
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Password updated."
+msgstr "Parola a fost actualizată."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password updated. You can now log in."
+msgstr "Parola a fost actualizată. Vă puteți autentifica acum."
 
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
@@ -3456,11 +3749,12 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "Previzualizare PDF"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "pending"
 msgstr "în așteptare"
 
 #: src/components/layout/StartPrivateChatRow.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "People"
 msgstr "Persoane"
 
@@ -3468,6 +3762,11 @@ msgstr "Persoane"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Permanent channel (+P)"
+msgstr "Canal permanent (+P)"
+
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Fotografie"
@@ -3477,9 +3776,17 @@ msgstr "Fotografie"
 msgid "Pick a password (3 characters or more)."
 msgstr "Alege o parolă (cel puțin 3 caractere)."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Pick a preset flood protection profile. UnrealIRCd only."
+msgstr "Alegeți un profil predefinit de protecție împotriva inundării. Doar UnrealIRCd."
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
 msgstr "Alege un nume dintr-un singur cuvânt (fără spații)."
+
+#: src/components/ui/EmojiPickerModal.tsx
+msgid "Pick an emoji"
+msgstr "Alegeți un emoji"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3535,10 +3842,6 @@ msgstr "Introduceți un nume de utilizator"
 msgid "Please wait..."
 msgstr "Vă rugăm așteptați..."
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "PM User"
-msgstr "Mesaj privat"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/VoiceVideoBand.tsx
@@ -3546,6 +3849,7 @@ msgstr "Mesaj privat"
 msgid "Pop out video"
 msgstr "Deschide videoclipul într-o fereastră separată"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
@@ -3555,7 +3859,7 @@ msgstr "Port"
 msgid "Post each server's message of the day to Server Notices and its welcome page"
 msgstr "Postează mesajul zilei al fiecărui server în Notificări server și pe pagina sa de bun venit"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Preferences"
 msgstr "Preferințe"
 
@@ -3563,9 +3867,13 @@ msgstr "Preferințe"
 msgid "Preview (not yet uploaded)"
 msgstr "Previzualizare (neîncărcat încă)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Preview:"
-msgstr "Previzualizare:"
+#: src/components/pages/SettingsPage.tsx
+msgid "Preview all external media. Any URL can trigger a request to an unknown server."
+msgstr "Previzualizați toate media externe. Orice URL poate declanșa o cerere către un server necunoscut."
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Preview media from your server's trusted file host only. Make no requests to external services."
+msgstr "Previzualizați media doar de la gazda de fișiere de încredere a serverului. Nu faceți cereri către servicii externe."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Previous fingerprint"
@@ -3579,38 +3887,46 @@ msgstr "Imaginea anterioară"
 msgid "Previous page"
 msgstr "Pagina anterioară"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Privacy"
 msgstr "Confidențialitate"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Privacy Policy"
 msgstr "Politică de confidențialitate"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Privacy warning:"
+msgstr "Avertisment de confidențialitate:"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Private channel (+p)"
+msgstr "Canal privat (+p)"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Private messages"
 msgstr "Mesaje private"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/pageSections.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Pronouns"
 msgstr "Pronume"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Protected Topic (+t)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Protected topic (+t)"
 msgstr "Subiect protejat (+t)"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Provider returned no bearer token."
 msgstr "Furnizorul nu a returnat niciun token bearer."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "Întrebări despre confidențialitate? Contactați-ne:"
 
@@ -3626,7 +3942,6 @@ msgstr "a ieșit"
 msgid "quit ({reason})"
 msgstr "a ieșit ({reason})"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "Mesaj de ieșire"
@@ -3673,9 +3988,11 @@ msgstr "a reacționat la acest mesaj"
 msgid "Read all"
 msgstr "Citește tot"
 
+#: src/components/layout/ProfilePane.tsx
+msgid "Real name"
+msgstr "Nume real"
+
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Real Name"
 msgstr "Nume real"
@@ -3688,7 +4005,7 @@ msgstr "Nume real:"
 msgid "Reason"
 msgstr "Motiv"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Reason (optional)"
 msgstr "Motiv (opțional)"
 
@@ -3696,10 +4013,6 @@ msgstr "Motiv (opțional)"
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Raționament"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Receiving command list…"
-msgstr "Se primește lista de comenzi…"
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Reconnect"
@@ -3723,6 +4036,10 @@ msgstr "Se reconectează. Editează conexiunea dacă tot eșuează"
 msgid "Record Audio"
 msgstr "Înregistrează audio"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Record history as max-lines:max-minutes. Leave empty to disable."
+msgstr "Înregistrați istoricul ca max-linii:max-minute. Lăsați gol pentru a dezactiva."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record screen"
 msgstr "Înregistrează ecranul"
@@ -3743,6 +4060,11 @@ msgstr "Înregistrează mesaj video"
 msgid "Record voice message"
 msgstr "Înregistrează mesaj vocal"
 
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Recovery failed: {0}"
+msgstr "Recuperarea a eșuat: {0}"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Reduceți zgomotul de fond al microfonului dvs."
@@ -3756,7 +4078,7 @@ msgstr "Reduceți ecoul de la difuzoarele dvs. captat de microfon"
 msgid "Refresh"
 msgstr "Reîmprospătează"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "Reîmprospătează WHOIS"
 
@@ -3764,15 +4086,23 @@ msgstr "Reîmprospătează WHOIS"
 msgid "Register for an account"
 msgstr "Înregistrează un cont"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Registered credentials"
 msgstr "Credențiale înregistrate"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Registered nick required (+M)"
+msgstr "Nickname înregistrat necesar (+M)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Registered users only (+R)"
+msgstr "Doar utilizatori înregistrați (+R)"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Respinge"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Relaxed"
 msgstr "Relaxat"
 
@@ -3780,14 +4110,16 @@ msgstr "Relaxat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Relaxat – Protecție mai puțin agresivă"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Remove"
 msgstr "Elimină"
 
-#. placeholder {0}: c.name
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#. placeholder {0}: pendingRemoval?.name
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
 msgstr "Elimini \"{0}\"? Nu o vei mai putea folosi ca al doilea factor."
 
@@ -3796,8 +4128,13 @@ msgid "Remove {username} from the channel"
 msgstr "Elimină {username} din canal"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "elimină atașamentul"
+
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Remove credential"
+msgstr "Eliminați credențiala"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
@@ -3833,9 +4170,9 @@ msgstr "Redenumește sau șterge {0}"
 msgid "Rename or delete folder"
 msgstr "Redenumește sau șterge folderul"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Rename this channel on the server. All users will see the new name."
-msgstr "Redenumiți acest canal pe server. Toți utilizatorii vor vedea noul nume."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Rename this channel. Everyone sees the new name."
+msgstr "Redenumiți canalul. Toată lumea va vedea noul nume."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
@@ -3851,15 +4188,25 @@ msgstr "Reordonează lista"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "Răspunde"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Require a registered nickname (+r) to talk."
+msgstr "Cereți un nickname înregistrat (+r) pentru a vorbi."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Require an invite to join."
+msgstr "Cereți o invitație pentru a intra."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "obligatoriu"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Refă"
@@ -3874,6 +4221,7 @@ msgstr "Reîncearcă trimiterea"
 msgid "Return to channel"
 msgstr "Revino la canal"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "Verifică cheia schimbată…"
@@ -3908,27 +4256,27 @@ msgstr "în curs"
 msgid "running · {elapsed}"
 msgstr "în curs de execuție · {elapsed}"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Safe"
 msgstr "Sigur"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "SASL PLAIN account"
+msgstr "Cont SASL PLAIN"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/TopicModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Save"
 msgstr "Salvează"
-
-#: src/components/ui/UserSettings.tsx
-msgid "Save Changes"
-msgstr "Salvează modificările"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Save failed: {msg}"
 msgstr "Salvare eșuată: {msg}"
 
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Save Settings"
+msgid "Save settings"
 msgstr "Salvați setările"
 
 #: src/components/message/EncryptedMediaPreview.tsx
@@ -3943,7 +4291,7 @@ msgstr "Salvat"
 msgid "Saving..."
 msgstr "Se salvează..."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Scanează acest cod QR cu aplicația de autentificare, apoi confirmă cu codul din 6 cifre afișat."
 
@@ -3964,9 +4312,14 @@ msgstr "Derulează în jos"
 msgid "Search"
 msgstr "Caută"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Search bots"
 msgstr "Caută boți"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Search channels..."
+msgstr "Căutați canale..."
 
 #: src/components/ui/AppEmojiPicker.tsx
 msgid "Search emojis..."
@@ -3988,35 +4341,31 @@ msgstr "Caută mesaje…"
 msgid "Search servers..."
 msgstr "Caută servere..."
 
-#: src/components/ui/QuickActions.tsx
-msgid "Search settings, channels, servers..."
-msgstr "Caută setări, canale, servere..."
-
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "Se caută..."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Secret"
 msgstr "Secret"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Secret (+s)"
 msgstr "Secret (+s)"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Secret channel"
-msgstr "Canal secret"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "Secure Connection"
+#: src/components/layout/ProfilePane.tsx
+msgid "Secure connection"
 msgstr "Conexiune securizată"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Secure connection required (+z)"
+msgstr "Conexiune securizată necesară (+z)"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Security"
 msgstr "Securitate"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Security groups"
 msgstr "Grupuri de securitate"
 
@@ -4038,6 +4387,10 @@ msgstr "Vezi informațiile canalului"
 msgid "See profile"
 msgstr "Vezi profilul"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "Vezi notificările serverului"
+
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
@@ -4048,9 +4401,9 @@ msgstr "Vezi spectatorii"
 msgid "Seek"
 msgstr "Derulare"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Select a bot on the left to see its commands and management actions."
-msgstr "Selectează un bot din stânga pentru a-i vedea comenzile și acțiunile de administrare."
+#: src/components/pages/BotsPage.tsx
+msgid "Select a bot to see its commands and management actions."
+msgstr "Selectați un bot pentru a vedea comenzile și acțiunile de administrare ale acestuia."
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
@@ -4068,7 +4421,7 @@ msgstr "Selectează un membru"
 msgid "Select or add a channel to get started."
 msgstr "Selectează sau adaugă un canal pentru a începe."
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "self-registered"
 msgstr "autoînregistrat"
 
@@ -4093,9 +4446,9 @@ msgstr "Trimiteți invitația"
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Send private message"
-msgstr "Trimite mesaj privat"
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Send OPER with the name and password above now."
+msgstr "Trimiteți OPER cu numele și parola de mai sus acum."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4113,6 +4466,10 @@ msgstr "Trimiteți notificări de tastare"
 msgid "Send unencrypted"
 msgstr "Trimite necriptat"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Send users here when they can't join. Leave empty to disable."
+msgstr "Trimiteți aici utilizatorii care nu pot intra. Lăsați gol pentru a dezactiva."
+
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Se trimite"
@@ -4121,34 +4478,30 @@ msgstr "Se trimite"
 msgid "Sending…"
 msgstr "Se trimite…"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/QuickActions.tsx
-msgid "Server"
-msgstr "Server"
 
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
 msgid "Server Channels"
 msgstr "Canale server"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
 msgstr "Serverul nu anunță suport pentru WebAuthn"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Server doesn't support advanced LIST filtering"
-msgstr "Serverul nu acceptă filtrarea avansată LIST"
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Server host"
+msgstr "Gazda serverului"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Server Host"
 msgstr "Adresă server"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Server host is required"
 msgstr "Adresa serverului este obligatorie"
 
@@ -4156,8 +4509,8 @@ msgstr "Adresa serverului este obligatorie"
 msgid "Server Information"
 msgstr "Informații server"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Server name is required"
 msgstr "Numele serverului este obligatoriu"
 
@@ -4173,6 +4526,11 @@ msgstr "Notificări server"
 msgid "Server operators on the network could potentially read your messages"
 msgstr "Operatorii de server din rețea pot citi mesajele tale"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Server password"
+msgstr "Parola serverului"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Server Password"
 msgstr "Parolă server"
@@ -4181,37 +4539,39 @@ msgstr "Parolă server"
 msgid "Server Password (PASS)"
 msgstr "Parolă server (PASS)"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Server returned an invalid WebAuthn challenge."
 msgstr "Serverul a returnat o provocare WebAuthn invalidă."
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Server settings"
+msgstr "Setările serverului"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Comunicarea server-la-server poate folosi conexiuni necriptate"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "La nivel de server"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Server-wide bot — reachable from any channel"
-msgstr "Bot la nivel de server — accesibil din orice canal"
-
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "Bot la nivel de server, accesibil din orice canal"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Servers"
+msgstr "Servere"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Session"
 msgstr "Sesiune"
 
-#. placeholder {0}: session.ordinal
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "Session {0}"
-msgstr "Sesiune {0}"
-
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Sessions"
 msgstr "Sesiuni"
 
@@ -4220,12 +4580,12 @@ msgstr "Sesiuni"
 msgid "Set a topic…"
 msgstr "Setează un subiect…"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Set Away"
-msgstr "Setează ca absent"
+#: src/components/layout/ProfilePane.tsx
+msgid "Set away"
+msgstr "Setați ca absent"
 
 #. placeholder {0}: mode.setter
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "set by {0}"
 msgstr "setat de {0}"
 
@@ -4233,22 +4593,39 @@ msgstr "setat de {0}"
 msgid "Set by:"
 msgstr "Setat de:"
 
+#: src/components/ui/FloodSettingsModal.tsx
+msgid "Set how many seconds to count flood activity before the counters reset"
+msgstr "Setați câte secunde să numărați activitatea de inundare înainte ca contoarele să se reseteze"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
 msgstr "Setează parola nouă"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the maximum number of users. Leave empty for no limit."
+msgstr "Setați numărul maxim de utilizatori. Lăsați gol pentru fără limită."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the password needed to join. Leave empty to remove the key."
+msgstr "Setați parola necesară pentru a intra. Lăsați gol pentru a elimina cheia."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the topic shown for this channel. Everyone can see it."
+msgstr "Setați subiectul afișat pentru acest canal. Îl poate vedea oricine."
 
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Setează-te ca absent"
 
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "SETPASS failed: {0}"
+msgstr "SETPASS a eșuat: {0}"
+
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
 msgid "sets mode: {0}"
 msgstr "setează modul: {0}"
-
-#: src/components/ui/QuickActions.tsx
-msgid "Setting"
-msgstr "Setare"
 
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
@@ -4259,7 +4636,11 @@ msgstr "Setarea nu a fost găsită"
 msgid "Setting…"
 msgstr "Se setează…"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
 msgid "Settings"
 msgstr "Setări"
 
@@ -4291,11 +4672,11 @@ msgstr "Partajează din nou ecranul pentru a reîncerca"
 msgid "she/her"
 msgstr "ea/ei"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "shortcode (e.g. partyparrot)"
 msgstr "shortcode (de ex. partyparrot)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode-ul trebuie să se potrivească cu [A-Za-z0-9._-]+."
 
@@ -4310,6 +4691,10 @@ msgstr "Afișați comentariile"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Afișați comentariile ({commentCount})"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Show in bots menu"
+msgstr "Afișați în meniul botilor"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -4364,39 +4749,27 @@ msgstr "Afișează MOTD"
 msgid "Show video"
 msgstr "Arată videoclipul"
 
-#. placeholder {0}: filteredChannels.length
-#: src/components/ui/ChannelListModal.tsx
-msgid "Showing {displayedChannelsCount} of {0} channels"
-msgstr "Se afișează {displayedChannelsCount} din {0} canale"
-
-#: src/components/ui/UserSettings.tsx
-msgid "Shows all external media. Any URL may cause a request to an unknown server."
-msgstr "Afișează toate conținuturile externe. Orice URL poate genera o solicitare către un server necunoscut."
-
-#: src/components/ui/UserSettings.tsx
-msgid "Shows media from your server's trusted file host. No requests are made to external services."
-msgstr "Afișează media de pe gazda de fișiere de încredere a serverului. Nu se fac solicitări către servicii externe."
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
-msgstr "Autentifică-te la furnizor, apoi vom lega identitatea rezultată de contul tău, astfel încât SASL OAUTHBEARER / IRCV3BEARER să funcționeze la conexiunile următoare."
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
+msgstr "Autentificați-vă la furnizor pentru a lega identitatea acestuia de contul dvs., astfel încât SASL OAUTHBEARER și IRCV3BEARER să funcționeze la conexiunile următoare."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Autentificarea a eșuat, conversezi ca invitat. Conectează-te din nou sau corectează parola"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Signed on"
 msgstr "Conectat la"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Signed On"
-msgstr "Conectat la"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Comenzi slash"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Social"
+msgstr "Social"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
@@ -4408,19 +4781,19 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (control)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Sort by Name"
-msgstr "Sortare după nume"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Sort by name"
+msgstr "Sortează după nume"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Sort by Users"
-msgstr "Sortare după utilizatori"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Sort by users"
+msgstr "Sortează după utilizatori"
 
 #: src/components/message/MediaPreview.tsx
 msgid "SoundCloud player"
 msgstr "Player SoundCloud"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Source"
 msgstr "Sursă"
 
@@ -4447,6 +4820,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "Pornește un canal vocal pe {serverName}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "Începe înregistrarea"
 
@@ -4458,20 +4832,15 @@ msgstr "Pornește camera video"
 msgid "Starting workflow…"
 msgstr "Se pornește fluxul de lucru…"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Status"
 msgstr "Stare"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Status Messages"
 msgstr "Mesaje de stare"
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Status:"
-msgstr "Stare:"
 
 #: src/lib/voiceErrors.ts
 msgid "Stay here while we rejoin. The server limits how often you can rejoin."
@@ -4490,6 +4859,7 @@ msgid "Stop"
 msgstr "Oprește"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "Oprește înregistrarea"
 
@@ -4502,7 +4872,6 @@ msgid "Stop video"
 msgstr "Oprește camera video"
 
 #: src/components/layout/AddChannelRow.tsx
-#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Flux"
 
@@ -4514,7 +4883,7 @@ msgstr "nume-stream"
 msgid "Streamer"
 msgstr "Transmițător"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Strict"
 msgstr "Strict"
 
@@ -4522,15 +4891,23 @@ msgstr "Strict"
 msgid "Strict - More aggressive protection"
 msgstr "Strict – Protecție mai agresivă"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Strip color codes (+S)"
+msgstr "Elimină codurile de culoare (+S)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Strip mIRC color codes from messages"
+msgstr "Elimină codurile de culoare mIRC din mesaje"
+
 #: src/components/ui/E2EELockControl.tsx
 msgid "Strongest, but only with other Obby users"
 msgstr "Cea mai puternică, dar doar cu alți utilizatori Obby"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Suspend"
 msgstr "Suspendă"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "suspended"
 msgstr "suspendat"
 
@@ -4551,6 +4928,7 @@ msgid "Take out of folder"
 msgstr "Scoate din folder"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Fă o fotografie"
 
@@ -4558,13 +4936,13 @@ msgstr "Fă o fotografie"
 msgid "Take Photo or Video"
 msgstr "Fă o fotografie sau un videoclip"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Text"
-msgstr "Text"
-
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Canal text"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "that account"
+msgstr "acest cont"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4610,17 +4988,9 @@ msgstr "Înregistrarea nu a putut fi realizată."
 msgid "The server refused your join. Check the channel modes and try again."
 msgstr "Serverul ți-a refuzat intrarea. Verifică modurile canalului și încearcă din nou."
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "The topic that will be displayed for this channel. All users can see the topic."
-msgstr "Subiectul afișat pentru acest canal. Toți utilizatorii îl pot vedea."
-
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
-msgstr "Acest cont este conectat din {sessionCount} sesiuni. Detaliile per sesiune sunt dezvăluite doar titularului contului sau operatorilor IRC."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -4663,8 +5033,8 @@ msgstr "Acest host nu acceptă fișiere {CIPHERTEXT_EXTENSION}, forma în care e
 msgid "This image has expired"
 msgstr "Această imagine a expirat"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "This is you"
 msgstr "Acesta ești tu"
 
@@ -4683,14 +5053,6 @@ msgstr "Acest mesaj nu a fost criptat. Poate proveni de la un alt client al aces
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "Aceasta elimină rețeaua de pe bouncer-ul tău soju. Pentru a o folosi din nou, va trebui să o adaugi la loc."
-
-#: src/components/ui/UserSettings.tsx
-msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
-msgstr "Acest server nu acceptă metadate extinse de profil (extensia IRCv3 METADATA). Câmpurile precum avatar, nume afișat și stare nu sunt disponibile."
-
-#: src/components/ui/EmojiPackAdminModal.tsx
-msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
-msgstr "Acest server nu anunță un URL de backend (draft/authtoken sau obby.world/FILEHOST). Endpoint-urile de administrare nu pot fi accesate."
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
@@ -4730,12 +5092,12 @@ msgstr "Fereastră de timp (secunde)"
 msgid "timed out"
 msgstr "timeout"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "TLS certificate fingerprint"
 msgstr "Amprenta certificatului TLS"
 
@@ -4744,7 +5106,6 @@ msgstr "Amprenta certificatului TLS"
 msgid "to"
 msgstr "către"
 
-#: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
@@ -4778,24 +5139,23 @@ msgstr "Prea mare pentru criptare, trimis necriptat"
 msgid "tool"
 msgstr "instrument"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Topic Set After (min ago)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Topic"
+msgstr "Subiect"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Topic set after (min ago)"
 msgstr "Subiect setat după (min în urmă)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Topic Set Before (min ago)"
-msgstr "Subiect setat înainte (min în urmă)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Topic set before (min ago)"
+msgstr "Subiect setat înainte de (min în urmă)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Topic:"
 msgstr "Subiect:"
 
-#. placeholder {0}: filteredChannels.length
-#: src/components/ui/ChannelListModal.tsx
-msgid "Total: {0}"
-msgstr "Total: {0}"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "Transport"
@@ -4804,7 +5164,7 @@ msgstr "Transport"
 msgid "truncated"
 msgstr "trunchiat"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Surse de încredere"
 
@@ -4816,6 +5176,14 @@ msgstr "Încearcă din nou încărcarea."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Încearcă din nou încărcarea. Gazda de fișiere a trimis un răspuns pe care nu l-am putut citi."
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Turn off media previews."
+msgstr "Dezactivați previzualizările media."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
+msgstr "Activați OPER la conectare pentru a trimite numele și parola salvate ca OPER la fiecare conexiune, sau folosiți Autentificați-vă ca OPER de mai jos."
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Pornește camera pentru a reîncerca"
@@ -4824,8 +5192,8 @@ msgstr "Pornește camera pentru a reîncerca"
 msgid "Turn the mic on to try again"
 msgstr "Pornește microfonul pentru a reîncerca"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Two-factor authentication"
 msgstr "Autentificare în doi pași"
 
@@ -4845,9 +5213,17 @@ msgstr "Scrie un mesaj..."
 msgid "Undeafen"
 msgstr "Activează sunetul"
 
+#: src/components/layout/ProfilePane.tsx
+msgid "Unignore user"
+msgstr "Nu mai ignora utilizatorul"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "Nu mai ignora utilizatorul"
+
+#: src/components/ui/LinkSecurityWarningModal.tsx
+msgid "Unknown Server"
+msgstr "Server necunoscut"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/voice/VoiceDock.tsx
@@ -4873,13 +5249,13 @@ msgstr "Anulează fixarea conversației private"
 msgid "Unpin this private message conversation"
 msgstr "Anulează fixarea acestei conversații private"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Anulează suspendarea"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
-msgstr "Încărcați o imagine sau furnizați o adresă URL cu înlocuire opțională {size}"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
+msgstr "Încărcați o imagine sau introduceți un URL. Folosiți {size} în URL pentru dimensionare dinamică."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -4901,7 +5277,7 @@ msgstr "Încărcat"
 msgid "Uploading..."
 msgstr "Se încarcă..."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "URL must be http(s):// or data:."
 msgstr "URL-ul trebuie să fie http(s):// sau data:."
 
@@ -4909,13 +5285,21 @@ msgstr "URL-ul trebuie să fie http(s):// sau data:."
 msgid "URL to your avatar image"
 msgstr "URL-ul imaginii dvs. de avatar"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "URL with optional {size} substitution for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "URL cu înlocuire opțională {size}. Exemplu: https://example.com/avatar/{size}/channel.jpg"
-
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Folosiți * pentru wildcard. Exemple: baduser!*@*, *!*@spammer.com, troll*!*@*"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use a secure websocket port."
+msgstr "Folosiți un port websocket securizat."
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
+msgstr "Folosiți un server cu IRCv3 METADATA pentru a seta avatarul, numele afișat și starea."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "Folosește fotografia"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
@@ -4925,11 +5309,15 @@ msgstr "Folosește parola serverului"
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Shift+Enter pentru rânduri noi (Enter trimite)"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "Folosește videoclipul"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
 msgstr "Utilizați WebSocket în loc de TCP brut"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Wildcard: * se potrivește oricărei secvențe, ? unui singur caracter. Exemple: nick!*@*, *!*@host.com, *!*user@*"
 
@@ -4938,32 +5326,16 @@ msgid "used"
 msgstr "utilizat"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "User Information"
 msgstr "Informații utilizator"
 
 #: src/components/message/MessageHeader.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "User is authenticated"
 msgstr "Utilizatorul este autentificat"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "User is away"
-msgstr "Utilizatorul este absent"
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "User modes"
-msgstr "Moduri utilizator"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Profil utilizator"
-
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
-msgid "User Settings"
-msgstr "Setări utilizator"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -4975,25 +5347,21 @@ msgstr "Nume de utilizator"
 msgid "Username:"
 msgstr "Nume utilizator:"
 
+#: src/components/ui/HomeScreen.tsx
+msgid "Users"
+msgstr "Utilizatori"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Users and patterns to ignore"
 msgstr "Utilizatori și modele de ignorat"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Users must be invited to join the channel"
-msgstr "Utilizatorii trebuie invitați pentru a intra în canal"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Users outside the channel cannot send messages to it"
-msgstr "Utilizatorii din afara canalului nu pot trimite mesaje"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Utilizatori:"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Valid server port is required"
 msgstr "Este necesar un port de server valid"
 
@@ -5016,6 +5384,7 @@ msgstr "Verifică codul"
 msgid "Verify encryption"
 msgstr "Verifică criptarea"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
 msgstr "Verifică amprenta…"
@@ -5028,11 +5397,11 @@ msgstr "Verifică…"
 msgid "Verifying…"
 msgstr "Se verifică…"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"
 msgstr "Foarte relaxat"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Foarte strict"
 
@@ -5042,6 +5411,7 @@ msgid "via @{0}"
 msgstr "prin @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -5050,7 +5420,7 @@ msgstr "Video"
 msgid "View Channel Topic"
 msgstr "Vezi subiectul canalului"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "View Full Privacy Policy"
 msgstr "Vizualizați politica completă de confidențialitate"
 
@@ -5058,13 +5428,15 @@ msgstr "Vizualizați politica completă de confidențialitate"
 msgid "View or edit the channel topic"
 msgstr "Vezi sau editează subiectul canalului"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "View our privacy policy and data practices"
 msgstr "Vezi politica noastră de confidențialitate și practicile privind datele"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "View profile"
+msgstr "Vizualizați profilul"
+
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "View Profile"
 msgstr "Vizualizați profilul"
 
@@ -5089,8 +5461,7 @@ msgstr "Spectator"
 msgid "Viewers ({0})"
 msgstr "Spectatori ({0})"
 
-#: src/components/ui/ChannelListModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Voice"
 msgstr "Voice"
 
@@ -5120,7 +5491,7 @@ msgstr "Volum pentru {0}"
 msgid "Waiting for {0} to accept…"
 msgstr "Se așteaptă ca {0} să accepte…"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Waiting for biometric prompt…"
 msgstr "Se așteaptă solicitarea biometrică…"
 
@@ -5128,7 +5499,7 @@ msgstr "Se așteaptă solicitarea biometrică…"
 msgid "Waiting for first step…"
 msgstr "Se așteaptă primul pas…"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Waiting for sign-in…"
 msgstr "Se așteaptă autentificarea…"
 
@@ -5154,19 +5525,15 @@ msgstr "A fost dat afară din canal"
 msgid "Watch full screen"
 msgstr "Urmărește pe tot ecranul"
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Watch the raw IRC traffic for this server"
-msgstr "Urmăriți traficul IRC brut al acestui server"
-
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "Nu stocăm comunicațiile dvs. IRC pe serverele noastre"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "WebAuthn is not available in this environment."
 msgstr "WebAuthn nu este disponibil în acest mediu."
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Webhook"
 msgstr "Webhook"
 
@@ -5179,7 +5546,7 @@ msgstr "Bine ai venit la {__DEFAULT_IRC_SERVER_NAME__}!"
 msgid "Welcome to {0}!"
 msgstr "Bine ai venit la {0}!"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Welcome to the channel!"
 msgstr "Bine ai venit în canal!"
 
@@ -5194,10 +5561,6 @@ msgstr "Ce înseamnă aceasta:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Ce faci"
-
-#: src/components/ui/UserSettings.tsx
-msgid "What's on your mind?"
-msgstr "La ce te gândești?"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
@@ -5257,17 +5620,13 @@ msgstr "Ești pe cale să deschizi un link extern:"
 msgid "You are an IRC Operator"
 msgstr "Ești un Operator IRC"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "You are no longer in this channel"
+msgstr "Nu mai sunteți în acest canal"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Ai câteva minute pentru a alege o parolă nouă."
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "You have no 2FA credentials registered."
-msgstr "Nu ai credențiale 2FA înregistrate."
-
-#: src/components/ui/UserSettings.tsx
-msgid "You have unsaved changes. Are you sure you want to close without saving?"
-msgstr "Ai modificări nesalvate. Ești sigur că vrei să închizi fără să salvezi?"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "You haven't created any invite links yet. Use the form above to mint your first one."
@@ -5318,7 +5677,7 @@ msgstr "Amprenta dvs."
 msgid "Your invite links"
 msgstr "Linkurile tale de invitație"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Your messages and settings are stored locally on your device"
 msgstr "Mesajele și setările dvs. sunt stocate local pe dispozitivul dvs."
 
@@ -5375,6 +5734,10 @@ msgstr "your@email.com"
 #: src/components/ui/AddServerModal.tsx
 msgid "YourNickname"
 msgstr "NumeleTău"
+
+#: src/components/message/EmbedPlayer.tsx
+msgid "YouTube video player"
+msgstr "Player video YouTube"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"

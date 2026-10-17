@@ -32,7 +32,21 @@ msgstr "(hanteras av Obby)"
 msgid "(inherit)"
 msgstr "(ärv)"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "(not set)"
+msgstr "(inte angivet)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "(set, edit to change)"
+msgstr "(angivet, redigera för att ändra)"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "(stored, leave blank to keep)"
+msgstr "(sparat, lämna tomt för att behålla)"
+
+#: src/components/pages/BotsPage.tsx
 msgid "(suspended)"
 msgstr "(avstängd)"
 
@@ -71,7 +85,7 @@ msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Visa 1 till} other {Visa {1} till}}"
 
 #. placeholder {0}: pack.emoji_count
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "{0} emoji"
 msgstr "{0} emoji"
 
@@ -81,7 +95,7 @@ msgid "{0} has invited you to play."
 msgstr "{0} har bjudit in dig att spela."
 
 #. placeholder {0}: formatIdle(s.idle)
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "{0} idle"
 msgstr "{0} inaktiv"
 
@@ -123,20 +137,20 @@ msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} sänder · {1} tittar"
 
 #. placeholder {0}: Math.floor(secs / 86400)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}d ago"
 msgstr "{0}d sedan"
 
 #. placeholder {0}: Math.floor(secs / 3600)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}h ago"
 msgstr "{0}h sedan"
 
 #. placeholder {0}: Math.floor(secs / 60)
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0}m ago"
 msgstr "{0}m sedan"
 
@@ -148,10 +162,6 @@ msgstr "{activeCount, plural, one {Laddar upp 1 fil} other {Laddar upp # filer}}
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 gång} other {{c} gånger}}"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "{days} days"
-msgstr "{days} dagar"
-
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 uppladdning misslyckades} other {# uppladdningar misslyckades}}"
@@ -159,10 +169,6 @@ msgstr "{failedCount, plural, one {1 uppladdning misslyckades} other {# uppladdn
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
 msgstr "{hiddenLines, plural, one {# till rad} other {# till rader}}"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "{hours} hours"
-msgstr "{hours} timmar"
 
 #: src/store/handlers/users.ts
 msgid "{inviter} has invited {target} to join {channel}"
@@ -175,10 +181,6 @@ msgstr "{inviter} bjöd in dig att gå med i {channel}"
 #: src/lib/eventGrouping.ts
 msgid "{joinCount, plural, one {joined} other {joined {joinCount} times}}"
 msgstr "{joinCount, plural, one {gick med} other {gick med {joinCount} gånger}}"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "{minutes} minutes"
-msgstr "{minutes} minuter"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "{name} · input"
@@ -240,10 +242,6 @@ msgstr "{safeName} är inte längre tillgänglig på servern."
 msgid "{safeName} was changed on the server, so it no longer decrypts."
 msgstr "{safeName} ändrades på servern och går inte längre att dekryptera."
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "{seconds} seconds"
-msgstr "{seconds} sekunder"
-
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption, so this conversation is being set up again."
 msgstr "{sender} startade om krypteringen, så den här konversationen sätts upp igen."
@@ -252,6 +250,10 @@ msgstr "{sender} startade om krypteringen, så den här konversationen sätts up
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} startade om krypteringen. Den här konversationen förblir okrypterad tills du godkänner."
 
+#: src/components/layout/ProfilePane.tsx
+msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
+msgstr "{sessionCount} sessioner anslutna. Logga in med det här kontot eller be en IRC-operatör om att se detaljerna."
+
 #: src/components/message/WorkflowLine.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
 msgstr "{stepCount, plural, one {# steg} other {# steg}}"
@@ -259,6 +261,10 @@ msgstr "{stepCount, plural, one {# steg} other {# steg}}"
 #: src/components/message/JsonLogMessage.tsx
 msgid "{title} Client"
 msgstr "{title} klient"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "{total, plural, one {# channel} other {# channels}}"
+msgstr "{total, plural, one {# kanal} other {# kanaler}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{totalLines, plural, one {# line} other {# lines}}"
@@ -276,11 +282,11 @@ msgstr "{userCount} användare"
 msgid "{userCount} watching"
 msgstr "{userCount} tittar"
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "*channel*"
 msgstr "*kanal*"
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "*spam*"
 msgstr "*skräp*"
 
@@ -292,18 +298,21 @@ msgstr "#kanal"
 msgid "#channel (optional)"
 msgstr "#kanal (valfritt)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "#new-channel-name"
 msgstr "#nytt-kanalnamn"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "#overflow"
 msgstr "#overflow"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-msgid "← Back"
-msgstr "← Tillbaka"
+#: src/components/ui/QuickActions.tsx
+msgid "↑ ↓ to move"
+msgstr "↑ ↓ flytta"
+
+#: src/components/ui/QuickActions.tsx
+msgid "↵ to open"
+msgstr "↵ öppna"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -336,22 +345,22 @@ msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious
 msgstr "<0>⚠️ Var försiktig!</0> Öppna bara länkar från betrodda källor. Skadliga länkar kan äventyra din säkerhet eller integritet."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
-msgid "<0>⚠️ Security Risk!</0> This connection may be vulnerable to interception or man-in-the-middle attacks."
-msgstr "<0>⚠️ Säkerhetsrisk!</0> Den här anslutningen kan vara sårbar för avlyssning eller man-in-the-middle-attacker."
-
-#: src/components/ui/LinkSecurityWarningModal.tsx
-msgid "<0>💡 Recommendation:</0> Only proceed if you trust this server and understand the risks. Avoid sharing sensitive information or passwords over this connection."
-msgstr "<0>💡 Rekommendation:</0> Fortsätt bara om du litar på den här servern och förstår riskerna. Undvik att dela känslig information eller lösenord via den här anslutningen."
+msgid "<0>Recommendation:</0> Only proceed if you trust this server and understand the risks. Avoid sharing sensitive information or passwords over this connection."
+msgstr "<0>Rekommendation:</0> Fortsätt bara om du litar på den här servern och förstår riskerna. Undvik att dela känslig information eller lösenord över den här anslutningen."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Risk:</0> Känslig information (meddelanden, privata konversationer, autentiseringsuppgifter) kan exponeras för nätverksadministratörer eller angripare som befinner sig mellan IRC-servrar."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
-msgstr "2FA är för närvarande obligatoriskt för det här kontot. Om du tar bort den enda registrerade inloggningsuppgiften kan du inte logga in. Lägg först till en annan uppgift eller inaktivera 2FA nedan."
+#: src/components/ui/LinkSecurityWarningModal.tsx
+msgid "<0>Security Risk!</0> This connection may be vulnerable to interception or man-in-the-middle attacks."
+msgstr "<0>Säkerhetsrisk!</0> Den här anslutningen kan vara sårbar för avlyssning eller man-in-the-middle-attacker."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA first."
+msgstr "2FA krävs för närvarande för det här kontot. Om du tar bort den enda registrerade inloggningsmetoden låser du dig ute. Lägg till en annan metod först, eller inaktivera 2FA först."
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "6-digit code"
 msgstr "6-siffrig kod"
 
@@ -373,19 +382,32 @@ msgstr "Acceptera krypterad chatt"
 msgid "Accept new key"
 msgstr "Acceptera ny nyckel"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Access control"
+msgstr "Åtkomstkontroll"
+
 #: src/lib/mediaDevices.ts
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Åtkomst nekades. Tillåt åtkomst till kamera och mikrofon i webbläsarens eller systemets inställningar och försök igen."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Account"
 msgstr "Konto"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Account name"
+msgstr "Kontonamn"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Kontonamn"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Account password"
+msgstr "Kontolösenord"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Password"
@@ -409,46 +431,55 @@ msgstr "Konto:"
 
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/ModerationModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Action"
 msgstr "Åtgärd"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Actions"
+msgstr "Åtgärder"
+
+#: src/components/pages/BotsPage.tsx
 msgid "active"
 msgstr "aktiv"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Activity"
 msgstr "Aktivitet"
 
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/settings/CustomMentionsField.tsx
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Add"
 msgstr "Lägg till"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Add a credential"
+msgstr "Lägg till en inloggningsmetod"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Add a credential to enable 2FA"
 msgstr "Lägg till en inloggningsuppgift för att aktivera 2FA"
+
+#: src/components/ui/ReactionModal.tsx
+msgid "Add a reaction"
+msgstr "Lägg till en reaktion"
 
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Lägg till ett ord eller en fras..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
 msgstr "Lägg till en autentiseringsapp eller en biometrisk nyckel / säkerhetsnyckel för att kräva en andra faktor vid inloggning."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Add authenticator app"
-msgstr "Lägg till autentiseringsapp"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add ban"
+msgstr "Lägg till bannlysning"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lägg till banmask (t.ex. nick!*@*, *!*@host.com)"
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Add biometric / security key"
-msgstr "Lägg till biometrisk nyckel / säkerhetsnyckel"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -458,16 +489,24 @@ msgstr "lägg till kanal"
 msgid "Add channel"
 msgstr "Lägg till kanal"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Add emoji"
 msgstr "Lägg till emoji"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add exception"
+msgstr "Lägg till undantag"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lägg till undantagsmask (t.ex. nick!*@*, *!*@host.com)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Add invitation"
+msgstr "Lägg till inbjudan"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Add invitation mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lägg till inbjudningsmask (t.ex. nick!*@*, *!*@host.com)"
 
@@ -496,6 +535,10 @@ msgstr "Lägg till reaktion {emoji}"
 msgid "Add Rule"
 msgstr "Lägg till regel"
 
+#: src/components/ui/FloodSettingsModal.tsx
+msgid "Add rules that set which activity to watch and what to do when a threshold is exceeded."
+msgstr "Lägg till regler som anger vilken aktivitet som ska övervakas och vad som ska göras när en gräns överskrids."
+
 #: src/components/layout/ServerList.tsx
 msgid "Add Server"
 msgstr "Lägg till server"
@@ -505,7 +548,7 @@ msgid "Add your first network"
 msgstr "Lägg till ditt första nätverk"
 
 #. placeholder {0}: c.createdAt
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "added {0}"
 msgstr "lade till {0}"
 
@@ -513,35 +556,27 @@ msgstr "lade till {0}"
 msgid "Additional Details"
 msgstr "Ytterligare detaljer"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Additional Information"
-msgstr "Ytterligare information"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Additional words or phrases to highlight"
 msgstr "Ytterligare ord eller fraser att markera"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Admin"
 msgstr "Admin"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Advanced"
 msgstr "Avancerat"
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "Advanced Filters"
-msgstr "Avancerade filter"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Album"
 msgstr "Album"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "Alla"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "All Content"
 msgstr "Allt innehåll"
 
@@ -581,43 +616,35 @@ msgstr "Tillåt mikrofonåtkomst för att spela in ljud."
 msgid "Already in {0}"
 msgstr "Redan i {0}"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
-msgstr "Visar också förhandsvisningar från YouTube, Vimeo, SoundCloud och liknande kända tjänster."
+#: src/components/pages/SettingsPage.tsx
+msgid "Also preview YouTube, Vimeo, SoundCloud, and similar known services."
+msgstr "Visa även förhandsvisningar för YouTube, Vimeo, SoundCloud och liknande kända tjänster."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Alt text (optional)"
 msgstr "Alternativ text (valfritt)"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
-msgstr "Alternativt namn för visning i gränssnittet. Får innehålla mellanslag, emoji och specialtecken. Det riktiga kanalnamnet ({channelName}) används fortfarande för IRC-kommandon."
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Mängd"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Anonymous Analytics:"
 msgstr "Anonym analys:"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Apply"
-msgstr "Tillämpa"
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "App"
+msgstr "App"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Apply Filters & Refresh"
-msgstr "Tillämpa filter och uppdatera"
+#: src/components/pages/SettingsPage.tsx
+msgid "Appearance"
+msgstr "Utseende"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Applying..."
-msgstr "Tillämpar..."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Apply and refresh"
+msgstr "Verkställ och uppdatera"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "Godkänn"
@@ -640,7 +667,11 @@ msgstr "är nu känd som **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Är du säker på att du vill ta bort det här meddelandet? Den här åtgärden kan inte ångras."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
+msgstr "Be serveradministratören att annonsera en backend-URL (draft/authtoken eller obby.world/FILEHOST) för att hantera paket."
+
+#: src/components/layout/ProfilePane.tsx
 msgid "ASN"
 msgstr "ASN"
 
@@ -653,6 +684,7 @@ msgstr "Bifoga"
 msgid "Attachment options"
 msgstr "Bilagealternativ"
 
+#: src/components/pages/SettingsPage.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Audio"
 msgstr "Ljud"
@@ -661,27 +693,37 @@ msgstr "Ljud"
 msgid "Audio position"
 msgstr "Ljudposition"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Audio Processing"
+msgstr "Ljudbearbetning"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Autentisera som IRC-operatör för administrativ åtkomst"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate now"
 msgstr "Autentisera nu"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Authenticate on connect"
 msgstr "Autentisera vid anslutning"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Authenticated"
 msgstr "Autentiserad"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Authenticated Account"
-msgstr "Autentiserat konto"
+#: src/components/pages/pageSections.tsx
+msgid "Authentication"
+msgstr "Autentisering"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Authenticator app"
+msgstr "Autentiseringsapp"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Authenticator app (TOTP)"
 msgstr "Autentiseringsapp (TOTP)"
 
@@ -709,7 +751,7 @@ msgstr "Autentisera automatiskt som operatör vid anslutning"
 msgid "Automatically switch to single line for short messages"
 msgstr "Växla automatiskt till enkel rad för korta meddelanden"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Avatar"
 msgstr "Avatar"
@@ -720,12 +762,11 @@ msgstr "Förhandsvisning av avatar"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Away"
 msgstr "Borta"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away from keyboard"
 msgstr "Borta från tangentbordet"
@@ -734,21 +775,20 @@ msgstr "Borta från tangentbordet"
 msgid "Away message"
 msgstr "Bortameddelande"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Away Message"
 msgstr "Borta-meddelande"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Away:"
 msgstr "Frånvarande:"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/EditServerModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/ui/page/PageShell.tsx
+#: src/components/ui/page/PageShell.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Tillbaka"
 
@@ -757,6 +797,13 @@ msgctxt "camera facing"
 msgid "Back"
 msgstr "Bak"
 
+#. placeholder {0}: channel.name
+#. placeholder {0}: pm.username
+#: src/components/ui/page/PageShell.tsx
+#: src/components/ui/page/PageShell.tsx
+msgid "Back to {0}"
+msgstr "Tillbaka till {0}"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
 msgstr "Tillbaka till bild"
@@ -764,6 +811,11 @@ msgstr "Tillbaka till bild"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Back to network list"
 msgstr "Tillbaka till nätverkslistan"
+
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Back to Settings"
+msgstr "Tillbaka till inställningar"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -793,64 +845,89 @@ msgstr "Banna användare (via hostmask)"
 msgid "Ban User (by Nickname)"
 msgstr "Banna användare (via nick)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Bans"
 msgstr "Banningar"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Biometric / security key"
 msgstr "Biometrisk nyckel / säkerhetsnyckel"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block color codes (+c)"
+msgstr "Blockera färgkoder (+c)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block CTCP commands in the channel"
+msgstr "Blockera CTCP-kommandon i kanalen"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block kicks."
+msgstr "Blockera kickar."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block messages containing mIRC color codes"
+msgstr "Blockera meddelanden som innehåller mIRC-färgkoder"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block messages from users outside the channel."
+msgstr "Blockera meddelanden från användare utanför kanalen."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block nickname changes."
+msgstr "Blockera nickbyten."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block NOTICE."
+msgstr "Blockera NOTICE."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block the /INVITE command."
+msgstr "Blockera kommandot /INVITE."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Block the /KNOCK command."
+msgstr "Blockera kommandot /KNOCK."
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Bot"
 msgstr "Bot"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "BOT"
 msgstr "BOT"
 
-#: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Bot Commands"
 msgstr "Bot-kommandon"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Bot hasn't registered any slash commands yet."
-msgstr "Botten har inte registrerat några snedstreckskommandon än."
 
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Bot in this channel"
 msgstr "Bot i den här kanalen"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
 msgid "Bots"
 msgstr "Bottar"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Bots on this network"
-msgstr "Bottar i detta nätverk"
 
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Ta fram det här fönstret och försök igen."
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Browse all channels on the server"
-msgstr "Bläddra bland alla kanaler på servern"
+#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Browse channels"
+msgstr "Bläddra bland kanaler"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse Channels"
 msgstr "Bläddra bland kanaler"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Browser does not expose WebAuthn"
 msgstr "Webbläsaren exponerar inte WebAuthn"
 
@@ -858,10 +935,11 @@ msgstr "Webbläsaren exponerar inte WebAuthn"
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Webbläsare visar dina högtalare först när du har tillåtit åtkomst till en mikrofon eller kamera. Inget spelas in."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Calls"
 msgstr "Samtal"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -873,18 +951,20 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
 msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -893,10 +973,7 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -924,7 +1001,7 @@ msgstr "avbryts"
 msgid "Centre on your location"
 msgstr "Centrera på din plats"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Cert FP"
 msgstr "Cert FP"
 
@@ -933,6 +1010,11 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Ändra accentfärg"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Change or reset the password for your account."
+msgstr "Ändra eller återställ lösenordet för ditt konto."
+
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Change password"
@@ -958,12 +1040,11 @@ msgstr "Bytte nick"
 msgid "changed the topic to: {topic}"
 msgstr "ändrade ämnet till: {topic}"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "channel"
 msgstr "kanal"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Channel"
 msgstr "Kanal"
 
@@ -971,21 +1052,17 @@ msgstr "Kanal"
 msgid "Channel Admin"
 msgstr "Kanaladmin"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Avatar"
-msgstr "Kanalavatar"
-
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel avatar preview"
 msgstr "Förhandsvisning av kanalavatar"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Channel bot — only in joined channels"
-msgstr "Kanalbot — endast i anslutna kanaler"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel behavior"
+msgstr "Kanalbeteende"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Display Name"
-msgstr "Kanalens visningsnamn"
+#: src/components/pages/BotsPage.tsx
+msgid "Channel bot, only in joined channels"
+msgstr "Kanalbot, endast i anslutna kanaler"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Half Operator"
@@ -996,21 +1073,29 @@ msgstr "Kanal-halvoperatör"
 msgid "Channel has been renamed from {oldName} to {newName} by {user}{0}"
 msgstr "Kanalen har döpts om från {oldName} till {newName} av {user}{0}"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel history (+H)"
+msgstr "Kanalhistorik (+H)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Channel Information"
 msgstr "Kanalinformation"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Key (+k)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel key (+k)"
 msgstr "Kanalnyckel (+k)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Name"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel link (+L)"
+msgstr "Kanallänk (+L)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel name"
 msgstr "Kanalnamn"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Channel Name Mask"
-msgstr "Kanalnamns-mask"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Channel name mask"
+msgstr "Kanalnamnmask"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Operator"
@@ -1020,8 +1105,12 @@ msgstr "Kanaloperatör"
 msgid "Channel Owner"
 msgstr "Kanalägare"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel Settings"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Channel properties"
+msgstr "Kanalegenskaper"
+
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Channel settings"
 msgstr "Kanalinställningar"
 
 #: src/lib/clientCommands.ts
@@ -1032,32 +1121,28 @@ msgstr "Kanal att gå med i (#namn)"
 msgid "Channel to leave (defaults to current)"
 msgstr "Kanal att lämna (standard är aktuell)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Kanalämne"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Channel won't appear in LIST or NAMES commands"
-msgstr "Kanalen visas inte i LIST- eller NAMES-kommandon"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "channel-name"
 msgstr "kanalnamn"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Channel-scoped"
 msgstr "Kanalspecifik"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/ui/HomeScreen.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Channels"
 msgstr "Kanaler"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Channels on {networkName}"
-msgstr "Kanaler på {networkName}"
+#: src/components/pages/SettingsPage.tsx
+msgid "Chat"
+msgstr "Chatt"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1076,8 +1161,8 @@ msgid "Choose a file with an extension. The file host does not accept files with
 msgstr "Välj en fil med filändelse. Filvärden accepterar inte filer utan."
 
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
-msgstr "Välj en fördefinierad flödeskyddsprofil. Dessa profiler ger balanserade skyddsinställningar för olika användningsfall."
+msgid "Choose a predefined flood protection profile for common use cases."
+msgstr "Välj en fördefinierad flood-skyddsprofil för vanliga användningsfall."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
@@ -1091,11 +1176,19 @@ msgstr "Välj en mindre fil. Den här är för stor för filvärden."
 msgid "Choose file"
 msgstr "Välj fil"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Choose how much external media loads in chat."
+msgstr "Välj hur mycket extern media som laddas i chatten."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Choose microphone and camera"
 msgstr "Välj mikrofon och kamera"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Choose sort order"
+msgstr "Välj sorteringsordning"
+
+#: src/components/pages/pageSections.tsx
 msgid "Choose the microphone, camera, and speaker calls use"
 msgstr "Välj mikrofonen, kameran och högtalaren som samtal använder"
 
@@ -1111,8 +1204,9 @@ msgstr "Välj din kamera och förhandsgranska vad den ser"
 msgid "Choose your microphone and preview its input level"
 msgstr "Välj din mikrofon och förhandsgranska dess ingångsnivå"
 
+#: src/components/pages/RawLogPage.tsx
+#: src/components/pages/RawLogPage.tsx
 #: src/components/ui/AvatarUpload.tsx
-#: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
 msgstr "Rensa"
 
@@ -1143,11 +1237,6 @@ msgstr "Klicka för att kopiera"
 msgid "Click to copy as JSON"
 msgstr "Klicka för att kopiera som JSON"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-msgid "Click to join {channel}"
-msgstr "Klicka för att gå med i {channel}"
-
 #: src/components/message/MessageReply.tsx
 msgid "Click to jump to message"
 msgstr "Klicka för att hoppa till meddelandet"
@@ -1160,35 +1249,20 @@ msgstr "klient"
 msgid "Client"
 msgstr "Klient"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Client Limit (+l)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Client limit (+l)"
 msgstr "Klientgräns (+l)"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/BouncerDisconnectConfirmModal.tsx
-#: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/RawLogViewer.tsx
-#: src/components/ui/ReactionModal.tsx
+#: src/components/ui/QuickActions.tsx
 #: src/components/ui/TicTacToeModal.tsx
-#: src/components/ui/TicTacToeModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/lib/modal/BaseModal.tsx
 msgid "Close"
 msgstr "Stäng"
 
@@ -1199,10 +1273,6 @@ msgstr "Stäng kommentarer"
 #: src/components/layout/ChannelList.tsx
 msgid "Close conversation"
 msgstr "Stäng konversationen"
-
-#: src/lib/modal/BaseModal.tsx
-msgid "Close modal"
-msgstr "Stäng dialog"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Close popped out server notices"
@@ -1216,6 +1286,10 @@ msgstr "Stäng visaren"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Stäng arbetsflöde"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Code accepted."
+msgstr "Koden godkändes."
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
@@ -1231,7 +1305,6 @@ msgstr "Dölj medlemslistan"
 msgid "Collapse workflow"
 msgstr "Dölj arbetsflöde"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Color"
 msgstr "Färg"
@@ -1244,7 +1317,7 @@ msgstr "Färg och formatering"
 msgid "Command provided by the IRC server"
 msgstr "Kommando från IRC-servern"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
 msgstr "Kommandon läses in…"
 
@@ -1262,23 +1335,27 @@ msgstr "Kommentarer ({commentCount})"
 msgid "complete"
 msgstr "färdig"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "config-defined"
 msgstr "konfigurationsdefinierad"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "Konfigurationsdefinierad bot. Redigera obbyircd.conf och kör /REHASH för att ändra tillstånd."
 
-#: src/components/ui/FloodSettingsModal.tsx
-msgid "Configure detailed flood protection rules. Each rule specifies what type of activity to monitor and what action to take when thresholds are exceeded."
-msgstr "Konfigurera detaljerade flödeskyddsregler. Varje regel anger vilken typ av aktivitet som ska övervakas och vilken åtgärd som ska vidtas när gränser överskrids."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Configure"
+msgstr "Konfigurera"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Configure notification sounds and highlights"
 msgstr "Konfigurera aviseringsljud och markeringar"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Confirm authenticator app"
+msgstr "Bekräfta autentiseringsappen"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Confirm enrolment"
 msgstr "Bekräfta registrering"
 
@@ -1287,7 +1364,7 @@ msgstr "Bekräfta registrering"
 msgid "Confirm new password"
 msgstr "Bekräfta nytt lösenord"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Confirm remove"
 msgstr "Bekräfta borttagning"
 
@@ -1308,16 +1385,12 @@ msgstr "Anslut en kamera för att dela video"
 msgid "Connect a microphone to talk"
 msgstr "Anslut en mikrofon för att prata"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Anslut till en server för att hantera operatörsinställningar."
 
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "connected from {sessionCount} sessions"
-msgstr "ansluten från {sessionCount} sessioner"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "Connected To"
+#: src/components/layout/ProfilePane.tsx
+msgid "Connected to"
 msgstr "Ansluten till"
 
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -1332,8 +1405,7 @@ msgstr "Ansluter..."
 msgid "Connecting…"
 msgstr "Ansluter…"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Connection"
 msgstr "Anslutning"
 
@@ -1353,23 +1425,23 @@ msgstr "Anslutning: bra"
 msgid "Connection: poor"
 msgstr "Anslutning: dålig"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Contact"
 msgstr "Kontakt"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Content filtering"
+msgstr "Innehållsfiltrering"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Continue Anyway"
 msgstr "Fortsätt ändå"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Control how much external media is loaded in chat."
-msgstr "Styr hur mycket externt media som laddas i chatten."
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Control how much external media is loaded. Off / Safe / Trusted Sources / All Content."
 msgstr "Styr hur mycket externt media som laddas. Av / Säkert / Betrodda källor / Allt innehåll."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Control media display and external content"
 msgstr "Styr medievisning och externt innehåll"
 
@@ -1380,14 +1452,16 @@ msgstr "Styr medievisning och externt innehåll"
 msgid "Copied"
 msgstr "Kopierat"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/CopyButton.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "Copy"
 msgstr "Kopiera"
 
-#: src/components/ui/RawLogViewer.tsx
+#: src/components/pages/RawLogPage.tsx
+#: src/components/pages/RawLogPage.tsx
 msgid "Copy all"
 msgstr "Kopiera allt"
 
@@ -1469,11 +1543,16 @@ msgstr "Kunde inte ladda GIF:ar. Sök igen för att försöka på nytt."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Kunde inte nå filvärden. Kontrollera anslutningen och försök igen."
 
+#. placeholder {0}: p.code
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Could not update password: {0}"
+msgstr "Kunde inte uppdatera lösenordet: {0}"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Kunde inte upprätta kryptering med {nick}."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Country"
 msgstr "Land"
 
@@ -1485,7 +1564,7 @@ msgstr "Skapa"
 msgid "Create a new invite link"
 msgstr "Skapa en ny inbjudningslänk"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Create and manage your invite links"
 msgstr "Skapa och hantera dina inbjudningslänkar"
 
@@ -1494,20 +1573,20 @@ msgstr "Skapa och hantera dina inbjudningslänkar"
 msgid "Create folder"
 msgstr "Skapa mapp"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Create pack"
 msgstr "Skapa paket"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Created After (min ago)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Created after (min ago)"
 msgstr "Skapad efter (min sedan)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Created Before (min ago)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Created before (min ago)"
 msgstr "Skapad före (min sedan)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Creating…"
 msgstr "Skapar…"
 
@@ -1515,8 +1594,12 @@ msgstr "Skapar…"
 msgid "Current avatar"
 msgstr "Nuvarande avatar"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Custom emoji pack"
+msgstr "Eget emojipaket"
+
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Custom emoji packs"
 msgstr "Anpassade emojipaket"
 
@@ -1532,11 +1615,11 @@ msgstr "Anpassade omnämnanden"
 msgid "Custom notification sound file"
 msgstr "Anpassad aviseringsljudfil"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Customize your IRC client experience"
 msgstr "Anpassa din IRC-klientupplevelse"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Data Collection"
 msgstr "Datainsamling"
 
@@ -1562,7 +1645,7 @@ msgstr "Dekrypterar {safeName}…"
 msgid "Deep dive"
 msgstr "Fördjupning"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Default"
 msgstr "Standard"
 
@@ -1578,16 +1661,24 @@ msgstr "Standardmeddelande när du markerar dig som borta"
 msgid "Default Nickname"
 msgstr "Standard-nick"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Delay joins (+D)"
+msgstr "Fördröj inträden (+D)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Delay showing joins until someone speaks"
+msgstr "Visa inträden först när någon pratar"
+
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete"
 msgstr "Ta bort"
 
 #. placeholder {0}: bot.nick
-#: src/components/ui/BotsModal.tsx
-msgid "Delete bot {0}?  This soft-deletes the database row; reuse the nick later only after a /REHASH."
-msgstr "Ta bort botten {0}?  Detta mjukraderar databasraden; återanvänd smeknamnet senare först efter en /REHASH."
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot {0}? Run /REHASH before you register this nick again."
+msgstr "Ta bort boten {0}? Kör /REHASH innan du registrerar det här nicket igen."
 
 #: src/components/layout/ChannelList.tsx
 msgid "Delete folder"
@@ -1601,11 +1692,11 @@ msgstr "Ta bort meddelande"
 msgid "Delete network"
 msgstr "Ta bort nätverk"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Ta bort paket"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
 msgstr "Ta bort paketet \"{packId}\"? Alla emoji i det tas också bort."
 
@@ -1621,7 +1712,7 @@ msgstr "Ta bort det här meddelandet? Det kan inte ångras."
 msgid "Delete this network?"
 msgstr "Ta bort det här nätverket?"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "deleted"
 msgstr "raderad"
 
@@ -1634,7 +1725,7 @@ msgstr "Gör om till tittare"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beskrivning (valfri, t.ex. \"Betatestare Q3\")"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Beskrivning (valfritt)"
 
@@ -1648,19 +1739,23 @@ msgstr "Enhetsnamn döljs tills du tillåter kameraåtkomst."
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Enhetsnamn döljs tills du tillåter mikrofonåtkomst."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Devices"
+msgstr "Enheter"
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Disable"
 msgstr "Inaktivera"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
-msgstr "Inaktivera 2FA. Ange en 6-siffrig kod från någon av dina registrerade autentiseringsappar för att bekräfta."
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Disable 2FA"
+msgstr "Inaktivera 2FA"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Inaktivera tryck-och-prata"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Disabled"
 msgstr "Inaktiverad"
 
@@ -1711,16 +1806,15 @@ msgstr "Avfärda"
 msgid "Dismiss notification"
 msgstr "Stäng avisering"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Display"
-msgstr "Visning"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display all server events in chat"
 msgstr "Visa alla serverhändelser i chatten"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Display name"
+msgstr "Visningsnamn"
+
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
 msgstr "Visningsnamn"
@@ -1784,7 +1878,7 @@ msgstr "Släpp filer här för att bifoga"
 msgid "e.g. <0>wss://host:port/socket</0>"
 msgstr "t.ex. <0>wss://host:port/socket</0>"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "e.g., 100:1440"
 msgstr "t.ex. 100:1440"
 
@@ -1793,8 +1887,9 @@ msgid "Echo Cancellation"
 msgstr "Ekoeliminering"
 
 #: src/components/layout/ConnectionStrip.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
 msgstr "Redigera"
 
@@ -1804,7 +1899,6 @@ msgid "Edit {0}"
 msgstr "Redigera {0}"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Edit Channel"
 msgstr "Redigera kanal"
 
@@ -1819,8 +1913,8 @@ msgstr "Redigera kanalinställningar"
 msgid "Edit connection"
 msgstr "Redigera anslutning"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Edit Profile"
+#: src/components/layout/ProfilePane.tsx
+msgid "Edit profile"
 msgstr "Redigera profil"
 
 #: src/components/layout/BouncerServerGroup.tsx
@@ -1829,7 +1923,7 @@ msgstr "Redigera profil"
 msgid "Edit Server"
 msgstr "Redigera server"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "E-post:"
 
@@ -1841,11 +1935,12 @@ msgstr "Inbäddning"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Empty pack. Add some emoji."
 msgstr "Tomt paket. Lägg till några emoji."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
 msgstr "Aktivera 2FA"
 
@@ -1877,7 +1972,7 @@ msgstr "Aktivera aviseringar"
 msgid "Enable push-to-talk"
 msgstr "Aktivera tryck-och-prata"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enabled"
 msgstr "Aktiverad"
 
@@ -1961,23 +2056,38 @@ msgstr "Krypteringen med {nick} slutade fungera, så meddelandet skickades inte.
 msgid "End encryption"
 msgstr "Avsluta kryptering"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
 msgstr "Ange en 6-siffrig kod från någon av dina autentiseringsappar för att inaktivera 2FA."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "Ange en sexsiffrig kod från någon av dina registrerade autentiseringsappar för att bekräfta."
+
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Enter a channel name for channel-scoped packs."
 msgstr "Ange ett kanalnamn för kanalspecifika paket."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
+msgstr "Ange ett namn med valfria mellanslag, emojis eller symboler. IRC-kommandon använder fortfarande det riktiga namnet ({channelName})."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
+msgstr "Ange en URL. Använd {size} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{size}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Ange kontonamn..."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
+msgstr "Ange ett kontonamn för inloggning med SASL PLAIN innan du går med i kanaler. Lämna tomt för att ansluta anonymt."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
 msgstr "Ange standardsmeknamn..."
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter display name"
 msgstr "Ange visningsnamn"
@@ -1986,7 +2096,7 @@ msgstr "Ange visningsnamn"
 msgid "Enter nickname..."
 msgstr "Ange smeknamn..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Enter oper password"
 msgstr "Ange oper-lösenord"
 
@@ -1994,7 +2104,7 @@ msgstr "Ange oper-lösenord"
 msgid "Enter oper password..."
 msgstr "Ange oper-lösenord..."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Enter oper username"
 msgstr "Ange oper-användarnamn"
 
@@ -2002,11 +2112,14 @@ msgstr "Ange oper-användarnamn"
 msgid "Enter oper username..."
 msgstr "Ange oper-användarnamn..."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter parameters as [rules]:seconds, or build them with Configure."
+msgstr "Ange parametrar som [regler]:sekunder, eller bygg dem med Konfigurera."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter password..."
 msgstr "Ange lösenord..."
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter real name"
 msgstr "Ange riktigt namn"
@@ -2015,16 +2128,17 @@ msgstr "Ange riktigt namn"
 msgid "Enter reason (optional)"
 msgstr "Ange anledning (valfritt)"
 
+#. placeholder {0}: pending.account
 #: src/components/ui/TotpStepUpModal.tsx
-msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
-msgstr "Ange den 6-siffriga koden från din autentiseringsapp för att slutföra inloggningen som {account}."
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {0}."
+msgstr "Ange den sexsiffriga koden från din autentiseringsapp för att slutföra inloggningen som {0}."
 
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Enter the 6-digit code from your authenticator app to finish signing in."
 msgstr "Ange den 6-siffriga koden från din autentiseringsapp för att slutföra inloggningen."
 
+#: src/components/pages/TwoFactorPage.tsx
 #: src/components/ui/TotpStepUpModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Enter the 6-digit code from your authenticator app."
 msgstr "Ange den 6-siffriga koden från din autentiseringsapp."
 
@@ -2036,6 +2150,14 @@ msgstr "Ange den 6-siffriga koden från din e-post."
 msgid "Enter the account name you want to recover."
 msgstr "Ange namnet på kontot du vill återställa."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Enter the server password only if your network requires one. It is separate from your account password."
+msgstr "Ange serverlösenordet bara om ditt nätverk kräver ett. Det är skilt från ditt kontolösenord."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter the URL of an IRCv3 custom-emoji pack JSON document. Its shortcodes override the network pack in this channel. Leave blank for the network default."
+msgstr "Ange URL:en till ett JSON-dokument för ett IRCv3-emojipaket. Dess kortkoder ersätter nätverkspaketet i den här kanalen. Lämna tomt för nätverkets standard."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Ange användarnamn att bjuda in"
@@ -2043,6 +2165,14 @@ msgstr "Ange användarnamn att bjuda in"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
 msgstr "Ange ditt kontonamn. Vi skickar en 6-siffrig återställningskod till den verifierade adressen vi har registrerad."
+
+#: src/components/ui/QuickActions.tsx
+msgid "esc to close"
+msgstr "esc stäng"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Events"
+msgstr "Händelser"
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -2052,13 +2182,13 @@ msgstr "Exakt"
 msgid "ExampleNET"
 msgstr "ExempelNÄT"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Exceptions"
 msgstr "Undantag"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Exclude Channel Name Mask"
-msgstr "Uteslut kanalnamns-mask"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Exclude channel name mask"
+msgstr "Undanta kanalnamnmask"
 
 #: src/components/voice/VoiceVideoBand.tsx
 #: src/components/voice/VoiceVideoBand.tsx
@@ -2096,9 +2226,9 @@ msgstr "Expandera medlemslistan"
 msgid "Expand workflow"
 msgstr "Expandera arbetsflöde"
 
-#: src/components/ui/UserSettings.tsx
-msgid "Extended Profile"
-msgstr "Utökad profil"
+#: src/components/pages/SettingsPage.tsx
+msgid "Extended profile unavailable"
+msgstr "Utökad profil är inte tillgänglig"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "External Link Warning"
@@ -2135,17 +2265,35 @@ msgstr "Filserverbild"
 msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
 msgstr "Filer över {0} skickas som de är. Filvärden lagrar filen läsbar, och alla som får tag på länken kan öppna den."
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Filter channels..."
-msgstr "Filtrera kanaler..."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Filter bad words (+G)"
+msgstr "Filtrera stötande ord (+G)"
 
 #: src/components/ui/AutocompleteDropdown.tsx
 msgid "Filter members…"
 msgstr "Filtrera medlemmar…"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Filter out bad words with <censored>"
+msgstr "Filtrera bort stötande ord med <censored>"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Filters"
+msgstr "Filter"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Filters are unavailable on this server"
+msgstr "Filter är inte tillgängliga på den här servern"
+
 #: src/components/layout/NetworkMenu.tsx
 msgid "Find channels"
 msgstr "Hitta kanaler"
+
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Find channels, people, settings and actions"
+msgstr "Hitta kanaler, personer, inställningar och åtgärder"
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Finding your location…"
@@ -2155,13 +2303,25 @@ msgstr "Hittar din plats…"
 msgid "First message to send"
 msgstr "Första meddelandet att skicka"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood parameters (+f)"
+msgstr "Flood-parametrar (+f)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood profile (+F)"
+msgstr "Flood-profil (+F)"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Flood Profile (+F)"
 msgstr "Flödesprofil (+F)"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Flood protection"
+msgstr "Flood-skydd"
+
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Flood Protection Settings"
-msgstr "Inställningar för flödeskydd"
+msgid "Flood protection settings"
+msgstr "Inställningar för flood-skydd"
 
 #: src/components/ui/WorkflowOutputViewer.tsx
 msgid "Fold all"
@@ -2179,9 +2339,17 @@ msgstr "Av säkerhetsskäl har alla befintliga sessioner för det här kontot lo
 msgid "Forfeit"
 msgstr "Ge upp"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget credentials"
+msgstr "Glöm inloggningsuppgifter"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Glömt lösenord"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forgot password?"
+msgstr "Glömt lösenordet?"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2210,19 +2378,16 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line (globalt ban)"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Gateway connected"
-msgstr "Gateway ansluten"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "gateway online"
 msgstr "gateway online"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/pageSections.tsx
 msgid "General"
 msgstr "Allmänt"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "Allmän supportkanal"
 
@@ -2234,7 +2399,7 @@ msgstr "Hämtar fler meddelanden..."
 msgid "GIF"
 msgstr "GIF"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "GitHub:"
 msgstr "GitHub:"
 
@@ -2254,7 +2419,7 @@ msgstr "GZ-Line"
 msgid "GZ-Line (Global Z-Line)"
 msgstr "GZ-Line (global Z-Line)"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
 
@@ -2265,6 +2430,10 @@ msgstr "Hanteras av Obby innan det skickas"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
 msgstr "Dölj kommentarer"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide the channel from LIST and NAMES."
+msgstr "Dölj kanalen från LIST och NAMES."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2280,28 +2449,24 @@ msgstr "Hem"
 msgid "HOME"
 msgstr "HEM"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Homepage"
 msgstr "Hemsida"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "Host"
 msgstr "Host"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Hostname"
 msgstr "Värdnamn"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Värdnamn:"
-
-#: src/components/ui/FloodSettingsModal.tsx
-msgid "How many seconds to monitor for flood activity before resetting counters"
-msgstr "Hur många sekunder flödaktivitet ska övervakas innan räknarna återställs"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2315,26 +2480,38 @@ msgstr "https://example.com/avatar.jpg"
 msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "https://example.com/avatar/{size}/channel.jpg"
 msgstr "https://example.com/avatar/{size}/channel.jpg"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "I'm Back"
+#: src/components/layout/ProfilePane.tsx
+msgid "I'm back"
 msgstr "Jag är tillbaka"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Ident"
 msgstr "Ident"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Identity"
+msgstr "Identitet"
+
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Idle"
 msgstr "Inaktiv"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "If {accountName} has a verified email on file, a code has been sent."
+msgstr "Om {accountName} har en verifierad e-postadress registrerad har en kod skickats."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Ignore List"
 msgstr "Ignorera-lista"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Ignore user"
+msgstr "Ignorera användare"
 
 #: src/components/ui/UserContextMenu.tsx
 msgid "Ignore User"
@@ -2370,6 +2547,7 @@ msgstr "Info:"
 msgid "Information regarding who invoked this command is provided by the bot and the sender cannot be verified by the server."
 msgstr "Information om vem som anropade det här kommandot tillhandahålls av boten och avsändaren kan inte verifieras av servern."
 
+#: src/components/pages/SettingsPage.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Input"
 msgstr "Inmatning"
@@ -2390,8 +2568,8 @@ msgstr "Ogiltigt mönsterformat. Använd formatet nick!user@host (jokertecken * 
 msgid "Invalid value"
 msgstr "Ogiltigt värde"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Invitations"
 msgstr "Inbjudningar"
 
@@ -2420,15 +2598,15 @@ msgstr "Bjud in användare"
 msgid "Invite User to {channelName}"
 msgstr "Bjud in användare till {channelName}"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Invite-Only (+i)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Invite-only (+i)"
 msgstr "Endast inbjudna (+i)"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "IP"
 msgstr "IP"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "IRC OP"
 msgstr "IRC OP"
 
@@ -2438,20 +2616,25 @@ msgstr "IRC OP"
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/MessageHeader.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "IRC Operator"
 msgstr "IRC-operatör"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "IRC operator only (+O)"
+msgstr "Endast IRC-operatörer (+O)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator password"
 msgstr "IRC-operatörslösenord"
 
-#: src/components/ui/EditServerModal.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "IRC-operatörens användarnamn"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "IRC Servers:"
 msgstr "IRC-servrar:"
 
@@ -2461,14 +2644,20 @@ msgid "is now known as **{newNick}**"
 msgstr "är nu känd som **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/QuickActions.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Join"
 msgstr "Gå med"
 
+#. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Join {0}"
 msgstr "Gå med i {0}"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Join {channel}"
+msgstr "Gå med i {channel}"
 
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
@@ -2494,7 +2683,8 @@ msgstr "Gå med i sändningen {channelName}"
 msgid "Join voice channel {channelName}"
 msgstr "Gå med i röstkanalen {channelName}"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "Joined"
 msgstr "Gick med"
 
@@ -2511,10 +2701,18 @@ msgstr "gick med och lämnade"
 msgid "Joined the channel"
 msgstr "Gick med i kanalen"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/InvitationsPanel.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "just now"
 msgstr "just nu"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep credentials"
+msgstr "Behåll inloggningsuppgifter"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Keep the channel when it empties. Only IRCops can set this."
+msgstr "Behåll kanalen när den blir tom. Endast IRC-operatörer kan ställa in detta."
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2529,12 +2727,11 @@ msgstr "Kill"
 msgid "Kill User"
 msgstr "Koppla från användare"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "Språk"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
 msgstr "Läs om hur vi hanterar dina uppgifter och skyddar din integritet."
 
@@ -2549,6 +2746,10 @@ msgstr "Läs mer om profiler →"
 #: src/lib/clientCommands.ts
 msgid "Leave a channel"
 msgstr "Lämna en kanal"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Leave blank to keep the stored credentials"
+msgstr "Lämna tomt för att behålla de sparade inloggningsuppgifterna"
 
 #: src/components/voice/VoiceDock.tsx
 #: src/components/voice/VoicePipOverlay.tsx
@@ -2581,6 +2782,26 @@ msgstr "lämnade {channelName} ({reason})"
 msgid "Left the channel"
 msgstr "Lämnade kanalen"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only clients on secure connections (SSL/TLS) join."
+msgstr "Tillåt endast klienter med säkra anslutningar (SSL/TLS) att gå med."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only IRC operators join. Only IRCops can set this."
+msgstr "Tillåt endast IRC-operatörer att gå med. Endast IRC-operatörer kan ställa in detta."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only operators change the topic."
+msgstr "Tillåt endast operatörer att ändra ämnet."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only registered users (+r) join."
+msgstr "Tillåt endast registrerade användare (+r) att gå med."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Let only users with voice or higher speak."
+msgstr "Tillåt endast användare med röst (Voice) eller högre att prata."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Let others know when you are typing"
 msgstr "Låt andra se när du skriver"
@@ -2589,12 +2810,12 @@ msgstr "Låt andra se när du skriver"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Link an OAuth identity"
-msgstr "Länka en OAuth-identitet"
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Link"
+msgstr "Länk"
 
 #. placeholder {0}: p.providerLabel
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Link with {0}"
 msgstr "Länka med {0}"
 
@@ -2614,36 +2835,28 @@ msgstr "Ladda äldre meddelanden för att nå svaret"
 msgid "Loading"
 msgstr "Laddar"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Loading channel modes..."
 msgstr "Laddar kanallägen..."
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "Loading channels..."
-msgstr "Laddar kanaler..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Loading GIFs..."
 msgstr "Laddar GIF:ar..."
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Loading more channels..."
-msgstr "Laddar fler kanaler..."
-
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Loading networks from your bouncer…"
 msgstr "Laddar nätverk från din bouncer…"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Loading WHOIS data..."
 msgstr "Laddar WHOIS-data..."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Loading…"
 msgstr "Laddar…"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Local Storage:"
 msgstr "Lokal lagring:"
 
@@ -2658,11 +2871,6 @@ msgstr "Platsåtkomst nekades. Tillåt platsåtkomst i webbläsarens eller syste
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Logga in igen"
-
-#. placeholder {0}: whoisData.account
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "logged in as {0}"
-msgstr "inloggad som {0}"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -2693,25 +2901,29 @@ msgstr "Hantera bottar"
 msgid "Manage Bots (loading {botsLoadingCount})"
 msgstr "Hantera bottar (laddar {botsLoadingCount})"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage packs"
 msgstr "Hantera paket"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
 msgstr "Hantera de nätverksomfattande och kanalspecifika emojipaket som den här servern publicerar via draft/EMOJI."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Manage two-factor authentication"
 msgstr "Hantera tvåfaktorsautentisering"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Manage your account and authentication"
 msgstr "Hantera ditt konto och autentisering"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Manage your profile information and metadata"
 msgstr "Hantera din profilinformation och metadata"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Manual oper"
+msgstr "Manuell OPER"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Mark as bot - usually 'on' or empty"
@@ -2725,6 +2937,10 @@ msgstr "Markera som läst"
 msgid "Mark as verified"
 msgstr "Markera som verifierad"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Mark the channel as private."
+msgstr "Markera kanalen som privat."
+
 #: src/lib/clientCommands.ts
 msgid "Mark yourself as away"
 msgstr "Markera dig själv som borta"
@@ -2737,8 +2953,8 @@ msgstr "Markera dig själv som tillbaka"
 msgid "Mark yourself back"
 msgstr "Markera dig som tillbaka"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Max Users"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Max users"
 msgstr "Max användare"
 
 #: src/components/message/ServerNoticesPopup.tsx
@@ -2750,10 +2966,6 @@ msgstr "Maximera"
 msgid "Maximum length is {0}"
 msgstr "Maximal längd är {0}"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Maximum number of users allowed in the channel. Leave empty for no limit."
-msgstr "Maximalt antal användare som tillåts i kanalen. Lämna tomt för ingen gräns."
-
 #. placeholder {0}: validation.max
 #: src/lib/settings/registry.ts
 msgid "Maximum value is {0}"
@@ -2762,11 +2974,11 @@ msgstr "Maximalt värde är {0}"
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Media"
 msgstr "Media"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Media Previews"
 msgstr "Medieförhandsvisningar"
@@ -2780,7 +2992,11 @@ msgstr "Medlemmar"
 msgid "Members — {0}"
 msgstr "Medlemmar — {0}"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/SettingsPage.tsx
+msgid "Mentions"
+msgstr "Omnämnanden"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Message"
 msgstr "Meddelande"
 
@@ -2856,8 +3072,8 @@ msgstr "Mikrofon {0}"
 msgid "Microphone level"
 msgstr "Mikrofonnivå"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Min Users"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Min users"
 msgstr "Min användare"
 
 #: src/components/message/ServerNoticesPopup.tsx
@@ -2878,9 +3094,6 @@ msgstr "Minimalt värde är {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Dialog"
 
@@ -2888,9 +3101,13 @@ msgstr "Dialog"
 msgid "Moderate User"
 msgstr "Moderera användare"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Moderated (+m)"
 msgstr "Modererad (+m)"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Modes"
+msgstr "Lägen"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
@@ -2905,6 +3122,8 @@ msgstr "Mer"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "More actions"
 msgstr "Fler åtgärder"
 
@@ -2947,7 +3166,7 @@ msgstr "Tysta aviseringar"
 msgid "Mute or unmute notification sounds"
 msgstr "Tysta eller aktivera aviseringsljud"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Name (e.g. iPhone)"
 msgstr "Namn (t.ex. iPhone)"
 
@@ -2965,9 +3184,14 @@ msgstr "nätverk"
 msgid "Network bound through soju bouncer"
 msgstr "Nätverk bundet via soju bouncer"
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Network Log"
+#: src/components/pages/RawLogPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Network log"
 msgstr "Nätverkslogg"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Network name"
+msgstr "Nätverksnamn"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2979,10 +3203,6 @@ msgstr "Nätverksnamn"
 msgid "Networks on {0}"
 msgstr "Nätverk på {0}"
 
-#: src/components/ui/QuickActions.tsx
-msgid "New DM"
-msgstr "Nytt DM"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
@@ -2991,6 +3211,10 @@ msgstr "ny mapp"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Nytt smeknamn"
+
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "New pack"
+msgstr "Nytt paket"
 
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
@@ -3022,9 +3246,9 @@ msgstr "nick!user@host (t.ex. spam*!*@*, *!*@badhost.com)"
 msgid "nickname"
 msgstr "smeknamn"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Nickname"
 msgstr "Nick"
@@ -3033,8 +3257,8 @@ msgstr "Nick"
 msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
 msgstr "Smeknamnet '{nick}' används redan, försöker med '{newNick}'"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Nickname is required"
 msgstr "Nick krävs"
 
@@ -3042,19 +3266,27 @@ msgstr "Nick krävs"
 msgid "Nickname to message"
 msgstr "Smeknamn att skriva till"
 
+#: src/components/pages/TwoFactorPage.tsx
+msgid "No 2FA credentials yet. Add one below."
+msgstr "Inga 2FA-inloggningsmetoder ännu. Lägg till en nedan."
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "No additional data"
 msgstr "Inga ytterligare data"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No ban exceptions found"
-msgstr "Inga banundantag hittades"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No advanced modes on this server."
+msgstr "Inga avancerade lägen på den här servern."
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No bans found"
-msgstr "Inga banningar hittades"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, add one above"
+msgstr "Inga bannlysningar ännu, lägg till en ovan"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+msgid "No bots match. Clear the search or change the filter."
+msgstr "Inga bottar matchar. Rensa sökningen eller ändra filtret."
+
+#: src/components/pages/BotsPage.tsx
 msgid "No bots registered on this network yet."
 msgstr "Inga bottar registrerade i detta nätverk än."
 
@@ -3062,36 +3294,39 @@ msgstr "Inga bottar registrerade i detta nätverk än."
 msgid "No camera detected."
 msgstr "Ingen kamera hittades."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "No Central Server:"
 msgstr "Ingen central server:"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
-msgid "No Changes"
-msgstr "Inga ändringar"
-
-#: src/components/ui/ChannelListModal.tsx
-msgid "No channels found."
-msgstr "Inga kanaler hittades."
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "No channels found. Change the search or filters."
+msgstr "Inga kanaler hittades. Ändra sökningen eller filtren."
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "No comments yet. Be the first!"
 msgstr "Inga kommentarer ännu. Var den första!"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No CTCPs (+C)"
+msgstr "Inga CTCP (+C)"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "No data"
 msgstr "Inga data"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No External Messages (+n)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, add one above"
+msgstr "Inga undantag ännu, lägg till ett ovan"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No external messages (+n)"
 msgstr "Inga externa meddelanden (+n)"
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "No file chosen"
 msgstr "Ingen fil vald"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No flood profile"
 msgstr "Ingen flödesprofil"
 
@@ -3103,15 +3338,27 @@ msgstr "Inga GIF:ar hittades. Prova en annan sökning."
 msgid "no host set"
 msgstr "ingen värd inställd"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "No invitations found"
-msgstr "Inga inbjudningar hittades"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, add one above"
+msgstr "Inga inbjudningar ännu, lägg till en ovan"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invites (+V)"
+msgstr "Inga inbjudningar (+V)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No key"
 msgstr "Ingen nyckel"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No kicks (+Q)"
+msgstr "Inga kickar (+Q)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No knocks (+K)"
+msgstr "Inga knackningar (+K)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No limit"
 msgstr "Ingen gräns"
 
@@ -3119,11 +3366,7 @@ msgstr "Ingen gräns"
 msgid "No media in this channel"
 msgstr "Inget media i den här kanalen"
 
-#: src/components/ui/UserSettings.tsx
-msgid "No media previews are loaded."
-msgstr "Inga medieförhandsvisningar laddas."
-
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "no message"
 msgstr "inget meddelande"
 
@@ -3131,17 +3374,29 @@ msgstr "inget meddelande"
 msgid "No microphone detected."
 msgstr "Ingen mikrofon hittades."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
-msgid "No packs configured yet."
-msgstr "Inga paket har konfigurerats ännu."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No nick changes (+N)"
+msgstr "Inga nickbyten (+N)"
 
-#: src/components/ui/RawLogViewer.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No notices (+T)"
+msgstr "Inga NOTICE (+T)"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "No oper credentials yet. Enter a name and password."
+msgstr "Inga operatörsuppgifter ännu. Ange ett namn och lösenord."
+
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "No packs yet. Create one to start."
+msgstr "Inga paket ännu. Skapa ett för att börja."
+
+#: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Ingen rå IRC-trafik har fångats än. Försök att ansluta eller skicka ett meddelande."
 
 #: src/components/ui/QuickActions.tsx
-msgid "No results found"
-msgstr "Inga resultat hittades"
+msgid "No results. Try fewer letters"
+msgstr "Inga resultat. Försök med färre bokstäver"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "No server is selected. Pick a server from the sidebar first; invite links are managed per-server."
@@ -3151,11 +3406,15 @@ msgstr "Ingen server är vald. Välj en server från sidofältet först; inbjudn
 msgid "No servers found."
 msgstr "Inga servrar hittades."
 
+#: src/components/pages/BotsPage.tsx
+msgid "No slash commands yet"
+msgstr "Inga snedstreckskommandon ännu"
+
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "No speaker detected."
 msgstr "Ingen högtalare hittades."
 
-#: src/components/ui/ChannelListModal.tsx
+#: src/components/pages/ChannelBrowserPage.tsx
 msgid "No topic"
 msgstr "Inget ämne"
 
@@ -3164,8 +3423,8 @@ msgid "No topic set"
 msgstr "Inget ämne angivet"
 
 #: src/components/ui/QuickActions.tsx
-msgid "No unread mentions or messages"
-msgstr "Inga olästa omnämnanden eller meddelanden"
+msgid "No unread mentions or messages. Type to search"
+msgstr "Inga olästa omnämnanden eller meddelanden. Skriv för att söka"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "No upstream networks yet."
@@ -3174,10 +3433,6 @@ msgstr "Inga uppströmsnätverk ännu."
 #: src/components/layout/VoiceChannelView.tsx
 msgid "No viewers yet."
 msgstr "Inga tittare än."
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "No WHOIS data available"
-msgstr "Ingen WHOIS-data tillgänglig"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Nobody's here. Ask someone to /join {channelName}."
@@ -3191,7 +3446,7 @@ msgstr "Brusreducering"
 msgid "None"
 msgstr "Ingen"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Normal"
 msgstr "Normal"
 
@@ -3204,6 +3459,10 @@ msgstr "Normal – standardskydd"
 msgid "Not encrypted"
 msgstr "Inte krypterat"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
+msgstr "Obs: Ändring av kanalmetadata kräver operatörsbehörighet (@) eller högre. Ändringarna syns för alla användare som stöder METADATA-specifikationen."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
 msgstr "Observera: servern ger samma svar oavsett om kontot har en verifierad e-postadress, så ett stavfel flaggas inte här. Om ingen kod kommer inom ett par minuter, kontrollera kontonamnet."
@@ -3212,45 +3471,42 @@ msgstr "Observera: servern ger samma svar oavsett om kontot har en verifierad e-
 msgid "Notification Sound"
 msgstr "Aviseringsljud"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "Aviseringar"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth-identitet"
+
+#: src/components/pages/pageSections.tsx
+msgid "OAuth2"
+msgstr "OAuth2"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
 msgstr "Obby"
 
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Obby - Bringing IRC to the future"
 msgstr "Obby - För IRC in i framtiden"
 
-#. placeholder {0}: session.total
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "of {0}"
-msgstr "av {0}"
-
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Off"
 msgstr "Av"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "offline"
 msgstr "offline"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
-#: src/components/ui/BotsModal.tsx
 msgid "Offline"
 msgstr "Offline"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "OK"
 msgstr "OK"
 
@@ -3264,38 +3520,35 @@ msgstr "en av:"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
 msgid "Online"
 msgstr "Online"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
 msgstr "Anslut bara till servrar du väljer"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Only operators can change the channel topic"
-msgstr "Endast operatörer kan ändra kanalämnet"
-
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Endast säkra websockets stöds"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Only users with voice or higher can speak"
-msgstr "Endast användare med Voice eller högre kan tala"
 
 #: src/store/handlers/batches.ts
 msgid "Oops! The net split! ⚠️"
 msgstr "Hoppsan! Nätverksuppdelning! ⚠️"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Op"
 msgstr "Op"
 
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Open"
 msgstr "Öppna"
+
+#. placeholder {0}: channel.channel
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Open {0}"
+msgstr "Öppna {0}"
 
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
@@ -3304,10 +3557,6 @@ msgstr "Öppna ett privat meddelande till en användare"
 #: src/components/ui/UserContextMenu.tsx
 msgid "Open bots menu"
 msgstr "Öppna bot-meny"
-
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Open channel configuration settings"
-msgstr "Öppna kanalens konfigurationsinställningar"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3353,6 +3602,11 @@ msgstr "Öppna nätverksalternativ"
 msgid "Open private chat"
 msgstr "Öppna privat chatt"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ServerList.tsx
+msgid "Open Server Notices to see what went wrong"
+msgstr "Öppna Servermeddelanden för att se vad som gick fel"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Open settings"
 msgstr "Öppna inställningar"
@@ -3361,32 +3615,57 @@ msgstr "Öppna inställningar"
 msgid "Open workflow"
 msgstr "Öppna arbetsflöde"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper credentials"
+msgstr "Operatörsuppgifter"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper name"
+msgstr "Operatörsnamn"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper-namn"
 
-#: src/components/ui/EditServerModal.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 msgid "Oper name and password are required"
 msgstr "Oper-namn och lösenord krävs"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper on connect"
+msgstr "OPER vid anslutning"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper on Connect"
 msgstr "Oper vid anslutning"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper password"
+msgstr "Operatörslösenord"
+
+#: src/components/pages/SettingsPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper Password"
 msgstr "Oper-lösenord"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Oper up"
+msgstr "Logga in som operatör"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Oper Username"
 msgstr "Oper-användarnamn"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Operator actions"
 msgstr "Operatörsåtgärder"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Operator password"
+msgstr "Operatörslösenord"
+
+#: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Valfria kraschrapporter för att förbättra appen"
 
@@ -3402,29 +3681,43 @@ msgstr "OTR krypterar inte filer, skickad som den är"
 msgid "Output"
 msgstr "Utmatning"
 
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Owner"
 msgstr "Ägare"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "pack_id (e.g. team-mascots)"
 msgstr "pack_id (t.ex. team-mascots)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "pack_id and name are required."
 msgstr "pack_id och namn krävs."
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "Packs"
+msgstr "Paket"
+
+#: src/components/ui/QuickActions.tsx
+msgid "Pages"
+msgstr "Sidor"
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Lösenord"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Password required to join the channel. Leave empty to remove the key."
-msgstr "Lösenord krävs för att gå med i kanalen. Lämna tomt för att ta bort nyckeln."
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Password reset complete"
 msgstr "Lösenordsåterställningen är klar"
+
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Password updated."
+msgstr "Lösenordet uppdaterades."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password updated. You can now log in."
+msgstr "Lösenordet uppdaterades. Du kan nu logga in."
 
 #: src/components/ui/ChangePasswordModal.tsx
 #: src/components/ui/PasswordRecoveryModal.tsx
@@ -3456,11 +3749,12 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF-förhandsgranskning"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "pending"
 msgstr "väntande"
 
 #: src/components/layout/StartPrivateChatRow.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "People"
 msgstr "Personer"
 
@@ -3468,6 +3762,11 @@ msgstr "Personer"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Permanent channel (+P)"
+msgstr "Permanent kanal (+P)"
+
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Photo"
 msgstr "Foto"
@@ -3477,9 +3776,17 @@ msgstr "Foto"
 msgid "Pick a password (3 characters or more)."
 msgstr "Välj ett lösenord (minst 3 tecken)."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Pick a preset flood protection profile. UnrealIRCd only."
+msgstr "Välj en förinställd flood-skyddsprofil. Endast UnrealIRCd."
+
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
 msgstr "Välj ett namn på ett enda ord (utan mellanslag)."
+
+#: src/components/ui/EmojiPickerModal.tsx
+msgid "Pick an emoji"
+msgstr "Välj en emoji"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
@@ -3535,10 +3842,6 @@ msgstr "Ange ett användarnamn"
 msgid "Please wait..."
 msgstr "Vänta..."
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "PM User"
-msgstr "PM-användare"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/VoiceVideoBand.tsx
@@ -3546,6 +3849,7 @@ msgstr "PM-användare"
 msgid "Pop out video"
 msgstr "Öppna video i eget fönster"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Port"
@@ -3555,7 +3859,7 @@ msgstr "Port"
 msgid "Post each server's message of the day to Server Notices and its welcome page"
 msgstr "Publicera varje servers meddelande för dagen i Servermeddelanden och på dess välkomstsida"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "Preferences"
 msgstr "Inställningar"
 
@@ -3563,9 +3867,13 @@ msgstr "Inställningar"
 msgid "Preview (not yet uploaded)"
 msgstr "Förhandsvisning (ej uppladdad ännu)"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Preview:"
-msgstr "Förhandsvisning:"
+#: src/components/pages/SettingsPage.tsx
+msgid "Preview all external media. Any URL can trigger a request to an unknown server."
+msgstr "Förhandsvisa all extern media. Vilken URL som helst kan utlösa en förfrågan till en okänd server."
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Preview media from your server's trusted file host only. Make no requests to external services."
+msgstr "Förhandsvisa bara media från serverns betrodda filvärd. Gör inga förfrågningar till externa tjänster."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Previous fingerprint"
@@ -3579,38 +3887,46 @@ msgstr "Föregående bild"
 msgid "Previous page"
 msgstr "Föregående sida"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Privacy"
 msgstr "Integritet"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Privacy Policy"
 msgstr "Integritetspolicy"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Privacy warning:"
+msgstr "Integritetsvarning:"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Private channel (+p)"
+msgstr "Privat kanal (+p)"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Private messages"
 msgstr "Privata meddelanden"
 
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/pageSections.tsx
 #: src/components/ui/FloodSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Pronouns"
 msgstr "Pronomen"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Protected Topic (+t)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Protected topic (+t)"
 msgstr "Skyddat ämne (+t)"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Provider returned no bearer token."
 msgstr "Leverantören returnerade ingen bearer-token."
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Questions about privacy? Contact us:"
 msgstr "Frågor om integritet? Kontakta oss:"
 
@@ -3626,7 +3942,6 @@ msgstr "lämnade"
 msgid "quit ({reason})"
 msgstr "lämnade ({reason})"
 
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "Quit-meddelande"
@@ -3673,9 +3988,11 @@ msgstr "reagerade på det här meddelandet"
 msgid "Read all"
 msgstr "Läs allt"
 
+#: src/components/layout/ProfilePane.tsx
+msgid "Real name"
+msgstr "Riktigt namn"
+
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Real Name"
 msgstr "Riktigt namn"
@@ -3688,7 +4005,7 @@ msgstr "Riktigt namn:"
 msgid "Reason"
 msgstr "Anledning"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Reason (optional)"
 msgstr "Anledning (valfritt)"
 
@@ -3696,10 +4013,6 @@ msgstr "Anledning (valfritt)"
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reasoning"
 msgstr "Resonemang"
-
-#: src/components/ui/BotsModal.tsx
-msgid "Receiving command list…"
-msgstr "Tar emot kommandolista…"
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Reconnect"
@@ -3723,6 +4036,10 @@ msgstr "Återansluter. Redigera anslutningen om detta fortsätter att misslyckas
 msgid "Record Audio"
 msgstr "Spela in ljud"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Record history as max-lines:max-minutes. Leave empty to disable."
+msgstr "Spela in historik som max-lines:max-minutes. Lämna tomt för att inaktivera."
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "Record screen"
 msgstr "Spela in skärm"
@@ -3743,6 +4060,11 @@ msgstr "Spela in videomeddelande"
 msgid "Record voice message"
 msgstr "Spela in röstmeddelande"
 
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Recovery failed: {0}"
+msgstr "Återställningen misslyckades: {0}"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Minska bakgrundsljud från din mikrofon"
@@ -3756,7 +4078,7 @@ msgstr "Minska eko från dina högtalare som fångas upp av mikrofonen"
 msgid "Refresh"
 msgstr "Uppdatera"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "Uppdatera WHOIS"
 
@@ -3764,15 +4086,23 @@ msgstr "Uppdatera WHOIS"
 msgid "Register for an account"
 msgstr "Registrera ett konto"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Registered credentials"
 msgstr "Registrerade inloggningsuppgifter"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Registered nick required (+M)"
+msgstr "Registrerat nick krävs (+M)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Registered users only (+R)"
+msgstr "Endast registrerade användare (+R)"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Avvisa"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Relaxed"
 msgstr "Avslappnat"
 
@@ -3780,14 +4110,16 @@ msgstr "Avslappnat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Avslappnat – mindre aggressivt skydd"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Remove"
 msgstr "Ta bort"
 
-#. placeholder {0}: c.name
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#. placeholder {0}: pendingRemoval?.name
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
 msgstr "Ta bort \"{0}\"? Du kan inte längre använda den som andra faktor."
 
@@ -3796,8 +4128,13 @@ msgid "Remove {username} from the channel"
 msgstr "Ta bort {username} från kanalen"
 
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Remove attachment"
 msgstr "ta bort bilaga"
+
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Remove credential"
+msgstr "Ta bort inloggningsmetod"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
@@ -3833,9 +4170,9 @@ msgstr "Byt namn på eller ta bort {0}"
 msgid "Rename or delete folder"
 msgstr "Byt namn på eller ta bort mapp"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Rename this channel on the server. All users will see the new name."
-msgstr "Byt namn på den här kanalen på servern. Alla användare ser det nya namnet."
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Rename this channel. Everyone sees the new name."
+msgstr "Byt namn på kanalen. Alla ser det nya namnet."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Render markdown formatting in messages"
@@ -3851,15 +4188,25 @@ msgstr "Ordna om listan"
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/mobile/MessageReaderSheet.tsx
+#: src/components/mobile/MessageReaderSheet.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reply"
 msgstr "Svara"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Require a registered nickname (+r) to talk."
+msgstr "Kräv ett registrerat nick (+r) för att prata."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Require an invite to join."
+msgstr "Kräv en inbjudan för att gå med."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "obligatoriskt"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Ta om"
@@ -3874,6 +4221,7 @@ msgstr "Försök skicka igen"
 msgid "Return to channel"
 msgstr "Återgå till kanalen"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
 msgstr "Granska ändrad nyckel…"
@@ -3908,27 +4256,27 @@ msgstr "körs"
 msgid "running · {elapsed}"
 msgstr "körs · {elapsed}"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Safe"
 msgstr "Säkert"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "SASL PLAIN account"
+msgstr "SASL PLAIN-konto"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/TopicModal.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "Save"
 msgstr "Spara"
-
-#: src/components/ui/UserSettings.tsx
-msgid "Save Changes"
-msgstr "Spara ändringar"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Save failed: {msg}"
 msgstr "Sparning misslyckades: {msg}"
 
 #: src/components/ui/FloodSettingsModal.tsx
-msgid "Save Settings"
+msgid "Save settings"
 msgstr "Spara inställningar"
 
 #: src/components/message/EncryptedMediaPreview.tsx
@@ -3943,7 +4291,7 @@ msgstr "Sparat"
 msgid "Saving..."
 msgstr "Sparar..."
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Skanna den här QR-koden med din autentiseringsapp och bekräfta sedan med den 6-siffriga koden den visar."
 
@@ -3964,9 +4312,14 @@ msgstr "Scrolla till botten"
 msgid "Search"
 msgstr "Sök"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Search bots"
 msgstr "Sök bottar"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Search channels..."
+msgstr "Sök kanaler..."
 
 #: src/components/ui/AppEmojiPicker.tsx
 msgid "Search emojis..."
@@ -3988,35 +4341,31 @@ msgstr "Sök meddelanden…"
 msgid "Search servers..."
 msgstr "Sök servrar..."
 
-#: src/components/ui/QuickActions.tsx
-msgid "Search settings, channels, servers..."
-msgstr "Sök inställningar, kanaler, servrar..."
-
 #: src/components/ui/GifSelector.tsx
 msgid "Searching..."
 msgstr "Söker..."
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Secret"
 msgstr "Hemlig"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Secret (+s)"
 msgstr "Hemlig (+s)"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Secret channel"
-msgstr "Hemlig kanal"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "Secure Connection"
+#: src/components/layout/ProfilePane.tsx
+msgid "Secure connection"
 msgstr "Säker anslutning"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Secure connection required (+z)"
+msgstr "Säker anslutning krävs (+z)"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Security"
 msgstr "Säkerhet"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Security groups"
 msgstr "Säkerhetsgrupper"
 
@@ -4038,6 +4387,10 @@ msgstr "Visa kanalinfo"
 msgid "See profile"
 msgstr "Visa profil"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "See server notices"
+msgstr "Visa servermeddelanden"
+
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
@@ -4048,9 +4401,9 @@ msgstr "Visa tittare"
 msgid "Seek"
 msgstr "Sök position"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Select a bot on the left to see its commands and management actions."
-msgstr "Välj en bot till vänster för att se dess kommandon och hanteringsåtgärder."
+#: src/components/pages/BotsPage.tsx
+msgid "Select a bot to see its commands and management actions."
+msgstr "Välj en bot för att se dess kommandon och hanteringsåtgärder."
 
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
@@ -4068,7 +4421,7 @@ msgstr "Välj medlem"
 msgid "Select or add a channel to get started."
 msgstr "Välj eller lägg till en kanal för att komma igång."
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "self-registered"
 msgstr "självregistrerad"
 
@@ -4093,9 +4446,9 @@ msgstr "Skicka inbjudan"
 msgid "Send Message"
 msgstr "Skicka meddelande"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Send private message"
-msgstr "Skicka privat meddelande"
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Send OPER with the name and password above now."
+msgstr "Skicka OPER med namnet och lösenordet ovan nu."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4113,6 +4466,10 @@ msgstr "Skicka skriv-aviseringar"
 msgid "Send unencrypted"
 msgstr "Skicka okrypterat"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Send users here when they can't join. Leave empty to disable."
+msgstr "Skicka användare hit när de inte kan gå med. Lämna tomt för att inaktivera."
+
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Skickar"
@@ -4121,34 +4478,30 @@ msgstr "Skickar"
 msgid "Sending…"
 msgstr "Skickar…"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/QuickActions.tsx
-msgid "Server"
-msgstr "Server"
 
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
 msgid "Server Channels"
 msgstr "Serverkanaler"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
 msgstr "Servern annonserar inte stöd för WebAuthn"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Server doesn't support advanced LIST filtering"
-msgstr "Servern stöder inte avancerad LIST-filtrering"
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Server host"
+msgstr "Serveradress"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Server Host"
 msgstr "Serveradress"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Server host is required"
 msgstr "Serveradress krävs"
 
@@ -4156,8 +4509,8 @@ msgstr "Serveradress krävs"
 msgid "Server Information"
 msgstr "Serverinformation"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Server name is required"
 msgstr "Servernamn krävs"
 
@@ -4173,6 +4526,11 @@ msgstr "Servermeddelanden"
 msgid "Server operators on the network could potentially read your messages"
 msgstr "Serveroperatörer på nätverket kan potentiellt läsa dina meddelanden"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Server password"
+msgstr "Serverlösenord"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Server Password"
 msgstr "Serverlösenord"
@@ -4181,37 +4539,39 @@ msgstr "Serverlösenord"
 msgid "Server Password (PASS)"
 msgstr "Serverlösenord (PASS)"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Server returned an invalid WebAuthn challenge."
 msgstr "Servern returnerade en ogiltig WebAuthn-utmaning."
+
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
+msgid "Server settings"
+msgstr "Serverinställningar"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Server-till-server-kommunikation kan använda okrypterade anslutningar"
 
-#: src/components/ui/BotsModal.tsx
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "Hela servern"
 
-#: src/components/ui/BotsModal.tsx
-msgid "Server-wide bot — reachable from any channel"
-msgstr "Serveromfattande bot — nåbar från vilken kanal som helst"
-
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "Server-omfattande bot, åtkomlig från alla kanaler"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/ui/QuickActions.tsx
+msgid "Servers"
+msgstr "Servrar"
+
+#: src/components/layout/ProfilePane.tsx
 msgid "Session"
 msgstr "Session"
 
-#. placeholder {0}: session.ordinal
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "Session {0}"
-msgstr "Session {0}"
-
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Sessions"
 msgstr "Sessioner"
 
@@ -4220,12 +4580,12 @@ msgstr "Sessioner"
 msgid "Set a topic…"
 msgstr "Ange ett ämne…"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Set Away"
-msgstr "Ange borta"
+#: src/components/layout/ProfilePane.tsx
+msgid "Set away"
+msgstr "Ange frånvaro"
 
 #. placeholder {0}: mode.setter
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "set by {0}"
 msgstr "angett av {0}"
 
@@ -4233,22 +4593,39 @@ msgstr "angett av {0}"
 msgid "Set by:"
 msgstr "Satt av:"
 
+#: src/components/ui/FloodSettingsModal.tsx
+msgid "Set how many seconds to count flood activity before the counters reset"
+msgstr "Ange hur många sekunder flood-aktivitet ska räknas innan räknarna nollställs"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
 msgstr "Ange nytt lösenord"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the maximum number of users. Leave empty for no limit."
+msgstr "Ange det högsta antalet användare. Lämna tomt för ingen gräns."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the password needed to join. Leave empty to remove the key."
+msgstr "Ange lösenordet som krävs för att gå med. Lämna tomt för att ta bort nyckeln."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Set the topic shown for this channel. Everyone can see it."
+msgstr "Ange ämnet som visas för den här kanalen. Alla kan se det."
 
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Ange dig som borta"
 
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "SETPASS failed: {0}"
+msgstr "SETPASS misslyckades: {0}"
+
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
 msgid "sets mode: {0}"
 msgstr "anger läge: {0}"
-
-#: src/components/ui/QuickActions.tsx
-msgid "Setting"
-msgstr "Inställning"
 
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
@@ -4259,7 +4636,11 @@ msgstr "Inställningen hittades inte"
 msgid "Setting…"
 msgstr "Ställer in…"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/pageSections.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions.tsx
+#: src/components/ui/QuickActions/pageTargets.ts
 msgid "Settings"
 msgstr "Inställningar"
 
@@ -4291,11 +4672,11 @@ msgstr "Dela din skärm igen för att försöka på nytt"
 msgid "she/her"
 msgstr "hon/hennes"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "shortcode (e.g. partyparrot)"
 msgstr "kortkod (t.ex. partyparrot)"
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kortkoden måste matcha [A-Za-z0-9._-]+."
 
@@ -4310,6 +4691,10 @@ msgstr "Visa kommentarer"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Show comments ({commentCount})"
 msgstr "Visa kommentarer ({commentCount})"
+
+#: src/components/layout/ProfilePane.tsx
+msgid "Show in bots menu"
+msgstr "Visa i bottmenyn"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Joins/Parts"
@@ -4364,39 +4749,27 @@ msgstr "Visa MOTD"
 msgid "Show video"
 msgstr "Visa video"
 
-#. placeholder {0}: filteredChannels.length
-#: src/components/ui/ChannelListModal.tsx
-msgid "Showing {displayedChannelsCount} of {0} channels"
-msgstr "Visar {displayedChannelsCount} av {0} kanaler"
-
-#: src/components/ui/UserSettings.tsx
-msgid "Shows all external media. Any URL may cause a request to an unknown server."
-msgstr "Visar allt externt media. Valfri URL kan orsaka en begäran till en okänd server."
-
-#: src/components/ui/UserSettings.tsx
-msgid "Shows media from your server's trusted file host. No requests are made to external services."
-msgstr "Visar media från serverns betrodda filvärd. Inga begäranden görs till externa tjänster."
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
-msgstr "Logga in hos leverantören så kopplar vi den resulterande identiteten till ditt konto, så att SASL OAUTHBEARER / IRCV3BEARER fungerar vid kommande anslutningar."
+#: src/components/pages/TwoFactorPage.tsx
+msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
+msgstr "Logga in hos leverantören för att koppla dess identitet till ditt konto, så att SASL OAUTHBEARER och IRCV3BEARER fungerar vid senare anslutningar."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Inloggningen misslyckades, du chattar som gäst. Logga in igen eller åtgärda ditt lösenord"
 
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Signed on"
 msgstr "Inloggad"
 
-#: src/components/ui/UserProfileModal.tsx
-msgid "Signed On"
-msgstr "Inloggad sedan"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "Slash commands"
 msgstr "Snedstreckskommandon"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Social"
+msgstr "Sociala"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Software:"
@@ -4408,19 +4781,19 @@ msgstr "Programvara:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (kontroll)"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Sort by Name"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Sort by name"
 msgstr "Sortera efter namn"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Sort by Users"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Sort by users"
 msgstr "Sortera efter användare"
 
 #: src/components/message/MediaPreview.tsx
 msgid "SoundCloud player"
 msgstr "SoundCloud-spelare"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Source"
 msgstr "Källa"
 
@@ -4447,6 +4820,7 @@ msgid "Start a voice channel on {serverName}"
 msgstr "Starta en röstkanal på {serverName}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Start recording"
 msgstr "Starta inspelning"
 
@@ -4458,20 +4832,15 @@ msgstr "Starta video"
 msgid "Starting workflow…"
 msgstr "Startar arbetsflöde…"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/pages/TwoFactorPage.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Status"
 msgstr "Status"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Status Messages"
 msgstr "Statusmeddelanden"
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "Status:"
-msgstr "Status:"
 
 #: src/lib/voiceErrors.ts
 msgid "Stay here while we rejoin. The server limits how often you can rejoin."
@@ -4490,6 +4859,7 @@ msgid "Stop"
 msgstr "Stoppa"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Stop recording"
 msgstr "Stoppa inspelning"
 
@@ -4502,7 +4872,6 @@ msgid "Stop video"
 msgstr "Stoppa video"
 
 #: src/components/layout/AddChannelRow.tsx
-#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Stream"
 
@@ -4514,7 +4883,7 @@ msgstr "streamnamn"
 msgid "Streamer"
 msgstr "Sändare"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Strict"
 msgstr "Strikt"
 
@@ -4522,15 +4891,23 @@ msgstr "Strikt"
 msgid "Strict - More aggressive protection"
 msgstr "Strikt – mer aggressivt skydd"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Strip color codes (+S)"
+msgstr "Ta bort färgkoder (+S)"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Strip mIRC color codes from messages"
+msgstr "Ta bort mIRC-färgkoder från meddelanden"
+
 #: src/components/ui/E2EELockControl.tsx
 msgid "Strongest, but only with other Obby users"
 msgstr "Starkast, men bara med andra Obby-användare"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Suspend"
 msgstr "Stäng av"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "suspended"
 msgstr "avstängd"
 
@@ -4551,6 +4928,7 @@ msgid "Take out of folder"
 msgstr "Ta ut ur mapp"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 msgid "Take photo"
 msgstr "Ta foto"
 
@@ -4558,13 +4936,13 @@ msgstr "Ta foto"
 msgid "Take Photo or Video"
 msgstr "Ta foto eller video"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Text"
-msgstr "Text"
-
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Textkanal"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "that account"
+msgstr "det kontot"
 
 #: src/lib/mediaDevices.ts
 msgid "That device is not available right now."
@@ -4610,17 +4988,9 @@ msgstr "Inspelningen kunde inte göras."
 msgid "The server refused your join. Check the channel modes and try again."
 msgstr "Servern nekade dig att gå med. Kontrollera kanalens lägen och försök igen."
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "The topic that will be displayed for this channel. All users can see the topic."
-msgstr "Ämnet som visas för den här kanalen. Alla användare kan se ämnet."
-
 #: src/components/ui/InviteUserModal.tsx
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Användaren får en inbjudan att gå med i {channelName}."
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
-msgstr "Det här kontot är anslutet från {sessionCount} sessioner. Detaljer per session avslöjas endast för kontoinnehavaren eller IRC-operatörer."
 
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
@@ -4663,8 +5033,8 @@ msgstr "Den här värden tar inte emot {CIPHERTEXT_EXTENSION}-filer, formatet en
 msgid "This image has expired"
 msgstr "Den här bilden har gått ut"
 
-#: src/components/ui/ObbyWhoisModal.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
+#: src/components/layout/ProfilePane.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "This is you"
 msgstr "Det här är du"
 
@@ -4683,14 +5053,6 @@ msgstr "Det här meddelandet var inte krypterat. Det kan komma från en annan av
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "Detta tar bort nätverket från din soju bouncer. För att använda det igen behöver du lägga till det på nytt."
-
-#: src/components/ui/UserSettings.tsx
-msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
-msgstr "Den här servern stöder inte utökad profilmetadata (IRCv3 METADATA-tillägget). Ytterligare fält som avatar, visningsnamn och status är inte tillgängliga."
-
-#: src/components/ui/EmojiPackAdminModal.tsx
-msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
-msgstr "Den här servern annonserar ingen backend-URL (draft/authtoken eller obby.world/FILEHOST). Administratörsändpunkterna kan inte nås."
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
@@ -4730,12 +5092,12 @@ msgstr "Tidsfönster (sekunder)"
 msgid "timed out"
 msgstr "timeout"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
-#: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "TLS certificate fingerprint"
 msgstr "TLS-certifikatets fingeravtryck"
 
@@ -4744,7 +5106,6 @@ msgstr "TLS-certifikatets fingeravtryck"
 msgid "to"
 msgstr "till"
 
-#: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
@@ -4778,24 +5139,23 @@ msgstr "För stor för att kryptera, skickad okrypterat"
 msgid "tool"
 msgstr "verktyg"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Topic Set After (min ago)"
-msgstr "Ämne angivet efter (min sedan)"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Topic"
+msgstr "Ämne"
 
-#: src/components/ui/ChannelListModal.tsx
-msgid "Topic Set Before (min ago)"
-msgstr "Ämne angivet före (min sedan)"
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Topic set after (min ago)"
+msgstr "Ämne satt efter (min sedan)"
+
+#: src/components/pages/ChannelBrowserPage.tsx
+msgid "Topic set before (min ago)"
+msgstr "Ämne satt före (min sedan)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Topic:"
 msgstr "Ämne:"
 
-#. placeholder {0}: filteredChannels.length
-#: src/components/ui/ChannelListModal.tsx
-msgid "Total: {0}"
-msgstr "Totalt: {0}"
-
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "Transport"
@@ -4804,7 +5164,7 @@ msgstr "Transport"
 msgid "truncated"
 msgstr "trunkerad"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Betrodda källor"
 
@@ -4816,6 +5176,14 @@ msgstr "Försök ladda upp igen."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Försök ladda upp igen. Filvärden skickade tillbaka ett svar vi inte kunde läsa."
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Turn off media previews."
+msgstr "Stäng av förhandsvisningar av media."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
+msgstr "Aktivera OPER vid anslutning för att skicka det sparade namnet och lösenordet som OPER vid varje anslutning, eller använd Logga in som operatör nedan."
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Slå på kameran för att försöka igen"
@@ -4824,8 +5192,8 @@ msgstr "Slå på kameran för att försöka igen"
 msgid "Turn the mic on to try again"
 msgstr "Slå på mikrofonen för att försöka igen"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Two-factor authentication"
 msgstr "Tvåfaktorsautentisering"
 
@@ -4845,9 +5213,17 @@ msgstr "Skriv ett meddelande..."
 msgid "Undeafen"
 msgstr "Avdöva"
 
+#: src/components/layout/ProfilePane.tsx
+msgid "Unignore user"
+msgstr "Sluta ignorera användare"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "Sluta ignorera användare"
+
+#: src/components/ui/LinkSecurityWarningModal.tsx
+msgid "Unknown Server"
+msgstr "Okänd server"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/voice/VoiceDock.tsx
@@ -4873,13 +5249,13 @@ msgstr "Lossa privatchatt"
 msgid "Unpin this private message conversation"
 msgstr "Lossa den här privata meddelandekonversationen"
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Unsuspend"
 msgstr "Återaktivera"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
-msgstr "Ladda upp en bild eller ange en URL med valfri {size}-ersättning för dynamisk storleksanpassning"
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
+msgstr "Ladda upp en bild eller ange en URL. Använd {size} i URL:en för dynamisk storlek."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -4901,7 +5277,7 @@ msgstr "Uppladdad"
 msgid "Uploading..."
 msgstr "Laddar upp..."
 
-#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 msgid "URL must be http(s):// or data:."
 msgstr "URL måste vara http(s):// eller data:."
 
@@ -4909,13 +5285,21 @@ msgstr "URL måste vara http(s):// eller data:."
 msgid "URL to your avatar image"
 msgstr "URL till din avatarbild"
 
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "URL with optional {size} substitution for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "URL med valfri {size}-ersättning för dynamisk storleksanpassning. Exempel: https://example.com/avatar/{size}/channel.jpg"
-
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Använd * som jokertecken. Exempel: baduser!*@*, *!*@spammer.com, troll*!*@*"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use a secure websocket port."
+msgstr "Använd en säker websocket-port."
+
+#: src/components/pages/SettingsPage.tsx
+msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
+msgstr "Använd en server med IRCv3 METADATA för att ange din avatar, ditt visningsnamn och din status."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use photo"
+msgstr "Använd foto"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Use server password"
@@ -4925,11 +5309,15 @@ msgstr "Använd serverlösenord"
 msgid "Use Shift+Enter for new lines (Enter sends)"
 msgstr "Använd Shift+Enter för nya rader (Enter skickar)"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Use video"
+msgstr "Använd video"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Use WebSocket instead of raw TCP"
 msgstr "Använd WebSocket istället för råa TCP"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Use wildcards: * matches any sequence, ? matches any single character. Examples: nick!*@*, *!*@host.com, *!*user@*"
 msgstr "Använd jokertecken: * matchar valfri sekvens, ? matchar valfritt enskilt tecken. Exempel: nick!*@*, *!*@host.com, *!*user@*"
 
@@ -4938,32 +5326,16 @@ msgid "used"
 msgstr "använd"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "User Information"
 msgstr "Användarinformation"
 
 #: src/components/message/MessageHeader.tsx
-#: src/components/ui/UserProfileModal.tsx
-#: src/components/ui/UserProfileModal.tsx
 msgid "User is authenticated"
 msgstr "Användaren är autentiserad"
-
-#: src/components/ui/UserProfileModal.tsx
-msgid "User is away"
-msgstr "Användaren är borta"
-
-#: src/components/ui/ObbyWhoisModal.tsx
-msgid "User modes"
-msgstr "Användarlägen"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Användarprofil"
-
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
-msgid "User Settings"
-msgstr "Användarinställningar"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -4975,25 +5347,21 @@ msgstr "Användarnamn"
 msgid "Username:"
 msgstr "Användarnamn:"
 
+#: src/components/ui/HomeScreen.tsx
+msgid "Users"
+msgstr "Användare"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Users and patterns to ignore"
 msgstr "Användare och mönster att ignorera"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Users must be invited to join the channel"
-msgstr "Användare måste bjudas in för att gå med i kanalen"
-
-#: src/components/ui/ChannelSettingsModal.tsx
-msgid "Users outside the channel cannot send messages to it"
-msgstr "Användare utanför kanalen kan inte skicka meddelanden till den"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Användare:"
 
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
-#: src/components/ui/EditServerModal.tsx
 msgid "Valid server port is required"
 msgstr "Giltig serverport krävs"
 
@@ -5016,6 +5384,7 @@ msgstr "Verifiera kod"
 msgid "Verify encryption"
 msgstr "Verifiera kryptering"
 
+#: src/components/layout/ProfilePane.tsx
 #: src/components/ui/E2EELockControl.tsx
 msgid "Verify fingerprint…"
 msgstr "Verifiera fingeravtryck…"
@@ -5028,11 +5397,11 @@ msgstr "Verifiera…"
 msgid "Verifying…"
 msgstr "Verifierar…"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"
 msgstr "Mycket avslappnat"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Mycket strikt"
 
@@ -5042,6 +5411,7 @@ msgid "via @{0}"
 msgstr "via @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"
@@ -5050,7 +5420,7 @@ msgstr "Video"
 msgid "View Channel Topic"
 msgstr "Visa kanalämne"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "View Full Privacy Policy"
 msgstr "Visa fullständig integritetspolicy"
 
@@ -5058,13 +5428,15 @@ msgstr "Visa fullständig integritetspolicy"
 msgid "View or edit the channel topic"
 msgstr "Visa eller redigera kanalämnet"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/pageSections.tsx
 msgid "View our privacy policy and data practices"
 msgstr "Visa vår integritetspolicy och datapraxis"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "View profile"
+msgstr "Visa profil"
+
 #: src/components/ui/UserContextMenu.tsx
-#: src/components/ui/UserSettings.tsx
-#: src/components/ui/UserSettings.tsx
 msgid "View Profile"
 msgstr "Visa profil"
 
@@ -5089,8 +5461,7 @@ msgstr "Tittare"
 msgid "Viewers ({0})"
 msgstr "Tittare ({0})"
 
-#: src/components/ui/ChannelListModal.tsx
-#: src/components/ui/UserProfileModal.tsx
+#: src/components/layout/ProfilePane.tsx
 msgid "Voice"
 msgstr "Voice"
 
@@ -5120,7 +5491,7 @@ msgstr "Volym för {0}"
 msgid "Waiting for {0} to accept…"
 msgstr "Väntar på att {0} ska acceptera…"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Waiting for biometric prompt…"
 msgstr "Väntar på biometrisk prompt…"
 
@@ -5128,7 +5499,7 @@ msgstr "Väntar på biometrisk prompt…"
 msgid "Waiting for first step…"
 msgstr "Väntar på första steget…"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "Waiting for sign-in…"
 msgstr "Väntar på inloggning…"
 
@@ -5154,19 +5525,15 @@ msgstr "Sparkades ut från kanalen"
 msgid "Watch full screen"
 msgstr "Titta i helskärm"
 
-#: src/components/ui/QuickActions/uiActionConfig.tsx
-msgid "Watch the raw IRC traffic for this server"
-msgstr "Se den råa IRC-trafiken för den här servern"
-
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "Vi lagrar inte dina IRC-kommunikationer på våra servrar"
 
-#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/pages/TwoFactorPage.tsx
 msgid "WebAuthn is not available in this environment."
 msgstr "WebAuthn är inte tillgängligt i den här miljön."
 
-#: src/components/ui/BotsModal.tsx
+#: src/components/pages/BotsPage.tsx
 msgid "Webhook"
 msgstr "Webhook"
 
@@ -5179,7 +5546,7 @@ msgstr "Välkommen till {__DEFAULT_IRC_SERVER_NAME__}!"
 msgid "Welcome to {0}!"
 msgstr "Välkommen till {0}!"
 
-#: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Welcome to the channel!"
 msgstr "Välkommen till kanalen!"
 
@@ -5194,10 +5561,6 @@ msgstr "Vad detta innebär:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Vad du gör"
-
-#: src/components/ui/UserSettings.tsx
-msgid "What's on your mind?"
-msgstr "Vad tänker du på?"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
@@ -5257,17 +5620,13 @@ msgstr "Du håller på att öppna en extern länk:"
 msgid "You are an IRC Operator"
 msgstr "Du är en IRC-operatör"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "You are no longer in this channel"
+msgstr "Du är inte längre i den här kanalen"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Du har några minuter på dig att välja ett nytt lösenord."
-
-#: src/components/ui/TwoFactorSettingsModal.tsx
-msgid "You have no 2FA credentials registered."
-msgstr "Du har inga 2FA-uppgifter registrerade."
-
-#: src/components/ui/UserSettings.tsx
-msgid "You have unsaved changes. Are you sure you want to close without saving?"
-msgstr "Du har osparade ändringar. Är du säker på att du vill stänga utan att spara?"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "You haven't created any invite links yet. Use the form above to mint your first one."
@@ -5318,7 +5677,7 @@ msgstr "Ditt fingeravtryck"
 msgid "Your invite links"
 msgstr "Dina inbjudningslänkar"
 
-#: src/components/ui/UserSettings.tsx
+#: src/components/pages/SettingsPage.tsx
 msgid "Your messages and settings are stored locally on your device"
 msgstr "Dina meddelanden och inställningar lagras lokalt på din enhet"
 
@@ -5375,6 +5734,10 @@ msgstr "din@epost.se"
 #: src/components/ui/AddServerModal.tsx
 msgid "YourNickname"
 msgstr "DittNick"
+
+#: src/components/message/EmbedPlayer.tsx
+msgid "YouTube video player"
+msgstr "YouTube-videospelare"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Zoom in"

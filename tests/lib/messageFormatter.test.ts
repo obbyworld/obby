@@ -160,7 +160,6 @@ describe("messageFormatter", () => {
         fontWeight: "normal",
         fontStyle: "normal",
         textDecoration: "none",
-        fontFamily: "inherit",
       });
     });
 

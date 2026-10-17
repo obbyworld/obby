@@ -4,7 +4,7 @@ import {
   requestPermission,
 } from "@tauri-apps/plugin-notification";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import { ServerNoticesPopup } from "./components/message/ServerNoticesPopup";
@@ -12,16 +12,11 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
 import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
 import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
-import ChannelListModal from "./components/ui/ChannelListModal";
-import { EditServerModal } from "./components/ui/EditServerModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
 import LoadingOverlay from "./components/ui/LoadingOverlay";
-import ProfileModalRouter from "./components/ui/ProfileModalRouter";
 import QuickActions from "./components/ui/QuickActions";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
-import { TwoFactorSettingsModal } from "./components/ui/TwoFactorSettingsModal";
-import UserSettings from "./components/ui/UserSettings";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
@@ -122,44 +117,28 @@ const initializeEnvSettings = (
   });
 };
 
+const FOCUS_KEY_GRACE_MS = 300;
+
 const App: React.FC = () => {
   const {
     toggleAddServerModal,
-    toggleEditServerModal,
     toggleQuickActions,
-    toggleTwoFactorSettings,
     ui: {
       isAddServerModalOpen,
-      isChannelListModalOpen,
       isServerNoticesPopupOpen,
-      isEditServerModalOpen,
-      isSettingsModalOpen,
       isQuickActionsOpen,
-      isUserProfileModalOpen,
-      isTwoFactorSettingsOpen,
-      editServerId,
-      twoFactorSettingsServerId,
       linkSecurityWarnings,
-      profileViewRequest,
       prefillServerDetails,
     },
     joinChannel,
     selectChannel,
     connectToSavedServers,
     toggleServerNoticesPopup,
-    clearProfileViewRequest,
     messages,
     isConnecting,
     servers,
     hasConnectedToSavedServers,
   } = useStore();
-
-  // Local state for User Profile modal
-  const [userProfileModalState, setUserProfileModalState] = useState<{
-    isOpen: boolean;
-    serverId: string;
-    username: string;
-  } | null>(null);
 
   // The composer is the only drop target. Anywhere else the webview follows the
   // file and replaces the app, which a native window offers no way back from.
@@ -172,18 +151,6 @@ const App: React.FC = () => {
       window.removeEventListener("drop", cancel);
     };
   }, []);
-
-  // Watch for profile view requests
-  useEffect(() => {
-    if (profileViewRequest) {
-      setUserProfileModalState({
-        isOpen: true,
-        serverId: profileViewRequest.serverId,
-        username: profileViewRequest.username,
-      });
-      clearProfileViewRequest();
-    }
-  }, [profileViewRequest, clearProfileViewRequest]);
 
   // Collect all server notices from all channels
   const serverNotices = Object.values(messages)
@@ -347,15 +314,24 @@ const App: React.FC = () => {
 
   // Global keyboard shortcut for Quick Actions (Cmd+K / Ctrl+K)
   useEffect(() => {
+    // A launcher that hands us focus with its own Cmd+K still held (Raycast)
+    // delivers that keydown here, so we ignore the shortcut right after focus.
+    let focusedAt = 0;
+    const handleFocus = () => {
+      focusedAt = performance.now();
+    };
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
-        event.preventDefault();
-        toggleQuickActions();
-      }
+      if (!(event.metaKey || event.ctrlKey) || event.key !== "k") return;
+      event.preventDefault();
+      if (event.repeat || performance.now() - focusedAt < FOCUS_KEY_GRACE_MS)
+        return;
+      toggleQuickActions();
     };
 
+    window.addEventListener("focus", handleFocus);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.removeEventListener("focus", handleFocus);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [toggleQuickActions]);
@@ -389,34 +365,12 @@ const App: React.FC = () => {
             <>
               <AppLayout />
               {isAddServerModalOpen && <AddServerModal />}
-              {isEditServerModalOpen && editServerId && (
-                <EditServerModal
-                  serverId={editServerId}
-                  onClose={() => toggleEditServerModal(false)}
-                />
-              )}
-              {isTwoFactorSettingsOpen && twoFactorSettingsServerId && (
-                <TwoFactorSettingsModal
-                  serverId={twoFactorSettingsServerId}
-                  onClose={() => toggleTwoFactorSettings(false)}
-                />
-              )}
               <BouncerDisconnectConfirmModal />
               <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
               <TicTacToeModal />
-              {isSettingsModalOpen && <UserSettings />}
               {isQuickActionsOpen && <QuickActions />}
-              {isChannelListModalOpen && <ChannelListModal />}
               <LinkSecurityWarningModal />
-              {userProfileModalState?.isOpen && (
-                <ProfileModalRouter
-                  isOpen={userProfileModalState.isOpen}
-                  onClose={() => setUserProfileModalState(null)}
-                  serverId={userProfileModalState.serverId}
-                  username={userProfileModalState.username}
-                />
-              )}
               {isServerNoticesPopupOpen && (
                 <ServerNoticesPopup
                   messages={serverNotices}

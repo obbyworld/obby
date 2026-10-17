@@ -55,8 +55,14 @@ const scrollInputIntoView = (e: React.FocusEvent<HTMLInputElement>) => {
       ? window.innerHeight - window.visualViewport.height
       : 0;
 
-    // Add bottom padding so the last fields can scroll above the keyboard
-    if (keyboardHeight > 100) {
+    // We pad only a container that reaches under the keyboard; one already
+    // placed above it (a bottom sheet) would grow by the keyboard's height.
+    const visibleBottom = window.visualViewport
+      ? window.visualViewport.offsetTop + window.visualViewport.height
+      : window.innerHeight;
+    const reachesUnderKeyboard =
+      scrollParent.getBoundingClientRect().bottom > visibleBottom + 1;
+    if (keyboardHeight > 100 && reachesUnderKeyboard) {
       scrollParent.style.paddingBottom = `${keyboardHeight}px`;
 
       const removePadding = () => {

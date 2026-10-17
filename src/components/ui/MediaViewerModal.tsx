@@ -44,7 +44,6 @@ import {
   MAP_PIN_SVG,
 } from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
-import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
   canShowMedia,
   detectMediaType,
@@ -52,6 +51,8 @@ import {
   extractMediaFromText,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
+  type MediaEntry,
+  type MediaType,
   mediaLevelToSettings,
 } from "../../lib/mediaUtils";
 import {
@@ -67,6 +68,7 @@ import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
 import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "../message/EmbedPlayer";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -82,7 +84,6 @@ const LazyDocument = lazy(() =>
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
 );
-const ReactPlayer = lazy(() => import("react-player"));
 
 const ZOOM_STEP = 0.25;
 export const ZOOM_MIN = 0.5;
@@ -1631,12 +1632,9 @@ export function MediaViewerModal({
                     }
                   >
                     <MediaErrorBoundary>
-                      <ReactPlayer
-                        src={currentUrl}
-                        width="100%"
-                        height="100%"
-                        controls
-                      />
+                      <div className="aspect-video w-full">
+                        <EmbedPlayer key={currentUrl} url={currentUrl} />
+                      </div>
                     </MediaErrorBoundary>
                   </Suspense>
                 </div>

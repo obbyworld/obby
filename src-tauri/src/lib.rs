@@ -7,6 +7,7 @@ mod screen_record;
 #[cfg(target_os = "windows")]
 mod screen_record_windows;
 mod socket;
+mod youtube_player;
 
 use socket::{connect, disconnect, listen, send, SocketState};
 
@@ -257,6 +258,13 @@ pub fn run() {
             tauri::async_runtime::spawn(async move { socket::disconnect_all(&state).await });
         })
         .manage(screen_record::RecorderState::default())
+        .manage(youtube_player::YoutubePlayerPort(
+            if cfg!(any(target_os = "ios", target_os = "macos")) {
+                youtube_player::start()
+            } else {
+                None
+            },
+        ))
         .invoke_handler(tauri::generate_handler![
             connect,
             disconnect,
@@ -268,7 +276,8 @@ pub fn run() {
             screen_record::start_region_recording,
             screen_record::stop_region_recording,
             screen_record::cancel_region_recording,
-            screen_record::take_recording
+            screen_record::take_recording,
+            youtube_player::youtube_player_port
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

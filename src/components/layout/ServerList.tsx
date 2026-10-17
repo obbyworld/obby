@@ -54,6 +54,7 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   const hasMentions =
     server.channels.some((ch) => ch.isMentioned) ||
     server.privateChats?.some((pc) => pc.isMentioned);
+  const hasAlerts = useStore((s) => (s.serverAlerts[server.id] ?? 0) > 0);
 
   const iconUrl = server.icon;
   const showIcon = canShowAvatarUrl(
@@ -162,6 +163,13 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           </div>
         )}
 
+        {hasAlerts && (
+          <div
+            className="absolute -top-1 -left-1 w-3.5 h-3.5 bg-discord-red rounded-full border-2 border-discord-dark-600"
+            title={t`Open Server Notices to see what went wrong`}
+          />
+        )}
+
         {hasMentions && !isSelected && (
           <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
         )}
@@ -216,9 +224,8 @@ export const ServerList: React.FC = () => {
     ui: { selectedServerId },
     selectServer,
     toggleAddServerModal,
-    toggleChannelListModal,
     reconnectServer,
-    toggleEditServerModal,
+    openPage,
     editBouncerNetwork,
     requestDeleteServer,
   } = useStore();
@@ -309,7 +316,7 @@ export const ServerList: React.FC = () => {
           const handleEdit = (id: string) => {
             const target = servers.find((s) => s.id === id);
             if (target?.bouncerNetid) editBouncerNetwork(id);
-            else toggleEditServerModal(true, id);
+            else openPage({ kind: "serverSettings", serverId: id });
           };
           const handleDelete = (id: string) => requestDeleteServer(id);
           const handleReconnect = (id: string) => reconnectServer(id);

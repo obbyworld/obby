@@ -1049,7 +1049,7 @@ function processUrlsInText(
           href={isIrcLink ? url : fullUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${linkClass} inline-block max-w-[40ch] truncate align-bottom`}
+          className={`${linkClass} inline-block max-w-[min(40ch,100%)] truncate align-bottom`}
           style={style}
           title={isExternalLink ? undefined : url}
         >

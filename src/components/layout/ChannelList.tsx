@@ -43,11 +43,10 @@ import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriDesktop, isTauriMobile } from "../../lib/platformUtils";
 import { getLiveVoiceCalls, subscribeLiveVoiceCalls } from "../../lib/voice";
-import useStore from "../../store";
+import useStore, { type AppState } from "../../store";
 import { useChannelFolders } from "../../store/channelFolders";
 import type { ChannelFolder } from "../../store/types";
-import type { Channel } from "../../types";
-import ChannelSettingsModal from "../ui/ChannelSettingsModal";
+import type { Channel, User } from "../../types";
 import InviteUserModal from "../ui/InviteUserModal";
 import Menu from "../ui/Menu";
 import AddChannelRow from "./AddChannelRow";
@@ -60,6 +59,25 @@ import PrivateChatRow from "./PrivateChatRow";
 import StartPrivateChatRow from "./StartPrivateChatRow";
 import UserPanel, { type PresenceStatus } from "./UserPanel";
 
+// The store keeps one currentUser for whichever server updated it last, so we
+// use it only when it carries our nick on the selected server.
+export function panelUser(
+  state: AppState,
+  serverId: string,
+  ircCurrentUser: User,
+): User {
+  if (state.currentUser?.username === ircCurrentUser.username)
+    return state.currentUser;
+  const server = state.servers.find((s) => s.id === serverId);
+  for (const channel of server?.channels ?? []) {
+    const user = channel.users.find(
+      (u) => u.username === ircCurrentUser.username,
+    );
+    if (user) return user;
+  }
+  return ircCurrentUser;
+}
+
 export const ChannelList: React.FC = () => {
   const {
     selectChannel,
@@ -69,11 +87,10 @@ export const ChannelList: React.FC = () => {
     pinPrivateChat,
     unpinPrivateChat,
     reorderPrivateChats,
-    toggleSettingsModal,
+    openPage,
     setMobileViewActiveColumn,
     reorderChannels,
-    setProfileViewRequest,
-    toggleUserProfileModal,
+    openProfile,
   } = useStore();
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
@@ -103,48 +120,10 @@ export const ChannelList: React.FC = () => {
   const currentUser = useStore(
     useShallow((state) => {
       if (!selectedServerId) return null;
-
-      // Get the current user's username from IRCClient
       const ircCurrentUser = ircClient.getCurrentUser(selectedServerId);
-      if (!ircCurrentUser) return null;
-
-      // If we have a currentUser in the store that matches this server's current user, use it (it has modes)
-      if (
-        state.currentUser &&
-        state.currentUser.username === ircCurrentUser.username
-      ) {
-        return state.currentUser;
-      }
-
-      // Otherwise, try to find user in channels for metadata and merge with store currentUser if available
-      const selectedServer = state.servers.find(
-        (s) => s.id === selectedServerId,
-      );
-      if (!selectedServer) return state.currentUser || ircCurrentUser;
-
-      // Look for the user in any channel
-      for (const channel of selectedServer.channels) {
-        const userWithMetadata = channel.users.find(
-          (u) => u.username === ircCurrentUser.username,
-        );
-        if (userWithMetadata) {
-          // If we have currentUser in store, merge its modes and IRC op status with the channel user's metadata
-          if (
-            state.currentUser &&
-            state.currentUser.username === userWithMetadata.username
-          ) {
-            return {
-              ...userWithMetadata,
-              modes: state.currentUser.modes,
-              isIrcOp: state.currentUser.isIrcOp,
-            };
-          }
-          return userWithMetadata;
-        }
-      }
-
-      // If not found in channels, return store currentUser or IRC user
-      return state.currentUser || ircCurrentUser;
+      return ircCurrentUser
+        ? panelUser(state, selectedServerId, ircCurrentUser)
+        : null;
     }),
   );
 
@@ -175,10 +154,7 @@ export const ChannelList: React.FC = () => {
   const closeMenu = () => setOpenMenu(null);
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const [isReordering, setIsReordering] = useState(false);
-  const [modalChannel, setModalChannel] = useState<{
-    name: string;
-    modal: "settings" | "invite";
-  } | null>(null);
+  const [inviteChannel, setInviteChannel] = useState<string | null>(null);
   const [clickedPM, setClickedPM] = useState<string | null>(null);
   const lastSelectedPM = useRef<string | null>(null);
 
@@ -281,6 +257,12 @@ export const ChannelList: React.FC = () => {
   }, [selectedServer]);
 
   const isTouch = useIsTouchInput();
+  const serverAlertCount = useStore((s) =>
+    selectedServerId ? (s.serverAlerts[selectedServerId] ?? 0) : 0,
+  );
+  const hasUnreadServerNotices = useStore(
+    (s) => !!selectedServerId && !!s.unreadServerNotices[selectedServerId],
+  );
 
   const applyChannelDrop = (
     ids: string[],
@@ -666,9 +648,22 @@ export const ChannelList: React.FC = () => {
                 <span className="w-6 flex justify-center flex-shrink-0">
                   <FaCommentDots className="text-lg" />
                 </span>
-                <span className="truncate font-medium">
+                <span className="truncate font-medium flex-1">
                   <Trans>Server Notices</Trans>
                 </span>
+                {serverAlertCount > 0 ? (
+                  <span
+                    className="min-w-5 h-5 px-1.5 rounded-full bg-discord-red text-white text-xs font-semibold flex items-center justify-center"
+                    title={t`Open Server Notices to see what went wrong`}
+                  >
+                    {serverAlertCount}
+                  </span>
+                ) : (
+                  hasUnreadServerNotices &&
+                  selectedChannelId !== "server-notices" && (
+                    <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                  )
+                )}
               </div>
             </div>
           </>
@@ -693,7 +688,7 @@ export const ChannelList: React.FC = () => {
         pronouns={currentUser?.metadata?.pronouns?.value}
         networkName={selectedServer?.networkName ?? selectedServer?.name}
         isIrcOp={isIrcOp}
-        onOpenSettings={() => toggleSettingsModal(true)}
+        onOpenSettings={() => openPage({ kind: "settings" })}
       />
       {selectedServerId && (
         <>
@@ -717,13 +712,8 @@ export const ChannelList: React.FC = () => {
                       id: "profile",
                       label: t`See profile`,
                       icon: <FaInfoCircle />,
-                      onClick: () => {
-                        setProfileViewRequest(
-                          selectedServerId,
-                          menuPrivateChat.username,
-                        );
-                        toggleUserProfileModal(true);
-                      },
+                      onClick: () =>
+                        openProfile(selectedServerId, menuPrivateChat.username),
                     },
                     {
                       id: "reorder",
@@ -760,16 +750,12 @@ export const ChannelList: React.FC = () => {
               channel={channelMenu.channel}
               anchor={channelMenu.anchor}
               onClose={closeMenu}
-              onInvite={() =>
-                setModalChannel({
-                  name: channelMenu.channel.name,
-                  modal: "invite",
-                })
-              }
+              onInvite={() => setInviteChannel(channelMenu.channel.name)}
               onOpenSettings={() =>
-                setModalChannel({
-                  name: channelMenu.channel.name,
-                  modal: "settings",
+                openPage({
+                  kind: "channelSettings",
+                  serverId: selectedServerId,
+                  channelName: channelMenu.channel.name,
                 })
               }
               onNewFolder={setRenamingFolderId}
@@ -830,21 +816,13 @@ export const ChannelList: React.FC = () => {
                 : []
             }
           />
-          {modalChannel && (
-            <>
-              <ChannelSettingsModal
-                isOpen={modalChannel.modal === "settings"}
-                onClose={() => setModalChannel(null)}
-                serverId={selectedServerId}
-                channelName={modalChannel.name}
-              />
-              <InviteUserModal
-                isOpen={modalChannel.modal === "invite"}
-                onClose={() => setModalChannel(null)}
-                serverId={selectedServerId}
-                channelName={modalChannel.name}
-              />
-            </>
+          {inviteChannel && (
+            <InviteUserModal
+              isOpen
+              onClose={() => setInviteChannel(null)}
+              serverId={selectedServerId}
+              channelName={inviteChannel}
+            />
           )}
         </>
       )}

@@ -6,6 +6,11 @@
 	<string>Obby uses the microphone for voice calls.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Obby uses the camera for video calls.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

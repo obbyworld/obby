@@ -13,6 +13,7 @@ import { registerMetadataHandlers } from "./metadata";
 import { registerNamedModesHandlers } from "./named-modes";
 import { registerPushBotHandlers } from "./pushbot";
 import { registerReadMarkerHandlers } from "./readMarker";
+import { registerServerReplyHandlers } from "./serverReplies";
 import { registerTicTacToeHandlers } from "./tictactoe";
 import { registerUserHandlers } from "./users";
 import { registerWhoisHandlers } from "./whois";
@@ -38,4 +39,5 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerBouncerHandlers(store);
   registerPushBotHandlers(store);
   registerE2EEHandlers(store);
+  registerServerReplyHandlers(store);
 }

@@ -265,7 +265,7 @@ describe("CameraCaptureModal", () => {
     const { onClose } = renderModal({});
     await waitForViewfinder();
 
-    fireEvent.click(screen.getByRole("button", { name: /close modal/i }));
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
     expect(onClose).toHaveBeenCalled();
     for (const track of tracks) expect(track.stop).toHaveBeenCalled();

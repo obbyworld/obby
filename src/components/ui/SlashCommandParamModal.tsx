@@ -20,8 +20,11 @@
 import { Trans, t } from "@lingui/macro";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { sendBotCommand } from "../../hooks/useMessageSending";
 import { COUNTRIES, flagEmoji } from "../../lib/countries";
+import { BaseModal } from "../../lib/modal/BaseModal";
+import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import type {
   BotCommand,
   BotCommandOption,
@@ -66,13 +69,17 @@ export const SlashCommandParamModal: React.FC<Props> = ({
     return init;
   });
   const [error, setError] = useState<string | null>(null);
+  const isTouch = useIsTouchInput();
   const firstFieldRef = useRef<HTMLInputElement | HTMLSelectElement | null>(
     null,
   );
 
   useEffect(() => {
-    firstFieldRef.current?.focus();
-  }, []);
+    if (isTouch) return;
+    // BaseModal focuses its container 50ms after opening, so we focus the first field after that.
+    const timer = setTimeout(() => firstFieldRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
+  }, [isTouch]);
 
   // Allow Escape to dismiss; Enter on a non-textarea submits.
   const onKey = useCallback(
@@ -131,38 +138,28 @@ export const SlashCommandParamModal: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4"
-      role="dialog"
-      aria-modal="true"
+    <BaseModal
+      isOpen
+      onClose={onClose}
+      closeOnClickOutside={false}
+      closeOnEsc={false}
+      maxWidth="md"
+      title={
+        <span className="truncate">
+          /{command.name}
+          <span className="text-discord-text-muted ml-1 text-sm">
+            @{botNick}
+          </span>
+        </span>
+      }
     >
-      <form
-        onSubmit={submit}
-        className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5 max-h-[85vh] flex flex-col"
-      >
-        <div className="flex justify-between items-start mb-3">
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold text-white truncate">
-              /{command.name}
-              <span className="text-discord-text-muted ml-1 text-sm">
-                @{botNick}
-              </span>
-            </h2>
-            {command.description && (
-              <p className="text-xs text-discord-text-muted mt-1">
-                {command.description}
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-discord-text-muted hover:text-white ml-2"
-          >
-            ✕
-          </button>
-        </div>
-        <div className="space-y-3 overflow-y-auto flex-1 min-h-0 pr-1">
+      <form onSubmit={submit} className="flex flex-col min-h-0 flex-1">
+        <ModalBody scrollable className="space-y-3">
+          {command.description && (
+            <p className="text-xs text-discord-text-muted">
+              {command.description}
+            </p>
+          )}
           {opts.map((o, idx) => (
             <ParamField
               key={o.name}
@@ -180,27 +177,18 @@ export const SlashCommandParamModal: React.FC<Props> = ({
               <Trans>This command takes no parameters.</Trans>
             </p>
           )}
-        </div>
-        {error && (
-          <p className="text-discord-red text-xs mt-3 flex-shrink-0">{error}</p>
-        )}
-        <div className="flex justify-end gap-2 mt-4 flex-shrink-0">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-3 py-2 rounded bg-discord-dark-400 text-discord-text-normal hover:text-white text-sm"
-          >
+          {error && <p className="text-discord-red text-xs">{error}</p>}
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="secondary" onClick={onClose}>
             <Trans>Cancel</Trans>
-          </button>
-          <button
-            type="submit"
-            className="button-primary px-3 py-2 rounded text-sm font-medium"
-          >
+          </Button>
+          <Button type="submit">
             <Trans>Run</Trans>
-          </button>
-        </div>
+          </Button>
+        </ModalFooter>
       </form>
-    </div>
+    </BaseModal>
   );
 };
 
