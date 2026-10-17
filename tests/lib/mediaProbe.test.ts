@@ -50,7 +50,7 @@ function makeErrorResponse(
 // Use unique URL counters per test to avoid cache collisions
 let urlCounter = 0;
 function uniqueUrl(suffix = "") {
-  return `https://filehost.example.com/unique${++urlCounter}${suffix}`;
+  return `https://host${++urlCounter}.example.com/unique${suffix}`;
 }
 
 beforeEach(() => {
@@ -254,12 +254,13 @@ describe("probeMediaUrl", () => {
     expect(result).toBeNull();
   });
 
-  test("web page host → null without a request", async () => {
-    const result = await probeMediaUrl(
-      `https://github.com/obbyworld/obby/pull/${Math.random()}`,
-    );
-    expect(result).toBeNull();
-    expect(fetch).not.toHaveBeenCalled();
+  test("host that blocked both requests is not fetched again", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("CORS"));
+    const first = uniqueUrl();
+    await probeMediaUrl(first);
+    const callsBefore = vi.mocked(fetch).mock.calls.length;
+    await probeMediaUrl(`${new URL(first).origin}/other`);
+    expect(vi.mocked(fetch).mock.calls.length).toBe(callsBefore);
   });
 
   test("network error → null", async () => {
