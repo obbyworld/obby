@@ -215,16 +215,33 @@ describe("notifying a chat message", () => {
   });
 
   it("shows it when notifications are on and the bell is not muted", async () => {
-    notifyChatMessage(useStore, mention);
+    notifyChatMessage(useStore, mention, false);
     await settle();
     expect(FakeNotification.instances).toHaveLength(1);
+  });
+
+  it("stays quiet only while its chat is open in a window in use", async () => {
+    const hasFocus = vi.spyOn(document, "hasFocus");
+    hasFocus.mockReturnValue(true);
+    notifyChatMessage(useStore, mention, true);
+    await settle();
+    expect(FakeNotification.instances).toHaveLength(0);
+
+    notifyChatMessage(useStore, mention, false);
+    await settle();
+    expect(FakeNotification.instances).toHaveLength(1);
+
+    hasFocus.mockReturnValue(false);
+    notifyChatMessage(useStore, mention, true);
+    await settle();
+    expect(FakeNotification.instances).toHaveLength(2);
   });
 
   it("stays quiet while the bell is muted", async () => {
     useStore.setState((state) => ({
       globalSettings: { ...state.globalSettings, notificationVolume: 0 },
     }));
-    notifyChatMessage(useStore, mention);
+    notifyChatMessage(useStore, mention, false);
     await settle();
     expect(FakeNotification.instances).toHaveLength(0);
   });
@@ -233,7 +250,7 @@ describe("notifying a chat message", () => {
     useStore.setState((state) => ({
       globalSettings: { ...state.globalSettings, enableNotifications: false },
     }));
-    notifyChatMessage(useStore, mention);
+    notifyChatMessage(useStore, mention, false);
     await settle();
     expect(FakeNotification.instances).toHaveLength(0);
   });
@@ -246,14 +263,14 @@ describe("notifying a chat message", () => {
     core.invoke.mockRejectedValueOnce(new Error("no activity") as never);
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-    notifyChatMessage(useStore, mention);
+    notifyChatMessage(useStore, mention, false);
 
     await vi.waitFor(() => expect(warn).toHaveBeenCalled());
   });
 
   it("falls back to an in-app note without permission", async () => {
     FakeNotification.permission = "denied";
-    notifyChatMessage(useStore, mention);
+    notifyChatMessage(useStore, mention, false);
     await settle();
     expect(useStore.getState().globalNotifications).toHaveLength(1);
   });
