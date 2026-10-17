@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-push-instances"
+description = "Enables the push_instances command without any pre-configured scope."
+commands.allow = ["push_instances"]
+
+[[permission]]
+identifier = "deny-push-instances"
+description = "Denies the push_instances command without any pre-configured scope."
+commands.deny = ["push_instances"]

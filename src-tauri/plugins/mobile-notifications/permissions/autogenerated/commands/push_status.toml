@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-push-status"
+description = "Enables the push_status command without any pre-configured scope."
+commands.allow = ["push_status"]
+
+[[permission]]
+identifier = "deny-push-status"
+description = "Denies the push_status command without any pre-configured scope."
+commands.deny = ["push_status"]

@@ -479,6 +479,10 @@ msgstr "Voeg inloggegevens toe om 2FA in te schakelen"
 msgid "Add a reaction"
 msgstr "Voeg een reactie toe"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Add a server to see how its notifications reach you"
+msgstr "Voeg een server toe om te zien hoe de meldingen ervan je bereiken"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Voeg een woord of zin toe..."
@@ -861,6 +865,10 @@ msgstr "Terug naar netwerklijst"
 msgid "Back to Settings"
 msgstr "Terug naar instellingen"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background check only"
+msgstr "Alleen achtergrondcontrole"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "{username} bannen via hostmasker (voorkomt dat ze opnieuw deelnemen via hetzelfde IP/host)"
@@ -1213,6 +1221,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chats en netwerken"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Check for new messages about every 15 minutes"
+msgstr "Ongeveer elke 15 minuten op nieuwe berichten controleren"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Kies een ander bestandstype. De bestandshost accepteert geen {ext}-bestanden."
@@ -1241,9 +1253,17 @@ msgstr "Kies een veilig wachtwoord"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Kies een kleiner bestand. Dit bestand is te groot voor de bestandshost."
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Choose distributor"
+msgstr "Distributeur kiezen"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Bestand kiezen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
+msgstr "Kies hoe berichten je bereiken terwijl Obby gesloten is. Servers zonder webpush gebruiken altijd de achtergrondcontrole."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1847,6 +1867,18 @@ msgstr "Dit netwerk verwijderen?"
 msgid "deleted"
 msgstr "verwijderd"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through a distributor app you choose, such as ntfy"
+msgstr "Direct bezorgen via een distributie-app naar keuze, zoals ntfy"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Deliver right away through Google Play services"
+msgstr "Direct bezorgen via Google Play-services"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Delivery While Closed"
+msgstr "Bezorging als de app gesloten is"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2376,6 +2408,10 @@ msgstr "Ledenlijst uitvouwen"
 msgid "Expand workflow"
 msgstr "Werkstroom uitvouwen"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Expect them up to 15 minutes late while Obby is closed"
+msgstr "Verwacht ze tot 15 minuten later terwijl Obby gesloten is"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Uitgebreid profiel niet beschikbaar"
@@ -2555,6 +2591,10 @@ msgstr "Algemeen ondersteuningskanaal"
 msgid "Get notified when someone says the words you follow."
 msgstr "Krijg een melding als iemand de woorden zegt die je volgt."
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Get them instantly, even with Obby closed"
+msgstr "Ontvang ze direct, ook als Obby gesloten is"
+
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2574,6 +2614,10 @@ msgstr "Ga naar {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Ga naar antwoord"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Google (FCM)"
+msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2643,6 +2687,10 @@ msgstr "Hostnaam"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostnaam:"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "How each server's notifications reach you once you close Obby"
+msgstr "Hoe de meldingen van elke server je bereiken zodra je Obby sluit"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2735,6 +2783,14 @@ msgstr "Emoji invoegen"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Install"
 msgstr "Installeren"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
+msgstr "Installeer een UnifiedPush-distributeur zoals ntfy en selecteer daarna opnieuw UnifiedPush"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install Google Play services to use this"
+msgstr "Installeer Google Play-services om dit te gebruiken"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2893,6 +2949,14 @@ msgstr "Chatgeschiedenis op dit apparaat bewaren"
 msgid "Keep credentials"
 msgstr "Bewaar inloggegevens"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby in the tray to get them"
+msgstr "Houd Obby in het systeemvak om ze te ontvangen"
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Keep Obby open to get them"
+msgstr "Houd Obby open om ze te ontvangen"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Wachtwoorden behouden"
@@ -2958,6 +3022,10 @@ msgstr "Kanaal verlaten"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Laat het kanaal leeg voor een algemene netwerkuitnodiging. De beschrijving is alleen voor je eigen administratie — alleen voor jou zichtbaar in deze lijst."
+
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Leave Obby in the background to get them, since swiping it away stops them"
+msgstr "Laat Obby op de achtergrond draaien om ze te ontvangen, want wegvegen stopt ze"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3738,6 +3806,10 @@ msgstr "Meldingsgeluid"
 #: src/components/pages/pageSections.tsx
 msgid "Notifications"
 msgstr "Meldingen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications While Obby Is Closed"
+msgstr "Meldingen terwijl Obby gesloten is"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5610,6 +5682,10 @@ msgstr "Zet Chatgeschiedenis bewaren aan om te beginnen met opslaan"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Zet OPER bij verbinden aan om de opgeslagen naam en wachtwoord bij elke verbinding als OPER te sturen, of gebruik hieronder Voer OPER uit."
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Turn on Show Notifications to get any"
+msgstr "Zet Meldingen tonen aan om meldingen te ontvangen"
+
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Zet de camera aan om het opnieuw te proberen"
@@ -5642,6 +5718,10 @@ msgstr "Typ woorden om berichten te doorzoeken"
 #: src/components/voice/VoiceDock.tsx
 msgid "Undeafen"
 msgstr "Doof opheffen"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "UnifiedPush"
+msgstr "UnifiedPush"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
@@ -5789,6 +5869,10 @@ msgstr "Gebruikers en patronen om te negeren"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Gebruikers:"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Using {currentName}"
+msgstr "{currentName} in gebruik"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -5995,6 +6079,10 @@ msgstr "Wat dit betekent:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Wat je aan het doen bent"
+
+#: src/components/pages/SettingsPage.tsx
+msgid "When Closed"
+msgstr "Wanneer gesloten"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

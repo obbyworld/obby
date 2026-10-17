@@ -13,11 +13,13 @@ import { registerInvitelinkHandlers } from "./invitelink";
 import { registerMessageHandlers } from "./messages";
 import { registerMetadataHandlers } from "./metadata";
 import { registerNamedModesHandlers } from "./named-modes";
+import { registerNativePushHandlers } from "./nativePush";
 import { registerPushBotHandlers } from "./pushbot";
 import { registerReadMarkerHandlers } from "./readMarker";
 import { registerServerReplyHandlers } from "./serverReplies";
 import { registerTicTacToeHandlers } from "./tictactoe";
 import { registerUserHandlers } from "./users";
+import { registerWebPushHandlers } from "./webPush";
 import { registerWhoisHandlers } from "./whois";
 
 export function registerAllHandlers(store: StoreApi<AppState>): void {
@@ -44,4 +46,6 @@ export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerServerReplyHandlers(store);
   registerHistoryHandlers(store);
   registerNotificationPermission(store);
+  registerWebPushHandlers(store);
+  registerNativePushHandlers(store);
 }

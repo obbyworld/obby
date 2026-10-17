@@ -181,6 +181,7 @@ describe("Metadata Display Features", () => {
         ignoreList: ["HistServ!*@*"],
         keepHistory: true,
         closeToTray: true,
+        pushMethod: "fcm",
         historyLimitMb: 500,
         nickname: "",
         accountName: "",

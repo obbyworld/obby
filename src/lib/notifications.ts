@@ -18,6 +18,7 @@ import {
   isTauriIOS,
   isTauriMobile,
 } from "./platformUtils";
+import { closePushNotifications, markShownByPage } from "./pushRegistration";
 
 /**
  * Check if the browser Notification API is supported
@@ -199,6 +200,21 @@ export function encryptedNotificationText(): string {
   return t`New encrypted message`;
 }
 
+/** The wording a background notifier needs, since it has no catalog. */
+export function backgroundNotificationStrings(): {
+  channelTitle: string;
+  encryptedBody: string;
+} {
+  return {
+    channelTitle: notificationTitle({
+      sender: "{sender}",
+      target: "{target}",
+      isPrivate: false,
+    }),
+    encryptedBody: encryptedNotificationText(),
+  };
+}
+
 export function notificationBody(text: string): string {
   const plain = stripIrcFormatting(text).trim();
   return plain.length > BODY_LIMIT
@@ -245,6 +261,7 @@ export async function showChatNotification(
   if (!shown) return false;
   const key = chatKey(notification.serverId, notification.target);
   webNotifications.set(key, shown);
+  markShownByPage(notification.serverId, notification.msgid);
   shown.onclick = () => {
     window.focus();
     openTarget?.(target);
@@ -262,6 +279,7 @@ export function closeChatNotification(serverId: string, target: string): void {
   const key = chatKey(serverId, target);
   webNotifications.get(key)?.close();
   webNotifications.delete(key);
+  if (!isTauri()) closePushNotifications(serverId, key);
   if (isTauri())
     removeActive([{ id: notificationIdFor(serverId, target) }]).catch(() => {});
 }
@@ -304,7 +322,10 @@ export async function handleNotificationTaps(
     route(target);
   };
   openTarget = route;
-  if (!isTauri()) return;
+  if (!isTauri()) {
+    handleServiceWorkerTaps(open);
+    return;
+  }
   if (isTauriMobile()) await handleMobileLaunchTaps(open);
   if (isTauriAndroid())
     await createChannel({
@@ -315,6 +336,28 @@ export async function handleNotificationTaps(
   await onAction(({ actionId, notification }) => {
     if (actionId === "tap") open(notification?.extra);
   });
+}
+
+const NOTIFICATION_QUERY = "obbyNotification";
+
+// The service worker shows web push notifications; a click reaches us as a
+// message, or as a query parameter on the window it opened.
+function handleServiceWorkerTaps(
+  open: (extra?: Record<string, unknown> | null) => void,
+): void {
+  navigator.serviceWorker?.addEventListener("message", (event) => {
+    if (event.data?.type === "obby-notification-tap") open(event.data.target);
+  });
+  const url = new URL(window.location.href);
+  const tapped = url.searchParams.get(NOTIFICATION_QUERY);
+  if (tapped === null) return;
+  url.searchParams.delete(NOTIFICATION_QUERY);
+  window.history.replaceState(null, "", url);
+  try {
+    open(JSON.parse(tapped));
+  } catch (error) {
+    if (!(error instanceof SyntaxError)) throw error;
+  }
 }
 
 // The mobile plugin keeps the tap that launched the app, since the

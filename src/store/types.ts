@@ -52,6 +52,9 @@ export interface ChannelFolder {
 
 export type ChannelFoldersMap = Record<string, ChannelFolder[]>;
 
+/** How the Android app receives messages while it is closed. */
+export type PushMethod = "fcm" | "unifiedpush" | "poll";
+
 export interface GlobalSettings {
   enableNotifications: boolean;
   notificationSound: string;
@@ -68,6 +71,7 @@ export interface GlobalSettings {
   ignoreList: string[];
   keepHistory: boolean;
   closeToTray: boolean;
+  pushMethod: PushMethod;
   historyLimitMb: number;
   nickname: string;
   accountName: string;
