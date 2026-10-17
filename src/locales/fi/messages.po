@@ -70,6 +70,16 @@ msgstr "{0, plural, one {# vaihe} other {# vaihetta}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Näytä 1 kohde lisää} other {Näytä {1} kohdetta lisää}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "{0} emojia"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0} on kutsunut sinut pelaamaan."
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -101,6 +111,11 @@ msgstr "{0} verkko{1} — valitse yksi liittyäksesi"
 msgid "{0} older messages"
 msgstr "{0} vanhempaa viestiä"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "{0} katsoo"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -125,6 +140,10 @@ msgstr "{0}t sitten"
 msgid "{0}m ago"
 msgstr "{0}min sitten"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, one {Ladataan 1 tiedostoa} other {Ladataan # tiedostoa}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 kerta} other {{c} kertaa}}"
@@ -132,6 +151,10 @@ msgstr "{c, plural, one {1 kerta} other {{c} kertaa}}"
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days} päivää"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, one {1 lataus epäonnistui} other {# latausta epäonnistui}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +347,20 @@ msgstr "<0>💡 Suositus:</0> Jatka vain jos luotat tähän palvelimeen ja ymmä
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Riski:</0> Arkaluonteiset tiedot (viestit, yksityiskeskustelut, tunnistautumistiedot) voisivat paljastua verkon ylläpitäjille tai hyökkääjille, jotka sijaitsevat IRC-palvelimien välissä."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "Kaksivaiheinen tunnistus on tällä tilillä pakollinen. Ainoan rekisteröidyn tunnistetiedon poistaminen lukitsisi sinut ulos kirjautumisesta. Lisää ensin toinen tunniste tai poista 2FA käytöstä alta."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6-numeroinen koodi"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "Tietoja tästä lähdemerkinnästä"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "Hyväksy"
 
@@ -350,6 +382,7 @@ msgid "Account"
 msgstr "Tili"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Tilin nimi"
@@ -393,13 +426,29 @@ msgstr "Toiminta"
 msgid "Add"
 msgstr "Lisää"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "Lisää tunniste ottaaksesi 2FA:n käyttöön"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Lisää sana tai lause..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "Lisää todennussovellus tai biometrinen tunniste / turva-avain vaatiaksesi toisen tekijän kirjautuessa."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "Lisää todennussovellus"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Lisää porttikieltomaski (esim. nick!*@*, *!*@host.com)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "Lisää biometrinen tunniste / turva-avain"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +457,11 @@ msgstr "lisää kanava"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "Lisää kanava"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "Lisää emoji"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +503,11 @@ msgstr "Lisää palvelin"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "Lisää ensimmäinen verkkosi"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "lisäsi {0}"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +551,14 @@ msgstr "Kaikki sisältö"
 msgid "Allow camera access"
 msgstr "Salli kameran käyttö"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "Salli kameran käyttö asetuksista jakaaksesi videota"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "Salli kameran käyttö ottaaksesi kuvan tai videon."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Salli monirivisyöttö"
@@ -501,6 +568,14 @@ msgstr "Salli monirivisyöttö"
 msgid "Allow microphone access"
 msgstr "Salli mikrofonin käyttö"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "Salli mikrofonin käyttö asetuksista puhuaksesi"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "Salli mikrofonin käyttö äänen tallentamiseen."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +584,10 @@ msgstr "Jo kanavalla {0}"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "Näyttää myös esikatselut YouTubesta, Vimeosta, SoundCloudista ja vastaavista tunnetuista palveluista."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "Vaihtoehtoinen teksti (valinnainen)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +644,11 @@ msgstr "Haluatko varmasti poistaa tämän viestin? Tätä toimintoa ei voi kumot
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "Liitä"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Liitteet-valinnat"
@@ -581,6 +665,14 @@ msgstr "Äänentoistoasento"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Tunnistaudu IRC-operaattoriksi ylläpito-oikeuksia varten"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "Todenna nyt"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "Todenna yhdistettäessä"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "Todennettu"
@@ -588,6 +680,10 @@ msgstr "Todennettu"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "Tunnistautunut tili"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "Todennussovellus (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +746,8 @@ msgstr "Poissa:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Takaisin"
@@ -699,6 +797,10 @@ msgstr "Estä käyttäjä (nimimerkin perusteella)"
 msgid "Bans"
 msgstr "Estot"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "Biometrinen tunniste / turva-avain"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +827,32 @@ msgstr "Botti ei ole vielä rekisteröinyt yhtään vinokomentoa."
 msgid "Bot in this channel"
 msgstr "Botti tässä kanavassa"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Botit"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "Botit (ladataan {botsLoadingCount})"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Tämän verkon botit"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Nosta tämä ikkuna eteen ja yritä uudelleen."
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Selaa kaikkia palvelimen kanavia"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "Selaa kanavia"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "Selain ei tue WebAuthnia"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +862,6 @@ msgstr "Selaimet paljastavat kaiuttimesi vasta, kun olet sallinut mikrofonin tai
 msgid "Calls"
 msgstr "Puhelut"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +873,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +884,7 @@ msgstr "Kamera {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +892,8 @@ msgstr "Kamera {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +912,10 @@ msgstr "Peruuta salaus"
 msgid "Cancel reply"
 msgstr "Peruuta vastaus"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "Peruuta lataus"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "peruutettu"
@@ -815,6 +932,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Vaihda korostusväri"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "Vaihda salasana"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1020,7 @@ msgstr "Kanavan operaattori"
 msgid "Channel Owner"
 msgstr "Kanavan omistaja"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Kanavan asetukset"
 
@@ -913,6 +1033,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "Kanava, jolta poistutaan (oletuksena nykyinen)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Kanavan aihe"
 
@@ -924,6 +1045,10 @@ msgstr "Kanava ei näy LIST- tai NAMES-komennoissa"
 msgid "channel-name"
 msgstr "kanavan-nimi"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "Kanavakohtainen"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1059,22 @@ msgstr "Kanavat"
 msgid "Channels on {networkName}"
 msgstr "Kanavat verkossa {networkName}"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "Valitse toinen tiedostotyyppi. Tiedostopalvelin ei hyväksy {ext}-tiedostoja."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "Valitse toinen tiedosto. Tiedostopalvelin hylkäsi tämän."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "Valitse alle {limit} tiedosto, se on suurin tiedostopalvelimen hyväksymä koko."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "Valitse tiedosto, jossa on tiedostopääte. Tiedostopalvelin ei hyväksy tiedostoja ilman päätettä."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "Valitse valmis tulvasuojausprofiili. Nämä profiilit tarjoavat tasapainoisia suojausasetuksia eri käyttötarkoituksiin."
@@ -941,6 +1082,10 @@ msgstr "Valitse valmis tulvasuojausprofiili. Nämä profiilit tarjoavat tasapain
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "Valitse turvallinen salasana"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "Valitse pienempi tiedosto. Tämä on liian suuri tiedostopalvelimelle."
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1152,6 @@ msgstr "Liity kanavalle {channel} napsauttamalla"
 msgid "Click to jump to message"
 msgstr "Siirry viestiin napsauttamalla"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "Aseta aihe napsauttamalla"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "asiakas"
@@ -1023,7 +1164,6 @@ msgstr "Asiakasohjelma"
 msgid "Client Limit (+l)"
 msgstr "Käyttäjäraja (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1034,11 +1174,18 @@ msgstr "Käyttäjäraja (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1048,6 +1195,10 @@ msgstr "Sulje"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Sulje kommentit"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Sulje keskustelu"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1127,6 +1278,19 @@ msgstr "Määritä yksityiskohtaiset tulvasuojaussäännöt. Kukin sääntö mä
 msgid "Configure notification sounds and highlights"
 msgstr "Määritä ilmoitusäänet ja korostukset"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "Vahvista rekisteröinti"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "Vahvista uusi salasana"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "Vahvista poisto"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "Vahvista?"
@@ -1135,6 +1299,18 @@ msgstr "Vahvista?"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "Yhdistä"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "Liitä kamera jakaaksesi videota"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "Liitä mikrofoni puhuaksesi"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "Yhdistä palvelimeen hallitaksesi operaattoriasetuksia."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1461,14 @@ msgstr "Sijaintia ei saatu määritettyä ajoissa. Yritä uudelleen paikassa, jo
 msgid "Could not get your location."
 msgstr "Sijaintiasi ei saatu selville."
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "GIF-kuvien lataus epäonnistui. Hae uudelleen yrittääksesi."
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "Tiedostopalvelimeen ei saatu yhteyttä. Tarkista yhteytesi ja yritä uudelleen."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Salausta ei voitu muodostaa käyttäjän {nick} kanssa."
@@ -1310,6 +1494,11 @@ msgstr "Luo ja hallinnoi kutsulinkkejäsi"
 msgid "Create folder"
 msgstr "Luo kansio"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "Luo paketti"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "Luotu myöhemmin kuin (min sitten)"
@@ -1318,9 +1507,18 @@ msgstr "Luotu myöhemmin kuin (min sitten)"
 msgid "Created Before (min ago)"
 msgstr "Luotu aiemmin kuin (min sitten)"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "Luodaan…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "Nykyinen avatar"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "Mukautetut emojipaketit"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1545,7 @@ msgid "Deafen"
 msgstr "Mykistä kuuntelu"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "Hylkää"
 
@@ -1402,9 +1601,13 @@ msgstr "Poista viesti"
 msgid "Delete network"
 msgstr "Poista verkko"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Poista yksityiskeskustelu"
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "Poista paketti"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "Poistetaanko paketti \"{packId}\"? Samalla poistetaan kaikki sen emojit."
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
@@ -1431,7 +1634,10 @@ msgstr "Alenna katsojaksi"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Kuvaus (valinnainen, esim. \"Beta-testaajat Q3\")"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "Kuvaus (valinnainen)"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1648,21 @@ msgstr "Laitteiden nimet ovat piilossa, kunnes sallit kameran käytön."
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Laitteiden nimet ovat piilossa, kunnes sallit mikrofonin käytön."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "Poista käytöstä"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "Poista 2FA käytöstä. Vahvista syöttämällä 6-numeroinen koodi jostakin rekisteröidystä todennussovelluksestasi."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Poista puhu painamalla käytöstä"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "Pois käytöstä"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1719,7 @@ msgstr "Näyttö"
 msgid "Display all server events in chat"
 msgstr "Näytä kaikki palvelintapahtumat chatissa"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1749,13 @@ msgstr "Haluatko avata tämän linkin uudessa välilehdessä?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "valmis"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "Valmis"
 
@@ -1540,8 +1765,8 @@ msgid "Download"
 msgstr "Lataa"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Vedä kahvasta siirtääksesi kanavan tai kansioon"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Vedä kahvasta siirtääksesi kanavaa tai keskustelua tai kanavan kansioon"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -1578,6 +1803,11 @@ msgstr "Muokkaa"
 msgid "Edit {0}"
 msgstr "Muokkaa {0}"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "Muokkaa kanavaa"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1841,14 @@ msgstr "Upotus"
 msgid "Emojis"
 msgstr "Emojit"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "Tyhjä paketti. Lisää emojeita."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "Ota 2FA käyttöön"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Ota korostukset käyttöön"
@@ -1638,6 +1876,10 @@ msgstr "Ota ilmoitukset käyttöön"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "Ota puhu painamalla käyttöön"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "Käytössä"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1961,14 @@ msgstr "Salaus käyttäjän {nick} kanssa lakkasi toimimasta, joten viestiä ei 
 msgid "End encryption"
 msgstr "Lopeta salaus"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "Poista 2FA käytöstä syöttämällä 6-numeroinen koodi jostakin todennussovelluksestasi."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "Anna kanavan nimi kanavakohtaisia paketteja varten."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Syötä tilin nimi..."
@@ -1765,9 +2015,34 @@ msgstr "Syötä oikea nimi"
 msgid "Enter reason (optional)"
 msgstr "Syötä syy (valinnainen)"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "Syötä todennussovelluksesi 6-numeroinen koodi viimeistelläksesi kirjautumisen tilille {account}."
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "Syötä todennussovelluksesi 6-numeroinen koodi viimeistelläksesi kirjautumisen."
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Syötä todennussovelluksesi 6-numeroinen koodi."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "Syötä sähköpostiisi saapunut 6-numeroinen koodi."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "Anna tilin nimi, jonka haluat palauttaa."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Syötä kutsuttavan käyttäjänimi"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "Anna tilisi nimi. Lähetämme 6-numeroisen palautuskoodin tilille merkittyyn vahvistettuun osoitteeseen."
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1784,6 +2059,11 @@ msgstr "Poikkeukset"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Sulje pois kanavan nimimaski"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Poistu koko näytöstä"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -1824,6 +2104,7 @@ msgstr "Laajennettu profiili"
 msgid "External Link Warning"
 msgstr "Ulkoisen linkin varoitus"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "epäonnistui"
@@ -1889,6 +2170,18 @@ msgstr "Kutista kaikki"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "Kansion nimi"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "Turvallisuuden vuoksi kaikki tämän tilin istunnot kirjattiin ulos ja tilikohtainen palvelimen tila tyhjennettiin. Jos kaksivaiheinen tunnistus oli käytössä, se pysyy käytössä, joten seuraava kirjautuminen vaatii sen edelleen."
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "Luovuta"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "Unohtunut salasana"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2446,7 @@ msgstr "IRC-operaattori"
 msgid "IRC operator password"
 msgstr "IRC-operaattorin salasana"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "IRC-operaattorin käyttäjänimi"
@@ -2295,6 +2589,15 @@ msgstr "Ilmoita muille, kun kirjoitat"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "Yhdistä OAuth-identiteetti"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "Yhdistä palvelulla {0}"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "Live"
@@ -2334,6 +2637,11 @@ msgstr "Ladataan verkkoja bounceristasi…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "Ladataan WHOIS-tietoja..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "Lataus…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2684,26 @@ msgstr "Laske käsi"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "Välimieshyökkäykset palvelinlinkeissä ovat mahdollisia"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "Hallitse botteja"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "Hallitse botteja (ladataan {botsLoadingCount})"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "Hallitse paketteja"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "Hallitse verkonlaajuisia ja kanavakohtaisia emojipaketteja, joita tämä palvelin julkaisee draft/EMOJI:n kautta."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "Hallitse kaksivaiheista tunnistusta"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2947,10 @@ msgstr "Mykistä ilmoitukset"
 msgid "Mute or unmute notification sounds"
 msgstr "Mykistä tai poista mykistys ilmoitusäänistä"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "Nimi (esim. iPhone)"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2991,11 @@ msgstr "uusi kansio"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Uusi lempinimi"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "Uusi salasana"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3095,10 @@ msgstr "Ei valittua tiedostoa"
 msgid "No flood profile"
 msgstr "Ei tulvasuojausprofiilia"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "GIF-kuvia ei löytynyt. Kokeile toista hakua."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "isäntää ei asetettu"
@@ -2789,6 +3130,10 @@ msgstr "ei viestiä"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "Mikrofonia ei havaittu."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "Paketteja ei ole vielä määritetty."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3204,10 @@ msgstr "Normaali – tavallinen suojaus"
 msgid "Not encrypted"
 msgstr "Ei salattu"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "Huom: palvelin antaa saman vastauksen riippumatta siitä, onko tilillä vahvistettu sähköpostiosoite, joten kirjoitusvirhettä ei merkitä tässä. Jos koodi ei saavu muutaman minuutin kuluessa, tarkista tilin nimi."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "Ilmoitusääni"
@@ -2866,6 +3215,10 @@ msgstr "Ilmoitusääni"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "Ilmoitukset"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "OAuth-identiteetti"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3250,10 @@ msgstr "ei verkossa"
 msgid "Offline"
 msgstr "Poissa verkosta"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "OK"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "päälle"
@@ -2920,6 +3277,7 @@ msgid "Only operators can change the channel topic"
 msgstr "Vain operaattorit voivat muuttaa kanavan aihetta"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Vain suojatut WebSocket-yhteydet ovat tuettuja"
 
@@ -2955,6 +3313,11 @@ msgstr "Avaa kanavan asetukset"
 #: src/components/layout/ChannelRow.tsx
 msgid "Open channel options"
 msgstr "Avaa kanavan valinnat"
+
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Avaa keskustelun asetukset"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -3027,6 +3390,10 @@ msgstr "Operaattoritoiminnot"
 msgid "Optional crash reports to improve the app"
 msgstr "Valinnaiset kaatumisraportit sovelluksen parantamiseksi"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "Muut tämän tilin avoimet istunnot kirjataan ulos muutoksen yhteydessä. Kaksivaiheisen tunnistuksen asetukset, jos niitä on, säilyvät ennallaan."
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR ei salaa tiedostoja, lähetetty sellaisenaan"
@@ -3039,6 +3406,14 @@ msgstr "Tuloste"
 msgid "Owner"
 msgstr "Omistaja"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id (esim. team-mascots)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id ja nimi vaaditaan."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Salasana"
@@ -3046,6 +3421,15 @@ msgstr "Salasana"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "Salasana vaaditaan kanavalle liittymiseen. Jätä tyhjäksi poistaaksesi avaimen."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "Salasanan palautus valmis"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "Salasanat eivät täsmää."
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3088,6 +3472,15 @@ msgstr "Pysyvä"
 msgid "Photo"
 msgstr "Kuva"
 
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "Valitse salasana (vähintään 3 merkkiä)."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "Valitse yksisanainen nimi (ei välilyöntejä)."
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
 msgstr "Valitse kanavan tyyppi"
@@ -3096,12 +3489,11 @@ msgstr "Valitse kanavan tyyppi"
 msgid "Picture-in-picture"
 msgstr "Kuva kuvassa"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Kiinnitä"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Kiinnitä keskustelu"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Kiinnitä yksityiskeskustelu"
@@ -3132,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Toista ääniä maininnoista ja viesteistä"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Pelaa ristinollaa"
 
@@ -3151,6 +3541,8 @@ msgstr "Lähetä viesti käyttäjälle"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Avaa video erilliseen ikkunaan"
 
@@ -3213,6 +3605,10 @@ msgstr "Pronominit"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Protected Topic (+t)"
 msgstr "Suojattu aihe (+t)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "Palveluntarjoaja ei palauttanut bearer-tunnusta."
 
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
@@ -3315,6 +3711,7 @@ msgstr "Uudelleenyhdistäminen epäonnistui"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Yhdistä uudelleen palvelimeen"
 
@@ -3367,6 +3764,10 @@ msgstr "Päivitä WHOIS"
 msgid "Register for an account"
 msgstr "Rekisteröidy tilille"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "Rekisteröidyt tunnisteet"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Hylkää"
@@ -3380,8 +3781,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "Löysä – vähemmän aggressiivinen suojaus"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "Poista"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "Poistetaanko \"{0}\"? Et voi enää käyttää sitä toisena tekijänä."
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3435,9 +3843,10 @@ msgstr "Näytä Markdown-muotoilu viesteissä"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Järjestä kanavat uudelleen"
+msgid "Reorder list"
+msgstr "Järjestä lista"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3462,7 +3871,6 @@ msgstr "Yritä lähettää uudelleen"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "Palaa kanavalle"
 
@@ -3473,6 +3881,11 @@ msgstr "Tarkista muuttunut avain…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Tarkista avain"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "Käännä 90°"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3943,10 @@ msgstr "Tallennettu"
 msgid "Saving..."
 msgstr "Tallennetaan..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "Skannaa tämä QR-koodi todennussovelluksellasi ja vahvista sen näyttämällä 6-numeroisella koodilla."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Vieritä keskustelu tähän vastaukseen"
@@ -3550,6 +3967,10 @@ msgstr "Hae"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "Etsi botteja"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "Hae emojeja..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3612,6 +4033,16 @@ msgstr "Näytä botit"
 msgid "See channel info"
 msgstr "Näytä kanavan tiedot"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Näytä profiili"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Näytä katsojat"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3641,11 +4072,6 @@ msgstr "Valitse kanava tai lisää uusi päästäksesi alkuun."
 msgid "self-registered"
 msgstr "itse rekisteröitynyt"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "Lähetä"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4097,10 @@ msgstr "Lähetä viesti"
 msgid "Send private message"
 msgstr "Lähetä yksityisviesti"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "Lähetä palautuskoodi"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "Lähetetäänkö tämä tiedosto salaamattomana?"
@@ -3687,6 +4117,10 @@ msgstr "Lähetä salaamattomana"
 msgid "Sending"
 msgstr "Lähetetään"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "Lähetetään…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4130,14 @@ msgstr "palvelin"
 msgid "Server"
 msgstr "Palvelin"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "Palvelimen kanavat"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "Palvelin ei ilmoita WebAuthn-tukea"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4181,16 @@ msgstr "Palvelimen salasana"
 msgid "Server Password (PASS)"
 msgstr "Palvelimen salasana (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "Palvelin palautti virheellisen WebAuthn-haasteen."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Palvelimien välinen viestintä voi käyttää salaamattomia yhteyksiä"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "Palvelimenlaajuinen"
 
@@ -3774,6 +4215,7 @@ msgstr "Istunto {0}"
 msgid "Sessions"
 msgstr "Istunnot"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Aseta aihe…"
@@ -3791,6 +4233,10 @@ msgstr "asettaja: {0}"
 msgid "Set by:"
 msgstr "Asettanut:"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "Aseta uusi salasana"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Merkitse itsesi poissaolevaksi"
@@ -3807,6 +4253,11 @@ msgstr "Asetus"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "Asetusta ei löydetty"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "Asetetaan…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4283,21 @@ msgstr "Jaa sijaintisi"
 msgid "Share your location with {target}."
 msgstr "Jaa sijaintisi kohteeseen {target}."
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "Jaa näyttösi uudelleen yrittääksesi uudestaan"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "hän/hänen"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "lyhytkoodi (esim. partyparrot)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "Lyhytkoodin on vastattava muotoa [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3897,6 +4360,10 @@ msgstr "Näytä poistumisviestit"
 msgid "Show the MOTD"
 msgstr "Näytä MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Näytä video"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -3909,6 +4376,10 @@ msgstr "Näyttää kaiken ulkoisen median. Mikä tahansa URL voi aiheuttaa yhtey
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Näyttää mediaa palvelimesi luotetusta tiedostoisännästä. Ulkoisille palveluille ei lähetetä pyyntöjä."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "Kirjaudu palveluntarjoajalla, niin sidomme saadun identiteetin tiliisi, jotta SASL OAUTHBEARER / IRCV3BEARER toimii seuraavissa yhteyksissä."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4469,14 @@ msgstr "Tila"
 msgid "Status Messages"
 msgstr "Tilaviestit"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "Tila:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Pysy tässä, kun liitymme uudelleen. Palvelin rajoittaa, kuinka usein voit liittyä uudelleen."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "Poistu striimistä"
@@ -4023,6 +4502,7 @@ msgid "Stop video"
 msgstr "Pysäytä video"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Striimaus"
 
@@ -4074,6 +4554,14 @@ msgstr "Poista kansiosta"
 msgid "Take photo"
 msgstr "Ota kuva"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "Ota kuva tai video"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "Teksti"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Tekstikanava"
@@ -4085,6 +4573,10 @@ msgstr "Laite ei ole juuri nyt käytettävissä."
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "Kyseistä näyttöä ei enää ole."
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "Puhelupalvelin hylkäsi pyynnön. Yritä hetken kuluttua uudelleen."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4113,6 +4605,10 @@ msgstr "Juuri ottamasi kuva"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Tallennusta ei voitu tehdä."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Palvelin hylkäsi liittymisesi. Tarkista kanavan tilat ja yritä uudelleen."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4192,6 +4688,10 @@ msgstr "Tämä poistaa verkon soju-bounceristasi. Käyttääksesi sitä uudellee
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Tämä palvelin ei tue laajennettua profiilimetadataa (IRCv3 METADATA -laajennus). Lisäkentät kuten avatar, näyttönimi ja tila eivät ole käytettävissä."
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "Tämä palvelin ei ilmoita taustapalvelun osoitetta (draft/authtoken tai obby.world/FILEHOST). Ylläpidon rajapintoihin ei saada yhteyttä."
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Tämä palvelin ei tue kutsulinkkejä (<0>obby.world/invitation</0>-kykyä ei ilmoiteta). Voit silti chattailla normaalisti; tämä paneeli on obbyircd-pohjaisia verkkoja varten."
@@ -4213,6 +4713,11 @@ msgstr "Tämä sulkee myös alla olevat {0} sidottua verkkoa."
 msgid "This will also close the bound network below."
 msgstr "Tämä sulkee myös alla olevan sidotun verkon."
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "Ristinolla: {0}"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Aika (min)"
@@ -4229,6 +4734,10 @@ msgstr "aikakatkaisu"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "TLS-varmenteen sormenjälki"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4808,31 @@ msgstr "katkaistu"
 msgid "Trusted Sources"
 msgstr "Luotetut lähteet"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "Yritä lähetystä uudelleen."
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "Yritä lähetystä uudelleen. Tiedostopalvelimen vastausta ei voitu lukea."
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "Käynnistä kamera yrittääksesi uudelleen"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "Käynnistä mikrofoni yrittääksesi uudelleen"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "Kaksivaiheinen tunnistus"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "Kaksivaiheinen tunnistus vaaditaan"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "Tyyppi"
@@ -4326,12 +4860,11 @@ msgstr "Poista mykistys"
 msgid "Unmute for me"
 msgstr "Poista mykistys vain minulta"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Irrota kiinnitys"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Irrota keskustelu"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Irrota yksityiskeskustelu"
@@ -4352,13 +4885,25 @@ msgstr "Lataa kuva tai anna URL, jossa voi käyttää valinnaista {size}-muuttuj
 msgid "Upload Avatar"
 msgstr "Lataa avatar"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "Lataus peruutettu."
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "Ladattu"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "Ladataan..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL-osoitteen on oltava http(s):// tai data:."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4411,11 +4956,11 @@ msgstr "Käyttäjä on poissa"
 msgid "User modes"
 msgstr "Käyttäjätilat"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Käyttäjäprofiili"
 
+#: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "Käyttäjäasetukset"
@@ -4459,6 +5004,14 @@ msgstr "Kelvollinen palvelinportti on pakollinen"
 msgid "Verified account"
 msgstr "Vahvistettu tili"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "Vahvista"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "Vahvista koodi"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "Vahvista salaus"
@@ -4470,6 +5023,10 @@ msgstr "Vahvista sormenjälki…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "Vahvista…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "Vahvistetaan…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5089,7 @@ msgstr "Katsoja"
 msgid "Viewers ({0})"
 msgstr "Katsojat ({0})"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -4557,9 +5115,22 @@ msgstr "Äänenvoimakkuus"
 msgid "Volume for {0}"
 msgstr "Äänenvoimakkuus käyttäjälle {0}"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "Odotetaan, että {0} hyväksyy…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "Odotetaan biometristä kehotetta…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Odotetaan ensimmäistä vaihetta…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "Odotetaan kirjautumista…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4578,6 +5149,11 @@ msgstr "potkittiin kanavalta {channelName} käyttäjän {username} toimesta ({re
 msgid "Was kicked from the channel"
 msgstr "Poistettiin kanavalta"
 
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Katso koko näytöllä"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"
 msgstr "Katso tämän palvelimen raakaa IRC-liikennettä"
@@ -4585,6 +5161,10 @@ msgstr "Katso tämän palvelimen raakaa IRC-liikennettä"
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "Emme tallenna IRC-viestintääsi palvelimillemme"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "WebAuthn ei ole käytettävissä tässä ympäristössä."
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5256,14 @@ msgstr "Olet avaamassa ulkoista linkkiä:"
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Olet IRC-operaattori"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "Sinulla on muutama minuutti aikaa valita uusi salasana."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "Sinulla ei ole rekisteröityjä 2FA-tunnisteita."
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"

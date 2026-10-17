@@ -24,7 +24,7 @@ vi.mock("../../../src/lib/voice", () => ({
   releaseVoiceClient: mocks.releaseVoiceClient,
 }));
 
-import { setSpotlight } from "../../../src/lib/voiceSpotlight";
+import { setSpotlight, setTheater } from "../../../src/lib/voiceSpotlight";
 
 const storeState = vi.hoisted(() => ({
   servers: [] as unknown[],
@@ -147,6 +147,7 @@ describe("VoiceChannelView", () => {
     isTouch = false;
     storeState.ui.isNarrowView = false;
     setSpotlight("s1", "^general", null);
+    setTheater("s1", "^general", false);
   });
 
   it("shows the connecting status while joining", () => {

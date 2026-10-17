@@ -1,4 +1,5 @@
 use std::{collections::HashMap, sync::Arc};
+use tauri::{webview::PageLoadEvent, Manager};
 use tokio::sync::Mutex;
 
 mod overlay;
@@ -248,6 +249,13 @@ pub fn run() {
             Ok(())
         })
         .manage(SocketState(Arc::new(Mutex::new(HashMap::new()))))
+        .on_page_load(|webview, payload| {
+            if webview.label() != "main" || payload.event() != PageLoadEvent::Started {
+                return;
+            }
+            let state = webview.state::<SocketState>().inner().clone();
+            tauri::async_runtime::spawn(async move { socket::disconnect_all(&state).await });
+        })
         .manage(screen_record::RecorderState::default())
         .invoke_handler(tauri::generate_handler![
             connect,

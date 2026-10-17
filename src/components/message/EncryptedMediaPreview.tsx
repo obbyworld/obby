@@ -94,7 +94,7 @@ export const EncryptedMediaPreview: React.FC<{
     <a
       href={objectUrl}
       download={safeName}
-      className="text-discord-blue hover:underline"
+      className="text-discord-primary hover:underline"
       title={t`Save the decrypted file`}
     >
       {safeName}

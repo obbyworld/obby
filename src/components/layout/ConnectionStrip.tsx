@@ -59,7 +59,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
         {trouble !== "retrying" && (
           <button
             type="button"
-            className={`${actionClass} bg-discord-primary text-white hover:bg-discord-primary/80`}
+            className={`${actionClass} button-primary`}
             onClick={() => reconnectServer(server.id)}
           >
             {trouble === "auth" ? <FaSignInAlt /> : <FaRedo />}

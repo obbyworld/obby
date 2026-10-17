@@ -1,8 +1,10 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import useStore from "../../store";
 
 export const TotpStepUpModal: React.FC = () => {
+  const { t } = useLingui();
   const pending = useStore((s) => s.pendingTotpStepUp);
   const submitTotpStepUp = useStore((s) => s.submitTotpStepUp);
   const cancelTotpStepUp = useStore((s) => s.cancelTotpStepUp);
@@ -21,12 +23,13 @@ export const TotpStepUpModal: React.FC = () => {
   }, [pending]);
 
   if (!pending) return null;
+  const account = pending.account;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = code.trim();
     if (!/^\d{6}$/.test(trimmed)) {
-      setError("Enter the 6-digit code from your authenticator app.");
+      setError(t`Enter the 6-digit code from your authenticator app.`);
       return;
     }
     submitTotpStepUp(pending.serverId, trimmed);
@@ -40,12 +43,20 @@ export const TotpStepUpModal: React.FC = () => {
     >
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-sm p-5">
         <h2 className="text-lg font-semibold mb-2 text-white">
-          Two-factor authentication required
+          <Trans>Two-factor authentication required</Trans>
         </h2>
         <p className="text-sm text-discord-text-muted mb-4">
-          Enter the 6-digit code from your authenticator app to finish signing
-          in
-          {pending.account ? ` as ${pending.account}` : ""}.
+          {account ? (
+            <Trans>
+              Enter the 6-digit code from your authenticator app to finish
+              signing in as {account}.
+            </Trans>
+          ) : (
+            <Trans>
+              Enter the 6-digit code from your authenticator app to finish
+              signing in.
+            </Trans>
+          )}
         </p>
         <form onSubmit={onSubmit}>
           <input
@@ -60,7 +71,7 @@ export const TotpStepUpModal: React.FC = () => {
               setCode(e.target.value.replace(/\D/g, ""));
               setError(null);
             }}
-            className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white tracking-[0.4em] text-center text-xl font-mono focus:outline-none focus:ring-2 focus:ring-discord-blue"
+            className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white tracking-[0.4em] text-center text-xl font-mono focus:outline-none focus:ring-2 focus:ring-discord-primary"
             placeholder="000000"
           />
           {error && <p className="text-discord-red text-xs mt-2">{error}</p>}
@@ -70,13 +81,13 @@ export const TotpStepUpModal: React.FC = () => {
               onClick={() => cancelTotpStepUp(pending.serverId)}
               className="px-3 py-2 rounded text-sm text-discord-text-muted hover:text-white"
             >
-              Cancel
+              <Trans>Cancel</Trans>
             </button>
             <button
               type="submit"
-              className="px-4 py-2 rounded bg-discord-blue text-white text-sm font-medium hover:bg-discord-blue-hover"
+              className="px-4 py-2 rounded button-primary text-sm font-medium"
             >
-              Verify
+              <Trans>Verify</Trans>
             </button>
           </div>
         </form>

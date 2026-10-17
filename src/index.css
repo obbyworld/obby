@@ -34,6 +34,9 @@
   .divider-soft {
     @apply my-1.5 mx-1 h-px border-0 bg-white/[0.06];
   }
+  .button-primary {
+    @apply bg-discord-primary text-white hover:bg-discord-primary/90 disabled:opacity-50;
+  }
   .chip-action {
     @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-discord-dark-300 text-discord-text-normal ring-1 ring-black/40 shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-colors duration-100 hover:bg-discord-primary hover:text-white disabled:opacity-70 disabled:hover:bg-discord-dark-300 disabled:hover:text-discord-text-normal;
   }
@@ -42,6 +45,7 @@
   }
   .surface-sheet {
     @apply bg-discord-dark-300 rounded-t-2xl shadow-[0_-8px_24px_rgba(0,0,0,0.45)] flex flex-col overflow-hidden;
+    padding-bottom: var(--safe-area-inset-bottom, 0px);
   }
   .sheet-handle {
     @apply mx-auto mt-2 mb-1 w-9 h-1 shrink-0 rounded-full bg-discord-dark-500;
@@ -895,15 +899,42 @@ html.window-blurred .group:hover .message-actions-container {
   background-color: #67060c;
 }
 
-/* Remove input bottom padding when keyboard is visible (iOS) */
-html[data-keyboard-visible] .chat-input-area {
-  padding-bottom: 0;
+/* Only the last control of a page clears the home indicator, so every page
+   background still reaches the bottom edge. We drop the inset only once a
+   keyboard really covers it; focus alone sets data-keyboard-visible, and a
+   floating or hardware keyboard covers nothing. */
+.chat-input-area,
+.user-panel {
+  margin-bottom: max(0.5rem, var(--safe-area-inset-bottom, 0px));
+}
+html[data-keyboard-open] .chat-input-area {
+  margin-bottom: 0.5rem;
 }
 
-/* Override AppLayout's inline paddingBottom (safe-area-inset-bottom) when keyboard is visible.
-   Uses !important because inline styles have higher specificity than class rules. */
-html[data-keyboard-visible] .keyboard-aware-layout {
-  padding-bottom: 0 !important;
+.user-panel {
+  container-type: inline-size;
+}
+.user-panel-wide {
+  display: none;
+}
+@container (min-width: 300px) {
+  .user-panel-wide {
+    display: flex;
+  }
+}
+
+/* We hide the floating call card while typing; on a short screen it would
+   cover the composer, and the call keeps running behind it. */
+html[data-keyboard-open] .voice-pip-card {
+  display: none;
+}
+
+/* A landscape keyboard leaves almost no message list, and the button would
+   float over the header. */
+@media (max-height: 240px) {
+  .scroll-to-bottom-btn {
+    display: none;
+  }
 }
 
 /* Chat input textarea - hide scrollbar when content fits */
@@ -1017,4 +1048,11 @@ textarea.resize-none::-webkit-scrollbar-thumb {
 }
 .animate-react-float {
   animation: react-float 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* emoji-picker-react sizes its rows to the list width, so the category grids must span that width too. */
+[data-reaction-picker] .epr-emoji-category-content {
+  margin-left: 0;
+  margin-right: 0;
+  justify-content: space-between;
 }

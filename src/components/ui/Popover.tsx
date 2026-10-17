@@ -176,7 +176,6 @@ export const Popover: React.FC<PopoverProps> = ({
           {titleBar}
           <div
             className={`overflow-y-auto overscroll-contain ${bodyClassName}`}
-            style={{ paddingBottom: "var(--safe-area-inset-bottom, 0px)" }}
           >
             {children}
           </div>

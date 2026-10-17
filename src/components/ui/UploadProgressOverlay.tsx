@@ -3,7 +3,7 @@
 // by XHR's upload-progress event, and a "done" / "failed" mark when
 // the upload settles.
 
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import {
   FaCheck,
@@ -36,14 +36,33 @@ interface Props {
 }
 
 export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
+  const { t } = useLingui();
   if (jobs.length === 0) return null;
+  const activeCount = jobs.filter(
+    (job) => job.status === "pending" || job.status === "uploading",
+  ).length;
+  const failedCount = jobs.filter((job) => job.status === "failed").length;
+  const header =
+    activeCount > 0 ? (
+      <Plural
+        value={activeCount}
+        one="Uploading 1 file"
+        other="Uploading # files"
+      />
+    ) : failedCount > 0 ? (
+      <Plural
+        value={failedCount}
+        one="1 upload failed"
+        other="# uploads failed"
+      />
+    ) : (
+      <Trans>Uploaded</Trans>
+    );
   return (
     <div className="absolute bottom-full left-0 right-0 mb-2 px-2 z-20">
       <div className="bg-discord-dark-300 rounded-md shadow-lg border border-discord-dark-200 p-2 space-y-2">
         <div className="text-xs text-discord-text-muted font-semibold uppercase tracking-wide px-1">
-          {jobs.length === 1
-            ? "Uploading 1 file"
-            : `Uploading ${jobs.length} files`}
+          {header}
         </div>
         {jobs.map((job) => {
           const pct =
@@ -56,25 +75,27 @@ export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
                 ) : job.status === "failed" ? (
                   <FaTimes className="text-discord-red flex-shrink-0" />
                 ) : (
-                  <FaSpinner className="animate-spin text-discord-blue flex-shrink-0" />
+                  <FaSpinner className="animate-spin text-discord-primary flex-shrink-0" />
                 )}
                 <FaFile className="text-discord-text-muted flex-shrink-0" />
                 <span className="truncate flex-1 text-white text-xs">
                   {job.file.name}
                 </span>
                 <span className="text-xs text-discord-text-muted whitespace-nowrap">
-                  {job.status === "failed"
-                    ? "failed"
-                    : job.status === "done"
-                      ? "done"
-                      : `${formatFileSize(job.loaded)} / ${formatFileSize(job.total || job.file.size)}`}
+                  {job.status === "failed" ? (
+                    <Trans>failed</Trans>
+                  ) : job.status === "done" ? (
+                    <Trans>done</Trans>
+                  ) : (
+                    `${formatFileSize(job.loaded)} / ${formatFileSize(job.total || job.file.size)}`
+                  )}
                 </span>
                 {onCancel && job.status !== "done" && (
                   <button
                     type="button"
                     onClick={() => onCancel(job.id)}
                     className="text-discord-text-muted hover:text-white text-xs"
-                    aria-label="Cancel upload"
+                    aria-label={t`Cancel upload`}
                   >
                     ✕
                   </button>
@@ -111,7 +132,7 @@ export const UploadProgressOverlay: React.FC<Props> = ({ jobs, onCancel }) => {
                     className={`h-full transition-[width] duration-150 ${
                       job.status === "failed"
                         ? "bg-discord-red"
-                        : "bg-discord-blue"
+                        : "bg-discord-primary"
                     }`}
                     style={{ width: `${pct}%` }}
                   />

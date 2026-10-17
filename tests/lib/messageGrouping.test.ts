@@ -22,6 +22,11 @@ const unprotected = (extra: Partial<Message> = {}) =>
   msg({ tags: { "e2ee-unprotected": "1" }, ...extra });
 
 describe("shouldShowMessageHeader", () => {
+  it("gives every whisper its own header, even in a run from one sender", () => {
+    const whisper = { tags: { "+draft/channel-context": "#qa" } };
+    expect(shouldShowMessageHeader(msg(whisper), msg(whisper))).toBe(true);
+  });
+
   it("shows a header for the first message", () => {
     expect(shouldShowMessageHeader(undefined, msg())).toBe(true);
   });

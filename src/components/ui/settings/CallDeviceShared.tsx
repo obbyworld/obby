@@ -36,7 +36,7 @@ export const DeviceAccessGate: React.FC<DeviceAccessGateProps> = ({
         type="button"
         onClick={onRequestAccess}
         disabled={requesting || disabled}
-        className="min-h-11 rounded bg-discord-primary px-4 py-2 text-white hover:opacity-90 disabled:opacity-50"
+        className="min-h-11 rounded button-primary px-4 py-2"
       >
         {requesting ? <LoadingSpinner size="xs" text="" /> : buttonLabel}
       </button>

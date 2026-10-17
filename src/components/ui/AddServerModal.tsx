@@ -119,9 +119,11 @@ export const AddServerModal: React.FC = () => {
         const cleanHost = serverHost
           .replace(/^(https?|wss?|ircs?|irc):\/\//, "")
           .replace(/[:/].*$/, "");
+        // We default to TLS and use plaintext only for a host typed as irc://.
+        const tcpScheme = serverHost.startsWith("irc://") ? "irc" : "ircs";
         finalHost = useWebSocket
           ? `wss://${cleanHost}:${port}`
-          : `ircs://${cleanHost}:${port}`;
+          : `${tcpScheme}://${cleanHost}:${port}`;
       }
 
       await connect(
@@ -240,7 +242,7 @@ export const AddServerModal: React.FC = () => {
                         !lockWebSocket && setUseWebSocket(!useWebSocket)
                       }
                       disabled={!!lockWebSocket}
-                      className={`accent-discord-accent rounded ${lockWebSocket ? "opacity-50 cursor-not-allowed" : ""}`}
+                      className={`accent-discord-primary rounded ${lockWebSocket ? "opacity-50 cursor-not-allowed" : ""}`}
                     />
                     <label
                       htmlFor="useWebSocket"
@@ -291,7 +293,7 @@ export const AddServerModal: React.FC = () => {
                   id="showAccount"
                   checked={showAccount}
                   onChange={() => setShowAccount(!showAccount)}
-                  className="accent-discord-accent rounded"
+                  className="accent-discord-primary rounded"
                 />
                 <label
                   htmlFor="showAccount"
@@ -327,7 +329,7 @@ export const AddServerModal: React.FC = () => {
                   id="showServerPassword"
                   checked={showServerPassword}
                   onChange={() => setShowServerPassword(!showServerPassword)}
-                  className="accent-discord-accent rounded"
+                  className="accent-discord-primary rounded"
                 />
                 <label
                   htmlFor="showServerPassword"
@@ -357,7 +359,7 @@ export const AddServerModal: React.FC = () => {
                   id="registerAccount"
                   checked={registerAccount}
                   onChange={() => setRegisterAccount(!registerAccount)}
-                  className="accent-discord-accent rounded"
+                  className="accent-discord-primary rounded"
                 />
                 <label
                   htmlFor="registerAccount"

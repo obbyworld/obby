@@ -984,7 +984,7 @@ export const UserSettings: React.FC = React.memo(() => {
               </strong>{" "}
               <a
                 href="mailto:support@obby.world"
-                className="text-discord-primary hover:text-discord-primary-light"
+                className="text-discord-primary hover:text-discord-text-link"
               >
                 support@obby.world
               </a>
@@ -998,7 +998,7 @@ export const UserSettings: React.FC = React.memo(() => {
                 href="https://github.com/obbyworld/obby"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-discord-primary hover:text-discord-primary-light"
+                className="text-discord-primary hover:text-discord-text-link"
               >
                 github.com/obbyworld/obby
               </a>
@@ -1385,7 +1385,7 @@ export const UserSettings: React.FC = React.memo(() => {
     if (!currentServer || !serverConfig) {
       return (
         <div className="text-discord-text-muted text-sm italic">
-          Connect to a server to manage operator settings.
+          <Trans>Connect to a server to manage operator settings.</Trans>
         </div>
       );
     }
@@ -1403,11 +1403,13 @@ export const UserSettings: React.FC = React.memo(() => {
         {supportsTwoFactor && (
           <div className="space-y-4 p-4 bg-discord-dark-400 rounded">
             <h3 className="text-discord-text-normal font-medium">
-              Two-Factor Authentication
+              <Trans>Two-factor authentication</Trans>
             </h3>
             <p className="text-discord-text-muted text-sm">
-              Add an authenticator app or biometric / security key to require a
-              second factor when logging in.
+              <Trans>
+                Add an authenticator app or biometric / security key to require
+                a second factor when logging in.
+              </Trans>
             </p>
             <button
               type="button"
@@ -1416,9 +1418,9 @@ export const UserSettings: React.FC = React.memo(() => {
                   .getState()
                   .toggleTwoFactorSettings(true, currentServer.id);
               }}
-              className="rounded bg-discord-button-secondary-default px-4 py-2 text-discord-text-normal hover:bg-discord-button-secondary-hover"
+              className="rounded bg-discord-button-secondary-default px-4 py-2 text-discord-text-normal hover:bg-discord-button-secondary-default/80"
             >
-              Manage two-factor authentication
+              <Trans>Manage two-factor authentication</Trans>
             </button>
           </div>
         )}
@@ -1471,7 +1473,7 @@ export const UserSettings: React.FC = React.memo(() => {
               htmlFor="operOnConnect"
               className="text-discord-text-normal text-sm"
             >
-              Authenticate on connect
+              <Trans>Authenticate on connect</Trans>
             </label>
           </div>
 
@@ -1481,7 +1483,7 @@ export const UserSettings: React.FC = React.memo(() => {
             disabled={!operName.trim() || !operPassword.trim()}
             className="w-full rounded bg-discord-button-success-default px-4 py-2 text-white hover:bg-discord-button-success-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Authenticate Now
+            <Trans>Authenticate now</Trans>
           </button>
         </div>
 
@@ -1490,18 +1492,20 @@ export const UserSettings: React.FC = React.memo(() => {
         {currentUser?.isIrcOp && currentServer?.emojiPackUrl && (
           <div className="space-y-4 p-4 bg-discord-dark-400 rounded">
             <h3 className="text-discord-text-normal font-medium">
-              Custom emoji packs
+              <Trans>Custom emoji packs</Trans>
             </h3>
             <p className="text-discord-text-muted text-sm">
-              Manage the network-wide and channel-scoped emoji packs that this
-              server publishes via draft/EMOJI.
+              <Trans>
+                Manage the network-wide and channel-scoped emoji packs that this
+                server publishes via draft/EMOJI.
+              </Trans>
             </p>
             <button
               type="button"
               onClick={() => setIsEmojiAdminOpen(true)}
-              className="w-full rounded bg-discord-blue px-4 py-2 text-white hover:bg-discord-blue-hover"
+              className="w-full rounded button-primary px-4 py-2"
             >
-              Manage packs
+              <Trans>Manage packs</Trans>
             </button>
           </div>
         )}
@@ -1529,7 +1533,7 @@ export const UserSettings: React.FC = React.memo(() => {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-discord-dark-500 flex-shrink-0">
               <h2 className="text-white text-lg font-semibold">
-                User Settings
+                <Trans>User Settings</Trans>
               </h2>
               <button
                 onClick={handleClose}

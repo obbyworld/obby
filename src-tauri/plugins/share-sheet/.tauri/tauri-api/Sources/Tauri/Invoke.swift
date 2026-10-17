@@ -31,22 +31,10 @@ import UIKit
   }
 
   public func getArgs() throws -> JSObject {
-    guard let jsonData = self.data.data(using: .utf8) else {
-      throw NSError(domain: "Tauri.Invoke", code: 1, userInfo: [
-        NSLocalizedDescriptionKey: "Invoke payload could not be encoded as UTF-8",
-      ])
-    }
-    let payload = try JSONSerialization.jsonObject(with: jsonData, options: [])
-    guard
-      let dictionary = payload as? NSDictionary,
-      let args = JSTypes.coerceDictionaryToJSObject(
-        dictionary, formattingDatesAsStrings: true)
-    else {
-      throw NSError(domain: "Tauri.Invoke", code: 2, userInfo: [
-        NSLocalizedDescriptionKey: "Invoke payload must be a JSON object",
-      ])
-    }
-    return args
+    let jsonData = self.data.data(using: .utf8)!
+    let data = try JSONSerialization.jsonObject(with: jsonData, options: [])
+    return JSTypes.coerceDictionaryToJSObject(
+      (data as! NSDictionary), formattingDatesAsStrings: true)!
   }
 
   public func parseArgs<T: Decodable>(_ type: T.Type) throws -> T {

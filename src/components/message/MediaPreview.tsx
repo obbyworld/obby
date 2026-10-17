@@ -372,7 +372,10 @@ const VideoPlayer: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onAudioOnly: () => void;
+}> = ({ url, msgid, serverId, channelId, onAudioOnly }) => {
+  const onAudioOnlyRef = useRef(onAudioOnly);
+  onAudioOnlyRef.current = onAudioOnly;
   const openMedia = useStore((state) => state.openMedia);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -446,6 +449,11 @@ const VideoPlayer: React.FC<{
     };
 
     const onLoadedMetadata = () => {
+      // Voice messages share the .webm extension with videos.
+      if (video.videoWidth === 0) {
+        onAudioOnlyRef.current();
+        return;
+      }
       const d = video.duration ?? 0;
       setDuration(d);
       if (seekRef.current) seekRef.current.max = String(d);
@@ -688,6 +696,17 @@ const VideoPreview: React.FC<{
   serverId?: string;
   channelId?: string;
 }> = ({ url, msgid, serverId, channelId }) => {
+  const [isAudioOnly, setIsAudioOnly] = useState(false);
+  if (isAudioOnly) {
+    return (
+      <AudioPreview
+        url={url}
+        msgid={msgid}
+        serverId={serverId}
+        channelId={channelId}
+      />
+    );
+  }
   // canPlayVideoUrl() is a synchronous HTMLVideoElement.canPlayType() probe — no
   // network request. Skipping the player entirely prevents the zombie mini-player
   // (play → store active → codec error → mini-bar playing nothing).
@@ -707,6 +726,7 @@ const VideoPreview: React.FC<{
       msgid={msgid}
       serverId={serverId}
       channelId={channelId}
+      onAudioOnly={() => setIsAudioOnly(true)}
     />
   );
 };

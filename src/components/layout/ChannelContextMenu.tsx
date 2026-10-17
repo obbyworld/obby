@@ -129,7 +129,7 @@ export const ChannelContextMenu: React.FC<ChannelContextMenuProps> = ({
     },
     {
       id: "reorder",
-      label: t`Reorder channels`,
+      label: t`Reorder list`,
       icon: <FaArrowsAltV />,
       show: !!onReorder,
       onClick: onReorder,

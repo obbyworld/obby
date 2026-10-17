@@ -418,7 +418,7 @@ describe("RecordingPanel: video", () => {
     );
     expect(onRecorded).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole("button", { name: /send/i }));
+    fireEvent.click(screen.getByRole("button", { name: /attach/i }));
     await waitFor(() => expect(onRecorded).toHaveBeenCalledTimes(1));
     const file = onRecorded.mock.calls[0][0] as File;
     expect(file.name).toMatch(/^video-message-.*\.webm$/);

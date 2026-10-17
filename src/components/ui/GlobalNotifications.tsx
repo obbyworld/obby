@@ -72,7 +72,13 @@ export const GlobalNotifications: React.FC = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+    <div
+      className="fixed left-[calc(1rem+var(--safe-area-inset-left,0px))] sm:left-auto z-50 space-y-2 max-w-sm"
+      style={{
+        top: "calc(1rem + var(--safe-area-inset-top, 0px))",
+        right: "calc(1rem + var(--safe-area-inset-right, 0px))",
+      }}
+    >
       {visibleNotifications.map(
         (notification: {
           id: string;

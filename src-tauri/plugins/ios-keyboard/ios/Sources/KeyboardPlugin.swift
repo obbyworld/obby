@@ -4,15 +4,21 @@ import WebKit
 
 class KeyboardPlugin: Plugin {
   private var keyboardObserver: KeyboardObserver?
+  private var appLifecycleObserver: AppLifecycleObserver?
 
   override public func load(webview: WKWebView) {
     super.load(webview: webview)
+    // The page pads itself with env(safe-area-inset-*), so we keep UIKit from
+    // insetting the scroll view as well, which on some devices shrinks the
+    // page by both insets and leaves a bare strip under it.
+    webview.scrollView.contentInsetAdjustmentBehavior = .never
 
     keyboardObserver = KeyboardObserver(webview: webview) { [weak self] event in
       self?.sendKeyboardEvent(event)
     }
 
     keyboardObserver?.startObserving()
+    appLifecycleObserver = AppLifecycleObserver(webview: webview)
   }
 
   deinit {

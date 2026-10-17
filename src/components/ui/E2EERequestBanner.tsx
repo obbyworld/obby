@@ -75,7 +75,7 @@ export const E2EERequestBanner: React.FC<{
         </div>
         <button
           type="button"
-          className="rounded bg-discord-primary px-3 py-1 text-xs font-medium text-white hover:bg-discord-primary-hover"
+          className="rounded button-primary px-3 py-1 text-xs font-medium"
           onClick={() => acceptE2EEOffer(serverId, nick)}
         >
           <Trans>Accept</Trans>
@@ -122,7 +122,7 @@ export const E2EERequestBanner: React.FC<{
         </div>
         <button
           type="button"
-          className="rounded bg-discord-primary px-3 py-1 text-xs font-medium text-white hover:bg-discord-primary-hover"
+          className="rounded button-primary px-3 py-1 text-xs font-medium"
           onClick={() => openE2EEVerify(serverId, nick)}
         >
           <Trans>Verify…</Trans>
@@ -189,7 +189,7 @@ export const E2EERequestBanner: React.FC<{
           // encryption, so the banner reporting it has to carry that control.
           <button
             type="button"
-            className="rounded bg-discord-primary px-3 py-1 text-xs font-medium text-white hover:bg-discord-primary-hover"
+            className="rounded button-primary px-3 py-1 text-xs font-medium"
             onClick={() => resetE2EESession(serverId, nick)}
           >
             <Trans>End encryption</Trans>

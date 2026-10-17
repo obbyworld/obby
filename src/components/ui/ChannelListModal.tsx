@@ -21,17 +21,17 @@ function channelTypeMeta(name: string): {
 } {
   switch (name[0]) {
     case "^":
-      return { Icon: FaVolumeUp, label: "Voice", color: "text-discord-green" };
+      return { Icon: FaVolumeUp, label: t`Voice`, color: "text-discord-green" };
     case "$":
       return {
         Icon: FaDesktop,
-        label: "Stream",
-        color: "text-discord-blue",
+        label: t`Stream`,
+        color: "text-discord-primary",
       };
     default:
       return {
         Icon: FaHashtag,
-        label: "Text",
+        label: t`Text`,
         color: "text-discord-text-muted",
       };
   }
@@ -493,7 +493,7 @@ const ChannelListModal: React.FC = () => {
 
               <button
                 onClick={applyFilters}
-                className="w-full bg-discord-primary hover:bg-discord-primary-hover text-white py-2 px-4 rounded text-sm font-medium"
+                className="w-full button-primary py-2 px-4 rounded text-sm font-medium"
               >
                 <Trans>Apply Filters & Refresh</Trans>
               </button>

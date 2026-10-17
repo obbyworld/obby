@@ -50,7 +50,10 @@ vi.mock("../../src/lib/ircClient", () => ({
   },
 }));
 
-vi.mock("../../src/lib/mediaDevices", () => ({
+vi.mock("../../src/lib/mediaDevices", async (importOriginal) => ({
+  classifyMediaError: (
+    await importOriginal<typeof import("../../src/lib/mediaDevices")>()
+  ).classifyMediaError,
   audioConstraints: mocks.audioConstraints,
   videoConstraints: mocks.videoConstraints,
   listDevices: mocks.listDevices,
@@ -58,7 +61,9 @@ vi.mock("../../src/lib/mediaDevices", () => ({
   speakerSelectionSupported: mocks.speakerSelectionSupported,
 }));
 
-import { VoiceClient } from "../../src/lib/voice";
+import type { StoreApi } from "zustand";
+import { setVoiceStore, VoiceClient } from "../../src/lib/voice";
+import type { AppState } from "../../src/store";
 
 interface FakeTransceiver {
   kind: string;
@@ -78,6 +83,8 @@ class FakePeerConnection {
     null;
   ontrack: ((e: RTCTrackEvent) => void) | null = null;
   createOfferCalls: unknown[] = [];
+  connectionState: RTCPeerConnectionState = "new";
+  onconnectionstatechange: (() => void) | null = null;
   localDescription: RTCSessionDescriptionInit | null = null;
 
   addTransceiver(kind: string, init?: { direction?: string }): void {
@@ -173,7 +180,10 @@ async function waitUntil(check: () => boolean, maxTicks = 50): Promise<void> {
 
 let currentClient: VoiceClient | undefined;
 
-async function joinAs(role: "streamer" | "viewer") {
+async function joinAs(
+  role: "streamer" | "viewer",
+  onError: (e: string) => void = () => {},
+) {
   const client = new VoiceClient({
     serverId: "s1",
     channel: "$stage",
@@ -181,7 +191,7 @@ async function joinAs(role: "streamer" | "viewer") {
     audioSink: fakeAudioSink(),
   });
   currentClient = client;
-  client.attach({ onState: () => {}, onError: () => {} });
+  client.attach({ onState: () => {}, onError });
 
   const joinPromise = client.join();
   // The client waits for its own JOIN to echo back before signaling the
@@ -367,5 +377,165 @@ describe("VoiceClient.setAudioInput", () => {
 
     expect(newTrack.stop).toHaveBeenCalled();
     expect(sender.replaceTrack).not.toHaveBeenCalled();
+  });
+
+  it("joins listen-only and reports a blocked mic instead of failing the call", async () => {
+    getUserMedia.mockRejectedValueOnce(
+      new DOMException("denied", "NotAllowedError"),
+    );
+    const onError = vi.fn();
+    const { pc } = await joinAs("streamer", onError);
+
+    expect(onError).toHaveBeenCalledWith("mic-blocked");
+    expect(pc.transceivers).toContainEqual({
+      kind: "audio",
+      direction: "recvonly",
+    });
+  });
+
+  it("rejoins the room when the peer connection fails", async () => {
+    const { pc } = await joinAs("viewer");
+    mocks.sendRaw.mockClear();
+
+    pc.connectionState = "failed";
+    pc.onconnectionstatechange?.();
+
+    const lines = mocks.sendRaw.mock.calls.map((c) => c[1] as string);
+    expect(lines.some((l) => l.includes('"type":"leave"'))).toBe(true);
+    expect(lines).toContain("JOIN $stage");
+  });
+
+  it("keeps a muted mic muted on the track captured after a rejoin", async () => {
+    const { client, pc } = await joinAs("streamer");
+    client.setMic(false);
+    const rejoinTrack = fakeAudioTrack();
+    getUserMedia.mockImplementationOnce(async () => fakeStream([rejoinTrack]));
+
+    pc.connectionState = "failed";
+    pc.onconnectionstatechange?.();
+    mocks.emit("JOIN", { username: "me", channelName: "$stage" });
+    await Promise.resolve();
+    mocks.emit("TAGMSG", {
+      serverId: "s1",
+      sender: "sfu",
+      channelName: "$stage",
+      mtags: {
+        "+obsidianirc/rtc": JSON.stringify({
+          type: "joined",
+          mode: "stream",
+          role: "streamer",
+          members: ["me"],
+          streamers: ["me"],
+        }),
+      },
+    });
+    await waitUntil(() => rejoinTrack.enabled === false);
+
+    expect(rejoinTrack.enabled).toBe(false);
+  });
+
+  it("asks for a blocked mic once however often unmute is tapped, and honors the last toggle", async () => {
+    getUserMedia.mockRejectedValueOnce(
+      new DOMException("denied", "NotAllowedError"),
+    );
+    const { client } = await joinAs("streamer");
+    const track = fakeAudioTrack();
+    let releaseCapture: (() => void) | undefined;
+    getUserMedia.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          releaseCapture = () => resolve(fakeStream([track]));
+        }),
+    );
+
+    client.setMic(true);
+    client.setMic(true);
+    client.setMic(false);
+    await waitUntil(() => releaseCapture !== undefined);
+    releaseCapture?.();
+    await waitUntil(() => track.enabled !== undefined, 500);
+
+    expect(getUserMedia).toHaveBeenCalledTimes(2);
+    expect(track.enabled).toBe(false);
+  });
+});
+
+describe("VoiceClient join refusals", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.handlers.clear();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    currentClient?.leave();
+    vi.useRealTimers();
+  });
+
+  function startJoin() {
+    const errors: string[] = [];
+    const states: string[] = [];
+    const client = new VoiceClient({
+      serverId: "s1",
+      channel: "$stage",
+      selfNick: "me",
+      audioSink: fakeAudioSink(),
+    });
+    currentClient = client;
+    client.attach({
+      onState: (s) => states.push(s.phase),
+      onError: (e) => errors.push(e),
+    });
+    void client.join();
+    return { client, errors, states };
+  }
+
+  const sentLines = () => mocks.sendRaw.mock.calls.map((c) => c[1] as string);
+
+  it("retries the IRC join while the server throttles it, then signals the call server once in", () => {
+    const { errors } = startJoin();
+    mocks.emit("JOIN_REFUSED", {
+      serverId: "s1",
+      channelName: "$stage",
+      isThrottled: true,
+    });
+    expect(errors).toEqual(["join-throttled"]);
+
+    mocks.sendRaw.mockClear();
+    vi.advanceTimersByTime(2000);
+    expect(sentLines()).toEqual(["JOIN $stage"]);
+
+    mocks.sendRaw.mockClear();
+    mocks.emit("JOIN", { username: "me", channelName: "$stage" });
+    expect(sentLines()).toHaveLength(1);
+    expect(sentLines()[0]).toContain('"type":"join"');
+  });
+
+  it("fails the call when the server refuses the join outright", () => {
+    const { client, errors } = startJoin();
+    mocks.emit("JOIN_REFUSED", {
+      serverId: "s1",
+      channelName: "$stage",
+      isThrottled: false,
+    });
+    expect(errors).toEqual(["join-refused"]);
+    expect(client.getState().phase).toBe("failed");
+  });
+
+  it("signals the call server at once when we already sit in the channel", () => {
+    setVoiceStore({
+      getState: () => ({
+        servers: [
+          {
+            id: "s1",
+            channels: [{ name: "$stage", users: [{ username: "me" }] }],
+          },
+        ],
+      }),
+    } as unknown as StoreApi<AppState>);
+    startJoin();
+    expect(sentLines()[0]).toBe("JOIN $stage");
+    expect(sentLines()[1]).toContain('"type":"join"');
+    setVoiceStore(null as unknown as StoreApi<AppState>);
   });
 });

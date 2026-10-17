@@ -589,7 +589,7 @@ const PrivacyPolicy = () => {
             </p>
             <button
               onClick={() => navigate("/")}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-discord-primary text-white rounded-lg hover:bg-discord-primary/80 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 button-primary rounded-lg transition-all"
             >
               <svg
                 className="w-4 h-4"

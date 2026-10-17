@@ -219,7 +219,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
             ref={scrollContainerRef}
             className="absolute inset-0 overflow-y-auto p-4 space-y-4"
           >
-            <p className="text-discord-text">
+            <p className="text-discord-text-normal">
               <Trans>
                 The connection to <strong>{serverName}</strong> has the
                 following security concerns:
@@ -317,7 +317,7 @@ const SingleWarningModal: React.FC<WarningModalProps> = ({
             {/* Checkboxes for remembering choice */}
             <div className="space-y-2">
               {isLinkSecurityWarning && (
-                <label className="flex items-center gap-2 text-sm text-discord-text-muted cursor-pointer hover:text-discord-text">
+                <label className="flex items-center gap-2 text-sm text-discord-text-muted cursor-pointer hover:text-discord-text-normal">
                   <input
                     type="checkbox"
                     checked={skipLinkSecurityWarning}

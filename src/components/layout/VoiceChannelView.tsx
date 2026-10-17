@@ -17,11 +17,15 @@ import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useVoiceCall } from "../../hooks/useVoiceCall";
 import { releaseVoiceClient, type VoiceMember } from "../../lib/voice";
-import { useSpotlight } from "../../lib/voiceSpotlight";
+import { describeVoiceError } from "../../lib/voiceErrors";
+import { useSpotlight, useTheater } from "../../lib/voiceSpotlight";
 import useStore, { resolveCallReturnTarget } from "../../store";
+import BottomSheet from "../mobile/BottomSheet";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
+import { VoiceAvatarBar } from "../voice/VoiceAvatarBar";
 import { VoiceDock } from "../voice/VoiceDock";
 import { VoiceStage } from "../voice/VoiceStage";
+import { VoiceVideoBand } from "../voice/VoiceVideoBand";
 
 interface Props {
   serverId: string;
@@ -66,7 +70,8 @@ export const VoiceChannelView: React.FC<Props> = ({
   // / grid -- see VoiceStage). Shared with the pop-out via
   // voiceSpotlight.ts so the pick follows the user across both views.
   const [focusNick, setFocusNick] = useSpotlight(serverId, channelName);
-  const [theater, setTheater] = useState(false);
+  const [theater, setTheater] = useTheater(serverId, channelName);
+  const [isViewerSheetOpen, setIsViewerSheetOpen] = useState(false);
   // Push-to-talk is purely a client-side toggle (not part of VoiceState),
   // so it's the one control mirrored into local state -- seeded from the
   // client whenever it changes so a remount picks up the real value.
@@ -74,6 +79,15 @@ export const VoiceChannelView: React.FC<Props> = ({
 
   const isNarrow = useMediaQuery();
   const isTouch = useIsTouchInput();
+  const isLandscape = useMediaQuery("(orientation: landscape)");
+  const hasStreamVideo = streamerMembers.some((m) => m.videoTrack);
+
+  // Turning a phone sideways while a stream plays is how people ask to watch
+  // it full screen, and turning it back is how they leave.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we react to orientation changes only
+  useEffect(() => {
+    if (isTouch && isStreamRoom && hasStreamVideo) setTheater(isLandscape);
+  }, [isLandscape]);
 
   useEffect(() => {
     if (client) setPttOn(client.isPushToTalk());
@@ -109,7 +123,7 @@ export const VoiceChannelView: React.FC<Props> = ({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [theater]);
+  }, [theater, setTheater]);
 
   // Auto-clear an explicit spotlight when that member leaves the call.
   useEffect(() => {
@@ -189,9 +203,187 @@ export const VoiceChannelView: React.FC<Props> = ({
         ? "bg-discord-red"
         : "bg-yellow-400 animate-pulse";
 
+  // A phone shows a call above its chat, and full screen it shows only the
+  // video, since there is no room left for chat beside it.
+  const isFullscreenVideo =
+    theater && isTouch && hasStreamVideo && state.phase === "connected";
+  const isCompact = isNarrow && isTouch && !isFullscreenVideo;
+
   const rootClass = theater
     ? "fixed inset-0 z-[9990] flex flex-col bg-discord-dark-400"
-    : "w-full flex flex-col bg-discord-dark-200";
+    : "w-full min-h-0 flex flex-col bg-discord-dark-200";
+  const safeAreaPadding = {
+    paddingTop: "var(--safe-area-inset-top, 0px)",
+    paddingBottom: "var(--safe-area-inset-bottom, 0px)",
+    paddingLeft: "var(--safe-area-inset-left, 0px)",
+    paddingRight: "var(--safe-area-inset-right, 0px)",
+  };
+
+  const dock = (
+    <VoiceDock
+      isNarrow={isNarrow}
+      isTouch={isTouch}
+      isStreamer={isStreamer}
+      micOn={self?.micOn ?? false}
+      videoOn={self?.videoOn ?? false}
+      screenOn={self?.screenSharing ?? false}
+      deafened={deafened}
+      handRaised={self?.handRaised ?? false}
+      pttOn={pttOn}
+      canStepOffStream={canStepOffStream}
+      onToggleMic={onToggleMic}
+      onToggleVideo={onToggleVideo}
+      onToggleScreen={onToggleScreen}
+      onToggleDeafen={onToggleDeafen}
+      onToggleHand={onToggleHand}
+      onTogglePtt={onTogglePtt}
+      onStepOffStream={onStepOffStream}
+      onReact={onReact}
+      onLeave={onLeave}
+      onOpenDeviceSettings={onOpenDeviceSettings}
+    />
+  );
+
+  const errorBanner = error && (
+    <div className="pointer-events-auto max-w-md w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-discord-red/90 text-white text-sm shadow-lg">
+      <span className="flex-1 min-w-0">{describeVoiceError(error)}</span>
+      <button
+        type="button"
+        onClick={clearError}
+        aria-label={t`Dismiss`}
+        title={t`Dismiss`}
+        className="flex-shrink-0 hover:opacity-80"
+      >
+        <FaTimes />
+      </button>
+    </div>
+  );
+
+  const viewerSheet = isStreamRoom && (
+    <BottomSheet
+      isOpen={isViewerSheetOpen}
+      onClose={() => setIsViewerSheetOpen(false)}
+    >
+      <ViewerList
+        viewers={viewerMembers}
+        isHost={isHost}
+        maxStreamers={STREAM_MAX_STREAMERS}
+        streamerCount={streamers.length}
+        onPromote={onPromote}
+      />
+    </BottomSheet>
+  );
+
+  const statusPill = (
+    <span className="flex items-center gap-2 px-2 py-1 rounded-full bg-black/55 text-xs text-white flex-shrink-0">
+      <span
+        className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
+        aria-hidden="true"
+      />
+      {statusLabel}
+    </span>
+  );
+  const viewersButton = isStreamRoom && state.phase === "connected" && (
+    <button
+      type="button"
+      onClick={() => setIsViewerSheetOpen(true)}
+      title={t`See viewers`}
+      aria-label={t`See viewers`}
+      className="flex-shrink-0 px-2 py-1 rounded-full bg-black/55 text-xs text-white"
+    >
+      <Trans>{viewerMembers.length} watching</Trans>
+    </button>
+  );
+  const videoBand = (
+    <VoiceVideoBand
+      members={streamerMembers}
+      serverId={serverId}
+      selfNick={selfNick}
+      focusNick={focusNick}
+      onFocus={setFocusNick}
+      reactions={reactions}
+      onSetMuted={onSetMuted}
+      onSetVolume={onSetVolume}
+      isHost={isHost}
+      onDemote={onDemote}
+      status={statusPill}
+      actions={viewersButton}
+      dock={dock}
+      isFullscreen={isFullscreenVideo}
+      onToggleFullscreen={() => setTheater(!theater)}
+    />
+  );
+
+  if (isFullscreenVideo) {
+    return createPortal(
+      <div
+        className="fixed inset-0 z-[9990] bg-black flex flex-col"
+        style={safeAreaPadding}
+      >
+        {videoBand}
+        {errorBanner && (
+          <div className="absolute inset-x-3 top-14 flex justify-center">
+            {errorBanner}
+          </div>
+        )}
+        {viewerSheet}
+      </div>,
+      document.body,
+    );
+  }
+
+  if (isCompact) {
+    return (
+      <div className="w-full flex flex-col bg-discord-dark-200">
+        {state.phase !== "connected" && state.phase !== "failed" && (
+          <div className="flex items-center justify-center py-6">
+            <LoadingSpinner size="md" text="" />
+          </div>
+        )}
+        {state.phase === "connected" && hasStreamVideo ? (
+          <>
+            <div className="[html[data-keyboard-open]_&]:hidden">
+              {videoBand}
+            </div>
+            <button
+              type="button"
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={() => (document.activeElement as HTMLElement)?.blur()}
+              className="hidden [html[data-keyboard-open]_&]:flex items-center gap-2 px-3 py-2 bg-discord-dark-300 text-xs text-discord-text-normal"
+            >
+              <span
+                className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
+                aria-hidden="true"
+              />
+              <span className="flex-1 text-left">{statusLabel}</span>
+              <span className="text-discord-text-link">
+                <Trans>Show video</Trans>
+              </span>
+            </button>
+          </>
+        ) : (
+          (state.phase === "connected" || state.phase === "failed") && (
+            <>
+              {(isStreamRoom || state.phase === "failed") && (
+                <div className="flex items-center gap-2 px-3 pt-2">
+                  {statusPill}
+                  <span className="flex-1" />
+                  {viewersButton}
+                </div>
+              )}
+              <VoiceAvatarBar
+                members={streamerMembers}
+                serverId={serverId}
+                dock={dock}
+              />
+            </>
+          )
+        )}
+        {errorBanner && <div className="px-3 py-2">{errorBanner}</div>}
+        {viewerSheet}
+      </div>
+    );
+  }
 
   // Theater renders through a portal to document.body so its `fixed`
   // container is positioned against the real viewport -- nested in place,
@@ -199,19 +391,7 @@ export const VoiceChannelView: React.FC<Props> = ({
   // AppLayout) would otherwise become its containing block and confine
   // it to that ancestor's box instead of the window.
   const content = (
-    <div
-      className={rootClass}
-      style={
-        theater
-          ? {
-              paddingTop: "var(--safe-area-inset-top, 0px)",
-              paddingBottom: "var(--safe-area-inset-bottom, 0px)",
-              paddingLeft: "var(--safe-area-inset-left, 0px)",
-              paddingRight: "var(--safe-area-inset-right, 0px)",
-            }
-          : undefined
-      }
-    >
+    <div className={rootClass} style={theater ? safeAreaPadding : undefined}>
       <div
         data-testid="voice-status-strip"
         className="h-9 flex-shrink-0 px-3 flex items-center gap-2 text-xs border-b border-discord-dark-300 bg-discord-dark-300/60 text-discord-text-muted"
@@ -220,10 +400,7 @@ export const VoiceChannelView: React.FC<Props> = ({
           className={`w-2 h-2 rounded-full flex-shrink-0 ${statusDotClass}`}
           aria-hidden="true"
         />
-        <span className="truncate">
-          {statusLabel}
-          {state.phase === "failed" && `: ${state.error}`}
-        </span>
+        <span className="truncate">{statusLabel}</span>
         {isStreamRoom && state.phase === "connected" && (
           <>
             <span className="px-1.5 py-0.5 rounded bg-discord-primary text-white flex-shrink-0">
@@ -255,14 +432,14 @@ export const VoiceChannelView: React.FC<Props> = ({
         className={
           theater
             ? "relative flex-1 min-h-0 flex flex-col bg-discord-dark-400"
-            : "relative bg-discord-dark-400 min-h-[16rem]"
+            : "relative min-h-0 flex flex-col bg-discord-dark-400"
         }
       >
         <div
           className={
             theater
               ? "flex-1 min-h-0 overflow-hidden flex flex-col pb-20"
-              : "overflow-y-auto pb-20"
+              : "min-h-[10rem] overflow-y-auto"
           }
         >
           {state.phase !== "connected" && state.phase !== "failed" && (
@@ -283,7 +460,7 @@ export const VoiceChannelView: React.FC<Props> = ({
               isHost={isHost}
               onDemote={onDemote}
               theater={theater}
-              onToggleTheater={() => setTheater((v) => !v)}
+              onToggleTheater={() => setTheater(!theater)}
             />
           )}
           {state.phase === "connected" &&
@@ -295,7 +472,7 @@ export const VoiceChannelView: React.FC<Props> = ({
                 </Trans>
               </p>
             )}
-          {isStreamRoom && state.phase === "connected" && (
+          {isStreamRoom && !theater && state.phase === "connected" && (
             <ViewerList
               viewers={viewerMembers}
               isHost={isHost}
@@ -306,45 +483,15 @@ export const VoiceChannelView: React.FC<Props> = ({
           )}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-4 flex flex-col items-center gap-2 px-3">
-          {error && (
-            <div className="pointer-events-auto max-w-md w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-discord-red/90 text-white text-sm shadow-lg">
-              <span className="flex-1 truncate">{error}</span>
-              <button
-                type="button"
-                onClick={clearError}
-                aria-label={t`Dismiss`}
-                title={t`Dismiss`}
-                className="flex-shrink-0 hover:opacity-80"
-              >
-                <FaTimes />
-              </button>
-            </div>
-          )}
-          <div className="pointer-events-auto">
-            <VoiceDock
-              isNarrow={isNarrow}
-              isTouch={isTouch}
-              isStreamer={isStreamer}
-              micOn={self?.micOn ?? false}
-              videoOn={self?.videoOn ?? false}
-              screenOn={self?.screenSharing ?? false}
-              deafened={deafened}
-              handRaised={self?.handRaised ?? false}
-              pttOn={pttOn}
-              canStepOffStream={canStepOffStream}
-              onToggleMic={onToggleMic}
-              onToggleVideo={onToggleVideo}
-              onToggleScreen={onToggleScreen}
-              onToggleDeafen={onToggleDeafen}
-              onToggleHand={onToggleHand}
-              onTogglePtt={onTogglePtt}
-              onStepOffStream={onStepOffStream}
-              onReact={onReact}
-              onLeave={onLeave}
-              onOpenDeviceSettings={onOpenDeviceSettings}
-            />
-          </div>
+        <div
+          className={`flex flex-col items-center gap-2 px-3 ${
+            theater
+              ? "pointer-events-none absolute inset-x-0 bottom-4"
+              : "flex-shrink-0 py-2"
+          }`}
+        >
+          {errorBanner}
+          <div className="pointer-events-auto">{dock}</div>
         </div>
       </div>
     </div>

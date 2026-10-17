@@ -1,57 +1,72 @@
-// The member a user pins large on the stage has to still be the pinned
-// member once the call floats into the pop-out (VoicePipOverlay), and
-// picking someone in the pop-out has to carry back into the channel
-// view -- so this lives at module scope instead of in either
-// component's local state, mirroring the live-call registry pattern in
-// voice.ts.
+// The stage and the pop-out (VoicePipOverlay) show the same call, and the call
+// view remounts on every rotation, so the per-call view choices live at module
+// scope beside the live-call registry in voice.ts.
 
 import { useCallback, useSyncExternalStore } from "react";
 
-const spotlights = new Map<string, string | null>();
 const listeners = new Set<() => void>();
+const clearers: Array<(k: string) => void> = [];
 
 function key(serverId: string, channel: string): string {
   return `${serverId}\x00${channel}`;
 }
 
-export function getSpotlight(serverId: string, channel: string): string | null {
-  return spotlights.get(key(serverId, channel)) ?? null;
-}
-
-export function setSpotlight(
-  serverId: string,
-  channel: string,
-  nick: string | null,
-): void {
-  const k = key(serverId, channel);
-  if ((spotlights.get(k) ?? null) === nick) return;
-  spotlights.set(k, nick);
-  for (const listener of listeners) listener();
-}
-
-export function subscribeSpotlight(listener: () => void): () => void {
+function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
   };
 }
 
-/** The shared spotlight for one (server, channel) call, and a setter
- *  that both the stage and the pop-out can call interchangeably. */
-export function useSpotlight(
-  serverId: string | undefined,
-  channel: string | undefined,
-): [string | null, (nick: string | null) => void] {
-  const nick = useSyncExternalStore(
-    subscribeSpotlight,
-    () => (serverId && channel ? getSpotlight(serverId, channel) : null),
-    () => null,
-  );
-  const setNick = useCallback(
-    (n: string | null) => {
-      if (serverId && channel) setSpotlight(serverId, channel, n);
-    },
-    [serverId, channel],
-  );
-  return [nick, setNick];
+function notify(): void {
+  for (const listener of listeners) listener();
+}
+
+function callScoped<T>(fallback: T) {
+  const values = new Map<string, T>();
+  clearers.push((k) => values.delete(k));
+
+  const get = (serverId: string, channel: string): T =>
+    values.get(key(serverId, channel)) ?? fallback;
+
+  const set = (serverId: string, channel: string, value: T): void => {
+    if (get(serverId, channel) === value) return;
+    values.set(key(serverId, channel), value);
+    notify();
+  };
+
+  const use = (
+    serverId: string | undefined,
+    channel: string | undefined,
+  ): [T, (value: T) => void] => {
+    const value = useSyncExternalStore(
+      subscribe,
+      () => (serverId && channel ? get(serverId, channel) : fallback),
+      () => fallback,
+    );
+    const setValue = useCallback(
+      (next: T) => {
+        if (serverId && channel) set(serverId, channel, next);
+      },
+      [serverId, channel],
+    );
+    return [value, setValue];
+  };
+
+  return { set, use };
+}
+
+const spotlight = callScoped<string | null>(null);
+const theater = callScoped(false);
+
+export const setSpotlight = spotlight.set;
+export const useSpotlight = spotlight.use;
+export const setTheater = theater.set;
+export const useTheater = theater.use;
+
+/** Forgets the view choices of a call that ended, so the next call in the
+ *  channel opens on the default layout. */
+export function clearCallView(serverId: string, channel: string): void {
+  for (const clear of clearers) clear(key(serverId, channel));
+  notify();
 }

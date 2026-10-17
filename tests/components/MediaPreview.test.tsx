@@ -118,6 +118,19 @@ describe("MediaPreview", () => {
     expect(video?.getAttribute("preload")).toBe("metadata");
   });
 
+  test("a video file with no picture plays as audio", async () => {
+    const { container } = render(
+      <MediaPreview
+        entry={makeEntry("video", "https://example.com/voice-message.webm")}
+      />,
+    );
+    const video = container.querySelector("video");
+    expect(video).toBeTruthy();
+    fireEvent(video as HTMLVideoElement, new Event("loadedmetadata"));
+
+    await waitFor(() => expect(container.querySelector("video")).toBeNull());
+  });
+
   test("audio entry renders play button, not audio element", () => {
     const { container, getByLabelText } = render(
       <MediaPreview

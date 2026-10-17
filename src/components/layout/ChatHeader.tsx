@@ -316,8 +316,32 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     ? t`Collapse member list`
     : t`Expand member list`;
 
-  // Define overflow menu items based on context
+  const openPrivateChatProfile = () => {
+    if (!selectedServerId || !selectedPrivateChat) return;
+    setProfileViewRequest(selectedServerId, selectedPrivateChat.username);
+    toggleUserProfileModal(true);
+  };
+
   const overflowMenuItems: MenuItem[] = [
+    {
+      label: selectedPrivateChat?.isPinned
+        ? t`Unpin conversation`
+        : t`Pin conversation`,
+      icon: <FaThumbtack />,
+      onClick: () => {
+        if (!selectedServerId || !selectedPrivateChat) return;
+        if (selectedPrivateChat.isPinned)
+          unpinPrivateChat(selectedServerId, selectedPrivateChat.id);
+        else pinPrivateChat(selectedServerId, selectedPrivateChat.id);
+      },
+      show: !!selectedPrivateChat && !!selectedServerId,
+    },
+    {
+      label: t`See profile`,
+      icon: <FaInfoCircle />,
+      onClick: openPrivateChatProfile,
+      show: !!selectedPrivateChat && !!selectedServerId,
+    },
     {
       label: t`Media`,
       icon: <FaFilm />,
@@ -327,10 +351,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           openMediaExplorer(selectedServerId, chatId);
         }
       },
-      show: hasMedia,
+      show: hasMedia && nativeMobile,
     },
     {
-      label: t`Channel Settings`,
+      label: t`Edit Channel`,
       icon: <FaPenAlt />,
       onClick: onOpenChannelSettings,
       show: !!selectedChannel,
@@ -343,7 +367,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     },
     {
       label:
-        botsLoadingCount > 0 ? t`Bots (loading ${botsLoadingCount})` : t`Bots`,
+        botsLoadingCount > 0
+          ? t`Manage Bots (loading ${botsLoadingCount})`
+          : t`Manage Bots`,
       icon: (
         <FaRobot
           className={
@@ -367,7 +393,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       show: !!selectedPrivateChat,
     },
     {
-      label: t`Server Channels`,
+      label: t`Browse Channels`,
       icon: <FaList />,
       onClick: () => toggleChannelListModal(true),
       show: true,
@@ -546,7 +572,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 }}
                 className="text-discord-channels-default/40 text-xs hover:text-discord-channels-default truncate text-left italic"
               >
-                <Trans>Click to set topic</Trans>
+                <Trans>Set a topic…</Trans>
               </button>
             ) : null}
           </div>
@@ -689,50 +715,76 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 {isNarrowView ? <FaChevronLeft /> : <FaChevronRight />}
               </button>
             )}
-            <div className="relative w-10 h-10 flex-shrink-0">
-              {(() => {
-                const selectedServer = servers.find(
-                  (s) => s.id === selectedServerId,
-                );
-                const shouldShowAvatar =
-                  canShowAvatarUrl(
-                    privateChatAvatar,
-                    serverFilehosts(selectedServer),
-                    mediaSettings,
-                  ) && !avatarLoadFailed;
+            <button
+              type="button"
+              className="flex items-center gap-3 min-w-0 text-left"
+              onClick={openPrivateChatProfile}
+            >
+              <span className="block relative w-10 h-10 flex-shrink-0">
+                {(() => {
+                  const selectedServer = servers.find(
+                    (s) => s.id === selectedServerId,
+                  );
+                  const shouldShowAvatar =
+                    canShowAvatarUrl(
+                      privateChatAvatar,
+                      serverFilehosts(selectedServer),
+                      mediaSettings,
+                    ) && !avatarLoadFailed;
 
-                return shouldShowAvatar ? (
-                  <img
-                    src={privateChatAvatar}
-                    alt={selectedPrivateChat.username}
-                    className="w-full h-full rounded-full object-cover"
-                    onError={() => setAvatarLoadFailed(true)}
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-discord-dark-400 flex items-center justify-center">
-                    <FaUser className="text-discord-text-muted text-xl" />
-                  </div>
-                );
-              })()}
-              <span
-                className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-discord-dark-200 ${
-                  selectedPrivateChat.isOnline
-                    ? selectedPrivateChat.isAway
-                      ? "bg-yellow-500"
-                      : "bg-green-500"
-                    : "bg-gray-500"
-                }`}
-                title={
-                  selectedPrivateChat.isOnline
-                    ? selectedPrivateChat.isAway
-                      ? t`Away`
-                      : t`Online`
-                    : t`Offline`
-                }
-              />
-            </div>
-            <div className="flex flex-col">
-              <h2 className="font-bold text-white">
+                  return shouldShowAvatar ? (
+                    <img
+                      src={privateChatAvatar}
+                      alt={selectedPrivateChat.username}
+                      className="w-full h-full rounded-full object-cover"
+                      onError={() => setAvatarLoadFailed(true)}
+                    />
+                  ) : (
+                    <span className="w-full h-full rounded-full bg-discord-dark-400 flex items-center justify-center">
+                      <FaUser className="text-discord-text-muted text-xl" />
+                    </span>
+                  );
+                })()}
+                <span
+                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-discord-dark-200 ${
+                    selectedPrivateChat.isOnline
+                      ? selectedPrivateChat.isAway
+                        ? "bg-yellow-500"
+                        : "bg-green-500"
+                      : "bg-gray-500"
+                  }`}
+                  title={
+                    selectedPrivateChat.isOnline
+                      ? selectedPrivateChat.isAway
+                        ? t`Away`
+                        : t`Online`
+                      : t`Offline`
+                  }
+                />
+              </span>
+              <span className="flex flex-col min-w-0">
+                <span className="block font-bold text-white truncate">
+                  {(() => {
+                    const userMetadata = getUserMetadata(
+                      selectedPrivateChat.username,
+                    );
+                    const displayName = userMetadata?.["display-name"]?.value;
+                    const user = getUserFromChannels(
+                      selectedPrivateChat.username,
+                    );
+                    return (
+                      <>
+                        {displayName || selectedPrivateChat.username}
+                        {renderUserBadges(
+                          selectedPrivateChat.username,
+                          selectedPrivateChat,
+                          user,
+                          !displayName,
+                        )}
+                      </>
+                    );
+                  })()}
+                </span>
                 {(() => {
                   const userMetadata = getUserMetadata(
                     selectedPrivateChat.username,
@@ -741,92 +793,37 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   const user = getUserFromChannels(
                     selectedPrivateChat.username,
                   );
-                  return (
-                    <>
-                      {displayName || selectedPrivateChat.username}
-                      {renderUserBadges(
-                        selectedPrivateChat.username,
-                        selectedPrivateChat,
-                        user,
-                        !displayName,
-                      )}
-                    </>
-                  );
-                })()}
-              </h2>
-              {(() => {
-                const userMetadata = getUserMetadata(
-                  selectedPrivateChat.username,
-                );
-                const displayName = userMetadata?.["display-name"]?.value;
-                const user = getUserFromChannels(selectedPrivateChat.username);
 
-                if (displayName) {
-                  return (
-                    <div className="flex items-center gap-1.5 text-xs truncate mt-0.5">
-                      <span className="bg-gray-300 text-black px-1 py-0 rounded font-bold whitespace-nowrap text-[10px]">
-                        {selectedPrivateChat.username}
-                        {renderUserBadges(
-                          selectedPrivateChat.username,
-                          selectedPrivateChat,
-                          user,
-                        )}
+                  if (displayName) {
+                    return (
+                      <span className="flex items-center gap-1.5 text-xs truncate mt-0.5">
+                        <span className="bg-gray-300 text-black px-1 py-0 rounded font-bold whitespace-nowrap text-[10px]">
+                          {selectedPrivateChat.username}
+                          {renderUserBadges(
+                            selectedPrivateChat.username,
+                            selectedPrivateChat,
+                            user,
+                          )}
+                        </span>
                       </span>
-                    </div>
-                  );
-                }
-
-                return privateChatUserMetadata?.status?.value ? (
-                  <span className="text-xs text-discord-text-muted">
-                    {privateChatUserMetadata.status.value}
-                  </span>
-                ) : null;
-              })()}
-            </div>
-            {selectedServerId && (
-              <button
-                className={`ml-2 ${
-                  selectedPrivateChat.isPinned
-                    ? "text-green-500 hover:text-green-400"
-                    : "text-discord-text-muted hover:text-yellow-400"
-                }`}
-                onClick={() => {
-                  if (selectedPrivateChat.isPinned) {
-                    unpinPrivateChat(selectedServerId, selectedPrivateChat.id);
-                  } else {
-                    pinPrivateChat(selectedServerId, selectedPrivateChat.id);
-                  }
-                }}
-                title={selectedPrivateChat.isPinned ? t`Unpin` : t`Pin`}
-              >
-                <FaThumbtack
-                  className={
-                    selectedPrivateChat.isPinned ? "" : "rotate-[25deg]"
-                  }
-                  style={
-                    selectedPrivateChat.isPinned
-                      ? {}
-                      : { transform: "rotate(25deg)" }
-                  }
-                />
-              </button>
-            )}
-            {selectedServerId && (
-              <button
-                className="ml-2 text-discord-text-muted hover:text-white"
-                onClick={() => {
-                  if (selectedServerId && selectedPrivateChat) {
-                    setProfileViewRequest(
-                      selectedServerId,
-                      selectedPrivateChat.username,
                     );
-                    toggleUserProfileModal(true);
                   }
-                }}
-                title={t`User Profile`}
-              >
-                <FaInfoCircle />
-              </button>
+
+                  return privateChatUserMetadata?.status?.value ? (
+                    <span className="text-xs text-discord-text-muted">
+                      {privateChatUserMetadata.status.value}
+                    </span>
+                  ) : null;
+                })()}
+              </span>
+            </button>
+            {selectedServerId && (
+              <span className="text-xs [&_button]:p-0.5 flex items-center">
+                <E2EELockControl
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
+              </span>
             )}
           </div>
 
@@ -867,29 +864,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   <FaFilm />
                 </button>
               )}
-              {selectedServerId && selectedPrivateChat && (
-                <E2EELockControl
-                  serverId={selectedServerId}
-                  nick={selectedPrivateChat.username}
-                />
-              )}
-              <button
-                className="hidden md:block hover:text-discord-text-normal"
-                onClick={() => {
-                  if (selectedServerId && selectedPrivateChat) {
-                    useStore
-                      .getState()
-                      .tictactoeInvite(
-                        selectedServerId,
-                        selectedPrivateChat.username,
-                      );
-                  }
-                }}
-                aria-label={t`Play Tic-Tac-Toe`}
-                title={t`Play Tic-Tac-Toe`}
-              >
-                <span aria-hidden="true">🎮</span>
-              </button>
               {selectedServerId && (
                 <BotToolsHistoryButton
                   serverId={selectedServerId}
@@ -906,7 +880,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               </button>
               <button
                 ref={overflowButtonRef}
-                className="md:hidden p-2 hover:text-discord-text-normal"
+                className="p-2 hover:text-discord-text-normal"
                 onClick={() => setIsOverflowMenuOpen(!isOverflowMenuOpen)}
                 aria-label={t`More actions`}
                 aria-expanded={isOverflowMenuOpen}

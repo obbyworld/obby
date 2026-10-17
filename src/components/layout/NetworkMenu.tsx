@@ -58,7 +58,7 @@ export const NetworkMenu: React.FC<NetworkMenuProps> = ({
         },
         {
           id: "reorder",
-          label: t`Reorder channels`,
+          label: t`Reorder list`,
           icon: <FaArrowsAltV />,
           show: isTouch,
           onClick: onReorder,
