@@ -17,6 +17,7 @@ import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { waitForAuthToken } from "../../lib/authToken";
+import { voiceDisplayName } from "../../lib/channelMentions";
 import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
@@ -2378,9 +2379,9 @@ export const ChatArea: React.FC<{
                         !isNativeMobile &&
                         !isCompactInput
                         ? globalSettings.multilineOnShiftEnter
-                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
-                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
-                        : t`Message ${selectedChannel.name}`
+                          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+                          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+                        : t`Message ${voiceDisplayName(selectedChannel.name)}`
                       : selectedPrivateChat
                         ? globalSettings.enableMultilineInput &&
                           !isMobile &&
