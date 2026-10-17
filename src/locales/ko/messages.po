@@ -3118,17 +3118,17 @@ msgstr "멘션 및 답장"
 msgid "Message"
 msgstr "메시지"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "{0}에 메시지 보내기"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "{0}에 메시지 보내기 (Enter로 줄바꿈, Shift+Enter로 전송)"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "{0}에 메시지 보내기 (Shift+Enter로 줄바꿈)"

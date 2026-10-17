@@ -5,10 +5,12 @@ import {
   FaCog,
   FaHashtag,
   FaHistory,
+  FaMicrophone,
   FaSearch,
   FaServer,
   FaUser,
 } from "react-icons/fa";
+import { classifyChannelName } from "../../../lib/channelMentions";
 import { fuzzyMatch } from "../../../lib/fuzzySearch";
 import type { Channel, PrivateChat } from "../../../types";
 import HighlightedText from "../HighlightedText";
@@ -47,8 +49,17 @@ export function resultIcon(result: QuickActionResult): React.ReactNode {
     case "page":
       return <FaCog />;
     case "channel":
-    case "join-channel":
-      return <FaHashtag />;
+    case "join-channel": {
+      const name =
+        result.type === "channel"
+          ? (result.data as Channel).name
+          : (result.data as { channelName: string }).channelName;
+      return classifyChannelName(name) === "voice" ? (
+        <FaMicrophone />
+      ) : (
+        <FaHashtag />
+      );
+    }
     case "dm":
     case "start-dm":
       return <FaUser />;
