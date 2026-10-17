@@ -18,6 +18,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
+import { useCommandInvocation } from "../../hooks/useCommandInvocation";
 import { useCompletion } from "../../hooks/useCompletion";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
@@ -92,7 +93,9 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType, User } from "../../types";
+import type { Message as MessageType, User } from "../../types";
+import { COMMAND_DETAIL_ID, CommandArgsStrip } from "../chat/CommandArgsStrip";
+import { CommandChip } from "../chat/CommandChip";
 import {
   type EmojiItem,
   emojiProvider,
@@ -133,7 +136,6 @@ import {
   type RecordingFailure,
   RegionRecordingBar,
 } from "../ui/RegionRecordingBar";
-import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
@@ -204,10 +206,6 @@ export const ChatArea: React.FC<{
   // completionInput mirrors the text only while a completion can be open.
   const [hasText, setHasText] = useState(false);
   const [completionInput, setCompletionInput] = useState(NO_COMPLETION_INPUT);
-  const [paramModal, setParamModal] = useState<{
-    botNick: string;
-    command: BotCommand;
-  } | null>(null);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -403,6 +401,11 @@ export const ChatArea: React.FC<{
     [resizeTextarea],
   );
 
+  const clearCompletion = useCallback(
+    () => setCompletionInput(NO_COMPLETION_INPUT),
+    [],
+  );
+
   const servers = useStore((state) => state.servers);
   const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
@@ -481,25 +484,6 @@ export const ChatArea: React.FC<{
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
-
-  const pendingBotCommandPick = useStore(
-    (state) => state.ui.pendingBotCommandPick,
-  );
-  const clearBotCommandPickRequest = useStore(
-    (state) => state.clearBotCommandPickRequest,
-  );
-  useEffect(() => {
-    if (
-      pendingBotCommandPick &&
-      pendingBotCommandPick.serverId === selectedServerId
-    ) {
-      setParamModal({
-        botNick: pendingBotCommandPick.botNick,
-        command: pendingBotCommandPick.command,
-      });
-      clearBotCommandPickRequest();
-    }
-  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -813,6 +797,39 @@ export const ChatArea: React.FC<{
     [selectedServer, selectedPrivateChatId],
   );
 
+  const command = useCommandInvocation({
+    serverId: selectedServerId,
+    channel: selectedChannel ?? null,
+    textRef: messageTextRef,
+    inputRef,
+    applyText,
+    onBegin: clearCompletion,
+  });
+
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      command.begin(
+        pendingBotCommandPick.botNick,
+        pendingBotCommandPick.command,
+      );
+      clearBotCommandPickRequest();
+    }
+  }, [
+    pendingBotCommandPick,
+    selectedServerId,
+    clearBotCommandPickRequest,
+    command.begin,
+  ]);
+
   const completionUsers = useMemo<User[]>(
     () =>
       selectedChannel?.users ??
@@ -838,19 +855,14 @@ export const ChatArea: React.FC<{
         slashSuggestions(selectedServer, selectedChannel),
         (cmd) => {
           if (cmd.source.kind !== "bot") return;
-          setParamModal({
-            botNick: cmd.source.botNick,
-            command: {
-              name: cmd.name,
-              description: cmd.description,
-              options: cmd.options,
-            },
+          command.begin(cmd.source.botNick, {
+            name: cmd.name,
+            description: cmd.description,
+            options: cmd.options,
           });
-          applyText("");
-          setCompletionInput(NO_COMPLETION_INPUT);
         },
       ),
-    [selectedServer, selectedChannel, applyText],
+    [selectedServer, selectedChannel, command.begin],
   );
   const completionProviders = useMemo(
     () => [slashCommandProvider, emojiProvider(emojiItems), memberProvider],
@@ -1058,9 +1070,9 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     const key = channelKey;
     return () => {
-      if (key) draftMap.current.set(key, messageTextRef.current);
+      if (key) draftMap.current.set(key, command.leave());
     };
-  }, [channelKey]);
+  }, [channelKey, command.leave]);
 
   // Save outgoing channel's scroll position on cleanup (same pattern as draftMap).
   useEffect(() => {
@@ -1573,8 +1585,29 @@ export const ChatArea: React.FC<{
     inputRef.current?.focus();
   };
 
+  const placeholder = (() => {
+    if (command.activeName !== undefined) return command.activeName;
+    if (selectedChannel)
+      return globalSettings.enableMultilineInput &&
+        !isNativeMobile &&
+        !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+        : t`Message ${voiceDisplayName(selectedChannel.name)}`;
+    if (selectedPrivateChat)
+      return globalSettings.enableMultilineInput && !isMobile && !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
+          : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
+        : t`Message @${selectedPrivateChat.username}`;
+    return t`Type a message...`;
+  })();
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const isModKey = isMac ? e.metaKey || e.ctrlKey : e.ctrlKey;
+
+    if (command.handleKey(e)) return;
 
     // Reply navigation: Cmd/Ctrl+↑ moves to older repliable message, ↓ moves newer / cancels
     if (isModKey && e.key === "ArrowUp") {
@@ -1763,7 +1796,12 @@ export const ChatArea: React.FC<{
 
     // We re-render on keystrokes only while the user types a slash command
     // name, and once after that to close any open completion.
-    if (getActiveSlashQuery(newText, newCursorPosition) !== null) {
+    command.clearError();
+
+    if (
+      !command.invocation &&
+      getActiveSlashQuery(newText, newCursorPosition) !== null
+    ) {
       // The first slash in this channel asks the +B users we have no schema
       // for, so their commands join the list as soon as they answer.
       const wasCompletingSlash =
@@ -1798,7 +1836,7 @@ export const ChatArea: React.FC<{
 
   const handleUpdatedText = (text: string) => {
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
-    if (!target) return;
+    if (!target || command.invocation) return;
     typingNotification.notifyTyping(target, text);
   };
 
@@ -2285,8 +2323,9 @@ export const ChatArea: React.FC<{
                 serverId={selectedServerId ?? ""}
                 channelId={selectedChannelId || selectedPrivateChatId || ""}
               />
+              {command.strip && <CommandArgsStrip {...command.strip} />}
               <div
-                className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"}`}
+                className={`bg-discord-dark-100 ${localReplyTo || command.invocation ? "rounded-b-lg" : "rounded-lg"}`}
               >
                 <AttachmentTray
                   attachments={attachments}
@@ -2305,6 +2344,9 @@ export const ChatArea: React.FC<{
                     <FaPlus />
                   </button>
 
+                  {command.invocation && (
+                    <CommandChip name={command.invocation.command.name} />
+                  )}
                   <TextArea
                     ref={inputRef}
                     defaultValue=""
@@ -2317,24 +2359,9 @@ export const ChatArea: React.FC<{
                     autoCorrect={isMobileInput ? "on" : "off"}
                     autoCapitalize={isMobileInput ? "sentences" : "off"}
                     spellCheck={isMobileInput}
-                    placeholder={
-                      selectedChannel
-                        ? globalSettings.enableMultilineInput &&
-                          !isNativeMobile &&
-                          !isCompactInput
-                          ? globalSettings.multilineOnShiftEnter
-                            ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
-                            : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
-                          : t`Message ${voiceDisplayName(selectedChannel.name)}`
-                        : selectedPrivateChat
-                          ? globalSettings.enableMultilineInput &&
-                            !isMobile &&
-                            !isCompactInput
-                            ? globalSettings.multilineOnShiftEnter
-                              ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
-                              : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
-                            : t`Message @${selectedPrivateChat.username}`
-                          : t`Type a message...`
+                    placeholder={placeholder}
+                    aria-describedby={
+                      command.invocation ? COMMAND_DETAIL_ID : undefined
                     }
                     enterKeyHint={
                       isNativeMobile && globalSettings.enableMultilineInput
@@ -2358,10 +2385,16 @@ export const ChatArea: React.FC<{
                       setShowMembersDropdown(false);
                     }}
                     onAtClick={handleAtButtonClick}
-                    onSendClick={handleSendMessage}
+                    onSendClick={
+                      command.invocation ? command.run : handleSendMessage
+                    }
                     showSendButton={isNativeMobile}
                     hideEmoji={isNativeMobile}
-                    canSend={hasText || attachments.length > 0}
+                    canSend={
+                      hasText ||
+                      attachments.length > 0 ||
+                      command.invocation !== null
+                    }
                   />
                 </div>
               </div>
@@ -2611,9 +2644,7 @@ export const ChatArea: React.FC<{
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
-        onPickBotCommand={(botNick, command) =>
-          setParamModal({ botNick, command })
-        }
+        onPickBotCommand={command.begin}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -2795,25 +2826,6 @@ export const ChatArea: React.FC<{
           onCancel={() => setPendingPlainUpload(null)}
         />
       )}
-      {paramModal &&
-        selectedServerId &&
-        createPortal(
-          <SlashCommandParamModal
-            serverId={selectedServerId}
-            botNick={paramModal.botNick}
-            command={paramModal.command}
-            channel={selectedChannel ?? null}
-            privateChat={selectedPrivateChat ?? null}
-            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
-            joinedChannels={
-              servers
-                .find((s) => s.id === selectedServerId)
-                ?.channels.map((c) => c.name) ?? []
-            }
-            onClose={() => setParamModal(null)}
-          />,
-          document.body,
-        )}
     </div>
   );
 };

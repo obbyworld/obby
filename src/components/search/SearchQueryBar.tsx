@@ -4,6 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { FaChevronDown, FaGlobe, FaHashtag, FaServer } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { keepInputFocus } from "../../lib/focus";
 import {
   hasFilledToken,
   hasSearchToken,
@@ -26,8 +27,6 @@ import type { Server } from "../../types";
 import CompletionList from "../ui/CompletionList";
 import Menu, { type MenuItem } from "../ui/Menu";
 import type { SearchDraft } from "./useSearchDraft";
-
-const keepInputFocus = (e: React.MouseEvent) => e.preventDefault();
 
 export const ScopeIcon: React.FC<{ scope: SearchScope }> = ({ scope }) => {
   if (scope.kind === "everywhere")

@@ -92,20 +92,20 @@ msgstr "{0} vás pozval(a) ke hře."
 msgid "{0} idle"
 msgstr "nečinný {0}"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} je povinné."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0} je povinné"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} musí být číslo."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0} musí být číslo"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} musí být celé číslo."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0} musí být celé číslo"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*kanál*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#kanál"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#kanál (volitelné)"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ pro posun"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ pro otevření"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount} možností"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "Nelze odebrat poslední údaj 2FA"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Zrušit"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "Zrušit příkaz"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "Barva a formátování"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Již brzy"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "Možnosti příkazu"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line (globální Z-Line)"
 msgid "Halfop"
 msgstr "Polooperátor"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "má hodnotu"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Obsahuje odkaz"
@@ -3534,10 +3545,6 @@ msgstr "Další obrázek"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "Další stránka"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "přezdívka"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "Pro mluvení vyžadovat registrovanou přezdívku (+r)."
 msgid "Require an invite to join."
 msgstr "Pro připojení vyžadovat pozvánku."
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "povinné"
@@ -4607,10 +4613,6 @@ msgstr "Otočit o 90°"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Pravidla"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "Spustit"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "Tento chat je šifrovaný šifrováním Obby. Porovnejte otisky se svým
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "Tento chat je šifrovaný pomocí OTR, kompatibilního s jinými IRC klienty. Porovnejte otisky se svým kontaktem mimo tento chat a pak ho označte jako ověřeného."
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "Tento příkaz nemá žádné parametry."
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."

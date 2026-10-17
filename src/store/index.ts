@@ -475,9 +475,6 @@ interface UIState {
   // bots modal — UserProfileModal sets this to {serverId, botNick}
   // when the user clicks "Show in Bots Menu" and ChatArea picks it up
   // to open the modal pre-selected on that bot.
-  // Cross-component deep-link from the member-list context menu's Bot
-  // Commands submenu — clicking a command sets this and ChatArea picks
-  // it up to open the slash-command param modal.
   pendingBotCommandPick: {
     serverId: string;
     botNick: string;

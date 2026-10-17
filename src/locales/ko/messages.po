@@ -92,20 +92,20 @@ msgstr "{0}님이 게임에 초대했습니다."
 msgid "{0} idle"
 msgstr "{0} 유휴"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0}은(는) 필수입니다."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0}은(는) 필수입니다"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0}은(는) 숫자여야 합니다."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0}은(는) 숫자여야 합니다"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0}은(는) 정수여야 합니다."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0}은(는) 정수여야 합니다"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*channel*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#채널"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#채널 (선택사항)"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ 이동"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ 열기"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount}개 옵션"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "취소"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "명령 취소"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "색상 및 서식"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "곧 출시"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "명령어 옵션"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line (글로벌 Z-Line)"
 msgid "Halfop"
 msgstr "Halfop"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "값 있음"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "링크 포함"
@@ -3534,10 +3545,6 @@ msgstr "다음 이미지"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "다음 페이지"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "닉네임"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "말하려면 등록된 닉네임이 필요합니다 (+r)."
 msgid "Require an invite to join."
 msgstr "참여하려면 초대가 필요합니다."
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "필수"
@@ -4607,10 +4613,6 @@ msgstr "90° 회전"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "규칙"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "실행"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "이 채팅은 Obby 암호화로 암호화되어 있습니다. 이 채팅
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "이 채팅은 다른 IRC 클라이언트와 호환되는 OTR로 암호화되어 있습니다. 이 채팅 밖에서 상대방과 지문을 비교한 후 인증됨으로 표시하세요."
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "이 명령어는 매개변수를 받지 않습니다."
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."

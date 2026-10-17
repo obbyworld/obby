@@ -92,20 +92,20 @@ msgstr "{0} があなたをゲームに招待しました。"
 msgid "{0} idle"
 msgstr "{0} アイドル"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} は必須です。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0} は必須です"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} は数値である必要があります。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0} は数値にしてください"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} は整数である必要があります。"
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0} は整数にしてください"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*channel*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#channel"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#チャンネル（任意）"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ で移動"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ で開く"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount} 個のオプション"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "最後の 2FA 認証情報は削除できません"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "キャンセル"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "コマンドをキャンセル"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "カラーと書式設定"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "近日公開"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "コマンドのオプション"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line（グローバルZ-Line）"
 msgid "Halfop"
 msgstr "Halfop"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "値あり"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "リンクあり"
@@ -3534,10 +3545,6 @@ msgstr "次の画像"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "次のページ"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "ニックネーム"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "発言には登録済みニックネームが必要です (+r)。"
 msgid "Require an invite to join."
 msgstr "参加には招待が必要です。"
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "必須"
@@ -4607,10 +4613,6 @@ msgstr "90°回転"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "ルール"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "実行"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "このチャットは Obby 暗号化で暗号化されています。こ
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "このチャットは、ほかの IRC クライアントと互換性のある OTR で暗号化されています。このチャット以外の方法で相手とフィンガープリントを照合してから、確認済みにしてください。"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "このコマンドはパラメータを受け取りません。"
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."

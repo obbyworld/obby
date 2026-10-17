@@ -92,20 +92,20 @@ msgstr "{0} seni oynamaya davet etti."
 msgid "{0} idle"
 msgstr "{0} boşta"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} gereklidir."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} is required"
+msgstr "{0} gerekli"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} bir sayı olmalıdır."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a number"
+msgstr "{0} bir sayı olmalı"
 
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} bir tam sayı olmalıdır."
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "{0} must be a whole number"
+msgstr "{0} bir tam sayı olmalı"
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -296,10 +296,6 @@ msgstr "*kanal*"
 msgid "*spam*"
 msgstr "*spam*"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#kanal"
-
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
 msgstr "#kanal (isteğe bağlı)"
@@ -319,6 +315,10 @@ msgstr "↑ ↓ taşı"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ aç"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "+{hiddenCount} options"
+msgstr "+{hiddenCount} seçenek"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1038,12 +1038,15 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "İptal"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Cancel command"
+msgstr "Komutu iptal et"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -1428,6 +1431,10 @@ msgstr "Renk ve Biçimlendirme"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Çok yakında"
+
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "Command options"
+msgstr "Komut seçenekleri"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2629,6 +2636,10 @@ msgstr "GZ-Line (global Z-Line)"
 msgid "Halfop"
 msgstr "Halfop"
 
+#: src/components/chat/CommandArgsStrip.tsx
+msgid "has a value"
+msgstr "değeri var"
+
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Bağlantı içeren"
@@ -3534,10 +3545,6 @@ msgstr "Sonraki görüntü"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next page"
 msgstr "Sonraki sayfa"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "nick"
 
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
@@ -4570,7 +4577,6 @@ msgstr "Konuşmak için kayıtlı bir takma ad gerekli (+r)."
 msgid "Require an invite to join."
 msgstr "Katılmak için davet gerekli."
 
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "gerekli"
@@ -4607,10 +4613,6 @@ msgstr "90° döndür"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Kurallar"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "Çalıştır"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5455,10 +5457,6 @@ msgstr "Bu sohbet Obby şifrelemesiyle şifrelendi. Parmak izlerini kişiyle bu 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "Bu sohbet, diğer IRC istemcileriyle uyumlu OTR ile şifrelendi. Parmak izlerini kişiyle bu sohbetin dışında karşılaştırın, sonra doğrulanmış olarak işaretleyin."
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "Bu komut parametre almıyor."
 
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."
