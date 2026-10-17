@@ -25,6 +25,10 @@ export function classifyChannelName(name: string): ChannelKind | null {
   }
 }
 
+export function voiceDisplayName(name: string): string {
+  return name.replace(/^\^/, "");
+}
+
 // RFC 2812 forbids space, comma and colon inside a channel name. A mention also
 // has to start a word, or every fragment identifier in a URL becomes one.
 const MENTION = new RegExp(`(^|[\\s(\\[{<'"])([${PREFIXES}][^\\s,:]+)`, "gu");
