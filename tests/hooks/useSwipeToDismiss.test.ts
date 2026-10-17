@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isDismissingSwipe } from "../../../src/components/mobile/BottomSheet";
+import { isDismissingSwipe } from "../../src/hooks/useSwipeToDismiss";
 
 describe("isDismissingSwipe", () => {
   it("closes after a third of the sheet, capped for tall sheets", () => {
