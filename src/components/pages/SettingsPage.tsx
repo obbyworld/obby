@@ -80,6 +80,7 @@ const subcategoryLabel = (name: string): string => {
     Appearance: t`Appearance`,
     Social: t`Social`,
     "Status Messages": t`Status Messages`,
+    Alerts: t`Alerts`,
     Audio: t`Audio`,
     Mentions: t`Mentions`,
     Chat: t`Chat`,
@@ -265,25 +266,29 @@ const SettingsContent: React.FC<
   const sections = getSettingsSections();
 
   const renderRegistryGroups = (settings: SettingDefinition[]) =>
-    groupBySubcategory(settings).map(([subcategory, group]) => (
-      <SettingGroup
-        key={subcategory ?? ""}
-        title={subcategory && subcategoryLabel(subcategory)}
-      >
-        {group.map((setting) => (
-          <SettingField
-            key={setting.id}
-            setting={setting}
-            value={globalValue(setting)}
-            onChange={(value) => setGlobal(setting.key, value)}
-            disabled={setting.dependencies?.some(({ settingId, condition }) => {
-              const dependency = settingsRegistry.get(settingId);
-              return dependency && !condition(globalValue(dependency));
-            })}
-          />
-        ))}
-      </SettingGroup>
-    ));
+    groupBySubcategory(settings.filter((setting) => !setting.hidden)).map(
+      ([subcategory, group]) => (
+        <SettingGroup
+          key={subcategory ?? ""}
+          title={subcategory && subcategoryLabel(subcategory)}
+        >
+          {group.map((setting) => (
+            <SettingField
+              key={setting.id}
+              setting={setting}
+              value={globalValue(setting)}
+              onChange={(value) => setGlobal(setting.key, value)}
+              disabled={setting.dependencies?.some(
+                ({ settingId, condition }) => {
+                  const dependency = settingsRegistry.get(settingId);
+                  return dependency && !condition(globalValue(dependency));
+                },
+              )}
+            />
+          ))}
+        </SettingGroup>
+      ),
+    );
 
   const renderProfile = () => {
     const profileSettings = settingsRegistry

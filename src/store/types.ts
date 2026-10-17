@@ -67,6 +67,7 @@ export interface GlobalSettings {
   customMentions: string[];
   ignoreList: string[];
   keepHistory: boolean;
+  closeToTray: boolean;
   historyLimitMb: number;
   nickname: string;
   accountName: string;

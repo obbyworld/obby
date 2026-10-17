@@ -2,6 +2,8 @@ use std::{collections::HashMap, sync::Arc};
 use tauri::{webview::PageLoadEvent, Manager};
 use tokio::sync::Mutex;
 
+#[cfg(any(mobile, test))]
+mod history_poll;
 mod overlay;
 mod screen_record;
 #[cfg(target_os = "windows")]
@@ -230,8 +232,13 @@ pub fn run() {
 
     #[cfg(desktop)]
     {
-        builder = builder.plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
-            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+        // Opening the app again brings back a window we hid to the tray.
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.unminimize();
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
         }));
     }
 
@@ -240,10 +247,14 @@ pub fn run() {
         builder = builder.plugin(tauri_plugin_ios_keyboard::init());
     }
 
+    builder = builder.plugin(tauri_plugin_notification::init());
+
     #[cfg(any(target_os = "ios", target_os = "android"))]
     {
         builder = builder.plugin(tauri_plugin_haptics::init());
         builder = builder.plugin(tauri_plugin_geolocation::init());
+        // We register this after the notification plugin so our iOS delegate wraps its delegate.
+        builder = builder.plugin(tauri_plugin_mobile_notifications::init());
     }
 
     #[cfg(target_os = "android")]
@@ -255,7 +266,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_os::init())
-        .plugin(tauri_plugin_notification::init())
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -306,6 +316,16 @@ pub fn run() {
             screen_record::take_recording,
             youtube_player::youtube_player_port
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app, _event| {
+            // Clicking the dock icon brings back a window the tray hid.
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Reopen { .. } = _event {
+                if let Some(window) = _app.get_webview_window("main") {
+                    let _ = window.show();
+                    let _ = window.set_focus();
+                }
+            }
+        });
 }

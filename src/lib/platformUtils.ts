@@ -9,6 +9,11 @@ export const isMac =
   typeof navigator !== "undefined" &&
   navigator.platform.toUpperCase().includes("MAC");
 
+export const isLinux =
+  typeof navigator !== "undefined" &&
+  /linux/i.test(navigator.userAgent) &&
+  !/android/i.test(navigator.userAgent);
+
 export const isTauri = (): boolean => {
   return typeof window !== "undefined" && window.__TAURI__ !== undefined;
 };

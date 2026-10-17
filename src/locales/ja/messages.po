@@ -232,6 +232,14 @@ msgstr "{safeName} はサーバー上にもう存在しません。"
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} はサーバー上で変更されたため、復号できません。"
 
+#: src/lib/notifications.ts
+msgid "{sender} in {target}"
+msgstr "{target} の {sender}"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} mentioned you in {target}: {body}"
+msgstr "{sender} が {target} であなたにメンションしました: {body}"
+
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} が暗号化を再開しました。承認するまで、この会話は暗号化されません。"
@@ -239,6 +247,10 @@ msgstr "{sender} が暗号化を再開しました。承認するまで、この
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. Wait a moment before you send a message."
 msgstr "{sender} が暗号化をやり直しました。しばらく待ってからメッセージを送信してください。"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} sent you a message: {body}"
+msgstr "{sender} からメッセージ: {body}"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -582,6 +594,10 @@ msgstr "以降"
 msgid "Album"
 msgstr "アルバム"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Alerts"
+msgstr "アラート"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
@@ -621,6 +637,10 @@ msgstr "話すには設定でマイクへのアクセスを許可してくださ
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Allow microphone access to record sound."
 msgstr "音声を録音するにはマイクへのアクセスを許可してください。"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "Allow notifications for Obby in your system settings to turn them on"
+msgstr "通知を有効にするには、システム設定で Obby の通知を許可してください"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Allow Obby under Screen Recording in System Settings, then record again."
@@ -1351,6 +1371,10 @@ msgstr "ビューアを閉じる"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "ワークフローを閉じる"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
+msgstr "ウィンドウを閉じても Obby はシステムトレイで接続を保ち、通知を受け取り続けます"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -2873,6 +2897,10 @@ msgstr "認証情報を保持"
 msgid "Keep passwords"
 msgstr "パスワードを保持"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep Running in the Tray"
+msgstr "トレイで実行を続ける"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "全員が退出した後もチャンネルを保持します。IRCop のみ設定できます。"
@@ -3250,6 +3278,7 @@ msgstr "誰かにメッセージ"
 
 #: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
+#: src/lib/notifications.ts
 msgid "Messages"
 msgstr "メッセージ"
 
@@ -3409,6 +3438,10 @@ msgstr "ネットワーク名"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Networks on {0}"
 msgstr "{0} のネットワーク"
+
+#: src/lib/notifications.ts
+msgid "New encrypted message"
+msgstr "新しい暗号化メッセージ"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -4195,6 +4228,10 @@ msgstr "退出しました ({reason})"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "退出メッセージ"
+
+#: src/lib/desktopTray.ts
+msgid "Quit Obby"
+msgstr "Obby を終了"
 
 #: src/components/message/EventMessage.tsx
 msgid "Quit the server"
@@ -5018,6 +5055,10 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "ショートコードは [A-Za-z0-9._-]+ に一致する必要があります。"
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
+msgstr "そのチャットを見ていないときに、プライベートメッセージとメンションのシステム通知を表示します"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "すべてのイベントを表示"
 
@@ -5065,6 +5106,14 @@ msgstr "スピーカーを表示"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "ニックネーム変更を表示"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show Notifications"
+msgstr "通知を表示"
+
+#: src/lib/desktopTray.ts
+msgid "Show Obby"
+msgstr "Obby を表示"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Show or hide the channel list sidebar"

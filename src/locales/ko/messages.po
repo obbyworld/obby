@@ -232,6 +232,14 @@ msgstr "{safeName} 파일이 서버에 더 이상 없습니다."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName}이(가) 서버에서 변경되어 복호화할 수 없습니다."
 
+#: src/lib/notifications.ts
+msgid "{sender} in {target}"
+msgstr "{target}의 {sender}"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} mentioned you in {target}: {body}"
+msgstr "{sender}님이 {target}에서 회원님을 언급했습니다: {body}"
+
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender}님이 암호화를 다시 시작했습니다. 수락하기 전까지 이 대화는 암호화되지 않습니다."
@@ -239,6 +247,10 @@ msgstr "{sender}님이 암호화를 다시 시작했습니다. 수락하기 전�
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. Wait a moment before you send a message."
 msgstr "{sender} 님이 암호화를 다시 시작했습니다. 잠시 기다린 후 메시지를 보내세요."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} sent you a message: {body}"
+msgstr "{sender}님이 메시지를 보냈습니다: {body}"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -582,6 +594,10 @@ msgstr "이후"
 msgid "Album"
 msgstr "앨범"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Alerts"
+msgstr "알림"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
@@ -621,6 +637,10 @@ msgstr "말하려면 설정에서 마이크 접근을 허용하세요"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Allow microphone access to record sound."
 msgstr "소리를 녹음하려면 마이크 접근을 허용하세요."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "Allow notifications for Obby in your system settings to turn them on"
+msgstr "알림을 켜려면 시스템 설정에서 Obby 알림을 허용하세요"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Allow Obby under Screen Recording in System Settings, then record again."
@@ -1351,6 +1371,10 @@ msgstr "뷰어 닫기"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "워크플로우 닫기"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
+msgstr "창을 닫아도 Obby가 시스템 트레이에서 연결을 유지하므로 알림을 계속 받을 수 있습니다"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -2873,6 +2897,10 @@ msgstr "인증 정보 유지"
 msgid "Keep passwords"
 msgstr "비밀번호 유지"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep Running in the Tray"
+msgstr "트레이에서 계속 실행"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "모두 나간 후에도 채널을 유지합니다. IRCop만 설정할 수 있습니다."
@@ -3250,6 +3278,7 @@ msgstr "누군가에게 메시지 보내기"
 
 #: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
+#: src/lib/notifications.ts
 msgid "Messages"
 msgstr "메시지"
 
@@ -3409,6 +3438,10 @@ msgstr "네트워크 이름"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Networks on {0}"
 msgstr "{0}의 네트워크"
+
+#: src/lib/notifications.ts
+msgid "New encrypted message"
+msgstr "새 암호화된 메시지"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -4195,6 +4228,10 @@ msgstr "서버를 나갔습니다 ({reason})"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "QUIT 메시지"
+
+#: src/lib/desktopTray.ts
+msgid "Quit Obby"
+msgstr "Obby 종료"
 
 #: src/components/message/EventMessage.tsx
 msgid "Quit the server"
@@ -5018,6 +5055,10 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "숏코드는 [A-Za-z0-9._-]+ 형식이어야 합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
+msgstr "해당 채팅을 보고 있지 않을 때 비공개 메시지와 멘션에 대한 시스템 알림을 표시합니다"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "모든 이벤트 표시"
 
@@ -5065,6 +5106,14 @@ msgstr "스피커 표시"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "닉네임 변경 표시"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show Notifications"
+msgstr "알림 표시"
+
+#: src/lib/desktopTray.ts
+msgid "Show Obby"
+msgstr "Obby 보기"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Show or hide the channel list sidebar"

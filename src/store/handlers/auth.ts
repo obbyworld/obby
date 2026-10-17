@@ -805,23 +805,25 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  // After CAP ACK we know whether the server supports draft/persistence.
-  // Issue an initial PERSISTENCE GET so the settings panel has fresh
-  // state by the time the user opens it.  We only do this once per
-  // (serverId, account) login -- the spec gates the command on
-  // IsLoggedIn, so we wait for the SASL success path to mark the
-  // session complete.
-  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
-    if (key !== "draft/persistence") return;
-    // Defer the GET until a tick later so SASL has had a chance to
-    // complete; the server returns ACCOUNT_REQUIRED otherwise and
-    // we'd just have to retry.
-    setTimeout(() => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server?.isConnected) return;
+  // Persistence needs an account, so we ask once registration is done and the
+  // connection is logged in, whichever comes last.
+  const registeredServers = new Set<string>();
+  const askPersistence = (serverId: string) => {
+    const server = store.getState().servers.find((s) => s.id === serverId);
+    if (
+      server?.account &&
+      registeredServers.has(serverId) &&
+      ircClient.hasCapability(serverId, "draft/persistence")
+    )
       ircClient.persistenceGet(serverId);
-    }, 1500);
+  };
+  ircClient.on("ready", ({ serverId }) => {
+    registeredServers.add(serverId);
+    askPersistence(serverId);
+  });
+  ircClient.on("LOGGED_IN", ({ serverId }) => askPersistence(serverId));
+  ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
+    if (connectionState !== "connected") registeredServers.delete(serverId);
   });
   // obsidianirc/cmdslist: maintain a lowercase set of invocable
   // commands per server.  Additions and removals can arrive in the
