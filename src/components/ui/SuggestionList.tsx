@@ -1,6 +1,8 @@
 import type React from "react";
 import { useEffect, useReducer, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { placePanel, VIEWPORT_MARGIN } from "./Popover";
 
 type SuggestionPlacement = "above" | "below" | "inline";
@@ -26,14 +28,41 @@ interface SuggestionListProps<T> {
 }
 
 const GAP_PX = 6;
+const SIDE_GUTTER_PX = 8;
+
+// The list spans the composer and fills the space between the chat header and the composer.
+export function placeAboveComposer(
+  composer: Pick<DOMRect, "top" | "left" | "right">,
+  viewport: { width: number; height: number },
+  headerBottom: number,
+): React.CSSProperties {
+  return {
+    bottom: viewport.height - composer.top + GAP_PX,
+    left: composer.left + SIDE_GUTTER_PX,
+    right: viewport.width - composer.right + SIDE_GUTTER_PX,
+    maxHeight: Math.max(0, composer.top - headerBottom - 2 * GAP_PX),
+  };
+}
 
 function getListStyle(
   rect: DOMRect | undefined,
   placement: SuggestionPlacement,
+  composerRect: DOMRect | undefined,
 ): React.CSSProperties | undefined {
   if (!rect || placement === "inline") return undefined;
-  if (placement === "above")
+  if (placement === "above") {
+    if (composerRect) {
+      const headerBottom =
+        document.querySelector(".chat-header")?.getBoundingClientRect()
+          .bottom ?? 0;
+      return placeAboveComposer(
+        composerRect,
+        { width: window.innerWidth, height: window.innerHeight },
+        headerBottom,
+      );
+    }
     return { bottom: window.innerHeight - rect.top + GAP_PX, left: rect.left };
+  }
   const width = Math.min(rect.width, window.innerWidth - 2 * VIEWPORT_MARGIN);
   const { left, verticalStyle } = placePanel(rect, width, "below");
   return { ...verticalStyle, left, width };
@@ -54,6 +83,7 @@ export function SuggestionList<T>({
   rowClassName = "",
   embedded = false,
 }: SuggestionListProps<T>) {
+  const isCompact = useMediaQuery() || useIsTouchInput();
   const selectedRef = useRef<HTMLButtonElement>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we scroll whenever the highlighted row changes
@@ -76,6 +106,10 @@ export function SuggestionList<T>({
   const rect = anchor?.getBoundingClientRect();
   // An anchor that has not been laid out yet would park the list in a corner for a frame.
   if (anchor && (!rect || rect.height === 0)) return null;
+  const composerRect =
+    isCompact && placement === "above"
+      ? (anchor?.parentElement ?? anchor)?.getBoundingClientRect()
+      : undefined;
   const isFloatingBelow = placement === "below";
   const titleId = id && `${id}-title`;
 
@@ -85,14 +119,15 @@ export function SuggestionList<T>({
       role="listbox"
       aria-labelledby={titleId}
       data-popover-panel={isFloatingBelow || undefined}
-      className={`${embedded ? "" : "surface-floating"} ${placement === "inline" ? "w-full" : "z-[9999] min-w-56 max-w-md"} ${rect ? "fixed" : ""} ${className}`}
-      style={getListStyle(rect, placement)}
+      data-compact={composerRect ? "" : undefined}
+      className={`${embedded ? "" : "surface-floating"} ${placement === "inline" ? "w-full" : composerRect ? "z-[9999] flex flex-col" : "z-[9999] min-w-56 max-w-md"} ${rect ? "fixed" : ""} ${className}`}
+      style={getListStyle(rect, placement, composerRect)}
       onMouseDown={(e) => e.preventDefault()}
     >
       <div id={titleId} className="section-label">
         {title}
       </div>
-      <div className="surface-list pt-0 max-h-72 overflow-y-auto">
+      <div className="surface-list pt-0 max-h-72 min-h-0 overflow-y-auto">
         {items.map((item, index) => {
           const isSelected = index === selectedIndex;
           return (

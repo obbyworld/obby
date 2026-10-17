@@ -296,18 +296,27 @@ export function slashProvider(
       const signature = formatOptions(cmd.options);
       const source = sourceLabel(cmd.source);
       return (
-        <span className="flex-1 min-w-0 flex flex-col gap-0.5">
-          <span className="flex items-baseline gap-2 min-w-0">
-            <span className="truncate">/{cmd.name}</span>
+        <span className="flex-1 min-w-0 flex flex-col gap-0.5 [[data-compact]_&]:flex-row [[data-compact]_&]:items-baseline [[data-compact]_&]:gap-2">
+          <span className="flex items-baseline gap-2 min-w-0 [[data-compact]_&]:contents">
+            <span className="truncate [[data-compact]_&]:shrink-0 [[data-compact]_&]:font-semibold">
+              /{cmd.name}
+            </span>
             {signature && (
-              <span className="row-meta truncate">{signature}</span>
+              <span className="row-meta truncate [[data-compact]_&]:shrink-0">
+                {signature}
+              </span>
             )}
-            <span className="row-meta ml-auto shrink-0" title={source.title}>
+            <span
+              className="row-meta ml-auto shrink-0 [[data-compact]_&]:order-last"
+              title={source.title}
+            >
               {source.label}
             </span>
           </span>
           {cmd.description && (
-            <span className="row-meta truncate">{cmd.description}</span>
+            <span className="row-meta truncate [[data-compact]_&]:flex-1 [[data-compact]_&]:min-w-0">
+              {cmd.description}
+            </span>
           )}
         </span>
       );

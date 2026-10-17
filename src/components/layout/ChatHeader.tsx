@@ -329,7 +329,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         : t`Select a channel`
       : t`Home`;
     return (
-      <div className="px-4 py-2.5 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12">
+      <div className="chat-header px-4 py-2.5 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12">
         {(isNarrowView || !isChanListVisible) && (
           <button
             onClick={onToggleChanList}
@@ -439,7 +439,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   ].filter((item) => item.show);
 
   return (
-    <div className="pl-4 pr-0 md:px-4 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12 relative">
+    <div className="chat-header pl-4 pr-0 md:px-4 border-b border-discord-dark-400 shadow-sm flex items-center min-h-12 relative">
       {/* CHANNELS */}
       {selectedChannel && (
         <div className="flex items-center justify-between w-full gap-2">
