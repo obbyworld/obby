@@ -3177,17 +3177,17 @@ msgstr "提及對象"
 msgid "Message"
 msgstr "訊息"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "傳訊息給 {0}"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "傳訊息給 {0}（Enter 換行，Shift+Enter 傳送）"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "傳訊息給 {0}（Shift+Enter 換行）"

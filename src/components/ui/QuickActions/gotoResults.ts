@@ -1,5 +1,6 @@
 import type { MessageDescriptor } from "@lingui/core";
 import { t } from "@lingui/core/macro";
+import { voiceDisplayName } from "../../../lib/channelMentions";
 import { fuzzyMatch } from "../../../lib/fuzzySearch";
 import { settingsRegistry } from "../../../lib/settings";
 import type { Server } from "../../../types";
@@ -126,7 +127,7 @@ export function buildGotoResults({
       results.push({
         type: "channel",
         id: `channel-${server.id}-${channel.id}`,
-        title: channel.name,
+        title: voiceDisplayName(channel.name),
         description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
         serverId: server.id,
         score: placeScore(
