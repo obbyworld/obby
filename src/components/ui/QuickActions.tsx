@@ -5,12 +5,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FaCog,
   FaHashtag,
+  FaMicrophone,
   FaSearch,
   FaServer,
   FaTimes,
   FaUser,
 } from "react-icons/fa";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
+import {
+  classifyChannelName,
+  voiceDisplayName,
+} from "../../lib/channelMentions";
 import { fuzzyMatch } from "../../lib/fuzzySearch";
 import ircClient from "../../lib/ircClient";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
@@ -98,7 +103,7 @@ const QuickActions: React.FC = () => {
             results.push({
               type: "channel",
               id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
+              title: voiceDisplayName(channel.name),
               description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
               serverId: server.id,
               score: 1000 + channel.unreadCount,
@@ -109,7 +114,7 @@ const QuickActions: React.FC = () => {
             results.push({
               type: "channel",
               id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
+              title: voiceDisplayName(channel.name),
               description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
               serverId: server.id,
               score: 500 + channel.unreadCount,
@@ -296,7 +301,7 @@ const QuickActions: React.FC = () => {
           results.push({
             type: "channel",
             id: `channel-${server.id}-${channel.id}`,
-            title: channel.name,
+            title: voiceDisplayName(channel.name),
             description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
             serverId: server.id,
             score: channelMatch.score + scoreAdjustment,
@@ -781,8 +786,17 @@ function resultIcon(result: QuickActionResult): React.ReactNode {
     case "page":
       return <FaCog />;
     case "channel":
-    case "join-channel":
-      return <FaHashtag />;
+    case "join-channel": {
+      const name =
+        result.type === "channel"
+          ? (result.data as Channel).name
+          : (result.data as { channelName: string }).channelName;
+      return classifyChannelName(name) === "voice" ? (
+        <FaMicrophone />
+      ) : (
+        <FaHashtag />
+      );
+    }
     case "dm":
     case "start-dm":
       return <FaUser />;

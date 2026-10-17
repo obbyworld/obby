@@ -1,6 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { voiceDisplayName } from "../../lib/channelMentions";
 import ircClient from "../../lib/ircClient";
 import type { Message, User } from "../../types";
 import {
@@ -86,7 +87,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                   channel.id,
                   makeEventMessage(
                     "join",
-                    t`joined ${channelName}`,
+                    t`joined ${{ channelName: voiceDisplayName(channelName) }}`,
                     username,
                     channel.id,
                     serverId,
@@ -230,7 +231,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             channel.id,
             makeEventMessage(
               "join",
-              t`joined ${channelName}`,
+              t`joined ${{ channelName: voiceDisplayName(channelName) }}`,
               username,
               channel.id,
               serverId,
@@ -555,8 +556,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                 makeEventMessage(
                   "part",
                   reason
-                    ? t`left ${channelName} (${reason})`
-                    : t`left ${channelName}`,
+                    ? t`left ${{ channelName: voiceDisplayName(channelName) }} (${reason})`
+                    : t`left ${{ channelName: voiceDisplayName(channelName) }}`,
                   username,
                   channel.id,
                   serverId,
@@ -607,8 +608,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
               makeEventMessage(
                 "part",
                 reason
-                  ? t`left ${channelName} (${reason})`
-                  : t`left ${channelName}`,
+                  ? t`left ${{ channelName: voiceDisplayName(channelName) }} (${reason})`
+                  : t`left ${{ channelName: voiceDisplayName(channelName) }}`,
                 username,
                 channel.id,
                 serverId,
@@ -684,8 +685,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
               makeEventMessage(
                 "kick",
                 reason
-                  ? t`was kicked from ${channelName} by ${username} (${reason})`
-                  : t`was kicked from ${channelName} by ${username}`,
+                  ? t`was kicked from ${{ channelName: voiceDisplayName(channelName) }} by ${username} (${reason})`
+                  : t`was kicked from ${{ channelName: voiceDisplayName(channelName) }} by ${username}`,
                 target,
                 channel.id,
                 serverId,
