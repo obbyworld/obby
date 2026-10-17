@@ -310,6 +310,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
   );
   const closeProfile = useStore((s) => s.closeProfile);
   const openPage = useStore((s) => s.openPage);
+  const openBot = useStore((s) => s.openBot);
   const joinChannel = useStore((s) => s.joinChannel);
   const selectChannel = useStore((s) => s.selectChannel);
   const openChat = useStore((s) => s.openChat);
@@ -428,8 +429,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
   };
 
   const showInBotsMenu = () => {
-    closeProfile();
-    openPage({ kind: "bots", serverId, botNick: username });
+    openBot(serverId, username);
   };
 
   const editOwnProfile = () => {

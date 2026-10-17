@@ -46,7 +46,7 @@ msgstr "(nastaveno, upravte pro změnu)"
 msgid "(stored, leave blank to keep)"
 msgstr "(uloženo, ponechte prázdné pro zachování)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "(suspended)"
 msgstr "(pozastaveno)"
 
@@ -452,7 +452,7 @@ msgstr "Akce"
 msgid "Actions"
 msgstr "Akce"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "active"
 msgstr "aktivní"
 
@@ -603,7 +603,6 @@ msgid "Alerts"
 msgstr "Upozornění"
 
 #: src/components/layout/SearchPane.tsx
-#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "Vše"
 
@@ -683,7 +682,7 @@ msgstr "Vzhled"
 msgid "Apply and refresh"
 msgstr "Použít a obnovit"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "Schválit"
@@ -832,6 +831,8 @@ msgstr "Zpráva o nepřítomnosti"
 msgid "Away:"
 msgstr "Nepřítomen:"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/ui/page/PageShell.tsx
@@ -969,8 +970,7 @@ msgstr "Příkazy bota"
 msgid "Bot in this channel"
 msgstr "Bot v tomto kanálu"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/ui/QuickActions/pageTargets.ts
+#: src/components/layout/BotPane.tsx
 msgid "Bots"
 msgstr "Boti"
 
@@ -1109,13 +1109,9 @@ msgstr "Změněna přezdívka"
 msgid "changed the topic to: {topic}"
 msgstr "změnil téma na: {topic}"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "channel"
 msgstr "kanál"
-
-#: src/components/pages/BotsPage.tsx
-msgid "Channel"
-msgstr "Kanál"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Admin"
@@ -1129,7 +1125,7 @@ msgstr "Náhled avatara kanálu"
 msgid "Channel behavior"
 msgstr "Chování kanálu"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Channel bot, only in joined channels"
 msgstr "Kanálový bot, pouze v připojených kanálech"
 
@@ -1206,8 +1202,8 @@ msgstr "název-kanálu"
 msgid "Channel-scoped"
 msgstr "Pouze pro kanál"
 
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1350,6 +1346,8 @@ msgstr "Klient"
 msgid "Client limit (+l)"
 msgstr "Limit klientů (+l)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1439,7 +1437,7 @@ msgstr "Příkaz poskytnutý IRC serverem"
 msgid "Command run by Obby"
 msgstr "Příkaz spuštěný Obby"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Commands are loading…"
 msgstr "Příkazy se načítají…"
 
@@ -1457,11 +1455,11 @@ msgstr "Komentáře ({commentCount})"
 msgid "complete"
 msgstr "hotovo"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "config-defined"
 msgstr "definováno v konfiguraci"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "Bot definovaný v konfiguraci. Pro změnu stavu upravte obbyircd.conf a použijte /REHASH."
 
@@ -1801,22 +1799,22 @@ msgstr "Výchozí přezdívka"
 msgid "Delay joins (+D)"
 msgstr "Zpozdit připojení (+D)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot"
 msgstr "Smazat bota"
 
 #. placeholder {0}: bot.nick
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot {0}? Run /REHASH before you register this nick again."
 msgstr "Smazat bota {0}? Před novou registrací této přezdívky spusťte /REHASH."
 
@@ -1863,7 +1861,7 @@ msgstr "Smazat tuto zprávu? Tuto akci nelze vrátit zpět."
 msgid "Delete this network?"
 msgstr "Smazat tuto síť?"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "deleted"
 msgstr "smazáno"
 
@@ -2574,7 +2572,7 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line (globální ban)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "gateway online"
 msgstr "gateway online"
 
@@ -2846,14 +2844,10 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/PrivateChatRow.tsx
-#: src/components/message/MessageHeader.tsx
 #: src/components/pages/pageSections.tsx
 #: src/components/pages/SettingsPage.tsx
+#: src/components/ui/OperatorKey.tsx
+#: src/components/ui/OperatorKey.tsx
 msgid "IRC Operator"
 msgstr "IRC operátor"
 
@@ -3507,6 +3501,10 @@ msgstr "Název sítě"
 msgid "Networks on {0}"
 msgstr "Sítě na {0}"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New"
+msgstr "Nové"
+
 #: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Nová šifrovaná zpráva"
@@ -3515,10 +3513,6 @@ msgstr "Nová šifrovaná zpráva"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nová složka"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "New messages"
-msgstr "Nové zprávy"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -3598,11 +3592,7 @@ msgstr "Zatím žádné zákazy, přidejte je výše"
 msgid "No bans yet, ask a channel operator to add one"
 msgstr "Zatím žádné bany, požádejte operátora kanálu o přidání"
 
-#: src/components/pages/BotsPage.tsx
-msgid "No bots match. Clear the search or change the filter."
-msgstr "Žádný bot neodpovídá. Vymažte hledání nebo změňte filtr."
-
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No bots registered on this network yet."
 msgstr "Na této síti zatím nejsou registrováni žádní boti."
 
@@ -3738,7 +3728,7 @@ msgstr "Není vybrán žádný server. Nejprve zvolte server z postranního pane
 msgid "No servers found."
 msgstr "Nebyly nalezeny žádné servery."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No slash commands yet"
 msgstr "Zatím žádné příkazy s lomítkem"
 
@@ -3831,7 +3821,7 @@ msgstr "Obby - Přinášíme IRC do budoucnosti"
 msgid "Off"
 msgstr "Vypnuto"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "offline"
 msgstr "offline"
 
@@ -3893,10 +3883,6 @@ msgstr "Otevřít {0}"
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
 msgstr "Otevřít soukromou zprávu uživateli"
-
-#: src/components/ui/UserContextMenu.tsx
-msgid "Open bots menu"
-msgstr "Otevřít nabídku botů"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3997,7 +3983,7 @@ msgstr "Přihlásit OPER"
 msgid "Oper Username"
 msgstr "Uživatelské jméno operátora"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Operator actions"
 msgstr "Akce operátora"
 
@@ -4089,7 +4075,7 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "Náhled PDF"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "pending"
 msgstr "čeká"
 
@@ -4714,11 +4700,6 @@ msgstr "Hledat"
 msgid "Search again"
 msgstr "Hledat znovu"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
-msgid "Search bots"
-msgstr "Hledat boty"
-
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Search channels..."
 msgstr "Hledat kanály..."
@@ -4808,10 +4789,6 @@ msgstr "Bezpečnostní skupiny"
 msgid "Security Warning"
 msgstr "Bezpečnostní upozornění"
 
-#: src/components/layout/NetworkMenu.tsx
-msgid "See bots"
-msgstr "Zobrazit boty"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
@@ -4836,10 +4813,6 @@ msgstr "Podívejte se, kdo píše nejvíc a kdy je kanál nejrušnější."
 msgid "Seek"
 msgstr "Přetočit"
 
-#: src/components/pages/BotsPage.tsx
-msgid "Select a bot to see its commands and management actions."
-msgstr "Vyberte bota a zobrazte jeho příkazy a správcovské akce."
-
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
 msgstr "Vybrat kanál"
@@ -4856,7 +4829,7 @@ msgstr "Vybrat člena"
 msgid "Select or add a channel to get started."
 msgstr "Vyberte nebo přidejte kanál pro začátek."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "samoregistrovaný"
 
@@ -4926,7 +4899,7 @@ msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Odesláno nešifrovaně, protože soubor je příliš velký na šifrování"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
 
@@ -4999,13 +4972,12 @@ msgstr "Nastavení serveru"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Komunikace mezi servery může používat nešifrovaná připojení"
 
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "Pro celý server"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "Bot dostupný na celém serveru, dosažitelný z jakéhokoli kanálu"
 
@@ -5225,7 +5197,7 @@ msgid "Signed on"
 msgstr "Přihlášen"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Slash commands"
 msgstr "Lomítkové příkazy"
 
@@ -5255,7 +5227,7 @@ msgstr "Řadit podle uživatelů"
 msgid "SoundCloud player"
 msgstr "Přehrávač SoundCloud"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Source"
 msgstr "Zdroj"
 
@@ -5374,11 +5346,11 @@ msgstr "Odstranit barevné kódy mIRC ze zpráv"
 msgid "Strongest encryption. Works only with other Obby users"
 msgstr "Nejsilnější šifrování. Funguje jen s dalšími uživateli Obby"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Suspend"
 msgstr "Pozastavit"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "suspended"
 msgstr "pozastaveno"
 
@@ -5645,7 +5617,7 @@ msgstr "Téma nastaveno před (min. zpět)"
 msgid "Topic:"
 msgstr "Téma:"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "Přenos"
@@ -5759,7 +5731,7 @@ msgstr "Odepnout soukromou konverzaci"
 msgid "Unpin this private message conversation"
 msgstr "Odepnout tuto soukromou konverzaci"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Unsuspend"
 msgstr "Zrušit pozastavení"
 
@@ -5930,6 +5902,10 @@ msgstr "prostřednictvím @{0}"
 msgid "Video"
 msgstr "Video"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "View Bot"
+msgstr "Zobrazit bota"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "View Channel Topic"
 msgstr "Zobrazit téma kanálu"
@@ -6051,7 +6027,7 @@ msgstr "Neukládáme vaši IRC komunikaci na našich serverech"
 msgid "WebAuthn is not available in this environment."
 msgstr "WebAuthn není v tomto prostředí dostupný."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Webhook"
 msgstr "Webhook"
 

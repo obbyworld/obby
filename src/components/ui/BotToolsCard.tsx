@@ -266,7 +266,7 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({
         </div>
       )}
 
-      {!workflow.collapsed && (
+      {!workflow.collapsed && !(isTerminal && groups.length === 0) && (
         <>
           <div className="hairline mx-3" />
           <div

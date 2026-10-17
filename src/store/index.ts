@@ -1007,6 +1007,7 @@ export interface AppState {
   openPage: (page: AppPage) => void;
   closePage: () => void;
   openProfile: (serverId: string, username: string) => void;
+  openBot: (serverId: string, botNick?: string) => void;
   closeProfile: () => void;
   // With no argument: closed opens Go to, open flips the mode.
   toggleQuickActions: (isOpen?: boolean) => void;
@@ -3378,9 +3379,22 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
+  openBot: (serverId, botNick) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        page: null,
+        sidePane: { kind: "bot", serverId, botNick },
+        mobileViewActiveColumn: state.ui.isNarrowView
+          ? "memberList"
+          : state.ui.mobileViewActiveColumn,
+      },
+    }));
+  },
+
   closeProfile: () => {
     set((state) =>
-      state.ui.sidePane?.kind === "profile"
+      state.ui.sidePane?.kind === "profile" || state.ui.sidePane?.kind === "bot"
         ? { ui: { ...state.ui, sidePane: null } }
         : {},
     );

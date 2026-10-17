@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import BotsPage from "../../../src/components/pages/BotsPage";
+import BotPane from "../../../src/components/layout/BotPane";
 import useStore from "../../../src/store";
 import type { PushBotInfo } from "../../../src/types";
 
@@ -17,7 +17,7 @@ const greeter: PushBotInfo = {
   commands: [{ name: "hello", description: "Say hello" }],
 };
 
-describe("BotsPage", () => {
+describe("BotPane", () => {
   beforeEach(() => {
     useStore.setState({
       servers: [
@@ -37,18 +37,14 @@ describe("BotsPage", () => {
       currentUser: null,
       ui: {
         ...useStore.getState().ui,
-        page: { kind: "bots", serverId: "server1", botNick: "greeter" },
+        sidePane: { kind: "bot", serverId: "server1", botNick: "greeter" },
         pendingBotCommandPick: null,
       },
     });
   });
 
-  it("requests the command pick for the bot and closes the page", () => {
-    render(
-      <BotsPage
-        page={{ kind: "bots", serverId: "server1", botNick: "greeter" }}
-      />,
-    );
+  it("requests the command pick for the bot and closes the pane", () => {
+    render(<BotPane target={{ serverId: "server1", botNick: "greeter" }} />);
 
     fireEvent.click(screen.getByText("/hello"));
 
@@ -57,6 +53,6 @@ describe("BotsPage", () => {
       botNick: "Greeter",
       command: greeter.commands[0],
     });
-    expect(useStore.getState().ui.page).toBeNull();
+    expect(useStore.getState().ui.sidePane).toBeNull();
   });
 });

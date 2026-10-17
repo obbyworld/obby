@@ -1,4 +1,4 @@
-import { detectMediaType, type MediaType } from "./mediaUtils";
+import { detectMediaType, extractHostname, type MediaType } from "./mediaUtils";
 
 export interface ProbeResult {
   type: MediaType;
@@ -19,6 +19,9 @@ function cacheSet(url: string, result: ProbeResult | null): void {
   cache.set(url, result);
   keyOrder.push(url);
 }
+
+// The browser logs every request a host blocks with CORS, so we stop asking a host once it refuses.
+const fetchBlockedHosts = new Set<string>();
 
 /** Returns true if the URL has no detectable type and should be HEAD-probed. */
 export function shouldProbeUrl(url: string): boolean {
@@ -87,6 +90,7 @@ async function tryHttpFetch(
  */
 async function fetchContentType(
   url: string,
+  host: string | null,
 ): Promise<{ contentType: string; contentLength?: number } | null> {
   const head = await tryHttpFetch(url, "HEAD");
   if (head?.ok && head.contentType) {
@@ -98,6 +102,8 @@ async function fetchContentType(
     return null;
   }
   const get = await tryHttpFetch(url, "GET");
+  if (head === null && get === null && host !== null)
+    fetchBlockedHosts.add(host);
   if (get?.ok && get.contentType) {
     return { contentType: get.contentType, contentLength: get.contentLength };
   }
@@ -169,7 +175,11 @@ async function probeUncached(url: string): Promise<ProbeResult | null> {
 
   // Primary path: HTTP Content-Type is the single source of truth.
   // HEAD is tried first; GET fallback covers servers that reject HEAD (e.g. Icecast).
-  const fetched = await fetchContentType(url);
+  const host = extractHostname(url);
+  const fetched =
+    host !== null && fetchBlockedHosts.has(host)
+      ? null
+      : await fetchContentType(url, host);
   if (fetched) {
     const result = classifyContentType(
       fetched.contentType,

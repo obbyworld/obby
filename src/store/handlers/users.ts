@@ -3,12 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import { voiceDisplayName } from "../../lib/channelMentions";
 import ircClient from "../../lib/ircClient";
-import type { Message, Server, User } from "../../types";
+import type { Message, User } from "../../types";
 import {
   generateDeterministicId,
   getCurrentSelection,
   isHistoryEvent,
   resolveUserMetadata,
+  setUserAway,
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
@@ -25,30 +26,6 @@ function appendMessage(
   store.setState((s) => ({
     messages: { ...s.messages, [key]: [...(s.messages[key] || []), message] },
   }));
-}
-
-function setUserAwayInChannels(
-  server: Server,
-  nick: string | undefined,
-  isAway: boolean,
-  awayMessage: string | undefined,
-): Server {
-  if (!nick) return server;
-  const lowerNick = nick.toLowerCase();
-  let hasChanged = false;
-  const channels = server.channels.map((channel) => {
-    const index = channel.users.findIndex(
-      (user) => user.username.toLowerCase() === lowerNick,
-    );
-    const user = channel.users[index];
-    if (!user || (user.isAway === isAway && user.awayMessage === awayMessage))
-      return channel;
-    hasChanged = true;
-    const users = [...channel.users];
-    users[index] = { ...user, isAway, awayMessage };
-    return { ...channel, users };
-  });
-  return hasChanged ? { ...server, channels } : server;
 }
 
 function makeEventMessage(
@@ -1154,11 +1131,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return setUserAwayInChannels(
+          return setUserAway(
             s,
             username,
             !!awayMessage,
             awayMessage || undefined,
+            ircClient.getNick(serverId),
           );
         }
         return s;
@@ -1274,11 +1252,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return setUserAwayInChannels(
+          return setUserAway(
             { ...s, isAway: true, awayMessage: message },
             ircClient.getNick(serverId),
             true,
             message,
+            ircClient.getNick(serverId),
           );
         }
         return s;
@@ -1303,11 +1282,12 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return setUserAwayInChannels(
+          return setUserAway(
             { ...s, isAway: false, awayMessage: undefined },
             ircClient.getNick(serverId),
             false,
             undefined,
+            ircClient.getNick(serverId),
           );
         }
         return s;

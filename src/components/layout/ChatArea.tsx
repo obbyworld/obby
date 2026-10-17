@@ -418,6 +418,7 @@ export const ChatArea: React.FC<{
   const toggleAddServerModal = useStore((state) => state.toggleAddServerModal);
   const openPage = useStore((state) => state.openPage);
   const openProfile = useStore((state) => state.openProfile);
+  const openBot = useStore((state) => state.openBot);
   const redactMessage = useStore((state) => state.redactMessage);
   const warnUser = useStore((state) => state.warnUser);
   const kickUser = useStore((state) => state.kickUser);
@@ -2111,10 +2112,7 @@ export const ChatArea: React.FC<{
           })
         }
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
-        onOpenBots={() =>
-          selectedServerId &&
-          openPage({ kind: "bots", serverId: selectedServerId })
-        }
+        onOpenBots={() => selectedServerId && openBot(selectedServerId)}
       />
 
       {topSlot && (

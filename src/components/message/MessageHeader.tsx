@@ -3,6 +3,7 @@ import type React from "react";
 import { FaHdd } from "react-icons/fa";
 import { getColorStyle } from "../../lib/ircUtils";
 import { HoverTooltip } from "../ui/HoverTooltip";
+import OperatorKey from "../ui/OperatorKey";
 import { E2EEUnprotectedBadge } from "./E2EEUnprotectedBadge";
 
 interface MessageHeaderProps {
@@ -62,14 +63,7 @@ export const MessageHeader: React.FC<MessageHeaderProps> = ({
             ✓
           </span>
         )}
-        {isIrcOp && (
-          <span
-            className="ml-1 inline-flex items-center justify-center w-4 h-4 text-xs text-white bg-blue-500 rounded"
-            title={t`IRC Operator`}
-          >
-            🔑
-          </span>
-        )}
+        {isIrcOp && <OperatorKey className="ml-0.5" />}
         {displayName && (
           <span className="ml-2 text-xs bg-discord-dark-600 px-1 py-0.5 rounded">
             {username}

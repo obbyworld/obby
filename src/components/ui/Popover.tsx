@@ -1,6 +1,7 @@
 import type React from "react";
 import {
   type ReactNode,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useReducer,
@@ -9,6 +10,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 
 // We pin the panel to its trigger for a mouse and show a bottom sheet on touch,
 // and we handle escape and outside-press dismissal here so callers pass only content.
@@ -110,6 +112,14 @@ export const Popover: React.FC<PopoverProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const swipeRef = useSwipeToDismiss(onClose);
+  const setPanel = useCallback(
+    (el: HTMLDivElement | null) => {
+      panelRef.current = el;
+      swipeRef(el);
+    },
+    [swipeRef],
+  );
   // Recompute the anchored position when the viewport shifts under the panel.
   const [, reflow] = useReducer((n: number) => n + 1, 0);
   const [measuredWidth, setMeasuredWidth] = useState(AUTO_MIN_WIDTH);
@@ -166,7 +176,7 @@ export const Popover: React.FC<PopoverProps> = ({
           style={{ zIndex: Z_INDEX }}
         />
         <div
-          ref={panelRef}
+          ref={setPanel}
           role={role}
           data-popover-panel
           className="fixed inset-x-0 bottom-0 surface-sheet animate-in slide-in-from-bottom duration-200"

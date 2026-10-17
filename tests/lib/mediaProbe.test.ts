@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { probeMediaUrl, shouldProbeUrl } from "../../src/lib/mediaProbe";
 
 vi.mock("../../src/lib/mediaUtils", () => ({
+  extractHostname: (url: string) => new URL(url).hostname,
   detectMediaType: vi.fn((url: string) => {
     if (url.endsWith(".mp4")) return "video";
     if (url.endsWith(".mp3")) return "audio";
@@ -49,7 +50,7 @@ function makeErrorResponse(
 // Use unique URL counters per test to avoid cache collisions
 let urlCounter = 0;
 function uniqueUrl(suffix = "") {
-  return `https://filehost.example.com/unique${++urlCounter}${suffix}`;
+  return `https://host${++urlCounter}.example.com/unique${suffix}`;
 }
 
 beforeEach(() => {
@@ -251,6 +252,15 @@ describe("probeMediaUrl", () => {
     } as unknown as Response);
     const result = await probeMediaUrl(uniqueUrl());
     expect(result).toBeNull();
+  });
+
+  test("host that blocked both requests is not fetched again", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("CORS"));
+    const first = uniqueUrl();
+    await probeMediaUrl(first);
+    const callsBefore = vi.mocked(fetch).mock.calls.length;
+    await probeMediaUrl(`${new URL(first).origin}/other`);
+    expect(vi.mocked(fetch).mock.calls.length).toBe(callsBefore);
   });
 
   test("network error → null", async () => {

@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
 import { stopTouchOutsideMap } from "../../lib/leafletMap";
 
 interface BottomSheetProps {
@@ -14,6 +15,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onClose,
   children,
 }) => {
+  const sheetRef = useSwipeToDismiss(onClose);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
@@ -37,6 +40,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     >
       <div className="absolute inset-0 scrim" onClick={onClose} />
       <div
+        ref={sheetRef}
         role="dialog"
         aria-modal="true"
         className="absolute bottom-0 left-0 right-0 surface-sheet"

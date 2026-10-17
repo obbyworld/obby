@@ -57,7 +57,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
     state.servers.find((s) => s.id === serverId),
   );
   const botCommands = server?.botCommands?.[username.toLowerCase()] ?? null;
-  const openPage = useStore((state) => state.openPage);
+  const openBot = useStore((state) => state.openBot);
   const ignoreList = useStore((state) => state.globalSettings.ignoreList);
   const addToIgnoreList = useStore((state) => state.addToIgnoreList);
   const removeFromIgnoreList = useStore((state) => state.removeFromIgnoreList);
@@ -93,21 +93,12 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       )
       .forEach(removeFromIgnoreList);
 
-  const botCommandItems: MenuItem[] = [
-    {
-      id: "bots-menu",
-      label: t`Open bots menu`,
-      icon: <FaRobot />,
-      onClick: () => openPage({ kind: "bots", serverId, botNick: username }),
-    },
-    ...(botCommands ?? []).map((command, index) => ({
-      id: `cmd-${command.name}`,
-      label: <span className="font-mono">/{command.name}</span>,
-      description: command.description,
-      divider: index === 0,
-      onClick: () => onPickBotCommand?.(username, command),
-    })),
-  ];
+  const botCommandItems: MenuItem[] = (botCommands ?? []).map((command) => ({
+    id: `cmd-${command.name}`,
+    label: <span className="font-mono">/{command.name}</span>,
+    description: command.description,
+    onClick: () => onPickBotCommand?.(username, command),
+  }));
 
   const menuItems: MenuItem[] = [
     {
@@ -121,6 +112,13 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       label: t`View Profile`,
       icon: <FaUser />,
       onClick: () => onOpenProfile?.(username),
+    },
+    {
+      id: "bot",
+      label: t`View Bot`,
+      icon: <FaRobot />,
+      show: isBot,
+      onClick: () => openBot(serverId, username),
     },
     {
       id: "bot-commands",
