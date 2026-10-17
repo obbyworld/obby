@@ -70,6 +70,33 @@ export function kindMediaType(kind: AttachmentKind): MediaType | null {
   return kind === "file" ? null : kind;
 }
 
+/** The links in the body that are files we can show. `entry.type` is set only
+ * for a trusted embed domain; a file is typed by its extension. Deliberately no
+ * HEAD probe: a badge is not worth a request to a host the reader may not have
+ * trusted. */
+function attachmentLinks(
+  message: Message,
+): { url: string; kind: AttachmentKind }[] {
+  const links: { url: string; kind: AttachmentKind }[] = [];
+  for (const entry of extractMediaFromMessage(message)) {
+    const kind = kindFromMediaType(entry.type ?? detectMediaType(entry.url));
+    if (kind) links.push({ url: entry.url, kind });
+  }
+  return links;
+}
+
+/** The message body with the links to its own attachments taken out, for a
+ *  compact preview that names the file separately. Repeating the raw link
+ *  there costs a line and tells the reader nothing they cannot see. A link to
+ *  somebody's page stays, because that one is the message. */
+export function bodyWithoutAttachmentLinks(message: Message): string {
+  let text = message.content;
+  for (const { url } of attachmentLinks(message)) {
+    text = text.split(url).join(" ");
+  }
+  return text.replace(/\s+/g, " ").trim();
+}
+
 /** What a message carries as an attachment, whichever way it got there. The two
  * sources are a plain URL in the body and an encrypted descriptor on a tag, and
  * everything downstream reads this shape rather than either of them, so a
@@ -90,19 +117,12 @@ export function describeAttachment(message: Message): AttachmentSummary | null {
     }
   }
 
-  for (const entry of extractMediaFromMessage(message)) {
-    // `entry.type` is set only for a trusted embed domain; a file is typed by
-    // its extension. Deliberately no HEAD probe: a badge is not worth a request
-    // to a host the reader may not have trusted.
-    const kind = kindFromMediaType(entry.type ?? detectMediaType(entry.url));
-    if (!kind) continue;
-    return {
-      kind,
-      name: filenameFromUrl(entry.url) || entry.url,
-      encrypted: false,
-      thumbnailUrl: kind === "image" ? entry.url : undefined,
-    };
-  }
-
-  return null;
+  const [first] = attachmentLinks(message);
+  if (!first) return null;
+  return {
+    kind: first.kind,
+    name: filenameFromUrl(first.url) || first.url,
+    encrypted: false,
+    thumbnailUrl: first.kind === "image" ? first.url : undefined,
+  };
 }

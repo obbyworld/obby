@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, other {显示另外 {1} 个项目}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0} 和 {1} 正在输入..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "闲置 {0}"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0} 为必填项。"
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0} 正在输入..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0} 个步骤等待批准"
 msgid "{0} workflow(s)"
 msgstr "{0} 个工作流"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}、{1} 和 {2} 正在输入..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}、{1}、{2} 以及另外 {3} 人正在输入..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS} 人正在直播 · {1} 人观看中"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -243,6 +223,18 @@ msgstr "{sender} 重新启动了加密。在你接受之前，这个对话不会
 msgid "{title} Client"
 msgstr "{title} 客户端"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} 人通话中"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} 位用户"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} 人观看中"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*channel*"
@@ -271,6 +263,32 @@ msgstr "#overflow"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← 返回"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0> 和 <1>{1}</1> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>、<1>{1}</1> 和 <2>{2}</2> 正在输入..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> 以及另外 {3} 人正在输入..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -304,6 +322,10 @@ msgstr "接受加密聊天"
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Accept new key"
 msgstr "接受新密钥"
+
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "访问被拒绝。请在浏览器或系统设置中允许摄像头和麦克风访问，然后重试。"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -438,9 +460,17 @@ msgstr "全部"
 msgid "All Content"
 msgstr "所有内容"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "允许摄像头访问"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "允许输入多行文本"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "允许麦克风访问"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -526,9 +556,17 @@ msgstr "已验证账户"
 msgid "Auto Fallback to Single Line"
 msgstr "自动回退到单行"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "自动增益控制"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft} 秒后自动关闭"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "自动调节麦克风音量"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -575,6 +613,7 @@ msgstr "离开："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "返回"
@@ -666,6 +705,24 @@ msgstr "此网络上的机器人"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "浏览服务器上的所有频道"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "浏览器只有在您允许访问麦克风或摄像头后，才会显示您的扬声器。不会录制任何内容。"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "通话"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "摄像头"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "摄像头 {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -847,6 +904,26 @@ msgstr "选择一个安全密码"
 msgid "Choose file"
 msgstr "选择文件"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "选择麦克风和摄像头"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "选择通话使用的麦克风、摄像头和扬声器"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "选择通话声音通过哪个扬声器播放"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "选择摄像头并预览其画面"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "选择麦克风并预览其输入电平"
+
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
@@ -940,6 +1017,11 @@ msgstr "关闭弹出的服务器通知"
 msgid "Close viewer"
 msgstr "关闭查看器"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Collapse"
+msgstr "收起"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "收起成员列表"
@@ -1012,10 +1094,26 @@ msgstr "连接中"
 msgid "Connecting..."
 msgstr "正在连接..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "正在连接…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "连接"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "连接：一般"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "连接：良好"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "连接：较差"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1076,6 +1174,10 @@ msgstr "复制链接"
 msgid "Copy URL"
 msgstr "复制链接"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "无法访问该设备。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "无法与 {nick} 建立加密。"
@@ -1127,6 +1229,10 @@ msgstr "自定义您的 IRC 客户端体验"
 #: src/components/ui/UserSettings.tsx
 msgid "Data Collection"
 msgstr "数据收集"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "屏蔽声音"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
@@ -1204,9 +1310,26 @@ msgstr "删除此网络？"
 msgid "deleted"
 msgstr "已删除"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "降为观众"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "在您允许摄像头访问之前，设备名称将被隐藏。"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "禁用按键说话"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1361,8 @@ msgstr "发现"
 msgid "Discover the world of IRC with Obby"
 msgstr "使用 Obby 探索 IRC 的世界"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1301,6 +1426,10 @@ msgstr "例如 <0>wss://host:port/socket</0>"
 msgid "e.g., 100:1440"
 msgstr "例如：100:1440"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "回声消除"
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1351,6 +1480,10 @@ msgstr "启用通知声音"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "启用通知"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "启用按键说话"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1494,6 +1627,17 @@ msgstr "例外"
 msgid "Exclude Channel Name Mask"
 msgstr "排除频道名称掩码"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "退出聚焦"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Expand"
+msgstr "展开"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1577,6 +1721,10 @@ msgstr "找到 1 条匹配\"{searchQuery}\"的消息"
 msgid "from"
 msgstr "来自"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "前置"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
 msgstr "G-Line"
@@ -1652,6 +1800,7 @@ msgstr "主页"
 msgid "Homepage"
 msgstr "主页"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1906,17 @@ msgstr "值无效"
 msgid "Invitations"
 msgstr "邀请"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "邀请"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "邀请用户加入当前频道"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "邀请加入直播"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1820,6 +1977,10 @@ msgstr "加入"
 msgid "Join {0}"
 msgstr "加入 {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "加入 {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "加入 {value}"
@@ -1827,6 +1988,18 @@ msgstr "加入 {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "加入频道"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "在 {serverName} 上加入频道"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "加入直播 {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "加入语音频道 {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -1884,6 +2057,11 @@ msgstr "了解更多配置文件 →"
 msgid "Leave a channel"
 msgstr "离开频道"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "离开通话"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "离开频道"
@@ -1921,6 +2099,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "链接预览"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "直播中"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2156,11 @@ msgstr "日志"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "链路安全级别较低（级别 {securityLevel}）"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "放下手"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2046,17 +2233,17 @@ msgstr "成员 — {0}"
 msgid "Message"
 msgstr "消息"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "给 {0} 发消息"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "给 {0} 发消息（Enter 换行，Shift+Enter 发送）"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "给 {0} 发消息（Shift+Enter 换行）"
@@ -2101,6 +2288,20 @@ msgstr "断开服务器时显示的消息"
 msgid "Messages with {nick} are now encrypted."
 msgstr "与 {nick} 的消息现在已加密。"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "麦克风"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "麦克风 {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "麦克风音量"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "最小用户数"
@@ -2144,6 +2345,7 @@ msgstr "模式："
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "更多"
 
@@ -2157,8 +2359,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enter 换行"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "静音"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "仅对我静音"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2260,6 +2469,10 @@ msgstr "未找到封禁"
 msgid "No bots registered on this network yet."
 msgstr "此网络上尚未注册任何机器人。"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "未检测到摄像头。"
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "无中央服务器："
@@ -2321,6 +2534,10 @@ msgstr "未加载任何媒体预览。"
 msgid "no message"
 msgstr "无消息"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "未检测到麦克风。"
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "尚未捕获任何原始 IRC 流量。请尝试连接或发送消息。"
@@ -2336,6 +2553,10 @@ msgstr "未选择服务器。请先从侧边栏选择一个服务器；邀请链
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "未找到服务器。"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "未检测到扬声器。"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2361,9 +2582,21 @@ msgstr "没有可用用户"
 msgid "No users found matching your search"
 msgstr "未找到与搜索条件匹配的用户"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "暂无观众。"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "无可用 WHOIS 数据"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "这里还没有人。邀请他人输入 /join {channelName} 加入。"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "噪声抑制"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2810,10 @@ msgstr "待处理"
 msgid "Permanent"
 msgstr "永久"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "画中画"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2866,11 @@ msgstr "请稍候..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "私信用户"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "弹出视频"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2953,17 @@ msgstr "退出消息"
 msgid "Quit the server"
 msgstr "已退出服务器"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "举手"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "执行了"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "添加表情"
 
@@ -2754,10 +3002,22 @@ msgstr "推理"
 msgid "Receiving command list…"
 msgstr "正在接收命令列表…"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "重新连接失败"
+
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "降低麦克风的背景噪声"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "降低麦克风拾取的扬声器回声"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -2843,6 +3103,12 @@ msgstr "回复消息已不在视图中"
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "重新发送"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "返回频道"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3427,10 @@ msgstr "未找到设置"
 msgid "Settings"
 msgstr "设置"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "共享屏幕"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "她/她的"
@@ -3193,6 +3463,10 @@ msgstr "显示踢出事件"
 #: src/components/message/MessageItem.tsx
 msgid "Show less"
 msgstr "收起"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "显示我的扬声器"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
@@ -3262,9 +3536,35 @@ msgstr "SoundCloud 播放器"
 msgid "Source"
 msgstr "来源"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "扬声器"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "扬声器 {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "此浏览器不支持扬声器选择。"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "在 {serverName} 上开启直播"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "在 {serverName} 上开启语音频道"
+
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"
 msgstr "发起私信"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "开启视频"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
@@ -3281,11 +3581,27 @@ msgstr "状态"
 msgid "Status Messages"
 msgstr "状态消息"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "退出直播"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "停止"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "停止共享"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "关闭视频"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "主播"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3311,6 +3627,10 @@ msgstr "已停用"
 msgid "System"
 msgstr "系统"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "系统默认"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "文本"
@@ -3318,6 +3638,10 @@ msgstr "文本"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "文字频道"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "该设备当前不可用。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -3515,13 +3839,24 @@ msgstr "类型"
 msgid "Type a message..."
 msgstr "输入消息..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "取消屏蔽声音"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "取消忽略用户"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "取消静音"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "仅对我取消静音"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +4060,15 @@ msgstr "查看资料"
 msgid "View user profile information"
 msgstr "查看用户资料信息"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "观众"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "观众 ({0})"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "语音权限"
@@ -3736,6 +4080,11 @@ msgstr "有发言权的用户"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "音量"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "{0} 的音量"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

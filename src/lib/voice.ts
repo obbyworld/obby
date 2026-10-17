@@ -23,7 +23,45 @@
 // (serverId,channel) join.  The hook in voice/store.ts manages the
 // active instance and exposes state to React.
 
+import type { StoreApi } from "zustand";
+import type { AppState } from "../store";
 import ircClient from "./ircClient";
+import {
+  audioConstraints,
+  type GlobalSettingsSlice,
+  listDevices,
+  resolveDeviceId,
+  type SavedDevice,
+  speakerSelectionSupported,
+  videoConstraints,
+} from "./mediaDevices";
+
+// store/index.ts imports this module (to release calls on disconnect), so a
+// static import of the store back here would cycle. It registers itself via
+// setVoiceStore() once the store exists instead, the same injection pattern
+// store/handlers/e2eeConversation.ts uses for the same reason.
+let storeRef: StoreApi<AppState> | null = null;
+
+export function setVoiceStore(store: StoreApi<AppState>): void {
+  storeRef = store;
+}
+
+const DEFAULT_CALL_SETTINGS: GlobalSettingsSlice = {
+  callAudioInput: null,
+  callVideoInput: null,
+  callCameraFacing: "user",
+  callEchoCancellation: true,
+  callNoiseSuppression: true,
+  callAutoGainControl: true,
+};
+
+function getCallSettings(): GlobalSettingsSlice {
+  return storeRef?.getState().globalSettings ?? DEFAULT_CALL_SETTINGS;
+}
+
+function getSavedOutputDevice(): SavedDevice | null {
+  return storeRef?.getState().globalSettings.callAudioOutput ?? null;
+}
 
 export interface VoiceMember {
   nick: string;
@@ -146,6 +184,14 @@ interface TrackHint {
 
 const RTC_TAG = "+obsidianirc/rtc";
 
+function isTouchDevice(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+
 // Mirrors UnrealIRCd's `message_tag_escape` (src/modules/message-tags.c)
 // byte-for-byte, which is the canonical IRCv3 message-tag value escape
 // table. Single-pass char loop -- avoids chained .replace() ordering
@@ -209,16 +255,21 @@ function encodedTagCost(charCode: number): number {
 // it -- ircClient already decodes message tag values, so the tag
 // value handed to us is the raw JSON.
 
-export interface VoiceClientOptions {
-  serverId: string;
-  channel: string;
-  selfNick: string;
+/** What a mounted view listens to. Several views can be attached at once,
+ *  for example the channel stage and the floating picture-in-picture card. */
+export interface VoiceViewCallbacks {
   onState: (s: VoiceState) => void;
   onError: (e: string) => void;
   /** Fired when a peer (or the local user, echo) sends an emoji
    *  reaction. The view animates the emoji floating up over that
    *  member's tile. */
   onReaction?: (nick: string, emoji: string) => void;
+}
+
+export interface VoiceClientOptions {
+  serverId: string;
+  channel: string;
+  selfNick: string;
   /** Audio element created by the React layer, used as the sink for
    *  inbound audio tracks.  Created upfront because Safari requires
    *  an attached element for autoplay to kick in. */
@@ -282,8 +333,14 @@ export class VoiceClient {
   private speakingTimer?: ReturnType<typeof setInterval>;
   private vadAudioCtx?: AudioContext;
   private isSpeakingNow = false;
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: read by future setMicTransient flow; setter is the public surface
   private pttMode = false;
+  private deafened = false;
+  // Bumped on every teardown. Capturing media is asynchronous, so a
+  // capture that started before the call ended must check this before
+  // keeping what it got, or the microphone stays live with nothing
+  // left to stop it and the OS keeps the device held.
+  private generation = 0;
+  private views = new Set<VoiceViewCallbacks>();
   // Per-peer audio playback sinks. Each member with an inbound audio
   // track gets a dedicated hidden <audio> element so its volume can be
   // controlled independently of other members. Mounted under the shared
@@ -302,19 +359,34 @@ export class VoiceClient {
    *  Used when the React component re-mounts after the user navigated
    *  away and back. Audio sink is owned by voice.ts itself (a hidden
    *  document-level <audio>), so the view doesn't need to pass one. */
-  attach(callbacks: {
-    onState: (s: VoiceState) => void;
-    onError: (e: string) => void;
-    onReaction?: (nick: string, emoji: string) => void;
-  }): void {
-    this.opts = { ...this.opts, ...callbacks };
+  attach(callbacks: VoiceViewCallbacks): () => void {
+    this.views.add(callbacks);
     // Push current state immediately so the freshly mounted UI doesn't
     // flash "idle" before the next state transition.
     callbacks.onState(this.state);
+    return () => {
+      this.views.delete(callbacks);
+    };
+  }
+
+  private emitError(e: string): void {
+    for (const v of this.views) v.onError(e);
+  }
+
+  private emitReaction(nick: string, emoji: string): void {
+    for (const v of this.views) v.onReaction?.(nick, emoji);
   }
 
   getState(): VoiceState {
     return this.state;
+  }
+
+  isPushToTalk(): boolean {
+    return this.pttMode;
+  }
+
+  isDeafened(): boolean {
+    return this.deafened;
   }
 
   async join(): Promise<void> {
@@ -406,6 +478,12 @@ export class VoiceClient {
 
   setDeafened(on: boolean): void {
     if (this.opts.audioSink) this.opts.audioSink.muted = on;
+    this.deafened = on;
+    const selfNick = this.opts.selfNick;
+    const m = this.members[selfNick] ?? blankMember(selfNick);
+    m.deafened = on;
+    this.members[selfNick] = m;
+    this.pushConnected();
   }
 
   /** Send a transient emoji reaction visible to everyone in the room.
@@ -473,18 +551,184 @@ export class VoiceClient {
   setMic(on: boolean): void {
     if (!this.localStream) return;
     for (const t of this.localStream.getAudioTracks()) t.enabled = on;
+    const selfNick = this.opts.selfNick;
+    const m = this.members[selfNick] ?? blankMember(selfNick);
+    m.micOn = on;
+    this.members[selfNick] = m;
     this.sendSignal({ type: "mic", state: on ? "on" : "off" });
+    this.pushConnected();
+  }
+
+  /** Resolve the saved microphone against the live device list and build
+   *  getUserMedia constraints from it. Called at capture time (never cached)
+   *  so a setting changed between calls always takes effect on the next
+   *  join / promote / swap. */
+  private async resolveAudioConstraints(
+    deviceId?: string,
+  ): Promise<MediaTrackConstraints> {
+    const settings = getCallSettings();
+    const resolved =
+      deviceId ??
+      resolveDeviceId(settings.callAudioInput, await listDevices("audioinput"));
+    return audioConstraints(settings, resolved);
+  }
+
+  private async resolveVideoConstraints(
+    deviceId?: string,
+  ): Promise<MediaTrackConstraints> {
+    const settings = getCallSettings();
+    const touch = isTouchDevice();
+    const resolved = touch
+      ? undefined
+      : (deviceId ??
+        resolveDeviceId(
+          settings.callVideoInput,
+          await listDevices("videoinput"),
+        ));
+    return videoConstraints(settings, resolved, touch);
+  }
+
+  private async resolveOutputDeviceId(): Promise<string | undefined> {
+    return resolveDeviceId(
+      getSavedOutputDevice(),
+      await listDevices("audiooutput"),
+    );
+  }
+
+  /** Push the saved (or given) output device to every per-peer sink.
+   *  Called whenever a new sink is created and by the settings panel when
+   *  the user changes the speaker while a call is live. No-op where
+   *  setSinkId isn't supported. */
+  async setAudioOutput(deviceId?: string): Promise<void> {
+    if (!speakerSelectionSupported()) return;
+    const generation = this.generation;
+    const id = deviceId ?? (await this.resolveOutputDeviceId());
+    if (this.generation !== generation) return;
+    for (const sink of this.memberAudioSinks.values()) {
+      try {
+        await (
+          sink as HTMLAudioElement & { setSinkId(id: string): Promise<void> }
+        ).setSinkId(id ?? "");
+      } catch (err) {
+        console.warn("voice: setSinkId failed", err);
+      }
+    }
+  }
+
+  /** Stop the second-by-second speaking detector and release its
+   *  AudioContext. Shared by teardown, demotion, and a mic swap that
+   *  needs to rebind the analyser to the new track. */
+  private stopVAD(): void {
+    if (this.speakingTimer) {
+      clearInterval(this.speakingTimer);
+      this.speakingTimer = undefined;
+    }
+    if (this.vadAudioCtx) {
+      void this.vadAudioCtx.close();
+      this.vadAudioCtx = undefined;
+    }
+  }
+
+  /** Swap the published microphone for a freshly captured one from the
+   *  given (or saved) device, without renegotiating -- replaceTrack keeps
+   *  the existing sender/m-line as-is. */
+  async setAudioInput(deviceId?: string): Promise<void> {
+    if (!this.pc || !this.localStream) return;
+    const generation = this.generation;
+    const sender = this.pc.getSenders().find((s) => s.track?.kind === "audio");
+    if (!sender) return;
+    let stream: MediaStream;
+    try {
+      const constraints = await this.resolveAudioConstraints(deviceId);
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: constraints,
+        video: false,
+      });
+    } catch (err) {
+      this.emitError(`microphone: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc || !this.localStream) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const newTrack = stream.getAudioTracks()[0];
+    if (!newTrack) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const oldTrack = sender.track ?? undefined;
+    newTrack.enabled = oldTrack?.enabled ?? true;
+    await sender.replaceTrack(newTrack);
+    if (oldTrack) {
+      this.localStream.removeTrack(oldTrack);
+      oldTrack.stop();
+    }
+    this.localStream.addTrack(newTrack);
+    this.stopVAD();
+    this.startVAD(this.localStream);
+    const selfNick = this.opts.selfNick;
+    const selfMember = this.members[selfNick] ?? blankMember(selfNick);
+    selfMember.micOn = newTrack.enabled;
+    this.members[selfNick] = selfMember;
+    this.pushConnected();
+  }
+
+  /** Swap the published camera for a freshly captured one. No-op when the
+   *  camera isn't currently on -- there's no sender to swap into, and the
+   *  new preference simply takes effect the next time setVideo(true) runs. */
+  async setVideoInput(deviceId?: string): Promise<void> {
+    if (!this.pc || !this.localStream) return;
+    const oldTrack = this.localStream.getVideoTracks()[0];
+    if (!oldTrack) return;
+    const generation = this.generation;
+    const sender = this.pc.getSenders().find((s) => s.track === oldTrack);
+    if (!sender) return;
+    let stream: MediaStream;
+    try {
+      const constraints = await this.resolveVideoConstraints(deviceId);
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: constraints,
+      });
+    } catch (err) {
+      this.emitError(`camera: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc || !this.localStream) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    const newTrack = stream.getVideoTracks()[0];
+    if (!newTrack) {
+      for (const t of stream.getTracks()) t.stop();
+      return;
+    }
+    await sender.replaceTrack(newTrack);
+    this.localStream.removeTrack(oldTrack);
+    oldTrack.stop();
+    this.localStream.addTrack(newTrack);
+    const selfNick = this.opts.selfNick;
+    const selfMember = this.members[selfNick] ?? blankMember(selfNick);
+    selfMember.videoTrack = newTrack;
+    this.members[selfNick] = selfMember;
+    this.pushConnected();
   }
 
   async setVideo(on: boolean): Promise<void> {
     if (!this.pc || !this.localStream) return;
+    const generation = this.generation;
     const selfNick = this.opts.selfNick;
     const selfMember = this.members[selfNick] ?? blankMember(selfNick);
     if (on) {
       try {
+        const constraints = await this.resolveVideoConstraints();
         const video = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: constraints,
         });
+        if (this.generation !== generation || !this.pc || !this.localStream) {
+          for (const t of video.getTracks()) t.stop();
+          return;
+        }
         const track = video.getVideoTracks()[0];
         this.localStream.addTrack(track);
         this.pc.addTrack(track, this.localStream);
@@ -493,7 +737,7 @@ export class VoiceClient {
         this.members[selfNick] = selfMember;
         await this.renegotiate();
       } catch (err) {
-        this.opts.onError(`camera: ${err}`);
+        this.emitError(`camera: ${err}`);
         return;
       }
     } else {
@@ -513,6 +757,7 @@ export class VoiceClient {
 
   async setScreenShare(on: boolean): Promise<void> {
     if (!this.pc) return;
+    const generation = this.generation;
     const selfNick = this.opts.selfNick;
     const selfMember = this.members[selfNick] ?? blankMember(selfNick);
     if (on) {
@@ -530,15 +775,13 @@ export class VoiceClient {
           audio: true,
         });
       } catch (err) {
-        this.opts.onError(`screen: ${err}`);
+        this.emitError(`screen: ${err}`);
         return;
       }
-      // Re-check pc *after* the await: the screen-picker dialog can
-      // sit open for many seconds, during which the call may have
-      // been torn down (hangup) or never even existed (race with a
-      // failed onJoined). Without this guard we throw "addTrack of
-      // undefined" and leak the captured stream.
-      if (!this.pc) {
+      // The picker can sit open for many seconds, so by now the call may
+      // have ended, or ended and been replaced by a different one. Either
+      // way this capture belongs to nothing and has to be stopped here.
+      if (!this.pc || this.generation !== generation) {
         for (const t of screen.getTracks()) t.stop();
         return;
       }
@@ -549,7 +792,7 @@ export class VoiceClient {
       } catch (err) {
         for (const t of screen.getTracks()) t.stop();
         this.screenStream = undefined;
-        this.opts.onError(`screen: ${err}`);
+        this.emitError(`screen: ${err}`);
         return;
       }
       // Add any captured desktop-audio tracks. Wrapped in its own
@@ -782,7 +1025,7 @@ export class VoiceClient {
         break;
       case "react":
         if (signal.member && signal.emoji) {
-          this.opts.onReaction?.(signal.member, signal.emoji);
+          this.emitReaction(signal.member, signal.emoji);
         }
         break;
       case "role":
@@ -799,7 +1042,7 @@ export class VoiceClient {
           this.setState({ phase: "failed", error: signal.error ?? "unknown" });
           this.teardown();
         } else if (signal.error) {
-          this.opts.onError(signal.error);
+          this.emitError(signal.error);
         }
         break;
     }
@@ -833,14 +1076,20 @@ export class VoiceClient {
    *  so we addTrack + renegotiate instead of building from scratch. */
   private async captureMicAndRenegotiate(): Promise<void> {
     if (!this.pc || this.localStream) return;
+    const generation = this.generation;
     let local: MediaStream;
     try {
+      const constraints = await this.resolveAudioConstraints();
       local = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: constraints,
         video: false,
       });
     } catch (err) {
-      this.opts.onError(`microphone: ${err}`);
+      this.emitError(`microphone: ${err}`);
+      return;
+    }
+    if (this.generation !== generation || !this.pc) {
+      for (const t of local.getTracks()) t.stop();
       return;
     }
     this.localStream = local;
@@ -861,14 +1110,7 @@ export class VoiceClient {
       for (const t of this.screenStream.getTracks()) t.stop();
       this.screenStream = undefined;
     }
-    if (this.speakingTimer) {
-      clearInterval(this.speakingTimer);
-      this.speakingTimer = undefined;
-    }
-    if (this.vadAudioCtx) {
-      void this.vadAudioCtx.close();
-      this.vadAudioCtx = undefined;
-    }
+    this.stopVAD();
     if (this.pc) {
       // Remove every sender; viewers don't publish anything.
       for (const s of this.pc.getSenders()) {
@@ -899,6 +1141,7 @@ export class VoiceClient {
   }
 
   private async onJoined(env: SignalEnvelope) {
+    const generation = this.generation;
     // Re-entrance guard: a duplicate "joined" envelope (e.g. server
     // re-issued one after a transient failure, or a leaked handler
     // from a previous VoiceClient instance) must not spawn a second
@@ -948,6 +1191,19 @@ export class VoiceClient {
       this.attachInboundTrack(e.track, e.streams[0], e.transceiver?.mid);
     };
 
+    // Seed the member map before anything is awaited. The server sends each
+    // existing member's mic state right after this reply, and capturing the
+    // microphone below can take seconds, so a map built afterwards would
+    // overwrite everything that arrived meanwhile and show people as muted.
+    const members: Record<string, VoiceMember> = {};
+    for (const m of env.members ?? []) {
+      members[m] = this.members[m] ?? blankMember(m);
+    }
+    members[this.opts.selfNick] =
+      this.members[this.opts.selfNick] ?? blankMember(this.opts.selfNick);
+    this.members = members;
+    this.pushConnected();
+
     // Viewers in stream channels never publish: skip getUserMedia,
     // skip addTrack, skip VAD. They get the regular receive-only PC
     // and can chat via the standard IRC channel input. If they're
@@ -956,13 +1212,18 @@ export class VoiceClient {
     if (this.role === "streamer") {
       let local: MediaStream;
       try {
+        const constraints = await this.resolveAudioConstraints();
         local = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: constraints,
           video: false,
         });
       } catch (err) {
         this.setState({ phase: "failed", error: `microphone: ${err}` });
         this.teardown();
+        return;
+      }
+      if (this.generation !== generation) {
+        for (const t of local.getTracks()) t.stop();
         return;
       }
       this.localStream = local;
@@ -972,21 +1233,19 @@ export class VoiceClient {
       this.startVAD(local);
     }
 
-    // Pre-populate the member map from the join reply.
-    const members: Record<string, VoiceMember> = {};
-    for (const m of env.members ?? []) {
-      members[m] = blankMember(m);
-    }
-    members[this.opts.selfNick] = blankMember(this.opts.selfNick);
-    this.members = members;
-    this.pushConnected();
     this.startStatsPump();
 
-    // Initial offer.
-    const offer = await pc.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: true,
-    });
+    // WebKit never implemented the legacy offerToReceive* options, so we ask
+    // for the inbound directions with transceivers instead. Without them a
+    // client that publishes nothing offers zero m-lines and the SFU rejects
+    // the whole session with "SetRemoteDescription called with no ice-ufrag".
+    // A streamer already has an audio m-line from its own mic track.
+    if (this.role !== "streamer") {
+      pc.addTransceiver("audio", { direction: "recvonly" });
+    }
+    pc.addTransceiver("video", { direction: "recvonly" });
+
+    const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     this.sendSignal({ type: "offer", sdp: offer.sdp ?? "" });
   }
@@ -1079,6 +1338,7 @@ export class VoiceClient {
         sink.setAttribute("data-obby-voice-peer", nick);
         document.body.appendChild(sink);
         this.memberAudioSinks.set(nick, sink);
+        void this.setAudioOutput();
       }
       const stream = new MediaStream([track]);
       sink.srcObject = stream;
@@ -1217,7 +1477,7 @@ export class VoiceClient {
 
   private setState(next: VoiceState) {
     this.state = next;
-    this.opts.onState(next);
+    for (const v of this.views) v.onState(next);
   }
 
   // Build a fresh "connected" state from the current members map plus
@@ -1282,17 +1542,11 @@ export class VoiceClient {
   }
 
   private teardown() {
-    if (this.speakingTimer) {
-      clearInterval(this.speakingTimer);
-      this.speakingTimer = undefined;
-    }
+    this.generation++;
+    this.stopVAD();
     if (this.statsTimer) {
       clearInterval(this.statsTimer);
       this.statsTimer = undefined;
-    }
-    if (this.vadAudioCtx) {
-      void this.vadAudioCtx.close();
-      this.vadAudioCtx = undefined;
     }
     if (this.localStream) {
       for (const t of this.localStream.getTracks()) t.stop();
@@ -1391,33 +1645,76 @@ function clientKey(serverId: string, channel: string): string {
   return `${serverId}\x00${channel}`;
 }
 
-export interface AcquireOptions {
+/** One entry per live call, whether or not any view is currently
+ *  looking at it -- drives the floating pop-out card. */
+export interface LiveVoiceCall {
+  serverId: string;
+  channel: string;
+}
+
+let cachedLiveCalls: LiveVoiceCall[] = [];
+const liveVoiceCallListeners = new Set<() => void>();
+
+// Snapshot is rebuilt only when the set of live calls actually changes,
+// so useSyncExternalStore's getSnapshot can return a stable reference
+// between renders instead of tripping React's "getSnapshot should be
+// cached" infinite-loop guard.
+function notifyLiveVoiceCalls(): void {
+  cachedLiveCalls = Array.from(liveClients.keys(), (key) => {
+    const [serverId, channel] = key.split("\x00");
+    return { serverId, channel };
+  });
+  for (const listener of liveVoiceCallListeners) listener();
+}
+
+export function getLiveVoiceCalls(): LiveVoiceCall[] {
+  return cachedLiveCalls;
+}
+
+export function subscribeLiveVoiceCalls(listener: () => void): () => void {
+  liveVoiceCallListeners.add(listener);
+  return () => {
+    liveVoiceCallListeners.delete(listener);
+  };
+}
+
+export interface AcquireOptions extends VoiceViewCallbacks {
   serverId: string;
   channel: string;
   selfNick: string;
-  onState: (s: VoiceState) => void;
-  onError: (e: string) => void;
-  onReaction?: (nick: string, emoji: string) => void;
 }
 
-export function acquireVoiceClient(opts: AcquireOptions): VoiceClient {
+export function acquireVoiceClient(opts: AcquireOptions): {
+  client: VoiceClient;
+  detach: () => void;
+} {
   const key = clientKey(opts.serverId, opts.channel);
-  const existing = liveClients.get(key);
-  if (existing) {
-    existing.attach({
-      onState: opts.onState,
-      onError: opts.onError,
-      onReaction: opts.onReaction,
+  let client = liveClients.get(key);
+  if (!client) {
+    // A person has one microphone and one pair of ears, so joining a call or a
+    // stream ends whichever one was already running rather than leaving it
+    // playing in the pop-out.
+    for (const [otherKey, other] of liveClients) {
+      if (otherKey === key) continue;
+      other.leave();
+      liveClients.delete(otherKey);
+    }
+    client = new VoiceClient({
+      serverId: opts.serverId,
+      channel: opts.channel,
+      selfNick: opts.selfNick,
+      audioSink: getSharedAudioSink(),
     });
-    return existing;
+    liveClients.set(key, client);
+    notifyLiveVoiceCalls();
+    void client.join();
   }
-  const c = new VoiceClient({
-    ...opts,
-    audioSink: getSharedAudioSink(),
+  const detach = client.attach({
+    onState: opts.onState,
+    onError: opts.onError,
+    onReaction: opts.onReaction,
   });
-  liveClients.set(key, c);
-  void c.join();
-  return c;
+  return { client, detach };
 }
 
 export function releaseVoiceClient(serverId: string, channel: string): void {
@@ -1426,6 +1723,7 @@ export function releaseVoiceClient(serverId: string, channel: string): void {
   if (!c) return;
   c.leave();
   liveClients.delete(key);
+  notifyLiveVoiceCalls();
 }
 
 export function hasActiveVoiceClient(
@@ -1435,9 +1733,25 @@ export function hasActiveVoiceClient(
   return liveClients.has(clientKey(serverId, channel));
 }
 
+/** End every call on one server. A call outlives its view on purpose, so
+ *  whoever takes the server away has to end it, or it floats on in the
+ *  pop-out with nothing behind it. */
+export function releaseServerVoiceClients(serverId: string): void {
+  const prefix = `${serverId}\x00`;
+  let released = false;
+  for (const [key, client] of liveClients) {
+    if (!key.startsWith(prefix)) continue;
+    client.leave();
+    liveClients.delete(key);
+    released = true;
+  }
+  if (released) notifyLiveVoiceCalls();
+}
+
 /** Drop all live calls -- call when the IRC connection itself drops,
  *  or on full client logout, so we don't leak peer connections. */
 export function shutdownAllVoiceClients(): void {
   for (const c of liveClients.values()) c.leave();
   liveClients.clear();
+  notifyLiveVoiceCalls();
 }

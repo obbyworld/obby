@@ -18,6 +18,10 @@
 	<string>0.2.5</string>
 	<key>CFBundleVersion</key>
 	<string>0.2.5</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Obby uses the camera for video calls.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Obby uses the microphone for voice calls.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -48,19 +52,15 @@
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>irc</string>
-			</array>
+			<array/>
 			<key>CFBundleURLName</key>
-			<string>irc</string>
+			<string>https</string>
 		</dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>ircs</string>
-			</array>
+			<array/>
 			<key>CFBundleURLName</key>
-			<string>ircs</string>
+			<string>https</string>
 		</dict>
 	</array>
 </dict>

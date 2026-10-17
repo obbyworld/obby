@@ -17,6 +17,7 @@ import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { waitForAuthToken } from "../../lib/authToken";
+import { voiceDisplayName } from "../../lib/channelMentions";
 import { getClientCommands } from "../../lib/clientCommands";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
@@ -57,7 +58,7 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType, User } from "../../types";
+import type { BotCommand, Message as MessageType } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
@@ -90,6 +91,7 @@ import {
 import { SlashParamHint } from "../ui/SlashParamHint";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
+import { TypingIndicator } from "../ui/TypingIndicator";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
 import { UploadPreviewModal } from "../ui/UploadPreviewModal";
 import {
@@ -105,39 +107,12 @@ import {
 import { ChatHeader } from "./ChatHeader";
 import { MemberList } from "./MemberList";
 
-const EMPTY_ARRAY: User[] = [];
-
 interface AliveChannel {
   key: string;
   serverId: string;
   channelId: string | null;
   privateChatId: string | null;
 }
-
-export const TypingIndicator: React.FC<{
-  serverId: string;
-  channelId: string;
-}> = ({ serverId, channelId }) => {
-  const key = `${serverId}-${channelId}`;
-  const { t } = useLingui();
-
-  const typingUsers = useStore(
-    (state) => state.typingUsers[key] ?? EMPTY_ARRAY,
-  );
-
-  let message = "";
-  if (typingUsers.length === 1) {
-    message = t`${typingUsers[0].username} is typing...`;
-  } else if (typingUsers.length === 2) {
-    message = t`${typingUsers[0].username} and ${typingUsers[1].username} are typing...`;
-  } else if (typingUsers.length === 3) {
-    message = t`${typingUsers[0].username}, ${typingUsers[1].username} and ${typingUsers[2].username} are typing...`;
-  } else if (typingUsers.length > 3) {
-    message = t`${typingUsers[0].username}, ${typingUsers[1].username}, ${typingUsers[2].username} and ${typingUsers.length - 3} others are typing...`;
-  }
-
-  return <div className="h-5 ml-5 text-sm italic">{message}</div>;
-};
 
 const isMac =
   typeof navigator !== "undefined" &&
@@ -2404,9 +2379,9 @@ export const ChatArea: React.FC<{
                         !isNativeMobile &&
                         !isCompactInput
                         ? globalSettings.multilineOnShiftEnter
-                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
-                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
-                        : t`Message ${selectedChannel.name}`
+                          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+                          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+                        : t`Message ${voiceDisplayName(selectedChannel.name)}`
                       : selectedPrivateChat
                         ? globalSettings.enableMultilineInput &&
                           !isMobile &&

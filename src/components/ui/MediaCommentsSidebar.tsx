@@ -44,6 +44,7 @@ import ReactionModal from "./ReactionModal";
 import { ReactionPopover } from "./ReactionPopover";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
 import { TextArea } from "./TextInput";
+import { TypingIndicator } from "./TypingIndicator";
 
 interface MediaCommentsSidebarProps {
   sourceMessage: Message;
@@ -533,6 +534,7 @@ export function MediaCommentsSidebar({
             : undefined
         }
       >
+        <TypingIndicator serverId={serverId} channelId={channelId} />
         <div className="bg-discord-dark-100 rounded-lg flex items-center relative flex-nowrap">
           <button
             type="button"

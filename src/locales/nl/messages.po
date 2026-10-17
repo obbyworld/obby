@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Toon 1 item meer} other {Toon {1} items meer}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0} en {1} zijn aan het typen..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "{0} inactief"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0} is verplicht."
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0} typt..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0} stap(pen) wachten op goedkeuring"
 msgid "{0} workflow(s)"
 msgstr "{0} workflow(s)"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}, {1} en {2} zijn aan het typen..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}, {1}, {2} en {3} anderen typen..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS} streamt · {1} kijkt mee"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -243,6 +223,18 @@ msgstr "{sender} heeft de versleuteling opnieuw gestart. Dit gesprek blijft onve
 msgid "{title} Client"
 msgstr "{title} client"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "{userCount} in gesprek"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "{userCount} gebruikers"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "{userCount} kijkers"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*kanaal*"
@@ -271,6 +263,32 @@ msgstr "#overflow"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← Terug"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0> en <1>{1}</1> zijn aan het typen..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0> typt..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1> en <2>{2}</2> zijn aan het typen..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> en {3} anderen typen..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -304,6 +322,10 @@ msgstr "Versleutelde chat accepteren"
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Accept new key"
 msgstr "Nieuwe sleutel accepteren"
+
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "Toegang geweigerd. Sta camera- en microfoontoegang toe in je browser- of systeeminstellingen en probeer het opnieuw."
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -438,9 +460,17 @@ msgstr "Alle"
 msgid "All Content"
 msgstr "Alle inhoud"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "Sta cameratoegang toe"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Meerdere tekstregels invoeren toestaan"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "Sta microfoontoegang toe"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -526,9 +556,17 @@ msgstr "Geverifieerd account"
 msgid "Auto Fallback to Single Line"
 msgstr "Automatisch terugvallen op één regel"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "Automatische versterkingsregeling"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "Automatisch sluiten over {secondsLeft}s"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "Volume van je microfoon automatisch aanpassen"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -575,6 +613,7 @@ msgstr "Afwezig:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Terug"
@@ -666,6 +705,24 @@ msgstr "Bots op dit netwerk"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Alle kanalen op de server bekijken"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "Browsers laten je luidsprekers pas zien nadat je toegang tot een microfoon of camera hebt toegestaan. Er wordt niets opgenomen."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "Gesprekken"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "Camera"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "Camera {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -847,6 +904,26 @@ msgstr "Kies een veilig wachtwoord"
 msgid "Choose file"
 msgstr "Bestand kiezen"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "Microfoon en camera kiezen"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "Kies de microfoon, camera en luidspreker die gesprekken gebruiken"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "Kies via welke luidspreker gesprekken worden afgespeeld"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "Kies je camera en bekijk een voorbeeld van wat hij ziet"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "Kies je microfoon en bekijk een voorbeeld van het invoerniveau"
+
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
@@ -940,6 +1017,11 @@ msgstr "Losgekoppelde serverberichten sluiten"
 msgid "Close viewer"
 msgstr "Viewer sluiten"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Collapse"
+msgstr "Inklappen"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "Ledenlijst inklappen"
@@ -1012,10 +1094,26 @@ msgstr "Verbinding maken"
 msgid "Connecting..."
 msgstr "Verbinding maken..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "Verbinden…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "Verbinding"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "Verbinding: matig"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "Verbinding: goed"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "Verbinding: slecht"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1076,6 +1174,10 @@ msgstr "Link kopiëren"
 msgid "Copy URL"
 msgstr "URL kopiëren"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "Kan geen toegang krijgen tot het apparaat."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Kon geen versleuteling met {nick} opzetten."
@@ -1127,6 +1229,10 @@ msgstr "Pas je IRC-clientervaring aan"
 #: src/components/ui/UserSettings.tsx
 msgid "Data Collection"
 msgstr "Gegevensverzameling"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "Doof"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
@@ -1204,9 +1310,26 @@ msgstr "Dit netwerk verwijderen?"
 msgid "deleted"
 msgstr "verwijderd"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "Degraderen naar kijker"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Beschrijving (optioneel, bijv. \"Bètatesters K3\")"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "Apparaatnamen zijn verborgen totdat je cameratoegang toestaat."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "Apparaatnamen zijn verborgen totdat je microfoontoegang toestaat."
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "Push-to-talk uitschakelen"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1361,8 @@ msgstr "Ontdekken"
 msgid "Discover the world of IRC with Obby"
 msgstr "Ontdek de wereld van IRC met Obby"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1301,6 +1426,10 @@ msgstr "bijv. <0>wss://host:port/socket</0>"
 msgid "e.g., 100:1440"
 msgstr "bijv. 100:1440"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "Echo-onderdrukking"
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1351,6 +1480,10 @@ msgstr "Meldingsgeluiden inschakelen"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "Meldingen inschakelen"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "Push-to-talk inschakelen"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1494,6 +1627,17 @@ msgstr "Uitzonderingen"
 msgid "Exclude Channel Name Mask"
 msgstr "Kanaalnaammasker uitsluiten"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "Spotlight verlaten"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Expand"
+msgstr "Uitvouwen"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1577,6 +1721,10 @@ msgstr "1 bericht gevonden dat overeenkomt met \"{searchQuery}\""
 msgid "from"
 msgstr "van"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "Voor"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
 msgstr "G-Line"
@@ -1652,6 +1800,7 @@ msgstr "START"
 msgid "Homepage"
 msgstr "Startpagina"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1906,17 @@ msgstr "Ongeldige waarde"
 msgid "Invitations"
 msgstr "Uitnodigingen"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "Uitnodigen"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "Een gebruiker uitnodigen voor het huidige kanaal"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "Uitnodigen om te streamen"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1820,6 +1977,10 @@ msgstr "Deelnemen"
 msgid "Join {0}"
 msgstr "Deelnemen aan {0}"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "Deelnemen aan {channelName}"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "Deelnemen aan {value}"
@@ -1827,6 +1988,18 @@ msgstr "Deelnemen aan {value}"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "Meedoen aan een kanaal"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "Deelnemen aan een kanaal op {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "Deelnemen aan stream {channelName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "Deelnemen aan spraakkanaal {channelName}"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -1884,6 +2057,11 @@ msgstr "Meer informatie over profielen →"
 msgid "Leave a channel"
 msgstr "Een kanaal verlaten"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "Gesprek verlaten"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "Kanaal verlaten"
@@ -1921,6 +2099,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "Linkvoorbeeldweergave"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "Live"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2156,11 @@ msgstr "logboeken"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "Lage verbindingsbeveiliging (niveau {securityLevel})"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "Hand laten zakken"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2046,17 +2233,17 @@ msgstr "Leden — {0}"
 msgid "Message"
 msgstr "Bericht"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "Bericht aan {0}"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "Bericht aan {0} (Enter voor nieuwe regel, Shift+Enter om te verzenden)"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "Bericht aan {0} (Shift+Enter voor nieuwe regel)"
@@ -2101,6 +2288,20 @@ msgstr "Bericht dat wordt weergegeven wanneer je de verbinding met de server ver
 msgid "Messages with {nick} are now encrypted."
 msgstr "Berichten met {nick} zijn nu versleuteld."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "Microfoon"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "Microfoon {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "Microfoonniveau"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "Min. gebruikers"
@@ -2144,6 +2345,7 @@ msgstr "Modi:"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "Meer"
 
@@ -2157,8 +2359,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Meerdere regels met Shift+Enter"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "Dempen"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "Dempen voor mij"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2260,6 +2469,10 @@ msgstr "Geen bannen gevonden"
 msgid "No bots registered on this network yet."
 msgstr "Nog geen bots geregistreerd op dit netwerk."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "Geen camera gedetecteerd."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "Geen centrale server:"
@@ -2321,6 +2534,10 @@ msgstr "Er worden geen mediavoorbeeldweergaven geladen."
 msgid "no message"
 msgstr "geen bericht"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "Geen microfoon gedetecteerd."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "Nog geen ruw IRC-verkeer vastgelegd. Probeer verbinding te maken of een bericht te versturen."
@@ -2336,6 +2553,10 @@ msgstr "Er is geen server geselecteerd. Kies eerst een server uit de zijbalk; ui
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "Geen servers gevonden."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "Geen luidspreker gedetecteerd."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2361,9 +2582,21 @@ msgstr "Geen gebruikers beschikbaar"
 msgid "No users found matching your search"
 msgstr "Geen gebruikers gevonden die overeenkomen met je zoekopdracht"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "Nog geen kijkers."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "Geen WHOIS-gegevens beschikbaar"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "Er is hier niemand. Vraag iemand om /join {channelName} uit te voeren."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "Ruisonderdrukking"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2810,10 @@ msgstr "in afwachting"
 msgid "Permanent"
 msgstr "Permanent"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "Beeld-in-beeld"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2866,11 @@ msgstr "Even wachten..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "Gebruiker een PM sturen"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "Video loskoppelen"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2953,17 @@ msgstr "Afsluitbericht"
 msgid "Quit the server"
 msgstr "De server verlaten"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "Hand opsteken"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "voerde uit"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "Reageren"
 
@@ -2754,10 +3002,22 @@ msgstr "Redenering"
 msgid "Receiving command list…"
 msgstr "Opdrachtenlijst wordt ontvangen…"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "Opnieuw verbinden mislukt"
+
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Opnieuw verbinden met server"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "Achtergrondgeluid van je microfoon verminderen"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "Echo van je luidsprekers die door de microfoon wordt opgepikt verminderen"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -2843,6 +3103,12 @@ msgstr "Het antwoordbericht is niet meer in beeld"
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "Opnieuw verzenden"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "Terug naar kanaal"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3427,10 @@ msgstr "Instelling niet gevonden"
 msgid "Settings"
 msgstr "Instellingen"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "Scherm delen"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "zij/haar"
@@ -3193,6 +3463,10 @@ msgstr "Kicks weergeven"
 #: src/components/message/MessageItem.tsx
 msgid "Show less"
 msgstr "Minder weergeven"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "Toon mijn luidsprekers"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
@@ -3262,9 +3536,35 @@ msgstr "SoundCloud-speler"
 msgid "Source"
 msgstr "Bron"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "Luidspreker"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "Luidspreker {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "Luidsprekerselectie wordt niet ondersteund in deze browser."
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "Stream starten op {serverName}"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "Spraakkanaal starten op {serverName}"
+
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"
 msgstr "Privébericht starten"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "Video starten"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
@@ -3281,11 +3581,27 @@ msgstr "Status"
 msgid "Status Messages"
 msgstr "Statusberichten"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "Stream verlaten"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "Stoppen"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "Delen stoppen"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "Video stoppen"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "Streamer"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3311,6 +3627,10 @@ msgstr "opgeschort"
 msgid "System"
 msgstr "Systeem"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "Systeemstandaard"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "Tekst"
@@ -3318,6 +3638,10 @@ msgstr "Tekst"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "Tekstkanalen"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "Dit apparaat is momenteel niet beschikbaar."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -3515,13 +3839,24 @@ msgstr "Type"
 msgid "Type a message..."
 msgstr "Typ een bericht..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "Doof opheffen"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "Gebruiker niet meer negeren"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "Dempen opheffen"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "Dempen opheffen voor mij"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +4060,15 @@ msgstr "Profiel bekijken"
 msgid "View user profile information"
 msgstr "Gebruikersprofielinformatie bekijken"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "Kijker"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "Kijkers ({0})"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -3736,6 +4080,11 @@ msgstr "Gebruiker met voice"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "Volume"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "Volume voor {0}"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

@@ -25,6 +25,7 @@ import { useChannelMru } from "../../hooks/useChannelTabSwitching";
 import { useDragReorder } from "../../hooks/useDragReorder";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { voiceDisplayName } from "../../lib/channelMentions";
 import ircClient from "../../lib/ircClient";
 import {
   getChannelAvatarUrl,
@@ -994,7 +995,7 @@ export const ChannelList: React.FC<{
                                 }`}
                               />
                               <span className="truncate font-medium">
-                                {channel.name.replace(/^\^/, "")}
+                                {voiceDisplayName(channel.name)}
                               </span>
                             </div>
                             {selectedChannelId === channel.id && (

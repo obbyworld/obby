@@ -54,6 +54,7 @@ vi.mock("../../src/store", () => ({
         servers: [{ id: "s1", channels: [mockChannel] }],
         messages: {},
         globalSettings: { mediaVisibilityLevel: 3 },
+        typingUsers: {},
       };
       return selector(state);
     }),

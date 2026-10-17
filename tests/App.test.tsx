@@ -88,14 +88,22 @@ const mockStoreState = {
   }),
 };
 
-vi.mock("../src/store", () => ({
-  default: vi.fn((selector) => {
+vi.mock("../src/store", () => {
+  const getState = () => ({ ...mockStoreState, _version: storeVersion });
+  const useStore = vi.fn((selector) => {
     // Return a new object each time to trigger re-renders
-    const state = { ...mockStoreState, _version: storeVersion };
+    const state = getState();
     return selector ? selector(state) : state;
-  }),
-  loadSavedServers: vi.fn(() => []),
-}));
+  });
+  return {
+    // useChannelTabSwitching reads getState()/subscribe() directly on mount
+    default: Object.assign(useStore, {
+      getState,
+      subscribe: vi.fn(() => vi.fn()),
+    }),
+    loadSavedServers: vi.fn(() => []),
+  };
+});
 
 describe("App", () => {
   beforeAll(() => {

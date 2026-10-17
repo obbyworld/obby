@@ -74,7 +74,7 @@ const DEFAULT_ACCENT = "#5865F2"; // discord-blurple fallback
 
 /** Render a country code as a flag emoji via regional indicator. */
 const flagFromCC = (cc: string | undefined): string => {
-  if (!cc || cc.length !== 2) return "";
+  if (cc?.length !== 2) return "";
   const a = cc.toUpperCase().charCodeAt(0);
   const b = cc.toUpperCase().charCodeAt(1);
   if (a < 0x41 || a > 0x5a || b < 0x41 || b > 0x5a) return "";
