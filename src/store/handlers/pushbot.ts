@@ -17,6 +17,7 @@ import {
   PRIVILEGED_COMMANDS,
 } from "../../lib/privilegedCommands";
 import type { BotCommand, PushBotInfo } from "../../types";
+import { isHistoryEvent } from "../helpers";
 import useStore, { type AppState } from "../index";
 
 function decodeB64Json(value: string): unknown | null {
@@ -158,7 +159,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("WHO_END", ({ serverId, mask }) => {
-    if (!mask?.startsWith("#")) return;
+    if (!mask || !ircClient.isChannel(serverId, mask)) return;
     const server = store.getState().servers.find((s) => s.id === serverId);
     if (!server) return;
     const channel = server.channels.find(
@@ -176,7 +177,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("TAGMSG", (response) => {
     const { serverId, sender, mtags } = response;
-    if (!mtags) return;
+    if (!mtags || isHistoryEvent(store.getState(), serverId, mtags)) return;
 
     // obby.world/bot-info: server-pushed bot directory entries
     // (initial burst + per-bot 'add'/'update'/'remove' events).

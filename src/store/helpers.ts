@@ -57,6 +57,91 @@ export const MAX_MESSAGES_PER_CHANNEL = 1500;
 export const messageTime = (message: Message) =>
   new Date(message.timestamp).getTime();
 
+export const isChatMessage = (message: Message) =>
+  message.type === "message" || message.type === undefined;
+
+// The newest message we hold for a chat, counting live messages a history
+// window is keeping aside.
+export function newestMessageTime(
+  state: AppState,
+  key: string,
+): number | undefined {
+  const messages = state.historyWindows[key]?.present ?? state.messages[key];
+  let newest: number | undefined;
+  for (const message of messages ?? []) {
+    if (message.status) continue;
+    // Our own lines keep their send time, so we read the server's from the echo.
+    const time = message.tags?.time
+      ? Date.parse(message.tags.time)
+      : messageTime(message);
+    if (isChatMessage(message) && !Number.isNaN(time))
+      newest = newest === undefined ? time : Math.max(newest, time);
+  }
+  return newest;
+}
+
+// The message a "New messages" line goes above: the first message from someone
+// else that is newer than the read marker.
+export function firstUnreadMessageId(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+): string | undefined {
+  return messages.find((message) => isUnread(message, readUpTo, ownNick))?.id;
+}
+
+export const isOwnMessage = (message: Message, ownNick: string | undefined) =>
+  !!ownNick && message.userId.toLowerCase() === ownNick.toLowerCase();
+
+const isUnread = (message: Message, readUpTo: number, ownNick?: string) =>
+  isChatMessage(message) &&
+  messageTime(message) > readUpTo &&
+  !isOwnMessage(message, ownNick);
+
+export type UnreadCounts = {
+  unreadCount: number;
+  mentionCount: number;
+  isMentioned: boolean;
+};
+
+// Unread messages are the ones from someone else newer than the read marker.
+// Every private message is addressed to the user, so each one is a mention.
+export function countUnread(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+  isPrivate: boolean,
+): UnreadCounts {
+  const counted = new Set<string>();
+  let unreadCount = 0;
+  let mentionCount = 0;
+  for (const message of messages) {
+    const id = message.msgid ?? message.id;
+    if (counted.has(id) || !isUnread(message, readUpTo, ownNick)) continue;
+    counted.add(id);
+    unreadCount += 1;
+    if (
+      isPrivate ||
+      message.mentioned.length > 0 ||
+      (!!message.replyMessage && isOwnMessage(message.replyMessage, ownNick))
+    )
+      mentionCount += 1;
+  }
+  return { unreadCount, mentionCount, isMentioned: mentionCount > 0 };
+}
+
+export function serverTracksReadMarker(
+  state: AppState,
+  serverId: string,
+): boolean {
+  const server = state.servers.find((s) => s.id === serverId);
+  return (
+    !!server?.capabilities?.includes("draft/read-marker") &&
+    !!server.account &&
+    !server.readMarkerRefused
+  );
+}
+
 const replaceAt = <T>(list: T[], index: number, item: T): T[] =>
   list.map((existing, i) => (i === index ? item : existing));
 
@@ -88,6 +173,47 @@ export function withoutReaction(
     : { ...message, reactions };
 }
 
+// A multiline message answers to its own msgid and to each of its lines' msgids.
+export function hasMsgid(message: Message, msgid: string): boolean {
+  return (
+    message.msgid === msgid || !!message.multilineMessageIds?.includes(msgid)
+  );
+}
+
+// Replayed history (server CHATHISTORY or our local replay) updates what was
+// said, never live state such as typing, presence, notifications or bot runs.
+export function isHistoryEvent(
+  state: Pick<AppState, "activeBatches">,
+  serverId: string,
+  mtags: Record<string, string> | undefined,
+): boolean {
+  const batchId = mtags?.batch;
+  return (
+    !!batchId &&
+    state.activeBatches[serverId]?.[batchId]?.type === "chathistory"
+  );
+}
+
+export function redactedMessage(original: Message, sender: string): Message {
+  return {
+    id: original.id,
+    msgid: original.msgid,
+    content: "",
+    timestamp: original.timestamp,
+    userId: "system",
+    channelId: original.channelId,
+    serverId: original.serverId,
+    type: "system",
+    reactions: [],
+    replyMessage: null,
+    mentioned: [],
+    tags: {
+      ...original.tags,
+      [REDACTED_BY_TAG]: original.userId === sender ? "sender" : "staff",
+    },
+  };
+}
+
 export function updateMessageByMsgid(
   state: Pick<AppState, "messages" | "historyWindows">,
   key: string,
@@ -95,7 +221,7 @@ export function updateMessageByMsgid(
   update: (message: Message) => Message | null,
 ): Partial<AppState> {
   const shown = state.messages[key] ?? [];
-  const index = shown.findIndex((m) => m.msgid === msgid);
+  const index = shown.findIndex((m) => hasMsgid(m, msgid));
   if (index >= 0) {
     const next = update(shown[index]);
     return next
@@ -106,7 +232,7 @@ export function updateMessageByMsgid(
   }
   const window = state.historyWindows[key];
   const presentIndex =
-    window?.present.findIndex((m) => m.msgid === msgid) ?? -1;
+    window?.present.findIndex((m) => hasMsgid(m, msgid)) ?? -1;
   if (!window || presentIndex < 0) return {};
   const next = update(window.present[presentIndex]);
   if (!next) return {};
@@ -234,6 +360,29 @@ export function getCurrentSelection(state: AppState) {
     };
   }
   return getServerSelection(state, state.ui.selectedServerId);
+}
+
+// A phone shows one app at a time, so a visible app there has the user's eyes,
+// while a desktop window also needs focus.
+export function isAppInFront(): boolean {
+  if (typeof document === "undefined" || typeof window === "undefined")
+    return true;
+  if (document.visibilityState !== "visible") return false;
+  return (
+    document.hasFocus() ||
+    window.matchMedia?.("(pointer: coarse)").matches === true
+  );
+}
+
+// The chat the user is looking at right now: selected, with the app in front
+// and, on a phone, the chat column showing. Messages anywhere else are unread.
+export function getViewedSelection(state: AppState) {
+  const isInView =
+    state.ui.isAppFocused !== false &&
+    (!state.ui.isNarrowView || state.ui.mobileViewActiveColumn === "chatView");
+  return isInView
+    ? getCurrentSelection(state)
+    : { selectedChannelId: null, selectedPrivateChatId: null };
 }
 
 // ============================================================================

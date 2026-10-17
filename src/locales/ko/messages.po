@@ -113,11 +113,6 @@ msgstr "{0}은(는) 정수여야 합니다."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0}개 네트워크{1} — 참여할 네트워크를 선택하세요"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "이전 메시지 {0}개"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0}명 시청 중"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS}명 스트리밍 중 · {1}명 시청 중"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {파일 1개 업로드 중} other {파일 #개 업로드 중}}"
 
@@ -149,7 +144,7 @@ msgstr "결과 {count}+개"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName}의 {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {업로드 1건 실패} other {업로드 #건 실패}}"
 
@@ -687,6 +682,10 @@ msgstr "이제 **{newNick}**(으)로 알려져 있습니다"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "이 메시지를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "이 목록을 변경하려면 채널 운영자에게 요청하세요."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "팩을 관리하려면 서버 관리자에게 백엔드 URL(draft/authtoken 또는 obby.world/FILEHOST)을 공개해 달라고 요청하세요."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "아바타 미리보기"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "자리 비움"
 
@@ -1000,7 +1003,6 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "취소"
 
@@ -1026,7 +1029,8 @@ msgstr "암호화 취소"
 msgid "Cancel reply"
 msgstr "답장 취소"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "업로드 취소"
 
@@ -1356,6 +1360,7 @@ msgstr "코드가 확인되었습니다."
 msgid "Code Snippets"
 msgstr "코드 스니펫"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "기본 닉네임"
 msgid "Delay joins (+D)"
 msgstr "입장 지연 (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "삭제"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "봇 삭제"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "폴더 삭제"
 msgid "Delete its saved chat history too"
 msgstr "저장된 채팅 기록도 함께 삭제"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "메시지 삭제"
 
@@ -1783,6 +1798,7 @@ msgstr "메시지 삭제"
 msgid "Delete network"
 msgstr "네트워크 삭제"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "팩 삭제"
@@ -1943,7 +1959,7 @@ msgstr "이 링크를 새 탭에서 여시겠습니까?"
 msgid "Don't warn me about low link security for this server"
 msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "완료"
 
@@ -2085,7 +2101,7 @@ msgstr "암호화 (OTR)"
 msgid "Encrypt this chat"
 msgstr "이 대화 암호화"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "암호화됨"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "공백, 이모지, 기호를 포함한 이름을 입력하세요. IRC 명령에서는 실제 이름({channelName})이 계속 사용됩니다."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {size}를 사용하세요. 예: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요. 예: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "계정 이름 입력..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "채널에 참여하기 전에 SASL PLAIN으로 로그인할 계정 이름을 입력하세요. 익명으로 연결하려면 비워 두세요."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "채널에 참여하기 전에 SASL PLAIN으로 로그인할 계정 이름을 입력하세요. 비워 두면 닉네임을 사용합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "전체 화면 종료"
 msgid "Exit spotlight"
 msgstr "스포트라이트 종료"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "확장 프로필을 사용할 수 없습니다"
 msgid "External Link Warning"
 msgstr "외부 링크 경고"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "실패"
@@ -2454,6 +2471,14 @@ msgstr "기권"
 msgid "Forget credentials"
 msgstr "인증 정보 잊기"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "비밀번호 삭제"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "저장된 SASL 및 서버 비밀번호를 삭제하여 연결할 때 더 이상 보내지 않도록 하세요."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "비밀번호 찾기"
@@ -2505,10 +2530,6 @@ msgstr "일반 지원 채널"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "팔로우하는 단어를 누군가 말하면 알림을 받으세요."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "메시지를 더 불러오는 중..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "참여했다가 퇴장했습니다"
 msgid "Joined the channel"
 msgstr "채널에 참여했습니다"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "최신으로 이동"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "이 기기에 채팅 기록 보관"
@@ -2851,6 +2868,10 @@ msgstr "이 기기에 채팅 기록 보관"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "인증 정보 유지"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "비밀번호 유지"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "라이브"
 msgid "Live Translate"
 msgstr "실시간 번역"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "이 기기에 저장된 이전 메시지 불러오기"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "결과 더 불러오기"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "이전 메시지 불러오기"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "{0}의 네트워크"
 msgid "new folder"
 msgstr "새 폴더"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "새 메시지"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "새 닉네임"
@@ -3476,6 +3493,10 @@ msgstr "이 서버에는 고급 모드가 없습니다."
 msgid "No bans yet, add one above"
 msgstr "아직 밴이 없습니다. 위에서 추가하세요"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "아직 차단이 없습니다. 추가하려면 채널 운영자에게 요청하세요"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "일치하는 봇이 없습니다. 검색을 지우거나 필터를 변경하세요."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "아직 예외가 없습니다. 위에서 추가하세요"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "아직 예외가 없습니다. 추가하려면 채널 운영자에게 요청하세요"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "외부 메시지 금지 (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "호스트가 설정되지 않음"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "아직 초대가 없습니다. 위에서 추가하세요"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "아직 초대가 없습니다. 추가하려면 채널 운영자에게 요청하세요"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "기본 - 표준 보호"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "암호화되지 않음"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "다음 중 하나:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "온라인"
 
@@ -4775,11 +4808,11 @@ msgstr "보내는 중"
 msgid "Sending…"
 msgstr "보내는 중…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "OTR은 텍스트만 암호화하므로 암호화 없이 전송됨"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "파일이 너무 커서 암호화할 수 없으므로 암호화 없이 전송됨"
 
@@ -5183,6 +5216,10 @@ msgstr "스트리밍 중지"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "비디오 중지"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "저장된 비밀번호"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5598,8 +5635,8 @@ msgid "Unsuspend"
 msgstr "정지 해제"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "이미지를 업로드하거나 URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {size}를 사용하세요."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "이미지를 업로드하거나 URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5613,7 +5650,7 @@ msgstr "업로드가 취소되었습니다."
 msgid "Upload Files"
 msgstr "파일 업로드"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "업로드됨"
 

@@ -8,6 +8,8 @@ import { defaultUIExtensions } from "../fixtures/uiState";
 // Mock IRC client
 const mockIRCClient = {
   on: vi.fn(),
+  isChannel: (_serverId: string, name?: string) =>
+    !!name && "#&+!^$".includes(name[0]),
 };
 
 describe("MODE Protocol Handler", () => {

@@ -456,6 +456,14 @@ describe("an encrypted message counts as unread like any other", () => {
     vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
     vi.spyOn(ircClient, "getNick").mockReturnValue("self");
     registerE2EEHandlers(useStore);
+    ircClient.triggerEvent("parsedLine", {
+      serverId,
+      line: ":irc.test 001 self :Welcome",
+      command: "001",
+      source: "irc.test",
+      parv: ["self", "Welcome"],
+      mtags: { time: new Date(Date.now() - 1000).toISOString() },
+    });
   });
 
   function chatWith(nick: string) {

@@ -30,6 +30,7 @@ import {
   getPreviewStyles,
   stripIrcFormatting,
 } from "../../lib/messageFormatter";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { Message } from "../../types";
@@ -504,10 +505,14 @@ export function MediaCommentsSidebar({
               onReactionUnreact={unreact}
               onOpenReactionModal={(msg, _pos) => openReactionModal(msg)}
               onDirectReaction={directReaction}
-              onRedactMessage={(msg) => {
+              onRedactMessage={async (msg) => {
                 if (!msg.msgid || !channelName) return;
                 if (
-                  window.confirm(t`Delete this message? This cannot be undone.`)
+                  await confirmDestructive(
+                    t`Delete message`,
+                    t`Delete this message? This cannot be undone.`,
+                    t`Delete`,
+                  )
                 ) {
                   redactMessage(serverId, channelName, msg.msgid);
                 }

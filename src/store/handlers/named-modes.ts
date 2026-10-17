@@ -112,15 +112,7 @@ export function registerNamedModesHandlers(store: StoreApi<AppState>): void {
     const server = state.servers.find((s) => s.id === event.serverId);
     if (!server?.namedModes?.supported) return;
 
-    // Channel target uses CHANTYPES heuristic (#^$ is what the
-    // ircd advertises today; covers any future prefix automatically
-    // because this branch's named-modes spec routes both via the
-    // same wire form). Anything else is a user target.
-    const isChannel =
-      event.target.startsWith("#") ||
-      event.target.startsWith("^") ||
-      event.target.startsWith("$");
-    const registry = isChannel
+    const registry = ircClient.isChannel(event.serverId, event.target)
       ? server.namedModes.channelModes
       : server.namedModes.userModes;
 

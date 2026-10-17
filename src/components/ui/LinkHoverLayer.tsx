@@ -5,7 +5,7 @@ import LinkHoverCard, { LINK_HOVER_CARD } from "./LinkHoverCard";
 
 const HOVER_OPEN_MS = 350;
 const HOVER_CLOSE_MS = 200;
-const EXTERNAL_LINK = "a.external-link-security";
+export const EXTERNAL_LINK = "a.external-link-security";
 
 // One card for the whole app: we watch the document for a mouse resting on an
 // external link, so every message, markdown block and panel shares it. Touch

@@ -1,7 +1,7 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import QRCode from "qrcode";
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BaseModal from "../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import {
@@ -166,24 +166,29 @@ const TwoFactorPage: React.FC<PageProps<"twoFactor">> = ({ page }) => {
     }
   };
 
+  // We register a passkey only after a click on this page, so we ignore a challenge left from an earlier attempt.
+  const hasRequestedWebauthn = useRef(false);
   const onAddWebAuthn = async () => {
     if (!isWebAuthnAvailable()) {
       setEnrollError(t`WebAuthn is not available in this environment.`);
       return;
     }
     setEnrollError(null);
+    hasRequestedWebauthn.current = true;
     twofaChallenge(serverId, "webauthn");
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (
+      !hasRequestedWebauthn.current ||
       !challenge ||
       challenge.serverId !== serverId ||
       challenge.type !== "webauthn" ||
       enrollBusy
     )
       return;
+    hasRequestedWebauthn.current = false;
     const decoded = decodeChallenge(challenge.blob);
     if (!decoded || typeof decoded !== "object") {
       setEnrollError(t`Server returned an invalid WebAuthn challenge.`);

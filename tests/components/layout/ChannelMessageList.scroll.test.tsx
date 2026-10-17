@@ -11,6 +11,8 @@ import useStore from "../../../src/store";
 vi.mock("../../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    isChannel: (_serverId: string, name?: string) =>
+      !!name && "#&+!^$".includes(name[0]),
     on: vi.fn(),
     getCurrentUser: vi.fn(() => ({ id: "u1", username: "tester" })),
     getNick: vi.fn(() => "tester"),
@@ -376,7 +378,7 @@ describe("ChannelMessageList history window", () => {
     expect(
       container.querySelector('[data-message-id="past-50"]')?.classList,
     ).toContain("jump-highlight");
-    fireEvent.click(getByRole("button", { name: "Jump to present" }));
+    fireEvent.click(getByRole("button", { name: "Scroll to bottom" }));
     expect(useStore.getState().historyWindows[KEY]).toBeUndefined();
     expect(container.querySelector('[data-message-id="now-2"]')).not.toBeNull();
   });
@@ -466,5 +468,87 @@ describe("ChannelMessageList history window", () => {
       command: "SEARCH_JUMP",
       code: "not-found",
     });
+  });
+});
+
+describe("New messages line", () => {
+  const key = defaultProps.channelKey;
+  const at = (minute: number) => new Date(`2024-01-01T12:0${minute}:00.000Z`);
+  const server = {
+    id: "s1",
+    name: "s1",
+    host: "irc.example",
+    port: 6697,
+    isConnected: true,
+    connectionState: "connected",
+    capabilities: ["draft/read-marker"],
+    account: "me",
+    channels: [],
+    users: [],
+    privateChats: [
+      {
+        id: "pm1",
+        username: "alice",
+        serverId: "s1",
+        unreadCount: 1,
+        isMentioned: false,
+        readMarker: at(0).toISOString(),
+      },
+    ],
+  } as unknown as import("../../../src/types").Server;
+
+  const appendWhileAway = (message: import("../../../src/types").Message) =>
+    act(() => {
+      useStore.setState((state) => ({
+        ui: { ...state.ui, isAppFocused: false },
+        messages: { [key]: [...state.messages[key], message] },
+      }));
+    });
+
+  beforeEach(() => {
+    useStore.setState((state) => ({
+      servers: [server],
+      messages: {
+        [key]: [
+          makeMsg("read", { timestamp: at(0) }),
+          makeMsg("unread", { timestamp: at(1) }),
+        ],
+      },
+      ui: { ...state.ui, isAppFocused: true },
+    }));
+  });
+
+  it("takes no height between messages, so the messages stay put when it goes", () => {
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    expect(container.querySelector("[data-unread-line]")?.className).toContain(
+      "h-0",
+    );
+  });
+
+  it("clears when the user sends a message, even after switching away", () => {
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    expect(container.querySelector("[data-unread-line]")).not.toBeNull();
+
+    appendWhileAway(makeMsg("mine", { userId: "tester", timestamp: at(2) }));
+
+    expect(container.querySelector("[data-unread-line]")).toBeNull();
+  });
+
+  it("stays when the user's own join lands while they are away", () => {
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+
+    appendWhileAway(
+      makeMsg("rejoin", { type: "join", userId: "tester", timestamp: at(2) }),
+    );
+
+    expect(container.querySelector("[data-unread-line]")).not.toBeNull();
+  });
+
+  it("stays while the user is away and someone else writes", () => {
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+
+    appendWhileAway(makeMsg("more", { timestamp: at(2) }));
+
+    expect(container.querySelector("[data-unread-line]")).not.toBeNull();
   });
 });

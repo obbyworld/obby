@@ -11,6 +11,31 @@ mod youtube_player;
 
 use socket::{connect, disconnect, listen, send, SocketState};
 
+// The opener plugin spawns /usr/bin/open on macOS, so we call NSWorkspace to open links from Obby itself.
+#[cfg(target_os = "macos")]
+#[tauri::command]
+async fn open_external_url(_app: tauri::AppHandle, url: String) -> Result<(), String> {
+    use objc2_app_kit::NSWorkspace;
+    use objc2_foundation::{NSString, NSURL};
+
+    let ns_url = NSURL::URLWithString(&NSString::from_str(&url)).ok_or("invalid url")?;
+    if NSWorkspace::sharedWorkspace().openURL(&ns_url) {
+        Ok(())
+    } else {
+        Err(format!("could not open {url}"))
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+#[tauri::command]
+async fn open_external_url(app: tauri::AppHandle, url: String) -> Result<(), String> {
+    use tauri_plugin_opener::OpenerExt;
+
+    app.opener()
+        .open_url(url, None::<&str>)
+        .map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 async fn download_image(app: tauri::AppHandle, url: String) -> Result<String, String> {
     download_image_impl(app, url).await
@@ -271,6 +296,7 @@ pub fn run() {
             listen,
             send,
             download_image,
+            open_external_url,
             overlay::prepare_region_overlay,
             screen_record::region_recording_supported,
             screen_record::screen_recording_allowed,

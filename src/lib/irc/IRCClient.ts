@@ -14,7 +14,7 @@ import type {
   WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
-import { isChannelTarget, parseMessageTags } from "../ircUtils";
+import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
 import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
@@ -39,9 +39,15 @@ function generateDeterministicId(serverId: string, name: string): string {
 // Gap and load-more decisions read a short page as the end of server history,
 // so every request has to ask for the same page size.
 const CHATHISTORY_PAGE_SIZE = 50;
+const PING_INTERVAL_MS = 30_000;
+const PONG_TIMEOUT_MS = 10_000;
+const WAKE_PONG_TIMEOUT_MS = 5_000;
+const DEAD_SOCKET_CLOSE_WAIT_MS = 2_000;
 
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
+  LOGGED_IN: BaseIRCEvent & { account: string };
+  LOGGED_OUT: BaseIRCEvent;
   connectionStateChange: BaseIRCEvent & {
     serverId: string;
     connectionState: ConnectionState;
@@ -463,8 +469,7 @@ export interface EventMap {
     serverId: string;
     channel: string;
   };
-  TOPIC: {
-    serverId: string;
+  TOPIC: EventWithTags & {
     channelName: string;
     topic: string;
     sender: string;
@@ -882,6 +887,7 @@ export class IRCClient implements IRCClientContext {
         };
         this.servers.set(server.id, server);
       }
+      this.closeReplacedSocket(server.id);
       this.sockets.set(server.id, socket);
       this.serverConnectParams.set(server.id, {
         name,
@@ -1246,37 +1252,50 @@ export class IRCClient implements IRCClientContext {
     // Clear any existing ping timer
     this.stopWebSocketPing(serverId);
 
-    // Send ping every 30 seconds
-    const pingTimer = setInterval(() => {
-      const socket = this.sockets.get(serverId);
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        try {
-          // Send WebSocket ping frame (opcode 0x9)
-          // Since we can't send ping frames directly in JS, we'll send an IRC PING
-          // which serves as both IRC keepalive and WebSocket activity
-          const timestamp = Date.now().toString();
-          this.sendRaw(serverId, `PING :${timestamp}`);
-
-          // Clear any previous pong timeout before starting a new one — otherwise
-          // a missed PONG from the prior cycle would close the socket mid-interval.
-          const oldPongTimeout = this.pongTimeouts.get(serverId);
-          if (oldPongTimeout) clearTimeout(oldPongTimeout);
-
-          const pongTimeout = setTimeout(() => {
-            console.warn(
-              `WebSocket ping timeout for server ${serverId}, closing connection`,
-            );
-            socket.close();
-          }, 10000);
-
-          this.pongTimeouts.set(serverId, pongTimeout);
-        } catch (error) {
-          console.error(`Failed to send ping for server ${serverId}:`, error);
-        }
-      }
-    }, 30000); // 30 seconds
-
+    const pingTimer = setInterval(
+      () => this.checkAlive(serverId, PONG_TIMEOUT_MS),
+      PING_INTERVAL_MS,
+    );
     this.pingTimers.set(serverId, pingTimer);
+  }
+
+  checkAlive(serverId: string, timeoutMs: number): void {
+    const socket = this.sockets.get(serverId);
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    // A check already waiting for its PONG keeps its earlier deadline.
+    if (this.pongTimeouts.has(serverId)) return;
+    this.sendRaw(serverId, `PING :${Date.now()}`);
+    this.pongTimeouts.set(
+      serverId,
+      setTimeout(() => {
+        this.pongTimeouts.delete(serverId);
+        console.warn(`Ping timeout for server ${serverId}, closing connection`);
+        this.dropDeadSocket(serverId, socket);
+      }, timeoutMs),
+    );
+  }
+
+  // We silence the old socket before closing it, so a reconnect never leaves a second live session under one server.
+  private closeReplacedSocket(serverId: string): void {
+    const old = this.sockets.get(serverId);
+    if (!old) return;
+    old.onopen = null;
+    old.onmessage = null;
+    old.onerror = null;
+    old.onclose = null;
+    old.close();
+  }
+
+  // A socket whose network died, as after the machine slept, can take minutes
+  // to report its close, so we run the close handling ourselves.
+  private dropDeadSocket(serverId: string, socket: ISocket): void {
+    socket.close();
+    setTimeout(() => {
+      if (this.sockets.get(serverId) !== socket) return;
+      const onclose = socket.onclose;
+      socket.onclose = null;
+      onclose?.();
+    }, DEAD_SOCKET_CLOSE_WAIT_MS);
   }
 
   private stopWebSocketPing(serverId: string): void {
@@ -1305,7 +1324,8 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, channelName: string): Channel {
+  joinChannel(serverId: string, typedName: string): Channel {
+    const channelName = this.withChannelPrefix(serverId, typedName);
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1322,14 +1342,7 @@ export class IRCClient implements IRCClientContext {
 
       this.sendRaw(serverId, `JOIN ${channelName}`);
 
-      // soju bouncer control sessions have no real channels — treat as cap-less.
-      const wantsChathistory =
-        !server.isBouncerControl &&
-        !!server.capabilities?.includes("draft/chathistory");
-
-      if (wantsChathistory) {
-        this.requestChathistoryLatest(serverId, channelName);
-      }
+      const wantsChathistory = this.hasChathistory(serverId);
 
       const channel: Channel = {
         id: generateDeterministicId(serverId, channelName),
@@ -1348,13 +1361,7 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      if (wantsChathistory) {
-        this.triggerEvent("CHATHISTORY_LOADING", {
-          serverId,
-          channelName,
-          isLoading: true,
-        });
-      } else {
+      if (!this.loadLatestHistory(serverId, channelName)) {
         // No CHATHISTORY support (or it's the bouncer control session) --
         // the LOADING(false) callback that normally fires WHO will never
         // run. Send it now.
@@ -1392,11 +1399,49 @@ export class IRCClient implements IRCClientContext {
     return true;
   }
 
-  requestChathistoryLatest(serverId: string, target: string): void {
+  requestChathistoryAt(
+    serverId: string,
+    target: string,
+    subcommand: "AFTER" | "AROUND",
+    timestamp: string,
+  ): boolean {
+    const server = this.servers.get(serverId);
+    if (!server?.capabilities?.includes("draft/chathistory")) return false;
+    if (server.isBouncerControl) return false;
+    this.sendRaw(
+      serverId,
+      `CHATHISTORY ${subcommand} ${target} timestamp=${timestamp} ${this.chathistoryPageSize(serverId)}`,
+    );
+    return true;
+  }
+
+  // soju bouncer control sessions have no real channels, so we treat them as cap-less.
+  private hasChathistory(serverId: string): boolean {
+    const server = this.servers.get(serverId);
+    return (
+      !!server &&
+      !server.isBouncerControl &&
+      !!server.capabilities?.includes("draft/chathistory")
+    );
+  }
+
+  requestChathistoryLatest(serverId: string, target: string): boolean {
+    if (!this.hasChathistory(serverId)) return false;
     this.sendRaw(
       serverId,
       `CHATHISTORY LATEST ${target} * ${this.chathistoryPageSize(serverId)}`,
     );
+    return true;
+  }
+
+  loadLatestHistory(serverId: string, target: string): boolean {
+    if (!this.requestChathistoryLatest(serverId, target)) return false;
+    this.triggerEvent("CHATHISTORY_LOADING", {
+      serverId,
+      channelName: target,
+      isLoading: true,
+    });
+    return true;
   }
 
   // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means
@@ -1410,12 +1455,31 @@ export class IRCClient implements IRCClientContext {
       : CHATHISTORY_PAGE_SIZE;
   }
 
+  chantypes(serverId: string): string {
+    return chantypesOf(this.isupportValues.get(serverId));
+  }
+
+  isChannel(serverId: string, name: string | undefined | null): boolean {
+    return isChannelTarget(name, this.chantypes(serverId));
+  }
+
+  // We prefix a bare name with the server's first channel type, so `/join foo` reaches a channel the server allows.
+  private withChannelPrefix(serverId: string, name: string): string {
+    if (this.isChannel(serverId, name)) return name;
+    return `${this.chantypes(serverId)[0]}${name}`;
+  }
+
   leaveChannel(serverId: string, channelName: string): void {
-    const server = this.servers.get(serverId);
-    if (server) {
+    if (this.servers.has(serverId))
       this.sendRaw(serverId, `PART ${channelName}`);
-      server.channels = server.channels.filter((c) => c.name !== channelName);
-    }
+  }
+
+  forgetChannel(serverId: string, channelName: string): void {
+    const server = this.servers.get(serverId);
+    if (server)
+      server.channels = server.channels.filter(
+        (c) => c.name.toLowerCase() !== channelName.toLowerCase(),
+      );
   }
 
   sendMessage(serverId: string, channelId: string, content: string): void {
@@ -1532,7 +1596,7 @@ export class IRCClient implements IRCClientContext {
     // have us in it), JOIN first so the typing TAGMSG lands instead
     // of getting bounced with 401.
     const server = this.servers.get(serverId);
-    if (server && isChannelTarget(target)) {
+    if (server && this.isChannel(serverId, target)) {
       const ch = server.channels.find((c) => c.name === target);
       if (
         ch &&
@@ -1779,11 +1843,7 @@ export class IRCClient implements IRCClientContext {
   ): void {
     if (!items.length) return;
 
-    const isChannelTarget =
-      target.startsWith("#") ||
-      target.startsWith("^") ||
-      target.startsWith("$");
-    const list = isChannelTarget
+    const list = this.isChannel(serverId, target)
       ? (registry?.channelModes ?? [])
       : (registry?.userModes ?? []);
 
@@ -1927,12 +1987,6 @@ export class IRCClient implements IRCClientContext {
     this.sendRaw(serverId, "AWAY");
   }
 
-  markChannelAsRead(serverId: string, channelId: string): void {
-    const server = this.servers.get(serverId);
-    const channel = server?.channels.find((c) => c.id === channelId);
-    if (channel) channel.unreadCount = 0;
-  }
-
   capAck(serverId: string, key: string, capabilities: string): void {
     this.triggerEvent("CAP_ACKNOWLEDGED", { serverId, key, capabilities });
   }
@@ -2002,6 +2056,9 @@ export class IRCClient implements IRCClientContext {
           lineAfterTags = line.substring(spaceIndex + 1);
         }
       }
+      // Servers without server-time leave the time to us, so we stamp one
+      // receive time that the chat and the saved history both read.
+      if (!mtags?.time) mtags = { ...mtags, time: new Date().toISOString() };
 
       // Parse IRC message properly handling colon-prefixed trailing parameter
       const spaceIndex = lineAfterTags.indexOf(" :");
@@ -2413,8 +2470,7 @@ export class IRCClient implements IRCClientContext {
       return;
     }
 
-    // connectionState === "connected" or "connecting": leave it alone.
-    // The existing ping/pong mechanism will detect a dead socket within ~40s
-    // and kick the normal reconnection flow.
+    if (server.connectionState === "connected")
+      this.checkAlive(serverId, WAKE_PONG_TIMEOUT_MS);
   }
 }

@@ -113,11 +113,6 @@ msgstr "{0} måste vara ett heltal."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} nätverk{1} — välj ett att gå med i"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} äldre meddelanden"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} tittar"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} sänder · {1} tittar"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Laddar upp 1 fil} other {Laddar upp # filer}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ resultat"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} i {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 uppladdning misslyckades} other {# uppladdningar misslyckades}}"
 
@@ -687,6 +682,10 @@ msgstr "är nu känd som **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Är du säker på att du vill ta bort det här meddelandet? Den här åtgärden kan inte ångras."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Be en kanaloperatör att ändra den här listan."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Be serveradministratören att annonsera en backend-URL (draft/authtoken eller obby.world/FILEHOST) för att hantera paket."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "Förhandsvisning av avatar"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Borta"
 
@@ -1000,7 +1003,6 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "Det går inte att ta bort din sista 2FA-uppgift"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -1026,7 +1029,8 @@ msgstr "Avbryt kryptering"
 msgid "Cancel reply"
 msgstr "Avbryt svar"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Avbryt uppladdning"
 
@@ -1356,6 +1360,7 @@ msgstr "Koden godkändes."
 msgid "Code Snippets"
 msgstr "Kodsnuttar"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "Standard-nick"
 msgid "Delay joins (+D)"
 msgstr "Fördröj inträden (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Ta bort"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Ta bort bot"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "Ta bort mapp"
 msgid "Delete its saved chat history too"
 msgstr "Ta även bort den sparade chatthistoriken"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Ta bort meddelande"
 
@@ -1783,6 +1798,7 @@ msgstr "Ta bort meddelande"
 msgid "Delete network"
 msgstr "Ta bort nätverk"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Ta bort paket"
@@ -1943,7 +1959,7 @@ msgstr "Vill du öppna den här länken i en ny flik?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Varna mig inte om låg länksäkerhet för den här servern"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "klart"
 
@@ -2085,7 +2101,7 @@ msgstr "Kryptera (OTR)"
 msgid "Encrypt this chat"
 msgstr "Kryptera den här chatten"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Krypterad"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Ange ett namn med valfria mellanslag, emojis eller symboler. IRC-kommandon använder fortfarande det riktiga namnet ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Ange en URL. Använd {size} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Ange kontonamn..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Ange ett kontonamn för inloggning med SASL PLAIN innan du går med i kanaler. Lämna tomt för att ansluta anonymt."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Ange ett kontonamn för att logga in med SASL PLAIN innan du går med i kanaler. Lämna tomt för att använda ditt smeknamn."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "Avsluta helskärm"
 msgid "Exit spotlight"
 msgstr "Lämna spotlight"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "Utökad profil är inte tillgänglig"
 msgid "External Link Warning"
 msgstr "Varning för extern länk"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "misslyckades"
@@ -2454,6 +2471,14 @@ msgstr "Ge upp"
 msgid "Forget credentials"
 msgstr "Glöm inloggningsuppgifter"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Glöm lösenord"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Glöm de sparade SASL- och serverlösenorden så att de inte längre skickas vid anslutning."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Glömt lösenord"
@@ -2505,10 +2530,6 @@ msgstr "Allmän supportkanal"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Få en avisering när någon säger orden du följer."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Hämtar fler meddelanden..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "gick med och lämnade"
 msgid "Joined the channel"
 msgstr "Gick med i kanalen"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Hoppa till nuet"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Behåll chatthistorik på denna enhet"
@@ -2851,6 +2868,10 @@ msgstr "Behåll chatthistorik på denna enhet"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Behåll inloggningsuppgifter"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Behåll lösenord"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Liveöversättning"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Ladda tidigare meddelanden som sparats på denna enhet"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Läs in fler resultat"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Ladda äldre meddelanden"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "Nätverk på {0}"
 msgid "new folder"
 msgstr "ny mapp"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nya meddelanden"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Nytt smeknamn"
@@ -3476,6 +3493,10 @@ msgstr "Inga avancerade lägen på den här servern."
 msgid "No bans yet, add one above"
 msgstr "Inga bannlysningar ännu, lägg till en ovan"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Inga bannlysningar än, be en kanaloperatör lägga till en"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Inga bottar matchar. Rensa sökningen eller ändra filtret."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Inga undantag ännu, lägg till ett ovan"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Inga undantag än, be en kanaloperatör lägga till ett"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Inga externa meddelanden (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "ingen värd inställd"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Inga inbjudningar ännu, lägg till en ovan"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Inga inbjudningar än, be en kanaloperatör lägga till en"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – standardskydd"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Inte krypterat"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "en av:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -4775,11 +4808,11 @@ msgstr "Skickar"
 msgid "Sending…"
 msgstr "Skickar…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Skickades okrypterat eftersom OTR bara krypterar text"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Skickades okrypterat eftersom filen är för stor för att krypteras"
 
@@ -5183,6 +5216,10 @@ msgstr "Sluta streama"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Stoppa video"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Sparade lösenord"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5598,8 +5635,8 @@ msgid "Unsuspend"
 msgstr "Återaktivera"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Ladda upp en bild eller ange en URL. Använd {size} i URL:en för dynamisk storlek."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Ladda upp en bild eller ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5613,7 +5650,7 @@ msgstr "Uppladdningen avbröts."
 msgid "Upload Files"
 msgstr "Ladda upp filer"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Uppladdad"
 

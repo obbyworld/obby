@@ -1,6 +1,7 @@
-import { useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
 import {
+  Fragment,
   forwardRef,
   memo,
   useCallback,
@@ -11,39 +12,71 @@ import {
   useRef,
   useState,
 } from "react";
-import { FaArrowDown } from "react-icons/fa";
-import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMessageJump } from "../../hooks/useMessageJump";
 import {
+  isScrolledToBottom,
   SCROLL_TOLERANCE,
   useScrollToBottom,
 } from "../../hooks/useScrollToBottom";
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import { findMessageRow } from "../../lib/highlightRow";
+import ircClient from "../../lib/ircClient";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
 import useStore from "../../store";
 import {
   loadNewerMessages,
   loadOlderMessages,
+  showMessagesFromReadMarker,
   showPresent,
   showSavedHistory,
 } from "../../store/handlers/history";
-import { serverSupportsChathistory } from "../../store/helpers";
+import {
+  firstUnreadMessageId,
+  isChatMessage,
+  isOwnMessage,
+  messageTime,
+  serverTracksReadMarker,
+} from "../../store/helpers";
 import type { Message as MessageType } from "../../types";
 import { CollapsedEventMessage } from "../message/CollapsedEventMessage";
 import { MessageItem } from "../message/MessageItem";
-import LoadingSpinner from "../ui/LoadingSpinner";
 import { ScrollToBottomButton } from "../ui/ScrollToBottomButton";
+import { MessageSkeletons } from "../ui/SkeletonRow";
 
 export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100;
+// How close to either end of the list we start loading the next page.
+const LOAD_AHEAD_PX = 800;
+// How long we wait for an older page before letting scrolling ask again.
+const OLDER_PAGE_TIMEOUT_MS = 10_000;
+// How long a chat may stay behind placeholders while it finds its unread line.
+const UNREAD_POSITIONING_LIMIT_MS = 4000;
+// How long a chat may wait for history at all before it opens without it.
+const UNREAD_POSITIONING_GIVE_UP_MS = 20_000;
+// How long a chat waits for its read marker before opening at the bottom.
+const READ_MARKER_WAIT_MS = 3000;
+// The room left above the "New messages" line when a chat opens on it.
+const UNREAD_LINE_MARGIN_PX = 48;
+// How long the "New messages" line stays once everything under it is read.
+const READ_LINE_LINGER_MS = 4000;
+// The read messages we show above the "New messages" line.
+const UNREAD_CONTEXT_ROWS = 20;
+
+type Opening =
+  | { step: "marker" }
+  | {
+      step: "placing" | "loading" | "open";
+      after: number | null;
+      hasFetched: boolean;
+      isOverdue?: boolean;
+      hasGivenUp?: boolean;
+    };
 
 // Stable empty array — prevents selector from returning a new [] on every render
 // when the channel has no messages yet (undefined ?? [] would create a new ref each time).
 const EMPTY_MESSAGES: import("../../types").Message[] = [];
 
 export interface ChannelMessageListHandle {
-  setAtBottom: () => void;
   scrollToBottom: () => void;
   getScrollState: () => {
     scrollTop: number;
@@ -112,7 +145,6 @@ export const ChannelMessageList = forwardRef<
     },
     ref,
   ) => {
-    const { t } = useLingui();
     const [visibleMessageCount, setVisibleMessageCount] = useState(
       initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT,
     );
@@ -122,14 +154,15 @@ export const ChannelMessageList = forwardRef<
     // Distinguishes initial join (full-screen spinner) from subsequent "load more" (button spinner).
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const isFetchingMoreRef = useRef(false);
+    const oldestAtFetchRef = useRef<string | null>(null);
+    // We remember the oldest row when an older page added nothing, so we ask
+    // the server for each older page once.
+    const emptyOlderPageAtRef = useRef<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const messagesInnerRef = useRef<HTMLDivElement>(null);
     // prev scrollHeight for prepend delta-correction.
     const prevScrollHeightRef = useRef(0);
-    // Ref mirror of isScrolledUp — lets useLayoutEffect closures read current value
-    // without listing isScrolledUp as a dep (which would re-run effects on every scroll).
-    const isScrolledUpRef = useRef(false);
     const prevFilteredLengthRef = useRef(0);
     const prevFirstMsgIdRef = useRef<string | null>(null);
     // Set when older messages are prepended, so the correction below knows a
@@ -180,7 +213,6 @@ export const ChannelMessageList = forwardRef<
     const windowJumpId = useStore(
       (state) => state.historyWindows[channelKey]?.jumpId,
     );
-    const isTouch = useIsTouchInput();
 
     useEffect(() => {
       if (historyTarget) showSavedHistory(useStore, serverId, historyTarget);
@@ -222,10 +254,10 @@ export const ChannelMessageList = forwardRef<
     }, [isActive]);
 
     useImperativeHandle(ref, () => ({
-      setAtBottom: () => {
+      scrollToBottom: () => {
         wasAtBottomRef.current = true;
+        scrollToBottom();
       },
-      scrollToBottom,
       getScrollState: () => ({
         scrollTop: lastScrollTopRef.current,
         isAtBottom: wasAtBottomRef.current,
@@ -234,7 +266,6 @@ export const ChannelMessageList = forwardRef<
     }));
 
     useEffect(() => {
-      isScrolledUpRef.current = isScrolledUp;
       // When the user returns to the bottom, shrink the window back to the base so
       // slice(-N) resumes trimming old messages from the top (memory optimization).
       // Only shrink if we grew above the base — preserves a sub-default saved visibleCount.
@@ -260,6 +291,17 @@ export const ChannelMessageList = forwardRef<
       resizeObserverPrevSHRef.current = 0;
     }, [channelKey]);
 
+    // Whether we moved the scroll to put the anchored row back where it was.
+    const keepAnchoredRow = (): boolean => {
+      const container = messagesContainerRef.current;
+      const anchor = droppedRowsAnchorRef.current;
+      droppedRowsAnchorRef.current = null;
+      const anchorTop = anchor && rowTop(anchor.id);
+      if (!container || !anchor || anchorTop == null) return false;
+      container.scrollTop += anchorTop - anchor.top;
+      return true;
+    };
+
     const rowTop = (id: string): number | null => {
       const container = messagesContainerRef.current;
       const row = container && findMessageRow(container, id);
@@ -269,12 +311,34 @@ export const ChannelMessageList = forwardRef<
         : null;
     };
 
-    // We grow the window during render: grown one commit later, slice(-N)
-    // would drop the top rows for a commit and remount them all.
     const [trackedList, setTrackedList] = useState({
       messages: channelMessages,
       jumpId: windowJumpId,
     });
+    const displayedMessages = useMemo(
+      () => channelMessages.slice(-visibleMessageCount),
+      [channelMessages, visibleMessageCount],
+    );
+    const {
+      isHoldingRef,
+      isHoldingJump,
+      holdRow,
+      releaseJump,
+      keepHeldRowInPlace,
+    } = useMessageJump({
+      containerRef: messagesContainerRef,
+      serverId,
+      isActive,
+      channelMessages,
+      displayedMessages,
+      visibleMessageCount,
+      setVisibleMessageCount,
+      windowJumpId,
+      wasAtBottomRef,
+    });
+
+    // We grow the window during render: grown one commit later, slice(-N)
+    // would drop the top rows for a commit and remount them all.
     if (
       trackedList.messages !== channelMessages ||
       trackedList.jumpId !== windowJumpId
@@ -284,6 +348,8 @@ export const ChannelMessageList = forwardRef<
       const delta = channelMessages.length - previous.length;
       const isFirstChanged = channelMessages[0]?.id !== previous[0]?.id;
       const isSameWindow = trackedList.jumpId === windowJumpId;
+      // A window that joins the present keeps its top row, so it is still the same list.
+      const isSameList = isSameWindow || !isFirstChanged;
       // The DOM still shows the dropped rows during this render, so we measure
       // here. The first kept row gains a date header, so we anchor on the next.
       const anchorId = channelMessages[1]?.id;
@@ -298,38 +364,28 @@ export const ChannelMessageList = forwardRef<
         if (top !== null) droppedRowsAnchorRef.current = { id: anchorId, top };
       }
       if (
-        isSameWindow &&
+        isSameList &&
         previous.length > 0 &&
         delta > 0 &&
-        (isFirstChanged || isScrolledUp || isDetached)
+        (isFirstChanged || isScrolledUp || isDetached || isHoldingRef.current)
       )
         setVisibleMessageCount((prev) => prev + delta);
     }
-
-    const displayedMessages = useMemo(
-      () => channelMessages.slice(-visibleMessageCount),
-      [channelMessages, visibleMessageCount],
-    );
-    const { isHoldingRef, isHoldingJump, releaseJump, keepHeldRowInPlace } =
-      useMessageJump({
-        containerRef: messagesContainerRef,
-        serverId,
-        isActive,
-        channelMessages,
-        displayedMessages,
-        visibleMessageCount,
-        setVisibleMessageCount,
-        windowJumpId,
-        wasAtBottomRef,
-      });
 
     const locallyHidden = channelMessages.length > displayedMessages.length;
     const serverHasMore =
       (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
-    const isHistoryLocalOnly = useStore(
-      (state) => !serverSupportsChathistory(state, serverId),
-    );
+    // The DOM still shows the top skeleton during this render, so we measure
+    // the first row here to keep it in place once the skeleton goes.
+    const [hadMoreMessages, setHadMoreMessages] = useState(hasMoreMessages);
+    if (hadMoreMessages !== hasMoreMessages) {
+      setHadMoreMessages(hasMoreMessages);
+      const firstId = displayedMessages[0]?.id;
+      const top = !hasMoreMessages && firstId ? rowTop(firstId) : null;
+      if (firstId && top !== null)
+        droppedRowsAnchorRef.current = { id: firstId, top };
+    }
 
     const eventGroups = useMemo(
       () => groupConsecutiveEvents(displayedMessages),
@@ -338,6 +394,271 @@ export const ChannelMessageList = forwardRef<
 
     const isLoadingHistory =
       (channel?.isLoadingHistory ?? privateChat?.isLoadingHistory) === true;
+
+    const readMarker = channel ? channel.readMarker : privateChat?.readMarker;
+    const isServerConnected =
+      servers.find((s) => s.id === serverId)?.isConnected === true;
+    const isAppFocused = useStore((state) => state.ui.isAppFocused !== false);
+    const isAppFocusedRef = useRef(isAppFocused);
+    isAppFocusedRef.current = isAppFocused;
+    // While the user is away we follow new messages only until the "New
+    // messages" line reaches the top, so nothing unseen scrolls out of view.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs and scrollToBottom are stable
+    const followNewMessages = useCallback(() => {
+      const container = messagesContainerRef.current;
+      const line = container?.querySelector<HTMLElement>("[data-unread-line]");
+      if (!container || isAppFocusedRef.current || !line) {
+        scrollToBottom();
+        return;
+      }
+      const lineTop =
+        line.getBoundingClientRect().top -
+        container.getBoundingClientRect().top +
+        container.scrollTop;
+      container.scrollTop = Math.min(
+        container.scrollHeight - container.clientHeight,
+        Math.max(0, lineTop - UNREAD_LINE_MARGIN_PX),
+      );
+    }, []);
+    const tracksReadMarker = useStore((state) =>
+      serverTracksReadMarker(state, serverId),
+    );
+    // We keep the marker as it stood on arrival, so the "New messages" line
+    // stays put while the chat is read.
+    const [opening, setOpening] = useState<Opening>({ step: "marker" });
+    const [wasActive, setWasActive] = useState(isActive);
+    if (wasActive !== isActive) {
+      setWasActive(isActive);
+      if (isActive) setOpening({ step: "marker" });
+    }
+    // A server without read markers keeps no shared place, so its chats open
+    // at the bottom.
+    if (isActive && opening.step === "marker" && readMarker !== undefined)
+      setOpening(
+        tracksReadMarker
+          ? {
+              step: "placing",
+              after: readMarker
+                ? Date.parse(readMarker)
+                : Number.NEGATIVE_INFINITY,
+              hasFetched: false,
+            }
+          : { step: "open", after: null, hasFetched: false },
+      );
+    const unreadAfter = opening.step === "marker" ? null : opening.after;
+    const isOverdue = opening.step !== "marker" && opening.isOverdue === true;
+    const hasGivenUp = opening.step !== "marker" && opening.hasGivenUp === true;
+
+    const firstUnreadId = useMemo(
+      () =>
+        unreadAfter == null
+          ? undefined
+          : firstUnreadMessageId(
+              channelMessages,
+              unreadAfter,
+              ircClient.getNick(serverId),
+            ),
+      [channelMessages, unreadAfter, serverId],
+    );
+    // A page that lands after we opened without it can still bring unread
+    // messages, so we place their line before the user reads past them.
+    if (opening.step === "open" && hasGivenUp && firstUnreadId)
+      setOpening({ ...opening, step: "placing" });
+    const oldestLoaded = channelMessages[0];
+    const needsMarkerPage =
+      opening.step === "placing" &&
+      !opening.hasFetched &&
+      !hasGivenUp &&
+      unreadAfter != null &&
+      Number.isFinite(unreadAfter) &&
+      !isDetached &&
+      hasMoreMessages &&
+      (!oldestLoaded || messageTime(oldestLoaded) > unreadAfter);
+    const isPositioningOnUnread =
+      isActive &&
+      (opening.step === "placing" || opening.step === "loading") &&
+      unreadAfter != null;
+
+    const isAwayFromPresent =
+      isScrolledUp || isDetached || isPositioningOnUnread;
+    // Messages that land while the user watches the bottom are read as they
+    // arrive, so they never start a new line. We also clear the line when the
+    // user sends a message, since sending means they have read the chat.
+    const [watchedMessages, setWatchedMessages] = useState(channelMessages);
+    if (watchedMessages !== channelMessages) {
+      setWatchedMessages(channelMessages);
+      const newest = channelMessages.at(-1);
+      const ownNick = ircClient.getNick(serverId);
+      const hasJustSent =
+        !!newest &&
+        newest.id !== watchedMessages.at(-1)?.id &&
+        isChatMessage(newest) &&
+        isOwnMessage(newest, ownNick);
+      if (
+        isActive &&
+        opening.step === "open" &&
+        opening.after != null &&
+        newest &&
+        (hasJustSent ||
+          (!isAwayFromPresent &&
+            isAppFocused &&
+            !hasGivenUp &&
+            !firstUnreadMessageId(watchedMessages, opening.after, ownNick)))
+      )
+        setOpening({
+          ...opening,
+          after: Math.max(opening.after, messageTime(newest)),
+        });
+    }
+    useEffect(() => {
+      if (!isActive) return;
+      useStore.setState((state) =>
+        state.ui.isChatAwayFromPresent === isAwayFromPresent
+          ? {}
+          : { ui: { ...state.ui, isChatAwayFromPresent: isAwayFromPresent } },
+      );
+    }, [isActive, isAwayFromPresent]);
+
+    // Once the user has read past the line at the bottom, we keep it a moment
+    // so a glance still shows where the new messages began, then drop it.
+    const readUpTo = readMarker ? Date.parse(readMarker) : null;
+    useEffect(() => {
+      if (!isActive || opening.step !== "open" || isAwayFromPresent) return;
+      if (!isAppFocused) return;
+      if (readUpTo == null || unreadAfter == null || readUpTo <= unreadAfter)
+        return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) =>
+            o.step === "open" ? { ...o, after: readUpTo } : o,
+          ),
+        READ_LINE_LINGER_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [
+      isActive,
+      opening.step,
+      isAwayFromPresent,
+      isAppFocused,
+      readUpTo,
+      unreadAfter,
+    ]);
+
+    // A chat restored at startup opens before we have logged in, so we wait
+    // for its marker while the server could still send one.
+    useEffect(() => {
+      if (!isActive || opening.step !== "marker" || !isServerConnected) return;
+      const timer = setTimeout(
+        () => setOpening({ step: "open", after: null, hasFetched: false }),
+        READ_MARKER_WAIT_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isActive, opening.step, isServerConnected]);
+
+    // Late history can hold the chat back, so after a while we place the
+    // unread line with the rows that have arrived and keep unseen ones unread.
+    useEffect(() => {
+      if (!isActive || opening.step !== "placing" || isOverdue) return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) =>
+            o.step === "placing" ? { ...o, isOverdue: true } : o,
+          ),
+        UNREAD_POSITIONING_LIMIT_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isActive, opening.step, isOverdue]);
+
+    // A dropped connection or an unanswered request can leave history loading
+    // for good, so we stop waiting and keep whatever arrives later unread.
+    useEffect(() => {
+      if (!isPositioningOnUnread || hasGivenUp) return;
+      const timer = setTimeout(
+        () =>
+          setOpening((o) =>
+            o.step === "placing" || o.step === "loading"
+              ? { ...o, step: "placing", isOverdue: true, hasGivenUp: true }
+              : o,
+          ),
+        UNREAD_POSITIONING_GIVE_UP_MS,
+      );
+      return () => clearTimeout(timer);
+    }, [isPositioningOnUnread, hasGivenUp]);
+
+    // We ask once per opening, also when React runs the effect twice, and drop
+    // the page if the user has moved on before it arrives.
+    const markerPageRequestRef = useRef<Opening | null>(null);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: the marker, the loaded rows and loading decide when to ask
+    useEffect(() => {
+      if (!needsMarkerPage || !historyTarget) return;
+      if (opening.step !== "placing" || opening.after == null) return;
+      if (isLoadingHistory && !isOverdue) return;
+      if (markerPageRequestRef.current === opening) return;
+      const request = opening;
+      markerPageRequestRef.current = request;
+      setOpening({ ...opening, step: "loading", hasFetched: true });
+      showMessagesFromReadMarker(
+        useStore,
+        serverId,
+        historyTarget,
+        opening.after,
+        () => markerPageRequestRef.current === request,
+      ).finally(() =>
+        setOpening((o) =>
+          o.step === "loading" ? { ...o, step: "placing" } : o,
+        ),
+      );
+    }, [needsMarkerPage, isLoadingHistory, isOverdue]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs are stable; the list and the opening step decide when to look
+    useLayoutEffect(() => {
+      if (!isActive || opening.step !== "placing") return;
+      const isWaitingForHistory = isLoadingHistory && !hasGivenUp;
+      if ((isWaitingForHistory && !isOverdue) || needsMarkerPage) return;
+      const container = messagesContainerRef.current;
+      if (!container) return;
+      const index = channelMessages.findIndex((m) => m.id === firstUnreadId);
+      if (index >= 0 && channelMessages.length - index > visibleMessageCount) {
+        setVisibleMessageCount(
+          channelMessages.length - index + UNREAD_CONTEXT_ROWS,
+        );
+        return;
+      }
+      const line = container.querySelector<HTMLElement>("[data-unread-line]");
+      // The server page we wait for can still bring the unread messages.
+      if (!line && isWaitingForHistory) return;
+      const top = line
+        ? line.getBoundingClientRect().top -
+          container.getBoundingClientRect().top +
+          container.scrollTop
+        : 0;
+      const isLineAtEnd =
+        top >= container.scrollHeight - container.clientHeight;
+      // A window loads the rows below the line next, so we wait for them.
+      if (line && isLineAtEnd && isDetached && !isOverdue) return;
+      setOpening({
+        ...opening,
+        step: "open",
+        hasGivenUp: hasGivenUp && !firstUnreadId,
+      });
+      if (!line || isLineAtEnd) return;
+      container.scrollTop = Math.max(0, top - UNREAD_LINE_MARGIN_PX);
+      resizeObserverPrevSHRef.current = container.scrollHeight;
+      holdRow(line, { keepsOffset: true });
+      // The bottom detection can still deliver what it saw before we moved,
+      // so we have it look again once those reports are out.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() =>
+          container.dispatchEvent(new Event("scroll")),
+        ),
+      );
+    }, [
+      displayedMessages,
+      opening,
+      isActive,
+      isLoadingHistory,
+      needsMarkerPage,
+    ]);
 
     // Scroll to bottom on initial mount, unless a saved position was passed in.
     // A jump can mount the list, and its layout effect has already placed the row.
@@ -368,9 +689,14 @@ export const ChannelMessageList = forwardRef<
           // delta correction for scroll position is handled by useLayoutEffect([displayedMessages])
           isFetchingMoreRef.current = false;
           setIsFetchingMore(false);
-        } else if (!isDetachedRef.current && !isHoldingRef.current) {
+          if (channelMessages[0]?.id === oldestAtFetchRef.current)
+            emptyOlderPageAtRef.current = oldestAtFetchRef.current;
+        } else if (
+          !isDetachedRef.current &&
+          !isHoldingRef.current &&
+          wasAtBottomRef.current
+        ) {
           scrollToBottom();
-          wasAtBottomRef.current = true;
         }
       }
       wasLoadingHistoryRef.current = isLoadingHistory;
@@ -394,8 +720,11 @@ export const ChannelMessageList = forwardRef<
       const wasDetached = wasDetachedRef.current;
       wasDetachedRef.current = isDetached;
       if (isDetached || !wasDetached) return;
-      releaseJump();
+      const hasJoinedPresent =
+        channelMessages[0]?.id === prevFirstMsgIdRef.current;
       resetWindowTracking();
+      if (hasJoinedPresent && isHoldingRef.current) return;
+      releaseJump();
       setVisibleMessageCount(DEFAULT_VISIBLE_MESSAGE_COUNT);
       wasAtBottomRef.current = true;
       scrollToBottom();
@@ -436,8 +765,13 @@ export const ChannelMessageList = forwardRef<
         pendingPrependRef.current = false;
       }
 
+      // We read the position here because the scrolled-up state updates a
+      // render late, after the first scroll that loads a page.
+      const wasAboveBottom =
+        container.scrollTop + container.clientHeight <
+        prevHeight - SCROLL_TOLERANCE;
       if (
-        isScrolledUpRef.current &&
+        wasAboveBottom &&
         prevHeight > 0 &&
         newHeight > prevHeight &&
         wasPrepend
@@ -447,16 +781,15 @@ export const ChannelMessageList = forwardRef<
         resizeObserverPrevSHRef.current = newHeight;
       }
 
-      const anchor = droppedRowsAnchorRef.current;
-      droppedRowsAnchorRef.current = null;
-      const anchorTop = anchor && rowTop(anchor.id);
-      if (anchor && anchorTop != null) {
-        container.scrollTop += anchorTop - anchor.top;
-        resizeObserverPrevSHRef.current = newHeight;
-      }
+      if (keepAnchoredRow()) resizeObserverPrevSHRef.current = newHeight;
 
       prevScrollHeightRef.current = newHeight;
     }, [displayedMessages]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the top skeleton goes; refs are stable
+    useLayoutEffect(() => {
+      keepAnchoredRow();
+    }, [hasMoreMessages]);
 
     // Re-stick to bottom when inner message content grows (media/audio previews loading).
     // Uses prevScrollHeight instead of wasAtBottomRef to avoid stale-flag race where the
@@ -468,7 +801,6 @@ export const ChannelMessageList = forwardRef<
       const container = messagesContainerRef.current;
       const inner = messagesInnerRef.current;
       if (!inner || !container) return;
-      resizeObserverPrevSHRef.current = container.scrollHeight;
       let prevClientWidth = container.clientWidth;
       const observer = new ResizeObserver(() => {
         if (container.clientHeight === 0) return;
@@ -483,14 +815,15 @@ export const ChannelMessageList = forwardRef<
         const widthChanged = currentClientWidth !== prevClientWidth;
         prevClientWidth = currentClientWidth;
         const prevSH = resizeObserverPrevSHRef.current;
+        // A list that shrank has already pulled the scroll back to its end.
         const wasAtPrevBottom =
           container.scrollTop + container.clientHeight >=
-          prevSH - SCROLL_TOLERANCE;
+          Math.min(prevSH, container.scrollHeight) - SCROLL_TOLERANCE;
         resizeObserverPrevSHRef.current = container.scrollHeight;
         if (isHoldingRef.current) {
           keepHeldRowInPlace();
         } else if (wasAtPrevBottom && !isDetachedRef.current) {
-          scrollToBottom();
+          followNewMessages();
         } else if (widthChanged && prevSH > 0) {
           const ratio = container.scrollTop / prevSH;
           container.scrollTop = Math.round(ratio * container.scrollHeight);
@@ -536,21 +869,113 @@ export const ChannelMessageList = forwardRef<
     }, []);
 
     const [isLoadingNewer, setIsLoadingNewer] = useState(false);
-    // biome-ignore lint/correctness/useExhaustiveDependencies: channelMessages reruns it after each page in case the bottom is still in view
+    const isLoadingNewerRef = useRef(false);
+
+    const loadOlder = (): boolean => {
+      if (!isActive || isLoadingHistory || isFetchingMoreRef.current)
+        return false;
+      const oldest = channelMessages[0];
+      if (locallyHidden) {
+        pendingPrependRef.current = true;
+        setVisibleMessageCount((prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT);
+        return true;
+      }
+      if (!serverHasMore || !historyTarget) return false;
+      if (oldest && emptyOlderPageAtRef.current === oldest.id) return false;
+      isFetchingMoreRef.current = true;
+      oldestAtFetchRef.current = oldest?.id ?? null;
+      setIsFetchingMore(true);
+      const stopFetching = () => {
+        isFetchingMoreRef.current = false;
+        setIsFetchingMore(false);
+      };
+      // A page read from disk can start and end loading within one render,
+      // which the loading watcher never sees, so we also stop after a while.
+      setTimeout(() => {
+        if (oldestAtFetchRef.current === (oldest?.id ?? null)) stopFetching();
+      }, OLDER_PAGE_TIMEOUT_MS);
+      loadOlderMessages(
+        useStore,
+        serverId,
+        historyTarget,
+        oldest?.timestamp ? new Date(oldest.timestamp).getTime() : Date.now(),
+      )
+        .then((isPageComing) => {
+          if (!isPageComing) stopFetching();
+        })
+        .catch(stopFetching);
+      return true;
+    };
+
     useEffect(() => {
-      if (!isDetached || isScrolledUp || isHoldingRef.current) return;
-      if (!isActive || isLoadingNewer || !historyTarget) return;
+      if (!isFetchingMoreRef.current) return;
+      if (channelMessages[0]?.id === oldestAtFetchRef.current) return;
+      oldestAtFetchRef.current = null;
+      isFetchingMoreRef.current = false;
+      setIsFetchingMore(false);
+    }, [channelMessages]);
+
+    const loadNewer = () => {
+      if (!isDetached || !isActive || !historyTarget) return;
+      if (isLoadingNewerRef.current) return;
+      isLoadingNewerRef.current = true;
       setIsLoadingNewer(true);
-      loadNewerMessages(useStore, serverId, historyTarget).finally(() =>
-        setIsLoadingNewer(false),
+      loadNewerMessages(useStore, serverId, historyTarget).finally(() => {
+        isLoadingNewerRef.current = false;
+        setIsLoadingNewer(false);
+      });
+    };
+
+    const isTopSkeletonInView = (container: HTMLElement) => {
+      const skeleton = hasMoreMessages
+        ? messagesInnerRef.current?.firstElementChild
+        : null;
+      return (
+        !!skeleton &&
+        skeleton.getBoundingClientRect().bottom >
+          container.getBoundingClientRect().top
       );
+    };
+
+    const loadNearEdgesRef = useRef(() => {});
+    loadNearEdgesRef.current = () => {
+      const container = messagesContainerRef.current;
+      if (!container || container.clientHeight === 0) return;
+      // Rows added below never move the held row, so we load newer ones while holding.
+      if (isScrolledToBottom(container, LOAD_AHEAD_PX)) loadNewer();
+      if (isHoldingRef.current) {
+        // Rows landing above leave the held row in place, so we fill the placeholders in view.
+        if (isTopSkeletonInView(container)) loadOlder();
+        return;
+      }
+      if (
+        container.scrollTop < LOAD_AHEAD_PX &&
+        (!isScrolledToBottom(container) ||
+          container.scrollHeight <= container.clientHeight)
+      )
+        loadOlder();
+    };
+
+    useEffect(() => {
+      const container = messagesContainerRef.current;
+      if (!container) return;
+      const onScroll = () => loadNearEdgesRef.current();
+      container.addEventListener("scroll", onScroll, { passive: true });
+      return () => container.removeEventListener("scroll", onScroll);
+    }, []);
+
+    // A page can land with the edge still in view, which fires no scroll event.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: each listed change can leave an edge in view
+    useEffect(() => {
+      loadNearEdgesRef.current();
     }, [
-      isDetached,
-      isScrolledUp,
-      isHoldingJump,
-      isActive,
+      displayedMessages,
+      isLoadingHistory,
+      hasMoreMessages,
+      isFetchingMore,
       isLoadingNewer,
-      channelMessages,
+      isActive,
+      isHoldingJump,
     ]);
 
     // Auto-scroll on new messages — skip when this channel is hidden (display:none).
@@ -560,10 +985,8 @@ export const ChannelMessageList = forwardRef<
       const isNarrowView = window.matchMedia("(max-width: 768px)").matches;
       const isChatVisible =
         !isNarrowView || mobileViewActiveColumn === "chatView";
-      if (wasAtBottomRef.current && isChatVisible) {
-        scrollToBottom();
-      }
-    }, [displayedMessages, mobileViewActiveColumn, scrollToBottom, isActive]);
+      if (wasAtBottomRef.current && isChatVisible) followNewMessages();
+    }, [displayedMessages, mobileViewActiveColumn, isActive]);
 
     return (
       <>
@@ -585,88 +1008,23 @@ export const ChannelMessageList = forwardRef<
             }
           }}
         >
+          {isPositioningOnUnread && (
+            <div className="sticky top-0 z-20 h-0">
+              <div className="h-screen flex flex-col bg-discord-dark-200">
+                <MessageSkeletons isFilling />
+              </div>
+            </div>
+          )}
           {isLoadingHistory &&
           !isFetchingMore &&
           channelMessages.length === 0 ? (
-            <div className="flex-grow flex items-center justify-center">
-              <LoadingSpinner
-                size="lg"
-                text="Loading chat history..."
-                className="text-discord-text-muted"
-              />
-            </div>
+            <MessageSkeletons isFilling />
           ) : (
-            <div ref={messagesInnerRef} className="flex flex-col">
-              {hasMoreMessages && (
-                <div className="flex items-center gap-3 px-4 py-3">
-                  <span className="hairline flex-1" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (locallyHidden) {
-                        pendingPrependRef.current = true;
-                        setVisibleMessageCount(
-                          (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT,
-                        );
-                      } else if (serverHasMore && historyTarget) {
-                        const oldest = channelMessages[0];
-                        isFetchingMoreRef.current = true;
-                        setIsFetchingMore(true);
-                        const stopFetching = () => {
-                          isFetchingMoreRef.current = false;
-                          setIsFetchingMore(false);
-                        };
-                        loadOlderMessages(
-                          useStore,
-                          serverId,
-                          historyTarget,
-                          oldest?.timestamp
-                            ? new Date(oldest.timestamp).getTime()
-                            : Date.now(),
-                        )
-                          .then((isPageComing) => {
-                            if (!isPageComing) stopFetching();
-                          })
-                          .catch(stopFetching);
-                      }
-                    }}
-                    disabled={isFetchingMore}
-                    title={
-                      isHistoryLocalOnly
-                        ? t`Load earlier messages saved on this device`
-                        : undefined
-                    }
-                    className={`chip-action ${isTouch ? "min-h-10 px-4" : ""}`}
-                  >
-                    {isFetchingMore ? (
-                      <LoadingSpinner
-                        size="sm"
-                        text=""
-                        className="text-discord-text-muted"
-                      />
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="w-3 h-3"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 19V5M5 12l7-7 7 7" />
-                      </svg>
-                    )}
-                    {isFetchingMore
-                      ? t`Getting more messages...`
-                      : locallyHidden
-                        ? t`${channelMessages.length - displayedMessages.length} older messages`
-                        : t`Load older messages`}
-                  </button>
-                  <span className="hairline flex-1" />
-                </div>
+            <div ref={messagesInnerRef} className="flex-grow flex flex-col">
+              {hasMoreMessages ? (
+                <MessageSkeletons isFilling />
+              ) : (
+                <div className="grow" />
               )}
               {eventGroups.map((group) => {
                 if (group.type === "eventGroup") {
@@ -693,59 +1051,73 @@ export const ChannelMessageList = forwardRef<
                   message,
                 );
                 return (
-                  <MessageItem
-                    key={message.id}
-                    message={message}
-                    showDate={
-                      originalIndex === 0 ||
-                      new Date(message.timestamp).toDateString() !==
-                        new Date(
-                          channelMessages[originalIndex - 1]?.timestamp,
-                        ).toDateString()
-                    }
-                    showHeader={showHeader}
-                    setReplyTo={onReply}
-                    isHighlighted={message.id === highlightedMessageId}
-                    isSearchHit={message.id === searchHitMessageId}
-                    onUsernameContextMenu={onUsernameContextMenu}
-                    onIrcLinkClick={onIrcLinkClick}
-                    onReactClick={onReactClick}
-                    joinChannel={joinChannel}
-                    onReactionUnreact={onReactionUnreact}
-                    onOpenReactionModal={onOpenReactionModal}
-                    onDirectReaction={onDirectReaction}
-                    serverId={serverId}
-                    channelId={channelId || undefined}
-                    privateChatId={privateChatId || undefined}
-                    onRedactMessage={onRedactMessage}
-                    onOpenProfile={onOpenProfile}
-                  />
+                  <Fragment key={message.id}>
+                    {message.id === firstUnreadId && (
+                      // We draw the line over the boundary with no height of its own, so the messages stay put when it comes and goes.
+                      // Above the first row there is nothing to overlap, so there it takes its own height.
+                      <div
+                        data-unread-line
+                        className={`relative z-[5] pointer-events-none ${originalIndex === 0 ? "h-5" : "h-0"}`}
+                      >
+                        <div
+                          className={`absolute inset-x-4 -translate-y-1/2 flex items-center gap-2 text-xs font-semibold text-discord-red ${originalIndex === 0 ? "top-1/2" : "top-0"}`}
+                        >
+                          <span className="hairline flex-1 bg-discord-red/70" />
+                          <span className="px-1 rounded bg-discord-dark-200">
+                            <Trans>New messages</Trans>
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    <MessageItem
+                      message={message}
+                      showDate={
+                        originalIndex === 0 ||
+                        new Date(message.timestamp).toDateString() !==
+                          new Date(
+                            channelMessages[originalIndex - 1]?.timestamp,
+                          ).toDateString()
+                      }
+                      showHeader={showHeader}
+                      setReplyTo={onReply}
+                      isHighlighted={message.id === highlightedMessageId}
+                      isSearchHit={message.id === searchHitMessageId}
+                      onUsernameContextMenu={onUsernameContextMenu}
+                      onIrcLinkClick={onIrcLinkClick}
+                      onReactClick={onReactClick}
+                      joinChannel={joinChannel}
+                      onReactionUnreact={onReactionUnreact}
+                      onOpenReactionModal={onOpenReactionModal}
+                      onDirectReaction={onDirectReaction}
+                      serverId={serverId}
+                      channelId={channelId || undefined}
+                      privateChatId={privateChatId || undefined}
+                      onRedactMessage={onRedactMessage}
+                      onOpenProfile={onOpenProfile}
+                    />
+                  </Fragment>
                 );
               })}
+              {isDetached && <MessageSkeletons />}
             </div>
           )}
           <div ref={messagesEndRef} className="h-px" />
         </div>
         <ScrollToBottomButton
-          isVisible={isScrolledUp && !isDetached}
+          isVisible={isScrolledUp || isDetached}
           onClick={() => {
             releaseJump();
-            scrollToBottom();
+            markerPageRequestRef.current = null;
+            setOpening((o) =>
+              o.step === "placing" || o.step === "loading"
+                ? { ...o, step: "open" }
+                : o,
+            );
+            if (isDetached && historyTarget)
+              showPresent(useStore, serverId, historyTarget);
+            else scrollToBottom();
           }}
         />
-        {isDetached && historyTarget && (
-          <div className="flex justify-center px-4 py-2 bg-discord-dark-200">
-            <button
-              type="button"
-              onClick={() => showPresent(useStore, serverId, historyTarget)}
-              onMouseDown={(e) => e.preventDefault()}
-              className={`chip-action ${isTouch ? "min-h-11 px-4 text-sm" : ""}`}
-            >
-              <FaArrowDown className="w-3 h-3" aria-hidden="true" />
-              {t`Jump to present`}
-            </button>
-          </div>
-        )}
       </>
     );
   },

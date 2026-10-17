@@ -424,7 +424,7 @@ export function registerWhoisHandlers(store: StoreApi<AppState>): void {
     // Flush any pending batched WHO replies for this channel so the
     // member list updates at the END_OF_WHO boundary instead of waiting
     // out the idle timer.
-    if (mask?.startsWith("#")) {
+    if (mask && ircClient.isChannel(serverId, mask)) {
       flushWhoReplies(store, serverId, mask);
     }
     // When WHO list is complete for a channel, request metadata for all users

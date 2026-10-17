@@ -82,7 +82,8 @@ export const BaseModal: React.FC<BaseModalProps> = ({
 
   const handleOverlayMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (closeOnClickOutside && e.target === e.currentTarget) onClose();
+      if (closeOnClickOutside && !modalRef.current?.contains(e.target as Node))
+        onClose();
     },
     [closeOnClickOutside, onClose],
   );

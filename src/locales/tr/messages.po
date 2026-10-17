@@ -113,11 +113,6 @@ msgstr "{0} bir tam sayı olmalıdır."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} ağ{1} — katılmak için birini seçin"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} eski mesaj"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} kişi izliyor"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} yayında · {1} izliyor"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {1 dosya yükleniyor} other {# dosya yükleniyor}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ sonuç"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} içinde {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 yükleme başarısız oldu} other {# yükleme başarısız oldu}}"
 
@@ -687,6 +682,10 @@ msgstr "artık **{newNick}** olarak bilinmektedir"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Bu mesajı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Bu listeyi değiştirmesi için bir kanal operatöründen isteyin."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Paketleri yönetmek için sunucu yöneticisinden bir backend URL'si (draft/authtoken veya obby.world/FILEHOST) duyurmasını isteyin."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "Avatar önizlemesi"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Uzakta"
 
@@ -1000,7 +1003,6 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "İptal"
 
@@ -1026,7 +1029,8 @@ msgstr "Şifrelemeyi iptal et"
 msgid "Cancel reply"
 msgstr "Yanıtı iptal et"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Yüklemeyi iptal et"
 
@@ -1356,6 +1360,7 @@ msgstr "Kod kabul edildi."
 msgid "Code Snippets"
 msgstr "Kod Parçacıkları"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "Varsayılan Takma Ad"
 msgid "Delay joins (+D)"
 msgstr "Katılımları geciktir (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Sil"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Botu sil"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "Klasörü sil"
 msgid "Delete its saved chat history too"
 msgstr "Kayıtlı sohbet geçmişini de sil"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Mesajı sil"
 
@@ -1783,6 +1798,7 @@ msgstr "Mesajı sil"
 msgid "Delete network"
 msgstr "Ağı sil"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Paketi sil"
@@ -1943,7 +1959,7 @@ msgstr "Bu bağlantıyı yeni sekmede açmak istiyor musunuz?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "bitti"
 
@@ -2085,7 +2101,7 @@ msgstr "Şifrele (OTR)"
 msgid "Encrypt this chat"
 msgstr "Bu sohbeti şifrele"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Şifrelenmiş"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Boşluk, emoji veya sembol içerebilen bir ad girin. IRC komutları yine de gerçek adı ({channelName}) kullanır."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Bir URL girin. Dinamik boyut için URL'de {size} kullanın. Örnek: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın. Örnek: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Hesap adını girin..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Kanallara katılmadan önce SASL PLAIN ile giriş yapmak için bir hesap adı girin. Anonim bağlanmak için boş bırakın."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Kanallara katılmadan önce SASL PLAIN ile giriş yapmak için bir hesap adı girin. Takma adınızı kullanmak için boş bırakın."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "Tam ekrandan çık"
 msgid "Exit spotlight"
 msgstr "Öne çıkarmayı durdur"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "Genişletilmiş profil kullanılamıyor"
 msgid "External Link Warning"
 msgstr "Harici Bağlantı Uyarısı"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "başarısız"
@@ -2454,6 +2471,14 @@ msgstr "Pes et"
 msgid "Forget credentials"
 msgstr "Kimlik bilgilerini unut"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Parolaları unut"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Bağlanırken gönderilmemeleri için kayıtlı SASL ve sunucu parolalarını unutun."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Parolamı unuttum"
@@ -2505,10 +2530,6 @@ msgstr "Genel Destek Kanalı"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Biri takip ettiğin kelimeleri söylediğinde bildirim al."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Daha fazla mesaj alınıyor..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "katıldı ve ayrıldı"
 msgid "Joined the channel"
 msgstr "Kanala katıldı"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Şimdiye atla"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Sohbet geçmişini bu cihazda tut"
@@ -2851,6 +2868,10 @@ msgstr "Sohbet geçmişini bu cihazda tut"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Kimlik bilgilerini sakla"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Parolaları sakla"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "Canlı"
 msgid "Live Translate"
 msgstr "Canlı Çeviri"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Bu cihazda kayıtlı önceki mesajları yükle"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Daha fazla sonuç yükle"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Eski mesajları yükle"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "{0} üzerindeki ağlar"
 msgid "new folder"
 msgstr "yeni klasör"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Yeni mesajlar"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Yeni takma ad"
@@ -3476,6 +3493,10 @@ msgstr "Bu sunucuda gelişmiş mod yok."
 msgid "No bans yet, add one above"
 msgstr "Henüz yasak yok, yukarıdan bir tane ekleyin"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Henüz yasak yok, eklemesi için bir kanal operatöründen isteyin"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Eşleşen bot yok. Aramayı temizleyin veya filtreyi değiştirin."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Henüz istisna yok, yukarıdan bir tane ekleyin"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Henüz istisna yok, eklemesi için bir kanal operatöründen isteyin"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Dış iletiler yok (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "sunucu ayarlanmadı"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Henüz davet yok, yukarıdan bir tane ekleyin"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Henüz davet yok, eklemesi için bir kanal operatöründen isteyin"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal - Standart koruma"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Şifrelenmemiş"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "şunlardan biri:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Çevrimiçi"
 
@@ -4775,11 +4808,11 @@ msgstr "Gönderiliyor"
 msgid "Sending…"
 msgstr "Gönderiliyor…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Şifresiz gönderildi çünkü OTR yalnızca metni şifreler"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Şifresiz gönderildi çünkü dosya şifrelenemeyecek kadar büyük"
 
@@ -5183,6 +5216,10 @@ msgstr "Yayını durdur"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Videoyu durdur"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Kayıtlı parolalar"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5598,8 +5635,8 @@ msgid "Unsuspend"
 msgstr "Askıdan al"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Bir resim yükleyin veya bir URL girin. Dinamik boyut için URL'de {size} kullanın."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Bir resim yükleyin veya bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5613,7 +5650,7 @@ msgstr "Yükleme iptal edildi."
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Yüklendi"
 

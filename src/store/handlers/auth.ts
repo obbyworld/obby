@@ -21,7 +21,6 @@ import {
   chunkSaslPayload,
 } from "../../lib/saslFrames";
 import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
-import { normalizeHost } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
@@ -121,6 +120,17 @@ function clearSession(serverId: string) {
 }
 
 export function registerAuthHandlers(store: StoreApi<AppState>): void {
+  const setAccount = (serverId: string, account: string | undefined) =>
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, account } : server,
+      ),
+    }));
+  ircClient.on("LOGGED_IN", ({ serverId, account }) =>
+    setAccount(serverId, account),
+  );
+  ircClient.on("LOGGED_OUT", ({ serverId }) => setAccount(serverId, undefined));
+
   ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
     if (capabilities?.startsWith("draft/metadata")) {
       const currentSubs =
@@ -542,11 +552,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
         const hasLowLinkSecurity = linkSecurityValue < 2;
         const savedServers = storage.servers.load();
         const serverConfig = currentServer
-          ? savedServers.find(
-              (s) =>
-                normalizeHost(s.host) === normalizeHost(currentServer.host) &&
-                s.port === currentServer.port,
-            )
+          ? savedServers.find((s) => s.id === serverId)
           : undefined;
         const shouldWarnLinkSecurity =
           hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;

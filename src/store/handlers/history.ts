@@ -25,6 +25,7 @@ import {
 } from "../../lib/history/historyDb";
 import {
   buildReplayLines,
+  decideAfterForwardFill,
   decideAfterGapFill,
   decideAfterLatest,
   HISTORY_GAP_CODE,
@@ -45,7 +46,7 @@ import {
 } from "../../lib/history/historySearch";
 import { containsLink, plainText } from "../../lib/history/searchFields";
 import ircClient from "../../lib/ircClient";
-import { isChannelTarget, parseMessageTags } from "../../lib/ircUtils";
+import { parseMessageTags } from "../../lib/ircUtils";
 import type {
   SearchPage,
   SearchQuery,
@@ -59,6 +60,7 @@ import {
   serverSupportsChathistory,
 } from "../helpers";
 import type { AppState } from "../index";
+import * as storage from "../localStorage";
 
 export const BYTES_PER_MB = 1_000_000;
 const PRUNE_EVERY_WRITES = 200;
@@ -71,15 +73,15 @@ const SEARCH_FILL_PACE_MS = 1000;
 const SEARCH_FILL_TIMEOUT_MS = 20_000;
 
 type GapFill = {
-  gap: HistoryGap;
+  gap?: HistoryGap;
   pagesLeft?: number;
   isDiskOnly?: boolean;
-  onSettled?: (isSaved: boolean) => void;
+  onSettled?: (isSaved: boolean, page?: HistoryPage) => void;
 };
 
 type PendingRequest =
   | { kind: "latest"; newestStoredTime: Promise<number | undefined> }
-  | { kind: "before"; fill?: GapFill };
+  | { kind: "before" | "after" | "around"; fill?: GapFill };
 
 const recorders = new Map<string, HistoryRecorder>();
 const pendingRequests = new Map<string, PendingRequest[]>();
@@ -91,7 +93,13 @@ let nextGapFill: GapFill | undefined;
 // all duplicates, would close the gap, so we keep one request per gap.
 function isGapBeingFilled(serverId: string, target: string, gapId: number) {
   return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
-    (request) => request.kind === "before" && request.fill?.gap.id === gapId,
+    (request) => request.kind !== "latest" && request.fill?.gap?.id === gapId,
+  );
+}
+
+export function isServerPageComing(serverId: string, target: string): boolean {
+  return (pendingRequests.get(conversationKey(serverId, target)) ?? []).some(
+    (request) => request.kind === "latest" || !request.fill?.isDiskOnly,
   );
 }
 
@@ -102,7 +110,8 @@ function requestPageBefore(
   fill: GapFill | undefined,
   showLoading = true,
 ): boolean {
-  if (fill && isGapBeingFilled(serverId, target, fill.gap.id)) return false;
+  if (fill?.gap && isGapBeingFilled(serverId, target, fill.gap.id))
+    return false;
   nextGapFill = fill;
   const isSent = ircClient.requestChathistoryBefore(
     serverId,
@@ -126,6 +135,29 @@ function serverAddress(
 ): string {
   const address = `${normalizeHost(server.host).toLowerCase()}:${server.port}`;
   return server.bouncerNetid ? `${address}/${server.bouncerNetid}` : address;
+}
+
+// We add the login to the address, so two accounts on one network never take each other's history.
+function serverLoginAddress(
+  server: Pick<
+    Server,
+    "id" | "host" | "port" | "bouncerNetid" | "bouncerServerId"
+  >,
+): string {
+  const configId = server.bouncerServerId ?? server.id;
+  const config = storage.servers.load().find((c) => c.id === configId);
+  const login = (
+    config?.saslAccountName ||
+    config?.nickname ||
+    ""
+  ).toLowerCase();
+  return `${serverAddress(server)}#${login}`;
+}
+
+// We fall back to the bare address for history parked before logins were part of it.
+async function adoptHistoryForServer(server: Server): Promise<void> {
+  if (await adoptParkedHistory(serverLoginAddress(server), server.id)) return;
+  await adoptParkedHistory(serverAddress(server), server.id);
 }
 
 function loadedCandidates(
@@ -213,7 +245,7 @@ export function settleSavedHistory(
 ): Promise<void> {
   return shouldDelete
     ? deleteServerHistory(server.id)
-    : parkServerHistory(server.id, serverAddress(server));
+    : parkServerHistory(server.id, serverLoginAddress(server));
 }
 
 const conversationKey = (serverId: string, target: string) =>
@@ -230,6 +262,7 @@ function recorderFor(
       ownNick: () => ircClient.getNick(serverId),
       hasChathistory: () =>
         serverSupportsChathistory(store.getState(), serverId),
+      chantypes: () => ircClient.chantypes(serverId),
       isOpenConversation: (target) =>
         findConversation(store, serverId, target) !== undefined,
       isEncryptedPm: (nick) =>
@@ -257,6 +290,38 @@ async function saveRows(store: StoreApi<AppState>, rows: NewHistoryRow[]) {
     );
   }
   return inserted;
+}
+
+// A page fetched around a time can land apart from the rows we had, or inside
+// a gap, so we replace the gaps it overlaps with one on each side whose edge
+// row is new to us.
+async function addIslandGaps(
+  server: string,
+  target: string,
+  page: HistoryPage,
+  inserted: boolean[],
+) {
+  if (page.oldest === undefined || page.newest === undefined) return;
+  for (const gap of await gapsFor(server, target))
+    if (gap.from < page.newest && gap.to > page.oldest) await deleteGap(gap.id);
+  const [older] = await eventRowsBefore(server, target, page.oldest - 1, 1);
+  if (older && inserted[0])
+    await addGap({
+      server,
+      target,
+      from: older.time,
+      to: page.oldest,
+      lost: false,
+    });
+  const [newer] = await eventRowsAfter(server, target, page.newest + 1, 1);
+  if (newer && inserted[inserted.length - 1])
+    await addGap({
+      server,
+      target,
+      from: page.newest,
+      to: newer.time,
+      lost: false,
+    });
 }
 
 async function saveHistoryPage(
@@ -294,11 +359,24 @@ async function saveHistoryPage(
       );
       if (gap) settleGap(store, serverId, target, gap, MAX_AUTO_FILL_PAGES);
     }
+  } else if (request?.kind === "around") {
+    await addIslandGaps(key, target, page, inserted);
+    request.fill?.onSettled?.(true);
+  } else if (request?.kind === "after" && request.fill) {
+    const filled = (await gapsFor(key, target)).find(
+      (gap) => gap.id === request.fill?.gap?.id,
+    );
+    const decision =
+      filled && decideAfterForwardFill({ gap: filled, page, inserted });
+    if (filled && decision?.kind === "close") await deleteGap(filled.id);
+    else if (filled && decision?.kind === "shrink")
+      await updateGap({ ...filled, from: decision.from });
+    request.fill.onSettled?.(true);
   } else if (request?.kind === "before" && request.fill) {
     const { pagesLeft } = request.fill;
     // We decide on the gap as saved now, since another fill may have moved it.
     const filled = (await gapsFor(key, target)).find(
-      (gap) => gap.id === request.fill?.gap.id,
+      (gap) => gap.id === request.fill?.gap?.id,
     );
     const decision =
       filled && decideAfterGapFill({ gap: filled, page, inserted });
@@ -310,7 +388,7 @@ async function saveHistoryPage(
       if (pagesLeft !== undefined)
         settleGap(store, serverId, target, gap, pagesLeft);
     }
-    request.fill.onSettled?.(true);
+    request.fill.onSettled?.(true, page);
   }
   await refreshHasMore(store, serverId, target, page.size > 0);
 }
@@ -349,8 +427,114 @@ async function refreshHasMore(
   }));
 }
 
-// Rows on disk older than the oldest message on screen. Messages can share a
-// millisecond, so we read past the ones on screen and skip them by msgid.
+async function gapsServerCanFill(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+): Promise<HistoryGap[]> {
+  if (!serverSupportsChathistory(store.getState(), serverId)) return [];
+  return (await gapsFor(serverId, target.toLowerCase())).filter(
+    (gap) => !gap.lost,
+  );
+}
+
+// We read saved rows only down to the nearest gap the server can still fill,
+// so the messages on screen never run across a hole without a way to fill it.
+async function rowsAboveGap(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  time: number,
+  rows: HistoryRow[],
+): Promise<HistoryRow[]> {
+  const [gap] = (await gapsServerCanFill(store, serverId, target))
+    .filter((g) => g.to <= time)
+    .sort((a, b) => b.to - a.to);
+  return gap ? rows.filter((row) => row.time >= gap.to) : rows;
+}
+
+type OlderEdge = {
+  time: number;
+  readCount: number;
+  isRead: (row: HistoryRow) => boolean;
+};
+
+// A replayed page can hold only hidden rows (from ignored users), which leaves
+// the oldest message on screen as it was, so we remember how far back we read.
+const readBackTo = new Map<
+  string,
+  { oldestShownId: string | undefined; time: number; rowIds: Set<number> }
+>();
+
+function readBackEdge(
+  store: StoreApi<AppState>,
+  key: string,
+): OlderEdge | undefined {
+  const readBack = readBackTo.get(key);
+  if (readBack?.oldestShownId !== store.getState().messages[key]?.[0]?.id)
+    return undefined;
+  return (
+    readBack && {
+      time: readBack.time,
+      readCount: readBack.rowIds.size,
+      isRead: (row) => readBack.rowIds.has(row.id),
+    }
+  );
+}
+
+// Where the next older page starts. Messages can share a millisecond, so we
+// read past the rows already read there and skip them.
+function olderEdge(
+  store: StoreApi<AppState>,
+  key: string,
+): OlderEdge | undefined {
+  const readBack = readBackEdge(store, key);
+  if (readBack) return readBack;
+  const messages = store.getState().messages[key] ?? [];
+  if (messages.length === 0) return undefined;
+  const oldest = messageTime(messages[0]);
+  const sameMs = messages.filter((m) => messageTime(m) === oldest);
+  const shown = new Set(
+    sameMs.flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
+  );
+  return {
+    time: oldest,
+    readCount: sameMs.length,
+    isRead: (row) => !!row.msgid && shown.has(row.msgid),
+  };
+}
+
+function forgetRemovedReadBacks(state: AppState) {
+  const keys = new Set(
+    state.servers.flatMap((server) =>
+      [...server.channels, ...(server.privateChats ?? [])].map(
+        (chat) => `${server.id}-${chat.id}`,
+      ),
+    ),
+  );
+  for (const key of readBackTo.keys())
+    if (!keys.has(key)) readBackTo.delete(key);
+}
+
+function rememberReadBack(
+  store: StoreApi<AppState>,
+  key: string,
+  rows: HistoryRow[],
+) {
+  const time = rows[0].time;
+  const previous = readBackTo.get(key);
+  const rowIds = new Set(
+    rows.filter((row) => row.time === time).map((row) => row.id),
+  );
+  if (previous?.time === time) for (const id of previous.rowIds) rowIds.add(id);
+  readBackTo.set(key, {
+    oldestShownId: store.getState().messages[key]?.[0]?.id,
+    time,
+    rowIds,
+  });
+}
+
+// Rows on disk older than the oldest message on screen.
 async function olderDiskRows(
   store: StoreApi<AppState>,
   serverId: string,
@@ -358,27 +542,28 @@ async function olderDiskRows(
   limit: number,
 ): Promise<HistoryRow[]> {
   const conversation = findConversation(store, serverId, target);
-  const messages = conversation
-    ? (store.getState().messages[conversation.key] ?? [])
-    : [];
-  if (messages.length === 0)
-    return newestEventRows(serverId, target.toLowerCase(), limit);
-  const oldest = new Date(messages[0].timestamp).getTime();
-  const sameMs = messages.filter(
-    (m) => new Date(m.timestamp).getTime() === oldest,
-  );
-  const shown = new Set(
-    sameMs.flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
-  );
+  const edge = conversation && olderEdge(store, conversation.key);
+  if (!edge)
+    return rowsAboveGap(
+      store,
+      serverId,
+      target,
+      Number.POSITIVE_INFINITY,
+      await newestEventRows(serverId, target.toLowerCase(), limit),
+    );
   const rows = await eventRowsBefore(
     serverId,
     target.toLowerCase(),
-    oldest,
-    limit + sameMs.length,
+    edge.time,
+    limit + edge.readCount,
   );
-  return rows
-    .filter((row) => !row.msgid || !shown.has(row.msgid))
-    .slice(-limit);
+  return rowsAboveGap(
+    store,
+    serverId,
+    target,
+    edge.time,
+    rows.filter((row) => !edge.isRead(row)).slice(-limit),
+  );
 }
 
 // A gap inside the messages on screen is invisible, so we fill it from the
@@ -411,7 +596,7 @@ function settleGap(
   );
 }
 
-function findConversation(
+export function findConversation(
   store: StoreApi<AppState>,
   serverId: string,
   target: string,
@@ -472,10 +657,11 @@ function trackOutgoing(
   serverId: string,
   line: string,
 ) {
-  const request = /^CHATHISTORY (LATEST|BEFORE) (\S+)/.exec(line);
+  const request = /^CHATHISTORY (LATEST|BEFORE|AFTER|AROUND) (\S+)/.exec(line);
   if (request) {
     const target = request[2].toLowerCase();
     const queue = pendingRequests.get(conversationKey(serverId, target)) ?? [];
+    const kind = request[1].toLowerCase() as "before" | "after" | "around";
     queue.push(
       request[1] === "LATEST"
         ? {
@@ -484,7 +670,7 @@ function trackOutgoing(
               ([row]) => row?.time,
             ),
           }
-        : { kind: "before", fill: nextGapFill },
+        : { kind, fill: nextGapFill },
     );
     pendingRequests.set(conversationKey(serverId, target), queue);
     return;
@@ -516,9 +702,13 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       void persistHistoryAction(store, serverId, action);
   });
 
-  store.subscribe(() => {
+  store.subscribe((state, previous) => {
     const update = moveArrivalsToPresent(store.getState());
     if (update) store.setState(update);
+    if (state.globalSettings.ignoreList !== previous.globalSettings.ignoreList)
+      readBackTo.clear();
+    else if (readBackTo.size > 0 && state.servers !== previous.servers)
+      forgetRemovedReadBacks(state);
   });
 
   ircClient.on("rawLine", ({ serverId, direction, line }) => {
@@ -534,7 +724,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     if (batchId.startsWith(LOCAL_BATCH_PREFIX)) return;
     const [request] =
       pendingRequests.get(conversationKey(serverId, target)) ?? [];
-    if (request?.kind === "before" && request.fill?.isDiskOnly)
+    if (request && request.kind !== "latest" && request.fill?.isDiskOnly)
       ircClient.markDiskOnlyBatch(serverId, batchId);
   });
 
@@ -549,7 +739,7 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
     const request = pendingRequests
       .get(conversationKey(serverId, target))
       ?.shift();
-    if (request?.kind === "before") request.fill?.onSettled?.(false);
+    if (request && request.kind !== "latest") request.fill?.onSettled?.(false);
   });
 
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
@@ -557,15 +747,16 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
       const server =
         store.getState().servers.find((s) => s.id === serverId) ??
         ircClient.servers.get(serverId);
-      if (server) void adoptParkedHistory(serverAddress(server), serverId);
+      if (server) void adoptHistoryForServer(server);
       return;
     }
     ircClient.clearDiskOnlyBatches(serverId);
     for (const [key, queue] of pendingRequests) {
       if (!key.startsWith(`${serverId}\n`)) continue;
       for (const request of queue)
-        if (request.kind === "before") request.fill?.onSettled?.(false);
+        if (request.kind !== "latest") request.fill?.onSettled?.(false);
       pendingRequests.delete(key);
+      setLoading(serverId, key.slice(serverId.length + 1), false);
     }
   });
 }
@@ -602,6 +793,80 @@ function fetchGapPage(gap: HistoryGap): Promise<boolean> {
     if (!requestPageBefore(gap.server, gap.target, gap.to, fill, false))
       fill.onSettled(false);
   });
+}
+
+function fetchPageToDisk(
+  serverId: string,
+  target: string,
+  subcommand: "AFTER" | "AROUND",
+  time: number,
+  gap?: HistoryGap,
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    const fill: GapFill = { gap, isDiskOnly: true };
+    const timer = window.setTimeout(
+      () => resolve(false),
+      SEARCH_FILL_TIMEOUT_MS,
+    );
+    fill.onSettled = (isSaved) => {
+      window.clearTimeout(timer);
+      resolve(isSaved);
+    };
+    nextGapFill = fill;
+    const isSent = ircClient.requestChathistoryAt(
+      serverId,
+      target,
+      subcommand,
+      new Date(time).toISOString(),
+    );
+    nextGapFill = undefined;
+    if (!isSent) fill.onSettled(false);
+  });
+}
+
+// A chat opens on its read marker: from the rows we saved when they cover it,
+// otherwise from a page the server sends around it. A marker older than what
+// the server keeps opens on the oldest message it still has after it.
+export async function showMessagesFromReadMarker(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  marker: number,
+  isCurrent: () => boolean = () => true,
+): Promise<boolean> {
+  if (!isEnabled(store)) return false;
+  const lower = target.toLowerCase();
+  const [lastRead] = await eventRowsBefore(serverId, lower, marker + 1, 1);
+  const isMarkerInGap = (await gapsFor(serverId, lower)).some(
+    (gap) => gap.from < marker && marker < gap.to,
+  );
+  const isSaved = lastRead?.time === marker && !isMarkerInGap;
+  if (!isSaved && serverSupportsChathistory(store.getState(), serverId))
+    await fetchPageToDisk(serverId, target, "AROUND", marker);
+  const [firstUnread] = await eventRowsAfter(serverId, lower, marker, 1);
+  if (!firstUnread) return false;
+  const shown = await showSavedMessagesAround(
+    store,
+    serverId,
+    target,
+    firstUnread.time,
+    isCurrent,
+  );
+  if (shown !== "loaded" || !isCurrent()) return false;
+  // The last read message is gone from both the server and this device, so
+  // we say messages before the first unread one may be missing.
+  const [stillSaved] = await eventRowsBefore(serverId, lower, marker + 1, 1);
+  const conversation = findConversation(store, serverId, target);
+  if (stillSaved?.time !== marker && conversation)
+    showMissingMarker(store, serverId, conversation.channelId, {
+      id: -firstUnread.time,
+      server: serverId,
+      target: lower,
+      from: firstUnread.time - 2,
+      to: firstUnread.time,
+      lost: true,
+    });
+  return true;
 }
 
 // While a search pane is open we fetch what the server still has for the gaps
@@ -651,7 +916,7 @@ export function showSavedHistory(
   const key = conversationKey(serverId, target);
   if (
     !isEnabled(store) ||
-    (isChannelTarget(target) &&
+    (ircClient.isChannel(serverId, target) &&
       serverSupportsChathistory(store.getState(), serverId))
   )
     return;
@@ -690,7 +955,16 @@ async function replayRows(
       nick ? `${nick}!${nick}@local` : undefined,
     ),
   );
-  if (rows.length) await markLostGaps(store, serverId, target, rows);
+  if (rows.length) {
+    const oldest = rows[0].time;
+    const newest = rows[rows.length - 1].time;
+    await showLostGaps(
+      store,
+      serverId,
+      target,
+      (gap) => gap.from >= oldest && gap.from <= newest,
+    );
+  }
   await refreshHasMore(
     store,
     serverId,
@@ -699,19 +973,37 @@ async function replayRows(
   );
 }
 
-async function markLostGaps(
+async function showLostGaps(
   store: StoreApi<AppState>,
   serverId: string,
   target: string,
-  rows: HistoryRow[],
+  isShown: (gap: HistoryGap) => boolean,
 ) {
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return;
-  const oldest = rows[0].time;
-  const newest = rows[rows.length - 1].time;
   for (const gap of await gapsFor(serverId, target.toLowerCase()))
-    if (gap.lost && gap.from >= oldest && gap.from <= newest)
+    if (gap.lost && isShown(gap))
       showMissingMarker(store, serverId, conversation.channelId, gap);
+}
+
+async function replayOlderDiskPage(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+): Promise<number> {
+  const conversation = findConversation(store, serverId, target);
+  const rows = await olderDiskRows(store, serverId, target, HISTORY_PAGE_SIZE);
+  if (!conversation || rows.length === 0) return 0;
+  const oldestShown = () =>
+    store.getState().messages[conversation.key]?.[0]?.id;
+  const wasOldest = oldestShown();
+  await replayRows(store, serverId, target, rows);
+  rememberReadBack(store, conversation.key, rows);
+  // Nothing on the page showed, so we keep reading back until something does
+  // or the history ends.
+  if (oldestShown() === wasOldest)
+    await loadOlderMessages(store, serverId, target, rows[0].time);
+  return rows.length;
 }
 
 async function replayNewestPage(
@@ -725,6 +1017,40 @@ async function replayNewestPage(
     HISTORY_PAGE_SIZE,
   );
   if (rows.length) await replayRows(store, serverId, target, rows);
+}
+
+// A channel's older page goes to disk first and the list reads it back from
+// there, so scrolling shows history through one path. Private chats skip
+// this: we never save encrypted or services messages, which would vanish.
+function diskFirstFill(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  oldestTime: number,
+  gap: HistoryGap | undefined,
+): GapFill {
+  return {
+    gap,
+    isDiskOnly: true,
+    onSettled: (isSaved, page) => {
+      void (async () => {
+        if (isSaved && (await replayOlderDiskPage(store, serverId, target)))
+          return;
+        // A page of lines we never show, like typing notices, can have history behind it.
+        if (isSaved && page?.oldest !== undefined && page.oldest < oldestTime) {
+          await loadOlderMessages(store, serverId, target, page.oldest);
+          return;
+        }
+        setLoading(serverId, target, false);
+        await showLostGaps(
+          store,
+          serverId,
+          target,
+          (lost) => lost.from < oldestTime,
+        );
+      })();
+    },
+  };
 }
 
 export async function loadOlderMessages(
@@ -748,29 +1074,29 @@ export async function loadOlderMessages(
   }
   setLoading(serverId, target, true);
   try {
+    const conversation = findConversation(store, serverId, target);
+    const readBack = conversation && readBackEdge(store, conversation.key);
+    const before = Math.min(oldestTime, readBack?.time ?? oldestTime);
     const [olderRow] = await olderDiskRows(store, serverId, target, 1);
     const plan = planLoadMore({
-      oldestTime,
+      oldestTime: before,
       newestOlderRowTime: olderRow?.time,
       gaps: await gapsFor(serverId, target.toLowerCase()),
       hasChathistory: serverHasChathistory,
     });
     if (plan.kind === "disk") {
-      const rows = await olderDiskRows(
-        store,
-        serverId,
-        target,
-        HISTORY_PAGE_SIZE,
-      );
-      await replayRows(store, serverId, target, rows);
-      return true;
+      if (await replayOlderDiskPage(store, serverId, target)) return true;
+      setLoading(serverId, target, false);
+      return false;
     }
     if (plan.kind === "server") {
       const isSent = requestPageBefore(
         serverId,
         target,
         plan.before,
-        plan.gap ? { gap: plan.gap } : undefined,
+        ircClient.isChannel(serverId, target)
+          ? diskFirstFill(store, serverId, target, before, plan.gap)
+          : plan.gap && { gap: plan.gap },
       );
       if (!isSent) setLoading(serverId, target, false);
       return isSent;
@@ -785,6 +1111,17 @@ export async function loadOlderMessages(
 }
 
 const WINDOW_ROWS = 50;
+
+async function nextGapAfter(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  time: number,
+): Promise<HistoryGap | undefined> {
+  return (await gapsServerCanFill(store, serverId, target))
+    .filter((gap) => gap.to > time)
+    .sort((a, b) => a.from - b.from)[0];
+}
 const WINDOW_KEEP_MESSAGES = 300;
 let jumpCounter = 0;
 
@@ -802,20 +1139,29 @@ export async function showSavedMessagesAround(
 ): Promise<SavedJump> {
   if (!isEnabled(store)) return "not-saved";
   const lower = target.toLowerCase();
-  const before = await eventRowsBefore(serverId, lower, time, WINDOW_ROWS);
-  const last = before[before.length - 1];
-  const after = await eventRowsAfter(
+  const before = await rowsAboveGap(
+    store,
     serverId,
     lower,
-    last?.time ?? time,
-    WINDOW_ROWS,
-    last?.id,
+    time,
+    await eventRowsBefore(serverId, lower, time, WINDOW_ROWS),
   );
+  const last = before[before.length - 1];
+  const hole = await nextGapAfter(store, serverId, lower, time);
+  const after = (
+    await eventRowsAfter(
+      serverId,
+      lower,
+      last?.time ?? time,
+      WINDOW_ROWS,
+      last?.id,
+    )
+  ).filter((row) => !hole || row.time <= hole.from);
   const rows = [...before, ...after];
   if (!rows.some((row) => row.time === time)) return "not-saved";
   const conversation = findConversation(store, serverId, target);
   if (!conversation) return "not-found";
-  if (after.length < WINDOW_ROWS) {
+  if (after.length < WINDOW_ROWS && !hole) {
     await replayRows(store, serverId, target, rows, () => {
       if (!isCurrentJump()) return false;
       showPresent(store, serverId, target);
@@ -862,6 +1208,14 @@ export async function loadNewerMessages(
       .filter((m) => messageTime(m) === window.until)
       .flatMap((m) => [m.msgid, ...(m.multilineMessageIds ?? [])]),
   );
+  // A gap above the window holds messages only the server has, so we read
+  // our rows up to it and then fetch forward from its older edge.
+  const hole = await nextGapAfter(
+    store,
+    serverId,
+    target.toLowerCase(),
+    window.until,
+  );
   const rows = (
     await eventRowsAfter(
       serverId,
@@ -872,16 +1226,38 @@ export async function loadNewerMessages(
     )
   )
     .filter((row) => !row.msgid || !shown.has(row.msgid))
+    .filter((row) => !hole || row.time <= hole.from)
     .slice(0, WINDOW_ROWS);
-  if (rows.length < WINDOW_ROWS) {
-    showPresent(store, serverId, target);
+  if (rows.length === 0 && hole) {
+    if (
+      serverSupportsChathistory(store.getState(), serverId) &&
+      (await fetchPageToDisk(
+        serverId,
+        target,
+        "AFTER",
+        Math.max(window.until, hole.from),
+        hole,
+      ))
+    )
+      await loadNewerMessages(store, serverId, target);
+    return;
+  }
+  const isSameWindow = () => {
+    const current = store.getState().historyWindows[conversation.key];
+    return current?.until === window.until && current.jumpId === window.jumpId;
+  };
+  if (rows.length < WINDOW_ROWS && !hole) {
+    if (!isSameWindow()) return;
+    joinWindowToPresent(store, conversation.key);
+    if (rows.length) await replayRows(store, serverId, target, rows);
+    if (serverSupportsChathistory(store.getState(), serverId))
+      ircClient.requestChathistoryLatest(serverId, target);
     return;
   }
   const newest = rows[rows.length - 1];
   await replayRows(store, serverId, target, rows, () => {
     const current = store.getState().historyWindows[conversation.key];
-    if (current?.until !== window.until || current.jumpId !== window.jumpId)
-      return false;
+    if (!current || !isSameWindow()) return false;
     store.setState((state) => ({
       historyWindows: {
         ...state.historyWindows,
@@ -936,6 +1312,22 @@ export function showPresent(
     ircClient.requestChathistoryLatest(serverId, target);
   else if (window.present.length === 0 && isEnabled(store))
     void replayNewestPage(store, serverId, target);
+}
+
+// A window paged down to the present joins it below, so the rows on screen stay.
+function joinWindowToPresent(store: StoreApi<AppState>, key: string) {
+  store.setState((state) => {
+    const window = state.historyWindows[key];
+    if (!window) return {};
+    const { [key]: _, ...others } = state.historyWindows;
+    return {
+      historyWindows: others,
+      messages: {
+        ...state.messages,
+        [key]: joinPresent(state.messages[key] ?? [], window.present),
+      },
+    };
+  });
 }
 
 function joinPresent(present: Message[], arrived: Message[]): Message[] {

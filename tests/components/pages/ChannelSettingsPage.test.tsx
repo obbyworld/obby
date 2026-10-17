@@ -28,6 +28,9 @@ const mockGetState = vi.mocked(useStore.getState);
 vi.mock("../../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    setTopic: vi.fn(),
+    renameChannel: vi.fn(),
+    sendNamedMode: vi.fn(),
     getCurrentUser: vi.fn(() => ({
       id: "test-user",
       username: "tester",
@@ -118,6 +121,7 @@ describe("ChannelSettingsPage", () => {
       linkSecurityWarnings: [],
     },
     closePage: vi.fn(),
+    metadataSet: vi.fn(),
     ...overrides,
   });
 
@@ -205,8 +209,9 @@ describe("ChannelSettingsPage", () => {
     expect(activeSection).toHaveTextContent("Exceptions");
   });
 
-  test("shows the add mask input in the bans section", () => {
-    renderPage();
+  test("shows the add mask input in the bans section to an operator", () => {
+    useMockState(createMockState({ status: "@" }));
+    renderPage({ section: "bans" });
 
     expect(
       screen.getByPlaceholderText(
@@ -221,8 +226,22 @@ describe("ChannelSettingsPage", () => {
     expect(screen.getByText("Loading channel modes...")).toBeInTheDocument();
   });
 
-  test("adds a new mask with MODE +b", () => {
+  test("shows the bans read-only to a member who is not an operator", () => {
     renderPage();
+
+    expect(
+      screen.queryByPlaceholderText(
+        "Add ban mask (e.g., nick!*@*, *!*@host.com)",
+      ),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Ask a channel operator to change this list."),
+    ).not.toBeInTheDocument();
+  });
+
+  test("adds a new mask with MODE +b", () => {
+    useMockState(createMockState({ status: "@" }));
+    renderPage({ section: "bans" });
 
     const input = screen.getByPlaceholderText(
       "Add ban mask (e.g., nick!*@*, *!*@host.com)",
@@ -255,13 +274,13 @@ describe("ChannelSettingsPage", () => {
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
   });
 
-  test("sends a flipped mode on its own as a single MODE command", () => {
+  test("sends a flipped mode on its own as a single MODE command", async () => {
     vi.useFakeTimers();
     useMockState(createMockState({ status: "@" }));
     renderPage({ section: "settings" });
 
     fireEvent.click(screen.getByRole("switch", { name: "Invite-only (+i)" }));
-    act(() => {
+    await act(async () => {
       vi.runAllTimers();
     });
 
@@ -270,6 +289,177 @@ describe("ChannelSettingsPage", () => {
       "MODE #testchannel +i",
     );
     vi.useRealTimers();
+  });
+
+  test.each([
+    "general",
+    "settings",
+    "advanced",
+  ])("sends nothing when an operator opens the %s section and leaves", async (section) => {
+    vi.useFakeTimers();
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0].channels[0], {
+      topic: "Welcome to the channel",
+      modes: "+nt",
+      metadata: { avatar: { value: "https://example.com/a.png" } },
+    });
+    useMockState(state);
+    const { unmount } = renderPage({ section });
+    vi.mocked(ircClient.sendRaw).mockClear();
+
+    await act(async () => {
+      vi.runAllTimers();
+    });
+    for (const field of screen.queryAllByRole("textbox")) {
+      fireEvent.blur(field);
+    }
+    unmount();
+    await act(async () => {
+      vi.runAllTimers();
+    });
+
+    expect(ircClient.setTopic).not.toHaveBeenCalled();
+    expect(state.metadataSet).not.toHaveBeenCalled();
+    expect(ircClient.sendNamedMode).not.toHaveBeenCalled();
+    const modeLines = vi
+      .mocked(ircClient.sendRaw)
+      .mock.calls.map(([, line]) => line)
+      .filter((line) => !/^MODE #testchannel \+[beI]$/.test(line));
+    expect(modeLines).toEqual([]);
+    vi.useRealTimers();
+  });
+
+  test("renames once focus leaves the name and reason fields", async () => {
+    vi.useFakeTimers();
+    useMockState(createMockState({ status: "@" }));
+    renderPage({ section: "general" });
+
+    const name = screen.getByDisplayValue("#testchannel");
+    const reason = screen.getByPlaceholderText("Reason (optional)");
+    fireEvent.change(name, { target: { value: "#renamed" } });
+    fireEvent.blur(name, { relatedTarget: reason });
+    await act(async () => {
+      vi.runAllTimers();
+    });
+    expect(ircClient.renameChannel).not.toHaveBeenCalled();
+
+    fireEvent.change(reason, { target: { value: "tidy up" } });
+    fireEvent.blur(reason);
+    await act(async () => {
+      vi.runAllTimers();
+    });
+    expect(ircClient.renameChannel).toHaveBeenCalledWith(
+      "server1",
+      "#testchannel",
+      "#renamed",
+      "tidy up",
+    );
+    vi.useRealTimers();
+  });
+
+  test("waits for a field the operator is still typing in", async () => {
+    vi.useFakeTimers();
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
+    useMockState(state);
+    renderPage({ section: "general" });
+
+    const name = screen.getByDisplayValue("#testchannel");
+    fireEvent.change(name, { target: { value: "#renamed" } });
+    fireEvent.blur(name);
+    const topic = screen.getByDisplayValue("Old topic");
+    fireEvent.change(topic, { target: { value: "New to" } });
+    await act(async () => {
+      vi.runAllTimers();
+    });
+
+    expect(ircClient.renameChannel).toHaveBeenCalled();
+    expect(ircClient.setTopic).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  test("sends only the topic once the operator edits it", async () => {
+    vi.useFakeTimers();
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0].channels[0], {
+      topic: "Old topic",
+      metadata: { avatar: { value: "https://example.com/a.png" } },
+    });
+    useMockState(state);
+    renderPage({ section: "general" });
+
+    const topic = screen.getByDisplayValue("Old topic");
+    fireEvent.change(topic, { target: { value: "New topic" } });
+    fireEvent.blur(topic);
+    await act(async () => {
+      vi.runAllTimers();
+    });
+
+    expect(ircClient.setTopic).toHaveBeenCalledWith(
+      "server1",
+      "#testchannel",
+      "New topic",
+    );
+    expect(state.metadataSet).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  test("shows the avatar size token in the avatar help", () => {
+    useMockState(createMockState({ status: "@" }));
+    renderPage({ section: "general" });
+
+    expect(
+      screen.getByPlaceholderText(
+        "https://example.com/avatar/{size}/channel.jpg",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("keeps an unsent edit when the server updates the channel", async () => {
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
+    useMockState(state);
+    const view = renderPage({ section: "general" });
+
+    fireEvent.change(screen.getByDisplayValue("Old topic"), {
+      target: { value: "Typing" },
+    });
+    const updated = createMockState({ status: "@" });
+    Object.assign(updated.servers[0].channels[0], {
+      topic: "Old topic",
+      users: [...updated.servers[0].channels[0].users],
+    });
+    useMockState(updated);
+    view.rerender(
+      <ChannelSettingsPage
+        page={{
+          kind: "channelSettings",
+          serverId: "server1",
+          channelName: "#testchannel",
+          section: "general",
+        }}
+      />,
+    );
+
+    expect(screen.getByDisplayValue("Typing")).toBeInTheDocument();
+  });
+
+  test("sends a second edit made before the server echoes the first", async () => {
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
+    useMockState(state);
+    renderPage({ section: "general" });
+
+    const topic = screen.getByDisplayValue("Old topic");
+    fireEvent.change(topic, { target: { value: "First" } });
+    fireEvent.blur(topic);
+    fireEvent.change(topic, { target: { value: "Second" } });
+    fireEvent.blur(topic);
+
+    expect(vi.mocked(ircClient.setTopic).mock.calls).toEqual([
+      ["server1", "#testchannel", "First"],
+      ["server1", "#testchannel", "Second"],
+    ]);
   });
 
   test("displays existing bans", () => {

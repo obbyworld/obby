@@ -110,6 +110,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          account: connectionState === "connected" ? server.account : undefined,
           saslFailed:
             connectionState === "connecting" ? false : server.saslFailed,
         };
@@ -336,9 +337,8 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         if (!reconnectedServer) return;
         if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
-          if (!ch.chathistoryRequested) {
-            ircClient.requestChathistoryLatest(serverId, ch.name);
-          }
+          if (!ch.chathistoryRequested)
+            ircClient.loadLatestHistory(serverId, ch.name);
         }
       }, 50);
 

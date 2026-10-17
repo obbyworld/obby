@@ -36,6 +36,7 @@ export interface RecorderEnv {
   ownNick: () => string | undefined;
   isOpenConversation: (target: string) => boolean;
   hasChathistory: () => boolean;
+  chantypes: () => string;
   isEncryptedPm: (nick: string) => boolean;
   now: () => number;
 }
@@ -284,7 +285,7 @@ export class HistoryRecorder {
         const text = parv[1] ?? "";
         if (text.startsWith("\x01") && !text.startsWith("\x01ACTION"))
           return [];
-        if (command === "NOTICE" && !historyTarget && !isChannelTarget(parv[0]))
+        if (command === "NOTICE" && !historyTarget && !this.isChannel(parv[0]))
           return [];
         const target = this.conversationOf(parsed, parv[0], historyTarget);
         return target && this.isStorable(mtags, text, target, source)
@@ -313,12 +314,16 @@ export class HistoryRecorder {
   ): string | undefined {
     if (historyTarget) return historyTarget.toLowerCase();
     if (!target) return;
-    if (isChannelTarget(target)) return target.toLowerCase();
+    if (this.isChannel(target)) return target.toLowerCase();
     const sender = nickOf(parsed.source);
     const own = this.env.ownNick();
     const other =
       own && sender.toLowerCase() === own.toLowerCase() ? target : sender;
     return other.toLowerCase();
+  }
+
+  private isChannel(target: string | undefined): boolean {
+    return isChannelTarget(target, this.env.chantypes());
   }
 
   // A chathistory server matches our rows back only by msgid, so we skip
@@ -336,7 +341,7 @@ export class HistoryRecorder {
     )
       return false;
     if (!this.env.isOpenConversation(target)) return false;
-    if (isChannelTarget(target)) return true;
+    if (this.isChannel(target)) return true;
     const isFromServer = !source.includes("!");
     return (
       !isFromServer &&
@@ -447,6 +452,20 @@ export function decideAfterLatest(input: {
     return { kind: "none" };
   if (page.oldest <= newestStoredTime) return { kind: "none" };
   return { kind: "add", from: newestStoredTime, to: page.oldest };
+}
+
+// After a page fetched forward into a gap from its older edge: it closes once
+// the page reaches rows we already had, otherwise its older edge moves up.
+export function decideAfterForwardFill(input: {
+  gap: HistoryGap;
+  page: Pick<HistoryPage, "newest">;
+  inserted: boolean[];
+}): { kind: "close" } | { kind: "shrink"; from: number } {
+  const { gap, page, inserted } = input;
+  if (inserted.some((wasNew) => !wasNew)) return { kind: "close" };
+  if (page.newest === undefined || page.newest >= gap.to)
+    return { kind: "close" };
+  return { kind: "shrink", from: page.newest };
 }
 
 type GapFillDecision =

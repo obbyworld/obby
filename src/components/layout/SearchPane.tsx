@@ -14,6 +14,7 @@ import { FaChevronLeft, FaTimes } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { escapeRegExp } from "../../lib/escapeRegExp";
 import type { HistoryGap } from "../../lib/history/historyDb";
+import ircClient from "../../lib/ircClient";
 import { isChannelTarget } from "../../lib/ircUtils";
 import {
   type JumpResult,
@@ -41,7 +42,7 @@ import { useSearchDraft } from "../search/useSearchDraft";
 import HighlightedText, { type TextRange } from "../ui/HighlightedText";
 import LoadingSpinner from "../ui/LoadingSpinner";
 import SegmentedControl from "../ui/SegmentedControl";
-import { SkeletonRow } from "../ui/SkeletonRow";
+import { MessageSkeletons } from "../ui/SkeletonRow";
 import { TextInput } from "../ui/TextInput";
 
 export const SEARCH_PAGE_LIMIT = 50;
@@ -83,7 +84,8 @@ function chatLabel(server: Server | undefined, target: string): string {
   const lower = target.toLowerCase();
   const channel = server?.channels.find((c) => c.name.toLowerCase() === lower);
   if (channel) return channel.name;
-  if (isChannelTarget(target)) return target;
+  if (isChannelTarget(target, server && ircClient.chantypes(server.id)))
+    return target;
   const peer =
     server?.privateChats?.find((pc) => pc.username.toLowerCase() === lower)
       ?.username ?? target;
@@ -146,17 +148,12 @@ const HitRow = memo<{
   );
 });
 
-const PLACEHOLDER_ROW_IDS = [0, 1, 2];
-
 const GapPlaceholder: React.FC = () => (
-  <li aria-hidden className="flex flex-col gap-0.5 blur-[1px]">
-    {PLACEHOLDER_ROW_IDS.map((id) => (
-      <SkeletonRow
-        key={id}
-        className="flex items-start gap-2.5 px-2 py-2"
-        avatarClassName="w-10 h-10 rounded-full"
-      />
-    ))}
+  <li aria-hidden>
+    <MessageSkeletons
+      rowClassName="flex items-start gap-2.5 px-2 py-2"
+      avatarClassName="w-10 h-10 rounded-full"
+    />
   </li>
 );
 

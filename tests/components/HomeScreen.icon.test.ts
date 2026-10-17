@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  parseNetworkStats,
-  serverIconUrl,
-} from "../../src/components/ui/HomeScreen";
+import { serverIconUrl } from "../../src/components/ui/HomeScreen";
 
 describe("serverIconUrl", () => {
   it("resolves repo-relative icons against the server list", () => {
@@ -16,19 +13,5 @@ describe("serverIconUrl", () => {
     expect(serverIconUrl("//evil.example/x.png")).toBeNull();
     expect(serverIconUrl("../../../other/repo/x.png")).toBeNull();
     expect(serverIconUrl(undefined)).toBeNull();
-  });
-});
-
-describe("parseNetworkStats", () => {
-  it("reads users and channels from the netsplit sentence", () => {
-    expect(
-      parseNetworkStats(
-        "323 users, 233 channels on average (via netsplit.de).",
-      ),
-    ).toEqual({ users: 323, channels: 233 });
-  });
-
-  it("leaves a written description alone", () => {
-    expect(parseNetworkStats("A cool place for tech talk.")).toBeNull();
   });
 });

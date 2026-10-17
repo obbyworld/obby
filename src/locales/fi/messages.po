@@ -113,11 +113,6 @@ msgstr "{0} on oltava kokonaisluku."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} verkko{1} — valitse yksi liittyäksesi"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} vanhempaa viestiä"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} katsoo"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} striimaa · {1} katsoo"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Ladataan 1 tiedostoa} other {Ladataan # tiedostoa}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ tulosta"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} kohteessa {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 lataus epäonnistui} other {# latausta epäonnistui}}"
 
@@ -687,6 +682,10 @@ msgstr "on nyt tunnettu nimellä **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Haluatko varmasti poistaa tämän viestin? Tätä toimintoa ei voi kumota."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Pyydä kanavan operaattoria muuttamaan tätä listaa."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Pyydä palvelimen ylläpitäjää ilmoittamaan taustajärjestelmän URL-osoite (draft/authtoken tai obby.world/FILEHOST) pakettien hallintaa varten."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "Avatarin esikatselu"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Poissa"
 
@@ -1000,7 +1003,6 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -1026,7 +1029,8 @@ msgstr "Peruuta salaus"
 msgid "Cancel reply"
 msgstr "Peruuta vastaus"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Peruuta lataus"
 
@@ -1356,6 +1360,7 @@ msgstr "Koodi hyväksytty."
 msgid "Code Snippets"
 msgstr "Koodinpätkät"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "Oletusnimimerkki"
 msgid "Delay joins (+D)"
 msgstr "Viivästä liittymisiä (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Poista"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Poista botti"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "Poista kansio"
 msgid "Delete its saved chat history too"
 msgstr "Poista myös sen tallennettu keskusteluhistoria"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Poista viesti"
 
@@ -1783,6 +1798,7 @@ msgstr "Poista viesti"
 msgid "Delete network"
 msgstr "Poista verkko"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Poista paketti"
@@ -1943,7 +1959,7 @@ msgstr "Haluatko avata tämän linkin uudessa välilehdessä?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "valmis"
 
@@ -2085,7 +2101,7 @@ msgstr "Salaa (OTR)"
 msgid "Encrypt this chat"
 msgstr "Salaa tämä keskustelu"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Salattu"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Kirjoita nimi, jossa voi olla välilyöntejä, emojeita tai symboleita. IRC-komennot käyttävät edelleen todellista nimeä ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Kirjoita URL-osoite. Käytä {size}-paikkamerkkiä dynaamista kokoa varten. Esimerkki: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Kirjoita URL-osoite. Käytä {sizeToken}-paikkamerkkiä dynaamista kokoa varten. Esimerkki: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Syötä tilin nimi..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Kirjoita tilin nimi, jolla kirjaudut SASL PLAIN -todennuksella ennen kanaville liittymistä. Jätä tyhjäksi yhdistääksesi nimettömänä."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Anna tilin nimi kirjautuaksesi SASL PLAINilla ennen kanaville liittymistä. Jätä tyhjäksi käyttääksesi nimimerkkiäsi."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "Poistu koko näytöstä"
 msgid "Exit spotlight"
 msgstr "Poistu spotlight-tilasta"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "Laajennettu profiili ei ole saatavilla"
 msgid "External Link Warning"
 msgstr "Ulkoisen linkin varoitus"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "epäonnistui"
@@ -2454,6 +2471,14 @@ msgstr "Luovuta"
 msgid "Forget credentials"
 msgstr "Unohda tunnistautumistiedot"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Unohda salasanat"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Unohda tallennetut SASL- ja palvelinsalasanat, jotta niitä ei enää lähetetä yhdistettäessä."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Unohtunut salasana"
@@ -2505,10 +2530,6 @@ msgstr "Yleinen tukikanava"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Saat ilmoituksen, kun joku sanoo seuraamasi sanat."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Haetaan lisää viestejä..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "liittyi ja poistui"
 msgid "Joined the channel"
 msgstr "Liittyi kanavalle"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Siirry nykyhetkeen"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Säilytä keskusteluhistoria tällä laitteella"
@@ -2851,6 +2868,10 @@ msgstr "Säilytä keskusteluhistoria tällä laitteella"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Säilytä tunnistautumistiedot"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Säilytä salasanat"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "Live"
 msgid "Live Translate"
 msgstr "Livekäännös"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Lataa tälle laitteelle tallennetut aiemmat viestit"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Lataa lisää tuloksia"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Lataa vanhempia viestejä"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "Verkot palvelimella {0}"
 msgid "new folder"
 msgstr "uusi kansio"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Uudet viestit"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Uusi lempinimi"
@@ -3476,6 +3493,10 @@ msgstr "Tällä palvelimella ei ole lisätiloja."
 msgid "No bans yet, add one above"
 msgstr "Ei vielä porttikieltoja, lisää yksi yltä"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Ei vielä porttikieltoja, pyydä kanavan operaattoria lisäämään"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Yksikään botti ei vastaa. Tyhjennä haku tai vaihda suodatin."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Ei vielä poikkeuksia, lisää yksi yltä"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Ei vielä poikkeuksia, pyydä kanavan operaattoria lisäämään"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Ei ulkopuolisia viestejä (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "isäntää ei asetettu"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Ei vielä kutsuja, lisää yksi yltä"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Ei vielä kutsuja, pyydä kanavan operaattoria lisäämään"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "Normaali – tavallinen suojaus"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Ei salattu"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "yksi seuraavista:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Verkossa"
 
@@ -4775,11 +4808,11 @@ msgstr "Lähetetään"
 msgid "Sending…"
 msgstr "Lähetetään…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Lähetetty salaamattomana, koska OTR salaa vain tekstin"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Lähetetty salaamattomana, koska tiedosto on liian suuri salattavaksi"
 
@@ -5183,6 +5216,10 @@ msgstr "Lopeta suoratoisto"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Pysäytä video"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Tallennetut salasanat"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5598,8 +5635,8 @@ msgid "Unsuspend"
 msgstr "Poista jäädytys"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Lataa kuva tai kirjoita URL-osoite. Käytä {size}-paikkamerkkiä dynaamista kokoa varten."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Lataa kuva tai kirjoita URL-osoite. Käytä {sizeToken}-paikkamerkkiä dynaamista kokoa varten."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5613,7 +5650,7 @@ msgstr "Lataus peruutettu."
 msgid "Upload Files"
 msgstr "Lataa tiedostoja"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Ladattu"
 
