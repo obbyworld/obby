@@ -7,6 +7,13 @@ vi.mock("../../src/lib/notificationSounds", () => ({
   playNotificationSound: vi.fn(),
   shouldPlayNotificationSound: vi.fn(() => false),
 }));
+const notifications = vi.hoisted(() => ({
+  closeChatNotification: vi.fn(),
+}));
+vi.mock("../../src/lib/notifications", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  ...notifications,
+}));
 
 const SERVER = "srv";
 const KEY = `${SERVER}-chan-1`;
@@ -97,6 +104,7 @@ async function boot({
 
 afterEach(() => {
   vi.useRealTimers();
+  notifications.closeChatNotification.mockClear();
 });
 
 describe("read markers", () => {
@@ -129,6 +137,35 @@ describe("read markers", () => {
       mentionCount: 0,
       isMentioned: false,
     });
+    expect(notifications.closeChatNotification).toHaveBeenCalledWith(
+      SERVER,
+      "#CHAN",
+    );
+  });
+
+  it("stores a start for a channel the server has no marker for, so the next launch keeps what arrived meanwhile unread", async () => {
+    const { useStore, ircClient, markreadSet, channel } = await boot({
+      selected: false,
+      readMarker: undefined as unknown as string,
+    });
+    useStore.setState({ messages: {} });
+    ircClient.triggerEvent("MARKREAD", {
+      serverId: SERVER,
+      target: "#chan",
+      timestamp: null,
+    });
+    const start = channel().readMarker;
+    expect(markreadSet).toHaveBeenCalledWith(SERVER, "#chan", start);
+    expect(notifications.closeChatNotification).not.toHaveBeenCalled();
+
+    ircClient.triggerEvent("MARKREAD", {
+      serverId: SERVER,
+      target: "#chan",
+      timestamp: new Date(BASE).toISOString(),
+    });
+    expect(notifications.closeChatNotification).not.toHaveBeenCalled();
+    useStore.setState({ messages: { [KEY]: [message(1)] } });
+    expect(channel()).toMatchObject({ unreadCount: 1, isMentioned: false });
   });
 
   it("marks the chat read up to its newest message once the user sees it", async () => {
