@@ -6,13 +6,11 @@ import {
   pickPushDistributor,
   pushStatus,
 } from "../../../lib/nativePush";
-import { openExternalUrl } from "../../../lib/openUrl";
 import type { SettingComponentProps } from "../../../lib/settings/types";
+import { hasWebPush } from "../../../lib/webpush";
+import useStore from "../../../store";
 import type { PushMethod } from "../../../store/types";
 import { type Segment, SegmentedControl } from "../SegmentedControl";
-
-const NTFY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=io.heckel.ntfy";
 
 export const PushMethodField: React.FC<SettingComponentProps> = ({
   value,
@@ -20,6 +18,7 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
   disabled,
 }) => {
   const { t } = useLingui();
+  const servers = useStore((s) => s.servers);
   const [status, setStatus] = useState<PushStatus | null>(null);
   const [isMissingDistributor, setIsMissingDistributor] = useState(false);
   const method = value as PushMethod;
@@ -48,7 +47,6 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
     setStatus(picked);
     setIsMissingDistributor(!picked.current);
     if (picked.current) onChange("unifiedpush");
-    else void openExternalUrl(NTFY_STORE_URL);
   };
 
   const choose = (next: PushMethod) => {
@@ -57,19 +55,28 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
     else onChange(next);
   };
 
+  const hasPushServer = servers.some(
+    (server) => server.isConnected && hasWebPush(server.id),
+  );
   const segments: Segment<PushMethod>[] = [
-    { value: "fcm", label: "Google" },
-    { value: "unifiedpush", label: "UnifiedPush" },
+    {
+      value: "fcm",
+      label: "Google",
+      disabled: !hasPushServer || status?.isFcmAvailable === false,
+    },
+    { value: "unifiedpush", label: "UnifiedPush", disabled: !hasPushServer },
     { value: "poll", label: t`Background` },
   ];
   const canChangeApp =
-    method === "unifiedpush" && (status?.distributors.length ?? 0) > 1;
+    hasPushServer &&
+    method === "unifiedpush" &&
+    (status?.distributors.length ?? 0) > 1;
 
   return (
     <div className="flex flex-col gap-2">
       <SegmentedControl
         segments={segments}
-        value={method}
+        value={hasPushServer ? method : "poll"}
         onChange={choose}
         disabled={disabled}
         size="lg"
