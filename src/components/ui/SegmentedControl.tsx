@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 export interface Segment<T extends string> {
   value: T;
   label: ReactNode;
-  disabled?: boolean;
 }
 
 const SIZE_CLASS = {
@@ -43,7 +42,7 @@ export function SegmentedControl<T extends string>({
             key={segment.value}
             type="button"
             aria-pressed={active}
-            disabled={disabled || segment.disabled}
+            disabled={disabled}
             onMouseDown={onMouseDown}
             onClick={() => onChange(segment.value)}
             className={`${SIZE_CLASS[size]} flex-1 rounded-full transition-colors disabled:opacity-50 ${
