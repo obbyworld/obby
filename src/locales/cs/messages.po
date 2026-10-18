@@ -479,10 +479,6 @@ msgstr "Přidejte údaj pro zapnutí 2FA"
 msgid "Add a reaction"
 msgstr "Přidat reakci"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "Přidejte server a uvidíte, jak k vám doručuje oznámení"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Přidat slovo nebo frázi..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "Zpět na nastavení"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "Pouze kontrola na pozadí"
+msgid "Background"
+msgstr "Na pozadí"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1082,6 +1078,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Změnit barvu zvýraznění"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Změnit aplikaci"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "Změňte nebo obnovte heslo k vašemu účtu."
@@ -1220,10 +1220,6 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chaty a sítě"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "Kontrolovat nové zprávy přibližně každých 15 minut"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Vyberte jiný typ souboru. Úložiště souborů nepřijímá soubory {ext}."
@@ -1252,17 +1248,9 @@ msgstr "Zvolte bezpečné heslo"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Vyberte menší soubor. Tento je pro úložiště souborů příliš velký."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "Vybrat distributora"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Vybrat soubor"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Vyberte, jak k vám zprávy dorazí, když je Obby zavřené. Servery bez web push vždy používají kontrolu na pozadí."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1872,18 +1860,6 @@ msgstr "Smazat tuto síť?"
 msgid "deleted"
 msgstr "smazáno"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "Doručovat okamžitě přes distribuční aplikaci, kterou si vyberete, například ntfy"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Doručovat okamžitě přes služby Google Play"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "Doručování při zavřené aplikaci"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2413,10 +2389,6 @@ msgstr "Rozbalit seznam členů"
 msgid "Expand workflow"
 msgstr "Rozbalit workflow"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Počítejte se zpožděním až 15 minut, když je Obby zavřené"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Rozšířený profil není dostupný"
@@ -2524,6 +2496,14 @@ msgstr "Sbalit vše"
 msgid "Folder name"
 msgstr "Název složky"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Pro soukromé zprávy a zmínky"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Pro soukromé zprávy a zmínky. Přestanou, když Obby smažete z přehledu aplikací."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Z bezpečnostních důvodů byly všechny stávající relace tohoto účtu odhlášeny a stav serveru vázaný na účet byl vymazán. Pokud bylo zapnuto dvoufázové ověření, zůstává zapnuté, takže ho bude vyžadovat i další přihlášení."
@@ -2596,10 +2576,6 @@ msgstr "Obecný podpůrný kanál"
 msgid "Get notified when someone says the words you follow."
 msgstr "Dostávejte upozornění, když někdo napíše sledovaná slova."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Dostávejte je okamžitě, i když je Obby zavřené"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2619,10 +2595,6 @@ msgstr "Přejít na {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Jít na odpověď"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2696,10 +2668,6 @@ msgstr "Název hostitele"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Jak k vám dorazí oznámení jednotlivých serverů, když Obby zavřete"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2794,12 +2762,8 @@ msgid "Install"
 msgstr "Instalovat"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "Nainstalujte distributora UnifiedPush, například ntfy, a pak znovu vyberte UnifiedPush"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "Pro použití nainstalujte služby Google Play"
+msgid "Install a UnifiedPush app first"
+msgstr "Nejprve nainstalujte aplikaci UnifiedPush"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2954,10 +2918,6 @@ msgstr "Uchovávat historii chatu v tomto zařízení"
 msgid "Keep credentials"
 msgstr "Ponechat údaje"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "Nechte Obby otevřené, abyste je dostávali"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Ponechat hesla"
@@ -3023,10 +2983,6 @@ msgstr "Opustit kanál"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Ponechte pole kanálu prázdné pro obecnou pozvánku do sítě. Popis slouží pouze pro vaše záznamy — viditelný je jen pro vás v tomto seznamu."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "Nechte Obby na pozadí, abyste je dostávali, protože jeho odsunutím přestanou chodit"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3801,8 +3757,8 @@ msgid "Notifications"
 msgstr "Oznámení"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Oznámení při zavřeném Obby"
+msgid "Notifications Source"
+msgstr "Zdroj oznámení"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5097,10 +5053,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode musí odpovídat [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Zobrazit systémové oznámení pro soukromé zprávy a zmínky, když se nedíváte na daný chat"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Zobrazit všechny události"
 
@@ -5648,10 +5600,6 @@ msgstr "Zapněte Uchovávat historii chatu a začněte ukládat"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Zapněte OPER při připojení, aby se uložené jméno a heslo odesílaly jako OPER při každém připojení, nebo použijte Přihlásit OPER níže."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "Zapněte Zobrazovat oznámení, abyste nějaká dostávali"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Zapněte kameru a zkuste to znovu"
@@ -5685,10 +5633,6 @@ msgstr "Pište slova pro hledání ve zprávách"
 msgid "Undeafen"
 msgstr "Zapnout poslech"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
-
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Přestat ignorovat uživatele"
@@ -5711,10 +5655,6 @@ msgstr "Zrušit ztlumení"
 #: src/components/voice/ParticipantTile.tsx
 msgid "Unmute for me"
 msgstr "Zrušit ztlumení jen pro mě"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Unmute notifications with the bell to get any"
-msgstr "Zrušte ztlumení oznámení zvonkem, abyste nějaká dostávali"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -5839,10 +5779,6 @@ msgstr "Uživatelé a vzory k ignorování"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Uživatelé:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "Používá se {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6053,10 +5989,6 @@ msgstr "Co to znamená:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Co děláte"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "Po zavření"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

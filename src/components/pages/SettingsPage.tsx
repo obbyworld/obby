@@ -83,7 +83,6 @@ const subcategoryLabel = (name: string): string => {
     Alerts: t`Alerts`,
     Audio: t`Audio`,
     Mentions: t`Mentions`,
-    "When Closed": t`When Closed`,
     Chat: t`Chat`,
     Events: t`Events`,
     Input: t`Input`,

@@ -479,10 +479,6 @@ msgstr "2FA'yı etkinleştirmek için bir kimlik bilgisi ekleyin"
 msgid "Add a reaction"
 msgstr "Tepki ekle"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "Bildirimlerinin size nasıl ulaştığını görmek için bir sunucu ekleyin"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Kelime veya ifade ekle..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "Ayarlara dön"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "Yalnızca arka plan denetimi"
+msgid "Background"
+msgstr "Arka plan"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1082,6 +1078,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Vurgu rengini değiştir"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Uygulamayı değiştir"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "Hesabınızın parolasını değiştirin veya sıfırlayın."
@@ -1220,10 +1220,6 @@ msgstr "Sohbet"
 msgid "Chats and networks"
 msgstr "Sohbetler ve ağlar"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "Yeni mesajları yaklaşık 15 dakikada bir denetle"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Farklı bir dosya türü seçin. Dosya sunucusu {ext} dosyalarını kabul etmiyor."
@@ -1252,17 +1248,9 @@ msgstr "Güvenli bir şifre seçin"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Daha küçük bir dosya seçin. Bu dosya, dosya sunucusu için çok büyük."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "Dağıtıcı seç"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Dosya seç"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Obby kapalıyken mesajların sana nasıl ulaşacağını seç. Web push desteği olmayan sunucular her zaman arka plan denetimini kullanır."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1872,18 +1860,6 @@ msgstr "Bu ağ silinsin mi?"
 msgid "deleted"
 msgstr "silindi"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "ntfy gibi seçtiğin bir dağıtıcı uygulamayla hemen teslim et"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Google Play hizmetleriyle hemen teslim et"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "Kapalıyken teslim"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2413,10 +2389,6 @@ msgstr "Üye listesini genişlet"
 msgid "Expand workflow"
 msgstr "İş akışını genişlet"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Obby kapalıyken 15 dakikaya kadar gecikme bekleyin"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Genişletilmiş profil kullanılamıyor"
@@ -2524,6 +2496,14 @@ msgstr "Tümünü daralt"
 msgid "Folder name"
 msgstr "Klasör adı"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Özel mesajlar ve bahsetmeler için"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Özel mesajlar ve bahsetmeler için. Obby'yi kaydırıp kapattığınızda durur."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Güvenlik için bu hesabın tüm mevcut oturumları kapatıldı ve hesaba bağlı sunucu durumu temizlendi. İki adımlı doğrulama etkinse etkin kalır, bu yüzden bir sonraki oturum açmada yine istenecektir."
@@ -2596,10 +2576,6 @@ msgstr "Genel Destek Kanalı"
 msgid "Get notified when someone says the words you follow."
 msgstr "Biri takip ettiğin kelimeleri söylediğinde bildirim al."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Obby kapalıyken bile anında alın"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2619,10 +2595,6 @@ msgstr "{name} kanalına git"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Yanıta git"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2696,10 +2668,6 @@ msgstr "Ana bilgisayar adı"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Ana makine adı:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Obby'yi kapattığınızda her sunucunun bildirimleri size nasıl ulaşır"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2794,12 +2762,8 @@ msgid "Install"
 msgstr "Yükle"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "ntfy gibi bir UnifiedPush dağıtıcısı yükle, ardından UnifiedPush’u yeniden seç"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "Bunu kullanmak için Google Play hizmetlerini yükle"
+msgid "Install a UnifiedPush app first"
+msgstr "Önce bir UnifiedPush uygulaması yükleyin"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2954,10 +2918,6 @@ msgstr "Sohbet geçmişini bu cihazda tut"
 msgid "Keep credentials"
 msgstr "Kimlik bilgilerini sakla"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "Almak için Obby'yi açık tutun"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Parolaları sakla"
@@ -3023,10 +2983,6 @@ msgstr "Kanaldan ayrıl"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Genel bir ağ daveti için kanal alanını boş bırakın. Açıklama yalnızca sizin kayıtlarınız içindir — bu listede yalnızca sizin görebileceğiniz şekilde gösterilir."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "Almak için Obby'yi arka planda bırakın, çünkü kaydırarak kapatmak onları durdurur"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3801,8 +3757,8 @@ msgid "Notifications"
 msgstr "Bildirimler"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Obby kapalıyken bildirimler"
+msgid "Notifications Source"
+msgstr "Bildirim kaynağı"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5097,10 +5053,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "O sohbete bakmıyorken özel mesajlar ve anmalar için sistem bildirimi göster"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Tüm Olayları Göster"
 
@@ -5648,10 +5600,6 @@ msgstr "Kaydetmeye başlamak için Sohbet geçmişini bu cihazda tut seçeneğin
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Kayıtlı ad ve parolayı her bağlantıda OPER olarak göndermek için Bağlanınca OPER'i açın, ya da aşağıdaki Operatör olarak giriş yap'ı kullanın."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "Bildirim almak için Bildirimleri göster seçeneğini açın"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Yeniden denemek için kamerayı açın"
@@ -5685,10 +5633,6 @@ msgstr "Mesajlarda aramak için kelime yaz"
 msgid "Undeafen"
 msgstr "Sesi aç"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
-
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Kullanıcıyı yoksaymayı bırak"
@@ -5711,10 +5655,6 @@ msgstr "Sesi Aç"
 #: src/components/voice/ParticipantTile.tsx
 msgid "Unmute for me"
 msgstr "Benim için sesi aç"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Unmute notifications with the bell to get any"
-msgstr "Bildirim almak için zil simgesiyle sesi açın"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -5839,10 +5779,6 @@ msgstr "Engellenecek kullanıcılar ve desenler"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Kullanıcılar:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "{currentName} kullanılıyor"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6053,10 +5989,6 @@ msgstr "Bu ne anlama geliyor:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Ne yapıyorsunuz"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "Kapalıyken"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

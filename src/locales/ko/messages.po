@@ -479,10 +479,6 @@ msgstr "2FA를 사용하려면 인증 수단을 추가하세요"
 msgid "Add a reaction"
 msgstr "반응 추가"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "서버를 추가하여 알림이 어떻게 전달되는지 확인하세요"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "단어나 문구 추가..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "설정으로 돌아가기"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "백그라운드 확인만"
+msgid "Background"
+msgstr "백그라운드"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1082,6 +1078,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "강조 색상 변경"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "앱 변경"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "계정의 비밀번호를 변경하거나 재설정하세요."
@@ -1220,10 +1220,6 @@ msgstr "채팅"
 msgid "Chats and networks"
 msgstr "채팅 및 네트워크"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "약 15분마다 새 메시지 확인"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "다른 파일 형식을 선택하세요. 파일 호스트가 {ext} 파일을 허용하지 않습니다."
@@ -1252,17 +1248,9 @@ msgstr "안전한 비밀번호를 선택하세요"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "더 작은 파일을 선택하세요. 이 파일은 파일 호스트에 비해 너무 큽니다."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "배포자 선택"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "파일 선택"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Obby가 닫혀 있을 때 메시지를 받는 방법을 선택하세요. 웹 푸시가 없는 서버는 항상 백그라운드 확인을 사용합니다."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1872,18 +1860,6 @@ msgstr "이 네트워크를 삭제할까요?"
 msgid "deleted"
 msgstr "삭제됨"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "ntfy 등 선택한 배포자 앱을 통해 즉시 전달"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Google Play 서비스를 통해 즉시 전달"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "닫혀 있을 때 전달"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2413,10 +2389,6 @@ msgstr "멤버 목록 펼치기"
 msgid "Expand workflow"
 msgstr "워크플로우 확장"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Obby가 닫혀 있는 동안 최대 15분 지연을 예상하세요"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "확장 프로필을 사용할 수 없습니다"
@@ -2524,6 +2496,14 @@ msgstr "모두 축소"
 msgid "Folder name"
 msgstr "폴더 이름"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "비공개 메시지와 멘션용"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "비공개 메시지와 멘션용. Obby를 스와이프해서 닫으면 중지됩니다."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "보안을 위해 이 계정의 모든 기존 세션이 로그아웃되었고 계정 범위의 서버 상태가 삭제되었습니다. 2단계 인증을 사용 중이었다면 계속 사용 상태이므로 다음 로그인에도 필요합니다."
@@ -2596,10 +2576,6 @@ msgstr "일반 지원 채널"
 msgid "Get notified when someone says the words you follow."
 msgstr "팔로우하는 단어를 누군가 말하면 알림을 받으세요."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Obby가 닫혀 있어도 즉시 받으세요"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2619,10 +2595,6 @@ msgstr "{name}(으)로 이동"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "답장으로 이동"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2696,10 +2668,6 @@ msgstr "호스트명"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "호스트명:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Obby를 닫은 후 각 서버의 알림이 전달되는 방식"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2794,12 +2762,8 @@ msgid "Install"
 msgstr "설치"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "ntfy 같은 UnifiedPush 배포자를 설치한 다음 UnifiedPush를 다시 선택하세요"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "사용하려면 Google Play 서비스를 설치하세요"
+msgid "Install a UnifiedPush app first"
+msgstr "먼저 UnifiedPush 앱을 설치하세요"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2954,10 +2918,6 @@ msgstr "이 기기에 채팅 기록 보관"
 msgid "Keep credentials"
 msgstr "인증 정보 유지"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "알림을 받으려면 Obby를 열어 두세요"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "비밀번호 유지"
@@ -3023,10 +2983,6 @@ msgstr "채널 나가기"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "일반 네트워크 초대를 보내려면 채널을 비워두세요. 설명은 본인 기록용일 뿐이며 이 목록에서 본인에게만 표시됩니다."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "알림을 받으려면 Obby를 백그라운드에 두세요. 스와이프해서 닫으면 알림이 중단됩니다"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3801,8 +3757,8 @@ msgid "Notifications"
 msgstr "알림"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Obby가 닫혀 있을 때 알림"
+msgid "Notifications Source"
+msgstr "알림 소스"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5097,10 +5053,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "숏코드는 [A-Za-z0-9._-]+ 형식이어야 합니다."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "해당 채팅을 보고 있지 않을 때 비공개 메시지와 멘션에 대한 시스템 알림을 표시합니다"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "모든 이벤트 표시"
 
@@ -5648,10 +5600,6 @@ msgstr "저장을 시작하려면 이 기기에 채팅 기록 보관을 켜세�
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "연결 시 OPER를 켜면 모든 연결에서 저장된 이름과 비밀번호로 OPER를 보냅니다. 또는 아래의 OPER 실행을 사용하세요."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "알림을 받으려면 알림 표시를 켜세요"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "다시 시도하려면 카메라를 켜세요"
@@ -5685,10 +5633,6 @@ msgstr "단어를 입력해 메시지 검색"
 msgid "Undeafen"
 msgstr "헤드셋 음소거 해제"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
-
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "무시 해제"
@@ -5711,10 +5655,6 @@ msgstr "음소거 해제"
 #: src/components/voice/ParticipantTile.tsx
 msgid "Unmute for me"
 msgstr "나에게만 음소거 해제"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Unmute notifications with the bell to get any"
-msgstr "알림을 받으려면 종 아이콘으로 음소거를 해제하세요"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -5839,10 +5779,6 @@ msgstr "무시할 사용자 및 패턴"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "사용자:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "{currentName} 사용 중"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6053,10 +5989,6 @@ msgstr "이것이 의미하는 바:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "현재 하고 있는 일"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "닫혀 있을 때"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
