@@ -7,7 +7,11 @@ import { CustomMentionsField } from "../../../components/ui/settings/CustomMenti
 import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
 import { PushMethodField } from "../../../components/ui/settings/PushMethodField";
-import { isTauriAndroid, isTauriDesktop } from "../../platformUtils";
+import {
+  isTauriAndroid,
+  isTauriDesktop,
+  isTauriIOS,
+} from "../../platformUtils";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -290,6 +294,7 @@ const notificationSettings: SettingDefinition[] = [
     description: msg`How each server's notifications reach you once you close Obby`,
     type: "custom",
     defaultValue: null,
+    hidden: !isTauriAndroid() && !isTauriIOS(),
     searchKeywords: [
       "closed",
       "background",

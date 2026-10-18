@@ -2955,10 +2955,6 @@ msgid "Keep credentials"
 msgstr "認証情報を保持"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "受け取るには Obby をトレイに常駐させてください"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "受け取るには Obby を開いたままにしてください"
 

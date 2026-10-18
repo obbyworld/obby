@@ -2955,10 +2955,6 @@ msgid "Keep credentials"
 msgstr "Conserver les identifiants"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "Gardez Obby dans la zone de notification pour les recevoir"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "Gardez Obby ouvert pour les recevoir"
 

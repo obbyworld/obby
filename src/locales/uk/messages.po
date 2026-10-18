@@ -2955,10 +2955,6 @@ msgid "Keep credentials"
 msgstr "Зберегти облікові дані"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "Залиште Obby в системному треї, щоб отримувати їх"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "Тримайте Obby відкритим, щоб отримувати їх"
 

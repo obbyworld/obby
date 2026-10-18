@@ -18,13 +18,22 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
   const [status, setStatus] = useState<PushStatus | null>(null);
   const [isMissingDistributor, setIsMissingDistributor] = useState(false);
 
+  // We reload on return to the app, since the user leaves Obby to install a distributor.
   useEffect(() => {
     let isCancelled = false;
-    void pushStatus().then((loaded) => {
-      if (!isCancelled) setStatus(loaded);
-    });
+    const loadStatus = () => {
+      if (document.visibilityState !== "visible") return;
+      void pushStatus().then((loaded) => {
+        if (isCancelled) return;
+        setStatus(loaded);
+        if (loaded.distributors.length > 0) setIsMissingDistributor(false);
+      });
+    };
+    loadStatus();
+    document.addEventListener("visibilitychange", loadStatus);
     return () => {
       isCancelled = true;
+      document.removeEventListener("visibilitychange", loadStatus);
     };
   }, []);
 

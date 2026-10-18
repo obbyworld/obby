@@ -1,49 +1,19 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useState } from "react";
 import {
   type ClosedAppDelivery,
   closedAppDelivery,
-  type NotificationPlatform,
 } from "../../../lib/closedAppDelivery";
 import { needsHistoryPoll } from "../../../lib/historyPoll/historyPollConfig";
 import { areChatNotificationsOn } from "../../../lib/notifications";
-import {
-  isTauriAndroid,
-  isTauriDesktop,
-  isTauriIOS,
-} from "../../../lib/platformUtils";
-import { findPushRegistration } from "../../../lib/pushRegistration";
+import { isTauriAndroid } from "../../../lib/platformUtils";
 import type { SettingComponentProps } from "../../../lib/settings/types";
 import useStore from "../../../store";
-
-function currentPlatform(): NotificationPlatform {
-  if (isTauriAndroid()) return "android";
-  if (isTauriIOS()) return "ios";
-  if (isTauriDesktop()) return "desktop";
-  return "web";
-}
 
 export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
   const { t } = useLingui();
   const servers = useStore((s) => s.servers);
   const globalSettings = useStore((s) => s.globalSettings);
-  const [pushServerIds, setPushServerIds] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    let isCancelled = false;
-    Promise.all(
-      servers.map(async (server) =>
-        (await findPushRegistration(server.id)) ? server.id : null,
-      ),
-    ).then((ids) => {
-      if (!isCancelled)
-        setPushServerIds(new Set(ids.filter((id) => id !== null)));
-    });
-    return () => {
-      isCancelled = true;
-    };
-  }, [servers]);
 
   const describe = (delivery: ClosedAppDelivery): string => {
     switch (delivery) {
@@ -53,8 +23,6 @@ export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
           : t`Turn on Show Notifications to get any`;
       case "instant":
         return t`Get them instantly, even with Obby closed`;
-      case "tray":
-        return t`Keep Obby in the tray to get them`;
       case "periodic-check":
         return t`Expect them up to 15 minutes late while Obby is closed`;
       case "background-only":
@@ -79,12 +47,10 @@ export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
           <span className="text-sm text-discord-text-muted">
             {describe(
               closedAppDelivery({
-                platform: currentPlatform(),
+                platform: isTauriAndroid() ? "android" : "ios",
                 areNotificationsOn: areChatNotificationsOn(globalSettings),
-                hasPushRegistration:
-                  pushServerIds.has(server.id) || !!server.pushEndpoint,
+                hasPushRegistration: !!server.pushEndpoint,
                 needsHistoryPoll: needsHistoryPoll(server),
-                keepsRunningInTray: globalSettings.closeToTray,
               }),
             )}
           </span>
