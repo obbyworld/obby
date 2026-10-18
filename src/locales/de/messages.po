@@ -5716,6 +5716,10 @@ msgstr "Ton einschalten"
 msgid "Unmute for me"
 msgstr "Stummschaltung für mich aufheben"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Hebe die Stummschaltung der Benachrichtigungen mit der Glocke auf, um welche zu erhalten"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

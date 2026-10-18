@@ -5716,6 +5716,10 @@ msgstr "Ativar som"
 msgid "Unmute for me"
 msgstr "Reativar áudio para mim"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Ative as notificações no sino para recebê-las"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

@@ -5716,6 +5716,10 @@ msgstr "Вкл. звук"
 msgid "Unmute for me"
 msgstr "Включить звук для меня"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Включите уведомления кнопкой с колокольчиком, чтобы получать их"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

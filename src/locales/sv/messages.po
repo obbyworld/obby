@@ -5716,6 +5716,10 @@ msgstr "Sluta tysta"
 msgid "Unmute for me"
 msgstr "Avtysta för mig"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Slå på aviseringar med klockan för att få några"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

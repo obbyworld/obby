@@ -5716,6 +5716,10 @@ msgstr "Dempen opheffen"
 msgid "Unmute for me"
 msgstr "Dempen opheffen voor mij"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Hef het dempen van meldingen op met de bel om ze te ontvangen"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

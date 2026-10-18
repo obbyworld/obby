@@ -5716,6 +5716,10 @@ msgstr "Poista mykistys"
 msgid "Unmute for me"
 msgstr "Poista mykistys vain minulta"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Poista ilmoitusten mykistys kellosta saadaksesi niitä"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

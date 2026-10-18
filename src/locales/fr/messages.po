@@ -5716,6 +5716,10 @@ msgstr "Rétablir le son"
 msgid "Unmute for me"
 msgstr "Rétablir le son pour moi"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Réactivez les notifications avec la cloche pour en recevoir"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"
