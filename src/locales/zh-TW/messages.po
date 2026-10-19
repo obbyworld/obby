@@ -2950,10 +2950,6 @@ msgid "Keep credentials"
 msgstr "保留憑證"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "請將 Obby 保留在系統匣中以接收通知"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "請保持 Obby 開啟以接收通知"
 

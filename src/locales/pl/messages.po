@@ -2950,10 +2950,6 @@ msgid "Keep credentials"
 msgstr "Zachowaj poświadczenia"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "Zostaw Obby w zasobniku systemowym, aby je otrzymywać"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "Zostaw Obby otwarte, aby je otrzymywać"
 

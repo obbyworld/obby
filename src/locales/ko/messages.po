@@ -2950,10 +2950,6 @@ msgid "Keep credentials"
 msgstr "인증 정보 유지"
 
 #: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "알림을 받으려면 Obby를 트레이에 두세요"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
 msgid "Keep Obby open to get them"
 msgstr "알림을 받으려면 Obby를 열어 두세요"
 
