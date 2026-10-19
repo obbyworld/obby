@@ -7,8 +7,6 @@ import {
   pushStatus,
 } from "../../../lib/nativePush";
 import type { SettingComponentProps } from "../../../lib/settings/types";
-import { hasWebPush } from "../../../lib/webpush";
-import useStore from "../../../store";
 import type { PushMethod } from "../../../store/types";
 import { type Segment, SegmentedControl } from "../SegmentedControl";
 
@@ -18,7 +16,6 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
   disabled,
 }) => {
   const { t } = useLingui();
-  const servers = useStore((s) => s.servers);
   const [status, setStatus] = useState<PushStatus | null>(null);
   const [isMissingDistributor, setIsMissingDistributor] = useState(false);
   const method = value as PushMethod;
@@ -55,28 +52,19 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
     else onChange(next);
   };
 
-  const hasPushServer = servers.some(
-    (server) => server.isConnected && hasWebPush(server.id),
-  );
   const segments: Segment<PushMethod>[] = [
-    {
-      value: "fcm",
-      label: "Google",
-      disabled: !hasPushServer || status?.isFcmAvailable === false,
-    },
-    { value: "unifiedpush", label: "UnifiedPush", disabled: !hasPushServer },
+    { value: "fcm", label: "Google" },
+    { value: "unifiedpush", label: "UnifiedPush" },
     { value: "poll", label: t`Background` },
   ];
   const canChangeApp =
-    hasPushServer &&
-    method === "unifiedpush" &&
-    (status?.distributors.length ?? 0) > 1;
+    method === "unifiedpush" && (status?.distributors.length ?? 0) > 1;
 
   return (
     <div className="flex flex-col gap-2">
       <SegmentedControl
         segments={segments}
-        value={hasPushServer ? method : "poll"}
+        value={method}
         onChange={choose}
         disabled={disabled}
         size="lg"
