@@ -2234,7 +2234,7 @@ export const ChatArea: React.FC<{
                 <BouncerNetworksPanel bouncerServerId={selectedServer.id} />
               </div>
             ) : (
-              <div className="flex-grow flex flex-col items-center justify-center bg-discord-dark-200">
+              <div className="flex-grow min-h-0 overflow-y-auto bg-discord-dark-200">
                 <BlankPage />
               </div>
             ))}
