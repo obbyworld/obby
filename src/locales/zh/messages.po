@@ -3930,6 +3930,10 @@ msgstr "操作员操作"
 msgid "Operator password"
 msgstr "管理员密码"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "可选"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "可选的崩溃报告以改善应用"

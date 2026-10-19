@@ -3930,6 +3930,10 @@ msgstr "Akce operátora"
 msgid "Operator password"
 msgstr "Heslo operátora"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "volitelné"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Volitelné zprávy o pádu pro zlepšení aplikace"

@@ -3930,6 +3930,10 @@ msgstr "Operator işlemleri"
 msgid "Operator password"
 msgstr "Operatör parolası"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "isteğe bağlı"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Uygulamayı geliştirmek için isteğe bağlı çökme raporları"

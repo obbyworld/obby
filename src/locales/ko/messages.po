@@ -3930,6 +3930,10 @@ msgstr "운영자 작업"
 msgid "Operator password"
 msgstr "운영자 비밀번호"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "선택"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "앱 개선을 위한 선택적 충돌 보고서"

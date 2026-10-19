@@ -36,6 +36,11 @@ export const CommandArgHint: React.FC<{
         <span className="mr-2 font-semibold text-discord-text-normal">
           {param.name}
         </span>
+        {!param.required && (
+          <span className="mr-2 rounded border border-dashed border-white/25 px-1 text-discord-text-muted">
+            {t`optional`}
+          </span>
+        )}
         <span
           className={error ? "text-discord-red" : "text-discord-text-muted"}
         >

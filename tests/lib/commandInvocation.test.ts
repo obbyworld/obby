@@ -6,7 +6,6 @@ import {
   coerceOptionValue,
   matchChoices,
   needsArguments,
-  optionLabel,
 } from "../../src/lib/commandInvocation";
 import type { Channel, User } from "../../src/types";
 
@@ -78,13 +77,6 @@ describe("needsArguments", () => {
     expect(needsArguments({ name: "ping" })).toBe(false);
     expect(needsArguments({ name: "ping", options: [] })).toBe(false);
     expect(needsArguments({ name: "agi", options: [text] })).toBe(true);
-  });
-});
-
-describe("optionLabel", () => {
-  it("marks optional options with a question mark", () => {
-    expect(optionLabel({ name: "host", required: true })).toBe("host");
-    expect(optionLabel({ name: "count" })).toBe("count?");
   });
 });
 

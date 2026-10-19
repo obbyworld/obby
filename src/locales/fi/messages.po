@@ -3930,6 +3930,10 @@ msgstr "Operaattoritoiminnot"
 msgid "Operator password"
 msgstr "Operaattorin salasana"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "valinnainen"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Valinnaiset kaatumisraportit sovelluksen parantamiseksi"

@@ -3929,6 +3929,10 @@ msgstr "Operator actions"
 msgid "Operator password"
 msgstr "Operator password"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "optional"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
 msgstr "Optional crash reports to improve the app"

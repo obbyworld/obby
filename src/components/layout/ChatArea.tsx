@@ -35,7 +35,7 @@ import {
 } from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
 import { voiceDisplayName } from "../../lib/channelMentions";
-import { needsArguments, optionLabel } from "../../lib/commandInvocation";
+import { needsArguments } from "../../lib/commandInvocation";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -1594,12 +1594,12 @@ export const ChatArea: React.FC<{
     invocation && command.activeParam
       ? Math.max(
           (invocation.values[command.activeParam.name] ?? "").length,
-          optionLabel(command.activeParam).length,
+          command.activeParam.name.length,
         ) + 1
       : 0;
 
   const placeholder = (() => {
-    if (command.activeParam) return optionLabel(command.activeParam);
+    if (command.activeParam) return command.activeParam.name;
     if (selectedChannel)
       return globalSettings.enableMultilineInput &&
         !isNativeMobile &&
@@ -2394,7 +2394,7 @@ export const ChatArea: React.FC<{
                         i === invocation.active ? null : (
                           <CommandArgPill
                             key={p.name}
-                            label={optionLabel(p)}
+                            label={p.name}
                             value={invocation.values[p.name] ?? ""}
                             optional={!p.required}
                             order={i < invocation.active ? 0 : 2}
@@ -2424,12 +2424,14 @@ export const ChatArea: React.FC<{
                           : "send"
                       }
                       className={`resize-none overflow-y-auto border-none leading-[22px] text-discord-text-normal outline-none placeholder:truncate ${
-                        invocation
-                          ? `order-1 mr-1 max-w-full rounded bg-discord-primary/15 px-1.5 ${isTouch ? "my-1 py-[11px]" : "my-[11px] py-1"}`
-                          : "min-w-0 flex-1 bg-transparent py-[15px]"
+                        !invocation
+                          ? "min-w-0 flex-1 bg-transparent py-[15px]"
+                          : isTouch
+                            ? "order-3 my-1 mr-1 min-w-0 basis-full rounded bg-discord-primary/15 px-1.5 py-[11px]"
+                            : "order-1 my-[11px] mr-1 max-w-full rounded bg-discord-primary/15 px-1.5 py-1"
                       }`}
                       style={
-                        invocation
+                        invocation && !isTouch
                           ? {
                               ...previewStyle,
                               width: `calc(${argFieldWidth}ch + 0.75rem)`,
@@ -2457,6 +2459,7 @@ export const ChatArea: React.FC<{
                     }
                     showSendButton={isNativeMobile}
                     hideEmoji={isNativeMobile}
+                    hideFormatting={isTouch && invocation !== null}
                     canSend={
                       hasText ||
                       attachments.length > 0 ||

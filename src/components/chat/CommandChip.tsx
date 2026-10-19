@@ -19,17 +19,17 @@ export const CommandArgPill: React.FC<{
 }> = ({ label, value, optional, order, onSelect }) => {
   const isTouch = useIsTouchInput();
   const tone = value
-    ? "text-discord-text-normal"
+    ? "border-transparent text-discord-text-normal"
     : optional
-      ? "text-discord-text-muted/60"
-      : "text-discord-text-muted";
+      ? "border-dashed border-white/25 text-discord-text-muted"
+      : "border-transparent text-discord-text-muted";
   return (
     <button
       type="button"
       style={{ order }}
       onMouseDown={keepInputFocus}
       onClick={onSelect}
-      className={`mr-1 max-w-full whitespace-pre-wrap break-words rounded bg-white/[0.06] px-1.5 text-left leading-[22px] hover:bg-white/10 ${isTouch ? "my-1 min-h-11 min-w-11 py-[11px]" : "my-[11px] py-1"} ${tone}`}
+      className={`mr-1 max-w-full whitespace-pre-wrap break-words rounded border bg-white/[0.06] px-1.5 text-left leading-[22px] hover:bg-white/10 ${isTouch ? "my-1 min-h-11 min-w-11 py-[11px]" : "my-[11px] py-1"} ${tone}`}
     >
       {value || label}
     </button>

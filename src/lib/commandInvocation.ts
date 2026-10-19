@@ -25,10 +25,6 @@ type CommandPayloadResult =
   | { payload: Record<string, OptionValue> }
   | { error: CommandArgError };
 
-export function optionLabel(option: BotCommandOption): string {
-  return option.required ? option.name : `${option.name}?`;
-}
-
 export function argChoices(
   option: BotCommandOption,
   users: readonly User[],
