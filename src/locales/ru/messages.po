@@ -4147,6 +4147,10 @@ msgstr "Опубликовать сообщение дня каждого сер
 msgid "Preferences"
 msgstr "Настройки"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Нажмите «Назад» ещё раз для выхода"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Предпросмотр (ещё не загружено)"

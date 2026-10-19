@@ -4147,6 +4147,10 @@ msgstr "Опубліковувати повідомлення дня кожно�
 msgid "Preferences"
 msgstr "Налаштування"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Натисніть «Назад» ще раз, щоб вийти"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Попередній перегляд (ще не завантажено)"

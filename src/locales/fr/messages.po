@@ -4147,6 +4147,10 @@ msgstr "Publier le message du jour de chaque serveur dans les avis du serveur et
 msgid "Preferences"
 msgstr "Préférences"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Appuyez à nouveau sur retour pour quitter"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Aperçu (pas encore envoyé)"

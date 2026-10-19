@@ -4147,6 +4147,10 @@ msgstr "Het bericht van de dag van elke server in Serverberichten en de welkomst
 msgid "Preferences"
 msgstr "Voorkeuren"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Druk nogmaals op terug om af te sluiten"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Voorbeeld (nog niet geüpload)"

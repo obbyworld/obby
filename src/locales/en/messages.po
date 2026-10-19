@@ -4146,6 +4146,10 @@ msgstr "Post each server's message of the day to Server Notices and its welcome 
 msgid "Preferences"
 msgstr "Preferences"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Press back again to exit"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Preview (not yet uploaded)"

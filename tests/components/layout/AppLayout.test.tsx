@@ -414,7 +414,7 @@ describe("AppLayout Swipe Navigation", () => {
       expect(result).toBe(false);
     });
 
-    it("should allow app exit from serverList on back", () => {
+    it("should allow app exit from serverList on a second back", () => {
       useStore.setState({
         ui: {
           ...useStore.getState().ui,
@@ -424,9 +424,8 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
 
-      const result = window.androidBackCallback?.();
-
-      expect(result).toBe(true);
+      expect(window.androidBackCallback?.()).toBe(false);
+      expect(window.androidBackCallback?.()).toBe(true);
     });
   });
 });

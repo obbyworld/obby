@@ -4147,6 +4147,10 @@ msgstr "Zveřejnit zprávu dne každého serveru v Oznámeníích serveru a na j
 msgid "Preferences"
 msgstr "Předvolby"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Stiskněte znovu Zpět pro ukončení"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Náhled (ještě nenahrán)"
