@@ -5745,6 +5745,10 @@ msgstr "Unmute"
 msgid "Unmute for me"
 msgstr "Unmute for me"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr "Unmute notifications with the bell to get any"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

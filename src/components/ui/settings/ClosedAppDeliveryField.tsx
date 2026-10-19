@@ -48,7 +48,9 @@ export const ClosedAppDeliveryField: React.FC<SettingComponentProps> = () => {
   const describe = (delivery: ClosedAppDelivery): string => {
     switch (delivery) {
       case "off":
-        return t`Turn on Show Notifications to get any`;
+        return globalSettings.enableNotifications
+          ? t`Unmute notifications with the bell to get any`
+          : t`Turn on Show Notifications to get any`;
       case "instant":
         return t`Get them instantly, even with Obby closed`;
       case "tray":

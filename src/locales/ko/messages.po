@@ -5746,6 +5746,10 @@ msgstr "음소거 해제"
 msgid "Unmute for me"
 msgstr "나에게만 음소거 해제"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

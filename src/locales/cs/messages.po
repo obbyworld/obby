@@ -5746,6 +5746,10 @@ msgstr "Zrušit ztlumení"
 msgid "Unmute for me"
 msgstr "Zrušit ztlumení jen pro mě"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

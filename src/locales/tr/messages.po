@@ -5746,6 +5746,10 @@ msgstr "Sesi Aç"
 msgid "Unmute for me"
 msgstr "Benim için sesi aç"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"

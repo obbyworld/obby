@@ -5746,6 +5746,10 @@ msgstr "取消静音"
 msgid "Unmute for me"
 msgstr "仅对我取消静音"
 
+#: src/components/ui/settings/ClosedAppDeliveryField.tsx
+msgid "Unmute notifications with the bell to get any"
+msgstr ""
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Unpin conversation"
