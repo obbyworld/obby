@@ -4156,6 +4156,10 @@ msgstr "Publicera varje servers meddelande för dagen i Servermeddelanden och p�
 msgid "Preferences"
 msgstr "Inställningar"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Tryck bakåt igen för att avsluta"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Förhandsvisning (ej uppladdad ännu)"

@@ -4156,6 +4156,10 @@ msgstr "각 서버의 오늘의 메시지를 서버 알림과 환영 페이지�
 msgid "Preferences"
 msgstr "환경설정"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "종료하려면 뒤로를 한 번 더 누르세요"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "미리보기 (아직 업로드되지 않음)"
