@@ -479,10 +479,6 @@ msgstr "Adaugă o credențială pentru a activa 2FA"
 msgid "Add a reaction"
 msgstr "Adăugați o reacție"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "Adaugă un server ca să vezi cum îți ajung notificările lui"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Adaugă un cuvânt sau o expresie..."
@@ -866,8 +862,8 @@ msgid "Back to Settings"
 msgstr "Înapoi la setări"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "Doar verificare în fundal"
+msgid "Background"
+msgstr ""
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1079,6 +1075,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Schimbă culoarea de accent"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr ""
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "Schimbați sau resetați parola contului dvs."
@@ -1221,10 +1221,6 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Conversații și rețele"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "Verifică mesajele noi cam la fiecare 15 minute"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Alege alt tip de fișier. Gazda de fișiere nu acceptă fișiere {ext}."
@@ -1253,17 +1249,9 @@ msgstr "Alege o parolă sigură"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Alege un fișier mai mic. Acesta este prea mare pentru gazda de fișiere."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "Alege distribuitorul"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Alege fișier"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Alege cum îți ajung mesajele cât timp Obby este închis. Serverele fără web push folosesc mereu verificarea în fundal."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1867,18 +1855,6 @@ msgstr "Ștergi această rețea?"
 msgid "deleted"
 msgstr "șters"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "Livrează imediat printr-o aplicație distribuitor aleasă de tine, cum ar fi ntfy"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Livrează imediat prin serviciile Google Play"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "Livrare cu aplicația închisă"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2408,10 +2384,6 @@ msgstr "Extinde lista de membri"
 msgid "Expand workflow"
 msgstr "Extindeți fluxul de lucru"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Așteaptă-te la o întârziere de până la 15 minute cât timp Obby este închis"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Profilul extins nu este disponibil"
@@ -2519,6 +2491,14 @@ msgstr "Restrângeți tot"
 msgid "Folder name"
 msgstr "Numele folderului"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr ""
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr ""
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Din motive de securitate, toate sesiunile existente ale acestui cont au fost deconectate, iar starea serverului asociată contului a fost ștearsă. Dacă autentificarea în doi pași era activată, rămâne activată, deci următoarea autentificare o va cere în continuare."
@@ -2591,10 +2571,6 @@ msgstr "Canal general de suport"
 msgid "Get notified when someone says the words you follow."
 msgstr "Primește notificări când cineva spune cuvintele urmărite."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Primește-le imediat, chiar și cu Obby închis"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2614,10 +2590,6 @@ msgstr "Mergi la {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Mergeți la răspuns"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2687,10 +2659,6 @@ msgstr "Nume gazdă"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Hostname:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Cum îți ajung notificările fiecărui server după ce închizi Obby"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2785,12 +2753,8 @@ msgid "Install"
 msgstr "Instalează"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "Instalează un distribuitor UnifiedPush, cum ar fi ntfy, apoi selectează din nou UnifiedPush"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "Instalează serviciile Google Play pentru a folosi această opțiune"
+msgid "Install a UnifiedPush app first"
+msgstr ""
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2949,10 +2913,6 @@ msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
 msgid "Keep credentials"
 msgstr "Păstrați credențialele"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "Ține Obby deschis ca să le primești"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Păstrează parolele"
@@ -3018,10 +2978,6 @@ msgstr "Părăsește canalul"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Lasă canalul gol pentru o invitație generică în rețea. Descrierea este doar pentru evidența ta — vizibilă doar pentru tine în această listă."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "Lasă Obby în fundal ca să le primești, pentru că dacă îl închizi prin glisare se opresc"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3804,8 +3760,8 @@ msgid "Notifications"
 msgstr "Notificări"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Notificări cât timp Obby este închis"
+msgid "Notifications Source"
+msgstr ""
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5123,10 +5079,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode-ul trebuie să se potrivească cu [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Afișează o notificare de sistem pentru mesaje private și mențiuni cât timp nu te uiți la acel chat"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Afișați toate evenimentele"
 
@@ -5678,10 +5630,6 @@ msgstr "Activează Păstrează istoricul conversațiilor pentru a începe salvar
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Activați OPER la conectare pentru a trimite numele și parola salvate ca OPER la fiecare conexiune, sau folosiți Autentificați-vă ca OPER de mai jos."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "Activează Afișează notificări ca să primești notificări"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Pornește camera pentru a reîncerca"
@@ -5715,10 +5663,6 @@ msgstr "Scrie cuvinte pentru a căuta în mesaje"
 msgid "Undeafen"
 msgstr "Activează sunetul"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
-
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Nu mai ignora utilizatorul"
@@ -5741,10 +5685,6 @@ msgstr "Activare sunet"
 #: src/components/voice/ParticipantTile.tsx
 msgid "Unmute for me"
 msgstr "Activează sunetul doar pentru mine"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Unmute notifications with the bell to get any"
-msgstr ""
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -5869,10 +5809,6 @@ msgstr "Utilizatori și modele de ignorat"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Utilizatori:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "Se folosește {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6079,10 +6015,6 @@ msgstr "Ce înseamnă aceasta:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Ce faci"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "Când este închis"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

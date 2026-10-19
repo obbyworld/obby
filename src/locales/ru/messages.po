@@ -479,10 +479,6 @@ msgstr "Добавьте учётные данные, чтобы включит�
 msgid "Add a reaction"
 msgstr "Добавить реакцию"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "Добавьте сервер, чтобы увидеть, как до вас доходят его уведомления"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Добавить слово или фразу..."
@@ -866,8 +862,8 @@ msgid "Back to Settings"
 msgstr "Назад к настройкам"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "Только фоновая проверка"
+msgid "Background"
+msgstr ""
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1079,6 +1075,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Изменить акцентный цвет"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr ""
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "Измените или сбросьте пароль аккаунта."
@@ -1221,10 +1221,6 @@ msgstr "Чат"
 msgid "Chats and networks"
 msgstr "Чаты и сети"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "Проверять новые сообщения примерно каждые 15 минут"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Выберите другой тип файла. Файловый хост не принимает файлы {ext}."
@@ -1253,17 +1249,9 @@ msgstr "Выберите надёжный пароль"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Выберите файл меньшего размера. Этот слишком велик для файлового хоста."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "Выбрать дистрибьютор"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Выбрать файл"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Выберите, как получать сообщения, пока Obby закрыт. Серверы без веб-пушей всегда используют фоновую проверку."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1867,18 +1855,6 @@ msgstr "Удалить эту сеть?"
 msgid "deleted"
 msgstr "удалён"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "Доставлять сразу через выбранное приложение-дистрибьютор, например ntfy"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Доставлять сразу через сервисы Google Play"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "Доставка при закрытом приложении"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2408,10 +2384,6 @@ msgstr "Развернуть список участников"
 msgid "Expand workflow"
 msgstr "Развернуть рабочий процесс"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Ожидайте задержку до 15 минут, пока Obby закрыт"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Расширенный профиль недоступен"
@@ -2519,6 +2491,14 @@ msgstr "Свернуть все"
 msgid "Folder name"
 msgstr "Название папки"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr ""
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr ""
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "В целях безопасности все существующие сеансы этой учётной записи завершены, а связанное с ней состояние на сервере удалено. Если двухфакторная аутентификация была включена, она остаётся включённой, поэтому при следующем входе она по-прежнему потребуется."
@@ -2591,10 +2571,6 @@ msgstr "Канал общей поддержки"
 msgid "Get notified when someone says the words you follow."
 msgstr "Получайте уведомления, когда кто-то пишет отслеживаемые слова."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Получайте их мгновенно, даже когда Obby закрыт"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2614,10 +2590,6 @@ msgstr "Перейти к {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Перейти к ответу"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2687,10 +2659,6 @@ msgstr "Имя хоста"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Хост:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Как до вас доходят уведомления каждого сервера после закрытия Obby"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2785,12 +2753,8 @@ msgid "Install"
 msgstr "Установить"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "Установите дистрибьютор UnifiedPush, например ntfy, затем снова выберите UnifiedPush"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "Установите сервисы Google Play, чтобы использовать этот вариант"
+msgid "Install a UnifiedPush app first"
+msgstr ""
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2949,10 +2913,6 @@ msgstr "Хранить историю чатов на этом устройст�
 msgid "Keep credentials"
 msgstr "Сохранить учётные данные"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "Держите Obby открытым, чтобы получать их"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Сохранить пароли"
@@ -3018,10 +2978,6 @@ msgstr "Покинуть канал"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Оставьте поле канала пустым для общего приглашения в сеть. Описание нужно только для ваших записей — оно видно только вам в этом списке."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "Оставьте Obby в фоне, чтобы получать их: если смахнуть приложение, они перестанут приходить"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3804,8 +3760,8 @@ msgid "Notifications"
 msgstr "Уведомления"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Уведомления при закрытом Obby"
+msgid "Notifications Source"
+msgstr ""
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5123,10 +5079,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Шорткод должен соответствовать [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Показывать системное уведомление о личных сообщениях и упоминаниях, когда вы не смотрите этот чат"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Показывать все события"
 
@@ -5678,10 +5630,6 @@ msgstr "Включите «Хранить историю чатов», чтоб�
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Включите «OPER при подключении», чтобы отправлять сохранённые имя и пароль как OPER при каждом подключении, или используйте «Войти как оператор» ниже."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "Включите «Показывать уведомления», чтобы получать их"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Включите камеру, чтобы повторить"
@@ -5715,10 +5663,6 @@ msgstr "Введите слова для поиска по сообщениям"
 msgid "Undeafen"
 msgstr "Включить звук"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
-
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
 msgstr "Перестать игнорировать пользователя"
@@ -5741,10 +5685,6 @@ msgstr "Вкл. звук"
 #: src/components/voice/ParticipantTile.tsx
 msgid "Unmute for me"
 msgstr "Включить звук для меня"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Unmute notifications with the bell to get any"
-msgstr ""
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -5869,10 +5809,6 @@ msgstr "Пользователи и шаблоны для игнорирован
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Пользователи:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "Используется {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6079,10 +6015,6 @@ msgstr "Что это означает:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Что вы делаете"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "После закрытия"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

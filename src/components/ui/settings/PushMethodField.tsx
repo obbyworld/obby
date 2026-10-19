@@ -7,7 +7,10 @@ import {
   pushStatus,
 } from "../../../lib/nativePush";
 import type { SettingComponentProps } from "../../../lib/settings/types";
+import { hasWebPush } from "../../../lib/webpush";
+import useStore from "../../../store";
 import type { PushMethod } from "../../../store/types";
+import { type Segment, SegmentedControl } from "../SegmentedControl";
 
 export const PushMethodField: React.FC<SettingComponentProps> = ({
   value,
@@ -15,10 +18,12 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
   disabled,
 }) => {
   const { t } = useLingui();
+  const servers = useStore((s) => s.servers);
   const [status, setStatus] = useState<PushStatus | null>(null);
   const [isMissingDistributor, setIsMissingDistributor] = useState(false);
+  const method = value as PushMethod;
 
-  // We reload on return to the app, since the user leaves Obby to install a distributor.
+  // We reload on return to the app, since the user leaves Obby to install ntfy.
   useEffect(() => {
     let isCancelled = false;
     const loadStatus = () => {
@@ -44,95 +49,53 @@ export const PushMethodField: React.FC<SettingComponentProps> = ({
     if (picked.current) onChange("unifiedpush");
   };
 
-  const choose = (method: PushMethod) => {
+  const choose = (next: PushMethod) => {
     setIsMissingDistributor(false);
-    if (method === "unifiedpush") void pickDistributor();
-    else onChange(method);
+    if (next === "unifiedpush") void pickDistributor();
+    else onChange(next);
   };
 
-  const currentName = status?.distributors.find(
-    (distributor) => distributor.id === status.current,
-  )?.name;
-  const options: {
-    method: PushMethod;
-    label: string;
-    description: string;
-    isUnavailable?: boolean;
-  }[] = [
-    {
-      method: "fcm",
-      label: t`Google (FCM)`,
-      description:
-        status?.isFcmAvailable === false
-          ? t`Install Google Play services to use this`
-          : t`Deliver right away through Google Play services`,
-      isUnavailable: status?.isFcmAvailable === false,
-    },
-    {
-      method: "unifiedpush",
-      label: t`UnifiedPush`,
-      description: t`Deliver right away through a distributor app you choose, such as ntfy`,
-    },
-    {
-      method: "poll",
-      label: t`Background check only`,
-      description: t`Check for new messages about every 15 minutes`,
-    },
-  ];
-
-  const unifiedPushDetails = isMissingDistributor ? (
-    <p className="pl-7 text-[13px] text-discord-text-muted">
-      <Trans>
-        Install a UnifiedPush distributor such as ntfy, then select UnifiedPush
-        again
-      </Trans>
-    </p>
-  ) : (
-    value === "unifiedpush" &&
-    currentName && (
-      <div className="flex items-center justify-between gap-3 pl-7">
-        <span className="text-[13px] text-discord-text-muted">
-          <Trans>Using {currentName}</Trans>
-        </span>
-        {status && status.distributors.length > 1 && (
-          <button
-            type="button"
-            onClick={() => void pickDistributor()}
-            disabled={disabled}
-            className="min-h-11 rounded px-4 text-sm bg-discord-dark-400 text-discord-text-normal disabled:opacity-50"
-          >
-            <Trans>Choose distributor</Trans>
-          </button>
-        )}
-      </div>
-    )
+  const hasPushServer = servers.some(
+    (server) => server.isConnected && hasWebPush(server.id),
   );
+  const segments: Segment<PushMethod>[] = [
+    {
+      value: "fcm",
+      label: "Google",
+      disabled: !hasPushServer || status?.isFcmAvailable === false,
+    },
+    { value: "unifiedpush", label: "UnifiedPush", disabled: !hasPushServer },
+    { value: "poll", label: t`Background` },
+  ];
+  const canChangeApp =
+    hasPushServer &&
+    method === "unifiedpush" &&
+    (status?.distributors.length ?? 0) > 1;
 
   return (
     <div className="flex flex-col gap-2">
-      {options.map((option) => (
-        <div key={option.method} className="flex flex-col gap-1">
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="radio"
-              name="push-method"
-              checked={value === option.method}
-              onChange={() => choose(option.method)}
-              disabled={disabled || option.isUnavailable}
-              className="mt-1 accent-discord-primary disabled:opacity-50"
-            />
-            <span className="flex flex-col">
-              <span className="text-sm text-discord-text-normal">
-                {option.label}
-              </span>
-              <span className="text-[13px] text-discord-text-muted">
-                {option.description}
-              </span>
-            </span>
-          </label>
-          {option.method === "unifiedpush" && unifiedPushDetails}
-        </div>
-      ))}
+      <SegmentedControl
+        segments={segments}
+        value={hasPushServer ? method : "poll"}
+        onChange={choose}
+        disabled={disabled}
+        size="lg"
+      />
+      {isMissingDistributor && (
+        <p className="text-[13px] text-discord-text-muted">
+          <Trans>Install a UnifiedPush app first</Trans>
+        </p>
+      )}
+      {canChangeApp && (
+        <button
+          type="button"
+          onClick={() => void pickDistributor()}
+          disabled={disabled}
+          className="min-h-11 self-start text-sm text-discord-text-link disabled:opacity-50"
+        >
+          <Trans>Change app</Trans>
+        </button>
+      )}
     </div>
   );
 };
