@@ -2,6 +2,7 @@
 declare const __APP_VERSION__: string;
 declare const __APP_NAME__: string;
 declare const __APP_DESCRIPTION__: string;
+declare const __BUILD_CONFIG__: Record<string, unknown>;
 declare const __DEFAULT_IRC_SERVER__: string;
 declare const __DEFAULT_IRC_SERVER_NAME__: string;
 declare const __DEFAULT_IRC_CHANNELS__: string[];

@@ -38,6 +38,8 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/pwa /etc/obby/pwa
+COPY --chmod=755 docker/40-obby-config.sh /docker-entrypoint.d/
 COPY --from=builder /app/dist /usr/share/nginx/html
 EXPOSE 80
 
