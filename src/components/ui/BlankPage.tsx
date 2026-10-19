@@ -20,7 +20,7 @@ const BlankPage: React.FC = () => {
   const motd = showMotd ? server?.motd : undefined;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 overflow-y-auto text-discord-text-muted">
+    <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 text-discord-text-muted">
       <div className="text-6xl mb-4">👋</div>
       <h2 className="text-xl font-semibold">
         <Trans>Welcome to {server?.name || "the unknown"}!</Trans>
@@ -45,7 +45,7 @@ const BlankPage: React.FC = () => {
 
       {motd && motd.length > 0 && (
         <section
-          className="mt-8 w-full max-w-2xl rounded-lg bg-discord-dark-300 pb-3"
+          className="mt-8 w-full max-w-4xl rounded-lg bg-discord-dark-300 pb-3"
           style={MOTD_GROUND}
         >
           <div className="section-label px-4 pt-3">
