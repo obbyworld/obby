@@ -32,10 +32,6 @@ msgstr "(успадкувати)"
 msgid "(not set)"
 msgstr "(не задано)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(виконує Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(задано, редагуйте, щоб змінити)"
@@ -3787,10 +3783,6 @@ msgstr "OK"
 msgid "on"
 msgstr "увімк"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "один з:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Вимагати зареєстрований нік (+r) для роз�
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Вимагати запрошення для приєднання."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "обов'язково"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Дуже розслаблений"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Дуже строгий"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "через @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

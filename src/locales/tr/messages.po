@@ -32,10 +32,6 @@ msgstr "(devralınan)"
 msgid "(not set)"
 msgstr "(ayarlanmadı)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(Obby tarafından çalıştırıldı)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(ayarlı, değiştirmek için düzenleyin)"
@@ -3787,10 +3783,6 @@ msgstr "Tamam"
 msgid "on"
 msgstr "açık"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "şunlardan biri:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Konuşmak için kayıtlı bir takma ad gerekli (+r)."
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Katılmak için davet gerekli."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "gerekli"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Çok Rahat"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Çok Katı"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "@{0} üzerinden"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

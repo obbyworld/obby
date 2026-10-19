@@ -32,10 +32,6 @@ msgstr "(eredita)"
 msgid "(not set)"
 msgstr "(non impostato)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(eseguito da Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(impostato, modifica per cambiare)"
@@ -3787,10 +3783,6 @@ msgstr "OK"
 msgid "on"
 msgstr "attivo"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "uno di:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Richiedi un nickname registrato per parlare (+r)."
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Richiedi un invito per entrare."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "richiesto"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Molto rilassato"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Molto rigido"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "tramite @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

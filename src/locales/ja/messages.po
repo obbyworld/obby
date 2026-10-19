@@ -32,10 +32,6 @@ msgstr "（継承）"
 msgid "(not set)"
 msgstr "(未設定)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(Obby により実行)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(設定済み。変更するには編集)"
@@ -3787,10 +3783,6 @@ msgstr "OK"
 msgid "on"
 msgstr "オン"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "次のいずれか:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "発言には登録済みニックネームが必要です (+r)。"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "参加には招待が必要です。"
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "必須"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "とても緩め"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "とても厳格"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "@{0} 経由"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

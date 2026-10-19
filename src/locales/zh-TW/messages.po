@@ -32,10 +32,6 @@ msgstr "（繼承）"
 msgid "(not set)"
 msgstr "（未設定）"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "（由 Obby 執行）"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "（已設定，編輯以變更）"
@@ -3787,10 +3783,6 @@ msgstr "確定"
 msgid "on"
 msgstr "開啟"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "其中之一："
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "發言需要已註冊暱稱（+r）。"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "需要邀請才能加入。"
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "必填"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "非常宽松"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "非常严格"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "透過 @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

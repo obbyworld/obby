@@ -35,8 +35,7 @@ import {
 } from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
 import { voiceDisplayName } from "../../lib/channelMentions";
-import { getClientCommands } from "../../lib/clientCommands";
-import { optionLabel } from "../../lib/commandInvocation";
+import { needsArguments, optionLabel } from "../../lib/commandInvocation";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -105,6 +104,7 @@ import {
   type SlashSuggestion,
   slashProvider,
   slashSuggestions,
+  typedBotCommand,
   useEmojiItems,
 } from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
@@ -137,7 +137,6 @@ import {
   type RecordingFailure,
   RegionRecordingBar,
 } from "../ui/RegionRecordingBar";
-import { SlashParamHint } from "../ui/SlashParamHint";
 import SuggestionList from "../ui/SuggestionList";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
@@ -1812,6 +1811,21 @@ export const ChatArea: React.FC<{
     // name, and once after that to close any open completion.
     command.onInput(newText);
 
+    const typedCommand = command.invocation
+      ? null
+      : typedBotCommand(
+          newText,
+          newCursorPosition,
+          slashSuggestions(selectedServer, selectedChannel),
+        );
+    if (typedCommand && needsArguments(typedCommand)) {
+      command.begin(typedCommand.source.botNick, {
+        name: typedCommand.name,
+        description: typedCommand.description,
+        options: typedCommand.options,
+      });
+    }
+
     if (
       !command.invocation &&
       getActiveSlashQuery(newText, newCursorPosition) !== null
@@ -2599,83 +2613,6 @@ export const ChatArea: React.FC<{
                   rowClassName={isTouch ? "min-h-12" : ""}
                 />
               )}
-
-              {/* Per-arg hint shown after the cmd name + a space.
-                  Pulls schemas from both client-side commands and
-                  any cached PushBot schemas. */}
-              {(() => {
-                const srv = servers.find((s) => s.id === selectedServerId);
-                const schemas: Record<
-                  string,
-                  {
-                    command: import("../../types").BotCommand;
-                    source: "client" | "bot";
-                    botNick?: string;
-                    scope: "channel" | "server" | "dm";
-                  }
-                > = {};
-
-                // Client-side commands first; bot schemas overwrite
-                // only if there's a real collision (none in practice
-                // because the client owns /me, /msg, etc).
-                for (const c of getClientCommands()) {
-                  schemas[c.name.toLowerCase()] = {
-                    command: {
-                      name: c.name,
-                      description: c.description,
-                      options: c.options,
-                    },
-                    source: "client",
-                    scope: "dm",
-                  };
-                }
-
-                if (srv?.botCommands) {
-                  const chanUsers = new Set<string>(
-                    selectedChannel?.users.map((u) =>
-                      u.username.toLowerCase(),
-                    ) ?? [],
-                  );
-                  for (const [botNick, list] of Object.entries(
-                    srv.botCommands,
-                  )) {
-                    const botScope: "channel" | "server" =
-                      srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick.toLowerCase());
-                    if (
-                      botScope === "channel" &&
-                      (!selectedChannel || !inChannel)
-                    )
-                      continue;
-                    for (const c of list) {
-                      const entry = {
-                        command: c,
-                        source: "bot" as const,
-                        botNick,
-                        scope: botScope,
-                      };
-                      // Specific key handles `/cmd@bot foo` lookups;
-                      // bare key is a fallback for `/cmd foo` (last
-                      // bot wins, which matches dispatch's fallback
-                      // ordering).
-                      schemas[
-                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
-                      ] = entry;
-                      schemas[c.name.toLowerCase()] = entry;
-                    }
-                  }
-                }
-
-                if (Object.keys(schemas).length === 0) return null;
-                return (
-                  <SlashParamHint
-                    inputValue={messageTextRef.current ?? ""}
-                    cursorPosition={cursorPositionRef.current}
-                    schemas={schemas}
-                    inputElement={inputRef.current}
-                  />
-                );
-              })()}
 
               {/* Members dropdown triggered by @ button */}
               <MemberPicker

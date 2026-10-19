@@ -32,10 +32,6 @@ msgstr "(ärv)"
 msgid "(not set)"
 msgstr "(inte angivet)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(körs av Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(angivet, redigera för att ändra)"
@@ -3787,10 +3783,6 @@ msgstr "OK"
 msgid "on"
 msgstr "på"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "en av:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Kräv ett registrerat nick (+r) för att prata."
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Kräv en inbjudan för att gå med."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "obligatoriskt"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Mycket avslappnat"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Mycket strikt"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "via @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

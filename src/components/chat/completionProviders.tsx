@@ -194,6 +194,27 @@ export function getActiveSlashQuery(
   return beforeCursor.slice(1).toLowerCase();
 }
 
+// `/name ` or `/name@bot ` with the caret after the space names the bot
+// command the user wants to fill in, as long as exactly one bot offers it.
+export function typedBotCommand(
+  inputValue: string,
+  cursorPosition: number,
+  suggestions: readonly SlashSuggestion[],
+): (SlashSuggestion & { source: { kind: "bot" } }) | null {
+  const match = /^\/([^\s/@]+)(?:@(\S+))? $/.exec(inputValue);
+  if (!match || cursorPosition !== inputValue.length) return null;
+  const name = match[1].toLowerCase();
+  const bot = match[2]?.toLowerCase();
+  const named = suggestions.filter((s) => s.name.toLowerCase() === name);
+  if (named.some((s) => s.source.kind === "client")) return null;
+  const bots = named.filter(
+    (s): s is SlashSuggestion & { source: { kind: "bot" } } =>
+      s.source.kind === "bot" &&
+      (!bot || s.source.botNick.toLowerCase() === bot),
+  );
+  return bots.length === 1 ? bots[0] : null;
+}
+
 function formatOptions(options: BotCommandOption[] | undefined): string {
   if (!options || options.length === 0) return "";
   return options

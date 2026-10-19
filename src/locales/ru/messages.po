@@ -32,10 +32,6 @@ msgstr "(наследуется)"
 msgid "(not set)"
 msgstr "(не задано)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(запущено Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(задано, измените, чтобы поменять)"
@@ -3787,10 +3783,6 @@ msgstr "ОК"
 msgid "on"
 msgstr "вкл"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "один из:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Для общения нужен зарегистрированный н
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Для входа нужно приглашение."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "обязательно"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Очень мягкий"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Очень строгий"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "через @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

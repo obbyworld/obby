@@ -7,6 +7,7 @@ import {
   type SlashSuggestion,
   slashProvider,
   slashSuggestions,
+  typedBotCommand,
 } from "../../../src/components/chat/completionProviders";
 import type { CompletionProvider } from "../../../src/hooks/useCompletion";
 import type { Channel, Server, User } from "../../../src/types";
@@ -152,5 +153,36 @@ describe("slashSuggestions", () => {
     expect(
       slashSuggestions(server, channel).some((s) => s.name === "whisper"),
     ).toBe(true);
+  });
+});
+
+describe("typedBotCommand", () => {
+  const pkg = (botNick: string): SlashSuggestion => ({
+    name: "pkg",
+    options: [{ name: "repo", required: true }],
+    source: { kind: "bot", botNick },
+  });
+
+  it("finds the bot command once a space follows its name", () => {
+    expect(typedBotCommand("/pkg ", 5, [pkg("cloudbot")])?.source).toEqual({
+      kind: "bot",
+      botNick: "cloudbot",
+    });
+    expect(typedBotCommand("/pkg", 4, [pkg("cloudbot")])).toBeNull();
+    expect(typedBotCommand("/pkg x", 6, [pkg("cloudbot")])).toBeNull();
+  });
+
+  it("needs the bot name when two bots offer the command", () => {
+    const both = [pkg("a"), pkg("b")];
+    expect(typedBotCommand("/pkg ", 5, both)).toBeNull();
+    expect(typedBotCommand("/pkg@B ", 7, both)?.source).toEqual({
+      kind: "bot",
+      botNick: "b",
+    });
+  });
+
+  it("leaves client commands to the client", () => {
+    const me: SlashSuggestion = { name: "pkg", source: { kind: "client" } };
+    expect(typedBotCommand("/pkg ", 5, [me, pkg("a")])).toBeNull();
   });
 });

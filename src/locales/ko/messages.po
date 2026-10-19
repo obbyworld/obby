@@ -32,10 +32,6 @@ msgstr "(상속)"
 msgid "(not set)"
 msgstr "(설정 안 됨)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(Obby가 실행함)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(설정됨, 변경하려면 편집)"
@@ -3787,10 +3783,6 @@ msgstr "확인"
 msgid "on"
 msgstr "켜기"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "다음 중 하나:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "말하려면 등록된 닉네임이 필요합니다 (+r)."
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "참여하려면 초대가 필요합니다."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "필수"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "매우 완화"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "매우 엄격"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "@{0} 통해"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

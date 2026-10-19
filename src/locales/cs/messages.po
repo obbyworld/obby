@@ -32,10 +32,6 @@ msgstr "(zděděno)"
 msgid "(not set)"
 msgstr "(nenastaveno)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(spravuje Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(nastaveno, upravte pro změnu)"
@@ -3787,10 +3783,6 @@ msgstr "OK"
 msgid "on"
 msgstr "zap"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "jedno z:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -4516,10 +4508,6 @@ msgstr "Pro mluvení vyžadovat registrovanou přezdívku (+r)."
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
 msgstr "Pro připojení vyžadovat pozvánku."
-
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "povinné"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5812,11 +5800,6 @@ msgstr "Velmi uvolněný"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Velmi přísný"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "prostřednictvím @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
