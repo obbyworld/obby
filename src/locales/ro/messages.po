@@ -4113,6 +4113,10 @@ msgstr "Postează mesajul zilei al fiecărui server în Notificări server și p
 msgid "Preferences"
 msgstr "Preferințe"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Apasă din nou înapoi pentru a ieși"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Previzualizare (neîncărcat încă)"
