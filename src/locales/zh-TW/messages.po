@@ -4170,6 +4170,10 @@ msgstr "在服務器通知和歡迎頁面中發布每個服務器的每日訊息
 msgid "Preferences"
 msgstr "偏好设置"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "再按一次返回即可退出"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "預覽（尚未上傳）"

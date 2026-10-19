@@ -4170,6 +4170,10 @@ msgstr "Nachricht des Tages jedes Servers in Server-Hinweisen und seiner Willkom
 msgid "Preferences"
 msgstr "Einstellungen"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Zum Beenden erneut Zurück drücken"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Vorschau (noch nicht hochgeladen)"
