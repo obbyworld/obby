@@ -2269,7 +2269,9 @@ export const ChatArea: React.FC<{
                   <div
                     key={key}
                     className={
-                      isKeyActive ? "flex flex-col flex-grow min-h-0" : "hidden"
+                      isKeyActive
+                        ? `flex flex-col flex-grow min-h-0 ${aChannelId === "server-notices" ? "pb-4" : ""}`
+                        : "hidden"
                     }
                   >
                     <ChannelMessageList
