@@ -4146,6 +4146,10 @@ msgstr "各サーバーの本日のメッセージをサーバー通知とウェ
 msgid "Preferences"
 msgstr "設定"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "もう一度戻るを押すと終了します"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "プレビュー（未アップロード）"

@@ -8,6 +8,7 @@ import {
   FaTimes,
   FaTimesCircle,
 } from "react-icons/fa";
+import { EXIT_HINT_COMMAND, EXIT_WINDOW_MS } from "../../hooks/useBackButton";
 import {
   JUMP_FAILURE_COMMAND,
   type JumpFailure,
@@ -43,7 +44,10 @@ export const GlobalNotifications: React.FC = () => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (!latest) return;
-    const timer = setTimeout(clearGlobalNotifications, TOAST_MS);
+    const timer = setTimeout(
+      clearGlobalNotifications,
+      latest.command === EXIT_HINT_COMMAND ? EXIT_WINDOW_MS : TOAST_MS,
+    );
     return () => clearTimeout(timer);
   }, [latest?.id]);
 
@@ -64,7 +68,11 @@ export const GlobalNotifications: React.FC = () => {
           className="flex min-w-0 flex-1 items-center gap-2 text-left text-sm text-discord-text-normal"
         >
           <span className="line-clamp-2 min-w-0 flex-1">
-            {isJumpFailure ? jumpFailureText(latest.code) : latest.message}
+            {latest.command === EXIT_HINT_COMMAND
+              ? t`Press back again to exit`
+              : isJumpFailure
+                ? jumpFailureText(latest.code)
+                : latest.message}
             {otherCount > 0 && (
               <span className="row-meta ml-1.5">+{otherCount}</span>
             )}

@@ -4146,6 +4146,10 @@ msgstr "Julkaise jokaisen palvelimen päivän viesti palvelintiedotteisiin ja se
 msgid "Preferences"
 msgstr "Asetukset"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Paina takaisin uudelleen poistuaksesi"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Esikatselu (ei vielä lähetetty)"
