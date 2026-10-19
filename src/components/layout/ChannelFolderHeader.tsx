@@ -79,7 +79,7 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
 }) => (
   <div
     {...drop}
-    className={`group flex items-center gap-0.5 mt-3.5 mb-1 pl-1 ${drop?.className ?? ""}`}
+    className={`group flex items-center gap-0.5 mt-2 mb-1 pl-1 ${drop?.className ?? ""}`}
     onContextMenu={(e) => {
       e.preventDefault();
       onOpenMenu(e.currentTarget);
