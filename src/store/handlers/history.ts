@@ -824,6 +824,24 @@ function fetchPageToDisk(
   });
 }
 
+// A notification can name a message older than the pages we loaded, so we ask
+// the server for the page around it before we jump there.
+export async function saveMessagesAround(
+  store: StoreApi<AppState>,
+  serverId: string,
+  target: string,
+  time: number,
+): Promise<boolean> {
+  if (!isEnabled(store)) return false;
+  const lower = target.toLowerCase();
+  const isSaved = async () =>
+    (await eventRowsBefore(serverId, lower, time, 1))[0]?.time === time;
+  if (await isSaved()) return true;
+  if (!serverSupportsChathistory(store.getState(), serverId)) return false;
+  await fetchPageToDisk(serverId, target, "AROUND", time);
+  return isSaved();
+}
+
 // A chat opens on its read marker: from the rows we saved when they cover it,
 // otherwise from a page the server sends around it. A marker older than what
 // the server keeps opens on the oldest message it still has after it.
