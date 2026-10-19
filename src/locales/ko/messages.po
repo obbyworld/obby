@@ -92,21 +92,6 @@ msgstr "{0}님이 게임에 초대했습니다."
 msgid "{0} idle"
 msgstr "{0} 유휴"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0}은(는) 필수입니다"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0}은(는) 숫자여야 합니다"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0}은(는) 정수여야 합니다"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ 이동"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ 열기"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount}개 옵션"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "명령 취소"
 
@@ -1419,10 +1400,6 @@ msgstr "색상 및 서식"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "곧 출시"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "명령어 옵션"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "사용자가 이 채널에 참여할 수 없을 때 보낼 채널을 입
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "공백, 이모지, 기호를 포함한 이름을 입력하세요. IRC 명령에서는 실제 이름({channelName})이 계속 사용됩니다."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "{0}에 숫자를 입력하세요"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요. 예: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "{0}에 정수를 입력하세요"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "파일 호스트 이미지"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "{0}보다 큰 파일은 암호화 없이 전송됩니다. 파일 호스트가 내용을 읽을 수 있고, 링크가 있는 사람은 누구나 열 수 있습니다."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "{0}을(를) 입력하세요"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "비속어 필터링 (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (글로벌 Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "값 있음"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

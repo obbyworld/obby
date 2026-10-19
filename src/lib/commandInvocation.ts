@@ -1,4 +1,4 @@
-import type { BotCommand, BotCommandOption } from "../types";
+import type { BotCommand, BotCommandOption, Channel, User } from "../types";
 
 export type CommandArgValues = Record<string, string>;
 
@@ -6,6 +6,7 @@ export type OptionValue = string | number | boolean;
 
 const WHOLE_NUMBER = /^-?\d+$/;
 const TRUTHY_WORDS = new Set(["true", "1", "yes", "on"]);
+const MAX_ARG_CHOICES = 20;
 
 export interface CommandArgError {
   kind: "required" | "int" | "number";
@@ -17,7 +18,6 @@ export interface CommandInvocation {
   command: BotCommand;
   values: CommandArgValues;
   active: number;
-  added: string[];
   error?: CommandArgError;
 }
 
@@ -25,13 +25,28 @@ type CommandPayloadResult =
   | { payload: Record<string, OptionValue> }
   | { error: CommandArgError };
 
-export function visibleOptions(
-  options: BotCommandOption[],
-  added: string[],
-): BotCommandOption[] {
-  return options.filter(
-    (o, i) => i === 0 || o.required || added.includes(o.name),
-  );
+export function optionLabel(option: BotCommandOption): string {
+  return option.required ? option.name : `${option.name}?`;
+}
+
+export function argChoices(
+  option: BotCommandOption,
+  users: readonly User[],
+  channels: readonly Channel[],
+): string[] {
+  if (option.choices?.length) return option.choices;
+  if (option.type === "user") return users.map((u) => u.username);
+  if (option.type === "channel") return channels.map((c) => c.name);
+  return [];
+}
+
+// A value that already names a choice is complete, so we stop offering choices.
+export function matchChoices(choices: string[], typed: string): string[] {
+  const needle = typed.trim().toLowerCase();
+  if (choices.some((c) => c.toLowerCase() === needle)) return [];
+  return choices
+    .filter((c) => c.toLowerCase().includes(needle))
+    .slice(0, MAX_ARG_CHOICES);
 }
 
 export function needsArguments(command: BotCommand): boolean {

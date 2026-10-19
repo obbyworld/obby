@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  argChoices,
   backspaceCancels,
   buildCommandPayload,
   coerceOptionValue,
+  matchChoices,
   needsArguments,
-  visibleOptions,
+  optionLabel,
 } from "../../src/lib/commandInvocation";
+import type { Channel, User } from "../../src/types";
 
 const text = { name: "text", type: "string" as const };
 
@@ -78,15 +81,40 @@ describe("needsArguments", () => {
   });
 });
 
-describe("visibleOptions", () => {
-  const opts = [text, { name: "b" }, { name: "c", required: true }];
-  it("shows the first and required options, then added ones", () => {
-    expect(visibleOptions(opts, []).map((o) => o.name)).toEqual(["text", "c"]);
-    expect(visibleOptions(opts, ["b"]).map((o) => o.name)).toEqual([
-      "text",
-      "b",
-      "c",
+describe("optionLabel", () => {
+  it("marks optional options with a question mark", () => {
+    expect(optionLabel({ name: "host", required: true })).toBe("host");
+    expect(optionLabel({ name: "count" })).toBe("count?");
+  });
+});
+
+describe("argChoices", () => {
+  const users = [{ username: "alice" }, { username: "bob" }] as User[];
+  const channels = [{ name: "#dev" }, { name: "&ops" }] as Channel[];
+  it("offers declared choices first, then members or channels by type", () => {
+    expect(
+      argChoices({ name: "r", choices: ["core"] }, users, channels),
+    ).toEqual(["core"]);
+    expect(argChoices({ name: "u", type: "user" }, users, channels)).toEqual([
+      "alice",
+      "bob",
     ]);
+    expect(argChoices({ name: "c", type: "channel" }, users, channels)).toEqual(
+      ["#dev", "&ops"],
+    );
+    expect(argChoices(text, users, channels)).toEqual([]);
+  });
+});
+
+describe("matchChoices", () => {
+  const repos = ["core", "core-testing", "extra"];
+  it("filters case-insensitively by what is typed", () => {
+    expect(matchChoices(repos, "")).toEqual(repos);
+    expect(matchChoices(repos, "TEST")).toEqual(["core-testing"]);
+  });
+
+  it("offers nothing once the value names a choice", () => {
+    expect(matchChoices(repos, "Core")).toEqual([]);
   });
 });
 

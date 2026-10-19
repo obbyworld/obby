@@ -36,6 +36,7 @@ import {
 import { waitForAuthToken } from "../../lib/authToken";
 import { voiceDisplayName } from "../../lib/channelMentions";
 import { getClientCommands } from "../../lib/clientCommands";
+import { optionLabel } from "../../lib/commandInvocation";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -93,9 +94,9 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { Message as MessageType, User } from "../../types";
-import { COMMAND_DETAIL_ID, CommandArgsStrip } from "../chat/CommandArgsStrip";
-import { CommandChip } from "../chat/CommandChip";
+import type { Channel, Message as MessageType, User } from "../../types";
+import { COMMAND_DETAIL_ID, CommandArgHint } from "../chat/CommandArgHint";
+import { CommandArgPill, CommandChip } from "../chat/CommandChip";
 import {
   type EmojiItem,
   emojiProvider,
@@ -137,6 +138,7 @@ import {
   RegionRecordingBar,
 } from "../ui/RegionRecordingBar";
 import { SlashParamHint } from "../ui/SlashParamHint";
+import SuggestionList from "../ui/SuggestionList";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
@@ -167,6 +169,7 @@ type UploadOutcome = "started" | "held" | "failed";
 const NO_ATTACHMENTS: PendingAttachment[] = [];
 
 const NO_COMPLETION_INPUT = { text: "", caret: 0 };
+const NO_CHANNELS: Channel[] = [];
 const MODIFIER_KEYS = ["Shift", "Control", "Alt", "Meta"];
 
 function previewable(file: File): boolean {
@@ -800,6 +803,7 @@ export const ChatArea: React.FC<{
   const command = useCommandInvocation({
     serverId: selectedServerId,
     channel: selectedChannel ?? null,
+    channels: selectedServer?.channels ?? NO_CHANNELS,
     textRef: messageTextRef,
     inputRef,
     applyText,
@@ -1585,8 +1589,18 @@ export const ChatArea: React.FC<{
     inputRef.current?.focus();
   };
 
+  const invocation = command.invocation;
+  const [argHint, setArgHint] = useState<HTMLDivElement | null>(null);
+  const argFieldWidth =
+    invocation && command.activeParam
+      ? Math.max(
+          (invocation.values[command.activeParam.name] ?? "").length,
+          optionLabel(command.activeParam).length,
+        ) + 1
+      : 0;
+
   const placeholder = (() => {
-    if (command.activeName !== undefined) return command.activeName;
+    if (command.activeParam) return optionLabel(command.activeParam);
     if (selectedChannel)
       return globalSettings.enableMultilineInput &&
         !isNativeMobile &&
@@ -1796,7 +1810,7 @@ export const ChatArea: React.FC<{
 
     // We re-render on keystrokes only while the user types a slash command
     // name, and once after that to close any open completion.
-    command.clearError();
+    command.onInput(newText);
 
     if (
       !command.invocation &&
@@ -2323,7 +2337,15 @@ export const ChatArea: React.FC<{
                 serverId={selectedServerId ?? ""}
                 channelId={selectedChannelId || selectedPrivateChatId || ""}
               />
-              {command.strip && <CommandArgsStrip {...command.strip} />}
+              {command.invocation && command.activeParam && (
+                <CommandArgHint
+                  param={command.activeParam}
+                  fallback={command.invocation.command.description}
+                  error={command.invocation.error}
+                  onCancel={command.cancel}
+                  ref={setArgHint}
+                />
+              )}
               <div
                 className={`bg-discord-dark-100 ${localReplyTo || command.invocation ? "rounded-b-lg" : "rounded-lg"}`}
               >
@@ -2332,7 +2354,10 @@ export const ChatArea: React.FC<{
                   onRemove={removeAttachment}
                 />
                 {/* We align to the bottom so the buttons stay beside the last line while the box grows. */}
-                <div className="relative flex flex-nowrap items-end pr-2">
+                <div
+                  data-composer
+                  className="relative flex flex-nowrap items-end pr-2"
+                >
                   <button
                     ref={plusButtonRef}
                     aria-label={t`Attach`}
@@ -2344,34 +2369,60 @@ export const ChatArea: React.FC<{
                     <FaPlus />
                   </button>
 
-                  {command.invocation && (
-                    <CommandChip name={command.invocation.command.name} />
-                  )}
-                  <TextArea
-                    ref={inputRef}
-                    defaultValue=""
-                    onChange={handleInputChange}
-                    onClick={handleInputClick}
-                    onKeyUp={handleInputKeyUp}
-                    onKeyDown={handleKeyDown}
-                    onPaste={handlePaste}
-                    onBeforeInput={onBeforeInputGuard}
-                    autoCorrect={isMobileInput ? "on" : "off"}
-                    autoCapitalize={isMobileInput ? "sentences" : "off"}
-                    spellCheck={isMobileInput}
-                    placeholder={placeholder}
-                    aria-describedby={
-                      command.invocation ? COMMAND_DETAIL_ID : undefined
-                    }
-                    enterKeyHint={
-                      isNativeMobile && globalSettings.enableMultilineInput
-                        ? "enter"
-                        : "send"
-                    }
-                    className="min-w-0 flex-1 resize-none overflow-y-auto border-none bg-transparent py-[15px] leading-[22px] text-discord-text-normal outline-none placeholder:truncate"
-                    style={previewStyle}
-                    rows={1}
-                  />
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center">
+                    {invocation && (
+                      <CommandChip name={invocation.command.name} />
+                    )}
+                    {invocation &&
+                      command.params.map((p, i) =>
+                        i === invocation.active ? null : (
+                          <CommandArgPill
+                            key={p.name}
+                            label={optionLabel(p)}
+                            value={invocation.values[p.name] ?? ""}
+                            optional={!p.required}
+                            order={i < invocation.active ? 0 : 2}
+                            onSelect={() => command.select(i)}
+                          />
+                        ),
+                      )}
+                    <TextArea
+                      ref={inputRef}
+                      defaultValue=""
+                      onChange={handleInputChange}
+                      onClick={handleInputClick}
+                      onKeyUp={handleInputKeyUp}
+                      onKeyDown={handleKeyDown}
+                      onPaste={handlePaste}
+                      onBeforeInput={onBeforeInputGuard}
+                      autoCorrect={isMobileInput ? "on" : "off"}
+                      autoCapitalize={isMobileInput ? "sentences" : "off"}
+                      spellCheck={isMobileInput}
+                      placeholder={placeholder}
+                      aria-describedby={
+                        command.invocation ? COMMAND_DETAIL_ID : undefined
+                      }
+                      enterKeyHint={
+                        isNativeMobile && globalSettings.enableMultilineInput
+                          ? "enter"
+                          : "send"
+                      }
+                      className={`resize-none overflow-y-auto border-none leading-[22px] text-discord-text-normal outline-none placeholder:truncate ${
+                        invocation
+                          ? `order-1 mr-1 max-w-full rounded bg-discord-primary/15 px-1.5 ${isTouch ? "my-1 py-[11px]" : "my-[11px] py-1"}`
+                          : "min-w-0 flex-1 bg-transparent py-[15px]"
+                      }`}
+                      style={
+                        invocation
+                          ? {
+                              ...previewStyle,
+                              width: `calc(${argFieldWidth}ch + 0.75rem)`,
+                            }
+                          : previewStyle
+                      }
+                      rows={1}
+                    />
+                  </div>
                   <InputToolbar
                     selectedColor={selectedColor}
                     onEmojiClick={() => {
@@ -2517,6 +2568,22 @@ export const ChatArea: React.FC<{
                   }
                   onClose={() => setIsEmojiSelectorOpen(false)}
                   customEmojis={pickerCustomEmojis}
+                />
+              )}
+
+              {argHint && command.activeParam && command.choices.length > 0 && (
+                <SuggestionList
+                  title={command.activeParam.name}
+                  items={command.choices}
+                  getKey={(choice) => choice}
+                  renderItem={(choice) => (
+                    <span className="min-w-0 flex-1 truncate">{choice}</span>
+                  )}
+                  selectedIndex={command.highlight}
+                  onHover={command.setHighlight}
+                  onPick={command.pickChoice}
+                  anchor={argHint}
+                  rowClassName={isTouch ? "min-h-12" : ""}
                 />
               )}
 

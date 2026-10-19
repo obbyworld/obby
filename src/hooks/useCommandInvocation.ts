@@ -1,46 +1,63 @@
-import { type RefObject, useCallback, useRef, useState } from "react";
-import type { CommandArgsStripProps } from "../components/chat/CommandArgsStrip";
 import {
+  type RefObject,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  argChoices,
   backspaceCancels,
   buildCommandPayload,
-  type CommandArgValues,
   type CommandInvocation,
+  matchChoices,
   needsArguments,
-  visibleOptions,
 } from "../lib/commandInvocation";
 import type { BotCommand, Channel } from "../types";
 import { sendBotCommand } from "./useMessageSending";
+import { useSuggestionKeys } from "./useSuggestionKeys";
 
 interface UseCommandInvocationOptions {
   serverId: string | null;
   channel: Channel | null;
+  channels: readonly Channel[];
   textRef: RefObject<string>;
   inputRef: RefObject<HTMLTextAreaElement | null>;
   applyText: (text: string) => void;
   onBegin: () => void;
 }
 
+const CHOICE_ACCEPT_KEYS = ["Tab", "Enter"];
+const NO_KEYS: readonly string[] = [];
+
 export function useCommandInvocation({
   serverId,
   channel,
+  channels,
   textRef,
   inputRef,
   applyText,
   onBegin,
 }: UseCommandInvocationOptions) {
   const [invocation, setInvocation] = useState<CommandInvocation | null>(null);
+  const [highlight, setHighlight] = useState(0);
   const stashedDraft = useRef<string | null>(null);
 
-  const params = invocation
-    ? visibleOptions(invocation.command.options ?? [], invocation.added)
+  const params = invocation?.command.options ?? [];
+  const activeParam = invocation ? params[invocation.active] : undefined;
+  const choices = activeParam
+    ? matchChoices(
+        argChoices(activeParam, channel?.users ?? [], channels),
+        invocation?.values[activeParam.name] ?? "",
+      )
     : [];
 
-  const commitActive = (inv: CommandInvocation): CommandArgValues => {
-    const name = params[inv.active]?.name;
-    return name === undefined
-      ? inv.values
-      : { ...inv.values, [name]: textRef.current };
-  };
+  const isInvoking = invocation !== null;
+  // The field keeps the height it measured in the other layout unless we reset it.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we reset whenever the layout switches
+  useLayoutEffect(() => {
+    if (inputRef.current) inputRef.current.style.height = "";
+  }, [isInvoking]);
 
   const finish = () => {
     setInvocation(null);
@@ -62,7 +79,8 @@ export function useCommandInvocation({
       }
       applyText("");
       onBegin();
-      setInvocation({ botNick, command, values: {}, active: 0, added: [] });
+      setHighlight(0);
+      setInvocation({ botNick, command, values: {}, active: 0 });
       inputRef.current?.focus();
     },
     [serverId, channel, textRef, inputRef, applyText, onBegin],
@@ -75,49 +93,77 @@ export function useCommandInvocation({
     return draft;
   }, [textRef]);
 
-  const clearError = () => {
-    if (invocation?.error) setInvocation({ ...invocation, error: undefined });
+  const onInput = (text: string) => {
+    if (!activeParam || !invocation) return;
+    setHighlight(0);
+    setInvocation({
+      ...invocation,
+      values: { ...invocation.values, [activeParam.name]: text },
+      error: undefined,
+    });
+  };
+
+  const moveTo = (
+    inv: CommandInvocation,
+    index: number,
+    error?: CommandInvocation["error"],
+  ) => {
+    setHighlight(0);
+    setInvocation({ ...inv, active: index, error });
+    applyText(inv.values[params[index].name] ?? "");
+    inputRef.current?.focus();
   };
 
   const select = (index: number) => {
-    if (!invocation || !params[index]) return;
-    const values = commitActive(invocation);
-    setInvocation({ ...invocation, values, active: index, error: undefined });
-    applyText(values[params[index].name] ?? "");
-    inputRef.current?.focus();
+    if (invocation && params[index]) moveTo(invocation, index);
   };
 
-  const addOption = () => {
-    if (!invocation) return;
-    const options = invocation.command.options ?? [];
-    const next = options.find((o) => !params.includes(o));
-    if (!next) return;
-    const added = [...invocation.added, next.name];
-    setInvocation({
-      ...invocation,
-      added,
-      values: commitActive(invocation),
-      active: visibleOptions(options, added).indexOf(next),
-      error: undefined,
-    });
-    applyText("");
-    inputRef.current?.focus();
+  const step = (by: 1 | -1) => {
+    if (invocation && params.length > 1)
+      moveTo(
+        invocation,
+        (invocation.active + by + params.length) % params.length,
+      );
   };
+
+  const pickChoice = (choice: string) => {
+    if (!invocation || !activeParam) return;
+    const picked = {
+      ...invocation,
+      values: { ...invocation.values, [activeParam.name]: choice },
+    };
+    if (invocation.active < params.length - 1)
+      moveTo(picked, invocation.active + 1);
+    else {
+      setInvocation(picked);
+      applyText(choice);
+    }
+  };
+
+  useSuggestionKeys({
+    isActive: invocation !== null,
+    count: choices.length,
+    selectedIndex: highlight,
+    onMove: setHighlight,
+    onAccept: (index, e) => {
+      if (e.key === "Tab" && e.shiftKey) return false;
+      pickChoice(choices[index]);
+      return true;
+    },
+    onClose: finish,
+    acceptKeys: CHOICE_ACCEPT_KEYS,
+    closeKeys: NO_KEYS,
+  });
 
   const run = () => {
     if (!invocation || !serverId) return;
-    const values = commitActive(invocation);
-    const result = buildCommandPayload(
-      invocation.command.options ?? [],
-      values,
-    );
+    const result = buildCommandPayload(params, invocation.values);
     if ("error" in result) {
       const active = Math.max(
         params.findIndex((p) => p.name === result.error.name),
         0,
       );
-      setInvocation({ ...invocation, values, active, error: result.error });
-      applyText(values[params[active].name] ?? "");
+      moveTo(invocation, active, result.error);
       return;
     }
     sendBotCommand(
@@ -140,12 +186,9 @@ export function useCommandInvocation({
     } else if (e.key === "Escape") {
       e.preventDefault();
       finish();
-    } else if (e.key === "Tab" && params.length > 1) {
+    } else if (e.key === "Tab") {
       e.preventDefault();
-      select(
-        (invocation.active + (e.shiftKey ? -1 : 1) + params.length) %
-          params.length,
-      );
+      step(e.shiftKey ? -1 : 1);
     } else if (
       e.key === "Backspace" &&
       input &&
@@ -158,26 +201,20 @@ export function useCommandInvocation({
     return true;
   };
 
-  const strip: CommandArgsStripProps | null = invocation && {
-    command: invocation.command,
-    params,
-    active: invocation.active,
-    values: invocation.values,
-    hiddenCount: (invocation.command.options?.length ?? 0) - params.length,
-    error: invocation.error,
-    onSelect: select,
-    onAddOption: addOption,
-    onCancel: finish,
-  };
-
   return {
     invocation,
-    strip,
-    activeName: invocation ? params[invocation.active]?.name : undefined,
+    params,
+    activeParam,
+    choices,
+    highlight,
+    setHighlight,
+    pickChoice,
     begin,
     leave,
-    clearError,
+    onInput,
+    select,
     run,
+    cancel: finish,
     handleKey,
   };
 }

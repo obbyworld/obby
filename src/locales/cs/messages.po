@@ -92,21 +92,6 @@ msgstr "{0} vás pozval(a) ke hře."
 msgid "{0} idle"
 msgstr "nečinný {0}"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} je povinné"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} musí být číslo"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} musí být celé číslo"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ pro posun"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ pro otevření"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} možností"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Nelze odebrat poslední údaj 2FA"
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Zrušit příkaz"
 
@@ -1419,10 +1400,6 @@ msgstr "Barva a formátování"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Již brzy"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Možnosti příkazu"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Zadejte kanál, kam se mají přesměrovat uživatelé, kteří se nemoh
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Zadejte název s mezerami, emoji nebo symboly. Příkazy IRC stále používají skutečný název ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Zadejte číslo pro {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Zadejte URL. Pro dynamickou velikost použijte v URL {sizeToken}. Příklad: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Zadejte celé číslo pro {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Obrázek z file hostu"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Soubory větší než {0} se odesílají nešifrovaně. Hostitel souborů je může číst a otevřít je může kdokoli s odkazem."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Vyplňte {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Filtrovat sprosté výrazy (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (globální Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Polooperátor"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "má hodnotu"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

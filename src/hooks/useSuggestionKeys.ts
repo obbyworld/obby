@@ -6,7 +6,7 @@ interface UseSuggestionKeysOptions {
   selectedIndex: number;
   onMove: (index: number) => void;
   // Returning false leaves the key to whatever has focus.
-  onAccept: (index: number) => boolean;
+  onAccept: (index: number, e: KeyboardEvent) => boolean;
   onClose: () => void;
   acceptKeys?: readonly string[];
   closeKeys?: readonly string[];
@@ -41,7 +41,7 @@ export function useSuggestionKeys({
       else if (e.key === "ArrowUp" || isCycle)
         next = selectedIndex === 0 ? count - 1 : selectedIndex - 1;
       else if (acceptKeys.includes(e.key)) {
-        if (onAccept(selectedIndex) === false) return;
+        if (onAccept(selectedIndex, e) === false) return;
       } else if (closeKeys.includes(e.key)) onClose();
       else return;
       e.preventDefault();

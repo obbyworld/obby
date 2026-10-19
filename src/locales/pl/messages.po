@@ -92,21 +92,6 @@ msgstr "{0} zaprasza Cię do gry."
 msgid "{0} idle"
 msgstr "{0} bezczynny"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} jest wymagane"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} musi być liczbą"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} musi być liczbą całkowitą"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ przesuń"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ otwórz"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} opcji"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Nie można usunąć ostatniej metody 2FA"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Anuluj polecenie"
 
@@ -1419,10 +1400,6 @@ msgstr "Kolor i formatowanie"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Wkrótce"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Opcje polecenia"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Podaj kanał, na który mają trafiać użytkownicy, gdy nie mogą doł�
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Wpisz nazwę z dowolnymi spacjami, emoji lub symbolami. Polecenia IRC nadal używają prawdziwej nazwy ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Wpisz liczbę dla {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Wpisz adres URL. Użyj {sizeToken} w adresie, aby dopasować rozmiar. Przykład: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Wpisz liczbę całkowitą dla {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Obraz z serwera plików"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Pliki większe niż {0} są wysyłane bez szyfrowania. Host plików może je odczytać, a każdy z linkiem może je otworzyć."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Uzupełnij {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Filtruj wulgaryzmy (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (globalna Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "ma wartość"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

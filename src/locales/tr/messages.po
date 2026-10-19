@@ -92,21 +92,6 @@ msgstr "{0} seni oynamaya davet etti."
 msgid "{0} idle"
 msgstr "{0} boşta"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} gerekli"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} bir sayı olmalı"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} bir tam sayı olmalı"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ taşı"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ aç"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} seçenek"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Komutu iptal et"
 
@@ -1419,10 +1400,6 @@ msgstr "Renk ve Biçimlendirme"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Çok yakında"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Komut seçenekleri"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Bu kanala katılamayan kullanıcıların yönlendirileceği bir kanal gi
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Boşluk, emoji veya sembol içerebilen bir ad girin. IRC komutları yine de gerçek adı ({channelName}) kullanır."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "{0} için bir sayı girin"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın. Örnek: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "{0} için bir tam sayı girin"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Dosya sunucu görseli"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "{0} boyutundan büyük dosyalar şifresiz gönderilir. Dosya sunucusu bunları okuyabilir ve bağlantıya sahip herkes açabilir."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "{0} alanını doldurun"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Kötü sözcükleri filtrele (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (global Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "değeri var"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

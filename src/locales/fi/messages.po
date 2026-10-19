@@ -92,21 +92,6 @@ msgstr "{0} on kutsunut sinut pelaamaan."
 msgid "{0} idle"
 msgstr "{0} joutilaana"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} on pakollinen"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} on oltava luku"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} on oltava kokonaisluku"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ siirtyäksesi"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ avataksesi"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} valintaa"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Peruuta komento"
 
@@ -1419,10 +1400,6 @@ msgstr "Väri ja muotoilu"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Tulossa pian"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Komennon asetukset"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Anna kanava, jolle käyttäjät ohjataan, kun he eivät voi liittyä tä
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Kirjoita nimi, jossa voi olla välilyöntejä, emojeita tai symboleita. IRC-komennot käyttävät edelleen todellista nimeä ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Anna luku kohteelle {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Kirjoita URL-osoite. Käytä {sizeToken}-paikkamerkkiä dynaamista kokoa varten. Esimerkki: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Anna kokonaisluku kohteelle {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Tiedostopalvelimen kuva"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Tiedostot, jotka ovat suurempia kuin {0}, lähetetään salaamattomina. Tiedostopalvelin voi lukea ne, ja jokainen linkin haltija voi avata ne."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Täytä {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Suodata kiroilu (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (maailmanlaajuinen Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "sisältää arvon"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

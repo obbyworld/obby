@@ -92,21 +92,6 @@ msgstr "{0} запрошує вас зіграти."
 msgid "{0} idle"
 msgstr "{0} без активності"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0}: обов'язкове поле"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} має бути числом"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} має бути цілим числом"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ перемістити"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ відкрити"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} параметрів"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Не можна видалити останні облікові дан�
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Скасувати команду"
 
@@ -1419,10 +1400,6 @@ msgstr "Колір і форматування"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "Незабаром"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Параметри команди"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Вкажіть канал, на який перенаправляти к
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Введіть назву з будь-якими пробілами, емодзі чи символами. IRC-команди все одно використовують справжню назву ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Введіть число для {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Введіть URL. Використовуйте {sizeToken} в URL для динамічного розміру. Приклад: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Введіть ціле число для {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Зображення з файлового хостингу"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Файли більші за {0} надсилаються без шифрування. Хост файлів може їх прочитати, а будь-хто з посиланням може їх відкрити."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Заповніть {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Фільтрувати лайку (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (глобальна Z-Line)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Напів-оператор"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "значення задано"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

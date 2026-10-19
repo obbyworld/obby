@@ -92,21 +92,6 @@ msgstr "{0} te-a invitat să joci."
 msgid "{0} idle"
 msgstr "{0} inactiv"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} este obligatoriu"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} trebuie să fie un număr"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} trebuie să fie un număr întreg"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ mută"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ deschide"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} opțiuni"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "Nu poți elimina ultima credențială 2FA"
 msgid "Cancel"
 msgstr "Anulează"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "Anulează comanda"
 
@@ -1419,10 +1400,6 @@ msgstr "Culoare și formatare"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "În curând"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "Opțiunile comenzii"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "Introdu un canal către care să fie trimiși utilizatorii când nu pot 
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Introduceți un nume cu spații, emoji sau simboluri. Comenzile IRC folosesc în continuare numele real ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Introdu un număr pentru {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Introduceți un URL. Folosiți {sizeToken} în URL pentru dimensionare dinamică. Exemplu: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Introdu un număr întreg pentru {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "Imagine filehost"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Fișierele mai mari de {0} sunt trimise necriptate. Gazda de fișiere le poate citi, iar oricine are linkul le poate deschide."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Completează {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "Filtrează cuvintele nepotrivite (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line (Z-Line globală)"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "Halfop"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "are o valoare"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"

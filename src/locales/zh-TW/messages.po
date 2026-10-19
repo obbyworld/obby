@@ -92,21 +92,6 @@ msgstr "{0} 邀請你一起玩。"
 msgid "{0} idle"
 msgstr "{0} 閒置"
 
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} is required"
-msgstr "{0} 為必填項"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a number"
-msgstr "{0} 必須是數字"
-
-#. placeholder {0}: e.name
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "{0} must be a whole number"
-msgstr "{0} 必須是整數"
-
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
 #: src/components/ui/BouncerNetworksPanel.tsx
@@ -315,10 +300,6 @@ msgstr "↑ ↓ 移動"
 #: src/components/ui/QuickActions.tsx
 msgid "↵ to open"
 msgstr "↵ 開啟"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "+{hiddenCount} options"
-msgstr "+{hiddenCount} 個選項"
 
 #. placeholder {0}: typingUsers[0].username
 #. placeholder {1}: typingUsers[1].username
@@ -1040,7 +1021,7 @@ msgstr "無法移除你的最後一個 2FA 憑證"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/components/chat/CommandArgsStrip.tsx
+#: src/components/chat/CommandArgHint.tsx
 msgid "Cancel command"
 msgstr "取消指令"
 
@@ -1419,10 +1400,6 @@ msgstr "颜色与格式"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Coming soon"
 msgstr "即將推出"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "Command options"
-msgstr "指令選項"
 
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
@@ -2225,9 +2202,19 @@ msgstr "輸入一個頻道，當使用者無法加入此頻道時將其轉到該
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "可包含空格、表情符號或符號。IRC 指令仍使用真實名稱（{channelName}）。"
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "請為 {0} 輸入數字"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "輸入 URL。在 URL 中使用 {sizeToken} 可動態調整大小。範例：https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "請為 {0} 輸入整數"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2436,6 +2423,11 @@ msgstr "檔案託管圖片"
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "大於 {0} 的檔案將不加密傳送。檔案主機可以讀取這些檔案，任何擁有連結的人都可以開啟。"
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "請填寫 {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
 msgstr "過濾不當詞語 (+G)"
@@ -2607,10 +2599,6 @@ msgstr "GZ-Line（全域 Z-Line）"
 #: src/components/layout/ProfilePane.tsx
 msgid "Halfop"
 msgstr "半管理员"
-
-#: src/components/chat/CommandArgsStrip.tsx
-msgid "has a value"
-msgstr "已有值"
 
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
