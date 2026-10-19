@@ -479,10 +479,6 @@ msgstr "Lisää tunniste ottaaksesi 2FA:n käyttöön"
 msgid "Add a reaction"
 msgstr "Lisää reaktio"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "Lisää palvelin nähdäksesi, miten sen ilmoitukset tavoittavat sinut"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Lisää sana tai lause..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "Takaisin asetuksiin"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "Vain taustatarkistus"
+msgid "Background"
+msgstr "Tausta"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1079,6 +1075,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "Vaihda korostusväri"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Vaihda sovellus"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "Vaihda tai palauta tilisi salasana."
@@ -1217,10 +1217,6 @@ msgstr "Keskustelu"
 msgid "Chats and networks"
 msgstr "Keskustelut ja verkot"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "Tarkista uudet viestit noin 15 minuutin välein"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Valitse toinen tiedostotyyppi. Tiedostopalvelin ei hyväksy {ext}-tiedostoja."
@@ -1249,17 +1245,9 @@ msgstr "Valitse turvallinen salasana"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Valitse pienempi tiedosto. Tämä on liian suuri tiedostopalvelimelle."
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "Valitse jakelija"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Valitse tiedosto"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Valitse, miten viestit tavoittavat sinut, kun Obby on suljettu. Palvelimet ilman web pushia käyttävät aina taustatarkistusta."
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1865,18 +1853,6 @@ msgstr "Poistetaanko tämä verkko?"
 msgid "deleted"
 msgstr "poistettu"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "Toimita heti valitsemasi jakelusovelluksen kautta, esimerkiksi ntfy"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Toimita heti Google Play -palveluiden kautta"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "Toimitus sovelluksen ollessa suljettu"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2406,10 +2382,6 @@ msgstr "Laajenna jäsenlista"
 msgid "Expand workflow"
 msgstr "Laajenna työnkulku"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Odota enintään 15 minuutin viivettä, kun Obby on suljettu"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "Laajennettu profiili ei ole saatavilla"
@@ -2517,6 +2489,14 @@ msgstr "Kutista kaikki"
 msgid "Folder name"
 msgstr "Kansion nimi"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Yksityisviesteille ja maininnoille"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Yksityisviesteille ja maininnoille. Ne loppuvat, kun pyyhkäiset Obbyn pois."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Turvallisuuden vuoksi kaikki tämän tilin istunnot kirjattiin ulos ja tilikohtainen palvelimen tila tyhjennettiin. Jos kaksivaiheinen tunnistus oli käytössä, se pysyy käytössä, joten seuraava kirjautuminen vaatii sen edelleen."
@@ -2589,10 +2569,6 @@ msgstr "Yleinen tukikanava"
 msgid "Get notified when someone says the words you follow."
 msgstr "Saat ilmoituksen, kun joku sanoo seuraamasi sanat."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Saa ne heti, vaikka Obby olisi suljettu"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2612,10 +2588,6 @@ msgstr "Siirry kanavalle {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "Siirry vastaukseen"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2685,10 +2657,6 @@ msgstr "Isäntänimi"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "Isäntänimi:"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Miten kunkin palvelimen ilmoitukset tavoittavat sinut, kun suljet Obbyn"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2783,12 +2751,8 @@ msgid "Install"
 msgstr "Asenna"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "Asenna UnifiedPush-jakelija, kuten ntfy, ja valitse sitten UnifiedPush uudelleen"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "Asenna Google Play -palvelut käyttääksesi tätä"
+msgid "Install a UnifiedPush app first"
+msgstr "Asenna ensin UnifiedPush-sovellus"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2943,14 +2907,6 @@ msgstr "Säilytä keskusteluhistoria tällä laitteella"
 msgid "Keep credentials"
 msgstr "Säilytä tunnistautumistiedot"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "Pidä Obby ilmoitusalueella saadaksesi ne"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "Pidä Obby auki saadaksesi ne"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Säilytä salasanat"
@@ -3016,10 +2972,6 @@ msgstr "Poistu kanavalta"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "Jätä kanava tyhjäksi yleistä verkkokutsua varten. Kuvaus on vain omaa kirjanpitoasi varten — näkyvissä vain sinulle tässä listassa."
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "Jätä Obby taustalle saadaksesi ne, sillä pois pyyhkäiseminen pysäyttää ne"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3798,8 +3750,8 @@ msgid "Notifications"
 msgstr "Ilmoitukset"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Ilmoitukset, kun Obby on suljettu"
+msgid "Notifications Source"
+msgstr "Ilmoitusten lähde"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5099,10 +5051,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Lyhytkoodin on vastattava muotoa [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Näytä järjestelmäilmoitus yksityisviesteistä ja maininnoista, kun et katso kyseistä keskustelua"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Näytä kaikki tapahtumat"
 
@@ -5654,10 +5602,6 @@ msgstr "Ota Säilytä keskusteluhistoria käyttöön aloittaaksesi tallennuksen"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "Ota käyttöön Operaattori yhdistettäessä, jolloin tallennettu nimi ja salasana lähetetään OPER-komennolla jokaisessa yhteydessä, tai käytä alla olevaa Ota operaattori käyttöön -toimintoa."
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "Ota Näytä ilmoitukset käyttöön saadaksesi ilmoituksia"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "Käynnistä kamera yrittääksesi uudelleen"
@@ -5690,10 +5634,6 @@ msgstr "Kirjoita sanoja hakeaksesi viesteistä"
 #: src/components/voice/VoiceDock.tsx
 msgid "Undeafen"
 msgstr "Poista kuuntelun mykistys"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
@@ -5841,10 +5781,6 @@ msgstr "Estettävät käyttäjät ja mallit"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "Käyttäjät:"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "Käytössä {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6055,10 +5991,6 @@ msgstr "Mitä tämä tarkoittaa:"
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "Mitä olet tekemässä"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "Suljettuna"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

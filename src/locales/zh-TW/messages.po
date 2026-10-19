@@ -479,10 +479,6 @@ msgstr "新增憑證以啟用 2FA"
 msgid "Add a reaction"
 msgstr "新增表情回應"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "新增伺服器以查看其通知如何送達"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "添加词语或短语..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "返回設定"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "僅背景檢查"
+msgid "Background"
+msgstr "背景"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1079,6 +1075,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "變更強調色"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "更換應用程式"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "變更或重設帳號密碼。"
@@ -1217,10 +1217,6 @@ msgstr "聊天"
 msgid "Chats and networks"
 msgstr "聊天和網路"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "大約每 15 分鐘檢查一次新訊息"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "請選擇其他檔案類型。檔案主機不接受 {ext} 檔案。"
@@ -1249,17 +1245,9 @@ msgstr "选择一个安全密码"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "請選擇較小的檔案。這個檔案對檔案主機來說太大。"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "選擇分發器"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "選擇檔案"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "選擇 Obby 關閉時如何接收訊息。不支援網頁推播的伺服器一律使用背景檢查。"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1865,18 +1853,6 @@ msgstr "刪除此網路？"
 msgid "deleted"
 msgstr "已刪除"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "透過你選擇的分發器應用程式（例如 ntfy）立即送達"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "透過 Google Play 服務立即送達"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "關閉時的訊息送達"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2406,10 +2382,6 @@ msgstr "展开成员列表"
 msgid "Expand workflow"
 msgstr "展開工作流程"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Obby 關閉期間，預計最多延遲 15 分鐘"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "擴充個人資料無法使用"
@@ -2517,6 +2489,14 @@ msgstr "全部摺疊"
 msgid "Folder name"
 msgstr "資料夾名稱"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "用於私訊和提及"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "用於私訊和提及。滑掉 Obby 後會停止。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "基於安全考量，此帳號的所有現有工作階段已登出，帳號範圍的伺服器狀態已清除。如果已啟用雙重驗證，它仍保持啟用，下次登入仍需驗證。"
@@ -2589,10 +2569,6 @@ msgstr "通用支持频道"
 msgid "Get notified when someone says the words you follow."
 msgstr "有人說出你關注的詞時收到通知。"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "即使 Obby 已關閉，也能即時收到"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2612,10 +2588,6 @@ msgstr "前往 {name}"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "前往回覆"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2685,10 +2657,6 @@ msgstr "主機名稱"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "主機名："
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "關閉 Obby 後各伺服器的通知如何送達"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2783,12 +2751,8 @@ msgid "Install"
 msgstr "安裝"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "請安裝 ntfy 等 UnifiedPush 分發器，然後再次選擇 UnifiedPush"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "請安裝 Google Play 服務以使用此選項"
+msgid "Install a UnifiedPush app first"
+msgstr "請先安裝 UnifiedPush 應用程式"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2943,14 +2907,6 @@ msgstr "在此裝置上保留聊天歷史"
 msgid "Keep credentials"
 msgstr "保留憑證"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "請將 Obby 保留在系統匣中以接收通知"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "請保持 Obby 開啟以接收通知"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "保留密碼"
@@ -3016,10 +2972,6 @@ msgstr "离开频道"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "頻道留空可建立一般網路邀請。描述僅供您自己記錄使用——只有您能在此清單中看到。"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "請讓 Obby 在背景執行以接收通知，滑掉應用程式會停止通知"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3798,8 +3750,8 @@ msgid "Notifications"
 msgstr "通知"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Obby 關閉時的通知"
+msgid "Notifications Source"
+msgstr "通知來源"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5099,10 +5051,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "短代碼必須符合 [A-Za-z0-9._-]+。"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "當你沒有在看該聊天時，為私訊和提及顯示系統通知"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "顯示所有事件"
 
@@ -5654,10 +5602,6 @@ msgstr "開啟「在此裝置上保留聊天歷史」即可開始儲存"
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "開啟「連線時執行 OPER」，以便每次連線時都以已儲存的名稱與密碼傳送 OPER，或使用下方的「執行 OPER」。"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "開啟「顯示通知」以接收通知"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "開啟相機以重試"
@@ -5690,10 +5634,6 @@ msgstr "輸入關鍵字搜尋訊息"
 #: src/components/voice/VoiceDock.tsx
 msgid "Undeafen"
 msgstr "取消屏蔽聲音"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
@@ -5841,10 +5781,6 @@ msgstr "要忽略的使用者和模式"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "用戶："
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "正在使用 {currentName}"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6055,10 +5991,6 @@ msgstr "这意味着："
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "你正在做什麼"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "關閉時"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"

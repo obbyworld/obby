@@ -479,10 +479,6 @@ msgstr "2FA を有効にするには認証情報を追加してください"
 msgid "Add a reaction"
 msgstr "リアクションを追加"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Add a server to see how its notifications reach you"
-msgstr "サーバーを追加して、通知の届き方を確認してください"
-
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "単語またはフレーズを追加..."
@@ -867,8 +863,8 @@ msgid "Back to Settings"
 msgstr "設定に戻る"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Background check only"
-msgstr "バックグラウンド確認のみ"
+msgid "Background"
+msgstr "バックグラウンド"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1079,6 +1075,10 @@ msgstr "Cert FP"
 msgid "Change accent color"
 msgstr "アクセントカラーを変更"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "アプリを変更"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
 msgstr "アカウントのパスワードを変更またはリセットします。"
@@ -1217,10 +1217,6 @@ msgstr "チャット"
 msgid "Chats and networks"
 msgstr "チャットとネットワーク"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Check for new messages about every 15 minutes"
-msgstr "約15分ごとに新着メッセージを確認する"
-
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "別のファイル形式を選択してください。ファイルホストは {ext} ファイルを受け付けません。"
@@ -1249,17 +1245,9 @@ msgstr "安全なパスワードを選択してください"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "より小さいファイルを選択してください。このファイルはファイルホストには大きすぎます。"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Choose distributor"
-msgstr "ディストリビューターを選択"
-
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "ファイルを選択"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Choose how messages reach you while Obby is closed. Servers without web push always use the background check."
-msgstr "Obbyを閉じている間のメッセージの受け取り方を選択してください。Web Push非対応のサーバーは常にバックグラウンド確認を使います。"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Choose how much external media loads in chat."
@@ -1865,18 +1853,6 @@ msgstr "このネットワークを削除しますか？"
 msgid "deleted"
 msgstr "削除済み"
 
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through a distributor app you choose, such as ntfy"
-msgstr "ntfyなど、選んだディストリビューターアプリ経由ですぐに配信する"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Deliver right away through Google Play services"
-msgstr "Google Play開発者サービス経由ですぐに配信する"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Delivery While Closed"
-msgstr "閉じている間の配信"
-
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Demote to viewer"
@@ -2406,10 +2382,6 @@ msgstr "メンバーリストを展開"
 msgid "Expand workflow"
 msgstr "ワークフローを展開"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Expect them up to 15 minutes late while Obby is closed"
-msgstr "Obby を閉じている間は最大 15 分の遅れを見込んでください"
-
 #: src/components/pages/SettingsPage.tsx
 msgid "Extended profile unavailable"
 msgstr "拡張プロフィールは利用できません"
@@ -2517,6 +2489,14 @@ msgstr "すべて折りたたむ"
 msgid "Folder name"
 msgstr "フォルダ名"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "プライベートメッセージとメンション用"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "プライベートメッセージとメンション用。Obbyをスワイプして閉じると停止します。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "セキュリティのため、このアカウントの既存のセッションはすべてサインアウトされ、アカウントに紐づくサーバー側の状態は消去されました。2 要素認証が有効だった場合は有効のままなので、次回のログインでも必要になります。"
@@ -2589,10 +2569,6 @@ msgstr "一般サポートチャンネル"
 msgid "Get notified when someone says the words you follow."
 msgstr "フォロー中の言葉が発言されたら通知を受け取りましょう。"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Get them instantly, even with Obby closed"
-msgstr "Obby を閉じていてもすぐに受け取ってください"
-
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
 msgstr "GIF"
@@ -2612,10 +2588,6 @@ msgstr "{name} に移動"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Go to reply"
 msgstr "返信に移動"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Google (FCM)"
-msgstr "Google (FCM)"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
@@ -2685,10 +2657,6 @@ msgstr "ホスト名"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Hostname:"
 msgstr "ホスト名："
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "How each server's notifications reach you once you close Obby"
-msgstr "Obby を閉じた後の各サーバーの通知の届き方"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "https://example.com"
@@ -2783,12 +2751,8 @@ msgid "Install"
 msgstr "インストール"
 
 #: src/components/ui/settings/PushMethodField.tsx
-msgid "Install a UnifiedPush distributor such as ntfy, then select UnifiedPush again"
-msgstr "ntfyなどのUnifiedPushディストリビューターをインストールしてから、もう一度UnifiedPushを選択してください"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Install Google Play services to use this"
-msgstr "使用するにはGoogle Play開発者サービスをインストールしてください"
+msgid "Install a UnifiedPush app first"
+msgstr "先にUnifiedPushアプリをインストールしてください"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2943,14 +2907,6 @@ msgstr "チャット履歴をこのデバイスに保存する"
 msgid "Keep credentials"
 msgstr "認証情報を保持"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby in the tray to get them"
-msgstr "受け取るには Obby をトレイに常駐させてください"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Keep Obby open to get them"
-msgstr "受け取るには Obby を開いたままにしてください"
-
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "パスワードを保持"
@@ -3016,10 +2972,6 @@ msgstr "チャンネルを退出"
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Leave channel blank for a generic network invite. Description is just for your records — visible only to you in this list."
 msgstr "チャンネルを空欄にすると、汎用のネットワーク招待になります。説明はあなた専用の記録で、このリストで自分にのみ表示されます。"
-
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Leave Obby in the background to get them, since swiping it away stops them"
-msgstr "受け取るには Obby をバックグラウンドに残してください。スワイプで閉じると届かなくなります"
 
 #: src/lib/eventGrouping.ts
 msgid "left"
@@ -3798,8 +3750,8 @@ msgid "Notifications"
 msgstr "通知"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Notifications While Obby Is Closed"
-msgstr "Obby を閉じているときの通知"
+msgid "Notifications Source"
+msgstr "通知の取得元"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
@@ -5099,10 +5051,6 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "ショートコードは [A-Za-z0-9._-]+ に一致する必要があります。"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "そのチャットを見ていないときに、プライベートメッセージとメンションのシステム通知を表示します"
-
-#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "すべてのイベントを表示"
 
@@ -5654,10 +5602,6 @@ msgstr "保存を始めるには「チャット履歴をこのデバイスに保
 msgid "Turn on Oper on connect to send the stored name and password as OPER on every connection, or use Oper up below."
 msgstr "接続時に OPER をオンにすると、保存済みの名前とパスワードで毎回 OPER を送信します。または下の OPER を実行を使ってください。"
 
-#: src/components/ui/settings/ClosedAppDeliveryField.tsx
-msgid "Turn on Show Notifications to get any"
-msgstr "受け取るには「通知を表示」をオンにしてください"
-
 #: src/lib/voiceErrors.ts
 msgid "Turn the camera on to try again"
 msgstr "もう一度試すにはカメラをオンにしてください"
@@ -5690,10 +5634,6 @@ msgstr "単語を入力してメッセージを検索"
 #: src/components/voice/VoiceDock.tsx
 msgid "Undeafen"
 msgstr "スピーカーミュートを解除"
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "UnifiedPush"
-msgstr "UnifiedPush"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Unignore user"
@@ -5841,10 +5781,6 @@ msgstr "無視するユーザーとパターン"
 #: src/components/message/JsonLogMessage.tsx
 msgid "Users:"
 msgstr "ユーザー："
-
-#: src/components/ui/settings/PushMethodField.tsx
-msgid "Using {currentName}"
-msgstr "{currentName}を使用中"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -6055,10 +5991,6 @@ msgstr "これが意味すること："
 #: src/lib/clientCommands.ts
 msgid "What you're doing"
 msgstr "あなたの行動"
-
-#: src/components/pages/SettingsPage.tsx
-msgid "When Closed"
-msgstr "閉じているとき"
 
 #: src/components/message/WhisperMessage.tsx
 msgid "WHISPER"
