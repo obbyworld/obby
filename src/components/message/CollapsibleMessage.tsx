@@ -139,12 +139,14 @@ export const CollapsibleMessage: React.FC<CollapsibleMessageProps> = ({
       {canRead && (
         <button
           type="button"
-          className="chip-action mt-1.5 min-h-11"
+          className="flex min-h-11 items-center"
           onClick={onRequestRead}
         >
-          <Trans>Read all</Trans>
-          <span className="row-meta">
-            {plural(totalLines, { one: "# line", other: "# lines" })}
+          <span className="chip-action">
+            <Trans>Read all</Trans>
+            <span className="row-meta">
+              {plural(totalLines, { one: "# line", other: "# lines" })}
+            </span>
           </span>
         </button>
       )}
