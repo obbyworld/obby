@@ -1,8 +1,8 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useBackButton } from "../../hooks/useBackButton";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useSwipeNavigation } from "../../hooks/useSwipeNavigation";
-import { isTauriAndroid } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
 import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
@@ -331,57 +331,54 @@ export const AppLayout: React.FC = () => {
     return getLayoutColumnElement(column);
   };
 
-  // Handle mobile back button
-  // TODO: ios
-  if (isTauriAndroid()) {
-    window.androidBackCallback = () => {
-      // An open dialog, sheet or menu closes on Escape, so back closes it
-      // before it moves anything underneath.
-      if (document.querySelector("[aria-modal='true'], [data-popover-panel]")) {
-        document.dispatchEvent(
-          new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
-        );
+  useBackButton(() => {
+    // An open dialog, sheet or menu closes on Escape, so back closes it
+    // before it moves anything underneath.
+    if (document.querySelector("[aria-modal='true'], [data-popover-panel]")) {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+      );
+      return false;
+    }
+    if (useStore.getState().ui.openedMedia) {
+      useStore.getState().closeMedia();
+      return false;
+    }
+    const {
+      page: openedPage,
+      sidePane: openedPane,
+      mobileViewActiveColumn: activeColumn,
+    } = useStore.getState().ui;
+    if (openedPage) {
+      (document.activeElement as HTMLElement | null)?.blur();
+      if (stepBackWithinPage()) return false;
+      useStore.getState().closePage();
+      return false;
+    }
+    if (openedPane?.kind === "profile") {
+      useStore.getState().closeProfile();
+      return false;
+    }
+    if (openedPane?.kind === "search") {
+      if (activeColumn === "chatView")
+        useStore.getState().setSearchChatShown(false);
+      else useStore.getState().closeSearchResults();
+      return false;
+    }
+    if (!isNarrowView) return true;
+    switch (mobileViewActiveColumn) {
+      case "chatView":
+        setMobileViewActiveColumn("serverList");
+        toggleChannelList(true);
         return false;
-      }
-      if (useStore.getState().ui.openedMedia) {
-        useStore.getState().closeMedia();
+      case "memberList":
+        setMobileViewActiveColumn("chatView");
+        toggleMemberList(false);
         return false;
-      }
-      const {
-        page: openedPage,
-        sidePane: openedPane,
-        mobileViewActiveColumn: activeColumn,
-      } = useStore.getState().ui;
-      if (openedPage) {
-        (document.activeElement as HTMLElement | null)?.blur();
-        if (stepBackWithinPage()) return false;
-        useStore.getState().closePage();
-        return false;
-      }
-      if (openedPane?.kind === "profile") {
-        useStore.getState().closeProfile();
-        return false;
-      }
-      if (openedPane?.kind === "search") {
-        if (activeColumn === "chatView")
-          useStore.getState().setSearchChatShown(false);
-        else useStore.getState().closeSearchResults();
-        return false;
-      }
-      switch (mobileViewActiveColumn) {
-        case "chatView":
-          setMobileViewActiveColumn("serverList");
-          toggleChannelList(true);
-          return false; // the android back will be prevented
-        case "memberList":
-          setMobileViewActiveColumn("chatView");
-          toggleMemberList(false);
-          return false; // the android back will be prevented
-        default:
-          return true; // the default android back
-      }
-    };
-  }
+      default:
+        return true;
+    }
+  });
 
   return (
     <ChannelLinkProvider>

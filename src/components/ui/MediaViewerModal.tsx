@@ -30,7 +30,6 @@ import {
   FaVideo,
 } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
-import { useCloseOnHistoryBack } from "../../hooks/useCloseOnHistoryBack";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
 import type { MediaDescriptor } from "../../lib/e2ee/media";
@@ -492,7 +491,6 @@ export function MediaViewerModal({
   preferLastEntry,
   decryptedType,
 }: MediaViewerModalProps) {
-  useCloseOnHistoryBack(isOpen, onClose);
   // zoom drives the slider/buttons UI; the actual image transform is applied
   // directly via imgRef to avoid React re-renders on every gesture event.
   const [zoom, setZoom] = useState(1);

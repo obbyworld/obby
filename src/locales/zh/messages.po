@@ -4011,6 +4011,10 @@ msgstr "在服务器通知和欢迎页面中发布每个服务器的每日消息
 msgid "Preferences"
 msgstr "偏好设置"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "再按一次返回退出"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "预览（尚未上传）"

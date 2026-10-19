@@ -4011,6 +4011,10 @@ msgstr "Her sunucunun günün mesajını Sunucu Bildirimleri'nde ve hoş geldin 
 msgid "Preferences"
 msgstr "Tercihler"
 
+#: src/components/ui/GlobalNotifications.tsx
+msgid "Press back again to exit"
+msgstr "Çıkmak için tekrar geri basın"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Preview (not yet uploaded)"
 msgstr "Önizleme (henüz yüklenmedi)"
