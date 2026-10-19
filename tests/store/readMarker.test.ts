@@ -168,6 +168,22 @@ describe("read markers", () => {
     expect(channel()).toMatchObject({ unreadCount: 1, isMentioned: false });
   });
 
+  it("sends no start marker for a guest, since the server keeps markers only for accounts", async () => {
+    const { useStore, ircClient, markreadSet } = await boot({
+      selected: false,
+      readMarker: undefined as unknown as string,
+    });
+    useStore.setState((state) => ({
+      servers: state.servers.map((s) => ({ ...s, account: undefined })),
+    }));
+    ircClient.triggerEvent("MARKREAD", {
+      serverId: SERVER,
+      target: "#chan",
+      timestamp: null,
+    });
+    expect(markreadSet).not.toHaveBeenCalled();
+  });
+
   it("marks the chat read up to its newest message once the user sees it", async () => {
     vi.useFakeTimers();
     const { useStore, markreadSet, channel } = await boot({ selected: true });

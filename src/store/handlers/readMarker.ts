@@ -224,8 +224,9 @@ export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
           : { ...chat, readMarker: timestamp, readMarkerFetched: true };
       }),
     }));
-    if (startedMarker) ircClient.markreadSet(serverId, target, startedMarker);
     const state = store.getState();
+    if (startedMarker && serverTracksReadMarker(state, serverId))
+      ircClient.markreadSet(serverId, target, startedMarker);
     const server = state.servers.find((s) => s.id === serverId);
     const chat = [
       ...(server?.channels ?? []),
