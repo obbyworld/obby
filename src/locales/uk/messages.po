@@ -863,7 +863,7 @@ msgstr "Назад до налаштувань"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Background"
-msgstr ""
+msgstr "Фон"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1077,7 +1077,7 @@ msgstr "Змінити акцентний колір"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Change app"
-msgstr ""
+msgstr "Змінити застосунок"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2493,11 +2493,11 @@ msgstr "Назва папки"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
-msgstr ""
+msgstr "Для приватних повідомлень і згадок"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions. They stop when you swipe Obby away."
-msgstr ""
+msgstr "Для приватних повідомлень і згадок. Зупиняються, коли ви змахуєте Obby."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
@@ -2754,7 +2754,7 @@ msgstr "Встановити"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install a UnifiedPush app first"
-msgstr ""
+msgstr "Спочатку встановіть застосунок UnifiedPush"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -3761,7 +3761,7 @@ msgstr "Сповіщення"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notifications Source"
-msgstr ""
+msgstr "Джерело сповіщень"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"

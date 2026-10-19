@@ -863,7 +863,7 @@ msgstr "返回設定"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Background"
-msgstr ""
+msgstr "背景"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1077,7 +1077,7 @@ msgstr "變更強調色"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Change app"
-msgstr ""
+msgstr "更換應用程式"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2493,11 +2493,11 @@ msgstr "資料夾名稱"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
-msgstr ""
+msgstr "用於私訊和提及"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions. They stop when you swipe Obby away."
-msgstr ""
+msgstr "用於私訊和提及。滑掉 Obby 後會停止。"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
@@ -2754,7 +2754,7 @@ msgstr "安裝"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install a UnifiedPush app first"
-msgstr ""
+msgstr "請先安裝 UnifiedPush 應用程式"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -3761,7 +3761,7 @@ msgstr "通知"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notifications Source"
-msgstr ""
+msgstr "通知來源"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"

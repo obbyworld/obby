@@ -863,7 +863,7 @@ msgstr "Terug naar instellingen"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Background"
-msgstr ""
+msgstr "Achtergrond"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1077,7 +1077,7 @@ msgstr "Accentkleur wijzigen"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Change app"
-msgstr ""
+msgstr "App wijzigen"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2493,11 +2493,11 @@ msgstr "Mapnaam"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
-msgstr ""
+msgstr "Voor privéberichten en vermeldingen"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions. They stop when you swipe Obby away."
-msgstr ""
+msgstr "Voor privéberichten en vermeldingen. Ze stoppen als je Obby wegveegt."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
@@ -2754,7 +2754,7 @@ msgstr "Installeren"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install a UnifiedPush app first"
-msgstr ""
+msgstr "Installeer eerst een UnifiedPush-app"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -3761,7 +3761,7 @@ msgstr "Meldingen"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notifications Source"
-msgstr ""
+msgstr "Meldingsbron"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"

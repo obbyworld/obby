@@ -863,7 +863,7 @@ msgstr "Înapoi la setări"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Background"
-msgstr ""
+msgstr "Fundal"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
@@ -1077,7 +1077,7 @@ msgstr "Schimbă culoarea de accent"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Change app"
-msgstr ""
+msgstr "Schimbă aplicația"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2493,11 +2493,11 @@ msgstr "Numele folderului"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
-msgstr ""
+msgstr "Pentru mesaje private și mențiuni"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions. They stop when you swipe Obby away."
-msgstr ""
+msgstr "Pentru mesaje private și mențiuni. Se opresc când închizi Obby prin glisare."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
@@ -2754,7 +2754,7 @@ msgstr "Instalează"
 
 #: src/components/ui/settings/PushMethodField.tsx
 msgid "Install a UnifiedPush app first"
-msgstr ""
+msgstr "Instalează mai întâi o aplicație UnifiedPush"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -3761,7 +3761,7 @@ msgstr "Notificări"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notifications Source"
-msgstr ""
+msgstr "Sursa notificărilor"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
