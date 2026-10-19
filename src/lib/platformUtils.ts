@@ -1,7 +1,7 @@
 declare global {
   interface Window {
     __TAURI__?: unknown;
-    androidBackCallback?: () => void;
+    androidBackCallback?: () => boolean;
   }
 }
 
