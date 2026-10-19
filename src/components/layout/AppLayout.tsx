@@ -74,7 +74,10 @@ export const AppLayout: React.FC = () => {
   );
 
   const shouldShowMemberList =
-    isMemberListVisible && !selectedPrivateChatId && !isBouncerControlSelected;
+    isMemberListVisible &&
+    !!selectedChannel &&
+    !selectedPrivateChatId &&
+    !isBouncerControlSelected;
 
   const handleChannelListWidthChange = useCallback((width: number) => {
     setChannelListWidth(width);
