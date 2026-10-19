@@ -344,6 +344,10 @@ export const AppLayout: React.FC = () => {
         );
         return false;
       }
+      if (useStore.getState().ui.openedMedia) {
+        useStore.getState().closeMedia();
+        return false;
+      }
       const { page: openedPage, profilePane: openedProfile } =
         useStore.getState().ui;
       if (openedPage) {
