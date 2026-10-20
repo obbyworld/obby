@@ -20,6 +20,7 @@ import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
 import { BouncerServerGroup } from "./BouncerServerGroup";
+import "./obby-readable-sidebar.css";
 
 const CONNECTION_BADGE_CLASS =
   "absolute -bottom-1 -right-1 z-10 w-5 h-5 rounded-full bg-discord-dark-500 ring-2 ring-discord-dark-300 flex items-center justify-center";
@@ -85,14 +86,30 @@ const ServerIcon: React.FC<ServerIconProps> = ({
 
   return (
     <>
+      {/* biome-ignore lint/a11y/useSemanticElements: This keyboard-accessible row contains separate edit and disconnect buttons. */}
       <div
         className={`
-          w-12 h-12 rounded-lg flex items-center justify-center
+          obby-server-row w-12 h-12 rounded-lg flex items-center justify-center
           transition-all duration-200 cursor-pointer group relative
           ${isSelected ? "bg-discord-primary" : "bg-discord-dark-400 hover:bg-discord-primary"}
           ${isShimmering ? "shimmer" : ""}
           ${isTouchDevice ? "no-touch-action no-select" : ""}
         `}
+        data-selected={isSelected}
+        title={server.networkName || server.name}
+        role="button"
+        tabIndex={0}
+        aria-label={server.networkName || server.name}
+        aria-pressed={isSelected}
+        onKeyDown={(e) => {
+          if (
+            e.target === e.currentTarget &&
+            (e.key === "Enter" || e.key === " ")
+          ) {
+            e.preventDefault();
+            onSelect();
+          }
+        }}
         onClick={handleClick}
         onContextMenu={isTouchDevice ? (e) => e.preventDefault() : undefined}
         {...(isTouchDevice
@@ -171,6 +188,10 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           />
         )}
 
+        <span className="obby-server-name">
+          {server.networkName || server.name}
+        </span>
+
         {hasMentions && !isSelected && (
           <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
         )}
@@ -218,7 +239,10 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   );
 };
 
-export const ServerList: React.FC = () => {
+export const ServerList: React.FC<{
+  expanded: boolean;
+  onToggleExpanded: () => void;
+}> = ({ expanded, onToggleExpanded }) => {
   const { t } = useLingui();
   const {
     servers,
@@ -264,7 +288,20 @@ export const ServerList: React.FC = () => {
   }, []);
 
   return (
-    <div className="pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full overflow-visible relative">
+    <div
+      className="obby-server-rail pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full relative"
+      data-expanded={expanded}
+    >
+      <button
+        type="button"
+        className="obby-server-toggle"
+        onClick={onToggleExpanded}
+        aria-expanded={expanded}
+        aria-label={expanded ? "Collapse server names" : "Show server names"}
+        title={expanded ? "Collapse server names" : "Show server names"}
+      >
+        {expanded ? "Servers  ‹" : "☰"}
+      </button>
       {/* Home button */}
       <div
         className={`
@@ -310,7 +347,7 @@ export const ServerList: React.FC = () => {
 
       {/* Server list */}
       <div
-        className="flex flex-col space-y-2 w-full items-center"
+        className="obby-server-scroll flex flex-col space-y-2 w-full items-center"
         data-testid="server-list"
       >
         {(() => {
