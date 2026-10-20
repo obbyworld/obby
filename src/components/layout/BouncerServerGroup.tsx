@@ -77,7 +77,7 @@ export const BouncerServerGroup: React.FC<BouncerServerGroupProps> = ({
 
   return (
     <div
-      className="relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-discord-dark-400 transition-all duration-300 group/pill"
+      className="obby-bouncer-group relative w-12 rounded-2xl flex flex-col items-center py-2 px-1 gap-1.5 bg-discord-dark-400 transition-all duration-300 group/pill"
       style={{
         boxShadow: `inset 3px 0 0 0 ${hexWithAlpha(accent, isAnyMemberSelected ? 1 : 0.55)}`,
       }}
@@ -214,14 +214,38 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
 
   return (
     <>
+      {/* biome-ignore lint/a11y/useSemanticElements: This keyboard-accessible row contains separate edit and disconnect buttons. */}
       <div
         className={`
-          relative ${sizeBox} rounded-full flex items-center justify-center
+          obby-server-row relative ${sizeBox} rounded-full flex items-center justify-center
           transition-all duration-200 cursor-pointer group shimmer-host
           ${isShimmering ? "shimmer" : ""}
           ${isTouchDevice ? "no-touch-action no-select" : ""}
         `}
         style={selectedRingStyle}
+        data-selected={isSelected}
+        title={
+          isControl
+            ? `Bouncer: ${server.networkName || server.name}`
+            : server.networkName || server.name
+        }
+        role="button"
+        tabIndex={0}
+        aria-label={
+          isControl
+            ? `Bouncer: ${server.networkName || server.name}`
+            : server.networkName || server.name
+        }
+        aria-pressed={isSelected}
+        onKeyDown={(e) => {
+          if (
+            e.target === e.currentTarget &&
+            (e.key === "Enter" || e.key === " ")
+          ) {
+            e.preventDefault();
+            onSelect();
+          }
+        }}
         onClick={handleClick}
         onContextMenu={isTouchDevice ? (e) => e.preventDefault() : undefined}
         {...(isTouchDevice
@@ -276,6 +300,11 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
             {initial}
           </div>
         )}
+
+        <span className="obby-server-name">
+          {isControl ? "Bouncer: " : ""}
+          {server.networkName || server.name}
+        </span>
 
         {hasMentions && !isSelected && (
           <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-[1.5px] border-discord-dark-600" />
