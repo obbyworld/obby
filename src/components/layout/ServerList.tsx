@@ -187,10 +187,6 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           />
         )}
 
-        <span className="obby-server-name">
-          {server.networkName || server.name}
-        </span>
-
         {hasMentions && !isSelected && (
           <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-discord-dark-600" />
         )}
@@ -238,10 +234,7 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   );
 };
 
-export const ServerList: React.FC<{
-  expanded: boolean;
-  onToggleExpanded: () => void;
-}> = ({ expanded, onToggleExpanded }) => {
+export const ServerList: React.FC = () => {
   const { t } = useLingui();
   const {
     servers,
@@ -276,20 +269,7 @@ export const ServerList: React.FC<{
   }, []);
 
   return (
-    <div
-      className="obby-server-rail pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full relative"
-      data-expanded={expanded}
-    >
-      <button
-        type="button"
-        className="obby-server-toggle"
-        onClick={onToggleExpanded}
-        aria-expanded={expanded}
-        aria-label={expanded ? "Collapse server names" : "Show server names"}
-        title={expanded ? "Collapse server names" : "Show server names"}
-      >
-        {expanded ? "Servers  ‹" : "☰"}
-      </button>
+    <div className="obby-server-rail pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full relative">
       {/* Home button */}
       <div
         className={`
