@@ -856,6 +856,8 @@ export const MessageItem = memo((props: MessageItemProps) => {
             {isBot && (
               <BotInvocationChip
                 tagValue={message.tags?.["+draft/invoked-by"]}
+                serverId={message.serverId}
+                botNick={message.userId}
               />
             )}
             {message.replyMessage && (

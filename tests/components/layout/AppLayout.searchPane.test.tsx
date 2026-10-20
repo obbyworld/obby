@@ -87,6 +87,7 @@ function setMode(mode: Mode) {
       serverNoticesPopupMinimized: false,
       shouldFocusChatInput: false,
       pendingBotCommandPick: null,
+      pendingComposerCommand: null,
       ...defaultUIExtensions,
     },
   } as never);

@@ -77,6 +77,7 @@ describe("ChatHeader - Members Button", () => {
         serverNoticesPopupMinimized: false,
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
     });

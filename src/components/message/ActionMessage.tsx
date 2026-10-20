@@ -93,7 +93,11 @@ export const ActionMessage: React.FC<ActionMessageProps> = ({
             </span>
           </div>
           {isBot && (
-            <BotInvocationChip tagValue={message.tags?.["+draft/invoked-by"]} />
+            <BotInvocationChip
+              tagValue={message.tags?.["+draft/invoked-by"]}
+              serverId={message.serverId}
+              botNick={message.userId}
+            />
           )}
           {message.replyMessage && (
             <MessageReply replyMessage={message.replyMessage} theme="discord" />

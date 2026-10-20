@@ -5693,6 +5693,11 @@ msgstr "URL вашего аватара"
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Используйте * в качестве маски. Примеры: baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#. placeholder {0}: decoded.name
+#: src/components/message/BotInvocationChip.tsx
+msgid "Use /{0}"
+msgstr "Использовать /{0}"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use a secure websocket port."
 msgstr "Использовать защищённый порт WebSocket."

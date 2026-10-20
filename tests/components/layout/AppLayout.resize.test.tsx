@@ -50,6 +50,7 @@ describe("AppLayout - Resize Behavior", () => {
         perServerSelections: {},
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
     });

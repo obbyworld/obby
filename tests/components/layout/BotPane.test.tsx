@@ -39,6 +39,7 @@ describe("BotPane", () => {
         ...useStore.getState().ui,
         sidePane: { kind: "bot", serverId: "server1", botNick: "greeter" },
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
       },
     });
   });

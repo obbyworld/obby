@@ -53,6 +53,7 @@ describe("MODE Protocol Handler", () => {
         serverNoticesPopupMinimized: false,
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
     });

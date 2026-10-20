@@ -10,6 +10,7 @@ import type React from "react";
 import { useMemo, useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { base64DecodeUtf8 } from "../../lib/base64";
+import useStore from "../../store";
 import { Popover } from "../ui/Popover";
 
 interface Decoded {
@@ -39,9 +40,15 @@ function filledOptions(
 
 interface Props {
   tagValue: string | undefined;
+  serverId: string;
+  botNick: string;
 }
 
-export const BotInvocationChip: React.FC<Props> = ({ tagValue }) => {
+export const BotInvocationChip: React.FC<Props> = ({
+  tagValue,
+  serverId,
+  botNick,
+}) => {
   const { t } = useLingui();
   const decoded = useMemo(() => decode(tagValue), [tagValue]);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -55,9 +62,19 @@ export const BotInvocationChip: React.FC<Props> = ({ tagValue }) => {
     <div className="text-[11px] text-discord-text-muted mb-1 flex items-baseline gap-1 flex-wrap">
       <span className="text-discord-text-normal font-medium">{nick}</span>
       <Trans>ran</Trans>
-      <span className="rounded bg-discord-primary/25 px-1 font-mono text-discord-text-link">
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          useStore
+            .getState()
+            .requestComposerCommand(serverId, botNick, decoded.name ?? "");
+        }}
+        className="rounded bg-discord-primary/25 px-1 font-mono text-discord-text-link hover:bg-discord-primary/40 hover:underline"
+        title={t`Use /${decoded.name}`}
+      >
         /{decoded.name}
-      </span>
+      </button>
       {opts.map(([name, value]) => (
         <span key={name} className="inline-flex min-w-0 items-baseline gap-1">
           <span className="font-semibold text-discord-text-normal">{name}</span>

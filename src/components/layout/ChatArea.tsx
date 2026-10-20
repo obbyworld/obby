@@ -833,6 +833,43 @@ export const ChatArea: React.FC<{
     command.begin,
   ]);
 
+  const beginTypedBotCommand = (text: string, caret: number) => {
+    const typed = typedBotCommand(
+      text,
+      caret,
+      slashSuggestions(selectedServer, selectedChannel),
+    );
+    if (typed && needsArguments(typed))
+      command.begin(typed.source.botNick, {
+        name: typed.name,
+        description: typed.description,
+        options: typed.options,
+      });
+    return typed;
+  };
+
+  const pendingComposerCommand = useStore(
+    (state) => state.ui.pendingComposerCommand,
+  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    if (
+      !pendingComposerCommand ||
+      pendingComposerCommand.serverId !== selectedServerId
+    )
+      return;
+    useStore.getState().clearComposerCommandRequest();
+    const { name, botNick } = pendingComposerCommand;
+    if (command.invocation) command.cancel();
+    const startCommand = (text: string) => {
+      applyText(text);
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(text.length, text.length);
+      return beginTypedBotCommand(text, text.length);
+    };
+    if (!startCommand(`/${name} `)) startCommand(`/${name}@${botNick} `);
+  }, [pendingComposerCommand, selectedServerId]);
+
   const completionUsers = useMemo<User[]>(
     () =>
       selectedChannel?.users ??
@@ -1811,20 +1848,7 @@ export const ChatArea: React.FC<{
     // name, and once after that to close any open completion.
     command.onInput(newText);
 
-    const typedCommand = command.invocation
-      ? null
-      : typedBotCommand(
-          newText,
-          newCursorPosition,
-          slashSuggestions(selectedServer, selectedChannel),
-        );
-    if (typedCommand && needsArguments(typedCommand)) {
-      command.begin(typedCommand.source.botNick, {
-        name: typedCommand.name,
-        description: typedCommand.description,
-        options: typedCommand.options,
-      });
-    }
+    if (!command.invocation) beginTypedBotCommand(newText, newCursorPosition);
 
     if (
       !command.invocation &&

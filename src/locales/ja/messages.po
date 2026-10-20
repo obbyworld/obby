@@ -5693,6 +5693,11 @@ msgstr "アバター画像のURL"
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "ワイルドカードには * を使用してください。例：baduser!*@*、*!*@spammer.com、troll*!*@*"
 
+#. placeholder {0}: decoded.name
+#: src/components/message/BotInvocationChip.tsx
+msgid "Use /{0}"
+msgstr "/{0} を使う"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use a secure websocket port."
 msgstr "安全な WebSocket ポートを使用してください。"

@@ -480,6 +480,11 @@ interface UIState {
     botNick: string;
     command: import("../types").BotCommand;
   } | null;
+  pendingComposerCommand: {
+    serverId: string;
+    botNick: string;
+    name: string;
+  } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -1038,6 +1043,12 @@ export interface AppState {
     command: import("../types").BotCommand,
   ) => void;
   clearBotCommandPickRequest: () => void;
+  requestComposerCommand: (
+    serverId: string,
+    botNick: string,
+    name: string,
+  ) => void;
+  clearComposerCommandRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -1299,6 +1310,7 @@ const useStore = create<AppState>((set, get) => ({
     },
     prefillServerDetails: null,
     pendingBotCommandPick: null,
+    pendingComposerCommand: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -3669,6 +3681,21 @@ const useStore = create<AppState>((set, get) => ({
   clearBotCommandPickRequest: () => {
     set((state) => ({
       ui: { ...state.ui, pendingBotCommandPick: null },
+    }));
+  },
+
+  requestComposerCommand: (serverId, botNick, name) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingComposerCommand: { serverId, botNick, name },
+      },
+    }));
+  },
+
+  clearComposerCommandRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingComposerCommand: null },
     }));
   },
 
