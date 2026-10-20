@@ -1,20 +1,7 @@
-/* Local readable-server-list customization. */
 .obby-server-rail { min-height: 0; overflow: hidden; }
 .obby-server-rail > * { flex-shrink: 0; }
-.obby-server-toggle { width: calc(100% - 16px); min-height: 36px; margin: 0 8px 8px; border: 1px solid #69707d; border-radius: 6px; color: inherit; background: transparent; text-align: center; cursor: pointer; }
-.obby-server-toggle:hover { background: #5865f240; }
 .obby-server-scroll { flex: 1 1 0%; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; padding: 6px 6px 18px; scrollbar-width: thin; }
 .obby-server-scroll > *, .obby-bouncer-group > *, .obby-server-row { flex-shrink: 0; }
 .obby-server-row { touch-action: pan-y !important; }
-.obby-server-row:focus-visible, .obby-server-toggle:focus-visible { outline: 2px solid #a5b4fc; outline-offset: -2px; }
-.obby-server-name { display: none; }
-.obby-server-rail[data-expanded="true"] .obby-bouncer-group { width: 100%; border-radius: 10px; padding: 8px; }
-.obby-server-rail[data-expanded="true"] .obby-server-row { width: 100%; height: auto; min-height: 44px; border-radius: 6px; justify-content: flex-start; gap: 8px; padding: 6px 8px; }
-.obby-server-rail[data-expanded="true"] .obby-server-row > img,
-.obby-server-rail[data-expanded="true"] .obby-server-row > div:not([class*="absolute"]) { flex-shrink: 0; }
-.obby-server-rail[data-expanded="true"] .obby-server-name { display: block; min-width: 0; flex: 1; text-align: left; font-size: 13px; line-height: 1.35; font-weight: 600; overflow-wrap: anywhere; white-space: normal; }
-.obby-server-rail[data-expanded="true"] .obby-server-row[data-selected="true"] { background: #5865f255; }
-.obby-server-rail[data-expanded="true"] .obby-server-row:hover { background: #5865f233; }
-/* Names are visible; use native title tooltips in compact mode. */
-.obby-server-rail[data-expanded="true"] .pointer-events-none.whitespace-nowrap { display: none; }
+.obby-server-row:focus-visible { outline: 2px solid #a5b4fc; outline-offset: -2px; }
 @media (pointer: coarse) { .obby-server-row { min-height: 44px; } }
