@@ -111,6 +111,8 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          isRegistered: false,
+          webPushFailure: undefined,
           account: connectionState === "connected" ? server.account : undefined,
           saslFailed:
             connectionState === "connecting" ? false : server.saslFailed,
@@ -147,6 +149,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("ready", ({ serverId, serverName, nickname }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, isRegistered: true } : server,
+      ),
+    }));
     // Prevent processing the same server's ready event multiple times
     if (readyProcessedServers.has(serverId)) {
       return;

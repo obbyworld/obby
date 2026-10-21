@@ -16,6 +16,8 @@ export interface User {
   metadata?: Record<string, { value: string | undefined; visibility: string }>;
 }
 
+export type WebPushFailure = "failed" | "timed-out";
+
 export type ConnectionState =
   | "disconnected"
   | "connecting"
@@ -84,6 +86,10 @@ export interface Server {
   privateChats: PrivateChat[];
   icon?: string;
   isConnected: boolean;
+  // The server welcomed us (001), so it accepts commands that need registration.
+  isRegistered?: boolean;
+  // Why this browser could not subscribe to the server's web push.
+  webPushFailure?: WebPushFailure;
   connectionState?: ConnectionState;
   // The server refused our SASL credentials on this connection.
   saslFailed?: boolean;

@@ -2902,6 +2902,10 @@ msgstr "Chatverlauf auf diesem Gerät behalten"
 msgid "Keep credentials"
 msgstr "Anmeldeinformationen behalten"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Lass Obby geöffnet, um Benachrichtigungen zu erhalten"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Passwörter behalten"
@@ -4515,7 +4519,11 @@ msgstr "Zum Sprechen einen registrierten Nickname verlangen (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Zum Beitreten eine Einladung verlangen."
+msgstr "Zum Beitreten eine Einladung verlangen.<<<<<<< HEAD||||||| b0cc70a2"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Starte den Browser neu, um Benachrichtigungen bei geschlossenem Obby zu erhalten>>>>>>> stack/qa-round"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

@@ -2902,6 +2902,10 @@ msgstr "チャット履歴をこのデバイスに保存する"
 msgid "Keep credentials"
 msgstr "認証情報を保持"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "通知を受け取るには Obby を開いたままにしてください"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "パスワードを保持"
@@ -4515,7 +4519,11 @@ msgstr "発言には登録済みニックネームが必要です (+r)。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "参加には招待が必要です。"
+msgstr "参加には招待が必要です。<<<<<<< HEAD||||||| b0cc70a2"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Obby を閉じているときも通知を受け取るには、ブラウザを再起動してください>>>>>>> stack/qa-round"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

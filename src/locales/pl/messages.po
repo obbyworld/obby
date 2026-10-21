@@ -2902,6 +2902,10 @@ msgstr "Przechowuj historię rozmów na tym urządzeniu"
 msgid "Keep credentials"
 msgstr "Zachowaj poświadczenia"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Pozostaw Obby otwarte, aby otrzymywać powiadomienia"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Zachowaj hasła"
@@ -4515,7 +4519,11 @@ msgstr "Wymagaj zarejestrowanego pseudonimu (+r), aby pisać."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Wymagaj zaproszenia, aby dołączyć."
+msgstr "Wymagaj zaproszenia, aby dołączyć.<<<<<<< HEAD||||||| b0cc70a2"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Uruchom ponownie przeglądarkę, aby otrzymywać powiadomienia przy zamkniętym Obby>>>>>>> stack/qa-round"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

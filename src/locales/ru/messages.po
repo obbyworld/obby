@@ -2902,6 +2902,10 @@ msgstr "Хранить историю чатов на этом устройст�
 msgid "Keep credentials"
 msgstr "Сохранить учётные данные"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Держите Obby открытым, чтобы получать уведомления"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Сохранить пароли"
@@ -4515,7 +4519,11 @@ msgstr "Для общения нужен зарегистрированный н
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Для входа нужно приглашение."
+msgstr "Для входа нужно приглашение.<<<<<<< HEAD||||||| b0cc70a2"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Перезапустите браузер, чтобы получать уведомления, когда Obby закрыт>>>>>>> stack/qa-round"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

@@ -2902,6 +2902,10 @@ msgstr "在此设备上保留聊天历史"
 msgid "Keep credentials"
 msgstr "保留凭据"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "保持 Obby 打开以接收通知"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "保留密码"
@@ -4515,7 +4519,11 @@ msgstr "发言需要已注册昵称（+r）。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "需要邀请才能加入。"
+msgstr "需要邀请才能加入。<<<<<<< HEAD||||||| b0cc70a2"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "重启浏览器，以便在 Obby 关闭时接收通知>>>>>>> stack/qa-round"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
