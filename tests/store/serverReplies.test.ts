@@ -81,6 +81,16 @@ describe("server notices", () => {
     expectQuiet();
   });
 
+  test("files a dropped connection as a note without counting it as a problem", () => {
+    ircClient.triggerEvent("serverError", {
+      serverId,
+      message: "Closing Link: me[127.0.0.1] (Registration Timeout)",
+    });
+    expect(notices()).toHaveLength(1);
+    expect(notices()[0].standardReplyType).toBe("NOTE");
+    expect(useStore.getState().serverAlerts[serverId] ?? 0).toBe(0);
+  });
+
   test("keeps a server's welcome notice naming a command quiet", () => {
     ircClient.triggerEvent("USERNOTICE", {
       serverId,
