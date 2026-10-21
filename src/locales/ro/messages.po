@@ -2907,6 +2907,10 @@ msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
 msgid "Keep credentials"
 msgstr "Păstrați credențialele"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Ține Obby deschis pentru a primi notificări"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Păstrează parolele"
@@ -4530,6 +4534,10 @@ msgstr "Cereți o invitație pentru a intra."
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "obligatoriu"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Repornește browserul pentru a primi notificări când Obby este închis"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

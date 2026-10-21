@@ -3,7 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const webpush = vi.hoisted(() => ({
   hasWebPush: vi.fn(() => true),
   pushContextFor: vi.fn(() => ({ nick: "me" })),
-  registerWebPush: vi.fn(async () => true),
+  registerWebPush: vi.fn<
+    (
+      serverId: string,
+      vapidKey: string,
+      context: object,
+      isCurrent: () => boolean,
+    ) => Promise<"registered" | "failed" | "timed-out">
+  >(async () => "registered"),
   sendPushContext: vi.fn(),
   unregisterWebPush: vi.fn(async () => {}),
 }));
@@ -22,6 +29,7 @@ const pushServer: Server = {
   host: "irc.example.org",
   port: 6697,
   isConnected: true,
+  isRegistered: true,
   vapidKey: "BKey",
   channels: [],
   privateChats: [],
@@ -40,6 +48,8 @@ describe("web push registration", () => {
     for (const mock of Object.values(webpush)) mock.mockClear();
     useStore.setState((state) => ({
       servers: [],
+      notificationPermission: "granted",
+      failedWebPushServers: [],
       globalSettings: {
         ...state.globalSettings,
         enableNotifications: false,
@@ -48,25 +58,75 @@ describe("web push registration", () => {
     }));
   });
 
-  it("registers once per connection", () => {
+  it("registers once per connection", async () => {
     turnNotificationsOn();
     useStore.setState({ servers: [{ ...pushServer }] });
     expect(webpush.registerWebPush).toHaveBeenCalledTimes(1);
-    expect(webpush.registerWebPush).toHaveBeenCalledWith("push-1", "BKey", {
-      nick: "me",
-    });
+    expect(webpush.registerWebPush).toHaveBeenCalledWith(
+      "push-1",
+      "BKey",
+      { nick: "me" },
+      expect.any(Function),
+    );
 
-    useStore.setState({ servers: [{ ...pushServer, isConnected: false }] });
+    useStore.setState({
+      servers: [{ ...pushServer, isConnected: false, isRegistered: false }],
+    });
     useStore.setState({ servers: [{ ...pushServer }] });
-    expect(webpush.registerWebPush).toHaveBeenCalledTimes(2);
+    await vi.waitFor(() =>
+      expect(webpush.registerWebPush).toHaveBeenCalledTimes(2),
+    );
   });
 
-  it("retries a registration the browser refused", async () => {
-    webpush.registerWebPush.mockResolvedValueOnce(false);
+  it("waits for the server to welcome us before it registers", async () => {
     turnNotificationsOn();
-    await Promise.resolve();
+    webpush.registerWebPush.mockClear();
+    useStore.setState({
+      servers: [{ ...pushServer, isConnected: false, isRegistered: false }],
+    });
+    useStore.setState({ servers: [{ ...pushServer, isRegistered: false }] });
+    expect(webpush.registerWebPush).not.toHaveBeenCalled();
+
     useStore.setState({ servers: [{ ...pushServer }] });
-    expect(webpush.registerWebPush).toHaveBeenCalledTimes(2);
+    await vi.waitFor(() =>
+      expect(webpush.registerWebPush).toHaveBeenCalledTimes(1),
+    );
+  });
+
+  it("reports why a registration failed until the next connection retries it", async () => {
+    webpush.registerWebPush.mockResolvedValueOnce("timed-out");
+    turnNotificationsOn();
+    await vi.waitFor(() =>
+      expect(useStore.getState().servers[0].webPushFailure).toBe("timed-out"),
+    );
+    useStore.setState((state) => ({ servers: [{ ...state.servers[0] }] }));
+    expect(webpush.registerWebPush).toHaveBeenCalledTimes(1);
+
+    useStore.setState({
+      servers: [{ ...pushServer, isConnected: false, isRegistered: false }],
+    });
+    useStore.setState({ servers: [{ ...pushServer }] });
+    await vi.waitFor(() =>
+      expect(webpush.registerWebPush).toHaveBeenCalledTimes(2),
+    );
+  });
+
+  it("ignores a registration result that arrives after the switch went off", async () => {
+    let finish: (result: "failed") => void = () => {};
+    webpush.registerWebPush.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+    );
+    turnNotificationsOn();
+    const [, , , isCurrent] = webpush.registerWebPush.mock.calls[0];
+    useStore.setState((state) => ({
+      globalSettings: { ...state.globalSettings, enableNotifications: false },
+    }));
+    finish("failed");
+    await Promise.resolve();
+    expect(isCurrent()).toBe(false);
+    expect(useStore.getState().servers[0].webPushFailure).toBeUndefined();
   });
 
   it("sends the worker a changed context without registering again", () => {
@@ -79,26 +139,36 @@ describe("web push registration", () => {
     });
   });
 
-  it("registers once the user allows the prompt the switch opened", () => {
-    vi.useFakeTimers();
-    const notification = { permission: "default" };
+  it("registers once the user allows the prompt the switch opened", async () => {
+    const notification = {
+      permission: "default",
+      requestPermission: vi.fn(async () => {
+        notification.permission = "granted";
+        return "granted";
+      }),
+    };
     vi.stubGlobal("Notification", notification);
+    useStore.setState({ notificationPermission: "default" });
     turnNotificationsOn();
     expect(webpush.registerWebPush).not.toHaveBeenCalled();
 
-    notification.permission = "granted";
-    vi.advanceTimersByTime(1000);
-    expect(webpush.registerWebPush).toHaveBeenCalledWith("push-1", "BKey", {
-      nick: "me",
-    });
-    vi.useRealTimers();
+    await vi.waitFor(() =>
+      expect(webpush.registerWebPush).toHaveBeenCalledWith(
+        "push-1",
+        "BKey",
+        { nick: "me" },
+        expect.any(Function),
+      ),
+    );
   });
 
-  it("unregisters when the bell mutes notifications", () => {
+  it("unregisters when the bell mutes notifications", async () => {
     turnNotificationsOn();
     useStore.setState((state) => ({
       globalSettings: { ...state.globalSettings, notificationVolume: 0 },
     }));
-    expect(webpush.unregisterWebPush).toHaveBeenCalledWith("push-1", true);
+    await vi.waitFor(() =>
+      expect(webpush.unregisterWebPush).toHaveBeenCalledWith("push-1", true),
+    );
   });
 });

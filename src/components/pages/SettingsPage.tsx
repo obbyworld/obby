@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useWebPushFailure } from "../../hooks/useWebPushFailure";
 import ircClient from "../../lib/ircClient";
 import { openExternalUrl } from "../../lib/openUrl";
 import { isTauri } from "../../lib/platformUtils";
@@ -20,6 +21,7 @@ import { ProfileBanner } from "../ui/ProfileBanner";
 import { PageShell } from "../ui/page/PageShell";
 import { SettingGroup, SettingRow, Switch } from "../ui/page/SettingRow";
 import { SettingField, TextDraftInput } from "../ui/settings/SettingRenderer";
+import { WebPushFailureLine } from "../ui/settings/WebPushFailureLine";
 import { TextInput } from "../ui/TextInput";
 import type { PageProps } from "./PageHost";
 import { getSettingsSections } from "./pageSections";
@@ -264,6 +266,7 @@ const SettingsContent: React.FC<
   };
 
   const sections = getSettingsSections();
+  const webPushFailure = useWebPushFailure();
 
   const renderRegistryGroups = (settings: SettingDefinition[]) =>
     groupBySubcategory(settings.filter((setting) => !setting.hidden)).map(
@@ -284,7 +287,11 @@ const SettingsContent: React.FC<
                   return dependency && !condition(globalValue(dependency));
                 },
               )}
-            />
+            >
+              {setting.id === "notifications.enable" && webPushFailure && (
+                <WebPushFailureLine failure={webPushFailure} />
+              )}
+            </SettingField>
           ))}
         </SettingGroup>
       ),

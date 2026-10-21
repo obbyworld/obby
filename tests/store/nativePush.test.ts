@@ -54,6 +54,7 @@ const pushServer: Server = {
   host: "irc.example.org",
   port: 6697,
   isConnected: true,
+  isRegistered: true,
   vapidKey: "BKey",
   channels: [],
   privateChats: [],

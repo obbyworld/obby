@@ -2907,6 +2907,10 @@ msgstr "Sohbet geçmişini bu cihazda tut"
 msgid "Keep credentials"
 msgstr "Kimlik bilgilerini sakla"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Bildirim almak için Obby'yi açık tut"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Parolaları sakla"
@@ -4530,6 +4534,10 @@ msgstr "Katılmak için davet gerekli."
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "gerekli"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Obby kapalıyken bildirim almak için tarayıcını yeniden başlat"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
