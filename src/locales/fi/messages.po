@@ -2913,6 +2913,10 @@ msgstr "Säilytä keskusteluhistoria tällä laitteella"
 msgid "Keep credentials"
 msgstr "Säilytä tunnistautumistiedot"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Pidä Obby auki saadaksesi ilmoituksia"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Säilytä salasanat"
@@ -4544,6 +4548,10 @@ msgstr "Vaadi kutsu liittymiseen."
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "pakollinen"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Käynnistä selain uudelleen, jotta saat ilmoituksia Obbyn ollessa suljettuna"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

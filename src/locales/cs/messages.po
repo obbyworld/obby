@@ -2913,6 +2913,10 @@ msgstr "Uchovávat historii chatu v tomto zařízení"
 msgid "Keep credentials"
 msgstr "Ponechat údaje"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Nechte Obby otevřené, abyste dostávali oznámení"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "Ponechat hesla"
@@ -4544,6 +4548,10 @@ msgstr "Pro připojení vyžadovat pozvánku."
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "povinné"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Restartujte prohlížeč, abyste dostávali oznámení i při zavřeném Obby"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

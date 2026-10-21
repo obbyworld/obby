@@ -326,7 +326,9 @@ export const SettingField: React.FC<{
         title={title}
         description={description}
         control={renderer}
-      />
+      >
+        {children}
+      </SettingRow>
     );
   }
 

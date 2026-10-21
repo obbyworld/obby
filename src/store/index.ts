@@ -599,6 +599,8 @@ export interface AppState {
   e2eeVerifyTarget: { serverId: string; nick: string } | null;
   typingUsers: Record<string, User[]>;
   typingTimers: Record<string, Record<string, NodeJS.Timeout>>;
+  // null where the browser has no Notification API.
+  notificationPermission: NotificationPermission | null;
   globalNotifications: {
     id: string;
     type: "fail" | "warn" | "note";
@@ -955,6 +957,7 @@ export interface AppState {
     serverId: string;
   }) => void;
   clearGlobalNotifications: () => void;
+  syncNotificationPermission: () => void;
   appendRawLogLine: (entry: {
     serverId: string;
     direction: "tx" | "rx" | "info";
@@ -1226,6 +1229,7 @@ const useStore = create<AppState>((set, get) => ({
   e2eeVerifyTarget: null,
   typingUsers: {},
   typingTimers: {},
+  notificationPermission: globalThis.Notification?.permission ?? null,
   globalNotifications: [],
   serverAlerts: {},
   unreadServerNotices: {},
@@ -2278,6 +2282,12 @@ const useStore = create<AppState>((set, get) => ({
         console.error("Failed to play error sound:", error);
       }
     }
+  },
+
+  syncNotificationPermission: () => {
+    const permission = globalThis.Notification?.permission ?? null;
+    if (get().notificationPermission !== permission)
+      set({ notificationPermission: permission });
   },
 
   clearGlobalNotifications: () => {

@@ -2913,6 +2913,10 @@ msgstr "在此裝置上保留聊天歷史"
 msgid "Keep credentials"
 msgstr "保留憑證"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "保持 Obby 開啟以接收通知"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
 msgstr "保留密碼"
@@ -4544,6 +4548,10 @@ msgstr "需要邀請才能加入。"
 #: src/components/ui/SlashParamHint.tsx
 msgid "required"
 msgstr "必填"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "重新啟動瀏覽器，以便在 Obby 關閉時接收通知"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

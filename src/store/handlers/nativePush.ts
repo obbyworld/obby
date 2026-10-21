@@ -38,7 +38,7 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
 
   const useEndpoint = ({ serverId, endpoint, p256dh, auth }: PushEndpoint) => {
     const server = store.getState().servers.find((s) => s.id === serverId);
-    if (!server?.isConnected) return;
+    if (!server?.isRegistered) return;
     if (server.pushEndpoint && server.pushEndpoint !== endpoint)
       ircClient.sendRaw(serverId, `WEBPUSH UNREGISTER ${server.pushEndpoint}`);
     ircClient.sendRaw(
@@ -54,7 +54,7 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
   // back from the server and register anew.
   void onPushUnregistered(({ serverId, isFailed }) => {
     const server = store.getState().servers.find((s) => s.id === serverId);
-    if (server?.isConnected && server.pushEndpoint)
+    if (server?.isRegistered && server.pushEndpoint)
       ircClient.sendRaw(serverId, `WEBPUSH UNREGISTER ${server.pushEndpoint}`);
     if (!isFailed) applied.delete(serverId);
     setEndpoint(serverId, undefined);
@@ -101,7 +101,7 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
       void unregisterNativePush(serverId);
     }
     for (const server of state.servers) {
-      if (!server.isConnected) {
+      if (!server.isRegistered) {
         applied.delete(server.id);
         continue;
       }
