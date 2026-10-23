@@ -1358,10 +1358,6 @@ msgstr "뷰어 닫기"
 msgid "Close workflow"
 msgstr "워크플로우 닫기"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "창을 닫아도 Obby가 시스템 트레이에서 연결을 유지하므로 알림을 계속 받을 수 있습니다"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "코드가 확인되었습니다."
@@ -2922,10 +2918,6 @@ msgstr "알림을 받으려면 Obby를 열어 두세요"
 msgid "Keep passwords"
 msgstr "비밀번호 유지"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "트레이에서 계속 실행"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "모두 나간 후에도 채널을 유지합니다. IRCop만 설정할 수 있습니다."
@@ -3340,6 +3332,10 @@ msgstr "최소 사용자 수"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "최소화"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "트레이로 최소화"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

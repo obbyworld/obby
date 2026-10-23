@@ -1358,10 +1358,6 @@ msgstr "Закрити переглядач"
 msgid "Close workflow"
 msgstr "Закрити робочий процес"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Після закриття вікна Obby лишається підключеним у системному треї, тож сповіщення й далі надходять"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Код прийнято."
@@ -2922,10 +2918,6 @@ msgstr "Тримайте Obby відкритим, щоб отримувати с
 msgid "Keep passwords"
 msgstr "Зберегти паролі"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Працювати в треї"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Зберігайте канал, коли всі його покинуть. Це можуть встановити лише IRCop-и."
@@ -3340,6 +3332,10 @@ msgstr "Мін. користувачів"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Згорнути"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "Згорнути в трей"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

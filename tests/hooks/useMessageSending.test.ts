@@ -127,3 +127,18 @@ describe("our own line on a server that echoes it", () => {
     expect(ownLines()).toEqual([]);
   });
 });
+
+describe("the /nick command", () => {
+  beforeEach(() => {
+    useStore.setState({ servers: [server] });
+    vi.restoreAllMocks();
+  });
+
+  it("asks for the nick through the store so a confirmed change is saved", () => {
+    const changeNick = vi
+      .spyOn(ircClient, "changeNick")
+      .mockImplementation(() => {});
+    runCommand("/nick Valware2");
+    expect(changeNick).toHaveBeenCalledWith("s1", "Valware2");
+  });
+});

@@ -20,9 +20,7 @@ export function useDesktopTray(): void {
       shownKey = key;
       void showUnreadState(level, mentions);
     };
-    void createDesktopTray(
-      () => useStore.getState().globalSettings.closeToTray,
-    ).then(() => update(useStore.getState()));
+    void createDesktopTray().then(() => update(useStore.getState()));
     return useStore.subscribe(update);
   }, []);
 }
