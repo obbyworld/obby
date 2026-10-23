@@ -401,15 +401,16 @@ async function openOlderRelease(version: 1 | 2) {
 }
 
 describe("upgrade", () => {
-  it.each([
-    1, 2,
-  ] as const)("reopens gaps that version %i marked lost", async (version) => {
-    await openOlderRelease(version);
+  it.each([1, 2] as const)(
+    "reopens gaps that version %i marked lost",
+    async (version) => {
+      await openOlderRelease(version);
 
-    expect(await db.fillableGaps()).toEqual([
-      expect.objectContaining({ server: "s1", target: "#a", lost: false }),
-    ]);
-  });
+      expect(await db.fillableGaps()).toEqual([
+        expect.objectContaining({ server: "s1", target: "#a", lost: false }),
+      ]);
+    },
+  );
 });
 
 describe("without indexedDB", () => {
