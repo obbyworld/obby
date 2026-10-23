@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { MediaPreview } from "../../src/components/message/MediaPreview";
 import type { MediaEntry } from "../../src/lib/mediaUtils";
@@ -56,13 +56,6 @@ vi.mock("react-player", () => ({
 
 vi.mock("exifr", () => ({ default: { parse: vi.fn(() => null) } }));
 
-// jsdom doesn't implement IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
-
 const EMBED_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
 describe("MediaPreview", () => {
@@ -87,6 +80,21 @@ describe("MediaPreview", () => {
     );
     const img = container.querySelector("img");
     expect(img).toBeTruthy();
+  });
+
+  // A lazy image that is not rendered never loads, so `onLoad` never arrives
+  // and the image stays invisible forever. It must be hidden with opacity
+  // while it loads, never with `display: none`.
+  test("a loading image is lazy but still rendered", () => {
+    const { container } = render(
+      <MediaPreview
+        entry={makeEntry("image", "https://example.com/photo.jpg")}
+      />,
+    );
+    const img = container.querySelector("img");
+    expect(img?.getAttribute("loading")).toBe("lazy");
+    expect(img?.className).not.toContain("hidden");
+    expect(img?.className).toContain("opacity-0");
   });
 
   test("renders video for video entry", () => {
@@ -131,9 +139,22 @@ describe("EmbedPreview — Now Playing Bar stop behaviour", () => {
 
   const embedEntry = (): MediaEntry => ({ url: EMBED_URL, type: "embed" });
 
+  // A provider iframe is the most expensive thing a message can mount, so an
+  // idle embed must stay a thumbnail until someone asks for playback.
+  test("no player until the embed is activated", () => {
+    const { queryByTestId, getByLabelText } = render(
+      <MediaPreview entry={embedEntry()} />,
+    );
+    expect(queryByTestId("react-player")).toBeNull();
+    expect(getByLabelText("Play")).toBeTruthy();
+  });
+
   // ReactPlayer is lazy-loaded; findByTestId waits for Suspense to resolve.
   test("playing=undefined when no active media — iframe is uncontrolled", async () => {
-    const { findByTestId } = render(<MediaPreview entry={embedEntry()} />);
+    const { findByTestId, getByLabelText } = render(
+      <MediaPreview entry={embedEntry()} />,
+    );
+    fireEvent.click(getByLabelText("Play"));
     const player = await findByTestId("react-player");
     // undefined = don't interfere; user can click play inside YouTube natively.
     // Passing false would force-pause the iframe and break playback initiation.

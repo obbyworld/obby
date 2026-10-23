@@ -57,6 +57,7 @@ const QuickActions: React.FC = () => {
     toggleUserProfileModal,
     setChannelSettingsRequest,
     setInviteUserRequest,
+    openRawLogViewer,
   } = useStore();
 
   const { i18n } = useLingui();
@@ -486,6 +487,11 @@ const QuickActions: React.FC = () => {
             toggleUserProfileModal(true);
           }
           break;
+        case "open-raw-log":
+          if (data.serverId) {
+            openRawLogViewer(data.serverId);
+          }
+          break;
       }
     },
     [
@@ -495,6 +501,7 @@ const QuickActions: React.FC = () => {
       setTopicModalRequest,
       setProfileViewRequest,
       toggleUserProfileModal,
+      openRawLogViewer,
     ],
   );
 

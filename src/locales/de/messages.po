@@ -1613,6 +1613,10 @@ msgstr "GIF"
 msgid "GitHub:"
 msgstr "GitHub:"
 
+#: src/components/message/ChannelLink.tsx
+msgid "Go to {name}"
+msgstr "Zu {name} wechseln"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2121,6 +2125,7 @@ msgstr "Mindestwert ist {0}"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "Modal"
 
@@ -2179,6 +2184,10 @@ msgstr "Netzwerk"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "Netzwerk über soju bouncer angebunden"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "Netzwerkprotokoll"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2586,6 +2595,8 @@ msgstr "Dieses Privatgespräch anheften"
 msgid "Plaintext"
 msgstr "Klartext"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
@@ -3746,6 +3757,10 @@ msgstr "wurde von {username} aus {channelName} gekickt ({reason})"
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "Wurde aus dem Kanal geworfen"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "Den rohen IRC-Verkehr dieses Servers ansehen"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"

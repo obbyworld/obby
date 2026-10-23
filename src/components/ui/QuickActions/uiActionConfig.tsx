@@ -8,6 +8,7 @@ import {
   FaInfoCircle,
   FaList,
   FaPenAlt,
+  FaTerminal,
   FaThumbtack,
   FaUserPlus,
 } from "react-icons/fa";
@@ -165,6 +166,18 @@ export function getUIActions(): UIActionConfig[] {
       badge: t`Modal`,
       data: { action: "open-user-profile" },
       availability: (ctx) => ctx.selectedPrivateChat !== null,
+    },
+    {
+      id: "open-raw-log",
+      type: "ui-modal",
+      title: t`Network Log`,
+      description: t`Watch the raw IRC traffic for this server`,
+      keywords: ["raw", "log", "network", "debug", "traffic", "protocol"],
+      score: 70,
+      icon: <FaTerminal className="w-4 h-4" />,
+      badge: t`Modal`,
+      data: { action: "open-raw-log" },
+      availability: (ctx) => ctx.selectedServerId !== null,
     },
   ];
 }

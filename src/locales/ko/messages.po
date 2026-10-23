@@ -1613,6 +1613,10 @@ msgstr "GIF"
 msgid "GitHub:"
 msgstr "GitHub:"
 
+#: src/components/message/ChannelLink.tsx
+msgid "Go to {name}"
+msgstr "{name}(으)로 이동"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "GZ-Line"
 msgstr "GZ-Line"
@@ -2121,6 +2125,7 @@ msgstr "최솟값은 {0}입니다"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Modal"
 msgstr "모달"
 
@@ -2179,6 +2184,10 @@ msgstr "네트워크"
 #: src/components/layout/ServerList.tsx
 msgid "Network bound through soju bouncer"
 msgstr "soju bouncer를 통해 연결된 네트워크"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Network Log"
+msgstr "네트워크 로그"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2586,6 +2595,8 @@ msgstr "이 비공개 메시지 대화 고정"
 msgid "Plaintext"
 msgstr "일반 텍스트"
 
+#: src/components/message/MediaPreview.tsx
+#: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
 #: src/components/message/MediaPreview.tsx
@@ -3746,6 +3757,10 @@ msgstr "{username}에 의해 {channelName}에서 추방당했습니다 ({reason}
 #: src/components/message/EventMessage.tsx
 msgid "Was kicked from the channel"
 msgstr "채널에서 추방되었습니다"
+
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Watch the raw IRC traffic for this server"
+msgstr "이 서버의 원시 IRC 트래픽을 봅니다"
 
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
