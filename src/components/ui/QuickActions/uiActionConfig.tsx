@@ -6,9 +6,6 @@ import {
   FaEdit,
   FaHashtag,
   FaInfoCircle,
-  FaList,
-  FaPenAlt,
-  FaTerminal,
   FaThumbtack,
   FaUserPlus,
 } from "react-icons/fa";
@@ -56,18 +53,6 @@ export function getUIActions(): UIActionConfig[] {
       badge: t`Toggle`,
       data: { action: "toggle-channel-list" },
       availability: () => true,
-    },
-    {
-      id: "open-channel-settings",
-      type: "ui-modal",
-      title: t`Edit Channel`,
-      description: t`Open channel configuration settings`,
-      keywords: ["channel", "settings", "config", "configure"],
-      score: 85,
-      icon: <FaPenAlt className="w-4 h-4" />,
-      badge: t`Modal`,
-      data: { action: "open-channel-settings" },
-      availability: (ctx) => ctx.selectedChannel !== null,
     },
     {
       id: "toggle-notifications",
@@ -119,18 +104,6 @@ export function getUIActions(): UIActionConfig[] {
       availability: (ctx) => ctx.selectedChannel !== null,
     },
     {
-      id: "open-server-channels",
-      type: "ui-modal",
-      title: t`Browse Channels`,
-      description: t`Browse all channels on the server`,
-      keywords: ["server", "channels", "browse", "list"],
-      score: 80,
-      icon: <FaList className="w-4 h-4" />,
-      badge: t`Modal`,
-      data: { action: "open-server-channels" },
-      availability: () => true,
-    },
-    {
       id: "open-rename-channel",
       type: "ui-modal",
       title: t`Rename Channel`,
@@ -167,24 +140,7 @@ export function getUIActions(): UIActionConfig[] {
       data: { action: "open-user-profile" },
       availability: (ctx) => ctx.selectedPrivateChat !== null,
     },
-    {
-      id: "open-raw-log",
-      type: "ui-modal",
-      title: t`Network Log`,
-      description: t`Watch the raw IRC traffic for this server`,
-      keywords: ["raw", "log", "network", "debug", "traffic", "protocol"],
-      score: 70,
-      icon: <FaTerminal className="w-4 h-4" />,
-      badge: t`Modal`,
-      data: { action: "open-raw-log" },
-      availability: (ctx) => ctx.selectedServerId !== null,
-    },
   ];
-}
-
-export function getUIActionBadge(actionId: string): string {
-  const action = getUIActions().find((a) => a.id === actionId);
-  return action?.badge || t`Action`;
 }
 
 export function getUIActionIcon(actionId: string): React.ReactNode {

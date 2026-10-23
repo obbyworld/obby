@@ -95,3 +95,43 @@ export interface UISelections {
     privateChatUsername: string | null;
   };
 }
+
+export type SettingsSection =
+  | "profile"
+  | "notifications"
+  | "preferences"
+  | "media"
+  | "calls"
+  | "account"
+  | "invitations"
+  | "privacy";
+
+// Pages fill the chat column; `highlight` names the row Ctrl+K jumps to,
+// matched against the row's `setting-<id>` element id, and `fromSearch` marks
+// a Ctrl+K jump, the only kind that flashes what it lands on.
+export type AppPage = (
+  | { kind: "settings"; section?: SettingsSection; highlight?: string }
+  | {
+      kind: "serverSettings";
+      serverId: string;
+      section?: string;
+      highlight?: string;
+    }
+  | {
+      kind: "channelSettings";
+      serverId: string;
+      channelName: string;
+      section?: string;
+      highlight?: string;
+    }
+  | { kind: "channelBrowser"; serverId: string }
+  | { kind: "bots"; serverId: string; botNick?: string }
+  | { kind: "rawLog"; serverId: string }
+  | { kind: "twoFactor"; serverId: string }
+  | { kind: "emojiPacks"; serverId: string }
+) & { fromSearch?: boolean };
+
+export interface ProfilePane {
+  serverId: string;
+  username: string;
+}

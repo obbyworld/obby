@@ -24,7 +24,7 @@ export function editConnection(serverId: string) {
   const store = useStore.getState();
   const server = store.servers.find((s) => s.id === serverId);
   if (server?.bouncerNetid) store.editBouncerNetwork(serverId);
-  else store.toggleEditServerModal(true, serverId);
+  else store.openPage({ kind: "serverSettings", serverId });
 }
 
 export const NetworkMenu: React.FC<NetworkMenuProps> = ({
@@ -47,7 +47,7 @@ export const NetworkMenu: React.FC<NetworkMenuProps> = ({
           label: t`Find channels`,
           icon: <FaList />,
           show: true,
-          onClick: () => store.toggleChannelListModal(true),
+          onClick: () => store.openPage({ kind: "channelBrowser", serverId }),
         },
         {
           id: "folder",
@@ -68,7 +68,7 @@ export const NetworkMenu: React.FC<NetworkMenuProps> = ({
           label: t`See bots`,
           icon: <FaRobot />,
           show: true,
-          onClick: () => store.requestBotsModalOpen(serverId, ""),
+          onClick: () => store.openPage({ kind: "bots", serverId }),
         },
         {
           id: "edit",

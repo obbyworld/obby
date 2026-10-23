@@ -25,14 +25,17 @@ describe("Store", () => {
   });
 
   describe("UI actions", () => {
-    test("should toggle channel list modal", () => {
-      const { toggleChannelListModal } = useStore.getState();
+    test("should open and close a page", () => {
+      const { openPage, closePage } = useStore.getState();
 
-      toggleChannelListModal(true);
-      expect(useStore.getState().ui.isChannelListModalOpen).toBe(true);
+      openPage({ kind: "channelBrowser", serverId: "s1" });
+      expect(useStore.getState().ui.page).toEqual({
+        kind: "channelBrowser",
+        serverId: "s1",
+      });
 
-      toggleChannelListModal(false);
-      expect(useStore.getState().ui.isChannelListModalOpen).toBe(false);
+      closePage();
+      expect(useStore.getState().ui.page).toBeNull();
     });
   });
 

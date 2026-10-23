@@ -87,6 +87,9 @@ describe("ChatHeader private chat", () => {
   it("opens the profile when the name is tapped", () => {
     renderHeader();
     fireEvent.click(screen.getByRole("button", { name: /^alice/ }));
-    expect(useStore.getState().ui.profileViewRequest?.username).toBe("alice");
+    expect(useStore.getState().ui.profilePane).toEqual({
+      serverId: "server1",
+      username: "alice",
+    });
   });
 });

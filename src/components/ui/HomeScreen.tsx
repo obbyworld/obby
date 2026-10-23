@@ -1,6 +1,7 @@
+import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaHashtag, FaPlus, FaUsers } from "react-icons/fa";
 import { isTauri } from "../../lib/platformUtils";
 import useStore from "../../store";
 import { TextInput } from "./TextInput";
@@ -11,7 +12,95 @@ interface DiscoverServer {
   wss?: string;
   ircs?: string;
   obby?: boolean;
+  icon?: string;
+  users?: number;
+  channels?: number;
 }
+
+const SERVER_LIST_BASE =
+  "https://raw.githubusercontent.com/obbyworld/server-list/refs/heads/main/";
+
+// Icons are files in the server-list repo itself, so we only load paths that
+// resolve inside it and never reach an origin the list does not already use.
+export function serverIconUrl(icon: string | undefined): string | null {
+  if (!icon) return null;
+  const url = new URL(icon, SERVER_LIST_BASE);
+  return url.href.startsWith(SERVER_LIST_BASE) ? url.href : null;
+}
+
+// Most entries carry their size only as a netsplit.de sentence, so we read
+// the numbers out of it when the entry has no users/channels fields.
+const NETSPLIT_STATS =
+  /^(\d+) users, (\d+) channels on average \(via netsplit\.de\)\.?$/;
+
+export function parseNetworkStats(
+  description: string,
+): { users: number; channels: number } | null {
+  const match = NETSPLIT_STATS.exec(description.trim());
+  return match ? { users: Number(match[1]), channels: Number(match[2]) } : null;
+}
+
+const NetworkStats: React.FC<{ users: number; channels: number }> = ({
+  users,
+  channels,
+}) => (
+  <span className="flex items-center gap-3 text-[13px] text-discord-text-muted">
+    <span className="flex items-center gap-1.5" title={t`Users`}>
+      <FaUsers className="w-3 h-3" />
+      {users.toLocaleString()}
+    </span>
+    <span className="flex items-center gap-1.5" title={t`Channels`}>
+      <FaHashtag className="w-3 h-3" />
+      {channels.toLocaleString()}
+    </span>
+  </span>
+);
+
+const ServerSummary: React.FC<{ server: DiscoverServer }> = ({ server }) => {
+  const parsed = parseNetworkStats(server.description);
+  const stats =
+    server.users !== undefined && server.channels !== undefined
+      ? { users: server.users, channels: server.channels }
+      : parsed;
+  return (
+    <>
+      {!parsed && (
+        <span className="text-[13px] text-discord-text-muted line-clamp-2">
+          {server.description}
+        </span>
+      )}
+      {stats && <NetworkStats users={stats.users} channels={stats.channels} />}
+    </>
+  );
+};
+
+const ServerTile: React.FC<{ server: DiscoverServer }> = ({ server }) => {
+  const [hasIconFailed, setHasIconFailed] = useState(false);
+  const iconUrl = serverIconUrl(server.icon);
+  if (iconUrl && !hasIconFailed) {
+    return (
+      <img
+        src={iconUrl}
+        alt=""
+        loading="lazy"
+        onError={() => setHasIconFailed(true)}
+        className="w-11 h-11 shrink-0 rounded-xl object-cover bg-discord-dark-300"
+      />
+    );
+  }
+  return (
+    <span
+      aria-hidden
+      className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-lg font-semibold text-white"
+      style={{ backgroundColor: tileColor(server.name) }}
+    >
+      {server.name
+        .replace(/^[^a-z0-9]+/i, "")
+        .charAt(0)
+        .toUpperCase()}
+    </span>
+  );
+};
 
 const DiscoverGrid = () => {
   const { t } = useLingui();
@@ -23,9 +112,7 @@ const DiscoverGrid = () => {
   useEffect(() => {
     const fetchServers = async () => {
       try {
-        const response = await fetch(
-          "https://raw.githubusercontent.com/obbyworld/server-list/refs/heads/main/servers.json",
-        );
+        const response = await fetch(`${SERVER_LIST_BASE}servers.json`);
         if (!response.ok) {
           throw new Error("Failed to fetch servers");
         }
@@ -95,12 +182,12 @@ const DiscoverGrid = () => {
     </div>
   ) : (
     <div className="h-full flex flex-col overflow-hidden bg-discord-dark-200 text-white">
-      <div className="m-1 rounded z-10 bg-discord-dark-300 border-b border-discord-dark-500 p-4 flex-shrink-0">
-        <h1 className="rounded-lg text-2xl font-bold mb-2">
+      <div className="px-4 pt-6 pb-1 flex-shrink-0 flex flex-col gap-3">
+        <h1 className="text-xl font-semibold">
           <Trans>Discover the world of IRC with Obby</Trans>
         </h1>
 
-        <div className="bg-discord-dark-100 rounded-lg flex items-center px-2 py-2">
+        <div className="bg-discord-dark-400 rounded-lg flex items-center px-2 h-10">
           <button className="px-2 text-discord-text-muted hover:text-discord-text-normal">
             <a
               href="https://github.com/obbyworld/server-list"
@@ -120,18 +207,22 @@ const DiscoverGrid = () => {
       </div>
       <div className="flex-1 overflow-y-auto">
         {filteredServers.length > 0 ? (
-          <div className="grid p-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid p-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
             {filteredServers.map((server) => (
-              <div
+              <button
+                type="button"
                 key={server.name}
-                className="bg-discord-dark-300 border border-discord-dark-500 rounded-lg p-4 shadow hover:shadow-lg transition-shadow cursor-pointer"
+                className="flex items-start gap-3 text-left bg-discord-dark-100 rounded-xl p-3.5 ring-1 ring-white/[0.04] transition-colors hover:bg-discord-dark-300 hover:ring-white/[0.08]"
                 onClick={() => handleServerClick(server)}
               >
-                <h2 className="text-lg font-semibold">{server.name}</h2>
-                <p className="text-sm text-discord-text-muted">
-                  {server.description}
-                </p>
-              </div>
+                <ServerTile server={server} />
+                <span className="min-w-0 flex flex-col gap-0.5">
+                  <span className="truncate text-[15px] font-semibold">
+                    {server.name}
+                  </span>
+                  <ServerSummary server={server} />
+                </span>
+              </button>
             ))}
           </div>
         ) : (
@@ -143,5 +234,13 @@ const DiscoverGrid = () => {
     </div>
   );
 };
+
+// A stable, muted hue per network name, so every card gets its own color
+// without loading a remote icon.
+function tileColor(name: string): string {
+  let hash = 0;
+  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+  return `hsl(${Math.abs(hash) % 360} 42% 38%)`;
+}
 
 export default DiscoverGrid;

@@ -81,20 +81,18 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 }) => {
   const { t } = useLingui();
   const {
-    toggleChannelListModal,
+    openPage,
+    openProfile,
     toggleMemberList,
     setMobileViewActiveColumn,
     pinPrivateChat,
     unpinPrivateChat,
     setTopicModalRequest,
     clearTopicModalRequest,
-    setProfileViewRequest,
-    toggleUserProfileModal,
     openMediaExplorer,
   } = useStore();
   const ui = useStore((state) => state.ui);
   const topicModalRequest = useStore((state) => state.ui.topicModalRequest);
-  const profileViewRequest = useStore((state) => state.ui.profileViewRequest);
   const botsLoadingCount = useStore(
     (state) =>
       state.servers.find((s) => s.id === selectedServerId)?.botCommandsLoading
@@ -318,8 +316,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   const openPrivateChatProfile = () => {
     if (!selectedServerId || !selectedPrivateChat) return;
-    setProfileViewRequest(selectedServerId, selectedPrivateChat.username);
-    toggleUserProfileModal(true);
+    openProfile(selectedServerId, selectedPrivateChat.username);
   };
 
   const overflowMenuItems: MenuItem[] = [
@@ -395,7 +392,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     {
       label: t`Browse Channels`,
       icon: <FaList />,
-      onClick: () => toggleChannelListModal(true),
+      onClick: () =>
+        selectedServerId &&
+        openPage({ kind: "channelBrowser", serverId: selectedServerId }),
       show: true,
     },
   ].filter((item) => item.show);

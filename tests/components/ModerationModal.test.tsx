@@ -103,7 +103,7 @@ describe("ModerationModal", () => {
   test("calls onClose when close button is clicked", () => {
     renderModal("warn");
 
-    const closeButton = screen.getByRole("button", { name: /Close modal/ });
+    const closeButton = screen.getByRole("button", { name: "Close" });
     fireEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -148,7 +148,7 @@ describe("ModerationModal", () => {
     fireEvent.change(reasonInput, { target: { value: "Test reason" } });
 
     // Close modal
-    const closeButton = screen.getByRole("button", { name: /Close modal/ });
+    const closeButton = screen.getByRole("button", { name: "Close" });
     fireEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);

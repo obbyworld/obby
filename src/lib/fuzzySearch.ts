@@ -1,53 +1,109 @@
 export interface FuzzyMatchResult {
   matches: boolean;
+  /** 0-100, one scale for every kind of result so Ctrl+K can sort them together. */
   score: number;
+  /** Matched [start, end) spans in the target, for highlighting. */
+  ranges: Array<[number, number]>;
+}
+
+const NO_MATCH: FuzzyMatchResult = { matches: false, score: 0, ranges: [] };
+const SEPARATOR = /[\s_\-./#:|()[\]&,+@!?'"]/;
+
+function wordStarts(target: string): Set<number> {
+  const starts = new Set<number>();
+  for (let i = 0; i < target.length; i++) {
+    const prev = target[i - 1];
+    const char = target[i];
+    if (SEPARATOR.test(char)) continue;
+    const isCamelHump =
+      prev !== undefined &&
+      prev === prev.toLowerCase() &&
+      prev !== prev.toUpperCase() &&
+      char !== char.toLowerCase();
+    if (i === 0 || SEPARATOR.test(prev) || isCamelHump) starts.add(i);
+  }
+  return starts;
+}
+
+// Matches the query as pieces that each begin a word, so "shmo" finds
+// "SHow the MOtd" while "hwt" finds nothing in it.
+function matchWordPieces(
+  query: string,
+  target: string,
+  starts: Set<number>,
+  from: number,
+): Array<[number, number]> | null {
+  if (query.length === 0) return [];
+  for (let start = from; start < target.length; start++) {
+    if (!starts.has(start) || target[start] !== query[0]) continue;
+    let length = 1;
+    while (length < query.length && target[start + length] === query[length]) {
+      length++;
+    }
+    for (let take = length; take >= 1; take--) {
+      const rest = matchWordPieces(
+        query.slice(take),
+        target,
+        starts,
+        start + take,
+      );
+      if (rest) return [[start, start + take], ...rest];
+    }
+  }
+  return null;
 }
 
 export const fuzzyMatch = (query: string, target: string): FuzzyMatchResult => {
-  const queryLower = query.toLowerCase();
-  const targetLower = target.toLowerCase();
+  const needle = query.trim().toLowerCase();
+  if (!needle) return { matches: true, score: 0, ranges: [] };
+  const haystack = target.toLowerCase();
+  const full: Array<[number, number]> = [[0, needle.length]];
 
-  if (queryLower === targetLower) {
-    return { matches: true, score: 100 };
-  }
+  if (haystack === needle) return { matches: true, score: 100, ranges: full };
+  if (haystack.startsWith(needle))
+    return { matches: true, score: 90, ranges: full };
 
-  if (targetLower.includes(queryLower)) {
-    const startIndex = targetLower.indexOf(queryLower);
-    const score = 80 - startIndex * 2;
-    return { matches: true, score: Math.max(score, 50) };
-  }
-
-  let queryIndex = 0;
-  let targetIndex = 0;
-  let consecutiveMatches = 0;
-  let maxConsecutive = 0;
-  const matchedIndices: number[] = [];
-
-  while (queryIndex < queryLower.length && targetIndex < targetLower.length) {
-    if (queryLower[queryIndex] === targetLower[targetIndex]) {
-      matchedIndices.push(targetIndex);
-      queryIndex++;
-      consecutiveMatches++;
-      maxConsecutive = Math.max(maxConsecutive, consecutiveMatches);
-    } else {
-      consecutiveMatches = 0;
+  const starts = wordStarts(target);
+  let wordIndex = 0;
+  for (let i = 0; i < haystack.length; i++) {
+    if (!starts.has(i)) continue;
+    if (haystack.startsWith(needle, i)) {
+      return {
+        matches: true,
+        score: 80 - Math.min(10, wordIndex * 2),
+        ranges: [[i, i + needle.length]],
+      };
     }
-    targetIndex++;
+    wordIndex++;
   }
 
-  if (queryIndex !== queryLower.length) {
-    return { matches: false, score: 0 };
+  const tokens = needle.split(/\s+/);
+  if (tokens.length > 1) {
+    const ranges: Array<[number, number]> = [];
+    for (const token of tokens) {
+      const at = [...starts].find((i) => haystack.startsWith(token, i));
+      if (at === undefined) return NO_MATCH;
+      ranges.push([at, at + token.length]);
+    }
+    return { matches: true, score: 70, ranges };
   }
 
-  const avgPosition =
-    matchedIndices.reduce((a, b) => a + b, 0) / matchedIndices.length;
-  const positionScore = Math.max(0, 100 - avgPosition * 2);
-  const consecutiveScore = (maxConsecutive / queryLower.length) * 50;
-  const lengthScore = (queryLower.length / targetLower.length) * 20;
+  const pieces = matchWordPieces(needle, haystack, starts, 0);
+  if (pieces) {
+    return {
+      matches: true,
+      score: Math.max(40, 65 - pieces.length * 5),
+      ranges: pieces,
+    };
+  }
 
-  const score = Math.round(
-    positionScore * 0.5 + consecutiveScore * 0.3 + lengthScore * 0.2,
-  );
-
-  return { matches: true, score: Math.max(score, 10) };
+  const inside = haystack.indexOf(needle);
+  if (needle.length >= 2 && inside >= 0) {
+    return {
+      matches: true,
+      score: 35,
+      ranges: [[inside, inside + needle.length]],
+    };
+  }
+  return NO_MATCH;
 };

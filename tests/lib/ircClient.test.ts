@@ -111,6 +111,34 @@ describe("IRCClient", () => {
       expect(mockSocket.sentMessages).toContain("CAP LS 302");
     });
 
+    test("asks for its nick only once capabilities and SASL are done", async () => {
+      const mockSocket = new MockWebSocket("ws://irc.example.com:443");
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
+      const connecting = client.connect(
+        "Test Server",
+        "irc.example.com",
+        443,
+        "testuser",
+      );
+      mockSocket.simulateOpen();
+      await connecting;
+      expect(mockSocket.sentMessages.some((m) => m.startsWith("NICK"))).toBe(
+        false,
+      );
+
+      mockSocket.simulateMessage(":irc.example.com CAP * LS :multi-prefix\r\n");
+      mockSocket.simulateMessage(
+        ":irc.example.com CAP * ACK :multi-prefix\r\n",
+      );
+      const sent = mockSocket.sentMessages;
+      const capEnd = sent.indexOf("CAP END");
+      expect(capEnd).toBeGreaterThan(-1);
+      expect(sent.slice(capEnd + 1)).toEqual([
+        "NICK testuser",
+        "USER testuser 0 * :testuser",
+      ]);
+    });
+
     test("leaves a drop on a live connection to the reconnect path", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
       MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));

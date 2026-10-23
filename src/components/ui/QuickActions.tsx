@@ -22,20 +22,21 @@ import { toggleNotificationSound } from "../../lib/notificationVolume";
 import { settingsRegistry } from "../../lib/settings";
 import type { SettingSearchResult } from "../../lib/settings/types";
 import useStore from "../../store";
+import type { AppPage, SettingsSection } from "../../store/types";
 import type { Channel, PrivateChat } from "../../types";
 import { buildQuickActionContext } from "./QuickActions/context";
 import { getJoinChannelResults } from "./QuickActions/joinChannelResults";
+import {
+  getPageTargets,
+  settingsSectionTitle,
+} from "./QuickActions/pageTargets";
 import type {
   QuickActionResult,
   UIActionData,
   UIModalAction,
   UIToggleAction,
 } from "./QuickActions/types";
-import {
-  getUIActionBadge,
-  getUIActionIcon,
-  getUIActions,
-} from "./QuickActions/uiActionConfig";
+import { getUIActionIcon, getUIActions } from "./QuickActions/uiActionConfig";
 import { TextInput } from "./TextInput";
 
 const QuickActions: React.FC = () => {
@@ -46,8 +47,8 @@ const QuickActions: React.FC = () => {
     globalSettings,
     currentUser,
     toggleQuickActions,
-    toggleSettingsModal,
-    setSettingsNavigation,
+    openPage,
+    openProfile,
     selectChannel,
     selectPrivateChat,
     selectServer,
@@ -57,13 +58,8 @@ const QuickActions: React.FC = () => {
     toggleChannelList,
     pinPrivateChat,
     unpinPrivateChat,
-    toggleChannelListModal,
     setTopicModalRequest,
-    setProfileViewRequest,
-    toggleUserProfileModal,
-    setChannelSettingsRequest,
     setInviteUserRequest,
-    openRawLogViewer,
   } = useStore();
 
   const { i18n } = useLingui();
@@ -198,9 +194,7 @@ const QuickActions: React.FC = () => {
         type: "setting",
         id: `setting-${settingResult.setting.id}`,
         title: i18n._(settingResult.setting.title),
-        description: settingResult.setting.description
-          ? i18n._(settingResult.setting.description)
-          : undefined,
+        description: `${t`Settings`} › ${settingsSectionTitle(settingResult.setting.category)}`,
         score: settingResult.score,
         data: settingResult,
       });
@@ -235,7 +229,7 @@ const QuickActions: React.FC = () => {
           title: actionConfig.title,
           description: actionConfig.description,
           serverId: currentServerId || undefined,
-          score: bestMatch.score + actionConfig.score,
+          score: bestMatch.score + (actionConfig.score - 70) / 10,
           data: {
             ...actionConfig.data,
             serverId: currentServerId || undefined,
@@ -251,6 +245,24 @@ const QuickActions: React.FC = () => {
       }
     });
 
+    for (const target of getPageTargets(actionContext)) {
+      const score = Math.max(
+        fuzzyMatch(query, target.title).score,
+        ...target.keywords.map((kw) => fuzzyMatch(query, kw).score * 0.9),
+        fuzzyMatch(query, target.path).score * 0.5,
+      );
+      if (score <= 0) continue;
+      results.push({
+        type: "page",
+        id: `page-${target.id}`,
+        title: target.title,
+        description: target.path,
+        serverId: currentServerId || undefined,
+        score,
+        data: target.page,
+      });
+    }
+
     servers.forEach((server) => {
       const isCurrentlySelectedServer = server.id === currentServerId;
 
@@ -258,7 +270,7 @@ const QuickActions: React.FC = () => {
       if (serverMatch.matches) {
         let scoreAdjustment = 0;
         if (isCurrentlySelectedServer) {
-          scoreAdjustment = -30;
+          scoreAdjustment = -20;
         }
 
         results.push({
@@ -281,9 +293,9 @@ const QuickActions: React.FC = () => {
 
           let scoreAdjustment = 0;
           if (isCurrentlySelected) {
-            scoreAdjustment = -30;
+            scoreAdjustment = -20;
           } else if (isCurrentlySelectedServer) {
-            scoreAdjustment = 20;
+            scoreAdjustment = 5;
           }
 
           results.push({
@@ -307,9 +319,9 @@ const QuickActions: React.FC = () => {
 
           let scoreAdjustment = 0;
           if (isCurrentlySelected) {
-            scoreAdjustment = -30;
+            scoreAdjustment = -20;
           } else if (isCurrentlySelectedServer) {
-            scoreAdjustment = 20;
+            scoreAdjustment = 5;
           }
 
           results.push({
@@ -370,7 +382,7 @@ const QuickActions: React.FC = () => {
                 title: `Message ${user.username}`,
                 description: `Start private message on ${server.name}`,
                 serverId: server.id,
-                score: userMatch.score + (user.isOnline ? 10 : 0),
+                score: userMatch.score - 5 + (user.isOnline ? 2 : 0),
                 data: undefined,
               });
             }
@@ -379,7 +391,7 @@ const QuickActions: React.FC = () => {
       }
     });
 
-    return results.sort((a, b) => b.score - a.score).slice(0, 15);
+    return groupResults(results.sort((a, b) => b.score - a.score).slice(0, 15));
   }, [
     searchQuery,
     servers,
@@ -420,24 +432,27 @@ const QuickActions: React.FC = () => {
   const handleUIModal = useCallback(
     (data: UIActionData) => {
       switch (data.action as UIModalAction) {
-        case "open-channel-settings":
-          if (data.serverId && data.channelId) {
-            setChannelSettingsRequest(data.serverId, data.channelId);
-          }
-          break;
         case "open-invite-user":
           if (data.serverId && data.channelId) {
             setInviteUserRequest(data.serverId, data.channelId);
           }
           break;
-        case "open-server-channels":
-          toggleChannelListModal(true);
-          break;
-        case "open-rename-channel":
-          if (data.serverId && data.channelId) {
-            setChannelSettingsRequest(data.serverId, data.channelId);
+        case "open-rename-channel": {
+          const channelName = useStore
+            .getState()
+            .servers.find((s) => s.id === data.serverId)
+            ?.channels.find((c) => c.id === data.channelId)?.name;
+          if (data.serverId && channelName) {
+            openPage({
+              kind: "channelSettings",
+              serverId: data.serverId,
+              channelName,
+              section: "general",
+              fromSearch: true,
+            });
           }
           break;
+        }
         case "open-topic-modal":
           if (data.serverId && data.channelId) {
             setTopicModalRequest(data.serverId, data.channelId);
@@ -445,26 +460,12 @@ const QuickActions: React.FC = () => {
           break;
         case "open-user-profile":
           if (data.serverId && data.username) {
-            setProfileViewRequest(data.serverId, data.username);
-            toggleUserProfileModal(true);
-          }
-          break;
-        case "open-raw-log":
-          if (data.serverId) {
-            openRawLogViewer(data.serverId);
+            openProfile(data.serverId, data.username);
           }
           break;
       }
     },
-    [
-      setChannelSettingsRequest,
-      setInviteUserRequest,
-      toggleChannelListModal,
-      setTopicModalRequest,
-      setProfileViewRequest,
-      toggleUserProfileModal,
-      openRawLogViewer,
-    ],
+    [setInviteUserRequest, setTopicModalRequest, openPage, openProfile],
   );
 
   const handleSelect = useCallback(
@@ -473,16 +474,16 @@ const QuickActions: React.FC = () => {
         case "setting": {
           const settingResult = result.data as SettingSearchResult;
           const setting = settingResult.setting;
-          setSettingsNavigation({
-            category: setting.category as
-              | "profile"
-              | "notifications"
-              | "preferences"
-              | "media"
-              | "account",
-            highlightedSettingId: setting.id,
+          openPage({
+            kind: "settings",
+            section: setting.category as SettingsSection,
+            highlight: setting.id,
+            fromSearch: true,
           });
-          toggleSettingsModal(true);
+          break;
+        }
+        case "page": {
+          openPage({ ...(result.data as AppPage), fromSearch: true });
           break;
         }
         case "channel": {
@@ -542,8 +543,7 @@ const QuickActions: React.FC = () => {
       handleClose();
     },
     [
-      setSettingsNavigation,
-      toggleSettingsModal,
+      openPage,
       selectServer,
       selectChannel,
       selectPrivateChat,
@@ -615,172 +615,240 @@ const QuickActions: React.FC = () => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    listRef.current
+      ?.querySelector(`[data-result-index="${selectedIndex}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
+
+  const query = searchQuery.trim();
+
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-start justify-center z-50 pt-[15vh]"
+      className="fixed inset-0 z-50 bg-black/60 flex items-start justify-center px-2 animate-in fade-in duration-100"
+      style={{
+        paddingTop: "max(12vh, calc(var(--safe-area-inset-top, 0px) + 8px))",
+      }}
       onClick={handleClose}
     >
       <div
-        className="bg-discord-dark-200 rounded-lg w-full max-w-2xl mx-4 shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t`Find channels, people, settings and actions`}
+        className="w-full max-w-[640px] flex flex-col overflow-hidden surface-dialog"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center border-b border-discord-dark-500 p-4">
-          <FaSearch className="text-discord-text-muted mr-3" />
+        <div className="h-14 flex items-center gap-3 px-4 bar-divider">
+          <FaSearch className="w-4 h-4 text-discord-text-muted shrink-0" />
           <TextInput
             ref={inputRef}
-            placeholder={t`Search settings, channels, servers...`}
+            role="combobox"
+            aria-expanded={searchResults.length > 0}
+            aria-controls="quick-actions-results"
+            aria-activedescendant={
+              searchResults.length > 0
+                ? `quick-action-${selectedIndex}`
+                : undefined
+            }
+            aria-label={t`Find channels, people, settings and actions`}
+            placeholder={t`Find channels, people, settings and actions`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent text-white placeholder-discord-text-muted outline-none"
+            className="flex-1 min-w-0 bg-transparent text-[15px] text-white placeholder:text-discord-text-muted outline-none"
             autoFocus
           />
           <button
+            type="button"
             onClick={handleClose}
-            className="text-discord-text-muted hover:text-white ml-3"
+            aria-label={t`Close`}
+            className="icon-button w-10 h-10 rounded-lg"
           >
             <FaTimes />
           </button>
         </div>
 
-        <div className="max-h-96 overflow-y-auto">
+        <div
+          ref={listRef}
+          id="quick-actions-results"
+          role="listbox"
+          className="overflow-y-auto overscroll-contain p-2"
+          style={{
+            maxHeight:
+              "min(60vh, 480px, calc(100dvh - var(--keyboard-height, 0px) - 12vh - 7rem))",
+          }}
+        >
           {searchResults.length === 0 ? (
-            <div className="p-8 text-center text-discord-text-muted">
-              {searchQuery.trim().length === 0
-                ? t`No unread mentions or messages`
-                : t`No results found`}
+            <div className="px-4 py-8 text-center text-sm text-discord-text-muted">
+              {query.length === 0
+                ? t`No unread mentions or messages. Type to search`
+                : t`No results. Try fewer letters`}
             </div>
           ) : (
-            <div className="p-2">
-              {searchResults.map((result, index) => {
-                const getIcon = () => {
-                  switch (result.type) {
-                    case "setting":
-                      return <FaCog className="mr-3" />;
-                    case "channel":
-                      return classifyChannelName(
-                        (result.data as Channel).name,
-                      ) === "voice" ? (
-                        <FaMicrophone className="mr-3" />
-                      ) : (
-                        <FaHashtag className="mr-3" />
-                      );
-                    case "dm":
-                      return <FaUser className="mr-3" />;
-                    case "server":
-                      return <FaServer className="mr-3" />;
-                    case "join-channel":
-                      return classifyChannelName(
-                        (result.data as { channelName: string }).channelName,
-                      ) === "voice" ? (
-                        <FaMicrophone className="mr-3" />
-                      ) : (
-                        <FaHashtag className="mr-3" />
-                      );
-                    case "start-dm":
-                      return <FaUser className="mr-3" />;
-                    case "ui-toggle":
-                    case "ui-modal": {
-                      const icon = getUIActionIcon(result.id);
-                      return icon ? (
-                        <span className="mr-3">{icon}</span>
-                      ) : (
-                        <FaCog className="mr-3" />
-                      );
-                    }
-                  }
-                };
-
-                const getTypeBadge = () => {
-                  switch (result.type) {
-                    case "setting":
-                      return t`Setting`;
-                    case "channel":
-                      return t`Channel`;
-                    case "dm":
-                      return "DM";
-                    case "server":
-                      return t`Server`;
-                    case "join-channel":
-                      return t`Join`;
-                    case "start-dm":
-                      return t`New DM`;
-                    case "ui-toggle":
-                      return t`Toggle`;
-                    case "ui-modal":
-                      return getUIActionBadge(result.id);
-                  }
-                };
-
-                // Get unread indicator for channels and DMs
-                const getUnreadIndicator = () => {
-                  if (result.type === "channel" || result.type === "dm") {
-                    const item = result.data as Channel | PrivateChat;
-                    if (item.isMentioned && item.unreadCount > 0) {
-                      // Red badge with count for mentions
-                      return (
-                        <span className="bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[20px] text-center ml-2">
-                          {item.unreadCount}
-                        </span>
-                      );
-                    }
-                    if (item.unreadCount > 0) {
-                      // Blue dot for unread messages
-                      return (
-                        <span className="w-2 h-2 bg-blue-500 rounded-full ml-2" />
-                      );
-                    }
-                  }
-                  return null;
-                };
-
-                return (
+            searchResults.map((result, index) => {
+              const isSelected = index === selectedIndex;
+              const group = resultGroupTitle(result);
+              const showGroup =
+                index === 0 ||
+                resultGroupTitle(searchResults[index - 1]) !== group;
+              return (
+                <div key={result.id}>
+                  {showGroup && (
+                    <div className="section-label pt-2.5">{group}</div>
+                  )}
                   <button
-                    key={result.id}
+                    type="button"
+                    id={`quick-action-${index}`}
+                    role="option"
+                    aria-selected={isSelected}
+                    tabIndex={-1}
+                    data-result-index={index}
                     onClick={() => handleSelect(result)}
-                    className={`w-full flex flex-col px-4 py-3 rounded text-left transition-colors ${
-                      index === selectedIndex
-                        ? "bg-discord-primary text-white"
-                        : "text-discord-text-normal hover:bg-discord-dark-400"
+                    onMouseMove={() => !isSelected && setSelectedIndex(index)}
+                    className={`w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-left ${
+                      isSelected ? "bg-white/[0.08]" : ""
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center flex-1 min-w-0">
-                        {getIcon()}
-                        <span className="font-medium truncate">
-                          {result.title}
-                        </span>
-                        {getUnreadIndicator()}
-                      </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded ml-2 whitespace-nowrap ${
-                          index === selectedIndex
-                            ? "bg-white/20"
-                            : "bg-discord-dark-400"
-                        }`}
-                      >
-                        {getTypeBadge()}
+                    <span
+                      className={`w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[13px] ${
+                        isSelected
+                          ? "bg-discord-primary text-white"
+                          : "bg-discord-dark-300 text-discord-text-normal"
+                      }`}
+                    >
+                      {resultIcon(result)}
+                    </span>
+                    <span className="flex-1 min-w-0 flex flex-col">
+                      <span className="truncate text-sm text-white">
+                        <MatchedText text={result.title} query={query} />
                       </span>
-                    </div>
-                    {result.description && (
-                      <span
-                        className={`text-sm mt-1 ml-8 truncate ${
-                          index === selectedIndex
-                            ? "text-white/80"
-                            : "text-discord-text-muted"
-                        }`}
-                      >
-                        {result.description}
+                      {result.description && (
+                        <span className="truncate text-xs text-discord-text-muted">
+                          {result.description}
+                        </span>
+                      )}
+                    </span>
+                    <UnreadIndicator result={result} />
+                    {isSelected && (
+                      <span className="hidden sm:inline shrink-0 text-xs text-discord-text-muted">
+                        ↵
                       </span>
                     )}
                   </button>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })
           )}
+        </div>
+        <div className="hidden sm:flex gap-4 px-4 h-9 items-center text-xs text-discord-text-muted shadow-[0_-1px_0_rgba(0,0,0,0.25)]">
+          <span>{t`↑ ↓ to move`}</span>
+          <span>{t`↵ to open`}</span>
+          <span>{t`esc to close`}</span>
         </div>
       </div>
     </div>
   );
+};
+
+function resultGroupTitle(result: QuickActionResult): string {
+  switch (result.type) {
+    case "setting":
+      return t`Settings`;
+    case "page":
+      return t`Pages`;
+    case "channel":
+    case "join-channel":
+      return t`Channels`;
+    case "dm":
+    case "start-dm":
+      return t`People`;
+    case "server":
+      return t`Servers`;
+    case "ui-toggle":
+    case "ui-modal":
+      return t`Actions`;
+  }
+}
+
+// We keep each kind of result together, ordered by its best match.
+function groupResults(sorted: QuickActionResult[]): QuickActionResult[] {
+  const groups = new Map<string, QuickActionResult[]>();
+  for (const result of sorted) {
+    const key = resultGroupTitle(result);
+    groups.set(key, [...(groups.get(key) ?? []), result]);
+  }
+  return [...groups.values()].flat();
+}
+
+function resultIcon(result: QuickActionResult): React.ReactNode {
+  switch (result.type) {
+    case "setting":
+    case "page":
+      return <FaCog />;
+    case "channel":
+    case "join-channel": {
+      const name =
+        result.type === "channel"
+          ? (result.data as Channel).name
+          : (result.data as { channelName: string }).channelName;
+      return classifyChannelName(name) === "voice" ? (
+        <FaMicrophone />
+      ) : (
+        <FaHashtag />
+      );
+    }
+    case "dm":
+    case "start-dm":
+      return <FaUser />;
+    case "server":
+      return <FaServer />;
+    case "ui-toggle":
+    case "ui-modal":
+      return getUIActionIcon(result.id) ?? <FaCog />;
+  }
+}
+
+const MatchedText: React.FC<{ text: string; query: string }> = ({
+  text,
+  query,
+}) => {
+  const { ranges } = fuzzyMatch(query, text);
+  if (!query || ranges.length === 0) return <>{text}</>;
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  for (const [start, end] of [...ranges].sort((a, b) => a[0] - b[0])) {
+    if (start < cursor) continue;
+    if (start > cursor) parts.push(text.slice(cursor, start));
+    parts.push(
+      <mark
+        key={start}
+        className="bg-transparent text-white font-semibold underline decoration-discord-primary decoration-2 underline-offset-[3px]"
+      >
+        {text.slice(start, end)}
+      </mark>,
+    );
+    cursor = end;
+  }
+  parts.push(text.slice(cursor));
+  return <>{parts}</>;
+};
+
+const UnreadIndicator: React.FC<{ result: QuickActionResult }> = ({
+  result,
+}) => {
+  if (result.type !== "channel" && result.type !== "dm") return null;
+  const item = result.data as Channel | PrivateChat;
+  if (item.isMentioned && item.unreadCount > 0) {
+    return (
+      <span className="shrink-0 bg-discord-red text-white text-xs font-bold rounded-full px-1.5 min-w-[20px] text-center">
+        {item.unreadCount}
+      </span>
+    );
+  }
+  if (item.unreadCount > 0) {
+    return <span className="shrink-0 w-2 h-2 rounded-full bg-white" />;
+  }
+  return null;
 };
 
 export default QuickActions;

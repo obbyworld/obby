@@ -1,6 +1,8 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import BaseModal from "../../lib/modal/BaseModal";
+import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import useStore from "../../store";
 
 export const TotpStepUpModal: React.FC = () => {
@@ -17,13 +19,11 @@ export const TotpStepUpModal: React.FC = () => {
     if (pending) {
       setCode("");
       setError(null);
-      // Autofocus once the modal mounts.
       requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [pending]);
 
   if (!pending) return null;
-  const account = pending.account;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,29 +36,27 @@ export const TotpStepUpModal: React.FC = () => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100002]"
-      role="dialog"
-      aria-modal="true"
+    <BaseModal
+      isOpen
+      onClose={() => cancelTotpStepUp(pending.serverId)}
+      maxWidth="sm"
+      title={t`Two-factor authentication required`}
     >
-      <div className="bg-discord-dark-200 rounded-lg w-full max-w-sm p-5">
-        <h2 className="text-lg font-semibold mb-2 text-white">
-          <Trans>Two-factor authentication required</Trans>
-        </h2>
-        <p className="text-sm text-discord-text-muted mb-4">
-          {account ? (
-            <Trans>
-              Enter the 6-digit code from your authenticator app to finish
-              signing in as {account}.
-            </Trans>
-          ) : (
-            <Trans>
-              Enter the 6-digit code from your authenticator app to finish
-              signing in.
-            </Trans>
-          )}
-        </p>
-        <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="flex flex-col min-h-0 flex-1">
+        <ModalBody className="gap-3">
+          <p className="text-sm text-discord-text-muted">
+            {pending.account ? (
+              <Trans>
+                Enter the 6-digit code from your authenticator app to finish
+                signing in as {pending.account}.
+              </Trans>
+            ) : (
+              <Trans>
+                Enter the 6-digit code from your authenticator app to finish
+                signing in.
+              </Trans>
+            )}
+          </p>
           <input
             ref={inputRef}
             type="text"
@@ -74,25 +72,22 @@ export const TotpStepUpModal: React.FC = () => {
             className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white tracking-[0.4em] text-center text-xl font-mono focus:outline-none focus:ring-2 focus:ring-discord-primary"
             placeholder="000000"
           />
-          {error && <p className="text-discord-red text-xs mt-2">{error}</p>}
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={() => cancelTotpStepUp(pending.serverId)}
-              className="px-3 py-2 rounded text-sm text-discord-text-muted hover:text-white"
-            >
-              <Trans>Cancel</Trans>
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded button-primary text-sm font-medium"
-            >
-              <Trans>Verify</Trans>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          {error && <p className="text-discord-red text-xs">{error}</p>}
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            variant="secondary"
+            onClick={() => cancelTotpStepUp(pending.serverId)}
+          >
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button type="submit" variant="primary">
+            <Trans>Verify</Trans>
+          </Button>
+        </ModalFooter>
+      </form>
+    </BaseModal>
   );
 };
 

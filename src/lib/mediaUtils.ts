@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api/core";
 import type { Message } from "../types/index";
 import { parseLocationShareUrl } from "./geolocation";
 import {
@@ -229,27 +230,44 @@ export function mediaLevelToSettings(
  * Currently supports YouTube (CDN thumbnail, no API key needed).
  */
 export function getEmbedThumbnailUrl(url: string): string | null {
+  const videoId = getYouTubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null;
+}
+
+function getYouTubeVideoId(url: string): string | null {
   try {
     const u = new URL(url);
     const host = u.hostname.replace(/^www\./, "");
-    if (host === "youtube.com" || host === "youtu.be") {
-      let videoId: string | null = null;
-      if (host === "youtu.be") {
-        videoId = u.pathname.slice(1).split("/")[0] || null;
-      } else {
-        videoId = u.searchParams.get("v");
-        if (!videoId) {
-          const parts = u.pathname.split("/").filter(Boolean);
-          if (parts[0] === "embed" || parts[0] === "shorts")
-            videoId = parts[1] ?? null;
-        }
-      }
-      if (videoId) return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-    }
+    if (host === "youtu.be") return u.pathname.slice(1).split("/")[0] || null;
+    if (host !== "youtube.com") return null;
+    const fromQuery = u.searchParams.get("v");
+    if (fromQuery) return fromQuery;
+    const parts = u.pathname.split("/").filter(Boolean);
+    return parts[0] === "embed" || parts[0] === "shorts"
+      ? (parts[1] ?? null)
+      : null;
   } catch {
-    // ignore invalid URLs
+    return null;
   }
-  return null;
+}
+
+// iOS and macOS load the app from the tauri: scheme, which sends YouTube no
+// referrer, so the app serves the player page from loopback and we embed that.
+let youtubePlayerOrigin: string | null = null;
+if (typeof window !== "undefined" && window.location.protocol === "tauri:") {
+  invoke<number | null>("youtube_player_port").then((port) => {
+    if (port) youtubePlayerOrigin = `http://127.0.0.1:${port}`;
+  });
+}
+
+/** The loopback player page for a YouTube link under the tauri: scheme, or
+ *  null where a regular embed works. */
+export function getAppYouTubeEmbedUrl(url: string, startAt = 0): string | null {
+  if (!youtubePlayerOrigin) return null;
+  const videoId = getYouTubeVideoId(url);
+  if (!videoId) return null;
+  const start = startAt > 0 ? `&start=${Math.floor(startAt)}` : "";
+  return `${youtubePlayerOrigin}/youtube-embed.html?v=${encodeURIComponent(videoId)}${start}`;
 }
 
 const SPOTIFY_CONTENT_TYPES: Record<string, string> = {

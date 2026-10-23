@@ -4,10 +4,13 @@
 // code -- the server accepts SETPASS on its own when the connection
 // holds a SASL session for the target account.
 
-import { Trans, useLingui } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import ircClient from "../../lib/ircClient";
+import BaseModal from "../../lib/modal/BaseModal";
+import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 
 interface Props {
   serverId: string;
@@ -15,7 +18,6 @@ interface Props {
 }
 
 export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
-  const { t } = useLingui();
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [busy, setBusy] = useState(false);
@@ -33,7 +35,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
       if (p.code === "SUCCESS") {
         setBusy(false);
         setDone(true);
-        setInfo(p.args.slice(1).join(" ") || "Password updated.");
+        setInfo(p.args.slice(1).join(" ") || t`Password updated.`);
       }
     };
     const onSetpassFail = (p: {
@@ -43,7 +45,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
     }) => {
       if (p.serverId !== serverId) return;
       setBusy(false);
-      setErr(p.message || `Could not update password: ${p.code}`);
+      setErr(p.message || t`Could not update password: ${p.code}`);
     };
     ircClient.on("SETPASS_NOTE", onSetpassNote);
     ircClient.on("SETPASS_FAIL", onSetpassFail);
@@ -69,27 +71,15 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-      role="dialog"
-      aria-modal="true"
+    <BaseModal
+      isOpen
+      onClose={onClose}
+      maxWidth="md"
+      title={t`Change password`}
     >
-      <div className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-white">
-            <Trans>Change password</Trans>
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-discord-text-muted hover:text-white"
-          >
-            ✕
-          </button>
-        </div>
-
-        {!done ? (
-          <form onSubmit={submit} className="space-y-3">
+      {!done ? (
+        <form onSubmit={submit} className="flex flex-col min-h-0 flex-1">
+          <ModalBody className="gap-3">
             <p className="text-xs text-discord-text-muted">
               <Trans>
                 Other open sessions for this account will be signed out as part
@@ -112,30 +102,28 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
               placeholder={t`Confirm new password`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
             />
-            <button
-              type="submit"
-              disabled={busy}
-              className="w-full px-3 py-2 rounded bg-discord-green text-white text-sm font-medium disabled:opacity-50"
-            >
-              {busy ? t`Setting…` : t`Change password`}
-            </button>
-          </form>
-        ) : (
-          <div className="space-y-3">
-            <p className="text-sm text-white">{info}</p>
-            <button
-              type="button"
-              onClick={onClose}
-              className="button-primary w-full px-3 py-2 rounded text-sm font-medium"
-            >
-              <Trans>Done</Trans>
-            </button>
-          </div>
-        )}
+            {err && <p className="text-discord-red text-xs">{err}</p>}
+          </ModalBody>
 
-        {err && <p className="text-discord-red text-xs mt-3">{err}</p>}
-      </div>
-    </div>
+          <ModalFooter>
+            <Button type="submit" disabled={busy}>
+              {busy ? t`Setting…` : t`Change password`}
+            </Button>
+          </ModalFooter>
+        </form>
+      ) : (
+        <>
+          <ModalBody className="gap-3">
+            <p className="text-sm text-white">{info}</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>
+              <Trans>Done</Trans>
+            </Button>
+          </ModalFooter>
+        </>
+      )}
+    </BaseModal>
   );
 };
 

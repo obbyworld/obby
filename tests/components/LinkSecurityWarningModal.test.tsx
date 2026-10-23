@@ -42,7 +42,7 @@ vi.mock("../../src/lib/ircClient", () => ({
 }));
 
 // Mock Audio
-const mockPlay = vi.fn();
+const mockPlay = vi.fn().mockResolvedValue(undefined);
 function makeAudio() {
   return {
     play: mockPlay,
@@ -94,13 +94,12 @@ describe("LinkSecurityWarningModal", () => {
         selectedChannelId: null,
         selectedPrivateChatId: null,
         isAddServerModalOpen: false,
-        isSettingsModalOpen: false,
-        isUserProfileModalOpen: false,
+        page: null,
+        profilePane: null,
         isDarkMode: false,
         isMobileMenuOpen: false,
         isMemberListVisible: false,
         isChannelListVisible: false,
-        isChannelListModalOpen: false,
         // biome-ignore lint/suspicious/noExplicitAny: Partial mock type
         mobileViewActiveColumn: "chat" as any,
         isServerMenuOpen: false,
@@ -271,9 +270,9 @@ describe("LinkSecurityWarningModal", () => {
 
     const backdrops = screen.getAllByText("Security Warning");
     if (backdrops.length > 0) {
-      const backdrop = backdrops[0].closest(".fixed");
+      const backdrop = backdrops[0].closest('[role="dialog"]');
       if (backdrop) {
-        fireEvent.click(backdrop);
+        fireEvent.mouseDown(backdrop);
       }
     }
 
@@ -338,9 +337,9 @@ describe("LinkSecurityWarningModal", () => {
     });
 
     // Mock scroll to bottom
-    const scrollContainers = document.querySelectorAll(".overflow-y-auto");
-    if (scrollContainers.length > 0) {
-      const container = scrollContainers[0] as HTMLElement;
+    const container =
+      linkSecurityCheckbox.closest<HTMLElement>(".overflow-y-auto");
+    if (container) {
       Object.defineProperty(container, "scrollHeight", {
         value: 1000,
         writable: true,

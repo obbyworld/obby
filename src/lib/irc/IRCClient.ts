@@ -930,9 +930,6 @@ export class IRCClient implements IRCClientContext {
           socket.send(`PASS ${password}`);
         }
 
-        // Send NICK command (can be sent during CAP negotiation)
-        socket.send(`NICK ${nickname}`);
-
         // Update server to mark as connected
         server.isConnected = true;
         server.connectionState = "connected";
@@ -1940,7 +1937,9 @@ export class IRCClient implements IRCClientContext {
       console.error(`No nickname found for serverId ${serverId}`);
       return;
     }
-    // NICK is already sent before CAP negotiation, only send USER now
+    // We send NICK after SASL, since logging in is what hands a persistent
+    // session's nick back from its ghost.
+    this.sendRaw(serverId, `NICK ${nickname}`);
     this.sendRaw(serverId, `USER ${nickname} 0 * :${nickname}`);
   }
 
@@ -1952,7 +1951,9 @@ export class IRCClient implements IRCClientContext {
       const parv: string[] = [];
       let i = 0;
       let l: string[];
-      line = line.trim();
+      // We strip only line endings, since a multiline-concat part keeps its
+      // trailing space and trimming it would glue two words together.
+      line = line.replace(/^[\r\n]+|[\r\n]+$/g, "");
 
       // Skip empty lines
       if (!line) continue;

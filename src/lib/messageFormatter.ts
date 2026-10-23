@@ -139,7 +139,9 @@ export function getPreviewStyles(
       : formatting.includes("strikethrough")
         ? "line-through"
         : "none",
-    fontFamily: formatting.includes("monospace") ? "monospace" : "inherit",
+    // We leave the font alone unless asked for monospace, so the composer
+    // keeps the same font the sent message renders in.
+    ...(formatting.includes("monospace") ? { fontFamily: "monospace" } : {}),
   };
 }
 

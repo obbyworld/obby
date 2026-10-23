@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { reportServerReply } from "./serverReplies";
 
 // Track which servers have had their ready handler run to prevent duplicate processing
 export const readyProcessedServers = new Set<string>();
@@ -38,29 +39,25 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     });
   });
 
-  ircClient.on("rateLimited", ({ serverId, message }) => {
-    const server = store.getState().servers.find((s) => s.id === serverId);
-    store.getState().addGlobalNotification({
+  ircClient.on("rateLimited", ({ serverId, message }) =>
+    reportServerReply(store, {
+      serverId,
       type: "warn",
       command: "ERROR",
       code: "RATE_LIMITED",
       message,
-      target: server?.host ?? serverId,
-      serverId,
-    });
-  });
+    }),
+  );
 
-  ircClient.on("serverError", ({ serverId, message }) => {
-    const server = store.getState().servers.find((s) => s.id === serverId);
-    store.getState().addGlobalNotification({
+  ircClient.on("serverError", ({ serverId, message }) =>
+    reportServerReply(store, {
+      serverId,
       type: "fail",
       command: "ERROR",
       code: "SERVER_ERROR",
       message,
-      target: server?.host ?? serverId,
-      serverId,
-    });
-  });
+    }),
+  );
 
   ircClient.on("rawLine", ({ serverId, direction, line }) => {
     store.getState().appendRawLogLine({ serverId, direction, line });

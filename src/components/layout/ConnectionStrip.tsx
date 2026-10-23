@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import type * as React from "react";
+import { useEffect, useState } from "react";
 import {
   FaCog,
   FaExclamationTriangle,
@@ -32,12 +33,33 @@ const ICONS: Record<Trouble, React.ReactNode> = {
   auth: <FaExclamationTriangle className="text-red-400" />,
 };
 
+// Starting up and short network blips pass in a moment, so we only speak up
+// once a problem has lasted long enough to need the user.
+const SETTLE_MS: Record<Trouble, number> = {
+  lost: 4000,
+  retrying: 10000,
+  auth: 0,
+};
+
+function useSettledTrouble(trouble: Trouble | null): Trouble | null {
+  const [settled, setSettled] = useState<Trouble | null>(null);
+  useEffect(() => {
+    if (!trouble) return;
+    const timer = setTimeout(() => setSettled(trouble), SETTLE_MS[trouble]);
+    return () => {
+      clearTimeout(timer);
+      setSettled(null);
+    };
+  }, [trouble]);
+  return settled === trouble ? trouble : null;
+}
+
 const actionClass =
   "h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold";
 
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
-  const trouble = getTrouble(server);
+  const trouble = useSettledTrouble(getTrouble(server));
   if (!trouble) return null;
 
   const messages: Record<Trouble, string> = {

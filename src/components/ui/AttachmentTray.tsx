@@ -1,5 +1,12 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import { FaFile, FaMapMarkerAlt, FaTrash, FaTrashAlt } from "react-icons/fa";
+import {
+  FaFile,
+  FaMapMarkerAlt,
+  FaTimes,
+  FaTrash,
+  FaTrashAlt,
+} from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { formatFileSize } from "../../lib/mediaUpload";
 import HoverTooltip from "./HoverTooltip";
 
@@ -18,18 +25,21 @@ function isAudio(attachment: PendingAttachment): boolean {
 
 function Thumbnail({
   attachment,
+  cover,
 }: {
   attachment: Extract<PendingAttachment, { kind: "file" }>;
+  cover?: boolean;
 }) {
+  const fit = cover ? "object-cover" : "object-contain";
   const { file, previewUrl } = attachment;
   if (previewUrl && file.type.startsWith("image/")) {
-    // Contained rather than cropped, so a tall screenshot is still recognisable
-    // as the thing that was picked.
+    // A card shows the whole picture so a tall screenshot stays recognisable,
+    // and a phone thumbnail fills its small square.
     return (
       <img
         src={previewUrl}
         alt={file.name}
-        className="h-full w-full object-contain"
+        className={`h-full w-full ${fit}`}
       />
     );
   }
@@ -42,13 +52,58 @@ function Thumbnail({
     );
   }
   if (previewUrl && file.type.startsWith("video/")) {
-    return (
-      <video src={previewUrl} className="h-full w-full object-contain" muted />
-    );
+    return <video src={previewUrl} className={`h-full w-full ${fit}`} muted />;
   }
   return (
     <div className="flex h-full w-full items-center justify-center text-discord-text-muted">
       <FaFile className="h-8 w-8" />
+    </div>
+  );
+}
+
+/** A phone keeps the composer small next to its keyboard, so each attachment
+ *  is a thumbnail with its own remove badge. */
+function AttachmentChip({
+  attachment,
+  onRemove,
+}: {
+  attachment: PendingAttachment;
+  onRemove: (id: string) => void;
+}) {
+  const { t } = useLingui();
+  const isMedia =
+    attachment.kind === "file" &&
+    !!attachment.previewUrl &&
+    /^(image|video)\//.test(attachment.file.type);
+  const caption =
+    attachment.kind === "file" ? attachment.file.name : attachment.label;
+
+  return (
+    <div
+      className={`relative h-16 shrink-0 overflow-hidden rounded-lg bg-discord-dark-300 ${
+        isMedia ? "w-16" : isAudio(attachment) ? "w-60" : "w-40"
+      }`}
+    >
+      {attachment.kind === "file" && (isMedia || isAudio(attachment)) ? (
+        <Thumbnail attachment={attachment} cover />
+      ) : (
+        <div className="flex h-full items-center gap-2 px-2 pr-7 text-xs text-discord-text-normal">
+          {attachment.kind === "file" ? (
+            <FaFile className="h-5 w-5 shrink-0 text-discord-text-muted" />
+          ) : (
+            <FaMapMarkerAlt className="h-5 w-5 shrink-0 text-discord-text-muted" />
+          )}
+          <span className="line-clamp-2 break-all">{caption}</span>
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={() => onRemove(attachment.id)}
+        aria-label={t`Remove attachment`}
+        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white"
+      >
+        <FaTimes className="h-3 w-3" />
+      </button>
     </div>
   );
 }
@@ -130,6 +185,7 @@ export function AttachmentTray({
   attachments: PendingAttachment[];
   onRemove: (id: string) => void;
 }) {
+  const isTouch = useIsTouchInput();
   const onRemoveAll = () => {
     for (const attachment of attachments) onRemove(attachment.id);
   };
@@ -138,16 +194,26 @@ export function AttachmentTray({
   return (
     <div
       data-testid="attachment-tray"
-      className="flex gap-2 overflow-x-auto px-3 pb-2 pt-3"
+      className={`flex gap-2 overflow-x-auto px-3 ${isTouch ? "pt-2" : "pb-2 pt-3"}`}
     >
-      {attachments.map((attachment) => (
-        <AttachmentCard
-          key={attachment.id}
-          attachment={attachment}
-          onRemove={onRemove}
-        />
-      ))}
-      {attachments.length > 1 && <ClearAllButton onClear={onRemoveAll} />}
+      {attachments.map((attachment) =>
+        isTouch ? (
+          <AttachmentChip
+            key={attachment.id}
+            attachment={attachment}
+            onRemove={onRemove}
+          />
+        ) : (
+          <AttachmentCard
+            key={attachment.id}
+            attachment={attachment}
+            onRemove={onRemove}
+          />
+        ),
+      )}
+      {!isTouch && attachments.length > 1 && (
+        <ClearAllButton onClear={onRemoveAll} />
+      )}
     </div>
   );
 }

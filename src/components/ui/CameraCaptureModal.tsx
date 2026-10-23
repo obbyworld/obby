@@ -1,7 +1,9 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaCamera, FaCheck, FaSyncAlt, FaTrash } from "react-icons/fa";
+import { createPortal } from "react-dom";
+import { FaCamera, FaCheck, FaSyncAlt, FaTimes, FaTrash } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useModalBehavior } from "../../hooks/useModalBehavior";
 import { pickVideoRecordingFormat } from "../../lib/audioRecording";
 import {
   type AutoStopReason,
@@ -263,6 +265,19 @@ export function CameraCaptureModal({
     onCloseRef.current();
   };
 
+  useModalBehavior({
+    isOpen: isOpen && isTouch,
+    onClose: handleClose,
+    clickOutsideEnabled: false,
+  });
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!isOpen || !isTouch) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+    return () => previousFocus?.focus();
+  }, [isOpen, isTouch]);
+
   const flipCamera = () => {
     updateGlobalSettings({
       callCameraFacing:
@@ -280,6 +295,185 @@ export function CameraCaptureModal({
       : stoppedBy === "duration-limit"
         ? t`Reached the maximum recording length, so the recording stopped here.`
         : null;
+
+  const recordingBadge = recording && (
+    <div className="flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-white">
+      <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+      <span className="font-mono text-sm tabular-nums">
+        {formatElapsed(elapsedMs)}
+      </span>
+      <span className="font-mono text-xs tabular-nums opacity-70">
+        {formatFileSize(sizeBytes)}
+      </span>
+    </div>
+  );
+  const notes = (
+    <>
+      {recording && isSilent && (
+        <p className="text-center text-xs text-yellow-400">
+          <Trans>Allow microphone access to record sound.</Trans>
+        </p>
+      )}
+      {stopReasonMessage && (
+        <p className="text-center text-xs text-yellow-400">
+          {stopReasonMessage}
+        </p>
+      )}
+    </>
+  );
+  const capturedMedia =
+    capture &&
+    (capture.video ? (
+      <video
+        src={capture.url}
+        controls
+        playsInline
+        className="h-full w-full object-contain"
+      >
+        <track kind="captions" />
+      </video>
+    ) : (
+      <img
+        src={capture.url}
+        alt={t`The photo you just took`}
+        className="h-full w-full object-contain"
+      />
+    ));
+
+  // A phone gets the whole screen, laid out like the system camera.
+  if (isTouch) {
+    if (!isOpen) return null;
+    return createPortal(
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t`Camera`}
+        className="fixed inset-0 z-[10000] flex flex-col bg-black text-white"
+        style={{
+          paddingTop: "var(--safe-area-inset-top, 0px)",
+          paddingBottom: "var(--safe-area-inset-bottom, 0px)",
+        }}
+      >
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          {status === "error" ? (
+            <p className="p-6 pt-20 text-center text-sm text-red-400">
+              {error}
+            </p>
+          ) : (
+            (capturedMedia ?? (
+              <VideoTrackView
+                ref={videoRef}
+                track={previewTrack}
+                muted
+                className={`h-full w-full ${mirror ? "scale-x-[-1]" : ""}`}
+              />
+            ))
+          )}
+          <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3">
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={handleClose}
+              aria-label={t`Close`}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
+            >
+              <FaTimes />
+            </button>
+            {recordingBadge}
+            {!capture && !recording && status !== "error" ? (
+              <button
+                type="button"
+                onClick={flipCamera}
+                aria-label={t`Switch camera`}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
+              >
+                <FaSyncAlt />
+              </button>
+            ) : (
+              <span className="w-11" />
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-4 px-6 pb-4 pt-4">
+          {notes}
+          {capture ? (
+            <div className="flex w-full items-center justify-between">
+              <button
+                type="button"
+                onClick={handleRetake}
+                className="min-h-11 px-2 text-base"
+              >
+                <Trans>Retake</Trans>
+              </button>
+              <button
+                type="button"
+                onClick={handleAttach}
+                className="button-primary min-h-11 rounded-full px-6 text-base"
+              >
+                {capture.video ? (
+                  <Trans>Use video</Trans>
+                ) : (
+                  <Trans>Use photo</Trans>
+                )}
+              </button>
+            </div>
+          ) : (
+            <>
+              {!recording && (
+                <div className="flex gap-8 text-sm font-semibold uppercase tracking-wider">
+                  {(["photo", "video"] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setMode(option)}
+                      aria-pressed={mode === option}
+                      className={
+                        mode === option ? "text-yellow-300" : "text-white/60"
+                      }
+                    >
+                      {option === "photo" ? (
+                        <Trans>Photo</Trans>
+                      ) : (
+                        <Trans>Video</Trans>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={handleShutter}
+                disabled={
+                  status === "starting" ||
+                  status === "arming" ||
+                  status === "error"
+                }
+                aria-label={
+                  recording
+                    ? t`Stop recording`
+                    : mode === "photo"
+                      ? t`Take photo`
+                      : t`Start recording`
+                }
+                className="flex h-[76px] w-[76px] items-center justify-center rounded-full border-4 border-white disabled:opacity-40"
+              >
+                <span
+                  className={`transition-all ${
+                    recording
+                      ? "h-7 w-7 rounded-md bg-red-500"
+                      : mode === "photo"
+                        ? "h-[58px] w-[58px] rounded-full bg-white"
+                        : "h-[58px] w-[58px] rounded-full bg-red-500"
+                  }`}
+                />
+              </button>
+            </>
+          )}
+        </div>
+      </div>,
+      document.body,
+    );
+  }
 
   return (
     <BaseModal
@@ -305,24 +499,7 @@ export function CameraCaptureModal({
         ) : (
           <>
             <div className="relative flex-1 min-h-[240px] overflow-hidden rounded-lg bg-black">
-              {capture ? (
-                capture.video ? (
-                  <video
-                    src={capture.url}
-                    controls
-                    playsInline
-                    className="h-full w-full object-contain"
-                  >
-                    <track kind="captions" />
-                  </video>
-                ) : (
-                  <img
-                    src={capture.url}
-                    alt={t`The photo you just took`}
-                    className="h-full w-full object-contain"
-                  />
-                )
-              ) : (
+              {capturedMedia || (
                 <VideoTrackView
                   ref={videoRef}
                   track={previewTrack}
@@ -330,38 +507,11 @@ export function CameraCaptureModal({
                   className={`h-full w-full ${mirror ? "scale-x-[-1]" : ""}`}
                 />
               )}
-              {isTouch && !capture && !recording && (
-                <button
-                  type="button"
-                  onClick={flipCamera}
-                  aria-label={t`Switch camera`}
-                  className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 text-white"
-                >
-                  <FaSyncAlt />
-                </button>
-              )}
-              {recording && (
-                <div className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-white">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-                  <span className="font-mono text-sm tabular-nums">
-                    {formatElapsed(elapsedMs)}
-                  </span>
-                  <span className="font-mono text-xs tabular-nums opacity-70">
-                    {formatFileSize(sizeBytes)}
-                  </span>
-                </div>
+              {recordingBadge && (
+                <div className="absolute left-3 top-3">{recordingBadge}</div>
               )}
             </div>
-            {recording && isSilent && (
-              <p className="text-center text-xs text-yellow-400">
-                <Trans>Allow microphone access to record sound.</Trans>
-              </p>
-            )}
-            {stopReasonMessage && (
-              <p className="text-center text-xs text-yellow-400">
-                {stopReasonMessage}
-              </p>
-            )}
+            {notes}
             {!capture && !recording && (
               <SegmentedControl
                 value={mode}

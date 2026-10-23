@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
 import { FaRegCopy, FaReply } from "react-icons/fa";
@@ -15,6 +15,9 @@ interface MessageReaderSheetProps {
   children: React.ReactNode;
 }
 
+const HEADER_ACTION =
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-discord-dark-300 text-discord-text-normal active:bg-discord-dark-400";
+
 // Shows a whole message on touch screens, so reading a long one leaves the chat still.
 const MessageReaderSheet: React.FC<MessageReaderSheetProps> = ({
   isOpen,
@@ -25,54 +28,50 @@ const MessageReaderSheet: React.FC<MessageReaderSheetProps> = ({
   onReply,
   children,
 }) => {
+  const { t } = useLingui();
   const [hasCopyFailed, setHasCopyFailed] = useState(false);
+  const copyLabel = hasCopyFailed ? t`Copy failed, tap to retry` : t`Copy`;
 
   return (
     <BottomSheet isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col max-h-[80vh]">
-        {(author || time) && (
-          <div className="flex items-baseline gap-2 px-4 pb-3">
-            <span className="font-semibold text-white truncate">{author}</span>
+      <div className="flex max-h-[80vh] flex-col">
+        <div className="flex items-center gap-2 px-4 pb-2">
+          <div className="flex min-w-0 flex-1 items-baseline gap-2">
+            <span className="truncate font-semibold text-white">{author}</span>
             <span className="row-meta shrink-0">{time}</span>
           </div>
-        )}
-        <div className="hairline" />
-        <div className="px-4 py-3 overflow-y-auto text-discord-text-normal whitespace-pre-wrap break-words">
-          {children}
-        </div>
-        <div className="hairline" />
-        <div className="flex gap-2 px-4 pt-3">
           {onReply && (
             <button
               type="button"
-              className="sheet-action"
+              className={HEADER_ACTION}
+              aria-label={t`Reply`}
+              title={t`Reply`}
               onClick={() => {
                 onClose();
                 onReply();
               }}
             >
-              <FaReply className="text-xs" />
-              <Trans>Reply</Trans>
+              <FaReply className="text-sm" />
             </button>
           )}
           {copyText !== undefined && (
             <button
               type="button"
-              className={`sheet-action ${hasCopyFailed ? "text-red-400" : ""}`}
+              className={`${HEADER_ACTION} ${hasCopyFailed ? "text-red-400" : ""}`}
+              aria-label={copyLabel}
+              title={copyLabel}
               onClick={() =>
                 copyToClipboard(copyText).then((isCopied) =>
                   isCopied ? onClose() : setHasCopyFailed(true),
                 )
               }
             >
-              <FaRegCopy className="text-xs" />
-              {hasCopyFailed ? (
-                <Trans>Copy failed, tap to retry</Trans>
-              ) : (
-                <Trans>Copy</Trans>
-              )}
+              <FaRegCopy className="text-sm" />
             </button>
           )}
+        </div>
+        <div className="overflow-y-auto px-4 pb-2 pt-1 text-[15px] leading-relaxed text-discord-text-normal whitespace-pre-wrap break-words">
+          {children}
         </div>
       </div>
     </BottomSheet>

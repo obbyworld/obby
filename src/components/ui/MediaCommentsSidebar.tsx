@@ -601,10 +601,6 @@ export function MediaCommentsSidebar({
             isOpen={isEmojiSelectorOpen}
             onEmojiClick={handleEmojiSelect}
             onClose={() => setIsEmojiSelectorOpen(false)}
-            onBackdropClick={(e) => {
-              if (e.target === e.currentTarget) setIsEmojiSelectorOpen(false);
-            }}
-            zIndex={9999}
           />
         )}
         <AutocompleteDropdown
@@ -625,7 +621,6 @@ export function MediaCommentsSidebar({
           isOpen={reactionModal.isOpen}
           onClose={closeReactionModal}
           onSelectEmoji={selectReaction}
-          zIndex={10000}
           reactedEmojis={reactedEmojis}
         />
       ) : (

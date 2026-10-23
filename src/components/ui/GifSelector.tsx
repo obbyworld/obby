@@ -2,8 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
 import { useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { FaTimes } from "react-icons/fa";
+import { BaseModal } from "../../lib/modal/BaseModal";
 import { TextInput } from "./TextInput";
 
 interface GifSelectorProps {
@@ -183,82 +182,61 @@ const GifSelector: React.FC<GifSelectorProps> = ({
     onClose();
   };
 
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="2xl"
+      title={<Trans>Send a GIF</Trans>}
     >
-      <div
-        className="bg-discord-dark-400 rounded-lg shadow-lg border border-discord-dark-300 max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+      {gifProviders.length > 1 && (
+        <div className="p-4 border-b border-discord-dark-300 flex gap-2">
+          {gifProviders.map((provider) => (
+            <button
+              key={provider}
+              type="button"
+              className={`px-4 py-2 rounded ${
+                activeProvider === provider
+                  ? "bg-discord-primary text-white"
+                  : "bg-discord-dark-200 text-discord-text-muted hover:text-white"
+              }`}
+              onClick={() => handleProviderChange(provider)}
+            >
+              {PROVIDERS[provider].label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSearch}
+        className="p-4 border-b border-discord-dark-300 flex gap-2"
       >
-        {/* Header */}
-        <div className="p-4 border-b border-discord-dark-300 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">
-            <Trans>Send a GIF</Trans>
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={t`Close`}
-            className="text-discord-text-muted hover:text-white"
-          >
-            <FaTimes />
-          </button>
-        </div>
-
-        {gifProviders.length > 1 && (
-          <div className="p-4 border-b border-discord-dark-300 flex gap-2">
-            {gifProviders.map((provider) => (
-              <button
-                key={provider}
-                type="button"
-                className={`px-4 py-2 rounded ${
-                  activeProvider === provider
-                    ? "bg-discord-primary text-white"
-                    : "bg-discord-dark-200 text-discord-text-muted hover:text-white"
-                }`}
-                onClick={() => handleProviderChange(provider)}
-              >
-                {PROVIDERS[provider].label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        <form
-          onSubmit={handleSearch}
-          className="p-4 border-b border-discord-dark-300 flex gap-2"
+        <TextInput
+          type="search"
+          enterKeyHint="search"
+          placeholder={t`Search GIFs...`}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1 min-w-0 px-3 py-2 bg-discord-dark-200 border border-discord-dark-300 rounded text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-primary"
+        />
+        <button
+          type="submit"
+          disabled={search.status === "loading"}
+          className="px-4 py-2 bg-discord-primary text-white rounded hover:bg-discord-primary/90 disabled:opacity-50"
         >
-          <TextInput
-            type="search"
-            enterKeyHint="search"
-            placeholder={t`Search GIFs...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 min-w-0 px-3 py-2 bg-discord-dark-200 border border-discord-dark-300 rounded text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-primary"
-          />
-          <button
-            type="submit"
-            disabled={search.status === "loading"}
-            className="px-4 py-2 bg-discord-primary text-white rounded hover:bg-discord-primary/90 disabled:opacity-50"
-          >
-            {search.status === "loading" ? (
-              <Trans>Searching...</Trans>
-            ) : (
-              <Trans>Search</Trans>
-            )}
-          </button>
-        </form>
+          {search.status === "loading" ? (
+            <Trans>Searching...</Trans>
+          ) : (
+            <Trans>Search</Trans>
+          )}
+        </button>
+      </form>
 
-        <div className="p-4 max-h-96 overflow-y-auto">
-          <GifResults search={search} onPick={handleGifClick} />
-        </div>
+      <div className="p-4 max-h-96 overflow-y-auto">
+        <GifResults search={search} onPick={handleGifClick} />
       </div>
-    </div>,
-    document.body,
+    </BaseModal>
   );
 };
 
