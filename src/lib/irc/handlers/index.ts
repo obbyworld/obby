@@ -37,6 +37,8 @@ import {
   handleCap,
   handleError,
   handleIsupport,
+  handleLoggedIn,
+  handleLoggedOut,
   handlePing,
   handlePong,
   handleRplEndOfMotd,
@@ -157,9 +159,11 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
   "381": (ctx, serverId, source, parv) =>
     handleRplYoureOper(ctx, serverId, source, parv),
 
-  // SASL authentication successful (901, 902, 903): finish CAP negotiation
+  "900": (ctx, serverId, source, parv) =>
+    handleLoggedIn(ctx, serverId, source, parv),
   "901": (ctx, serverId, source, parv) =>
-    handleSaslSuccess(ctx, serverId, source, parv),
+    handleLoggedOut(ctx, serverId, source, parv),
+  // SASL authentication successful (902, 903): finish CAP negotiation
   "902": (ctx, serverId, source, parv) =>
     handleSaslSuccess(ctx, serverId, source, parv),
   "903": (ctx, serverId, source, parv) =>
@@ -199,7 +203,19 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
   "500": (ctx, serverId, _source, parv) =>
     handleJoinRefused(ctx, serverId, parv, true),
   ...Object.fromEntries(
-    ["405", "471", "473", "474", "475", "477", "489", "520"].map((code) => [
+    [
+      "403",
+      "405",
+      "471",
+      "473",
+      "474",
+      "475",
+      "476",
+      "477",
+      "479",
+      "489",
+      "520",
+    ].map((code) => [
       code,
       ((ctx, serverId, _source, parv) =>
         handleJoinRefused(ctx, serverId, parv, false)) satisfies HandlerFn,

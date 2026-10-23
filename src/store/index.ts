@@ -7,7 +7,6 @@ import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
-import { isChannelTarget } from "../lib/ircUtils";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
 import { recordPlace, recordSearch } from "../lib/search/recents";
@@ -53,11 +52,18 @@ import {
   verifyOtrSession as otrVerify,
   trustOtrChangedKey,
 } from "./handlers/otr";
+import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
-import { MAX_MESSAGES_PER_CHANNEL } from "./helpers";
+import {
+  ensureUrlFormat,
+  isAppInFront,
+  MAX_MESSAGES_PER_CHANNEL,
+  normalizeHost,
+} from "./helpers";
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
+import { markPendingJoin } from "./pendingJoins";
 import type {
   AppPage,
   ChannelOrderMap,
@@ -120,23 +126,48 @@ export function rememberMsgIds(set: Set<string>, ids: string[]): Set<string> {
   return next;
 }
 
-// Helper function to normalize host for comparison (extract hostname from URL or return as-is)
-function normalizeHost(host: string): string {
-  if (host.includes("://")) {
-    // Extract hostname from URL format
-    const withoutProtocol = host.replace(/^(irc|ircs|wss):\/\//, "");
-    return withoutProtocol.split(":")[0]; // Get just hostname, strip port if present
-  }
-  return host;
+// We connect a saved server under its own id, so servers that share an address stay apart.
+function connectSavedServer(
+  connect: AppState["connect"],
+  config: ServerConfig,
+): Promise<Server> {
+  const urlHost = ensureUrlFormat(config.host, config.port);
+  return connect(
+    config.name || normalizeHost(urlHost),
+    urlHost,
+    config.port,
+    config.nickname,
+    config.saslEnabled,
+    config.password,
+    config.saslAccountName,
+    config.saslPassword,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    config.id,
+  );
 }
 
-// Helper function to ensure host is in URL format
-function ensureUrlFormat(host: string, port: number): string {
-  if (host.includes("://")) {
-    return host; // Already in URL format
-  }
-  // Convert old hostname-only format to URL — always wss://
-  return `wss://${host}:${port}`;
+// We log a bouncer network in with its bouncer's saved host and credentials, then bind it to its network.
+function connectBouncerChild(
+  childId: string,
+  netid: string,
+  name: string,
+  savedParent: ServerConfig,
+): Promise<Server> {
+  ircClient.setPendingBouncerBind(childId, netid);
+  return ircClient.connect(
+    name,
+    ensureUrlFormat(savedParent.host, savedParent.port),
+    savedParent.port,
+    savedParent.nickname,
+    savedParent.password,
+    savedParent.saslAccountName,
+    savedParent.saslPassword,
+    childId,
+  );
 }
 
 // Types for batch event processing
@@ -191,35 +222,6 @@ export const getChannelMessages = (serverId: string, channelId: string) => {
   const key = `${serverId}-${channelId}`;
   return state.messages[key] || [];
 };
-
-// draft/read-marker: find the latest message timestamp (across normal
-// chat messages -- system / event rows are ignored so reading a "X
-// joined" line doesn't move the marker).  Returns an ISO 8601 string
-// in the spec's format, or null if there's nothing to mark.
-const ISO_DROP_END_RX = /Z?$/;
-function _toMarkreadIso(d: Date): string {
-  // The spec mandates "YYYY-MM-DDThh:mm:ss.sssZ" -- exactly the form
-  // toISOString() emits.
-  return d.toISOString().replace(ISO_DROP_END_RX, "Z");
-}
-
-export function getLatestMessageTimestampIso(
-  serverId: string,
-  bufferId: string,
-): string | null {
-  const state = useStore.getState();
-  const key = `${serverId}-${bufferId}`;
-  const messages = state.historyWindows[key]?.present ?? state.messages[key];
-  if (!messages || messages.length === 0) return null;
-  let latest: number | null = null;
-  for (const msg of messages) {
-    if (msg.type !== "message" && msg.type !== undefined) continue;
-    const t = msg.timestamp ? new Date(msg.timestamp).getTime() : Number.NaN;
-    if (Number.isNaN(t)) continue;
-    if (latest === null || t > latest) latest = t;
-  }
-  return latest === null ? null : _toMarkreadIso(new Date(latest));
-}
 
 export const findChannelMessageById = (
   serverId: string,
@@ -455,6 +457,9 @@ interface UIState {
   isMemberListVisible: boolean;
   isChannelListVisible: boolean;
   mobileViewActiveColumn: layoutColumn;
+  // The open chat shows older messages than the newest, so new ones are unseen.
+  isChatAwayFromPresent?: boolean;
+  isAppFocused?: boolean;
   homeView?: "plugins";
   isServerMenuOpen: boolean;
   contextMenu: {
@@ -775,10 +780,12 @@ export interface AppState {
     registerPassword?: string,
     isNewServer?: boolean,
     oauthConfig?: ServerOAuthConfig,
+    serverId?: string,
   ) => Promise<Server>;
   disconnect: (serverId: string) => void;
   joinChannel: (serverId: string, channelName: string) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
+  forgetChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
   startE2EESession: (
     serverId: string,
@@ -1193,7 +1200,9 @@ export function resolveCallReturnTarget(
     if (privateChat) return { type: "privateChat", id: privateChat.id };
   }
 
-  const firstText = server.channels.find((c) => c.name.startsWith("#"));
+  const firstText = server.channels.find(
+    (c) => classifyChannelName(c.name) === "text",
+  );
   return firstText ? { type: "channel", id: firstText.id } : null;
 }
 
@@ -1279,6 +1288,8 @@ const useStore = create<AppState>((set, get) => ({
     isChannelListVisible:
       loadUISelections().sidebarPreferences?.channelList.isVisible ?? true,
     mobileViewActiveColumn: "serverList", // Always start on server/channel list, never auto-navigate to chat
+    isChatAwayFromPresent: false,
+    isAppFocused: isAppInFront(),
     isServerMenuOpen: false,
     contextMenu: {
       isOpen: false,
@@ -1364,14 +1375,23 @@ const useStore = create<AppState>((set, get) => ({
     registerPassword,
     isNewServer,
     oauthConfig,
+    serverId,
   ) => {
-    // Check if already connected to this server
     const state = get();
+    // One network can hold several accounts, so a saved server is the same
+    // one only when the address and the login both match.
+    const existingSavedServer = serverId
+      ? loadSavedServers().find((s) => s.id === serverId)
+      : loadSavedServers().find(
+          (s) =>
+            normalizeHost(s.host) === normalizeHost(host) &&
+            s.port === port &&
+            s.nickname === nickname &&
+            (s.saslAccountName ?? "") === (saslAccountName ?? ""),
+        );
+    const targetId = serverId ?? existingSavedServer?.id;
     const existingServer = state.servers.find(
-      (s) =>
-        normalizeHost(s.host) === normalizeHost(host) &&
-        s.port === port &&
-        s.isConnected,
+      (s) => s.id === targetId && s.isConnected,
     );
     if (existingServer) {
       if (isNewServer) get().selectServer(existingServer.id);
@@ -1384,10 +1404,9 @@ const useStore = create<AppState>((set, get) => ({
       connectionError: null,
     });
 
-    const knownServer = state.servers.find(
-      (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-    );
-    const newServerId = isNewServer && !knownServer ? uuidv4() : undefined;
+    const knownServer = state.servers.find((s) => s.id === targetId);
+    const newServerId =
+      isNewServer && !knownServer ? (targetId ?? uuidv4()) : undefined;
     if (newServerId) {
       set((state) => ({
         servers: [
@@ -1409,12 +1428,6 @@ const useStore = create<AppState>((set, get) => ({
     }
 
     try {
-      // Look up saved server to get its ID
-      const existingSavedServers: ServerConfig[] = loadSavedServers();
-      const existingSavedServer = existingSavedServers.find(
-        (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-      );
-
       // Auth-handler reads OAuth out of localStorage when SASL fires, so
       // persist any caller-supplied oauth config BEFORE opening the
       // socket -- otherwise the first SASL turn would race past it.
@@ -1449,18 +1462,9 @@ const useStore = create<AppState>((set, get) => ({
       // Ensure host is in URL format for storage
       const urlHost = ensureUrlFormat(host, port);
 
-      // Find existing server using normalized comparison
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port,
-      );
+      const savedServer = savedServers.find((s) => s.id === server.id);
       const channelsToJoin = savedServer?.channels || [];
-
-      // Remove existing server entry using normalized comparison
-      const updatedServers = savedServers.filter(
-        (s) =>
-          normalizeHost(s.host) !== normalizeHost(urlHost) || s.port !== port,
-      );
+      const updatedServers = savedServers.filter((s) => s.id !== server.id);
 
       updatedServers.push({
         id: server.id,
@@ -1487,9 +1491,7 @@ const useStore = create<AppState>((set, get) => ({
 
       set((state) => {
         const existingServerIndex = state.servers.findIndex(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(server.host) &&
-            s.port === port,
+          (s) => s.id === server.id,
         );
         if (existingServerIndex !== -1) {
           const updatedServers = [...state.servers];
@@ -1514,10 +1516,7 @@ const useStore = create<AppState>((set, get) => ({
       const isLocalhost = host === "localhost" || host === "127.0.0.1";
       if (isLocalhost) {
         const savedServers = loadSavedServers();
-        const serverConfig = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(host) && s.port === port,
-        );
+        const serverConfig = savedServers.find((s) => s.id === server.id);
 
         // Only show warning if not already skipped
         if (!serverConfig?.skipLocalhostWarning) {
@@ -1568,8 +1567,7 @@ const useStore = create<AppState>((set, get) => ({
 
       set((state) => {
         const existingServerIndex = state.servers.findIndex(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(host) && s.port === port,
+          (s) => s.id === (targetId ?? newServerId),
         );
         if (existingServerIndex !== -1) {
           // Update existing server to disconnected
@@ -1693,12 +1691,14 @@ const useStore = create<AppState>((set, get) => ({
   joinChannel: (serverId, channelName) => {
     const channel = ircClient.joinChannel(serverId, channelName);
     if (channel) {
+      const isSameChannel = (name: string) =>
+        name.toLowerCase() === channel.name.toLowerCase();
       set((state) => {
         const updatedServers = state.servers.map((server) => {
           if (server.id === serverId) {
             // Check if channel already exists in store
-            const existingChannel = server.channels.find(
-              (c) => c.name.toLowerCase() === channelName.toLowerCase(),
+            const existingChannel = server.channels.find((c) =>
+              isSameChannel(c.name),
             );
             if (existingChannel) {
               // Channel already exists, don't add duplicate
@@ -1712,20 +1712,21 @@ const useStore = create<AppState>((set, get) => ({
           return server;
         });
 
-        // Skip for bouncer sessions: savedServer lookup is host:port-keyed
-        // and a soju bouncer's parent + every bound child share that.
+        // We skip bouncer sessions because the bouncer rejoins their channels itself.
         const currentServer = state.servers.find((s) => s.id === serverId);
         const isBouncerSession =
           !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
-        if (!isBouncerSession) {
+        const isNewRow = !currentServer?.channels.some((c) =>
+          isSameChannel(c.name),
+        );
+        if (isBouncerSession) {
+          if (isNewRow) markPendingJoin(serverId, channel.name);
+        } else {
           const savedServers = loadSavedServers();
-          const savedServer = savedServers.find(
-            (s) =>
-              normalizeHost(s.host) ===
-                normalizeHost(currentServer?.host || "") &&
-              s.port === currentServer?.port,
-          );
-          if (savedServer && !savedServer.channels.includes(channel.name)) {
+          const savedServer = savedServers.find((s) => s.id === serverId);
+          if (savedServer && !savedServer.channels.some(isSameChannel)) {
+            // We track only channels this join adds to the saved list, so a refused autojoin keeps the channels the user saved.
+            markPendingJoin(serverId, channel.name);
             savedServer.channels.push(channel.name);
             saveServersToLocalStorage(savedServers);
           }
@@ -1758,14 +1759,20 @@ const useStore = create<AppState>((set, get) => ({
     // channel is the only thing left that can end it.
     releaseVoiceClient(serverId, channelName);
     ircClient.leaveChannel(serverId, channelName); // Send PART command to the IRC server
+    get().forgetChannel(serverId, channelName);
+  },
 
+  forgetChannel: (serverId, channelName) => {
+    const isForgotten = (name: string) =>
+      name.toLowerCase() === channelName.toLowerCase();
+    ircClient.forgetChannel(serverId, channelName);
     set((state) => {
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {
           return {
             ...server,
             channels: server.channels.filter(
-              (channel) => channel.name !== channelName,
+              (channel) => !isForgotten(channel.name),
             ),
           };
         }
@@ -1778,15 +1785,11 @@ const useStore = create<AppState>((set, get) => ({
         !!currentServer?.isBouncerControl || !!currentServer?.bouncerNetid;
       if (!isBouncerSession) {
         const savedServers = loadSavedServers();
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) ===
-              normalizeHost(currentServer?.host || "") &&
-            s.port === currentServer?.port,
-        );
+        const savedServer = savedServers.find((s) => s.id === serverId);
         if (savedServer) {
-          savedServer.channels =
-            currentServer?.channels.map((c) => c.name) || [];
+          savedServer.channels = savedServer.channels.filter(
+            (name) => !isForgotten(name),
+          );
           saveServersToLocalStorage(savedServers);
         }
       }
@@ -1795,14 +1798,14 @@ const useStore = create<AppState>((set, get) => ({
       const currentOrder = state.channelOrder[serverId] || [];
       const newChannelOrder = {
         ...state.channelOrder,
-        [serverId]: currentOrder.filter((name) => name !== channelName),
+        [serverId]: currentOrder.filter((name) => !isForgotten(name)),
       };
       saveChannelOrder(newChannelOrder);
 
       // Clear selection if the left channel was the selected one
       const currentSelection = getServerSelection(state, serverId);
       const server = state.servers.find((s) => s.id === serverId);
-      const leftChannel = server?.channels.find((c) => c.name === channelName);
+      const leftChannel = server?.channels.find((c) => isForgotten(c.name));
 
       let updatedUI = state.ui;
       if (
@@ -2349,55 +2352,7 @@ const useStore = create<AppState>((set, get) => ({
         server?.privateChats?.find((pc) => pc.id === selectedPrivateChatId)
           ?.username || null;
 
-      // When the user switches *to* a server, the channel or PM that
-      // restores into focus has now been "looked at" -- clear its
-      // unread / mention indicators.  Without this the badge sticks
-      // on the just-foregrounded buffer until the user clicks somewhere
-      // else and back.
-      let updatedServers = state.servers;
-      if (selectedChannelId || selectedPrivateChatId) {
-        updatedServers = state.servers.map((s) => {
-          if (s.id !== serverId) return s;
-          let touched = false;
-          const channels = s.channels.map((ch) => {
-            if (ch.id !== selectedChannelId) return ch;
-            if (
-              ch.unreadCount === 0 &&
-              !ch.isMentioned &&
-              (ch.mentionCount ?? 0) === 0
-            )
-              return ch;
-            touched = true;
-            return {
-              ...ch,
-              unreadCount: 0,
-              mentionCount: 0,
-              isMentioned: false,
-            };
-          });
-          const privateChats = s.privateChats?.map((pc) => {
-            if (pc.id !== selectedPrivateChatId) return pc;
-            if (
-              pc.unreadCount === 0 &&
-              !pc.isMentioned &&
-              (pc.mentionCount ?? 0) === 0
-            )
-              return pc;
-            touched = true;
-            return {
-              ...pc,
-              unreadCount: 0,
-              mentionCount: 0,
-              isMentioned: false,
-            };
-          });
-          if (!touched) return s;
-          return { ...s, channels, privateChats };
-        });
-      }
-
       return {
-        servers: updatedServers,
         ui: {
           ...state.ui,
           selectedServerId: serverId,
@@ -2478,10 +2433,7 @@ const useStore = create<AppState>((set, get) => ({
         }
       }
 
-      // Mark channel as read
       if (serverId && channelId) {
-        ircClient.markChannelAsRead(serverId, channelId);
-
         const server = state.servers.find((s) => s.id === serverId);
         const channelName =
           server?.channels.find((c) => c.id === channelId)?.name || null;
@@ -2512,45 +2464,7 @@ const useStore = create<AppState>((set, get) => ({
           }
         }
 
-        // draft/read-marker: tell the server how far we've read so
-        // our other sessions clear their unread state too. The marker
-        // is keyed to the user's account on the server, so skip the
-        // request entirely when the user isn't logged in -- the
-        // server would just FAIL MARKREAD :Account required.
-        if (
-          channelName &&
-          server?.capabilities?.includes("draft/read-marker") &&
-          ircClient.getCurrentUser(serverId)?.account
-        ) {
-          const ts = getLatestMessageTimestampIso(serverId, channelId);
-          if (ts) ircClient.markreadSet(serverId, channelName, ts);
-        }
-
-        // Update unread state in store
-        const updatedServers = state.servers.map((server) => {
-          if (server.id === serverId) {
-            const updatedChannels = server.channels.map((channel) => {
-              if (channel.id === channelId) {
-                return {
-                  ...channel,
-                  unreadCount: 0,
-                  mentionCount: 0,
-                  isMentioned: false,
-                };
-              }
-              return channel;
-            });
-
-            return {
-              ...server,
-              channels: updatedChannels,
-            };
-          }
-          return server;
-        });
-
         return {
-          servers: updatedServers,
           ui: {
             ...state.ui,
             selectedServerId: serverId,
@@ -2613,35 +2527,7 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   markChannelAsRead: (serverId, channelId) => {
-    ircClient.markChannelAsRead(serverId, channelId);
-
-    set((state) => {
-      const updatedServers = state.servers.map((server) => {
-        if (server.id === serverId) {
-          const updatedChannels = server.channels.map((channel) => {
-            if (channel.id === channelId) {
-              return {
-                ...channel,
-                unreadCount: 0,
-                mentionCount: 0,
-                isMentioned: false,
-              };
-            }
-            return channel;
-          });
-
-          return {
-            ...server,
-            channels: updatedChannels,
-          };
-        }
-        return server;
-      });
-
-      return {
-        servers: updatedServers,
-      };
-    });
+    markChatRead(useStore, serverId, channelId);
   },
 
   reorderChannels: (serverId, channelIds) => {
@@ -2664,11 +2550,7 @@ const useStore = create<AppState>((set, get) => ({
 
       if (!isBouncerSession) {
         const savedServers = loadSavedServers();
-        const savedServer = savedServers.find(
-          (s) =>
-            normalizeHost(s.host) === normalizeHost(server.host) &&
-            s.port === server.port,
-        );
+        const savedServer = savedServers.find((s) => s.id === serverId);
         if (savedServer) {
           savedServer.channels = channelNames;
           saveServersToLocalStorage(savedServers);
@@ -2710,60 +2592,13 @@ const useStore = create<AppState>((set, get) => ({
         return state;
       }
 
-      // Mark private chat as read
       if (serverId && privateChatId) {
         const server = state.servers.find((s) => s.id === serverId);
-        const pc = server?.privateChats?.find((pc) => pc.id === privateChatId);
-        const pcUsername = pc?.username || null;
-
-        // draft/read-marker: PMs aren't auto-pushed by the server,
-        // so the first time we open one ask for its stored marker
-        // (so the unread badge can clear if another device already
-        // read past it).  After that, push the latest timestamp like
-        // we do for channels. The marker is keyed to the user's
-        // account on the server, so skip when the user isn't logged
-        // in (server would FAIL MARKREAD :Account required).
-        if (
-          pcUsername &&
-          server?.capabilities?.includes("draft/read-marker") &&
-          ircClient.getCurrentUser(serverId)?.account
-        ) {
-          if (!pc?.readMarkerFetched) {
-            ircClient.markreadGet(serverId, pcUsername);
-          }
-          const ts = getLatestMessageTimestampIso(serverId, privateChatId);
-          if (ts) ircClient.markreadSet(serverId, pcUsername, ts);
-        }
-
-        const updatedServers = state.servers.map((server) => {
-          if (server.id === serverId) {
-            const updatedPrivateChats =
-              server.privateChats?.map((privateChat) => {
-                if (privateChat.id === privateChatId) {
-                  return {
-                    ...privateChat,
-                    unreadCount: 0,
-                    mentionCount: 0,
-                    isMentioned: false,
-                    // Mark as fetched so we don't spam GETs on every
-                    // re-selection of the same PM.  The reply will
-                    // overwrite this with the actual marker.
-                    readMarkerFetched: true,
-                  };
-                }
-                return privateChat;
-              }) || [];
-
-            return {
-              ...server,
-              privateChats: updatedPrivateChats,
-            };
-          }
-          return server;
-        });
+        const pcUsername =
+          server?.privateChats?.find((pc) => pc.id === privateChatId)
+            ?.username || null;
 
         return {
-          servers: updatedServers,
           ui: {
             ...state.ui,
             selectedServerId: serverId,
@@ -3195,24 +3030,11 @@ const useStore = create<AppState>((set, get) => ({
 
     const connectionPromises: Promise<unknown>[] = [];
     for (const savedServer of parents) {
-      const {
-        id,
-        name,
-        host,
-        port,
-        nickname,
-        password,
-        saslEnabled,
-        saslAccountName,
-        saslPassword,
-      } = savedServer;
+      const { id, name, host, port } = savedServer;
 
       const urlHost = ensureUrlFormat(host, port);
 
-      const existingServer = get().servers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port,
-      );
+      const existingServer = get().servers.find((s) => s.id === id);
 
       if (!existingServer) {
         const connectingServer: Server = {
@@ -3235,21 +3057,15 @@ const useStore = create<AppState>((set, get) => ({
         }));
       }
 
-      let connectionPromise: Promise<unknown> = get().connect(
-        name || normalizeHost(urlHost),
-        urlHost,
-        port,
-        nickname,
-        saslEnabled,
-        password,
-        saslAccountName,
-        saslPassword,
+      let connectionPromise: Promise<unknown> = connectSavedServer(
+        get().connect,
+        savedServer,
       );
       connectionPromise = connectionPromise.catch((error) => {
         console.error(`Failed to reconnect to server ${urlHost}`, error);
         set((state) => ({
           servers: state.servers.map((s) =>
-            normalizeHost(s.host) === normalizeHost(urlHost) && s.port === port
+            s.id === id
               ? { ...s, connectionState: "disconnected" as const }
               : s,
           ),
@@ -3286,11 +3102,8 @@ const useStore = create<AppState>((set, get) => ({
     try {
       // Get saved server config to get credentials
       const savedServers = loadSavedServers();
-      const savedServer = savedServers.find(
-        (s) =>
-          normalizeHost(s.host) === normalizeHost(server.host) &&
-          s.port === server.port,
-      );
+      const configId = server.bouncerServerId ?? serverId;
+      const savedServer = savedServers.find((s) => s.id === configId);
 
       if (!savedServer) {
         console.error(`No saved configuration found for server ${serverId}`, {
@@ -3301,19 +3114,16 @@ const useStore = create<AppState>((set, get) => ({
         throw new Error(`No saved configuration found for server ${serverId}`);
       }
 
-      // Ensure host is in URL format (handles old hostname-only entries)
-      const urlHost = ensureUrlFormat(savedServer.host, savedServer.port);
-
-      await get().connect(
-        savedServer.name || normalizeHost(savedServer.host),
-        urlHost, // Use full URL
-        savedServer.port,
-        savedServer.nickname,
-        savedServer.saslEnabled,
-        savedServer.password,
-        savedServer.saslAccountName,
-        savedServer.saslPassword,
-      );
+      if (server.bouncerServerId && server.bouncerNetid) {
+        await connectBouncerChild(
+          serverId,
+          server.bouncerNetid,
+          server.name,
+          savedServer,
+        );
+      } else {
+        await connectSavedServer(get().connect, savedServer);
+      }
     } catch (error) {
       console.error(`Failed to reconnect to server ${serverId}`, error);
       // Update server state back to disconnected
@@ -3674,7 +3484,7 @@ const useStore = create<AppState>((set, get) => ({
       get().selectChannel(channel.id, { navigate: true });
       return channel.id;
     }
-    if (isChannelTarget(target)) return null;
+    if (ircClient.isChannel(serverId, target)) return null;
     const findPrivateChat = () =>
       findServer()?.privateChats?.find(
         (pc) => pc.username.toLowerCase() === lower,
@@ -4462,25 +4272,8 @@ const useStore = create<AppState>((set, get) => ({
       return { servers: [...state.servers, seed] };
     });
 
-    // Queue the BIND so the next CAP END for this new connection
-    // emits `BOUNCER BIND <netid>` first.
-    ircClient.setPendingBouncerBind(childId, netid);
-
-    // The in-memory Server.host is stripped to a bare hostname during
-    // the original parent connect, which loses the protocol + path for
-    // WSS URLs (e.g. wss://obby.t3ks.com:6662/socket -> obby.t3ks.com).
-    // Use the persisted savedParent.host instead so the child landing
-    // on the same listener actually opens /socket, not the bare root.
-    return ircClient.connect(
-      friendly,
-      savedParent.host,
-      savedParent.port,
-      savedParent.nickname,
-      savedParent.password,
-      savedParent.saslAccountName,
-      savedParent.saslPassword,
-      childId,
-    );
+    // We connect with the persisted parent host, since the in-memory one lost its protocol and path.
+    return connectBouncerChild(childId, netid, friendly, savedParent);
   },
 
   sendRaw: (serverId, command) => {

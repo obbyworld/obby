@@ -1,6 +1,5 @@
 // Everything a private message causes besides the row itself: last activity,
-// unread and mention counts, the notification sound, and the browser
-// notification. Encrypted messages are decrypted on a separate path and never
+// the notification sound, and the browser notification. Encrypted messages are decrypted on a separate path and never
 // reach the inbound PRIVMSG handler, so this lives on its own rather than
 // inside either one: an encrypted conversation has to be as noticeable as a
 // plaintext one.
@@ -11,9 +10,12 @@ import {
   playNotificationSound,
   shouldPlayNotificationSound,
 } from "../../lib/notificationSounds";
-import { showMentionNotification } from "../../lib/notifications";
+import {
+  privateMessageNotificationName,
+  showMentionNotification,
+} from "../../lib/notifications";
 import type { Message } from "../../types";
-import { getCurrentSelection } from "../helpers";
+import { getViewedSelection } from "../helpers";
 import type { AppState } from "../index";
 
 export interface PrivateMessageArrival {
@@ -52,18 +54,7 @@ export function notePrivateMessageArrived(
         privateChats:
           s.privateChats?.map((pc) => {
             if (pc.id !== privateChatId) return pc;
-            const isActive =
-              getCurrentSelection(state).selectedPrivateChatId === pc.id;
-            const reset = isActive || isHistorical;
-            return {
-              ...pc,
-              lastActivity: new Date(),
-              unreadCount: reset ? 0 : pc.unreadCount + 1,
-              mentionCount: reset ? 0 : (pc.mentionCount ?? 0) + 1,
-              // A PM is addressed to you by construction, so it counts as a
-              // mention.
-              isMentioned: !isHistorical,
-            };
+            return { ...pc, lastActivity: laterActivity(pc, arrival.message) };
           }) || [],
       };
     }),
@@ -71,7 +62,7 @@ export function notePrivateMessageArrived(
 
   const current = store.getState();
   const isActiveChat =
-    getCurrentSelection(current).selectedPrivateChatId === privateChatId;
+    getViewedSelection(current).selectedPrivateChatId === privateChatId;
   if (
     isActiveChat ||
     isHistorical ||
@@ -80,7 +71,7 @@ export function notePrivateMessageArrived(
     return;
   showMentionNotification(
     serverId,
-    `DM from ${sender}`,
+    privateMessageNotificationName(sender),
     sender,
     body,
     (id, msg) => {
@@ -93,4 +84,16 @@ export function notePrivateMessageArrived(
       });
     },
   );
+}
+
+// A replayed message carries its own server-time and must never move a chat
+// back in the list.
+export function laterActivity(
+  chat: { lastActivity?: Date },
+  message: { timestamp: Date },
+): Date {
+  const at = new Date(message.timestamp);
+  return chat.lastActivity && new Date(chat.lastActivity) >= at
+    ? chat.lastActivity
+    : at;
 }

@@ -1,10 +1,9 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
-import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
 import { readyProcessedServers } from "../../src/store/handlers/connection";
 import * as storage from "../../src/store/localStorage";
-import type { Channel } from "../../src/types";
+import type { Channel, Server } from "../../src/types";
 
 function makeChannel(overrides: Partial<Channel> = {}): Channel {
   return {
@@ -20,27 +19,37 @@ function makeChannel(overrides: Partial<Channel> = {}): Channel {
   };
 }
 
-function setupServer(channelOverrides: Partial<Channel> = {}) {
-  useStore.setState({
-    servers: [
-      {
-        id: "srv-1",
-        name: "TestServer",
-        host: "irc.example.com",
-        port: 6667,
-        channels: [makeChannel(channelOverrides)],
-        privateChats: [],
-        isConnected: true,
-        users: [],
-      },
-    ],
+function makeServer(overrides: Partial<Server> = {}): Server {
+  return {
+    id: "srv-1",
+    name: "TestServer",
+    host: "irc.example.com",
+    port: 6667,
+    channels: [],
+    privateChats: [],
+    isConnected: true,
+    users: [],
+    ...overrides,
+  };
+}
+
+function setServers(servers: Server[]) {
+  for (const server of servers)
+    ircClient.servers.set(server.id, { ...server, channels: [] });
+  useStore.setState((state) => ({
+    servers,
     messages: {},
     activeBatches: {},
     globalSettings: {
+      ...state.globalSettings,
       showEvents: true,
       showJoinsParts: true,
     },
-  } as unknown as AppState);
+  }));
+}
+
+function setupServer(channelOverrides: Partial<Channel> = {}) {
+  setServers([makeServer({ channels: [makeChannel(channelOverrides)] })]);
 }
 
 const AVATAR_META = {
@@ -168,6 +177,11 @@ describe("readyProcessedServers — reconnect guard", () => {
     setupServer();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
   it("clears the server from readyProcessedServers on disconnect", () => {
     readyProcessedServers.add("srv-1");
 
@@ -177,6 +191,72 @@ describe("readyProcessedServers — reconnect guard", () => {
     });
 
     expect(readyProcessedServers.has("srv-1")).toBe(false);
+  });
+
+  it("shows a rejoined channel loading until its newest page arrives", () => {
+    vi.useFakeTimers();
+    vi.spyOn(storage.servers, "load").mockReturnValue([
+      {
+        id: "srv-1",
+        host: "irc.example.com",
+        port: 6667,
+        nickname: "me",
+        channels: [],
+        saslEnabled: false,
+      },
+    ]);
+    setServers([
+      makeServer({
+        channels: [makeChannel()],
+        capabilities: ["draft/chathistory"],
+      }),
+    ]);
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+
+    ircClient.triggerEvent("ready", {
+      serverId: "srv-1",
+      serverName: "TestServer",
+      nickname: "me",
+    });
+    vi.advanceTimersByTime(50);
+
+    expect(sendRaw).toHaveBeenCalledWith(
+      "srv-1",
+      expect.stringMatching(/^CHATHISTORY LATEST #test /),
+    );
+    expect(useStore.getState().servers[0].channels[0].isLoadingHistory).toBe(
+      true,
+    );
+  });
+
+  it("asks a rejoined channel for no history on a server without it", () => {
+    vi.useFakeTimers();
+    vi.spyOn(storage.servers, "load").mockReturnValue([
+      {
+        id: "srv-1",
+        host: "irc.example.com",
+        port: 6667,
+        nickname: "me",
+        channels: [],
+        saslEnabled: false,
+      },
+    ]);
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+
+    ircClient.triggerEvent("ready", {
+      serverId: "srv-1",
+      serverName: "TestServer",
+      nickname: "me",
+    });
+    vi.advanceTimersByTime(50);
+
+    expect(sendRaw).not.toHaveBeenCalledWith(
+      "srv-1",
+      expect.stringMatching(/^CHATHISTORY LATEST/),
+    );
+    expect(useStore.getState().servers[0].channels[0].isLoadingHistory).toBe(
+      undefined,
+    );
   });
 
   it("does not clear on connect (only on disconnect)", () => {
@@ -193,27 +273,7 @@ describe("readyProcessedServers — reconnect guard", () => {
 
 describe("server-initiated own-JOIN — CHATHISTORY/WHO fanout", () => {
   function setupServerWithCaps(caps: string[]) {
-    useStore.setState({
-      servers: [
-        {
-          id: "srv-1",
-          name: "TestServer",
-          host: "irc.example.com",
-          port: 6667,
-          channels: [],
-          privateChats: [],
-          isConnected: true,
-          users: [],
-          capabilities: caps,
-        },
-      ],
-      messages: {},
-      activeBatches: {},
-      globalSettings: {
-        showEvents: true,
-        showJoinsParts: true,
-      },
-    } as unknown as AppState);
+    setServers([makeServer({ capabilities: caps })]);
     ircClient.nicks.set("srv-1", "me");
   }
 

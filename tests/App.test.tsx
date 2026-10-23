@@ -94,6 +94,7 @@ vi.mock("../src/store", () => {
     // useChannelTabSwitching reads getState()/subscribe() directly on mount
     default: Object.assign(useStore, {
       getState,
+      setState: vi.fn(),
       subscribe: vi.fn(() => vi.fn()),
     }),
     loadSavedServers: vi.fn(() => []),

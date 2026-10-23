@@ -7,7 +7,6 @@ import {
 import type { Message } from "../types";
 import { plainText } from "./history/searchFields";
 import ircClient from "./ircClient";
-import { isChannelTarget } from "./ircUtils";
 
 export interface MessageLocation {
   serverId: string;
@@ -71,7 +70,7 @@ async function selectChat(
   if (!useStore.getState().servers.some((s) => s.id === serverId))
     return "not-found";
   if (!hasChat(serverId, target)) {
-    if (isChannelTarget(target)) return "left-channel";
+    if (ircClient.isChannel(serverId, target)) return "left-channel";
     if (!(await hasSavedChat(useStore, serverId, target))) return "not-saved";
   }
   const peer = nick?.toLowerCase() === target.toLowerCase() ? nick : target;

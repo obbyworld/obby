@@ -70,7 +70,9 @@ import {
   isValidFormattingType,
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { toggleNotificationSound } from "../../lib/notificationVolume";
+import { showOwnPrivateMessage } from "../../lib/ownPrivateMessage";
 import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import { maxRecordingBytes } from "../../lib/recordingLimits";
 import {
@@ -137,10 +139,7 @@ import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
-import {
-  type UploadJob,
-  UploadProgressOverlay,
-} from "../ui/UploadProgressOverlay";
+import { type UploadJob, UploadProgressBar } from "../ui/UploadProgressBar";
 import UserContextMenu from "../ui/UserContextMenu";
 import {
   MemoChannelMessageList as ChannelMessageList,
@@ -1150,7 +1149,7 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    channelListRefs.current.get(channelKey)?.setAtBottom();
+    channelListRefs.current.get(channelKey)?.scrollToBottom();
     if (attachments.length > 0) {
       const files = attachments.flatMap((a) =>
         a.kind === "file" ? [a.file] : [],
@@ -1240,7 +1239,9 @@ export const ChatArea: React.FC<{
       info = await fetchUploadInfo(filehostUrl);
       // Serialised because waitForAuthToken resolves on the first matching
       // TOKEN_GENERATE event -- parallel mints would race for the reply.
-      const scope = target.startsWith("#") ? `channel:${target}` : undefined;
+      const scope = ircClient.isChannel(selectedServerId, target)
+        ? `channel:${target}`
+        : undefined;
       for (let i = 0; i < files.length; i++) {
         ircClient.requestToken(selectedServerId, "filehost", scope);
         const tok = await waitForAuthToken(selectedServerId, "filehost");
@@ -1461,19 +1462,13 @@ export const ChatArea: React.FC<{
           `${replyTags}PRIVMSG ${target} :${line}`,
         );
         if (selectedPrivateChat && currentUser) {
-          const outgoing = {
-            id: uuidv4(),
-            content: line,
-            timestamp: new Date(),
-            userId: currentUser.username || currentUser.id,
-            channelId: selectedPrivateChat.id,
-            serverId: selectedServerId,
-            type: "message" as const,
-            reactions: [],
-            replyMessage: replyTo,
-            mentioned: [],
-          };
-          useStore.getState().addMessage(outgoing);
+          showOwnPrivateMessage(
+            selectedServerId,
+            selectedPrivateChat,
+            currentUser,
+            line,
+            replyTo,
+          );
         }
       }
     }
@@ -1557,30 +1552,14 @@ export const ChatArea: React.FC<{
     }
 
     ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${url}`);
-
-    // A channel echoes our own line back, and so does a private message once
-    // the server negotiates echo-message, so we only place a local copy where
-    // nothing is coming back to place it for us.
-    if (
-      selectedPrivateChat &&
-      currentUser &&
-      !ircClient.hasCapability(selectedServerId, "echo-message")
-    ) {
-      const outgoingMessage = {
-        id: uuidv4(),
-        content: url,
-        timestamp: new Date(),
-        userId: currentUser.username || currentUser.id,
-        channelId: selectedPrivateChat.id,
-        serverId: selectedServerId,
-        type: "message" as const,
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-      };
-
-      const { addMessage } = useStore.getState();
-      addMessage(outgoingMessage);
+    if (selectedPrivateChat && currentUser) {
+      showOwnPrivateMessage(
+        selectedServerId,
+        selectedPrivateChat,
+        currentUser,
+        url,
+        null,
+      );
     }
   };
 
@@ -2029,10 +2008,12 @@ export const ChatArea: React.FC<{
   };
 
   const handleRedactMessage = useCallback(
-    (message: MessageType) => {
+    async (message: MessageType) => {
       if (message.msgid && selectedServerId) {
-        const confirmed = window.confirm(
+        const confirmed = await confirmDestructive(
+          t`Delete message`,
           t`Are you sure you want to delete this message? This action cannot be undone.`,
+          t`Delete`,
         );
         if (confirmed) {
           const { servers: currentServers } = useStore.getState();
@@ -2144,6 +2125,7 @@ export const ChatArea: React.FC<{
 
       <TopicMediaStrip />
       <MiniMediaPlayer />
+      <UploadProgressBar jobs={uploadJobs} onCancel={cancelUploadJob} />
       {/* Member list overlay replaces messages when desktop is too narrow for sidebar */}
       {showMemberListOverlay && (
         <div
@@ -2506,12 +2488,6 @@ export const ChatArea: React.FC<{
                   customEmojis={pickerCustomEmojis}
                 />
               )}
-
-              {/* Multi-file upload progress strip, anchored above input */}
-              <UploadProgressOverlay
-                jobs={uploadJobs}
-                onCancel={cancelUploadJob}
-              />
 
               {completion.isOpen && (
                 <CompletionList

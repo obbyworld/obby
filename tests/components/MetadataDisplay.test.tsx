@@ -10,6 +10,8 @@ import { defaultUIExtensions } from "../fixtures/uiState";
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    isChannel: (_serverId: string, name?: string) =>
+      !!name && "#&+!^$".includes(name[0]),
     sendTyping: vi.fn(),
     on: vi.fn(),
     getCurrentUser: vi.fn(() => ({ id: "test-user", username: "tester" })),

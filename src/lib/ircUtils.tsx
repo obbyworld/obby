@@ -17,18 +17,24 @@ import("./hljs").then((m) => {
   hljsModule = m.default;
 });
 
-/** True when `target` is a channel name as opposed to a nick. Mirrors
- * the ircd's CHANTYPES -- standard text (`#`), local text (`&` per
- * RFC 1459/2811), voice (`^`), and stream (`$`) channels. The receive
- * path uses this to choose between the CHANMSG event (channel) and
- * USERMSG event (DM); a hardcoded `startsWith("#")` here was silently
- * routing every PRIVMSG to a $-channel as a DM-from-self, which is
- * why messages on stream channels echoed back to the input but never
- * appeared in the chat. */
-export function isChannelTarget(name: string | undefined | null): boolean {
-  if (!name) return false;
-  const c = name[0];
-  return c === "#" || c === "&" || c === "^" || c === "$";
+// Every channel prefix we know: RFC 1459/2811 (`#&+!`) and ObbyIRCd's voice
+// (`^`) and stream (`$`) channels. We use it where the server's CHANTYPES is
+// unknown; no nick can start with `#&+!`.
+export const KNOWN_CHANTYPES = "#&+!^$";
+
+// A bouncer's control session can advertise an empty CHANTYPES, so we fall
+// back to every prefix we know.
+export function chantypesOf(isupport: Map<string, string> | undefined): string {
+  return isupport?.get("CHANTYPES") || KNOWN_CHANTYPES;
+}
+
+/** True when `name` is a channel as opposed to a nick: it starts with one of
+ * `chantypes`, the server's CHANTYPES when the caller has it. */
+export function isChannelTarget(
+  name: string | undefined | null,
+  chantypes: string = KNOWN_CHANTYPES,
+): boolean {
+  return !!name && chantypes.includes(name[0]);
 }
 
 /** Split an IRCv3 named-modes mode name into its vendor prefix and a

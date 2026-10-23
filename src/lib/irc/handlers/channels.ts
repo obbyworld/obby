@@ -28,13 +28,14 @@ export function handleTopic(
   serverId: string,
   source: string,
   parv: string[],
-  _mtags: Record<string, string> | undefined,
+  mtags: Record<string, string> | undefined,
 ): void {
   const channelName = parv[0];
   const topic = parv.slice(1).join(" ");
   const sender = getNickFromNuh(source);
   ctx.triggerEvent("TOPIC", {
     serverId,
+    mtags,
     channelName,
     topic,
     sender,

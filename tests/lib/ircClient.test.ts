@@ -295,7 +295,7 @@ describe("IRCClient", () => {
 
       expect(receivedMode).toEqual({
         serverId: server.id,
-        mtags: undefined,
+        mtags: { time: expect.any(String) },
         sender: "ircuser",
         target: "#testchannel",
         modestring: "+o",
@@ -335,7 +335,7 @@ describe("IRCClient", () => {
 
       expect(receivedMode).toEqual({
         serverId: server.id,
-        mtags: undefined,
+        mtags: { time: expect.any(String) },
         sender: "ircuser",
         target: "#testchannel",
         modestring: "+ov-v",
@@ -373,7 +373,7 @@ describe("IRCClient", () => {
 
       expect(receivedMode).toEqual({
         serverId: server.id,
-        mtags: undefined,
+        mtags: { time: expect.any(String) },
         sender: "testuser",
         target: "testuser",
         modestring: "+i",

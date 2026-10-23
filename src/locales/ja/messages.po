@@ -113,11 +113,6 @@ msgstr "{0} は整数である必要があります。"
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} 件のネットワーク{1} — 参加するものを1つ選んでください"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} 件の古いメッセージ"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0}人が視聴中"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} 人が配信中 · {1} 人が視聴中"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {1 件のファイルをアップロード中} other {# 件のファイルをアップロード中}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ 件の結果"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} 内の {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 件のアップロードに失敗しました} other {# 件のアップロードに失敗しました}}"
 
@@ -687,6 +682,10 @@ msgstr "は現在 **{newNick}** として知られています"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "このメッセージを削除してもよいですか？この操作は元に戻せません。"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "このリストを変更するにはチャンネルオペレーターに依頼してください。"
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "パックを管理するには、サーバー管理者にバックエンド URL（draft/authtoken または obby.world/FILEHOST）を公開してもらってください。"
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "アバタープレビュー"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "離席中"
 
@@ -1000,7 +1003,6 @@ msgstr "最後の 2FA 認証情報は削除できません"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "最後の 2FA 認証情報は削除できません"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -1026,7 +1029,8 @@ msgstr "暗号化をキャンセル"
 msgid "Cancel reply"
 msgstr "返信をキャンセル"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "アップロードをキャンセル"
 
@@ -1356,6 +1360,7 @@ msgstr "コードを確認しました。"
 msgid "Code Snippets"
 msgstr "コードスニペット"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "デフォルトニックネーム"
 msgid "Delay joins (+D)"
 msgstr "入室を遅延 (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "削除"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "ボットを削除"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "フォルダを削除"
 msgid "Delete its saved chat history too"
 msgstr "保存されたチャット履歴も削除する"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "メッセージを削除"
 
@@ -1783,6 +1798,7 @@ msgstr "メッセージを削除"
 msgid "Delete network"
 msgstr "ネットワークを削除"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "パックを削除"
@@ -1943,7 +1959,7 @@ msgstr "このリンクを新しいタブで開きますか？"
 msgid "Don't warn me about low link security for this server"
 msgstr "このサーバーのリンクセキュリティが低い場合に警告しない"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "完了"
 
@@ -2085,7 +2101,7 @@ msgstr "暗号化 (OTR)"
 msgid "Encrypt this chat"
 msgstr "このチャットを暗号化"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "暗号化済み"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "スペース、絵文字、記号を含む名前を入力してください。IRC コマンドでは実際の名前（{channelName}）が使われます。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "URL を入力してください。サイズを動的に指定するには URL に {size} を使います。例: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "URL を入力してください。サイズを動的に指定するには URL に {sizeToken} を使います。例: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "アカウント名を入力..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "チャンネルに参加する前に SASL PLAIN でログインするアカウント名を入力してください。匿名で接続する場合は空欄のままにします。"
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "チャンネルに参加する前に SASL PLAIN でログインするアカウント名を入力してください。空欄にするとニックネームを使います。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "全画面表示を終了"
 msgid "Exit spotlight"
 msgstr "スポットライトを終了"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "拡張プロフィールは利用できません"
 msgid "External Link Warning"
 msgstr "外部リンクの警告"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失敗"
@@ -2454,6 +2471,14 @@ msgstr "降参"
 msgid "Forget credentials"
 msgstr "認証情報を削除"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "パスワードを削除"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "保存された SASL とサーバーのパスワードを削除して、接続時に送信しないようにします。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "パスワードを忘れた場合"
@@ -2505,10 +2530,6 @@ msgstr "一般サポートチャンネル"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "フォロー中の言葉が発言されたら通知を受け取りましょう。"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "メッセージを取得中..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "参加して退出しました"
 msgid "Joined the channel"
 msgstr "チャンネルに参加しました"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "最新に移動"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "チャット履歴をこのデバイスに保存する"
@@ -2851,6 +2868,10 @@ msgstr "チャット履歴をこのデバイスに保存する"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "認証情報を保持"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "パスワードを保持"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "ライブ"
 msgid "Live Translate"
 msgstr "ライブ翻訳"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "このデバイスに保存された過去のメッセージを読み込む"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "さらに結果を読み込む"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "古いメッセージを読み込む"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "{0} のネットワーク"
 msgid "new folder"
 msgstr "新しいフォルダ"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "新着メッセージ"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "新しいニックネーム"
@@ -3476,6 +3493,10 @@ msgstr "このサーバーには拡張モードがありません。"
 msgid "No bans yet, add one above"
 msgstr "BAN はまだありません。上から追加してください"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "BANはまだありません。追加するにはチャンネルオペレーターに依頼してください"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "一致するボットはありません。検索をクリアするかフィルターを変更してください。"
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "例外はまだありません。上から追加してください"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "例外はまだありません。追加するにはチャンネルオペレーターに依頼してください"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "外部からのメッセージを禁止 (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "ホスト未設定"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "招待はまだありません。上から追加してください"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "招待はまだありません。追加するにはチャンネルオペレーターに依頼してください"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "通常 — 標準的な保護"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "暗号化されていません"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "次のいずれか:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "オンライン"
 
@@ -4779,11 +4812,11 @@ msgstr "送信中"
 msgid "Sending…"
 msgstr "送信中…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "OTR はテキストのみを暗号化するため、暗号化なしで送信しました"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "ファイルが大きすぎて暗号化できないため、暗号化なしで送信しました"
 
@@ -5187,6 +5220,10 @@ msgstr "配信を停止"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "ビデオを停止"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "保存されたパスワード"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5602,8 +5639,8 @@ msgid "Unsuspend"
 msgstr "停止を解除"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "画像をアップロードするか URL を入力してください。サイズを動的に指定するには URL に {size} を使います。"
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "画像をアップロードするか URL を入力してください。サイズを動的に指定するには URL に {sizeToken} を使います。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5617,7 +5654,7 @@ msgstr "アップロードをキャンセルしました。"
 msgid "Upload Files"
 msgstr "ファイルをアップロード"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "アップロード済み"
 

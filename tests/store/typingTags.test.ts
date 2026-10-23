@@ -55,6 +55,18 @@ describe("typing tags", () => {
   });
 
   it("ignores a typing tag replayed inside a history batch", () => {
+    useStore.setState({
+      activeBatches: {
+        "srv-1": {
+          "history-1": {
+            type: "chathistory",
+            parameters: ["#general"],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    });
     typing({ "+typing": "active", batch: "history-1" });
     expect(useStore.getState().typingUsers[TYPING_KEY] ?? []).toEqual([]);
   });

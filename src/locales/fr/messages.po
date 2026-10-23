@@ -113,11 +113,6 @@ msgstr "{0} doit être un nombre entier."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} réseau{1} — choisissez-en un à rejoindre"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} anciens messages"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} regardent"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} en direct · {1} spectateurs"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Envoi d'1 fichier} other {Envoi de # fichiers}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ résultats"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} dans {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 envoi a échoué} other {# envois ont échoué}}"
 
@@ -687,6 +682,10 @@ msgstr "est maintenant connu sous le nom de **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Êtes-vous sûr de vouloir supprimer ce message ? Cette action est irréversible."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Demandez à un opérateur du salon de modifier cette liste."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Demandez à l'administrateur du serveur de publier une URL backend (draft/authtoken ou obby.world/FILEHOST) pour gérer les paquets."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "Aperçu de l'avatar"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Absent"
 
@@ -1000,7 +1003,6 @@ msgstr "Impossible de supprimer votre dernier identifiant 2FA"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "Impossible de supprimer votre dernier identifiant 2FA"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -1026,7 +1029,8 @@ msgstr "Annuler le chiffrement"
 msgid "Cancel reply"
 msgstr "Annuler la réponse"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Annuler l'envoi"
 
@@ -1356,6 +1360,7 @@ msgstr "Code accepté."
 msgid "Code Snippets"
 msgstr "Extraits de code"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "Pseudo par défaut"
 msgid "Delay joins (+D)"
 msgstr "Retarder les arrivées (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Supprimer"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Supprimer le bot"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "Supprimer le dossier"
 msgid "Delete its saved chat history too"
 msgstr "Supprimer aussi son historique de conversation enregistré"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Supprimer le message"
 
@@ -1783,6 +1798,7 @@ msgstr "Supprimer le message"
 msgid "Delete network"
 msgstr "Supprimer le réseau"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Supprimer le pack"
@@ -1943,7 +1959,7 @@ msgstr "Voulez-vous ouvrir ce lien dans un nouvel onglet ?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Ne plus m'avertir de la faible sécurité des liens pour ce serveur"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "terminé"
 
@@ -2085,7 +2101,7 @@ msgstr "Chiffrer (OTR)"
 msgid "Encrypt this chat"
 msgstr "Chiffrer cette conversation"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Chiffré"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Saisissez un nom avec des espaces, des emojis ou des symboles. Les commandes IRC utilisent toujours le nom réel ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Saisissez une URL. Utilisez {size} dans l'URL pour un dimensionnement dynamique. Exemple : https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Saisissez une URL. Utilisez {sizeToken} dans l'URL pour un dimensionnement dynamique. Exemple : https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Entrez le nom du compte..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Saisissez un nom de compte pour vous connecter avec SASL PLAIN avant de rejoindre les canaux. Laissez vide pour vous connecter anonymement."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Saisissez un nom de compte pour vous connecter avec SASL PLAIN avant de rejoindre les salons. Laissez vide pour utiliser votre pseudo."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "Quitter le plein écran"
 msgid "Exit spotlight"
 msgstr "Quitter le mode vedette"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "Profil étendu indisponible"
 msgid "External Link Warning"
 msgstr "Avertissement de lien externe"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "échoué"
@@ -2454,6 +2471,14 @@ msgstr "Abandonner"
 msgid "Forget credentials"
 msgstr "Oublier les identifiants"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Oublier les mots de passe"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Oubliez les mots de passe SASL et serveur enregistrés pour ne plus les envoyer à la connexion."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Mot de passe oublié"
@@ -2505,10 +2530,6 @@ msgstr "Canal d'assistance générale"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Soyez averti quand quelqu’un dit les mots que vous suivez."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Chargement des messages..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "a rejoint et quitté"
 msgid "Joined the channel"
 msgstr "A rejoint le canal"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Revenir au présent"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Conserver l'historique des conversations sur cet appareil"
@@ -2851,6 +2868,10 @@ msgstr "Conserver l'historique des conversations sur cet appareil"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Conserver les identifiants"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Conserver les mots de passe"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "En direct"
 msgid "Live Translate"
 msgstr "Traduction en direct"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Charger les messages précédents enregistrés sur cet appareil"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Charger plus de résultats"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Charger les anciens messages"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "Réseaux sur {0}"
 msgid "new folder"
 msgstr "nouveau dossier"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Nouveaux messages"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Nouveau pseudo"
@@ -3476,6 +3493,10 @@ msgstr "Aucun mode avancé sur ce serveur."
 msgid "No bans yet, add one above"
 msgstr "Aucun bannissement pour le moment, ajoutez-en un ci-dessus"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Aucun bannissement pour l'instant, demandez à un opérateur du salon d'en ajouter un"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Aucun bot ne correspond. Effacez la recherche ou modifiez le filtre."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Aucune exception pour le moment, ajoutez-en une ci-dessus"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Aucune exception pour l'instant, demandez à un opérateur du salon d'en ajouter une"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Aucun message extérieur (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "aucun hôte défini"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Aucune invitation pour le moment, ajoutez-en une ci-dessus"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Aucune invitation pour l'instant, demandez à un opérateur du salon d'en ajouter une"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – Protection standard"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Non chiffré"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "l'un de :"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "En ligne"
 
@@ -4779,11 +4812,11 @@ msgstr "Envoi en cours"
 msgid "Sending…"
 msgstr "Envoi…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Envoyé non chiffré car OTR chiffre uniquement le texte"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Envoyé non chiffré car le fichier est trop volumineux pour être chiffré"
 
@@ -5187,6 +5220,10 @@ msgstr "Arrêter la diffusion"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Arrêter la vidéo"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Mots de passe enregistrés"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5602,8 +5639,8 @@ msgid "Unsuspend"
 msgstr "Réactiver"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Importez une image ou saisissez une URL. Utilisez {size} dans l'URL pour un dimensionnement dynamique."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Importez une image ou saisissez une URL. Utilisez {sizeToken} dans l'URL pour un dimensionnement dynamique."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5617,7 +5654,7 @@ msgstr "Envoi annulé."
 msgid "Upload Files"
 msgstr "Télécharger des fichiers"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Envoyé"
 

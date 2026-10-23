@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
 import useStore, { loadSavedServers } from "../../store";
+import { normalizeHost } from "../../store/helpers";
 import type { Server, ServerConfig, ServerOAuthConfig } from "../../types";
 import ChangePasswordModal from "../ui/ChangePasswordModal";
 import { OAuthSection } from "../ui/OAuthSection";
@@ -32,6 +33,7 @@ interface Draft {
   operPassword: string;
   operOnConnect: boolean;
   forgetOperCredentials: boolean;
+  forgetPasswords: boolean;
   oauth: ServerOAuthConfig | undefined;
 }
 
@@ -50,6 +52,7 @@ const savedDraft = (
   operPassword: "",
   operOnConnect: serverConfig?.operOnConnect || false,
   forgetOperCredentials: false,
+  forgetPasswords: false,
   oauth: serverConfig?.oauth,
 });
 
@@ -111,19 +114,29 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
       return;
     }
 
+    // We drop stored passwords when the host moves to another network, so we never send them to a server they were not saved for.
+    const isNewNetwork =
+      !!serverConfig &&
+      normalizeHost(draft.host.trim()).toLowerCase() !==
+        normalizeHost(serverConfig.host).toLowerCase();
+    const isForgettingPasswords = draft.forgetPasswords || isNewNetwork;
+
     try {
       const updatedConfig: Partial<ServerConfig> = {
         name: finalServerName,
         host: draft.host.trim(),
         port: Number.parseInt(draft.port, 10),
         nickname: draft.nickname.trim(),
-        password: draft.password.trim() || undefined,
+        ...(isForgettingPasswords
+          ? { password: undefined, saslPassword: undefined, saslEnabled: false }
+          : {}),
+        // We leave the password out while its field is blank, so we keep the stored one.
+        ...(draft.password.trim() ? { password: draft.password.trim() } : {}),
         saslAccountName: finalSaslAccountName || undefined,
         // The stored format expects SASL passwords base64-encoded, so we encode them here.
-        saslPassword: draft.saslPassword.trim()
-          ? btoa(draft.saslPassword.trim())
-          : undefined,
-        saslEnabled: !!draft.saslPassword.trim(),
+        ...(draft.saslPassword.trim()
+          ? { saslPassword: btoa(draft.saslPassword.trim()), saslEnabled: true }
+          : {}),
         ...(draft.forgetOperCredentials
           ? { operUsername: undefined, operPassword: undefined }
           : draft.operName.trim()
@@ -145,6 +158,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         operPassword: "",
         operName: draft.forgetOperCredentials ? "" : draft.operName,
         forgetOperCredentials: false,
+        forgetPasswords: false,
       };
       setDraft(saved);
       setBaseline(saved);
@@ -162,7 +176,12 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: only these fields save without a blur
   useEffect(() => {
     if (isDirtyRef.current) saveRef.current();
-  }, [draft.operOnConnect, draft.oauth, draft.forgetOperCredentials]);
+  }, [
+    draft.operOnConnect,
+    draft.oauth,
+    draft.forgetOperCredentials,
+    draft.forgetPasswords,
+  ]);
   useEffect(
     () => () => {
       if (isDirtyRef.current) saveRef.current();
@@ -247,7 +266,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         <SettingRow
           id="server.saslAccountName"
           title={t`Account name`}
-          description={t`Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously.`}
+          description={t`Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname.`}
           field={
             <TextInput
               value={draft.saslAccountName}
@@ -295,6 +314,22 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
             />
           }
         />
+        {(serverConfig?.password || serverConfig?.saslPassword) && (
+          <SettingRow
+            title={t`Stored passwords`}
+            description={t`Forget the stored SASL and server passwords to stop sending them on connect.`}
+            control={
+              <Button
+                variant={draft.forgetPasswords ? "danger" : "secondary"}
+                onClick={() => set("forgetPasswords", !draft.forgetPasswords)}
+              >
+                {draft.forgetPasswords
+                  ? t`Keep passwords`
+                  : t`Forget passwords`}
+              </Button>
+            }
+          />
+        )}
       </SettingGroup>
 
       {server?.capabilities?.includes("draft/account-recovery") && (

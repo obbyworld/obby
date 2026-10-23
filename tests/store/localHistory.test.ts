@@ -117,6 +117,7 @@ async function boot(caps: string[]) {
           serverId: id,
           unreadCount: 0,
           isMentioned: false,
+          readMarker: new Date(BASE).toISOString(),
           messages: [],
           users: [user("alice"), user("bob"), user(OWN_NICK)],
         },
@@ -333,6 +334,7 @@ describe("local history with a chathistory server", () => {
             unreadCount: 0,
             mentionCount: 0,
             isMentioned: false,
+            readMarker: at(5),
           })),
         })),
       }));
@@ -455,6 +457,25 @@ describe("local history with a chathistory server", () => {
       await w.drain();
 
       expect(w.channelMessages()).toEqual([]);
+    });
+
+    it("saves an older channel page to disk and shows it from there", async () => {
+      expect(await w.loadOlderFor(SERVER, BASE + 100_000)).toBe(true);
+      expect(w.chathistoryRequests()).toEqual([
+        `CHATHISTORY BEFORE #chan timestamp=${at(100)} 50`,
+      ]);
+
+      w.feed(...inBatch("old1", "#chan", page(3, 10, "o")));
+
+      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(3));
+      await vi.waitFor(() =>
+        expect(w.channelMessages().map((m) => m.msgid)).toEqual([
+          "o0",
+          "o1",
+          "o2",
+        ]),
+      );
+      expect(w.channel()?.isLoadingHistory).toBe(false);
     });
   });
 
@@ -1103,6 +1124,30 @@ describe("removing a server", () => {
       expect(await w.stored()).toHaveLength(3);
       await w.loadOlderFor("srv2");
       expect(replayedContents("srv2")).toEqual([]);
+    });
+
+    it("keeps the history of another account on the same network apart", async () => {
+      const configs = [
+        { id: SERVER, host: "irc.test", port: 6667, nickname: "alice" },
+        { id: "srv2", host: "irc.test", port: 6667, nickname: "bob" },
+        { id: "srv3", host: "irc.test", port: 6667, nickname: "Alice" },
+      ];
+      vi.mocked(window.localStorage.getItem).mockImplementation((key) =>
+        key === "savedServers" ? JSON.stringify(configs) : null,
+      );
+      await removeKeepingHistory();
+
+      w.addServer("srv2", "irc.test");
+      connect("srv2");
+      await w.drain();
+      expect(await w.db.hasServerHistory("srv2")).toBe(false);
+
+      w.addServer("srv3", "irc.test");
+      connect("srv3");
+      await vi.waitFor(async () =>
+        expect(await w.db.hasServerHistory("srv3")).toBe(true),
+      );
+      vi.mocked(window.localStorage.getItem).mockReset();
     });
 
     it("leaves nothing to adopt after we delete the history", async () => {

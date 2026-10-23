@@ -113,11 +113,6 @@ msgstr "{0} 必須是整數。"
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} 個網路{1} — 選擇一個加入"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} 則較早的訊息"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} 人正在觀看"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} 人正在直播 · {1} 人觀看中"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, other {正在上傳 # 個檔案}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ 筆結果"
 msgid "{countLabel} in {scopeName}"
 msgstr "{scopeName} 中的 {countLabel}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, other {# 個上傳失敗}}"
 
@@ -687,6 +682,10 @@ msgstr "現在稱為 **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "您確定要刪除此訊息嗎？此操作無法復原。"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "請讓頻道管理員修改此清單。"
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "請伺服器管理員公告後端 URL（draft/authtoken 或 obby.world/FILEHOST），以便管理表情包。"
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "头像预览"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "离开"
 
@@ -1000,7 +1003,6 @@ msgstr "無法移除你的最後一個 2FA 憑證"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "無法移除你的最後一個 2FA 憑證"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "取消"
 
@@ -1026,7 +1029,8 @@ msgstr "取消加密"
 msgid "Cancel reply"
 msgstr "取消回复"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "取消上傳"
 
@@ -1356,6 +1360,7 @@ msgstr "代碼已接受。"
 msgid "Code Snippets"
 msgstr "程式碼片段"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "預設暱稱"
 msgid "Delay joins (+D)"
 msgstr "延遲加入 (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "删除"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "刪除機器人"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "刪除資料夾"
 msgid "Delete its saved chat history too"
 msgstr "同時刪除其已儲存的聊天歷史"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "删除消息"
 
@@ -1783,6 +1798,7 @@ msgstr "删除消息"
 msgid "Delete network"
 msgstr "刪除網路"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "刪除表情包"
@@ -1943,7 +1959,7 @@ msgstr "是否在新标签页中打开此链接？"
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "完成"
 
@@ -2085,7 +2101,7 @@ msgstr "加密 (OTR)"
 msgid "Encrypt this chat"
 msgstr "加密此聊天"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "已加密"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "可包含空格、表情符號或符號。IRC 指令仍使用真實名稱（{channelName}）。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "輸入 URL。在 URL 中使用 {size} 可動態調整大小。範例：https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "輸入 URL。在 URL 中使用 {sizeToken} 可動態調整大小。範例：https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "輸入帳戶名稱..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "輸入帳號名稱，以便在加入頻道前透過 SASL PLAIN 登入。留空則匿名連線。"
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "輸入帳號名稱，以便在加入頻道前透過 SASL PLAIN 登入。留空則使用你的暱稱。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "結束全螢幕"
 msgid "Exit spotlight"
 msgstr "結束聚焦"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "擴充個人資料無法使用"
 msgid "External Link Warning"
 msgstr "外部链接警告"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "失敗"
@@ -2454,6 +2471,14 @@ msgstr "認輸"
 msgid "Forget credentials"
 msgstr "忘記憑證"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "忘記密碼"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "忘記已儲存的 SASL 和伺服器密碼，連線時不再傳送它們。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "忘記密碼"
@@ -2505,10 +2530,6 @@ msgstr "通用支持频道"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "有人說出你關注的詞時收到通知。"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "正在載入更多訊息..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "已加入並退出"
 msgid "Joined the channel"
 msgstr "已加入频道"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "跳至最新"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "在此裝置上保留聊天歷史"
@@ -2851,6 +2868,10 @@ msgstr "在此裝置上保留聊天歷史"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "保留憑證"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "保留密碼"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "直播中"
 msgid "Live Translate"
 msgstr "即時翻譯"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "載入儲存在此裝置上的更早訊息"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "載入更多結果"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "載入較早的訊息"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "{0} 上的網路"
 msgid "new folder"
 msgstr "新資料夾"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "新訊息"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "新暱稱"
@@ -3476,6 +3493,10 @@ msgstr "此伺服器沒有進階模式。"
 msgid "No bans yet, add one above"
 msgstr "尚無封鎖，請於上方新增"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "還沒有封鎖，請讓頻道管理員新增"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "沒有符合的機器人。請清除搜尋或變更篩選條件。"
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "尚無例外，請於上方新增"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "還沒有例外，請讓頻道管理員新增"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "禁止外部訊息 (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "未設定主機"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "尚無邀請，請於上方新增"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "還沒有邀請，請讓頻道管理員新增"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "普通 – 標準保護"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "未加密"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "其中之一："
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "在线"
 
@@ -4779,11 +4812,11 @@ msgstr "傳送中"
 msgid "Sending…"
 msgstr "正在寄送…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "未加密傳送，因為 OTR 只加密文字"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "未加密傳送，因為檔案太大無法加密"
 
@@ -5187,6 +5220,10 @@ msgstr "停止直播"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "關閉視訊"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "已儲存的密碼"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5602,8 +5639,8 @@ msgid "Unsuspend"
 msgstr "取消停用"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "上傳圖片或輸入 URL。在 URL 中使用 {size} 可動態調整大小。"
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "上傳圖片或輸入 URL。在 URL 中使用 {sizeToken} 可動態調整大小。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5617,7 +5654,7 @@ msgstr "上傳已取消。"
 msgid "Upload Files"
 msgstr "上傳檔案"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "已上傳"
 

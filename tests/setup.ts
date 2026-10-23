@@ -22,6 +22,9 @@ window.matchMedia = ((query: string) => ({
   removeEventListener: vi.fn(),
 })) as unknown as (query: string) => MediaQueryList;
 
+// jsdom never focuses its window, and tests play a user at the screen.
+document.hasFocus = () => true;
+
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
   disconnect() {}

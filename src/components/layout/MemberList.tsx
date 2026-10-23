@@ -169,6 +169,9 @@ const UserItem: React.FC<{
         </div>
         {/* Status indicator overlay */}
         <span
+          role="img"
+          aria-label={user.isAway ? t`Away` : t`Online`}
+          title={user.isAway ? t`Away` : t`Online`}
           className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-discord-dark-200 ${
             user.isAway ? "bg-yellow-500" : "bg-green-500"
           }`}

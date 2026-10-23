@@ -25,8 +25,10 @@ import { useKeyboardResize } from "./hooks/useKeyboardResize";
 import { whenHistoryIdle } from "./lib/history/historyDb";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
+import { isChannelTarget } from "./lib/ircUtils";
 import { isTauri } from "./lib/platformUtils";
 import useStore, { type AppState, loadSavedServers } from "./store";
+import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
 
 const askPermissions = async () => {
@@ -58,13 +60,8 @@ if (typeof window !== "undefined") {
       const trimmed = raw.trim();
       if (trimmed) {
         // Accept both encoded ("%23weather") and unencoded ("#weather")
-        // forms.  Default to a `#` prefix when the caller passed a
-        // bare channel name; sigils &, ^, $ are preserved verbatim.
-        const first = trimmed.charAt(0);
-        pendingJoinChannel =
-          first === "#" || first === "&" || first === "^" || first === "$"
-            ? trimmed
-            : `#${trimmed}`;
+        // forms, and give a bare channel name a `#` prefix.
+        pendingJoinChannel = isChannelTarget(trimmed) ? trimmed : `#${trimmed}`;
       }
       // Strip the param so refreshes don't re-trigger.  Preserve any
       // other query params the host page may use.
@@ -366,20 +363,52 @@ const App: React.FC = () => {
 
   // Suppress :hover popups on blur; reclaim focus from iframes immediately.
   useEffect(() => {
+    const setAppFocused = (isAppFocused: boolean) =>
+      useStore.setState((state) =>
+        state.ui.isAppFocused === isAppFocused
+          ? {}
+          : { ui: { ...state.ui, isAppFocused } },
+      );
+    const noteAppInFront = () => setAppFocused(isAppInFront());
+    // Focus returning from an embedded player, or to the macOS webview, can
+    // come without a focus event, so we take a click or a key press as the app in front.
+    const noteInput = () =>
+      setAppFocused(document.visibilityState === "visible");
     const onBlur = () => {
+      noteAppInFront();
       document.documentElement.classList.add("window-blurred");
       // Cross-origin iframes swallow all keystrokes — blur immediately so the parent document regains them.
       if (document.activeElement?.tagName === "IFRAME") {
         (document.activeElement as HTMLElement).blur();
+        setTimeout(noteAppInFront, 0);
       }
     };
-    const onFocus = () =>
+    const onFocus = () => {
+      noteAppInFront();
       document.documentElement.classList.remove("window-blurred");
+    };
     window.addEventListener("blur", onBlur);
     window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", noteAppInFront);
+    document.addEventListener("pointerdown", noteInput, true);
+    document.addEventListener("keydown", noteInput, true);
+    const unlisteners: (() => void)[] = [];
+    if (isTauri())
+      import("@tauri-apps/api/event").then(({ listen }) => {
+        listen("tauri://focus", () => setAppFocused(true)).then((off) =>
+          unlisteners.push(off),
+        );
+        listen("tauri://blur", () => setAppFocused(false)).then((off) =>
+          unlisteners.push(off),
+        );
+      });
     return () => {
       window.removeEventListener("blur", onBlur);
       window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", noteAppInFront);
+      document.removeEventListener("pointerdown", noteInput, true);
+      document.removeEventListener("keydown", noteInput, true);
+      for (const off of unlisteners) off();
     };
   }, []);
 

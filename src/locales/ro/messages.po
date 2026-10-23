@@ -113,11 +113,6 @@ msgstr "{0} trebuie să fie un număr întreg."
 msgid "{0} network{1} — pick one to join"
 msgstr "{0} rețea{1} — alege una pentru a te conecta"
 
-#. placeholder {0}: channelMessages.length - displayedMessages.length
-#: src/components/layout/ChannelMessageList.tsx
-msgid "{0} older messages"
-msgstr "{0} mesaje mai vechi"
-
 #. placeholder {0}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
 msgid "{0} watching"
@@ -129,7 +124,7 @@ msgstr "{0} urmăresc"
 msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
 msgstr "{0}/{STREAM_MAX_STREAMERS} transmit · {1} urmăresc"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
 msgstr "{activeCount, plural, one {Se încarcă 1 fișier} other {Se încarcă # fișiere}}"
 
@@ -149,7 +144,7 @@ msgstr "{count}+ rezultate"
 msgid "{countLabel} in {scopeName}"
 msgstr "{countLabel} în {scopeName}"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
 msgstr "{failedCount, plural, one {1 încărcare a eșuat} other {# încărcări au eșuat}}"
 
@@ -687,6 +682,10 @@ msgstr "acum este cunoscut ca **{newNick}**"
 msgid "Are you sure you want to delete this message? This action cannot be undone."
 msgstr "Sigur doriți să ștergeți acest mesaj? Această acțiune nu poate fi anulată."
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Ask a channel operator to change this list."
+msgstr "Cere unui operator al canalului să modifice această listă."
+
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Ask the server admin to advertise a backend URL (draft/authtoken or obby.world/FILEHOST) to manage packs."
 msgstr "Cereți administratorului serverului să anunțe un URL de backend (draft/authtoken sau obby.world/FILEHOST) pentru a gestiona pachetele."
@@ -782,9 +781,13 @@ msgid "Avatar preview"
 msgstr "Previzualizare avatar"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Away"
 msgstr "Absent"
 
@@ -1000,7 +1003,6 @@ msgstr "Nu poți elimina ultima credențială 2FA"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/E2EERequestBanner.tsx
-#: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/LocationShareModal.tsx
@@ -1011,6 +1013,7 @@ msgstr "Nu poți elimina ultima credențială 2FA"
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
+#: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -1026,7 +1029,8 @@ msgstr "Anulează criptarea"
 msgid "Cancel reply"
 msgstr "Anulează răspunsul"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Cancel upload"
 msgstr "Anulează încărcarea"
 
@@ -1356,6 +1360,7 @@ msgstr "Cod acceptat."
 msgid "Code Snippets"
 msgstr "Fragmente de cod"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1752,11 +1757,19 @@ msgstr "Pseudonim implicit"
 msgid "Delay joins (+D)"
 msgstr "Întârzie alăturările (+D)"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
+#: src/components/pages/BotsPage.tsx
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Șterge"
+
+#: src/components/pages/BotsPage.tsx
+msgid "Delete bot"
+msgstr "Șterge botul"
 
 #. placeholder {0}: bot.nick
 #: src/components/pages/BotsPage.tsx
@@ -1775,7 +1788,9 @@ msgstr "Șterge folderul"
 msgid "Delete its saved chat history too"
 msgstr "Șterge și istoricul de conversații salvat"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/message/MessageActions.tsx
+#: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete message"
 msgstr "Șterge mesaj"
 
@@ -1783,6 +1798,7 @@ msgstr "Șterge mesaj"
 msgid "Delete network"
 msgstr "Șterge rețeaua"
 
+#: src/components/pages/EmojiPacksPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Delete pack"
 msgstr "Șterge pachetul"
@@ -1943,7 +1959,7 @@ msgstr "Dorești să deschizi acest link într-o filă nouă?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Nu mă avertiza despre securitatea scăzută a legăturilor pentru acest server"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "done"
 msgstr "gata"
 
@@ -2085,7 +2101,7 @@ msgstr "Criptează (OTR)"
 msgid "Encrypt this chat"
 msgstr "Criptează această conversație"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Encrypted"
 msgstr "Criptat"
 
@@ -2173,16 +2189,16 @@ msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use t
 msgstr "Introduceți un nume cu spații, emoji sau simboluri. Comenzile IRC folosesc în continuare numele real ({channelName})."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Enter a URL. Use {size} in the URL for dynamic sizing. Example: https://example.com/avatar/{size}/channel.jpg"
-msgstr "Introduceți un URL. Folosiți {size} în URL pentru dimensionare dinamică. Exemplu: https://example.com/avatar/{size}/channel.jpg"
+msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "Introduceți un URL. Folosiți {sizeToken} în URL pentru dimensionare dinamică. Exemplu: https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Introduceți numele contului..."
 
 #: src/components/pages/ServerSettingsPage.tsx
-msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to connect anonymously."
-msgstr "Introduceți un nume de cont pentru autentificare cu SASL PLAIN înainte de a intra în canale. Lăsați gol pentru conectare anonimă."
+msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
+msgstr "Introdu un nume de cont pentru a te autentifica cu SASL PLAIN înainte de a intra pe canale. Lasă gol pentru a folosi porecla ta."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2310,6 +2326,7 @@ msgstr "Ieși din ecran complet"
 msgid "Exit spotlight"
 msgstr "Ieși din evidențiere"
 
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Expand"
@@ -2343,7 +2360,7 @@ msgstr "Profilul extins nu este disponibil"
 msgid "External Link Warning"
 msgstr "Avertisment link extern"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "eșuat"
@@ -2454,6 +2471,14 @@ msgstr "Renunță"
 msgid "Forget credentials"
 msgstr "Uitați credențialele"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget passwords"
+msgstr "Uită parolele"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Forget the stored SASL and server passwords to stop sending them on connect."
+msgstr "Uită parolele SASL și de server salvate ca să nu mai fie trimise la conectare."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Forgot password"
 msgstr "Am uitat parola"
@@ -2505,10 +2530,6 @@ msgstr "Canal general de suport"
 #: src/components/ui/PluginsScreen.tsx
 msgid "Get notified when someone says the words you follow."
 msgstr "Primește notificări când cineva spune cuvintele urmărite."
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Getting more messages..."
-msgstr "Se încarcă mai multe mesaje..."
 
 #: src/components/message/MediaPreview.tsx
 msgid "GIF"
@@ -2612,8 +2633,8 @@ msgid "https://example.com/avatar.png"
 msgstr "https://example.com/avatar.png"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "https://example.com/avatar/{size}/channel.jpg"
-msgstr "https://example.com/avatar/{size}/channel.jpg"
+msgid "https://example.com/avatar/{sizeToken}/channel.jpg"
+msgstr "https://example.com/avatar/{sizeToken}/channel.jpg"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "I'm back"
@@ -2840,10 +2861,6 @@ msgstr "s-a alăturat și a ieșit"
 msgid "Joined the channel"
 msgstr "S-a alăturat canalului"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Jump to present"
-msgstr "Salt la prezent"
-
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Keep chat history on this device"
 msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
@@ -2851,6 +2868,10 @@ msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Păstrați credențialele"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Keep passwords"
+msgstr "Păstrează parolele"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -2973,17 +2994,9 @@ msgstr "În direct"
 msgid "Live Translate"
 msgstr "Traducere live"
 
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load earlier messages saved on this device"
-msgstr "Încarcă mesajele anterioare salvate pe acest dispozitiv"
-
 #: src/components/layout/SearchPane.tsx
 msgid "Load more results"
 msgstr "Încarcă mai multe rezultate"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "Load older messages"
-msgstr "Încarcă mesaje mai vechi"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Load older messages to reach the reply"
@@ -3402,6 +3415,10 @@ msgstr "Rețele pe {0}"
 msgid "new folder"
 msgstr "folder nou"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New messages"
+msgstr "Mesaje noi"
+
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Pseudonim nou"
@@ -3476,6 +3493,10 @@ msgstr "Niciun mod avansat pe acest server."
 msgid "No bans yet, add one above"
 msgstr "Niciun ban încă, adăugați unul mai sus"
 
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No bans yet, ask a channel operator to add one"
+msgstr "Încă niciun ban, cere unui operator al canalului să adauge unul"
+
 #: src/components/pages/BotsPage.tsx
 msgid "No bots match. Clear the search or change the filter."
 msgstr "Niciun bot nu corespunde. Ștergeți căutarea sau schimbați filtrul."
@@ -3513,6 +3534,10 @@ msgid "No exceptions yet, add one above"
 msgstr "Nicio excepție încă, adăugați una mai sus"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "No exceptions yet, ask a channel operator to add one"
+msgstr "Încă nicio excepție, cere unui operator al canalului să adauge una"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "No external messages (+n)"
 msgstr "Fără mesaje externe (+n)"
 
@@ -3535,6 +3560,10 @@ msgstr "niciun host setat"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invitations yet, add one above"
 msgstr "Nicio invitație încă, adăugați una mai sus"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "No invitations yet, ask a channel operator to add one"
+msgstr "Încă nicio invitație, cere unui operator al canalului să adauge una"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "No invites (+V)"
@@ -3657,7 +3686,7 @@ msgid "Normal - Standard protection"
 msgstr "Normal – Protecție standard"
 
 #: src/components/message/E2EEUnprotectedBadge.tsx
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
 msgstr "Necriptat"
 
@@ -3721,9 +3750,13 @@ msgid "one of:"
 msgstr "unul dintre:"
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/UserPanel.tsx
+#: src/components/message/MessageAvatar.tsx
+#: src/components/message/MessageAvatar.tsx
 msgid "Online"
 msgstr "Conectat"
 
@@ -4779,11 +4812,11 @@ msgstr "Se trimite"
 msgid "Sending…"
 msgstr "Se trimite…"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because OTR encrypts text only"
 msgstr "Trimis necriptat deoarece OTR criptează doar text"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Trimis necriptat deoarece fișierul este prea mare pentru a fi criptat"
 
@@ -5187,6 +5220,10 @@ msgstr "Oprește transmiterea"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
 msgstr "Oprește camera video"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Stored passwords"
+msgstr "Parole salvate"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "Stream"
@@ -5602,8 +5639,8 @@ msgid "Unsuspend"
 msgstr "Anulează suspendarea"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Upload an image or enter a URL. Use {size} in the URL for dynamic sizing."
-msgstr "Încărcați o imagine sau introduceți un URL. Folosiți {size} în URL pentru dimensionare dinamică."
+msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
+msgstr "Încărcați o imagine sau introduceți un URL. Folosiți {sizeToken} în URL pentru dimensionare dinamică."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload Avatar"
@@ -5617,7 +5654,7 @@ msgstr "Încărcare anulată."
 msgid "Upload Files"
 msgstr "Încărcați fișiere"
 
-#: src/components/ui/UploadProgressOverlay.tsx
+#: src/components/ui/UploadProgressBar.tsx
 msgid "Uploaded"
 msgstr "Încărcat"
 

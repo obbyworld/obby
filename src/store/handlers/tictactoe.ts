@@ -13,6 +13,7 @@ import {
 } from "../../lib/games/tictactoe";
 import { unescapeTagValue } from "../../lib/games/tictactoeProtocol";
 import ircClient from "../../lib/ircClient";
+import { isHistoryEvent } from "../helpers";
 import type { AppState } from "../index";
 import * as actions from "./tictactoeActions";
 
@@ -52,6 +53,7 @@ export function registerTicTacToeHandlers(store: StoreApi<AppState>) {
   ircClient.on("TAGMSG", ({ serverId, mtags, sender, channelName }) => {
     const me = ircClient.getNick(serverId);
     if (!me || !mtags) return;
+    if (isHistoryEvent(store.getState(), serverId, mtags)) return;
     // Only direct messages from another nick to us.
     if (channelName !== me) return;
     if (!sender || sender === me) return;

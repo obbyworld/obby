@@ -10,12 +10,16 @@ export interface TooltipAnchor {
   x: number;
   y: number;
   bottom: number;
+  left: number;
+  width: number;
 }
 
 export const tooltipAnchorOf = (rect: DOMRect): TooltipAnchor => ({
   x: rect.left + rect.width / 2,
   y: rect.top,
   bottom: rect.bottom,
+  left: rect.left,
+  width: rect.width,
 });
 
 // Every hover hint in the app renders through this panel, so they all share one look.
@@ -32,9 +36,12 @@ export const TooltipPanel: React.FC<{
     if (!el) return;
     const { width, height } = el.getBoundingClientRect();
     const gap = 6;
+    // A hint narrower than its element starts where the element's text starts.
+    const preferredLeft =
+      anchor.width > width ? anchor.left : anchor.x - width / 2;
     const left = Math.max(
       8,
-      Math.min(anchor.x - width / 2, window.innerWidth - width - 8),
+      Math.min(preferredLeft, window.innerWidth - width - 8),
     );
     const above = anchor.y - height - gap;
     const top = above >= 8 ? above : anchor.bottom + gap;
@@ -49,7 +56,11 @@ export const TooltipPanel: React.FC<{
       style={{
         position: "fixed",
         zIndex: 9999,
-        maxWidth: TOOLTIP_MAX_WIDTH,
+        // A long hint on a wide element, like a channel topic, spreads to its width.
+        maxWidth: Math.min(
+          Math.max(TOOLTIP_MAX_WIDTH, anchor.width),
+          window.innerWidth - 16,
+        ),
         ...pos,
       }}
       className="tooltip-surface"

@@ -14,6 +14,7 @@ import {
   fetchPackJson,
   listPacks,
 } from "../../lib/emojiAdminApi";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { Button } from "../../lib/modal/components";
 import useStore from "../../store";
 import { PageShell } from "../ui/page/PageShell";
@@ -103,9 +104,11 @@ const EmojiPacksPage: React.FC<PageProps<"emojiPacks">> = ({ page }) => {
 
   const removePack = async (packId: string) => {
     if (
-      !window.confirm(
+      !(await confirmDestructive(
+        t`Delete pack`,
         t`Delete pack "${packId}"? This also deletes every emoji in it.`,
-      )
+        t`Delete`,
+      ))
     ) {
       return;
     }

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
+import { effectiveWorkflowState } from "../../src/lib/botTools";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
@@ -47,6 +48,35 @@ describe("botTools store handler", () => {
       collapsed: true,
       dismissed: false,
     });
+  });
+
+  test("a run replayed from history keeps its server time and reads as over", () => {
+    useStore.setState({
+      activeBatches: {
+        [SID]: {
+          hist: {
+            type: "chathistory",
+            parameters: [CHAN],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    } as Partial<AppState>);
+    emit("TAGMSG", {
+      serverId: SID,
+      mtags: {
+        ...tag('{"msg":"workflow","id":"old","state":"start"}'),
+        batch: "hist",
+        time: "2026-01-01T10:00:00.000Z",
+      },
+      sender: BOT,
+      channelName: CHAN,
+    });
+    const wf = useStore.getState().aiWorkflows[SID]?.old;
+    expect(wf?.startedAt).toBe(Date.parse("2026-01-01T10:00:00.000Z"));
+    expect(wf?.historical).toBe(true);
+    expect(wf && effectiveWorkflowState(wf)).toBe("failed");
   });
 
   test("subsequent workflow update merges over existing state", () => {
@@ -271,6 +301,33 @@ describe("botTools store handler", () => {
         botToolsWorkflowId: "w9",
         botToolsPending: false,
         content: "done",
+      });
+    });
+
+    test("finishes the run when the final answer arrives as a multiline batch", () => {
+      startRun();
+      const done = tag('{"msg":"workflow","id":"w9","state":"complete"}')[
+        "+draft/bot-tools"
+      ];
+      const feed = (line: string) =>
+        (
+          ircClient as unknown as {
+            handleMessage(data: string, serverId: string): void;
+          }
+        ).handleMessage(`${line}\r\n`, SID);
+      feed(
+        `@+draft/bot-tools=${done};msgid=b-1 :irc.test BATCH +ml1 draft/multiline ${CHAN}`,
+      );
+      feed(`@batch=ml1;msgid=l-1 :${BOT}!b@h PRIVMSG ${CHAN} :first line`);
+      feed(`@batch=ml1;msgid=l-2 :${BOT}!b@h PRIVMSG ${CHAN} :second line`);
+      feed(":irc.test BATCH -ml1");
+
+      expect(useStore.getState().aiWorkflows[SID]?.w9?.state).toBe("complete");
+      expect(rows()).toHaveLength(1);
+      expect(rows()[0]).toMatchObject({
+        botToolsWorkflowId: "w9",
+        botToolsPending: false,
+        content: "first line\nsecond line",
       });
     });
   });
