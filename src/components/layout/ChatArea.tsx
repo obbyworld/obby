@@ -861,13 +861,12 @@ export const ChatArea: React.FC<{
     useStore.getState().clearComposerCommandRequest();
     const { name, botNick } = pendingComposerCommand;
     if (command.invocation) command.cancel();
-    const startCommand = (text: string) => {
-      applyText(text);
-      inputRef.current?.focus();
-      inputRef.current?.setSelectionRange(text.length, text.length);
-      return beginTypedBotCommand(text, text.length);
-    };
-    if (!startCommand(`/${name} `)) startCommand(`/${name}@${botNick} `);
+    // We name the bot, since a bare name may belong to the server or another bot.
+    const text = `/${name}@${botNick} `;
+    applyText(text);
+    inputRef.current?.focus();
+    inputRef.current?.setSelectionRange(text.length, text.length);
+    beginTypedBotCommand(text, text.length);
   }, [pendingComposerCommand, selectedServerId]);
 
   const completionUsers = useMemo<User[]>(

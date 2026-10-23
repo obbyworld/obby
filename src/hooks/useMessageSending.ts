@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { base64EncodeUtf8 } from "../lib/base64";
+import { botPriority } from "../lib/botPriority";
 import { coerceOptionValue } from "../lib/commandInvocation";
 import ircClient from "../lib/ircClient";
 import {
@@ -34,10 +35,12 @@ import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
  *
  *   1) explicit `/cmd@botnick` where botnick is a +B user in the
  *      current channel or is the current DM peer (and is +B)
- *   2) otherwise scan +B users in the current channel
+ *   2) otherwise scan +B users in the current channel, ranked by
+ *      botPriority
  *   3) DM target if the peer is +B
  * Privileged names listed in PRIVILEGED_COMMANDS are refused
- * outright.
+ * outright, and a bare name the server lists in its cmdslist runs
+ * on the server.
  */
 function tryDispatchBotCommand(
   serverId: string,
@@ -60,6 +63,7 @@ function tryDispatchBotCommand(
 
   const server = useStore.getState().servers.find((s) => s.id === serverId);
   if (!server?.botCommands) return false;
+  if (!target && server.cmdsAvailable?.includes(lowerCmd)) return false;
   const bots = server.botCommands;
 
   const isKnownBotNick = (nick: string): boolean => {
@@ -107,7 +111,12 @@ function tryDispatchBotCommand(
     }
   }
   if (!matches.length) return false;
-  const { bot, cmd } = matches[0];
+  const { bot, cmd } = matches.reduce((best, match) =>
+    botPriority(server.bots?.[match.bot.toLowerCase()]) <
+    botPriority(server.bots?.[best.bot.toLowerCase()])
+      ? match
+      : best,
+  );
 
   // Naive arg parsing: map positional args onto declared options in
   // order, leftovers concatenated onto the last string-typed option.

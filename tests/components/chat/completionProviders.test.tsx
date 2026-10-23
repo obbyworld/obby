@@ -139,11 +139,43 @@ describe("slashSuggestions", () => {
     cmdsAvailable: ["HELP", "kick", "roll"],
   } as unknown as Server;
 
-  it("lists channel bots present here, server bots anywhere, and unclaimed server commands", () => {
+  it("lists server commands ahead of channel bots present here and server bots anywhere", () => {
     const names = slashSuggestions(server, channel)
       .filter((s) => s.source.kind !== "client")
       .map((s) => `${s.source.kind}:${s.name}`);
-    expect(names).toEqual(["bot:help", "bot:roll", "server:kick"]);
+    expect(names).toEqual([
+      "server:HELP",
+      "server:kick",
+      "server:roll",
+      "bot:roll",
+      "bot:help",
+    ]);
+  });
+
+  it("lists a network bot ahead of a directory channel bot ahead of any other bot", () => {
+    const here = {
+      users: ["plain", "listed", "network"].map((username) => ({
+        id: username,
+        username,
+        isOnline: true,
+      })),
+    } as Channel;
+    const ranked = {
+      botCommands: {
+        plain: [{ name: "pkg" }],
+        listed: [{ name: "pkg" }],
+        network: [{ name: "pkg" }],
+      },
+      bots: {
+        plain: { bot_id: "draft-bot-cmds:plain", scope: "channel" },
+        listed: { bot_id: "7", scope: "channel" },
+        network: { bot_id: "9", scope: "server" },
+      },
+    } as unknown as Server;
+    const bots = slashSuggestions(ranked, here)
+      .filter((s) => s.source.kind === "bot")
+      .map((s) => (s.source.kind === "bot" ? s.source.botNick : ""));
+    expect(bots).toEqual(["network", "listed", "plain"]);
   });
 
   it("drops channel bots and channel-only client commands outside a channel", () => {
@@ -172,12 +204,24 @@ describe("typedBotCommand", () => {
     expect(typedBotCommand("/pkg x", 6, [pkg("cloudbot")])).toBeNull();
   });
 
-  it("needs the bot name when two bots offer the command", () => {
+  it("takes the first-listed bot unless the bot is named", () => {
     const both = [pkg("a"), pkg("b")];
-    expect(typedBotCommand("/pkg ", 5, both)).toBeNull();
+    expect(typedBotCommand("/pkg ", 5, both)?.source).toEqual({
+      kind: "bot",
+      botNick: "a",
+    });
     expect(typedBotCommand("/pkg@B ", 7, both)?.source).toEqual({
       kind: "bot",
       botNick: "b",
+    });
+  });
+
+  it("leaves a bare name the server offers to the server", () => {
+    const server: SlashSuggestion = { name: "pkg", source: { kind: "server" } };
+    expect(typedBotCommand("/pkg ", 5, [server, pkg("a")])).toBeNull();
+    expect(typedBotCommand("/pkg@a ", 7, [server, pkg("a")])?.source).toEqual({
+      kind: "bot",
+      botNick: "a",
     });
   });
 

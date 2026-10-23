@@ -402,7 +402,7 @@ describe("ChatArea Tab Completion Integration", () => {
         .getState()
         .requestComposerCommand("server1", "_cloudbot", "catfact");
     });
-    expect(input).toHaveValue("/catfact ");
+    expect(input).toHaveValue("/catfact@_cloudbot ");
     expect(useStore.getState().ui.pendingComposerCommand).toBeNull();
 
     act(() => {
