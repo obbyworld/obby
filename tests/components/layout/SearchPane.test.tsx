@@ -349,17 +349,20 @@ describe("SearchPane", () => {
     ["left-channel", "Join this channel to jump to the message"],
     ["not-saved", "This message is no longer saved"],
     ["not-found", "Could not find this message"],
-  ] as const)("shows a toast when a jump fails with %s", async (reason, text) => {
-    useStore.setState({ globalNotifications: [] });
-    vi.mocked(jumpToMessage).mockResolvedValueOnce({ ok: false, reason });
-    search.mockResolvedValue({ hits: [hit()] });
-    openPane();
-    render(<GlobalNotifications />);
+  ] as const)(
+    "shows a toast when a jump fails with %s",
+    async (reason, text) => {
+      useStore.setState({ globalNotifications: [] });
+      vi.mocked(jumpToMessage).mockResolvedValueOnce({ ok: false, reason });
+      search.mockResolvedValue({ hits: [hit()] });
+      openPane();
+      render(<GlobalNotifications />);
 
-    fireEvent.click(await screen.findByText("alice"));
+      fireEvent.click(await screen.findByText("alice"));
 
-    expect(await screen.findByText(text)).toBeInTheDocument();
-  });
+      expect(await screen.findByText(text)).toBeInTheDocument();
+    },
+  );
 
   it("shows a toast when reading saved history fails during a jump", async () => {
     useStore.setState({ globalNotifications: [] });

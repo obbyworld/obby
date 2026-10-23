@@ -88,22 +88,24 @@ describe("ChatHeader private chat", () => {
     expect(pinPrivateChat).toHaveBeenCalledWith("server1", "pc1");
   });
 
-  it.each([
-    false,
-    true,
-  ])("opens the palette in Messages mode scoped to this chat (touch: %s)", (touch) => {
-    isTouch = touch;
-    useStore.setState((state) => ({ ui: { ...state.ui, quickActions: null } }));
-    renderHeader();
-    const button = screen.getByRole("button", { name: "Search messages" });
-    expect(button.textContent).toBe(touch ? "" : "Search");
-    expect(button.className).toContain(touch ? "w-11" : "chip-outline");
-    fireEvent.click(button);
-    expect(useStore.getState().ui.quickActions).toEqual({
-      mode: "messages",
-      scope: { kind: "chat", serverId: "server1", target: "alice" },
-    });
-  });
+  it.each([false, true])(
+    "opens the palette in Messages mode scoped to this chat (touch: %s)",
+    (touch) => {
+      isTouch = touch;
+      useStore.setState((state) => ({
+        ui: { ...state.ui, quickActions: null },
+      }));
+      renderHeader();
+      const button = screen.getByRole("button", { name: "Search messages" });
+      expect(button.textContent).toBe(touch ? "" : "Search");
+      expect(button.className).toContain(touch ? "w-11" : "chip-outline");
+      fireEvent.click(button);
+      expect(useStore.getState().ui.quickActions).toEqual({
+        mode: "messages",
+        scope: { kind: "chat", serverId: "server1", target: "alice" },
+      });
+    },
+  );
 
   it("opens the profile when the name is tapped", () => {
     renderHeader();

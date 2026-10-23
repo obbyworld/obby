@@ -6,24 +6,15 @@ const withChantypes = (value: string) =>
   new Map<string, string>([["CHANTYPES", value]]);
 
 describe("channel types", () => {
-  test.each([
-    "#lobby",
-    "&local",
-    "+modeless",
-    "!safe",
-    "^voice",
-    "$stream",
-  ])("%s is a channel when the server's CHANTYPES is unknown", (name) =>
-    expect(isChannelTarget(name)).toBe(true));
+  test.each(["#lobby", "&local", "+modeless", "!safe", "^voice", "$stream"])(
+    "%s is a channel when the server's CHANTYPES is unknown",
+    (name) => expect(isChannelTarget(name)).toBe(true),
+  );
 
-  test.each([
-    "alice",
-    "[bot]",
-    "_x",
-    "",
-    undefined,
-  ])("%s is not a channel", (name) =>
-    expect(isChannelTarget(name)).toBe(false));
+  test.each(["alice", "[bot]", "_x", "", undefined])(
+    "%s is not a channel",
+    (name) => expect(isChannelTarget(name)).toBe(false),
+  );
 
   test("the server's CHANTYPES decides", () => {
     expect(isChannelTarget("^nick", "#")).toBe(false);
