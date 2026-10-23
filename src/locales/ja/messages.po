@@ -4519,11 +4519,11 @@ msgstr "発言には登録済みニックネームが必要です (+r)。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "参加には招待が必要です。<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "参加には招待が必要です。"
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Obby を閉じているときも通知を受け取るには、ブラウザを再起動してください>>>>>>> stack/qa-round"
+msgstr "Obby を閉じているときも通知を受け取るには、ブラウザを再起動してください"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

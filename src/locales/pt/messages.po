@@ -4519,11 +4519,11 @@ msgstr "Exigir apelido registrado (+r) para falar."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Exigir convite para entrar.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Exigir convite para entrar."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Reinicie o navegador para receber notificações com o Obby fechado>>>>>>> stack/qa-round"
+msgstr "Reinicie o navegador para receber notificações com o Obby fechado"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

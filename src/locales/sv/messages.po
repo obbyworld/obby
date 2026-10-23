@@ -4519,11 +4519,11 @@ msgstr "Kräv ett registrerat nick (+r) för att prata."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Kräv en inbjudan för att gå med.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Kräv en inbjudan för att gå med."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Starta om webbläsaren för att få aviseringar när Obby är stängt>>>>>>> stack/qa-round"
+msgstr "Starta om webbläsaren för att få aviseringar när Obby är stängt"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

@@ -4519,11 +4519,11 @@ msgstr "Для общения нужен зарегистрированный н
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Для входа нужно приглашение.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Для входа нужно приглашение."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Перезапустите браузер, чтобы получать уведомления, когда Obby закрыт>>>>>>> stack/qa-round"
+msgstr "Перезапустите браузер, чтобы получать уведомления, когда Obby закрыт"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

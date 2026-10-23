@@ -4519,11 +4519,11 @@ msgstr "Cereți un nickname înregistrat (+r) pentru a vorbi."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Cereți o invitație pentru a intra.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Cereți o invitație pentru a intra."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Repornește browserul pentru a primi notificări când Obby este închis>>>>>>> stack/qa-round"
+msgstr "Repornește browserul pentru a primi notificări când Obby este închis"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

@@ -4519,11 +4519,11 @@ msgstr "Wymagaj zarejestrowanego pseudonimu (+r), aby pisać."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Wymagaj zaproszenia, aby dołączyć.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Wymagaj zaproszenia, aby dołączyć."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Uruchom ponownie przeglądarkę, aby otrzymywać powiadomienia przy zamkniętym Obby>>>>>>> stack/qa-round"
+msgstr "Uruchom ponownie przeglądarkę, aby otrzymywać powiadomienia przy zamkniętym Obby"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

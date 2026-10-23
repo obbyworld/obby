@@ -4519,11 +4519,11 @@ msgstr "Exiger un pseudo enregistré pour parler (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Exiger une invitation pour rejoindre.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Exiger une invitation pour rejoindre."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Redémarrez le navigateur pour recevoir les notifications quand Obby est fermé>>>>>>> stack/qa-round"
+msgstr "Redémarrez le navigateur pour recevoir les notifications quand Obby est fermé"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

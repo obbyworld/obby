@@ -4519,11 +4519,11 @@ msgstr "말하려면 등록된 닉네임이 필요합니다 (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "참여하려면 초대가 필요합니다.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "참여하려면 초대가 필요합니다."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Obby가 닫혀 있을 때도 알림을 받으려면 브라우저를 다시 시작하세요>>>>>>> stack/qa-round"
+msgstr "Obby가 닫혀 있을 때도 알림을 받으려면 브라우저를 다시 시작하세요"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

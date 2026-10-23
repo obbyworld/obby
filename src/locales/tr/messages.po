@@ -4519,11 +4519,11 @@ msgstr "Konuşmak için kayıtlı bir takma ad gerekli (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Katılmak için davet gerekli.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Katılmak için davet gerekli."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Obby kapalıyken bildirim almak için tarayıcını yeniden başlat>>>>>>> stack/qa-round"
+msgstr "Obby kapalıyken bildirim almak için tarayıcını yeniden başlat"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

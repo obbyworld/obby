@@ -4519,11 +4519,11 @@ msgstr "Вимагати зареєстрований нік (+r) для роз�
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Вимагати запрошення для приєднання.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Вимагати запрошення для приєднання."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Перезапустіть браузер, щоб отримувати сповіщення, коли Obby закрито>>>>>>> stack/qa-round"
+msgstr "Перезапустіть браузер, щоб отримувати сповіщення, коли Obby закрито"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
