@@ -424,17 +424,20 @@ describe("local history with a chathistory server", () => {
     it.each([
       ["an empty", []],
       ["a short", [privmsg("p1", 10, "p one"), privmsg("p2", 11, "p two")]],
-    ])("offers older saved rows again after %s latest page", async (_name, lines) => {
-      await seedDisk();
-      w.restart();
-      w.feed(privmsg("l1", 20, "live"));
-      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(4));
+    ])(
+      "offers older saved rows again after %s latest page",
+      async (_name, lines) => {
+        await seedDisk();
+        w.restart();
+        w.feed(privmsg("l1", 20, "live"));
+        await vi.waitFor(async () => expect(await w.stored()).toHaveLength(4));
 
-      w.ircClient.sendRaw(SERVER, "CHATHISTORY LATEST #chan * 50");
-      w.feed(...inBatch("h1", "#chan", lines));
+        w.ircClient.sendRaw(SERVER, "CHATHISTORY LATEST #chan * 50");
+        w.feed(...inBatch("h1", "#chan", lines));
 
-      await vi.waitFor(() => expect(w.channel()?.hasMoreHistory).toBe(true));
-    });
+        await vi.waitFor(() => expect(w.channel()?.hasMoreHistory).toBe(true));
+      },
+    );
 
     it("offers older saved rows again for a private chat", async () => {
       w.addPrivateChat("bob");

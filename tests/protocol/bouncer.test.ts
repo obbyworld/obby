@@ -92,7 +92,9 @@ describe("BOUNCER protocol handler", () => {
     handleBouncer(ctx, "s1", "", ["NETWORK", "42", "name=Foo"], {
       batch: "abc",
     });
-    expect((ctx.events[0]?.data as { batchTag?: string }).batchTag).toBe("abc");
+    expect(
+      (ctx.events[0]?.data as { batchTag?: string } | undefined)?.batchTag,
+    ).toBe("abc");
   });
 });
 

@@ -291,43 +291,42 @@ describe("ChannelSettingsPage", () => {
     vi.useRealTimers();
   });
 
-  test.each([
-    "general",
-    "settings",
-    "advanced",
-  ])("sends nothing when an operator opens the %s section and leaves", async (section) => {
-    vi.useFakeTimers();
-    const state = createMockState({ status: "@" });
-    Object.assign(state.servers[0].channels[0], {
-      topic: "Welcome to the channel",
-      modes: "+nt",
-      metadata: { avatar: { value: "https://example.com/a.png" } },
-    });
-    useMockState(state);
-    const { unmount } = renderPage({ section });
-    vi.mocked(ircClient.sendRaw).mockClear();
+  test.each(["general", "settings", "advanced"])(
+    "sends nothing when an operator opens the %s section and leaves",
+    async (section) => {
+      vi.useFakeTimers();
+      const state = createMockState({ status: "@" });
+      Object.assign(state.servers[0].channels[0], {
+        topic: "Welcome to the channel",
+        modes: "+nt",
+        metadata: { avatar: { value: "https://example.com/a.png" } },
+      });
+      useMockState(state);
+      const { unmount } = renderPage({ section });
+      vi.mocked(ircClient.sendRaw).mockClear();
 
-    await act(async () => {
-      vi.runAllTimers();
-    });
-    for (const field of screen.queryAllByRole("textbox")) {
-      fireEvent.blur(field);
-    }
-    unmount();
-    await act(async () => {
-      vi.runAllTimers();
-    });
+      await act(async () => {
+        vi.runAllTimers();
+      });
+      for (const field of screen.queryAllByRole("textbox")) {
+        fireEvent.blur(field);
+      }
+      unmount();
+      await act(async () => {
+        vi.runAllTimers();
+      });
 
-    expect(ircClient.setTopic).not.toHaveBeenCalled();
-    expect(state.metadataSet).not.toHaveBeenCalled();
-    expect(ircClient.sendNamedMode).not.toHaveBeenCalled();
-    const modeLines = vi
-      .mocked(ircClient.sendRaw)
-      .mock.calls.map(([, line]) => line)
-      .filter((line) => !/^MODE #testchannel \+[beI]$/.test(line));
-    expect(modeLines).toEqual([]);
-    vi.useRealTimers();
-  });
+      expect(ircClient.setTopic).not.toHaveBeenCalled();
+      expect(state.metadataSet).not.toHaveBeenCalled();
+      expect(ircClient.sendNamedMode).not.toHaveBeenCalled();
+      const modeLines = vi
+        .mocked(ircClient.sendRaw)
+        .mock.calls.map(([, line]) => line)
+        .filter((line) => !/^MODE #testchannel \+[beI]$/.test(line));
+      expect(modeLines).toEqual([]);
+      vi.useRealTimers();
+    },
+  );
 
   test("renames once focus leaves the name and reason fields", async () => {
     vi.useFakeTimers();

@@ -56,7 +56,9 @@ describe("labeled-response — batch label inheritance", () => {
 
     const usermsg = ctx.events.find((e) => e.event === "USERMSG");
     expect(usermsg).toBeDefined();
-    const mtags = (usermsg?.data as { mtags?: Record<string, string> }).mtags;
+    const mtags = (
+      usermsg?.data as { mtags?: Record<string, string> } | undefined
+    )?.mtags;
     expect(mtags?.label).toBe(label);
     expect(mtags?.batch).toBe("abc");
     expect(mtags?.msgid).toBe("m1");
@@ -78,7 +80,8 @@ describe("labeled-response — batch label inheritance", () => {
     const chanmsg = ctx.events.find((e) => e.event === "CHANMSG");
     expect(chanmsg).toBeDefined();
     expect(
-      (chanmsg?.data as { mtags?: Record<string, string> }).mtags?.label,
+      (chanmsg?.data as { mtags?: Record<string, string> } | undefined)?.mtags
+        ?.label,
     ).toBe(label);
   });
 
@@ -91,7 +94,8 @@ describe("labeled-response — batch label inheritance", () => {
 
     const usermsg = ctx.events.find((e) => e.event === "USERMSG");
     expect(
-      (usermsg?.data as { mtags?: Record<string, string> }).mtags?.label,
+      (usermsg?.data as { mtags?: Record<string, string> } | undefined)?.mtags
+        ?.label,
     ).toBeUndefined();
   });
 
@@ -109,7 +113,8 @@ describe("labeled-response — batch label inheritance", () => {
 
     const chanmsg = ctx.events.find((e) => e.event === "CHANMSG");
     expect(
-      (chanmsg?.data as { mtags?: Record<string, string> }).mtags?.label,
+      (chanmsg?.data as { mtags?: Record<string, string> } | undefined)?.mtags
+        ?.label,
     ).toBeUndefined();
   });
 
@@ -128,7 +133,8 @@ describe("labeled-response — batch label inheritance", () => {
 
     const usermsg = ctx.events.find((e) => e.event === "USERMSG");
     expect(
-      (usermsg?.data as { mtags?: Record<string, string> }).mtags?.label,
+      (usermsg?.data as { mtags?: Record<string, string> } | undefined)?.mtags
+        ?.label,
     ).toBe("explicit_label");
   });
 });

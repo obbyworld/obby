@@ -398,18 +398,16 @@ describe("TAGMSG", () => {
     });
   });
 
-  it.each([
-    "+draft/react",
-    "+draft/unreact",
-    "+react",
-    "+unreact",
-  ])("treats %s as a reaction tag", (tag) => {
-    const { feed } = setup();
-    const [row] = onlyRows(
-      feed(`@msgid=m2;${tag}=x;+draft/reply=m1 :a!u@h TAGMSG #c`),
-    );
-    expect(row.ref).toBe("m1");
-  });
+  it.each(["+draft/react", "+draft/unreact", "+react", "+unreact"])(
+    "treats %s as a reaction tag",
+    (tag) => {
+      const { feed } = setup();
+      const [row] = onlyRows(
+        feed(`@msgid=m2;${tag}=x;+draft/reply=m1 :a!u@h TAGMSG #c`),
+      );
+      expect(row.ref).toBe("m1");
+    },
+  );
 
   it("accepts +reply as the reference tag", () => {
     const { feed } = setup();
@@ -481,25 +479,28 @@ describe("channel events", () => {
     ["TOPIC", ":a!u@h TOPIC #Chan :new topic"],
     ["KICK", ":op!u@h KICK #Chan victim :reason"],
     ["MODE", ":op!u@h MODE #Chan +o a"],
-  ])("does not store %s live or inside a chathistory batch", (_command, line) => {
-    const { feed, feedAll } = setup();
-    expect(feed(`@msgid=m1;time=${T1} ${line}`)).toEqual([]);
-    expect(
-      feedAll([
-        "BATCH +h chathistory #Chan",
-        `@batch=h;msgid=m2;time=${T1} ${line}`,
-        "BATCH -h",
-      ]),
-    ).toEqual([
-      {
-        type: "history-batch",
-        target: "#chan",
-        rows: [],
-        redacts: [],
-        page: { size: 1, oldest: T1_MS, newest: T1_MS, msgids: ["m2"] },
-      },
-    ]);
-  });
+  ])(
+    "does not store %s live or inside a chathistory batch",
+    (_command, line) => {
+      const { feed, feedAll } = setup();
+      expect(feed(`@msgid=m1;time=${T1} ${line}`)).toEqual([]);
+      expect(
+        feedAll([
+          "BATCH +h chathistory #Chan",
+          `@batch=h;msgid=m2;time=${T1} ${line}`,
+          "BATCH -h",
+        ]),
+      ).toEqual([
+        {
+          type: "history-batch",
+          target: "#chan",
+          rows: [],
+          redacts: [],
+          page: { size: 1, oldest: T1_MS, newest: T1_MS, msgids: ["m2"] },
+        },
+      ]);
+    },
+  );
 
   it("keeps only the message when a chathistory batch also has a JOIN", () => {
     const { feedAll } = setup();
@@ -1098,16 +1099,14 @@ describe("decideAfterGapFill", () => {
 });
 
 describe("allowlist", () => {
-  it.each([
-    "NickServ",
-    "ChanServ",
-    "AuthServ",
-    "Q",
-  ])("does not store a PM with %s in either direction", (nick) => {
-    const { feed } = setup();
-    expect(feed(`@msgid=m1 :${nick}!s@services PRIVMSG me :hi`)).toEqual([]);
-    expect(feed(`@msgid=m2 :me!u@h PRIVMSG ${nick} :help`)).toEqual([]);
-  });
+  it.each(["NickServ", "ChanServ", "AuthServ", "Q"])(
+    "does not store a PM with %s in either direction",
+    (nick) => {
+      const { feed } = setup();
+      expect(feed(`@msgid=m1 :${nick}!s@services PRIVMSG me :hi`)).toEqual([]);
+      expect(feed(`@msgid=m2 :me!u@h PRIVMSG ${nick} :help`)).toEqual([]);
+    },
+  );
 
   it.each([
     "IDENTIFY hunter2",
@@ -1131,14 +1130,18 @@ describe("allowlist", () => {
     ).toHaveLength(1);
   });
 
-  it.each([
-    "+channel-context",
-    "+draft/channel-context",
-  ])("does not store a whisper tagged %s", (tag) => {
-    const { feed } = setup();
-    expect(feed(`@msgid=m1;${tag}=#c :alice!u@h PRIVMSG me :psst`)).toEqual([]);
-    expect(feed(`@msgid=m2;${tag}=#c :alice!u@h PRIVMSG #c :psst`)).toEqual([]);
-  });
+  it.each(["+channel-context", "+draft/channel-context"])(
+    "does not store a whisper tagged %s",
+    (tag) => {
+      const { feed } = setup();
+      expect(feed(`@msgid=m1;${tag}=#c :alice!u@h PRIVMSG me :psst`)).toEqual(
+        [],
+      );
+      expect(feed(`@msgid=m2;${tag}=#c :alice!u@h PRIVMSG #c :psst`)).toEqual(
+        [],
+      );
+    },
+  );
 
   it("does not store a PM from a server source", () => {
     const { feed } = setup();

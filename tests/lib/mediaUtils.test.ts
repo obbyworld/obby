@@ -628,14 +628,14 @@ describe("canShowAvatarUrl", () => {
   });
 
   // Browsers normalize scheme case and strip leading whitespace before fetching.
-  test.each([
-    ["HTTPS://evil.com/x.png"],
-    [" \thttps://evil.com/x.png"],
-  ])("level 1 blocks normalized-but-untrusted URL %s", (url) => {
-    expect(canShowAvatarUrl(url, filehost, mediaLevelToSettings(1))).toBe(
-      false,
-    );
-  });
+  test.each([["HTTPS://evil.com/x.png"], [" \thttps://evil.com/x.png"]])(
+    "level 1 blocks normalized-but-untrusted URL %s",
+    (url) => {
+      expect(canShowAvatarUrl(url, filehost, mediaLevelToSettings(1))).toBe(
+        false,
+      );
+    },
+  );
 });
 
 describe("TRUSTED_EMBED_DOMAINS", () => {
