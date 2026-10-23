@@ -108,7 +108,11 @@ export function SuggestionList<T>({
   if (anchor && (!rect || rect.height === 0)) return null;
   const composerRect =
     isCompact && placement === "above"
-      ? (anchor?.parentElement ?? anchor)?.getBoundingClientRect()
+      ? (
+          anchor?.closest("[data-composer]") ??
+          anchor?.parentElement ??
+          anchor
+        )?.getBoundingClientRect()
       : undefined;
   const isFloatingBelow = placement === "below";
   const titleId = id && `${id}-title`;

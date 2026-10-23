@@ -49,6 +49,21 @@ export function markShownByPage(serverId: string, msgid?: string): void {
   );
 }
 
+/** Shows a notification through the server's push worker, so a push for the
+ *  same tag replaces it. Resolves to false while the server has no active worker. */
+export async function showOnPushWorker(
+  serverId: string,
+  title: string,
+  options: NotificationOptions,
+  msgid?: string,
+): Promise<boolean> {
+  const registration = await findPushRegistration(serverId);
+  if (!registration?.active) return false;
+  if (msgid) registration.active.postMessage({ type: "obby-shown", msgid });
+  await registration.showNotification(title, options);
+  return true;
+}
+
 export function closePushNotifications(serverId: string, tag: string): void {
   void findPushRegistration(serverId)
     .then((registration) => registration?.getNotifications({ tag }))

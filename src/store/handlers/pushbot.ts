@@ -11,6 +11,7 @@
  */
 import type { StoreApi } from "zustand";
 import { base64DecodeUtf8 } from "../../lib/base64";
+import { SYNTHESISED_BOT_ID_PREFIX } from "../../lib/botPriority";
 import ircClient from "../../lib/ircClient";
 import {
   botCanRegisterPrivileged,
@@ -101,7 +102,7 @@ function commitBotCmds(
         .filter((c) => c.users.some((u) => u.username.toLowerCase() === key))
         .map((c) => c.name);
       const synthesisedBot: PushBotInfo = existingBot ?? {
-        bot_id: `draft-bot-cmds:${key}`,
+        bot_id: `${SYNTHESISED_BOT_ID_PREFIX}${key}`,
         nick: senderNick,
         realname: "",
         scope: "channel",
@@ -270,7 +271,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
             : {
                 ...(s.bots ?? {}),
                 [key]: {
-                  bot_id: `draft-bot-cmds:${key}`,
+                  bot_id: `${SYNTHESISED_BOT_ID_PREFIX}${key}`,
                   nick: sender,
                   realname: "",
                   scope: "channel",

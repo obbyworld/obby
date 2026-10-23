@@ -1,3 +1,4 @@
+import "./lib/deploymentConfig";
 import { i18n, type Messages } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { locale as tauriLocale } from "@tauri-apps/plugin-os";

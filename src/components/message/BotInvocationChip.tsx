@@ -10,6 +10,7 @@ import type React from "react";
 import { useMemo, useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { base64DecodeUtf8 } from "../../lib/base64";
+import useStore from "../../store";
 import { Popover } from "../ui/Popover";
 
 interface Decoded {
@@ -29,42 +30,59 @@ function decode(b64: string | undefined): Decoded | null {
   }
 }
 
-function formatOptions(
+function filledOptions(
   options: Record<string, string | number | boolean> | undefined,
-): string {
-  if (!options) return "";
-  const parts: string[] = [];
-  for (const [k, v] of Object.entries(options)) {
-    if (v === "" || v === undefined || v === null) continue;
-    parts.push(`${k}: ${typeof v === "string" ? v : JSON.stringify(v)}`);
-  }
-  return parts.join(", ");
+): [string, string][] {
+  return Object.entries(options ?? {})
+    .filter(([, v]) => v !== "" && v !== undefined && v !== null)
+    .map(([k, v]) => [k, typeof v === "string" ? v : JSON.stringify(v)]);
 }
 
 interface Props {
   tagValue: string | undefined;
+  serverId: string;
+  botNick: string;
 }
 
-export const BotInvocationChip: React.FC<Props> = ({ tagValue }) => {
+export const BotInvocationChip: React.FC<Props> = ({
+  tagValue,
+  serverId,
+  botNick,
+}) => {
   const { t } = useLingui();
   const decoded = useMemo(() => decode(tagValue), [tagValue]);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   if (!decoded?.name) return null;
-  const opts = formatOptions(decoded.options);
+  const opts = filledOptions(decoded.options);
   const nick = decoded.nick ?? "";
 
   return (
     <div className="text-[11px] text-discord-text-muted mb-1 flex items-baseline gap-1 flex-wrap">
       <span className="text-discord-text-normal font-medium">{nick}</span>
       <Trans>ran</Trans>
-      <span className="font-mono text-discord-text-link">/{decoded.name}</span>
-      {opts && (
-        <span className="text-discord-text-muted font-mono truncate max-w-full">
-          {opts}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          useStore
+            .getState()
+            .requestComposerCommand(serverId, botNick, decoded.name ?? "");
+        }}
+        className="rounded bg-discord-primary/25 px-1 font-mono text-discord-text-link hover:bg-discord-primary/40 hover:underline"
+        title={t`Use /${decoded.name}`}
+      >
+        /{decoded.name}
+      </button>
+      {opts.map(([name, value]) => (
+        <span key={name} className="inline-flex min-w-0 items-baseline gap-1">
+          <span className="font-semibold text-discord-text-normal">{name}</span>
+          <span className="break-words rounded bg-white/[0.06] px-1 text-discord-text-normal">
+            {value}
+          </span>
         </span>
-      )}
+      ))}
       <button
         ref={buttonRef}
         type="button"

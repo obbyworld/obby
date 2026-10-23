@@ -6,6 +6,8 @@ import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { base64EncodeUtf8 } from "../lib/base64";
+import { botPriority } from "../lib/botPriority";
+import { coerceOptionValue } from "../lib/commandInvocation";
 import ircClient from "../lib/ircClient";
 import {
   makeLabel,
@@ -33,10 +35,12 @@ import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
  *
  *   1) explicit `/cmd@botnick` where botnick is a +B user in the
  *      current channel or is the current DM peer (and is +B)
- *   2) otherwise scan +B users in the current channel
+ *   2) otherwise scan +B users in the current channel, ranked by
+ *      botPriority
  *   3) DM target if the peer is +B
  * Privileged names listed in PRIVILEGED_COMMANDS are refused
- * outright.
+ * outright, and a bare name the server lists in its cmdslist runs
+ * on the server.
  */
 function tryDispatchBotCommand(
   serverId: string,
@@ -59,6 +63,7 @@ function tryDispatchBotCommand(
 
   const server = useStore.getState().servers.find((s) => s.id === serverId);
   if (!server?.botCommands) return false;
+  if (!target && server.cmdsAvailable?.includes(lowerCmd)) return false;
   const bots = server.botCommands;
 
   const isKnownBotNick = (nick: string): boolean => {
@@ -106,7 +111,12 @@ function tryDispatchBotCommand(
     }
   }
   if (!matches.length) return false;
-  const { bot, cmd } = matches[0];
+  const { bot, cmd } = matches.reduce((best, match) =>
+    botPriority(server.bots?.[match.bot.toLowerCase()]) <
+    botPriority(server.bots?.[best.bot.toLowerCase()])
+      ? match
+      : best,
+  );
 
   // Naive arg parsing: map positional args onto declared options in
   // order, leftovers concatenated onto the last string-typed option.
@@ -116,22 +126,14 @@ function tryDispatchBotCommand(
     const o = opts[i];
     const isLast = i === opts.length - 1;
     const raw = isLast ? args.slice(i).join(" ") : args[i];
-    if (o.type === "int") options[o.name] = Number.parseInt(raw, 10);
-    else if (o.type === "bool")
-      options[o.name] = raw === "true" || raw === "1" || raw === "yes";
-    else options[o.name] = raw;
+    const value = coerceOptionValue(o.type, raw);
+    if (value !== undefined) options[o.name] = value;
   }
 
   sendBotCommand(serverId, channel, bot, cmd, options);
   return true;
 }
 
-/**
- * Wire-level send for a pre-resolved bot command with structured
- * options (no freeform-arg parsing).  Used both by the freeform-text
- * path above and by the param modal, which collects values directly
- * via form controls.
- */
 // Where a command may be invoked. Prefer the spec `contexts`; fall back to the
 // legacy obby.world/bot-info `visibility`/`scopes` pair so a private command is
 // NEVER routed publicly just because the directory hasn't sent `contexts` yet.

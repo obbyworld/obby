@@ -6,8 +6,8 @@ import type { Message } from "../../types";
 import {
   type BatchInfo,
   capMergedMessages,
+  compareMessageOrder,
   hasMsgid,
-  messageTime,
   redactedMessage,
   withoutReaction,
   withReaction,
@@ -358,9 +358,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
 
           const capped = capMergedMessages(
             existing,
-            [...existing, ...newMessages].sort(
-              (a, b) => messageTime(a) - messageTime(b),
-            ),
+            [...existing, ...newMessages].sort(compareMessageOrder),
             state.historyWindows[key],
           );
           const merged = capped.messages;
@@ -433,9 +431,7 @@ export function registerBatchHandlers(store: StoreApi<AppState>): void {
 
           const capped = capMergedMessages(
             existing,
-            [...existing, ...newMessages].sort(
-              (a, b) => messageTime(a) - messageTime(b),
-            ),
+            [...existing, ...newMessages].sort(compareMessageOrder),
             state.historyWindows[key],
           );
           const merged = capped.messages;

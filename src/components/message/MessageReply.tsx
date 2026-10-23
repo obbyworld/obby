@@ -6,7 +6,6 @@ import {
   FaFilm,
   FaImage,
   FaLock,
-  FaTimes,
   FaVolumeUp,
 } from "react-icons/fa";
 
@@ -36,6 +35,7 @@ import {
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore from "../../store";
 import type { MessageType } from "../../types";
+import { CloseButton } from "../ui/CloseButton";
 
 const KIND_ICONS = {
   image: FaImage,
@@ -156,20 +156,7 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
           draggable={false}
         />
       )}
-      {onClose && (
-        <button
-          type="button"
-          className="flex-shrink-0 self-center p-3 mr-1 rounded-lg hover:bg-white/10 text-discord-text-muted hover:text-discord-text-normal transition-colors"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          aria-label={t`Cancel reply`}
-        >
-          <FaTimes className="text-base" />
-        </button>
-      )}
+      {onClose && <CloseButton label={t`Cancel reply`} onClick={onClose} />}
     </div>
   );
 };

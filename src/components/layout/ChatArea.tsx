@@ -18,6 +18,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
+import { useCommandInvocation } from "../../hooks/useCommandInvocation";
 import { useCompletion } from "../../hooks/useCompletion";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
@@ -34,7 +35,7 @@ import {
 } from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
 import { voiceDisplayName } from "../../lib/channelMentions";
-import { getClientCommands } from "../../lib/clientCommands";
+import { needsArguments } from "../../lib/commandInvocation";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
@@ -92,7 +93,9 @@ import {
   routeOutgoingPM,
 } from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType, User } from "../../types";
+import type { Channel, Message as MessageType, User } from "../../types";
+import { COMMAND_DETAIL_ID, CommandArgHint } from "../chat/CommandArgHint";
+import { CommandArgPill, CommandChip } from "../chat/CommandChip";
 import {
   type EmojiItem,
   emojiProvider,
@@ -101,6 +104,7 @@ import {
   type SlashSuggestion,
   slashProvider,
   slashSuggestions,
+  typedBotCommand,
   useEmojiItems,
 } from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
@@ -133,8 +137,7 @@ import {
   type RecordingFailure,
   RegionRecordingBar,
 } from "../ui/RegionRecordingBar";
-import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
-import { SlashParamHint } from "../ui/SlashParamHint";
+import SuggestionList from "../ui/SuggestionList";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
@@ -165,6 +168,7 @@ type UploadOutcome = "started" | "held" | "failed";
 const NO_ATTACHMENTS: PendingAttachment[] = [];
 
 const NO_COMPLETION_INPUT = { text: "", caret: 0 };
+const NO_CHANNELS: Channel[] = [];
 const MODIFIER_KEYS = ["Shift", "Control", "Alt", "Meta"];
 
 function previewable(file: File): boolean {
@@ -204,10 +208,6 @@ export const ChatArea: React.FC<{
   // completionInput mirrors the text only while a completion can be open.
   const [hasText, setHasText] = useState(false);
   const [completionInput, setCompletionInput] = useState(NO_COMPLETION_INPUT);
-  const [paramModal, setParamModal] = useState<{
-    botNick: string;
-    command: BotCommand;
-  } | null>(null);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -403,6 +403,11 @@ export const ChatArea: React.FC<{
     [resizeTextarea],
   );
 
+  const clearCompletion = useCallback(
+    () => setCompletionInput(NO_COMPLETION_INPUT),
+    [],
+  );
+
   const servers = useStore((state) => state.servers);
   const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
@@ -481,25 +486,6 @@ export const ChatArea: React.FC<{
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
-
-  const pendingBotCommandPick = useStore(
-    (state) => state.ui.pendingBotCommandPick,
-  );
-  const clearBotCommandPickRequest = useStore(
-    (state) => state.clearBotCommandPickRequest,
-  );
-  useEffect(() => {
-    if (
-      pendingBotCommandPick &&
-      pendingBotCommandPick.serverId === selectedServerId
-    ) {
-      setParamModal({
-        botNick: pendingBotCommandPick.botNick,
-        command: pendingBotCommandPick.command,
-      });
-      clearBotCommandPickRequest();
-    }
-  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -813,6 +799,76 @@ export const ChatArea: React.FC<{
     [selectedServer, selectedPrivateChatId],
   );
 
+  const command = useCommandInvocation({
+    serverId: selectedServerId,
+    channel: selectedChannel ?? null,
+    channels: selectedServer?.channels ?? NO_CHANNELS,
+    textRef: messageTextRef,
+    inputRef,
+    applyText,
+    onBegin: clearCompletion,
+  });
+
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      command.begin(
+        pendingBotCommandPick.botNick,
+        pendingBotCommandPick.command,
+      );
+      clearBotCommandPickRequest();
+    }
+  }, [
+    pendingBotCommandPick,
+    selectedServerId,
+    clearBotCommandPickRequest,
+    command.begin,
+  ]);
+
+  const beginTypedBotCommand = (text: string, caret: number) => {
+    const typed = typedBotCommand(
+      text,
+      caret,
+      slashSuggestions(selectedServer, selectedChannel),
+    );
+    if (typed && needsArguments(typed))
+      command.begin(typed.source.botNick, {
+        name: typed.name,
+        description: typed.description,
+        options: typed.options,
+      });
+    return typed;
+  };
+
+  const pendingComposerCommand = useStore(
+    (state) => state.ui.pendingComposerCommand,
+  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    if (
+      !pendingComposerCommand ||
+      pendingComposerCommand.serverId !== selectedServerId
+    )
+      return;
+    useStore.getState().clearComposerCommandRequest();
+    const { name, botNick } = pendingComposerCommand;
+    if (command.invocation) command.cancel();
+    // We name the bot, since a bare name may belong to the server or another bot.
+    const text = `/${name}@${botNick} `;
+    applyText(text);
+    inputRef.current?.focus();
+    inputRef.current?.setSelectionRange(text.length, text.length);
+    beginTypedBotCommand(text, text.length);
+  }, [pendingComposerCommand, selectedServerId]);
+
   const completionUsers = useMemo<User[]>(
     () =>
       selectedChannel?.users ??
@@ -838,19 +894,14 @@ export const ChatArea: React.FC<{
         slashSuggestions(selectedServer, selectedChannel),
         (cmd) => {
           if (cmd.source.kind !== "bot") return;
-          setParamModal({
-            botNick: cmd.source.botNick,
-            command: {
-              name: cmd.name,
-              description: cmd.description,
-              options: cmd.options,
-            },
+          command.begin(cmd.source.botNick, {
+            name: cmd.name,
+            description: cmd.description,
+            options: cmd.options,
           });
-          applyText("");
-          setCompletionInput(NO_COMPLETION_INPUT);
         },
       ),
-    [selectedServer, selectedChannel, applyText],
+    [selectedServer, selectedChannel, command.begin],
   );
   const completionProviders = useMemo(
     () => [slashCommandProvider, emojiProvider(emojiItems), memberProvider],
@@ -1058,9 +1109,9 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     const key = channelKey;
     return () => {
-      if (key) draftMap.current.set(key, messageTextRef.current);
+      if (key) draftMap.current.set(key, command.leave());
     };
-  }, [channelKey]);
+  }, [channelKey, command.leave]);
 
   // Save outgoing channel's scroll position on cleanup (same pattern as draftMap).
   useEffect(() => {
@@ -1573,8 +1624,39 @@ export const ChatArea: React.FC<{
     inputRef.current?.focus();
   };
 
+  const invocation = command.invocation;
+  const [argHint, setArgHint] = useState<HTMLDivElement | null>(null);
+  const argFieldWidth =
+    invocation && command.activeParam
+      ? Math.max(
+          (invocation.values[command.activeParam.name] ?? "").length,
+          command.activeParam.name.length,
+        ) + 1
+      : 0;
+
+  const placeholder = (() => {
+    if (command.activeParam) return command.activeParam.name;
+    if (selectedChannel)
+      return globalSettings.enableMultilineInput &&
+        !isNativeMobile &&
+        !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+        : t`Message ${voiceDisplayName(selectedChannel.name)}`;
+    if (selectedPrivateChat)
+      return globalSettings.enableMultilineInput && !isMobile && !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
+          : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
+        : t`Message @${selectedPrivateChat.username}`;
+    return t`Type a message...`;
+  })();
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const isModKey = isMac ? e.metaKey || e.ctrlKey : e.ctrlKey;
+
+    if (command.handleKey(e)) return;
 
     // Reply navigation: Cmd/Ctrl+↑ moves to older repliable message, ↓ moves newer / cancels
     if (isModKey && e.key === "ArrowUp") {
@@ -1763,7 +1845,14 @@ export const ChatArea: React.FC<{
 
     // We re-render on keystrokes only while the user types a slash command
     // name, and once after that to close any open completion.
-    if (getActiveSlashQuery(newText, newCursorPosition) !== null) {
+    command.onInput(newText);
+
+    if (!command.invocation) beginTypedBotCommand(newText, newCursorPosition);
+
+    if (
+      !command.invocation &&
+      getActiveSlashQuery(newText, newCursorPosition) !== null
+    ) {
       // The first slash in this channel asks the +B users we have no schema
       // for, so their commands join the list as soon as they answer.
       const wasCompletingSlash =
@@ -1798,7 +1887,7 @@ export const ChatArea: React.FC<{
 
   const handleUpdatedText = (text: string) => {
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
-    if (!target) return;
+    if (!target || command.invocation) return;
     typingNotification.notifyTyping(target, text);
   };
 
@@ -2203,7 +2292,9 @@ export const ChatArea: React.FC<{
                   <div
                     key={key}
                     className={
-                      isKeyActive ? "flex flex-col flex-grow min-h-0" : "hidden"
+                      isKeyActive
+                        ? `flex flex-col flex-grow min-h-0 ${aChannelId === "server-notices" ? "pb-4" : ""}`
+                        : "hidden"
                     }
                   >
                     <ChannelMessageList
@@ -2285,15 +2376,27 @@ export const ChatArea: React.FC<{
                 serverId={selectedServerId ?? ""}
                 channelId={selectedChannelId || selectedPrivateChatId || ""}
               />
+              {command.invocation && command.activeParam && (
+                <CommandArgHint
+                  param={command.activeParam}
+                  fallback={command.invocation.command.description}
+                  error={command.invocation.error}
+                  onCancel={command.cancel}
+                  ref={setArgHint}
+                />
+              )}
               <div
-                className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"}`}
+                className={`bg-discord-dark-100 ${localReplyTo || command.invocation ? "rounded-b-lg" : "rounded-lg"}`}
               >
                 <AttachmentTray
                   attachments={attachments}
                   onRemove={removeAttachment}
                 />
                 {/* We align to the bottom so the buttons stay beside the last line while the box grows. */}
-                <div className="relative flex flex-nowrap items-end pr-2">
+                <div
+                  data-composer
+                  className="relative flex flex-nowrap items-end pr-2"
+                >
                   <button
                     ref={plusButtonRef}
                     aria-label={t`Attach`}
@@ -2305,46 +2408,62 @@ export const ChatArea: React.FC<{
                     <FaPlus />
                   </button>
 
-                  <TextArea
-                    ref={inputRef}
-                    defaultValue=""
-                    onChange={handleInputChange}
-                    onClick={handleInputClick}
-                    onKeyUp={handleInputKeyUp}
-                    onKeyDown={handleKeyDown}
-                    onPaste={handlePaste}
-                    onBeforeInput={onBeforeInputGuard}
-                    autoCorrect={isMobileInput ? "on" : "off"}
-                    autoCapitalize={isMobileInput ? "sentences" : "off"}
-                    spellCheck={isMobileInput}
-                    placeholder={
-                      selectedChannel
-                        ? globalSettings.enableMultilineInput &&
-                          !isNativeMobile &&
-                          !isCompactInput
-                          ? globalSettings.multilineOnShiftEnter
-                            ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
-                            : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
-                          : t`Message ${voiceDisplayName(selectedChannel.name)}`
-                        : selectedPrivateChat
-                          ? globalSettings.enableMultilineInput &&
-                            !isMobile &&
-                            !isCompactInput
-                            ? globalSettings.multilineOnShiftEnter
-                              ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
-                              : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
-                            : t`Message @${selectedPrivateChat.username}`
-                          : t`Type a message...`
-                    }
-                    enterKeyHint={
-                      isNativeMobile && globalSettings.enableMultilineInput
-                        ? "enter"
-                        : "send"
-                    }
-                    className="min-w-0 flex-1 resize-none overflow-y-auto border-none bg-transparent py-[15px] leading-[22px] text-discord-text-normal outline-none placeholder:truncate"
-                    style={previewStyle}
-                    rows={1}
-                  />
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center">
+                    {invocation && (
+                      <CommandChip name={invocation.command.name} />
+                    )}
+                    {invocation &&
+                      command.params.map((p, i) =>
+                        i === invocation.active ? null : (
+                          <CommandArgPill
+                            key={p.name}
+                            label={p.name}
+                            value={invocation.values[p.name] ?? ""}
+                            optional={!p.required}
+                            order={i < invocation.active ? 0 : 2}
+                            onSelect={() => command.select(i)}
+                          />
+                        ),
+                      )}
+                    <TextArea
+                      ref={inputRef}
+                      defaultValue=""
+                      onChange={handleInputChange}
+                      onClick={handleInputClick}
+                      onKeyUp={handleInputKeyUp}
+                      onKeyDown={handleKeyDown}
+                      onPaste={handlePaste}
+                      onBeforeInput={onBeforeInputGuard}
+                      autoCorrect={isMobileInput ? "on" : "off"}
+                      autoCapitalize={isMobileInput ? "sentences" : "off"}
+                      spellCheck={isMobileInput}
+                      placeholder={placeholder}
+                      aria-describedby={
+                        command.invocation ? COMMAND_DETAIL_ID : undefined
+                      }
+                      enterKeyHint={
+                        isNativeMobile && globalSettings.enableMultilineInput
+                          ? "enter"
+                          : "send"
+                      }
+                      className={`resize-none overflow-y-auto border-none leading-[22px] text-discord-text-normal outline-none placeholder:truncate ${
+                        !invocation
+                          ? "min-w-0 flex-1 bg-transparent py-[15px]"
+                          : isTouch
+                            ? "order-3 my-1 mr-1 min-w-0 basis-full rounded bg-discord-primary/15 px-1.5 py-[11px]"
+                            : "order-1 my-[11px] mr-1 max-w-full rounded bg-discord-primary/15 px-1.5 py-1"
+                      }`}
+                      style={
+                        invocation && !isTouch
+                          ? {
+                              ...previewStyle,
+                              width: `calc(${argFieldWidth}ch + 0.75rem)`,
+                            }
+                          : previewStyle
+                      }
+                      rows={1}
+                    />
+                  </div>
                   <InputToolbar
                     selectedColor={selectedColor}
                     onEmojiClick={() => {
@@ -2358,10 +2477,17 @@ export const ChatArea: React.FC<{
                       setShowMembersDropdown(false);
                     }}
                     onAtClick={handleAtButtonClick}
-                    onSendClick={handleSendMessage}
+                    onSendClick={
+                      command.invocation ? command.run : handleSendMessage
+                    }
                     showSendButton={isNativeMobile}
                     hideEmoji={isNativeMobile}
-                    canSend={hasText || attachments.length > 0}
+                    hideFormatting={isTouch && invocation !== null}
+                    canSend={
+                      hasText ||
+                      attachments.length > 0 ||
+                      command.invocation !== null
+                    }
                   />
                 </div>
               </div>
@@ -2487,6 +2613,22 @@ export const ChatArea: React.FC<{
                 />
               )}
 
+              {argHint && command.activeParam && command.choices.length > 0 && (
+                <SuggestionList
+                  title={command.activeParam.name}
+                  items={command.choices}
+                  getKey={(choice) => choice}
+                  renderItem={(choice) => (
+                    <span className="min-w-0 flex-1 truncate">{choice}</span>
+                  )}
+                  selectedIndex={command.highlight}
+                  onHover={command.setHighlight}
+                  onPick={command.pickChoice}
+                  anchor={argHint}
+                  rowClassName={isTouch ? "min-h-12" : ""}
+                />
+              )}
+
               {completion.isOpen && (
                 <CompletionList
                   completion={completion}
@@ -2499,83 +2641,6 @@ export const ChatArea: React.FC<{
                   rowClassName={isTouch ? "min-h-12" : ""}
                 />
               )}
-
-              {/* Per-arg hint shown after the cmd name + a space.
-                  Pulls schemas from both client-side commands and
-                  any cached PushBot schemas. */}
-              {(() => {
-                const srv = servers.find((s) => s.id === selectedServerId);
-                const schemas: Record<
-                  string,
-                  {
-                    command: import("../../types").BotCommand;
-                    source: "client" | "bot";
-                    botNick?: string;
-                    scope: "channel" | "server" | "dm";
-                  }
-                > = {};
-
-                // Client-side commands first; bot schemas overwrite
-                // only if there's a real collision (none in practice
-                // because the client owns /me, /msg, etc).
-                for (const c of getClientCommands()) {
-                  schemas[c.name.toLowerCase()] = {
-                    command: {
-                      name: c.name,
-                      description: c.description,
-                      options: c.options,
-                    },
-                    source: "client",
-                    scope: "dm",
-                  };
-                }
-
-                if (srv?.botCommands) {
-                  const chanUsers = new Set<string>(
-                    selectedChannel?.users.map((u) =>
-                      u.username.toLowerCase(),
-                    ) ?? [],
-                  );
-                  for (const [botNick, list] of Object.entries(
-                    srv.botCommands,
-                  )) {
-                    const botScope: "channel" | "server" =
-                      srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick.toLowerCase());
-                    if (
-                      botScope === "channel" &&
-                      (!selectedChannel || !inChannel)
-                    )
-                      continue;
-                    for (const c of list) {
-                      const entry = {
-                        command: c,
-                        source: "bot" as const,
-                        botNick,
-                        scope: botScope,
-                      };
-                      // Specific key handles `/cmd@bot foo` lookups;
-                      // bare key is a fallback for `/cmd foo` (last
-                      // bot wins, which matches dispatch's fallback
-                      // ordering).
-                      schemas[
-                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
-                      ] = entry;
-                      schemas[c.name.toLowerCase()] = entry;
-                    }
-                  }
-                }
-
-                if (Object.keys(schemas).length === 0) return null;
-                return (
-                  <SlashParamHint
-                    inputValue={messageTextRef.current ?? ""}
-                    cursorPosition={cursorPositionRef.current}
-                    schemas={schemas}
-                    inputElement={inputRef.current}
-                  />
-                );
-              })()}
 
               {/* Members dropdown triggered by @ button */}
               <MemberPicker
@@ -2611,9 +2676,7 @@ export const ChatArea: React.FC<{
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
-        onPickBotCommand={(botNick, command) =>
-          setParamModal({ botNick, command })
-        }
+        onPickBotCommand={command.begin}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -2795,25 +2858,6 @@ export const ChatArea: React.FC<{
           onCancel={() => setPendingPlainUpload(null)}
         />
       )}
-      {paramModal &&
-        selectedServerId &&
-        createPortal(
-          <SlashCommandParamModal
-            serverId={selectedServerId}
-            botNick={paramModal.botNick}
-            command={paramModal.command}
-            channel={selectedChannel ?? null}
-            privateChat={selectedPrivateChat ?? null}
-            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
-            joinedChannels={
-              servers
-                .find((s) => s.id === selectedServerId)
-                ?.channels.map((c) => c.name) ?? []
-            }
-            onClose={() => setParamModal(null)}
-          />,
-          document.body,
-        )}
     </div>
   );
 };

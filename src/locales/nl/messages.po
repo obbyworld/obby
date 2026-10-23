@@ -32,10 +32,6 @@ msgstr "(overnemen)"
 msgid "(not set)"
 msgstr "(niet ingesteld)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(uitgevoerd door Obby)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(ingesteld, bewerk om te wijzigen)"
@@ -91,21 +87,6 @@ msgstr "{0} heeft je uitgenodigd om te spelen."
 #: src/components/layout/ProfilePane.tsx
 msgid "{0} idle"
 msgstr "{0} inactief"
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0} is verplicht."
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0} moet een getal zijn."
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0} moet een geheel getal zijn."
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -295,10 +276,6 @@ msgstr "*kanaal*"
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "*spam*"
 msgstr "*spam*"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#kanaal"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -1034,12 +1011,15 @@ msgstr "Je laatste 2FA-inloggegevens kunnen niet worden verwijderd"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "Annuleren"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "Cancel command"
+msgstr "Commando annuleren"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -2218,9 +2198,19 @@ msgstr "Voer een kanaal in om gebruikers naartoe te sturen als ze niet kunnen de
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Voer een naam in met spaties, emoji of symbolen. IRC-commando's gebruiken nog steeds de echte naam ({channelName})."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "Voer een getal in voor {0}"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Voer een URL in. Gebruik {sizeToken} in de URL voor dynamische grootte. Voorbeeld: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "Voer een geheel getal in voor {0}"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2428,6 +2418,11 @@ msgstr "Afbeelding van bestandshost"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "Bestanden groter dan {0} worden onversleuteld verstuurd. De bestandshost kan ze lezen en iedereen met de link kan ze openen."
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "Vul {0} in"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -3491,10 +3486,6 @@ msgstr "Volgende afbeelding"
 msgid "Next page"
 msgstr "Volgende pagina"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "nick"
-
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -3796,10 +3787,6 @@ msgstr "OK"
 msgid "on"
 msgstr "aan"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "een van:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -3946,6 +3933,10 @@ msgstr "Operatoracties"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Operator password"
 msgstr "Operatorwachtwoord"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "optioneel"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
@@ -4530,11 +4521,6 @@ msgstr "Vereis een geregistreerde nick om te praten (+r)."
 msgid "Require an invite to join."
 msgstr "Vereis een uitnodiging om te joinen."
 
-#: src/components/ui/SlashCommandParamModal.tsx
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "verplicht"
-
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
 msgstr "Start je browser opnieuw om meldingen te krijgen als Obby gesloten is"
@@ -4571,10 +4557,6 @@ msgstr "90° draaien"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "Regels"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "Uitvoeren"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5416,10 +5398,6 @@ msgstr "Deze chat is versleuteld met Obby-versleuteling. Vergelijk de vingerafdr
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "Deze chat is versleuteld met OTR, dat compatibel is met andere IRC-clients. Vergelijk de vingerafdrukken met je contact buiten deze chat en markeer de chat daarna als geverifieerd."
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "Deze opdracht heeft geen parameters."
-
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."
 msgstr "Dit apparaat kan je locatie nu niet vinden. Probeer het zo meteen opnieuw."
@@ -5723,6 +5701,11 @@ msgstr "URL naar je avatarafbeelding"
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "Gebruik * voor jokertekens. Voorbeelden: slechtegebruiker!*@*, *!*@spammer.com, trol*!*@*"
 
+#. placeholder {0}: decoded.name
+#: src/components/message/BotInvocationChip.tsx
+msgid "Use /{0}"
+msgstr "/{0} gebruiken"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use a secure websocket port."
 msgstr "Gebruik een beveiligde websocketpoort."
@@ -5838,11 +5821,6 @@ msgstr "Zeer ontspannen"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "Zeer streng"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "via @{0}"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

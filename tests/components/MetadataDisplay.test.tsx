@@ -159,6 +159,7 @@ describe("Metadata Display Features", () => {
         serverNoticesPopupMinimized: false,
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       messages: {

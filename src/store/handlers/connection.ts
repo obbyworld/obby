@@ -49,10 +49,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     }),
   );
 
+  // A dropped link reconnects on its own and the connection strip shows it, so we file it as a note.
   ircClient.on("serverError", ({ serverId, message }) =>
     reportServerReply(store, {
       serverId,
-      type: "fail",
+      type: "note",
       command: "ERROR",
       code: "SERVER_ERROR",
       message,

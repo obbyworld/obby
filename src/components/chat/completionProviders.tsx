@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useEffect, useMemo, useState } from "react";
 import type { CompletionProvider } from "../../hooks/useCompletion";
+import { botPriority } from "../../lib/botPriority";
 import { getClientCommands } from "../../lib/clientCommands";
 import type { ResolvedShortcode } from "../../lib/customEmoji";
 import type { BotCommandOption, Channel, Server, User } from "../../types";
@@ -194,6 +195,29 @@ export function getActiveSlashQuery(
   return beforeCursor.slice(1).toLowerCase();
 }
 
+// `/name ` or `/name@bot ` with the caret after the space names the bot
+// command the user wants to fill in. A bare name goes to the first bot listed,
+// since slashSuggestions lists bots in the order they answer.
+export function typedBotCommand(
+  inputValue: string,
+  cursorPosition: number,
+  suggestions: readonly SlashSuggestion[],
+): (SlashSuggestion & { source: { kind: "bot" } }) | null {
+  const match = /^\/([^\s/@]+)(?:@(\S+))? $/.exec(inputValue);
+  if (!match || cursorPosition !== inputValue.length) return null;
+  const name = match[1].toLowerCase();
+  const bot = match[2]?.toLowerCase();
+  const named = suggestions.filter((s) => s.name.toLowerCase() === name);
+  if (named.some((s) => s.source.kind === "client")) return null;
+  if (!bot && named.some((s) => s.source.kind === "server")) return null;
+  const bots = named.filter(
+    (s): s is SlashSuggestion & { source: { kind: "bot" } } =>
+      s.source.kind === "bot" &&
+      (!bot || s.source.botNick.toLowerCase() === bot),
+  );
+  return bots[0] ?? null;
+}
+
 function formatOptions(options: BotCommandOption[] | undefined): string {
   if (!options || options.length === 0) return "";
   return options
@@ -224,9 +248,9 @@ function sourceLabel(source: SlashSuggestionSource): {
   }
 }
 
-// Client commands come first because they own their names, then bot schemas,
-// then the server's cmdslist minus anything already listed. Two bots may both
-// offer a name, and we list both so the pick fills `/cmd@bot` unambiguously.
+// Client commands come first because they own their names, then the server's
+// cmdslist, then bot schemas by botPriority. A bare `/cmd` runs the first of
+// these, so a bot behind it is picked as `/cmd@bot`.
 export function slashSuggestions(
   server: Server | undefined,
   channel: Channel | undefined,
@@ -245,11 +269,20 @@ export function slashSuggestions(
     seen.add(c.name.toLowerCase());
   }
 
+  for (const name of server?.cmdsAvailable ?? []) {
+    if (seen.has(name.toLowerCase())) continue;
+    suggestions.push({ name, source: { kind: "server" } });
+  }
+
   if (server?.botCommands) {
     const channelNicks = new Set(
       channel?.users.map((u) => u.username.toLowerCase()) ?? [],
     );
-    for (const [botNick, list] of Object.entries(server.botCommands)) {
+    const byPriority = Object.entries(server.botCommands).sort(
+      ([a], [b]) =>
+        botPriority(server.bots?.[a]) - botPriority(server.bots?.[b]),
+    );
+    for (const [botNick, list] of byPriority) {
       const scope = server.bots?.[botNick]?.scope ?? "channel";
       if (scope === "channel" && !channelNicks.has(botNick.toLowerCase()))
         continue;
@@ -260,21 +293,12 @@ export function slashSuggestions(
           options: c.options,
           source: { kind: "bot", botNick, scope },
         });
-        seen.add(c.name.toLowerCase());
       }
     }
-  }
-
-  for (const name of server?.cmdsAvailable ?? []) {
-    if (seen.has(name.toLowerCase())) continue;
-    suggestions.push({ name, source: { kind: "server" } });
-    seen.add(name.toLowerCase());
   }
   return suggestions;
 }
 
-// A bot command that declares options goes to `onPickWithOptions` so its
-// values are entered through typed form fields.
 export function slashProvider(
   commands: readonly SlashSuggestion[],
   onPickWithOptions: (suggestion: SlashSuggestion) => void,
@@ -307,7 +331,11 @@ export function slashProvider(
               </span>
             )}
             <span
-              className="row-meta ml-auto shrink-0 [[data-compact]_&]:order-last"
+              className={`ml-auto shrink-0 [[data-compact]_&]:order-last ${
+                cmd.source.kind === "server"
+                  ? "rounded px-1.5 text-[11px] font-semibold uppercase bg-discord-primary text-white"
+                  : "row-meta"
+              }`}
               title={source.title}
             >
               {source.label}

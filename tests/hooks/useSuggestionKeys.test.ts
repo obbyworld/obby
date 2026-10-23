@@ -40,7 +40,7 @@ describe("useSuggestionKeys", () => {
   it("accepts the highlighted row and consumes the key", () => {
     const { onAccept } = setup(1);
     expect(press("Enter").defaultPrevented).toBe(true);
-    expect(onAccept).toHaveBeenCalledWith(1);
+    expect(onAccept).toHaveBeenCalledWith(1, expect.any(KeyboardEvent));
   });
 
   it("leaves the key alone when accept declines it", () => {

@@ -86,6 +86,16 @@ export const MAX_MESSAGES_PER_CHANNEL = 1500;
 export const messageTime = (message: Message) =>
   new Date(message.timestamp).getTime();
 
+// A line waiting for its echo has no server time yet, so we keep it below
+// every line the server stamped, in the order we sent it.
+export function compareMessageOrder(a: Message, b: Message): number {
+  const isPendingA = a.status === "pending";
+  const isPendingB = b.status === "pending";
+  if (isPendingA !== isPendingB) return isPendingA ? 1 : -1;
+  if (isPendingA) return 0;
+  return messageTime(a) - messageTime(b);
+}
+
 export const isChatMessage = (message: Message) =>
   message.type === "message" || message.type === undefined;
 

@@ -56,6 +56,7 @@ import {
 import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import {
+  compareMessageOrder,
   ensureUrlFormat,
   isAppInFront,
   MAX_MESSAGES_PER_CHANNEL,
@@ -475,13 +476,15 @@ interface UIState {
   // bots modal — UserProfileModal sets this to {serverId, botNick}
   // when the user clicks "Show in Bots Menu" and ChatArea picks it up
   // to open the modal pre-selected on that bot.
-  // Cross-component deep-link from the member-list context menu's Bot
-  // Commands submenu — clicking a command sets this and ChatArea picks
-  // it up to open the slash-command param modal.
   pendingBotCommandPick: {
     serverId: string;
     botNick: string;
     command: import("../types").BotCommand;
+  } | null;
+  pendingComposerCommand: {
+    serverId: string;
+    botNick: string;
+    name: string;
   } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
@@ -1044,6 +1047,12 @@ export interface AppState {
     command: import("../types").BotCommand,
   ) => void;
   clearBotCommandPickRequest: () => void;
+  requestComposerCommand: (
+    serverId: string,
+    botNick: string,
+    name: string,
+  ) => void;
+  clearComposerCommandRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -1306,6 +1315,7 @@ const useStore = create<AppState>((set, get) => ({
     },
     prefillServerDetails: null,
     pendingBotCommandPick: null,
+    pendingComposerCommand: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -2107,18 +2117,9 @@ const useStore = create<AppState>((set, get) => ({
         return state; // Don't add duplicate message
       }
 
-      // Add message and sort chronologically by timestamp
-      const updatedMessages = [...currentMessages, message].sort((a, b) => {
-        const timeA =
-          a.timestamp instanceof Date
-            ? a.timestamp.getTime()
-            : new Date(a.timestamp).getTime();
-        const timeB =
-          b.timestamp instanceof Date
-            ? b.timestamp.getTime()
-            : new Date(b.timestamp).getTime();
-        return timeA - timeB;
-      });
+      const updatedMessages = [...currentMessages, message].sort(
+        compareMessageOrder,
+      );
 
       // Cap per-channel history to prevent unbounded memory growth in long sessions.
       // A detached window moves its newer lines to the present right after, so we leave it whole.
@@ -2152,12 +2153,9 @@ const useStore = create<AppState>((set, get) => ({
       const next = list.map((msg) => {
         if (msg.pendingLabel !== label) return msg;
         matched = true;
-        // We keep the time we sent it: a server that delays a burst stamps
-        // later times, and the next sort would shuffle our own lines.
         return {
           ...msg,
           ...updates,
-          timestamp: msg.timestamp,
           pendingLabel: undefined,
           status: undefined,
         };
@@ -2166,7 +2164,7 @@ const useStore = create<AppState>((set, get) => ({
       return {
         messages: {
           ...state.messages,
-          [channelKey]: next,
+          [channelKey]: next.sort(compareMessageOrder),
         },
       };
     });
@@ -3682,6 +3680,21 @@ const useStore = create<AppState>((set, get) => ({
   clearBotCommandPickRequest: () => {
     set((state) => ({
       ui: { ...state.ui, pendingBotCommandPick: null },
+    }));
+  },
+
+  requestComposerCommand: (serverId, botNick, name) => {
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        pendingComposerCommand: { serverId, botNick, name },
+      },
+    }));
+  },
+
+  clearComposerCommandRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingComposerCommand: null },
     }));
   },
 

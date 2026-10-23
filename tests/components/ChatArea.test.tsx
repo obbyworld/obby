@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatArea } from "../../src/components/layout/ChatArea";
@@ -98,6 +98,7 @@ describe("ChatArea Tab Completion Integration", () => {
         serverNoticesPopupMinimized: false,
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       messages: {},
@@ -366,6 +367,52 @@ describe("ChatArea Tab Completion Integration", () => {
     fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
     expect(input).toHaveValue("/join ");
   });
+
+  it("starts a bot command from a ran chip as if it were typed", async () => {
+    useStore.setState({
+      servers: [
+        {
+          ...mockServer,
+          channels: [
+            {
+              ...mockChannel,
+              users: [
+                ...mockUsers,
+                { id: "5", username: "_cloudbot", isOnline: true },
+              ],
+            },
+          ],
+          botCommands: {
+            _cloudbot: [
+              { name: "catfact" },
+              {
+                name: "cakeday",
+                options: [{ name: "user", type: "user", required: true }],
+              },
+            ],
+          },
+        },
+      ],
+    });
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    act(() => {
+      useStore
+        .getState()
+        .requestComposerCommand("server1", "_cloudbot", "catfact");
+    });
+    expect(input).toHaveValue("/catfact@_cloudbot ");
+    expect(useStore.getState().ui.pendingComposerCommand).toBeNull();
+
+    act(() => {
+      useStore
+        .getState()
+        .requestComposerCommand("server1", "_cloudbot", "cakeday");
+    });
+    expect(await screen.findByText("/cakeday")).toBeInTheDocument();
+    expect(ircClient.sendRaw).not.toHaveBeenCalled();
+  });
 });
 
 const makeMsg = (
@@ -429,6 +476,7 @@ describe("ChatArea reply keyboard navigation", () => {
         serverNoticesPopupMinimized: false,
         shouldFocusChatInput: false,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       typingUsers: {},

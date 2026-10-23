@@ -32,10 +32,6 @@ msgstr "(상속)"
 msgid "(not set)"
 msgstr "(설정 안 됨)"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(run by Obby)"
-msgstr "(Obby가 실행함)"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
 msgstr "(설정됨, 변경하려면 편집)"
@@ -91,21 +87,6 @@ msgstr "{0}님이 게임에 초대했습니다."
 #: src/components/layout/ProfilePane.tsx
 msgid "{0} idle"
 msgstr "{0} 유휴"
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} is required."
-msgstr "{0}은(는) 필수입니다."
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a number."
-msgstr "{0}은(는) 숫자여야 합니다."
-
-#. placeholder {0}: o.name
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "{0} must be a whole number."
-msgstr "{0}은(는) 정수여야 합니다."
 
 #. placeholder {0}: networks.length
 #. placeholder {1}: networks.length === 1 ? "" : "s"
@@ -295,10 +276,6 @@ msgstr "*channel*"
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "*spam*"
 msgstr "*spam*"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "#channel"
-msgstr "#채널"
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "#channel (optional)"
@@ -1034,12 +1011,15 @@ msgstr "마지막 2FA 인증 수단은 삭제할 수 없습니다"
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/RemoveServerConfirmModal.tsx
 #: src/components/ui/settings/HistoryUsageField.tsx
-#: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/lib/modal/ConfirmDialog.tsx
 msgid "Cancel"
 msgstr "취소"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "Cancel command"
+msgstr "명령 취소"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Cancel Connection"
@@ -2218,9 +2198,19 @@ msgstr "사용자가 이 채널에 참여할 수 없을 때 보낼 채널을 입
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "공백, 이모지, 기호를 포함한 이름을 입력하세요. IRC 명령에서는 실제 이름({channelName})이 계속 사용됩니다."
 
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a number for {0}"
+msgstr "{0}에 숫자를 입력하세요"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요. 예: https://example.com/avatar/{sizeToken}/channel.jpg"
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Enter a whole number for {0}"
+msgstr "{0}에 정수를 입력하세요"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
@@ -2428,6 +2418,11 @@ msgstr "파일 호스트 이미지"
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
 msgstr "{0}보다 큰 파일은 암호화 없이 전송됩니다. 파일 호스트가 내용을 읽을 수 있고, 링크가 있는 사람은 누구나 열 수 있습니다."
+
+#. placeholder {0}: e.name
+#: src/components/chat/CommandArgHint.tsx
+msgid "Fill in {0}"
+msgstr "{0}을(를) 입력하세요"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -3491,10 +3486,6 @@ msgstr "다음 이미지"
 msgid "Next page"
 msgstr "다음 페이지"
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "nick"
-msgstr "닉네임"
-
 #. placeholder {0}: nick ? `(${nick})` : ""
 #: src/store/handlers/users.ts
 msgid "Nick change failed: {error} {0}"
@@ -3796,10 +3787,6 @@ msgstr "확인"
 msgid "on"
 msgstr "켜기"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "one of:"
-msgstr "다음 중 하나:"
-
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/MemberList.tsx
 #: src/components/layout/MemberList.tsx
@@ -3946,6 +3933,10 @@ msgstr "운영자 작업"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Operator password"
 msgstr "운영자 비밀번호"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "optional"
+msgstr "선택"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Optional crash reports to improve the app"
@@ -4530,11 +4521,6 @@ msgstr "말하려면 등록된 닉네임이 필요합니다 (+r)."
 msgid "Require an invite to join."
 msgstr "참여하려면 초대가 필요합니다."
 
-#: src/components/ui/SlashCommandParamModal.tsx
-#: src/components/ui/SlashParamHint.tsx
-msgid "required"
-msgstr "필수"
-
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
 msgstr "Obby가 닫혀 있을 때도 알림을 받으려면 브라우저를 다시 시작하세요"
@@ -4571,10 +4557,6 @@ msgstr "90° 회전"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
 msgstr "규칙"
-
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "Run"
-msgstr "실행"
 
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Run {name}?"
@@ -5416,10 +5398,6 @@ msgstr "이 채팅은 Obby 암호화로 암호화되어 있습니다. 이 채팅
 msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
 msgstr "이 채팅은 다른 IRC 클라이언트와 호환되는 OTR로 암호화되어 있습니다. 이 채팅 밖에서 상대방과 지문을 비교한 후 인증됨으로 표시하세요."
 
-#: src/components/ui/SlashCommandParamModal.tsx
-msgid "This command takes no parameters."
-msgstr "이 명령어는 매개변수를 받지 않습니다."
-
 #: src/lib/geolocation.ts
 msgid "This device could not find your location right now. Try again in a moment."
 msgstr "이 기기에서 지금 위치를 찾을 수 없습니다. 잠시 후 다시 시도하세요."
@@ -5723,6 +5701,11 @@ msgstr "아바타 이미지의 URL"
 msgid "Use * for wildcards. Examples: baduser!*@*, *!*@spammer.com, troll*!*@*"
 msgstr "와일드카드로 *를 사용하세요. 예: baduser!*@*, *!*@spammer.com, troll*!*@*"
 
+#. placeholder {0}: decoded.name
+#: src/components/message/BotInvocationChip.tsx
+msgid "Use /{0}"
+msgstr "/{0} 사용"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use a secure websocket port."
 msgstr "보안 웹소켓 포트를 사용하세요."
@@ -5838,11 +5821,6 @@ msgstr "매우 완화"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Strict"
 msgstr "매우 엄격"
-
-#. placeholder {0}: entry.botNick
-#: src/components/ui/SlashParamHint.tsx
-msgid "via @{0}"
-msgstr "@{0} 통해"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
