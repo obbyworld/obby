@@ -16,6 +16,24 @@ import * as storage from "../localStorage";
 import { takePendingJoin } from "../pendingJoins";
 import { reportServerReply } from "./serverReplies";
 
+// We save only a nick the user asked for, so a nick the server assigns us never sticks.
+const requestedNicks = new Map<string, string>();
+
+export function rememberRequestedNick(serverId: string, nick: string): void {
+  requestedNicks.set(serverId, nick.toLowerCase());
+}
+
+function saveConfirmedNick(
+  store: StoreApi<AppState>,
+  serverId: string,
+  newNick: string,
+): void {
+  if (requestedNicks.get(serverId) !== newNick.toLowerCase()) return;
+  if (ircClient.getNick(serverId) !== newNick) return;
+  requestedNicks.delete(serverId);
+  store.getState().updateServer(serverId, { nickname: newNick });
+}
+
 function appendMessage(
   store: StoreApi<AppState>,
   serverId: string,
@@ -290,6 +308,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
         return;
       }
     }
+    saveConfirmedNick(store, serverId, newNick);
     store.setState((state) => {
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {

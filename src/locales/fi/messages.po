@@ -1358,10 +1358,6 @@ msgstr "Sulje katseluohjelma"
 msgid "Close workflow"
 msgstr "Sulje työnkulku"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Ikkunan sulkeminen pitää Obbyn yhdistettynä ilmoitusalueella, joten ilmoitukset saapuvat edelleen"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Koodi hyväksytty."
@@ -2922,10 +2918,6 @@ msgstr "Pidä Obby auki saadaksesi ilmoituksia"
 msgid "Keep passwords"
 msgstr "Säilytä salasanat"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Jatka ilmoitusalueella"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Pidä kanava, kun kaikki ovat poistuneet. Vain IRCopit voivat asettaa tämän."
@@ -3340,6 +3332,10 @@ msgstr "Käyttäjiä vähintään"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Pienennä"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "Pienennä ilmoitusalueelle"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

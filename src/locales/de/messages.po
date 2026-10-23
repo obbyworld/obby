@@ -1358,10 +1358,6 @@ msgstr "Ansicht schließen"
 msgid "Close workflow"
 msgstr "Workflow schließen"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Beim Schließen des Fensters bleibt Obby im Infobereich verbunden, sodass Benachrichtigungen weiter ankommen"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Code akzeptiert."
@@ -2922,10 +2918,6 @@ msgstr "Lass Obby geöffnet, um Benachrichtigungen zu erhalten"
 msgid "Keep passwords"
 msgstr "Passwörter behalten"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Im Infobereich weiterlaufen"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Kanal behalten, nachdem alle ihn verlassen haben. Nur IRCops können das festlegen."
@@ -3340,6 +3332,10 @@ msgstr "Min. Nutzer"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Minimieren"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "In den Infobereich minimieren"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

@@ -1358,10 +1358,6 @@ msgstr "Zavřít prohlížeč"
 msgid "Close workflow"
 msgstr "Zavřít workflow"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Zavření okna nechá Obby připojené v systémové liště, takže oznámení stále přicházejí"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Kód přijat."
@@ -2922,10 +2918,6 @@ msgstr "Nechte Obby otevřené, abyste dostávali oznámení"
 msgid "Keep passwords"
 msgstr "Ponechat hesla"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Běžet v systémové liště"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Ponechat kanál, i když ho všichni opustí. Může to nastavit jen IRCop."
@@ -3340,6 +3332,10 @@ msgstr "Min. počet uživatelů"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Minimalizovat"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "Minimalizovat do lišty"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

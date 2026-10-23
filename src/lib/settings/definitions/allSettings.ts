@@ -6,11 +6,7 @@ import { CustomMentionsField } from "../../../components/ui/settings/CustomMenti
 import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
 import { PushMethodField } from "../../../components/ui/settings/PushMethodField";
-import {
-  isTauriAndroid,
-  isTauriDesktop,
-  isTauriIOS,
-} from "../../platformUtils";
+import { isTauriAndroid, isTauriIOS } from "../../platformUtils";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -186,19 +182,6 @@ const notificationSettings: SettingDefinition[] = [
     type: "toggle",
     defaultValue: false,
     searchKeywords: ["notification", "alert", "desktop", "push", "banner"],
-    priority: 0,
-  },
-  {
-    id: "notifications.closeToTray",
-    key: "closeToTray",
-    category: "notifications",
-    subcategory: "Alerts",
-    title: msg`Keep Running in the Tray`,
-    description: msg`Closing the window keeps Obby connected in the system tray, so notifications still arrive`,
-    type: "toggle",
-    defaultValue: true,
-    hidden: !isTauriDesktop(),
-    searchKeywords: ["tray", "background", "close", "minimize", "menu bar"],
     priority: 0,
   },
   {

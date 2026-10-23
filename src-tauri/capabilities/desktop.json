@@ -1,13 +1,14 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "desktop",
-  "description": "desktop-only permissions: in-app auto-update and restart",
+  "description": "desktop-only permissions: in-app auto-update, restart and quit",
   "windows": [
     "main"
   ],
   "platforms": ["macOS", "windows", "linux"],
   "permissions": [
     "updater:default",
-    "process:allow-restart"
+    "process:allow-restart",
+    "process:allow-exit"
   ]
 }

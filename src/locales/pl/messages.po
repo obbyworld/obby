@@ -1358,10 +1358,6 @@ msgstr "Zamknij przeglądarkę"
 msgid "Close workflow"
 msgstr "Zamknij przepływ pracy"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Zamknięcie okna pozostawia Obby połączone w zasobniku systemowym, więc powiadomienia nadal docierają"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Kod zaakceptowany."
@@ -2922,10 +2918,6 @@ msgstr "Pozostaw Obby otwarte, aby otrzymywać powiadomienia"
 msgid "Keep passwords"
 msgstr "Zachowaj hasła"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Działaj w zasobniku"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Zachowaj kanał po wyjściu wszystkich. Może to ustawić tylko IRCop."
@@ -3340,6 +3332,10 @@ msgstr "Min. użytkowników"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Minimalizuj"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "Zminimalizuj do zasobnika"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts
