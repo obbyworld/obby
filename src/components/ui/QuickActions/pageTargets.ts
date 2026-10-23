@@ -75,13 +75,6 @@ export function getPageTargets(ctx: QuickActionContext): PageTarget[] {
       page: { kind: "channelBrowser", serverId },
     },
     {
-      id: "bots",
-      title: t`Bots`,
-      path: server.name,
-      keywords: ["bot", "commands", "tools"],
-      page: { kind: "bots", serverId },
-    },
-    {
       id: "raw-log",
       title: t`Network log`,
       path: server.name,

@@ -62,17 +62,21 @@ export function notePrivateMessageArrived(
   const isActiveChat =
     getViewedSelection(store.getState()).selectedPrivateChatId ===
     privateChatId;
-  if (isActiveChat || isHistorical) return;
-  notifyChatMessage(store, {
-    serverId,
-    target: sender,
-    sender,
-    // We keep decrypted text out of the system's notification center.
-    text: arrival.isEncrypted ? encryptedNotificationText() : body,
-    isPrivate: true,
-    time: new Date(arrival.message.timestamp).getTime(),
-    msgid: arrival.message.msgid,
-  });
+  if (isHistorical) return;
+  notifyChatMessage(
+    store,
+    {
+      serverId,
+      target: sender,
+      sender,
+      // We keep decrypted text out of the system's notification center.
+      text: arrival.isEncrypted ? encryptedNotificationText() : body,
+      isPrivate: true,
+      time: new Date(arrival.message.timestamp).getTime(),
+      msgid: arrival.message.msgid,
+    },
+    isActiveChat,
+  );
 }
 
 // A replayed message carries its own server-time and must never move a chat

@@ -651,6 +651,12 @@ export function useMessageSending({
         selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
       if (!target) return;
 
+      if (
+        useStore.getState().servers.find((s) => s.id === selectedServerId)
+          ?.isAway
+      )
+        clearAway(selectedServerId);
+
       // Route PMs through E2EE before any plaintext send path.
       if (selectedPrivateChat) {
         const routed = routeOutgoingPM(
@@ -702,6 +708,7 @@ export function useMessageSending({
       selectedPrivateChat,
       currentUser,
       localReplyTo,
+      clearAway,
       handleCommand,
       sendMultilineMessage,
       sendMultilineFallback,

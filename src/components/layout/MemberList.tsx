@@ -15,6 +15,7 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import OperatorKey from "../ui/OperatorKey";
 import UserContextMenu from "../ui/UserContextMenu";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
@@ -141,15 +142,18 @@ const UserItem: React.FC<{
     setAvatarLoadFailed(false);
   }, []);
 
+  const openMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
+    onContextMenu(e, user.username, serverId, channelId, avatarElement);
+  };
+
   return (
     <div
       ref={refMeasure}
       data-username={user.username}
       className="flex items-center gap-3 py-2 px-3 mx-2 mb-1 rounded cursor-pointer bg-discord-dark-400/30 hover:bg-discord-dark-400/50 transition-colors"
-      onClick={(e) => {
-        const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
-        onContextMenu(e, user.username, serverId, channelId, avatarElement);
-      }}
+      onClick={openMenu}
+      onContextMenu={openMenu}
     >
       {/* Avatar with status indicator */}
       <div className="relative shrink-0">
@@ -182,14 +186,7 @@ const UserItem: React.FC<{
       <div className="flex flex-col truncate min-w-0 flex-1">
         {/* Display name or username with badges */}
         <div className="flex items-center gap-1">
-          {!displayName && isIrcOp && (
-            <span
-              className="inline-flex items-center justify-center p-2.5 w-4 h-4 text-xs text-white bg-blue-500 rounded font-bold"
-              title={t`IRC Operator`}
-            >
-              🔑
-            </span>
-          )}
+          {!displayName && isIrcOp && <OperatorKey className="ml-0.5" />}
           {user.status && (
             <span
               className="shrink-0 bg-blue-600 text-white px-1.5 py-0.5 rounded text-xs font-bold shadow-sm"
@@ -211,14 +208,7 @@ const UserItem: React.FC<{
                 title={t`Verified account`}
               />
             )}
-            {!displayName && isOperator && (
-              <span
-                className="inline ml-1 bg-red-600 text-white px-3 py-0.5 rounded text-xs font-bold"
-                title={t`IRC Operator`}
-              >
-                🔑
-              </span>
-            )}
+            {!displayName && isOperator && <OperatorKey className="ml-0.5" />}
             {!displayName && isBot && (
               <span className="ml-1 group relative">
                 🤖
@@ -247,14 +237,7 @@ const UserItem: React.FC<{
                     title={t`Verified account`}
                   />
                 )}
-                {(isIrcOp || isOperator) && (
-                  <span
-                    className="ml-0.5 inline-flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-500 rounded"
-                    title={t`IRC Operator`}
-                  >
-                    🔑
-                  </span>
-                )}
+                {(isIrcOp || isOperator) && <OperatorKey className="ml-0.5" />}
                 {isBot && <span className="ml-0.5">🤖</span>}
               </span>
               {(user.realname || metadataStatus || website) && (

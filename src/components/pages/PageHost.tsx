@@ -11,7 +11,6 @@ const loaders = {
   serverSettings: () => import("./ServerSettingsPage"),
   channelSettings: () => import("./ChannelSettingsPage"),
   channelBrowser: () => import("./ChannelBrowserPage"),
-  bots: () => import("./BotsPage"),
   rawLog: () => import("./RawLogPage"),
   twoFactor: () => import("./TwoFactorPage"),
   emojiPacks: () => import("./EmojiPacksPage"),
@@ -27,7 +26,6 @@ const SettingsPage = lazy(loaders.settings);
 const ServerSettingsPage = lazy(loaders.serverSettings);
 const ChannelSettingsPage = lazy(loaders.channelSettings);
 const ChannelBrowserPage = lazy(loaders.channelBrowser);
-const BotsPage = lazy(loaders.bots);
 const RawLogPage = lazy(loaders.rawLog);
 const TwoFactorPage = lazy(loaders.twoFactor);
 const EmojiPacksPage = lazy(loaders.emojiPacks);
@@ -42,8 +40,6 @@ function renderPage(page: AppPage) {
       return <ChannelSettingsPage page={page} />;
     case "channelBrowser":
       return <ChannelBrowserPage page={page} />;
-    case "bots":
-      return <BotsPage page={page} />;
     case "rawLog":
       return <RawLogPage page={page} />;
     case "twoFactor":

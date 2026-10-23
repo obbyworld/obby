@@ -22,9 +22,6 @@ export function registerModeHandler(
         modeargs,
         useStore,
       );
-    } else {
-      // User mode - for now, just log
-      console.log(`User mode change: ${target} ${modestring}`, modeargs);
     }
   });
 }

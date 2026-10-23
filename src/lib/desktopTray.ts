@@ -62,6 +62,7 @@ export async function showMainWindow(): Promise<void> {
   await window.setFocus();
 }
 
+const TRAY_ID = "main";
 let tray: TrayIcon | null = null;
 let trayCreation: Promise<void> | null = null;
 let baseIcon: Image | null = null;
@@ -77,6 +78,8 @@ export function createDesktopTray(
 }
 
 async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
+  // The tray outlives a page reload but its menu callbacks do not, so we replace it.
+  await (await TrayIcon.getById(TRAY_ID))?.close();
   baseIcon = await defaultWindowIcon();
   const menu = await Menu.new({
     items: [
@@ -89,7 +92,7 @@ async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
     ],
   });
   tray = await TrayIcon.new({
-    id: "main",
+    id: TRAY_ID,
     icon: baseIcon ?? undefined,
     tooltip: "Obby",
     menu,

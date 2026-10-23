@@ -75,11 +75,17 @@ export function offerNotificationsOnce(store: StoreApi<AppState>): void {
   });
 }
 
+function isWindowInUse(): boolean {
+  return document.visibilityState === "visible" && document.hasFocus();
+}
+
 export function notifyChatMessage(
   store: StoreApi<AppState>,
   notification: ChatNotification,
+  isChatOpen: boolean,
 ): void {
   if (!areChatNotificationsOn(store.getState().globalSettings)) return;
+  if (isChatOpen && isWindowInUse()) return;
   void showChatNotification(notification)
     .then((isShown) => {
       if (isShown) return;

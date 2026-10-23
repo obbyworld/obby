@@ -144,7 +144,6 @@ export type AppPage = (
       highlight?: string;
     }
   | { kind: "channelBrowser"; serverId: string }
-  | { kind: "bots"; serverId: string; botNick?: string }
   | { kind: "rawLog"; serverId: string }
   | { kind: "twoFactor"; serverId: string }
   | { kind: "emojiPacks"; serverId: string }
@@ -155,6 +154,11 @@ export interface ProfilePane {
   username: string;
 }
 
+export interface BotPane {
+  serverId: string;
+  botNick?: string;
+}
+
 // isChatShown hides the results behind the chat where both cannot fit;
 // hitChatId is the chat a result opened, so the way back shows only there,
 // and hitMessageId is the message it landed on, which the chat keeps marked.
@@ -162,6 +166,7 @@ export interface ProfilePane {
 // pane searches as the reader types.
 export type SidePane =
   | ({ kind: "profile" } & ProfilePane)
+  | ({ kind: "bot" } & BotPane)
   | {
       kind: "search";
       query: SearchQuery;

@@ -7,6 +7,7 @@ import { processMarkdownInText, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, type MediaSettings } from "../../lib/mediaUtils";
 import { loadSavedMetadata } from "../../store";
 import type { PrivateChat, Server, User } from "../../types";
+import OperatorKey from "../ui/OperatorKey";
 import type { DragRowProps } from "./ChannelRow";
 
 function getUserMetadata(server: Server | undefined, username: string) {
@@ -80,15 +81,7 @@ function renderUserBadges(
           🤖
         </span>
       )}
-      {isIrcOp && (
-        <span
-          className="inline ml-0.5"
-          style={{ fontSize: "0.9em" }}
-          title={t`IRC Operator`}
-        >
-          🔑
-        </span>
-      )}
+      {isIrcOp && <OperatorKey className="ml-0.5" />}
     </>
   );
 }

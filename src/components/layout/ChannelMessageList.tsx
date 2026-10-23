@@ -279,19 +279,6 @@ export const ChannelMessageList = forwardRef<
       }
     }, [isScrolledUp]);
 
-    // Reset ref-tracked windowing state when switching channels.
-    // visibleMessageCount is NOT reset here — useState(initialScrollState?.visibleCount ?? DEFAULT_VISIBLE_MESSAGE_COUNT)
-    // already initializes it correctly on mount, and this effect runs once on mount for the
-    // same channelKey (each instance is bound to exactly one channel by the parent key={}).
-    // biome-ignore lint/correctness/useExhaustiveDependencies: intentional full reset on channel change
-    useEffect(() => {
-      prevFilteredLengthRef.current = 0;
-      prevFirstMsgIdRef.current = null;
-      prevScrollHeightRef.current = 0;
-      pendingPrependRef.current = false;
-      resizeObserverPrevSHRef.current = 0;
-    }, [channelKey]);
-
     // Whether we moved the scroll to put the anchored row back where it was.
     const keepAnchoredRow = (): boolean => {
       const container = messagesContainerRef.current;
@@ -1063,18 +1050,19 @@ export const ChannelMessageList = forwardRef<
                 return (
                   <Fragment key={message.id}>
                     {message.id === firstUnreadId && (
-                      // We draw the line over the boundary with no height of its own, so the messages stay put when it comes and goes.
+                      // We draw the line with no height of its own, so the messages stay put when it comes and goes.
+                      // A row with a header has a 16px gap above it, and the line sits in the middle of it.
                       // Above the first row there is nothing to overlap, so there it takes its own height.
                       <div
                         data-unread-line
                         className={`relative z-[5] pointer-events-none ${originalIndex === 0 ? "h-5" : "h-0"}`}
                       >
                         <div
-                          className={`absolute inset-x-4 -translate-y-1/2 flex items-center gap-2 text-xs font-semibold text-discord-red ${originalIndex === 0 ? "top-1/2" : "top-0"}`}
+                          className={`absolute inset-x-4 -translate-y-1/2 flex items-center gap-2 text-xs font-semibold text-discord-red ${originalIndex === 0 ? "top-1/2" : showHeader ? "top-2" : "top-0"}`}
                         >
                           <span className="hairline flex-1 bg-discord-red/70" />
-                          <span className="px-1 rounded bg-discord-dark-200">
-                            <Trans>New messages</Trans>
+                          <span className="px-1.5 h-4 leading-4 text-[10px] rounded-sm bg-discord-red text-white">
+                            <Trans>New</Trans>
                           </span>
                         </div>
                       </div>

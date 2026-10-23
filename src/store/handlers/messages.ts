@@ -203,21 +203,20 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
           return;
         }
 
-        if (
-          !isActiveChannel &&
-          !isOwnMessage &&
-          !isHistoricalMessage &&
-          hasMention
-        )
-          notifyChatMessage(store, {
-            serverId: server.id,
-            target: channelName,
-            sender: response.sender,
-            text: message,
-            isPrivate: false,
-            time: new Date(timestamp).getTime(),
-            msgid: mtags?.msgid,
-          });
+        if (!isOwnMessage && !isHistoricalMessage && hasMention)
+          notifyChatMessage(
+            store,
+            {
+              serverId: server.id,
+              target: channelName,
+              sender: response.sender,
+              text: message,
+              isPrivate: false,
+              time: new Date(timestamp).getTime(),
+              msgid: mtags?.msgid,
+            },
+            isActiveChannel,
+          );
 
         // If message has bot tag, mark user as bot (skip for historical — live messages will set this)
         if (!isHistoricalMessage && mtags?.bot !== undefined) {
@@ -487,16 +486,20 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             channel.id &&
           multilineCurrentState.ui.selectedServerId === server.id;
 
-        if (!isActiveChannel && !isOwnMessage && hasMention)
-          notifyChatMessage(store, {
-            serverId: server.id,
-            target: channel.name,
-            sender,
-            text: message,
-            isPrivate: false,
-            time: new Date(timestamp).getTime(),
-            msgid: newMessage.msgid,
-          });
+        if (!isOwnMessage && hasMention)
+          notifyChatMessage(
+            store,
+            {
+              serverId: server.id,
+              target: channel.name,
+              sender,
+              text: message,
+              isPrivate: false,
+              time: new Date(timestamp).getTime(),
+              msgid: newMessage.msgid,
+            },
+            isActiveChannel,
+          );
 
         const soundState = store.getState();
         if (

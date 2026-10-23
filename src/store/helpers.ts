@@ -15,6 +15,35 @@ export function findServerUser(
   return undefined;
 }
 
+// Our own away state lives on the server and on our channel entries, so we write both together.
+export function setUserAway(
+  server: Server,
+  nick: string | undefined,
+  isAway: boolean,
+  awayMessage: string | undefined,
+  ownNick: string | undefined,
+): Server {
+  if (!nick) return server;
+  const lowerNick = nick.toLowerCase();
+  let hasChanged = false;
+  const channels = server.channels.map((channel) => {
+    const index = channel.users.findIndex(
+      (user) => user.username.toLowerCase() === lowerNick,
+    );
+    const user = channel.users[index];
+    if (!user || (user.isAway === isAway && user.awayMessage === awayMessage))
+      return channel;
+    hasChanged = true;
+    const users = [...channel.users];
+    users[index] = { ...user, isAway, awayMessage };
+    return { ...channel, users };
+  });
+  const isOwn = lowerNick === ownNick?.toLowerCase();
+  if (isOwn && (server.isAway !== isAway || server.awayMessage !== awayMessage))
+    return { ...server, channels, isAway, awayMessage };
+  return hasChanged ? { ...server, channels } : server;
+}
+
 // Namespace UUID for generating deterministic channel/chat IDs
 export const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
 

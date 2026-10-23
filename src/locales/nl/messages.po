@@ -46,7 +46,7 @@ msgstr "(ingesteld, bewerk om te wijzigen)"
 msgid "(stored, leave blank to keep)"
 msgstr "(opgeslagen, leeg laten om te behouden)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "(suspended)"
 msgstr "(opgeschort)"
 
@@ -452,7 +452,7 @@ msgstr "Actie"
 msgid "Actions"
 msgstr "Acties"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "active"
 msgstr "actief"
 
@@ -599,7 +599,6 @@ msgid "Alerts"
 msgstr "Meldingen"
 
 #: src/components/layout/SearchPane.tsx
-#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "Alle"
 
@@ -679,7 +678,7 @@ msgstr "Weergave"
 msgid "Apply and refresh"
 msgstr "Toepassen en vernieuwen"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "Goedkeuren"
@@ -828,6 +827,8 @@ msgstr "Afwezigheidsbericht"
 msgid "Away:"
 msgstr "Afwezig:"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/ui/page/PageShell.tsx
@@ -965,8 +966,7 @@ msgstr "Botopdrachten"
 msgid "Bot in this channel"
 msgstr "Bot in dit kanaal"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/ui/QuickActions/pageTargets.ts
+#: src/components/layout/BotPane.tsx
 msgid "Bots"
 msgstr "Bots"
 
@@ -1109,13 +1109,9 @@ msgstr "Nickname gewijzigd"
 msgid "changed the topic to: {topic}"
 msgstr "heeft het onderwerp gewijzigd naar: {topic}"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "channel"
 msgstr "kanaal"
-
-#: src/components/pages/BotsPage.tsx
-msgid "Channel"
-msgstr "Kanaal"
 
 #: src/components/layout/MemberList.tsx
 msgid "Channel Admin"
@@ -1129,7 +1125,7 @@ msgstr "Kanaalavatar voorbeeldweergave"
 msgid "Channel behavior"
 msgstr "Kanaalgedrag"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Channel bot, only in joined channels"
 msgstr "Kanaalbot, alleen in gejoinde kanalen"
 
@@ -1206,8 +1202,8 @@ msgstr "kanaalnaam"
 msgid "Channel-scoped"
 msgstr "Kanaalgebonden"
 
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1338,6 +1334,8 @@ msgstr "Client"
 msgid "Client limit (+l)"
 msgstr "Clientlimiet (+l)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1427,7 +1425,7 @@ msgstr "Commando geleverd door de IRC-server"
 msgid "Command run by Obby"
 msgstr "Opdracht uitgevoerd door Obby"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Commands are loading…"
 msgstr "Opdrachten worden geladen…"
 
@@ -1445,11 +1443,11 @@ msgstr "Reacties ({commentCount})"
 msgid "complete"
 msgstr "voltooid"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "config-defined"
 msgstr "config-gedefinieerd"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "Config-gedefinieerde bot. Bewerk obbyircd.conf en /REHASH om de status te wijzigen."
 
@@ -1789,22 +1787,22 @@ msgstr "Standaard nickname"
 msgid "Delay joins (+D)"
 msgstr "Vertraag joins (+D)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot"
 msgstr "Bot verwijderen"
 
 #. placeholder {0}: bot.nick
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot {0}? Run /REHASH before you register this nick again."
 msgstr "Bot {0} verwijderen? Voer /REHASH uit voordat je deze nick opnieuw registreert."
 
@@ -1851,7 +1849,7 @@ msgstr "Dit bericht verwijderen? Dit kan niet ongedaan worden gemaakt."
 msgid "Delete this network?"
 msgstr "Dit netwerk verwijderen?"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "deleted"
 msgstr "verwijderd"
 
@@ -2554,7 +2552,7 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line (globale ban)"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "gateway online"
 msgstr "gateway online"
 
@@ -2810,14 +2808,10 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/PrivateChatRow.tsx
-#: src/components/message/MessageHeader.tsx
 #: src/components/pages/pageSections.tsx
 #: src/components/pages/SettingsPage.tsx
+#: src/components/ui/OperatorKey.tsx
+#: src/components/ui/OperatorKey.tsx
 msgid "IRC Operator"
 msgstr "IRC Operator"
 
@@ -3463,6 +3457,10 @@ msgstr "Netwerknaam"
 msgid "Networks on {0}"
 msgstr "Netwerken op {0}"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New"
+msgstr "Nieuw"
+
 #: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "Nieuw versleuteld bericht"
@@ -3471,10 +3469,6 @@ msgstr "Nieuw versleuteld bericht"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "nieuwe map"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "New messages"
-msgstr "Nieuwe berichten"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -3554,11 +3548,7 @@ msgstr "Nog geen bans, voeg er hierboven een toe"
 msgid "No bans yet, ask a channel operator to add one"
 msgstr "Nog geen bans, vraag een kanaaloperator er een toe te voegen"
 
-#: src/components/pages/BotsPage.tsx
-msgid "No bots match. Clear the search or change the filter."
-msgstr "Geen bots gevonden. Wis de zoekopdracht of wijzig het filter."
-
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No bots registered on this network yet."
 msgstr "Nog geen bots geregistreerd op dit netwerk."
 
@@ -3694,7 +3684,7 @@ msgstr "Er is geen server geselecteerd. Kies eerst een server uit de zijbalk; ui
 msgid "No servers found."
 msgstr "Geen servers gevonden."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No slash commands yet"
 msgstr "Nog geen slashcommando's"
 
@@ -3787,7 +3777,7 @@ msgstr "Obby — IRC de toekomst in"
 msgid "Off"
 msgstr "Uit"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "offline"
 msgstr "offline"
 
@@ -3849,10 +3839,6 @@ msgstr "Open {0}"
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
 msgstr "Open een privébericht naar een gebruiker"
-
-#: src/components/ui/UserContextMenu.tsx
-msgid "Open bots menu"
-msgstr "Bot-menu openen"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3953,7 +3939,7 @@ msgstr "Voer OPER uit"
 msgid "Oper Username"
 msgstr "Oper-gebruikersnaam"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Operator actions"
 msgstr "Operatoracties"
 
@@ -4045,7 +4031,7 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF-voorbeeld"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "pending"
 msgstr "in afwachting"
 
@@ -4678,11 +4664,6 @@ msgstr "Zoeken"
 msgid "Search again"
 msgstr "Opnieuw zoeken"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
-msgid "Search bots"
-msgstr "Bots zoeken"
-
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Search channels..."
 msgstr "Zoek kanalen..."
@@ -4772,10 +4753,6 @@ msgstr "Beveiligingsgroepen"
 msgid "Security Warning"
 msgstr "Beveiligingswaarschuwing"
 
-#: src/components/layout/NetworkMenu.tsx
-msgid "See bots"
-msgstr "Bots bekijken"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
@@ -4800,10 +4777,6 @@ msgstr "Zie wie het meest praat en wanneer je kanaal druk is."
 msgid "Seek"
 msgstr "Spoelen"
 
-#: src/components/pages/BotsPage.tsx
-msgid "Select a bot to see its commands and management actions."
-msgstr "Selecteer een bot om de commando's en beheeracties te zien."
-
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
 msgstr "Selecteer een kanaal"
@@ -4820,7 +4793,7 @@ msgstr "Lid selecteren"
 msgid "Select or add a channel to get started."
 msgstr "Selecteer of voeg een kanaal toe om te beginnen."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "zelf-geregistreerd"
 
@@ -4890,7 +4863,7 @@ msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "Onversleuteld verstuurd omdat het bestand te groot is om te versleutelen"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
 
@@ -4963,13 +4936,12 @@ msgstr "Serverinstellingen"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Server-naar-servercommunicatie kan niet-versleutelde verbindingen gebruiken"
 
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "Serverbreed"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "Serverwijd bot, bereikbaar vanuit elk kanaal"
 
@@ -5185,7 +5157,7 @@ msgid "Signed on"
 msgstr "Aangemeld op"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Slash commands"
 msgstr "Slash-opdrachten"
 
@@ -5215,7 +5187,7 @@ msgstr "Sorteer op gebruikers"
 msgid "SoundCloud player"
 msgstr "SoundCloud-speler"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Source"
 msgstr "Bron"
 
@@ -5334,11 +5306,11 @@ msgstr "Verwijder mIRC-kleurcodes uit berichten"
 msgid "Strongest encryption. Works only with other Obby users"
 msgstr "Sterkste versleuteling. Werkt alleen met andere Obby-gebruikers"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Suspend"
 msgstr "Opschorten"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "suspended"
 msgstr "opgeschort"
 
@@ -5605,7 +5577,7 @@ msgstr "Onderwerp ingesteld voor (min geleden)"
 msgid "Topic:"
 msgstr "Onderwerp:"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "Transport"
@@ -5711,7 +5683,7 @@ msgstr "Privégesprek losmaken"
 msgid "Unpin this private message conversation"
 msgstr "Dit privéberichtgesprek losmaken"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Unsuspend"
 msgstr "Opschorting opheffen"
 
@@ -5878,6 +5850,10 @@ msgstr "via @{0}"
 msgid "Video"
 msgstr "Video"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "View Bot"
+msgstr "Bot bekijken"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "View Channel Topic"
 msgstr "Kanaalonderwerp bekijken"
@@ -5999,7 +5975,7 @@ msgstr "We slaan je IRC-communicatie niet op onze servers op"
 msgid "WebAuthn is not available in this environment."
 msgstr "WebAuthn is niet beschikbaar in deze omgeving."
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Webhook"
 msgstr "Webhook"
 

@@ -340,7 +340,7 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
   // command token rather than letting handleFail swallow them.
   FAIL: (ctx, serverId, source, parv, mtags, trailing) => {
     if (parv[0] === "METADATA")
-      return handleMetadataFail(ctx, serverId, source, parv, mtags);
+      return handleMetadataFail(ctx, serverId, source, parv, mtags, trailing);
     if (parv[0] === "BOUNCER")
       return handleBouncerFail(ctx, serverId, source, parv);
     return handleFail(ctx, serverId, source, parv, mtags, trailing);

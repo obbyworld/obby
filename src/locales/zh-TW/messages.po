@@ -46,7 +46,7 @@ msgstr "（已設定，編輯以變更）"
 msgid "(stored, leave blank to keep)"
 msgstr "（已儲存，留空則保留）"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "(suspended)"
 msgstr "（已停用）"
 
@@ -452,7 +452,7 @@ msgstr "操作"
 msgid "Actions"
 msgstr "動作"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "active"
 msgstr "活躍"
 
@@ -599,7 +599,6 @@ msgid "Alerts"
 msgstr "提醒"
 
 #: src/components/layout/SearchPane.tsx
-#: src/components/pages/BotsPage.tsx
 msgid "All"
 msgstr "全部"
 
@@ -679,7 +678,7 @@ msgstr "外觀"
 msgid "Apply and refresh"
 msgstr "套用並重新整理"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Approve"
 msgstr "核准"
@@ -828,6 +827,8 @@ msgstr "离开消息"
 msgid "Away:"
 msgstr "離開："
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/ui/page/PageShell.tsx
@@ -965,8 +966,7 @@ msgstr "Bot 指令"
 msgid "Bot in this channel"
 msgstr "此頻道中的機器人"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/ui/QuickActions/pageTargets.ts
+#: src/components/layout/BotPane.tsx
 msgid "Bots"
 msgstr "機器人"
 
@@ -1109,12 +1109,8 @@ msgstr "已更改昵称"
 msgid "changed the topic to: {topic}"
 msgstr "將主題更改為：{topic}"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "channel"
-msgstr "頻道"
-
-#: src/components/pages/BotsPage.tsx
-msgid "Channel"
 msgstr "頻道"
 
 #: src/components/layout/MemberList.tsx
@@ -1129,7 +1125,7 @@ msgstr "频道头像预览"
 msgid "Channel behavior"
 msgstr "頻道行為"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Channel bot, only in joined channels"
 msgstr "頻道機器人，僅在已加入的頻道中生效"
 
@@ -1206,8 +1202,8 @@ msgstr "頻道名稱"
 msgid "Channel-scoped"
 msgstr "頻道範圍"
 
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1338,6 +1334,8 @@ msgstr "客戶端"
 msgid "Client limit (+l)"
 msgstr "用戶端上限 (+l)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1427,7 +1425,7 @@ msgstr "IRC伺服器提供的命令"
 msgid "Command run by Obby"
 msgstr "由 Obby 執行的指令"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Commands are loading…"
 msgstr "指令載入中…"
 
@@ -1445,11 +1443,11 @@ msgstr "評論 ({commentCount})"
 msgid "complete"
 msgstr "已完成"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "config-defined"
 msgstr "設定定義"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Config-defined bot. Edit obbyircd.conf and /REHASH to change state."
 msgstr "由設定定義的機器人。編輯 obbyircd.conf 並執行 /REHASH 以變更狀態。"
 
@@ -1789,22 +1787,22 @@ msgstr "預設暱稱"
 msgid "Delay joins (+D)"
 msgstr "延遲加入 (+D)"
 
+#: src/components/layout/BotPane.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/layout/ChatArea.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Delete"
 msgstr "删除"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot"
 msgstr "刪除機器人"
 
 #. placeholder {0}: bot.nick
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Delete bot {0}? Run /REHASH before you register this nick again."
 msgstr "刪除機器人 {0}？再次註冊此暱稱前，請先執行 /REHASH。"
 
@@ -1851,7 +1849,7 @@ msgstr "刪除此訊息？此操作無法復原。"
 msgid "Delete this network?"
 msgstr "刪除此網路？"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "deleted"
 msgstr "已刪除"
 
@@ -2554,7 +2552,7 @@ msgstr "G-Line"
 msgid "G-Line (Global Ban)"
 msgstr "G-Line（全域封禁）"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "gateway online"
 msgstr "gateway 上線"
 
@@ -2810,14 +2808,10 @@ msgstr "IP"
 msgid "IRC OP"
 msgstr "IRC OP"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/MemberList.tsx
-#: src/components/layout/PrivateChatRow.tsx
-#: src/components/message/MessageHeader.tsx
 #: src/components/pages/pageSections.tsx
 #: src/components/pages/SettingsPage.tsx
+#: src/components/ui/OperatorKey.tsx
+#: src/components/ui/OperatorKey.tsx
 msgid "IRC Operator"
 msgstr "IRC Operator"
 
@@ -3463,6 +3457,10 @@ msgstr "网络名称"
 msgid "Networks on {0}"
 msgstr "{0} 上的網路"
 
+#: src/components/layout/ChannelMessageList.tsx
+msgid "New"
+msgstr "新訊息"
+
 #: src/lib/notifications.ts
 msgid "New encrypted message"
 msgstr "新的加密訊息"
@@ -3471,10 +3469,6 @@ msgstr "新的加密訊息"
 #: src/components/layout/ChannelList.tsx
 msgid "new folder"
 msgstr "新資料夾"
-
-#: src/components/layout/ChannelMessageList.tsx
-msgid "New messages"
-msgstr "新訊息"
 
 #: src/lib/clientCommands.ts
 msgid "New nickname"
@@ -3554,11 +3548,7 @@ msgstr "尚無封鎖，請於上方新增"
 msgid "No bans yet, ask a channel operator to add one"
 msgstr "還沒有封鎖，請讓頻道管理員新增"
 
-#: src/components/pages/BotsPage.tsx
-msgid "No bots match. Clear the search or change the filter."
-msgstr "沒有符合的機器人。請清除搜尋或變更篩選條件。"
-
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No bots registered on this network yet."
 msgstr "此網路上尚未註冊任何機器人。"
 
@@ -3694,7 +3684,7 @@ msgstr "尚未選擇伺服器。請先從側邊欄選擇一個伺服器；邀請
 msgid "No servers found."
 msgstr "未找到服务器。"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "No slash commands yet"
 msgstr "尚無斜線指令"
 
@@ -3787,7 +3777,7 @@ msgstr "Obby - 将 IRC 带入未来"
 msgid "Off"
 msgstr "关"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "offline"
 msgstr "離線"
 
@@ -3849,10 +3839,6 @@ msgstr "開啟{0}"
 #: src/lib/clientCommands.ts
 msgid "Open a private message to a user"
 msgstr "開啟與使用者的私訊"
-
-#: src/components/ui/UserContextMenu.tsx
-msgid "Open bots menu"
-msgstr "打開機器人選單"
 
 #: src/components/layout/ChannelRow.tsx
 #: src/components/layout/ChannelRow.tsx
@@ -3953,7 +3939,7 @@ msgstr "執行 OPER"
 msgid "Oper Username"
 msgstr "Oper 使用者名稱"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Operator actions"
 msgstr "操作員操作"
 
@@ -4045,7 +4031,7 @@ msgstr "PDF"
 msgid "PDF preview"
 msgstr "PDF 預覽"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "pending"
 msgstr "等待中"
 
@@ -4678,11 +4664,6 @@ msgstr "搜索"
 msgid "Search again"
 msgstr "重新搜尋"
 
-#: src/components/pages/BotsPage.tsx
-#: src/components/pages/BotsPage.tsx
-msgid "Search bots"
-msgstr "搜尋機器人"
-
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Search channels..."
 msgstr "搜尋頻道..."
@@ -4772,10 +4753,6 @@ msgstr "安全性群組"
 msgid "Security Warning"
 msgstr "安全警告"
 
-#: src/components/layout/NetworkMenu.tsx
-msgid "See bots"
-msgstr "檢視機器人"
-
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "See channel info"
@@ -4800,10 +4777,6 @@ msgstr "查看誰發言最多以及頻道何時最熱鬧。"
 msgid "Seek"
 msgstr "跳转"
 
-#: src/components/pages/BotsPage.tsx
-msgid "Select a bot to see its commands and management actions."
-msgstr "選擇機器人以查看其指令與管理動作。"
-
 #: src/components/layout/ChatHeader.tsx
 msgid "Select a channel"
 msgstr "选择频道"
@@ -4820,7 +4793,7 @@ msgstr "选择成员"
 msgid "Select or add a channel to get started."
 msgstr "选择或添加频道以开始使用。"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "自助註冊"
 
@@ -4890,7 +4863,7 @@ msgid "Sent unencrypted because the file is too large to encrypt"
 msgstr "未加密傳送，因為檔案太大無法加密"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "伺服器"
 
@@ -4963,13 +4936,12 @@ msgstr "伺服器設定"
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "服务器之间的通信可能使用未加密的连接"
 
-#: src/components/pages/BotsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Server-wide"
 msgstr "伺服器範圍"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Server-wide bot, reachable from any channel"
 msgstr "伺服器範圍的機器人，可從任何頻道存取"
 
@@ -5185,7 +5157,7 @@ msgid "Signed on"
 msgstr "登入時間"
 
 #: src/components/chat/completionProviders.tsx
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Slash commands"
 msgstr "斜線命令"
 
@@ -5215,7 +5187,7 @@ msgstr "依使用者數排序"
 msgid "SoundCloud player"
 msgstr "SoundCloud 播放器"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Source"
 msgstr "來源"
 
@@ -5334,11 +5306,11 @@ msgstr "從訊息中移除 mIRC 顏色代碼"
 msgid "Strongest encryption. Works only with other Obby users"
 msgstr "最強加密。僅適用於其他 Obby 使用者"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Suspend"
 msgstr "停用"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "suspended"
 msgstr "已停權"
 
@@ -5605,7 +5577,7 @@ msgstr "主題設定時間早於（幾分鐘前）"
 msgid "Topic:"
 msgstr "話題："
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Transport"
 msgstr "傳輸"
@@ -5711,7 +5683,7 @@ msgstr "取消置顶私聊"
 msgid "Unpin this private message conversation"
 msgstr "取消置顶此私信对话"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Unsuspend"
 msgstr "取消停用"
 
@@ -5878,6 +5850,10 @@ msgstr "透過 @{0}"
 msgid "Video"
 msgstr "影片"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "View Bot"
+msgstr "檢視機器人"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "View Channel Topic"
 msgstr "查看频道主题"
@@ -5999,7 +5975,7 @@ msgstr "我們不在伺服器上儲存您的 IRC 通訊"
 msgid "WebAuthn is not available in this environment."
 msgstr "此環境不支援 WebAuthn。"
 
-#: src/components/pages/BotsPage.tsx
+#: src/components/layout/BotPane.tsx
 msgid "Webhook"
 msgstr "Webhook"
 

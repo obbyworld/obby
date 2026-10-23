@@ -95,14 +95,7 @@ function commitBotCmds(
       const filteredCmds = botCanRegisterPrivileged(existingBot)
         ? cmds
         : cmds.filter((c) => {
-            if (PRIVILEGED_COMMANDS.has(c.name.toLowerCase())) {
-              console.warn(
-                "[pushbot] dropping privileged command from non-config bot",
-                { bot: senderNick, cmd: c.name },
-              );
-              return false;
-            }
-            return true;
+            return !PRIVILEGED_COMMANDS.has(c.name.toLowerCase());
           });
       const sharedChannels = s.channels
         .filter((c) => c.users.some((u) => u.username.toLowerCase() === key))
@@ -250,7 +243,6 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("BATCH_START", ({ serverId, batchId, type, sender }) => {
     if (type !== "draft/bot-cmds") return;
-    console.log("[bot-cmds] BATCH start", { batchId, sender });
     botCmdsBatches.set(`${serverId}:${batchId}`, {
       sender: sender ?? "",
       fragments: [],
@@ -312,16 +304,9 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
       }));
     }
     const joined = entry.fragments.join("");
-    console.log("[bot-cmds] BATCH end", {
-      batchId,
-      sender: entry.sender,
-      fragments: entry.fragments.length,
-      joinedLength: joined.length,
-    });
     if (!entry.fragments.length) return;
     const cmds = decodeBotCmds(joined);
     if (cmds) {
-      console.log("[bot-cmds] decoded ok", { count: cmds.length });
       commitBotCmds(store, serverId, entry.sender, cmds);
     } else {
       console.warn(

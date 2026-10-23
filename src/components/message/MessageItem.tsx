@@ -192,7 +192,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [isReaderOpen, setIsReaderOpen] = useState(false);
   const longPress = useLongPress({
-    onLongPress: () => setSheetOpen(true),
+    onLongPress: () => {
+      (document.activeElement as HTMLElement | null)?.blur();
+      setSheetOpen(true);
+    },
   });
 
   const handleMessageMouseEnter = () => {
