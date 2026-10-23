@@ -25,9 +25,9 @@ tauri = { version = "2.11", features = ["macos-private-api", "tray-icon", "image
 tauri-plugin-log = "2.0.0-rc"
 # Pinned because the mobile-notifications plugin reuses this plugin's private tap extras.
 tauri-plugin-notification = "=2.7.0"
-tauri-plugin-os = "2.3"
-tauri-plugin-opener = "2"
-tauri-plugin-deep-link = "2.4"
+tauri-plugin-os = "2.4"
+tauri-plugin-opener = "2.7"
+tauri-plugin-deep-link = "2.6"
 tokio = { version = "1.52.3", features = ["rt-multi-thread", "macros", "net", "io-util", "time"] }
 base64 = "0.22"
 futures-util = { version = "0.3", default-features = false, features = ["sink"] }
@@ -77,9 +77,9 @@ tauri-plugin-ios-keyboard = { path = "plugins/ios-keyboard" }
 tauri-plugin-share-sheet = { path = "plugins/share-sheet" }
 
 [target.'cfg(any(target_os = "ios", target_os = "android"))'.dependencies]
-tauri-plugin-haptics = "2"
+tauri-plugin-haptics = "2.4"
 tauri-plugin-mobile-notifications = { path = "plugins/mobile-notifications" }
-tauri-plugin-geolocation = "2"
+tauri-plugin-geolocation = "2.5"
 
 [patch.crates-io]
 swift-rs = { path = "vendor/swift-rs" }
