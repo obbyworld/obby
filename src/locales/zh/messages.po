@@ -1363,10 +1363,6 @@ msgstr "关闭查看器"
 msgid "Close workflow"
 msgstr "关闭工作流"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "关闭窗口后 Obby 仍在系统托盘中保持连接，通知会继续送达"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "代码已接受。"
@@ -2929,10 +2925,6 @@ msgstr "保持 Obby 打开以接收通知"
 msgid "Keep passwords"
 msgstr "保留密码"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "在托盘中保持运行"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "所有人离开后保留频道。只有 IRCop 可以设置。"
@@ -3347,6 +3339,10 @@ msgstr "最少用户数"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "最小化"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "最小化到托盘"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts

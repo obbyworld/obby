@@ -4,6 +4,7 @@ import { Image } from "@tauri-apps/api/image";
 import { Menu } from "@tauri-apps/api/menu";
 import { TrayIcon } from "@tauri-apps/api/tray";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { exit } from "@tauri-apps/plugin-process";
 import type { Server } from "../types";
 
 export type UnreadLevel = "none" | "unread" | "mention";
@@ -68,16 +69,17 @@ let trayCreation: Promise<void> | null = null;
 let baseIcon: Image | null = null;
 const dottedIcons = new Map<UnreadLevel, Image>();
 
-/** Creates the tray icon with its menu once per app, and hides the window on
- *  close while `shouldCloseToTray` says so. */
-export function createDesktopTray(
-  shouldCloseToTray: () => boolean,
-): Promise<void> {
-  trayCreation ??= buildTray(shouldCloseToTray);
+// We end the whole process, since any other window left open keeps the app running.
+const quitApp = () => void exit(0);
+
+/** Creates the tray icon with its menu once per app. Closing the window quits
+ *  the app, and the tray menu hides it to the tray instead. */
+export function createDesktopTray(): Promise<void> {
+  trayCreation ??= buildTray();
   return trayCreation;
 }
 
-async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
+async function buildTray(): Promise<void> {
   // The tray outlives a page reload but its menu callbacks do not, so we replace it.
   await (await TrayIcon.getById(TRAY_ID))?.close();
   baseIcon = await defaultWindowIcon();
@@ -85,10 +87,11 @@ async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
     items: [
       { id: "show", text: t`Show Obby`, action: () => void showMainWindow() },
       {
-        id: "quit",
-        text: t`Quit Obby`,
-        action: () => void getCurrentWindow().destroy(),
+        id: "hide",
+        text: t`Minimize to tray`,
+        action: () => void getCurrentWindow().hide(),
       },
+      { id: "quit", text: t`Quit Obby`, action: quitApp },
     ],
   });
   tray = await TrayIcon.new({
@@ -106,11 +109,7 @@ async function buildTray(shouldCloseToTray: () => boolean): Promise<void> {
         void showMainWindow();
     },
   });
-  await getCurrentWindow().onCloseRequested((event) => {
-    if (!shouldCloseToTray()) return;
-    event.preventDefault();
-    void getCurrentWindow().hide();
-  });
+  await getCurrentWindow().onCloseRequested(quitApp);
 }
 
 async function iconFor(level: UnreadLevel): Promise<Image | null> {

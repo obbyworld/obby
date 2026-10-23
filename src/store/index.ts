@@ -9,7 +9,6 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
-import { isLinux } from "../lib/platformUtils";
 import { recordPlace, recordSearch } from "../lib/search/recents";
 import { serializeSearchQuery } from "../lib/search/searchQuery";
 import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
@@ -55,6 +54,7 @@ import {
 } from "./handlers/otr";
 import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
+import { rememberRequestedNick } from "./handlers/users";
 import {
   compareMessageOrder,
   ensureUrlFormat,
@@ -1364,8 +1364,6 @@ const useStore = create<AppState>((set, get) => ({
     // Ignore list
     ignoreList: ["HistServ!*@*"],
     keepHistory: true,
-    // Some Linux desktops never show a tray icon, so closing quits there by default.
-    closeToTray: !isLinux,
     pushMethod: "fcm",
     historyLimitMb: 500,
     // Hosted chat mode settings
@@ -2113,6 +2111,7 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   changeNick: (serverId, newNick) => {
+    rememberRequestedNick(serverId, newNick);
     ircClient.changeNick(serverId, newNick);
   },
 

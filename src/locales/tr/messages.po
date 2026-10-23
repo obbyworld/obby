@@ -1363,10 +1363,6 @@ msgstr "Görüntüleyiciyi kapat"
 msgid "Close workflow"
 msgstr "İş akışını kapat"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
-msgstr "Pencereyi kapatmak Obby'yi sistem tepsisinde bağlı tutar, böylece bildirimler gelmeye devam eder"
-
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Kod kabul edildi."
@@ -2929,10 +2925,6 @@ msgstr "Bildirim almak için Obby'yi açık tut"
 msgid "Keep passwords"
 msgstr "Parolaları sakla"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Keep Running in the Tray"
-msgstr "Tepside çalışmaya devam et"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Herkes ayrıldıktan sonra kanalı koru. Bunu yalnızca IRCops ayarlayabilir."
@@ -3347,6 +3339,10 @@ msgstr "En az kullanıcı"
 #: src/components/message/ServerNoticesPopup.tsx
 msgid "Minimize"
 msgstr "Küçült"
+
+#: src/lib/desktopTray.ts
+msgid "Minimize to tray"
+msgstr "Tepsiye küçült"
 
 #. placeholder {0}: validation.minLength
 #: src/lib/settings/registry.ts
