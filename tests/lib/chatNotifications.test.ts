@@ -67,6 +67,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  Reflect.deleteProperty(navigator, "serviceWorker");
   vi.useRealTimers();
   vi.restoreAllMocks();
   core.invoke.mockReset();
@@ -121,6 +122,54 @@ describe("showing a chat notification", () => {
     });
     closeChatNotification("s1", "#DEV");
     expect(shown.close).toHaveBeenCalled();
+  });
+
+  it("shows through the server's push worker so a push for the same chat replaces it", async () => {
+    const showNotification = vi.fn(async () => {});
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        getRegistration: async (scope: string) => ({
+          scope,
+          showNotification,
+          active: { postMessage: vi.fn() },
+        }),
+      },
+    });
+    expect(await showChatNotification(mention)).toBe(true);
+
+    expect(FakeNotification.instances).toHaveLength(0);
+    expect(showNotification).toHaveBeenCalledWith(
+      "alice in #dev",
+      expect.objectContaining({
+        tag: "s1:#dev",
+        data: {
+          serverId: "s1",
+          target: "#dev",
+          time: mention.time,
+          msgid: "m1",
+        },
+      }),
+    );
+  });
+
+  it("shows its own notification while the push worker is still installing", async () => {
+    const showNotification = vi.fn(async () => {});
+    Object.defineProperty(navigator, "serviceWorker", {
+      configurable: true,
+      value: {
+        getRegistration: async (scope: string) => ({
+          scope,
+          showNotification,
+          active: null,
+        }),
+      },
+    });
+
+    expect(await showChatNotification(mention)).toBe(true);
+
+    expect(showNotification).not.toHaveBeenCalled();
+    expect(FakeNotification.instances).toHaveLength(1);
   });
 
   it("reports a missing permission so the caller can fall back", async () => {

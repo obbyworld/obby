@@ -18,7 +18,11 @@ import {
   isTauriIOS,
   isTauriMobile,
 } from "./platformUtils";
-import { closePushNotifications, markShownByPage } from "./pushRegistration";
+import {
+  closePushNotifications,
+  markShownByPage,
+  showOnPushWorker,
+} from "./pushRegistration";
 
 /**
  * Check if the browser Notification API is supported
@@ -176,6 +180,8 @@ const ANDROID_MESSAGES_CHANNEL = "messages";
 const BODY_LIMIT = 200;
 const TAP_REPEAT_MS = 3000;
 
+const CHAT_ICON = "/pwa/icon-192.png";
+
 const chatKey = (serverId: string, target: string) =>
   `${serverId}:${target.toLowerCase()}`;
 
@@ -253,13 +259,26 @@ export async function showChatNotification(
     else sendNotification(native);
     return true;
   }
+  const key = chatKey(notification.serverId, notification.target);
+  // Chrome replaces a tagged notification only within one registration, so we
+  // show through the server's push worker to let a push for the same chat replace ours.
+  if (
+    isNotificationSupported() &&
+    Notification.permission === "granted" &&
+    (await showOnPushWorker(
+      notification.serverId,
+      title,
+      { body, icon: CHAT_ICON, badge: CHAT_ICON, tag: key, data: target },
+      notification.msgid,
+    ))
+  )
+    return true;
   const shown = showBrowserNotification(title, {
     body,
-    icon: "/images/obby.png",
-    tag: chatKey(notification.serverId, notification.target),
+    icon: CHAT_ICON,
+    tag: key,
   });
   if (!shown) return false;
-  const key = chatKey(notification.serverId, notification.target);
   webNotifications.set(key, shown);
   markShownByPage(notification.serverId, notification.msgid);
   shown.onclick = () => {
