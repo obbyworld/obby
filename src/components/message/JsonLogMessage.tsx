@@ -9,6 +9,7 @@ import {
   FaCopy,
   FaSkull,
 } from "react-icons/fa";
+import ircClient from "../../lib/ircClient";
 import useStore from "../../store";
 import type { JsonValue, MessageType, User } from "../../types";
 
@@ -188,11 +189,7 @@ const renderStructuredData = (
       );
     }
     if (typeof value === "string") {
-      // Check if this is a channel name that should have a join button
-      const isChannelName =
-        value.startsWith("#") &&
-        // Any channel name (temporarily permissive to debug)
-        true;
+      const isChannelName = ircClient.isChannel(message.serverId, value);
 
       // Format timestamps nicely
       if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {

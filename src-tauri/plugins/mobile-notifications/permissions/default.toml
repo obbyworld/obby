@@ -1,0 +1,13 @@
+[default]
+description = "Lets the app register for push, configure the history poll, post chat notifications, read the notification that launched it and hear about later taps."
+permissions = [
+  "allow-configure-history-poll",
+  "allow-take-launch-target",
+  "allow-show-notification",
+  "allow-register-listener",
+  "allow-push-status",
+  "allow-pick-push-distributor",
+  "allow-register-push",
+  "allow-unregister-push",
+  "allow-push-instances",
+]

@@ -11,12 +11,19 @@ import type {
   MetadataValueEvent,
   Server,
   User,
+  WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
-import { isChannelTarget, parseMessageTags } from "../ircUtils";
+import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
+import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
 import type { IRCClientContext } from "./IRCClientContext";
+import {
+  chunkForMultiline,
+  type MultilineLimits,
+  parseMultilineLimits,
+} from "./multiline";
 
 // Namespace UUID for generating deterministic channel/chat IDs
 const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -29,12 +36,23 @@ function generateDeterministicId(serverId: string, name: string): string {
   return uuidv5(`${serverId}:${name}`, CHANNEL_NAMESPACE);
 }
 
+// Gap and load-more decisions read a short page as the end of server history,
+// so every request has to ask for the same page size.
+const CHATHISTORY_PAGE_SIZE = 50;
+const PING_INTERVAL_MS = 30_000;
+const PONG_TIMEOUT_MS = 10_000;
+const WAKE_PONG_TIMEOUT_MS = 5_000;
+const DEAD_SOCKET_CLOSE_WAIT_MS = 2_000;
+
 export interface EventMap {
   ready: BaseIRCEvent & { serverName: string; nickname: string };
+  LOGGED_IN: BaseIRCEvent & { account: string };
+  LOGGED_OUT: BaseIRCEvent;
   connectionStateChange: BaseIRCEvent & {
     serverId: string;
     connectionState: ConnectionState;
   };
+  saslFailed: BaseIRCEvent;
   NICK: EventWithTags & {
     oldNick: string;
     newNick: string;
@@ -51,6 +69,11 @@ export interface EventMap {
     time?: string;
     account?: string; // From extended-join
     realname?: string; // From extended-join
+  };
+  JOIN_REFUSED: {
+    serverId: string;
+    channelName: string;
+    isThrottled: boolean;
   };
   PART: BaseUserActionEvent & {
     channelName: string;
@@ -111,6 +134,24 @@ export interface EventMap {
   METADATA_UNSUBOK: BaseIRCEvent & { keys: string[] };
   METADATA_SUBS: BaseIRCEvent & { keys: string[] };
   METADATA_SYNCLATER: BaseIRCEvent & { target: string; retryAfter?: number };
+  // soju.im/bouncer-networks
+  BOUNCER_NETWORK: BaseIRCEvent & {
+    netid: string;
+    deleted: boolean;
+    attributes: Record<string, string>;
+    batchTag?: string;
+  };
+  BOUNCER_ADDNETWORK_OK: BaseIRCEvent & { netid: string };
+  BOUNCER_CHANGENETWORK_OK: BaseIRCEvent & { netid: string };
+  BOUNCER_DELNETWORK_OK: BaseIRCEvent & { netid: string };
+  BOUNCER_FAIL: BaseIRCEvent & {
+    code: string;
+    subcommand: string;
+    netid?: string;
+    attribute?: string;
+    context: string[];
+    description: string;
+  };
   BATCH_START: BaseIRCEvent & {
     batchId: string;
     type: string;
@@ -125,7 +166,6 @@ export interface EventMap {
     messageIds: string[]; // All message IDs that make up this multiline message
   };
   METADATA_FAIL: BaseIRCEvent & {
-    subcommand: string;
     code: string;
     target?: string;
     key?: string;
@@ -234,6 +274,7 @@ export interface EventMap {
   RPL_YOUREOPER: BaseIRCEvent & {
     message: string;
   };
+  MOTD: BaseIRCEvent & { lines: string[] };
   RPL_YOURHOST: BaseIRCEvent & {
     serverName: string;
     version: string;
@@ -427,8 +468,7 @@ export interface EventMap {
     serverId: string;
     channel: string;
   };
-  TOPIC: {
-    serverId: string;
+  TOPIC: EventWithTags & {
     channelName: string;
     topic: string;
     sender: string;
@@ -487,9 +527,37 @@ export interface EventMap {
     nick: string;
     message: string;
   };
+  /**
+   * Account-level umodes + snomask (RPL_WHOISMODES 379) carried in
+   * the parent obby.world/whois batch. Sub-batched 379 (legacy
+   * obbyircd) still populates WhoisSession.umodes via the per-numeric
+   * handler.
+   */
+  WHOIS_MODES: {
+    serverId: string;
+    nick: string;
+    umodes: string;
+    snomask?: string;
+  };
   WHOIS_END: {
     serverId: string;
     nick: string;
+  };
+  /**
+   * Fired when an obby.world/whois parent batch closes for `nick`.
+   * Carries the assembled per-session detail (one entry per
+   * obby.world/whois-session sub-batch) plus any session-count
+   * summary the server emitted for non-privileged queriers.
+   * The legacy per-numeric WHOIS_* events still fire for the
+   * parent-batch numerics, so account-level fields stay populated
+   * via the existing handlers.
+   */
+  OBBY_WHOIS_COMPLETE: {
+    serverId: string;
+    nick: string;
+    sessions: WhoisSession[];
+    sessionCount?: number;
+    securityGroups?: string[];
   };
   /**
    * obbyircd INVITELINK reply: a freshly-minted invite share-id +
@@ -533,10 +601,28 @@ export interface EventMap {
     direction: "tx" | "rx" | "info";
     line: string;
   };
+  parsedLine: ParsedLine & { serverId: string };
+}
+
+export interface ParsedLine {
+  line: string;
+  command: string;
+  source: string;
+  parv: string[];
+  mtags: Record<string, string> | undefined;
 }
 
 type EventKey = keyof EventMap;
 type EventCallback<K extends EventKey> = (data: EventMap[K]) => void;
+
+// A capability value carries its own `=` (`draft/multiline=max-bytes=5250,max-lines=15`),
+// so the name ends at the first one and the rest is the value.
+function splitCapToken(token: string): { cap: string; value?: string } {
+  const eq = token.indexOf("=");
+  return eq === -1
+    ? { cap: token }
+    : { cap: token.slice(0, eq), value: token.slice(eq + 1) };
+}
 
 export class IRCClient implements IRCClientContext {
   private sockets: Map<string, ISocket> = new Map();
@@ -551,7 +637,15 @@ export class IRCClient implements IRCClientContext {
   private saslCredentials: Map<string, { username: string; password: string }> =
     new Map();
   private pendingConnections: Map<string, Promise<Server>> = new Map();
-  private pendingCapReqs: Map<string, number> = new Map(); // Track how many CAP REQ batches are pending ACK
+  // Requested capabilities still awaiting an ACK. A long CAP REQ is split
+  // across batches and the server may ACK in arbitrary pieces, so completion
+  // is tracked by name rather than by counting ACK lines.
+  private pendingCapReqs: Map<string, Set<string>> = new Map();
+  // soju.im/bouncer-networks BIND: when a serverId is mapped here, the
+  // next CAP END for that server is preceded by a `BOUNCER BIND <netid>`
+  // line so the connection lands inside the named upstream network's
+  // session rather than the bouncer's control channel.
+  private pendingBouncerBind: Map<string, string> = new Map();
   capNegotiationComplete: Map<string, boolean> = new Map(); // Track if CAP negotiation is complete
   private reconnectionAttempts: Map<string, number> = new Map(); // Track reconnection attempts per server
   reconnectionTimeouts: Map<string, NodeJS.Timeout> = new Map(); // Track reconnection timeouts per server
@@ -589,6 +683,24 @@ export class IRCClient implements IRCClientContext {
       }
     >
   > = new Map(); // Track active batches per server
+  whoisBuilders: Map<
+    string,
+    Map<
+      string,
+      {
+        target: string;
+        sessionsByRef: Map<string, WhoisSession>;
+        summaryCount?: number;
+        securityGroups: string[];
+      }
+    >
+  > = new Map();
+
+  /** ISUPPORT accumulator for draft/extended-isupport-0.2's `+=`
+   *  append form.  See IRCClientContext for the contract. */
+  isupportValues: Map<string, Map<string, string>> = new Map();
+  private diskOnlyBatches = new Set<string>();
+  motdLines: Map<string, string[]> = new Map();
 
   private ourCaps: string[] = [
     "multi-prefix",
@@ -607,6 +719,7 @@ export class IRCClient implements IRCClientContext {
     "draft/chathistory",
     "draft/event-playback",
     "draft/extended-isupport",
+    "draft/extended-isupport-0.2",
     "sasl",
     "cap-notify",
     "draft/channel-rename",
@@ -636,12 +749,25 @@ export class IRCClient implements IRCClientContext {
     "draft/named-modes",
     "labeled-response",
     "draft/read-marker",
+    "draft/persistence",
     "obsidianirc/cmdslist",
+    // soju.im/bouncer-networks: multi-network bouncer discovery. The
+    // -notify variant gives us live add/change/del pushes without
+    // polling LISTNETWORKS.
+    "soju.im/bouncer-networks",
+    "soju.im/bouncer-networks-notify",
+    // Vendor: opt in to obby.world/whois batch-wrapped WHOIS replies
+    // (parent obby.world/whois batch + nested obby.world/whois-session
+    // sub-batches). Without this cap a server implementing the spec
+    // falls back to legacy unwrapped numerics, which we still parse.
+    "obby.world/whois",
     "draft/bot-cmds",
     "obby.world/channel-bots",
     // obbyircd vendor cap. Without REQ'ing it the server won't emit
     // the INVITELINK protocol even if it advertises support in CAP LS.
     "obby.world/invitation",
+    "draft/webpush",
+    "soju.im/webpush",
     // Note: unrealircd.org/link-security is informational only, don't request it
   ];
 
@@ -662,7 +788,11 @@ export class IRCClient implements IRCClientContext {
     serverId?: string,
     oauthBearerEnabled?: boolean,
   ): Promise<Server> {
-    const connectionKey = `${host}:${port}`;
+    // Bouncer child connections share host:port with the control
+    // connection (and with each other). Scope the pending-connection
+    // dedup by serverId when one is provided so each child gets its
+    // own promise rather than landing on a sibling's.
+    const connectionKey = serverId ?? `${host}:${port}`;
 
     // Check if there's already a pending connection to this server
     const existingConnection = this.pendingConnections.get(connectionKey);
@@ -759,6 +889,7 @@ export class IRCClient implements IRCClientContext {
         };
         this.servers.set(server.id, server);
       }
+      this.closeReplacedSocket(server.id);
       this.sockets.set(server.id, socket);
       this.serverConnectParams.set(server.id, {
         name,
@@ -821,9 +952,6 @@ export class IRCClient implements IRCClientContext {
           socket.send(`PASS ${password}`);
         }
 
-        // Send NICK command (can be sent during CAP negotiation)
-        socket.send(`NICK ${nickname}`);
-
         // Update server to mark as connected
         server.isConnected = true;
         server.connectionState = "connected";
@@ -831,15 +959,6 @@ export class IRCClient implements IRCClientContext {
           serverId: server.id,
           connectionState: "connected",
         });
-
-        // Rejoin channels if this is a reconnection
-        if (server.channels.length > 0) {
-          for (const channel of server.channels) {
-            if (serverId) {
-              this.sendRaw(serverId, `JOIN ${channel.name}`);
-            }
-          }
-        }
 
         // Don't start ping timer here - wait for 001 welcome message
         // to ensure connection is fully established before sending PINGs
@@ -851,6 +970,9 @@ export class IRCClient implements IRCClientContext {
 
           this.stopWebSocketPing(server.id);
           this.sockets.delete(server.id);
+          this.isupportValues.delete(server.id);
+          this.motdLines.delete(server.id);
+          this.whoisBuilders.delete(server.id);
           server.isConnected = false;
           const wasReconnecting = server.connectionState === "reconnecting";
           server.connectionState = "disconnected";
@@ -877,11 +999,6 @@ export class IRCClient implements IRCClientContext {
       };
 
       socket.onerror = (error) => {
-        // Mark server as disconnected but keep it in the map
-        server.isConnected = false;
-        server.connectionState = "disconnected";
-        this.sockets.delete(server.id);
-        this.pendingConnections.delete(connectionKey);
         const cause =
           error instanceof Error
             ? error.message
@@ -893,6 +1010,12 @@ export class IRCClient implements IRCClientContext {
           direction: "info",
           line: `** socket error: ${cause || "(no detail)"}`,
         });
+        // A drop on a live link (the OS cuts sockets of a backgrounded app)
+        // also fires onclose, which reconnects, so we only report failed connects.
+        if (server.isConnected) return;
+        server.connectionState = "disconnected";
+        this.sockets.delete(server.id);
+        this.pendingConnections.delete(connectionKey);
         this.triggerEvent("serverError", {
           serverId: server.id,
           message: cause || `Failed to connect to ${actualHost}:${actualPort}`,
@@ -941,8 +1064,7 @@ export class IRCClient implements IRCClientContext {
     const socket = this.sockets.get(serverId);
     if (socket) {
       const message =
-        quitMessage ||
-        i18n._({ id: "ObsidianIRC - Bringing IRC to the future" });
+        quitMessage || i18n._({ id: "Obby - Bringing IRC to the future" });
       socket.send(`QUIT :${message}`);
       socket.close();
       this.sockets.delete(serverId);
@@ -955,8 +1077,11 @@ export class IRCClient implements IRCClientContext {
         serverId: server.id,
         connectionState: "disconnected",
       });
-      const connectionKey = `${server.host}:${server.port}`;
-      this.pendingConnections.delete(connectionKey);
+      // connect() keys the pending promise by serverId when present and
+      // falls back to host:port, so clear both to avoid a stuck entry
+      // that would block a later reconnect for the same server.
+      this.pendingConnections.delete(serverId);
+      this.pendingConnections.delete(`${server.host}:${server.port}`);
     }
     // Clear reconnection state
     this.reconnectionAttempts.delete(serverId);
@@ -967,6 +1092,9 @@ export class IRCClient implements IRCClientContext {
     }
     // Stop WebSocket ping timers
     this.stopWebSocketPing(serverId);
+    this.isupportValues.delete(serverId);
+    this.motdLines.delete(serverId);
+    this.whoisBuilders.delete(serverId);
   }
 
   removeServer(serverId: string): void {
@@ -1126,37 +1254,50 @@ export class IRCClient implements IRCClientContext {
     // Clear any existing ping timer
     this.stopWebSocketPing(serverId);
 
-    // Send ping every 30 seconds
-    const pingTimer = setInterval(() => {
-      const socket = this.sockets.get(serverId);
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        try {
-          // Send WebSocket ping frame (opcode 0x9)
-          // Since we can't send ping frames directly in JS, we'll send an IRC PING
-          // which serves as both IRC keepalive and WebSocket activity
-          const timestamp = Date.now().toString();
-          this.sendRaw(serverId, `PING :${timestamp}`);
-
-          // Clear any previous pong timeout before starting a new one — otherwise
-          // a missed PONG from the prior cycle would close the socket mid-interval.
-          const oldPongTimeout = this.pongTimeouts.get(serverId);
-          if (oldPongTimeout) clearTimeout(oldPongTimeout);
-
-          const pongTimeout = setTimeout(() => {
-            console.warn(
-              `WebSocket ping timeout for server ${serverId}, closing connection`,
-            );
-            socket.close();
-          }, 10000);
-
-          this.pongTimeouts.set(serverId, pongTimeout);
-        } catch (error) {
-          console.error(`Failed to send ping for server ${serverId}:`, error);
-        }
-      }
-    }, 30000); // 30 seconds
-
+    const pingTimer = setInterval(
+      () => this.checkAlive(serverId, PONG_TIMEOUT_MS),
+      PING_INTERVAL_MS,
+    );
     this.pingTimers.set(serverId, pingTimer);
+  }
+
+  checkAlive(serverId: string, timeoutMs: number): void {
+    const socket = this.sockets.get(serverId);
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    // A check already waiting for its PONG keeps its earlier deadline.
+    if (this.pongTimeouts.has(serverId)) return;
+    this.sendRaw(serverId, `PING :${Date.now()}`);
+    this.pongTimeouts.set(
+      serverId,
+      setTimeout(() => {
+        this.pongTimeouts.delete(serverId);
+        console.warn(`Ping timeout for server ${serverId}, closing connection`);
+        this.dropDeadSocket(serverId, socket);
+      }, timeoutMs),
+    );
+  }
+
+  // We silence the old socket before closing it, so a reconnect never leaves a second live session under one server.
+  private closeReplacedSocket(serverId: string): void {
+    const old = this.sockets.get(serverId);
+    if (!old) return;
+    old.onopen = null;
+    old.onmessage = null;
+    old.onerror = null;
+    old.onclose = null;
+    old.close();
+  }
+
+  // A socket whose network died, as after the machine slept, can take minutes
+  // to report its close, so we run the close handling ourselves.
+  private dropDeadSocket(serverId: string, socket: ISocket): void {
+    socket.close();
+    setTimeout(() => {
+      if (this.sockets.get(serverId) !== socket) return;
+      const onclose = socket.onclose;
+      socket.onclose = null;
+      onclose?.();
+    }, DEAD_SOCKET_CLOSE_WAIT_MS);
   }
 
   private stopWebSocketPing(serverId: string): void {
@@ -1185,7 +1326,8 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, channelName: string): Channel {
+  joinChannel(serverId: string, typedName: string): Channel {
+    const channelName = this.withChannelPrefix(serverId, typedName);
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1202,10 +1344,7 @@ export class IRCClient implements IRCClientContext {
 
       this.sendRaw(serverId, `JOIN ${channelName}`);
 
-      // Only request CHATHISTORY if the server supports it
-      if (server.capabilities?.includes("draft/chathistory")) {
-        this.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
-      }
+      const wantsChathistory = this.hasChathistory(serverId);
 
       const channel: Channel = {
         id: generateDeterministicId(serverId, channelName),
@@ -1217,23 +1356,17 @@ export class IRCClient implements IRCClientContext {
         isMentioned: false,
         messages: [],
         users: [],
-        isLoadingHistory: !!server.capabilities?.includes("draft/chathistory"), // Only loading if we requested history
-        hasMoreHistory: !!server.capabilities?.includes("draft/chathistory"), // Assume there's history until proven otherwise
-        needsWhoRequest: true, // Need to request WHO after CHATHISTORY completes (or immediately if no CHATHISTORY)
-        chathistoryRequested:
-          !!server.capabilities?.includes("draft/chathistory"), // Mark that we've requested CHATHISTORY only if supported
+        isLoadingHistory: wantsChathistory,
+        hasMoreHistory: wantsChathistory,
+        needsWhoRequest: true,
+        chathistoryRequested: wantsChathistory,
       };
       server.channels.push(channel);
 
-      if (server.capabilities?.includes("draft/chathistory")) {
-        this.triggerEvent("CHATHISTORY_LOADING", {
-          serverId,
-          channelName,
-          isLoading: true,
-        });
-      } else {
-        // No CHATHISTORY support, so the LOADING(false) callback that
-        // normally fires WHO will never run. Send it now.
+      if (!this.loadLatestHistory(serverId, channelName)) {
+        // No CHATHISTORY support (or it's the bouncer control session) --
+        // the LOADING(false) callback that normally fires WHO will never
+        // run. Send it now.
         this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
         channel.needsWhoRequest = false;
       }
@@ -1247,29 +1380,108 @@ export class IRCClient implements IRCClientContext {
     serverId: string,
     channelName: string,
     beforeTimestamp: string,
-  ): void {
+    { showLoading = true }: { showLoading?: boolean } = {},
+  ): boolean {
     const server = this.servers.get(serverId);
-    if (!server?.capabilities?.includes("draft/chathistory")) return;
+    if (!server?.capabilities?.includes("draft/chathistory")) return false;
+    if (server.isBouncerControl) return false;
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
     // and restores scroll position once isLoadingHistory goes false (batch end).
-    this.triggerEvent("CHATHISTORY_LOADING", {
-      serverId,
-      channelName,
-      isLoading: true,
-    });
+    if (showLoading)
+      this.triggerEvent("CHATHISTORY_LOADING", {
+        serverId,
+        channelName,
+        isLoading: true,
+      });
     this.sendRaw(
       serverId,
-      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} 50`,
+      `CHATHISTORY BEFORE ${channelName} timestamp=${beforeTimestamp} ${this.chathistoryPageSize(serverId)}`,
+    );
+    return true;
+  }
+
+  requestChathistoryAt(
+    serverId: string,
+    target: string,
+    subcommand: "AFTER" | "AROUND",
+    timestamp: string,
+  ): boolean {
+    const server = this.servers.get(serverId);
+    if (!server?.capabilities?.includes("draft/chathistory")) return false;
+    if (server.isBouncerControl) return false;
+    this.sendRaw(
+      serverId,
+      `CHATHISTORY ${subcommand} ${target} timestamp=${timestamp} ${this.chathistoryPageSize(serverId)}`,
+    );
+    return true;
+  }
+
+  // soju bouncer control sessions have no real channels, so we treat them as cap-less.
+  private hasChathistory(serverId: string): boolean {
+    const server = this.servers.get(serverId);
+    return (
+      !!server &&
+      !server.isBouncerControl &&
+      !!server.capabilities?.includes("draft/chathistory")
     );
   }
 
+  requestChathistoryLatest(serverId: string, target: string): boolean {
+    if (!this.hasChathistory(serverId)) return false;
+    this.sendRaw(
+      serverId,
+      `CHATHISTORY LATEST ${target} * ${this.chathistoryPageSize(serverId)}`,
+    );
+    return true;
+  }
+
+  loadLatestHistory(serverId: string, target: string): boolean {
+    if (!this.requestChathistoryLatest(serverId, target)) return false;
+    this.triggerEvent("CHATHISTORY_LOADING", {
+      serverId,
+      channelName: target,
+      isLoading: true,
+    });
+    return true;
+  }
+
+  // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means
+  // they state none.
+  private chathistoryPageSize(serverId: string): number {
+    const advertised = Number(
+      this.isupportValues.get(serverId)?.get("CHATHISTORY"),
+    );
+    return advertised > 0
+      ? Math.min(CHATHISTORY_PAGE_SIZE, advertised)
+      : CHATHISTORY_PAGE_SIZE;
+  }
+
+  chantypes(serverId: string): string {
+    return chantypesOf(this.isupportValues.get(serverId));
+  }
+
+  isChannel(serverId: string, name: string | undefined | null): boolean {
+    return isChannelTarget(name, this.chantypes(serverId));
+  }
+
+  // We prefix a bare name with the server's first channel type, so `/join foo` reaches a channel the server allows.
+  private withChannelPrefix(serverId: string, name: string): string {
+    if (this.isChannel(serverId, name)) return name;
+    return `${this.chantypes(serverId)[0]}${name}`;
+  }
+
   leaveChannel(serverId: string, channelName: string): void {
-    const server = this.servers.get(serverId);
-    if (server) {
+    if (this.servers.has(serverId))
       this.sendRaw(serverId, `PART ${channelName}`);
-      server.channels = server.channels.filter((c) => c.name !== channelName);
-    }
+  }
+
+  forgetChannel(serverId: string, channelName: string): void {
+    const server = this.servers.get(serverId);
+    if (server)
+      server.channels = server.channels.filter(
+        (c) => c.name.toLowerCase() !== channelName.toLowerCase(),
+      );
   }
 
   sendMessage(serverId: string, channelId: string, content: string): void {
@@ -1344,54 +1556,40 @@ export class IRCClient implements IRCClientContext {
     target: string,
     lines: string[],
   ): void {
-    const batchId = `ml_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    // Start multiline batch
-    this.sendRaw(serverId, `BATCH +${batchId} draft/multiline ${target}`);
-
-    // Send each line as a separate PRIVMSG with batch tag
-    // Handle long lines by splitting them if needed
-    for (const line of lines) {
-      const splitLines = this.splitLongLine(line);
-      for (const splitLine of splitLines) {
-        this.sendRaw(
-          serverId,
-          `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-        );
-      }
-    }
-
-    // End batch
-    this.sendRaw(serverId, `BATCH -${batchId}`);
+    this.sendMultiline(
+      serverId,
+      target,
+      // preserveBoundarySpace, or concat rejoins "AAA BBB CCC" as "AAA BBBCCC".
+      lines.map((line) => splitLongMessage(line, target, true)),
+    );
   }
 
-  // Split long lines to respect IRC message length limits (512 bytes)
-  private splitLongLine(text: string, maxLength = 450): string[] {
-    if (!text) return [""];
-
-    // Account for IRC overhead (PRIVMSG + target + formatting)
-    // Conservative limit to account for formatting codes and IRC overhead
-    const lines: string[] = [];
-    let remaining = text;
-
-    while (remaining.length > maxLength) {
-      // Try to split at word boundaries
-      let splitIndex = maxLength;
-      const lastSpace = remaining.lastIndexOf(" ", maxLength);
-      if (lastSpace > maxLength * 0.7) {
-        // Don't split too early
-        splitIndex = lastSpace;
+  sendMultiline(
+    serverId: string,
+    target: string,
+    lines: readonly (readonly string[])[],
+    openTags = "",
+  ): void {
+    for (const batch of chunkForMultiline(
+      lines,
+      this.multilineLimits(serverId),
+    )) {
+      const batchId = createBatchId();
+      this.sendRaw(
+        serverId,
+        `${openTags}BATCH +${batchId} draft/multiline ${target}`,
+      );
+      for (const parts of batch) {
+        parts.forEach((part, index) => {
+          const concat = index > 0 ? ";draft/multiline-concat" : "";
+          this.sendRaw(
+            serverId,
+            `@batch=${batchId}${concat} PRIVMSG ${target} :${part}`,
+          );
+        });
       }
-
-      lines.push(remaining.substring(0, splitIndex));
-      remaining = remaining.substring(splitIndex).trim();
+      this.sendRaw(serverId, `BATCH -${batchId}`);
     }
-
-    if (remaining) {
-      lines.push(remaining);
-    }
-
-    return lines.length > 0 ? lines : [""];
   }
 
   sendTyping(serverId: string, target: string, isActive: boolean): void {
@@ -1400,7 +1598,7 @@ export class IRCClient implements IRCClientContext {
     // have us in it), JOIN first so the typing TAGMSG lands instead
     // of getting bounced with 401.
     const server = this.servers.get(serverId);
-    if (server && isChannelTarget(target)) {
+    if (server && this.isChannel(serverId, target)) {
       const ch = server.channels.find((c) => c.name === target);
       if (
         ch &&
@@ -1583,6 +1781,44 @@ export class IRCClient implements IRCClientContext {
     this.sendRaw(serverId, `METADATA ${target} SYNC`);
   }
 
+  // soju.im/bouncer-networks commands. The attribute payload must
+  // already be encoded with bouncerAttrs.encodeBouncerAttrs() to handle
+  // the message-tag-style escapes for `;`, ` `, etc.
+  bouncerListNetworks(serverId: string): void {
+    this.sendRaw(serverId, "BOUNCER LISTNETWORKS");
+  }
+  // Mark a server connection as a bouncer-child for the upcoming CAP
+  // negotiation. The next sendCapEnd() will emit `BOUNCER BIND <netid>`
+  // immediately before `CAP END`. Call this BEFORE the WS opens (or at
+  // least before CAP LS arrives) so we never miss the bind window.
+  setPendingBouncerBind(serverId: string, netid: string): void {
+    this.pendingBouncerBind.set(serverId, netid);
+  }
+  // Centralised CAP END sender. All call sites should use this instead
+  // of raw sendRaw("CAP END") so the BIND-before-end invariant is
+  // enforced in one place.
+  sendCapEnd(serverId: string): void {
+    const netid = this.pendingBouncerBind.get(serverId);
+    if (netid) {
+      this.pendingBouncerBind.delete(serverId);
+      this.sendRaw(serverId, `BOUNCER BIND ${netid}`);
+    }
+    this.sendRaw(serverId, "CAP END");
+  }
+  bouncerAddNetwork(serverId: string, encodedAttrs: string): void {
+    this.sendRaw(serverId, `BOUNCER ADDNETWORK ${encodedAttrs}`);
+  }
+  bouncerChangeNetwork(
+    serverId: string,
+    netid: string,
+    encodedAttrs: string,
+  ): void {
+    this.sendRaw(serverId, `BOUNCER CHANGENETWORK ${netid} ${encodedAttrs}`);
+  }
+  bouncerDelNetwork(serverId: string, netid: string): void {
+    this.sendRaw(serverId, `BOUNCER DELNETWORK ${netid}`);
+  }
+
   /**
    * IRCv3 draft/named-modes: send a mode change addressed by long-form
    * mode names instead of single letters.
@@ -1609,11 +1845,7 @@ export class IRCClient implements IRCClientContext {
   ): void {
     if (!items.length) return;
 
-    const isChannelTarget =
-      target.startsWith("#") ||
-      target.startsWith("^") ||
-      target.startsWith("$");
-    const list = isChannelTarget
+    const list = this.isChannel(serverId, target)
       ? (registry?.channelModes ?? [])
       : (registry?.userModes ?? []);
 
@@ -1757,12 +1989,6 @@ export class IRCClient implements IRCClientContext {
     this.sendRaw(serverId, "AWAY");
   }
 
-  markChannelAsRead(serverId: string, channelId: string): void {
-    const server = this.servers.get(serverId);
-    const channel = server?.channels.find((c) => c.id === channelId);
-    if (channel) channel.unreadCount = 0;
-  }
-
   capAck(serverId: string, key: string, capabilities: string): void {
     this.triggerEvent("CAP_ACKNOWLEDGED", { serverId, key, capabilities });
   }
@@ -1802,7 +2028,9 @@ export class IRCClient implements IRCClientContext {
       console.error(`No nickname found for serverId ${serverId}`);
       return;
     }
-    // NICK is already sent before CAP negotiation, only send USER now
+    // We send NICK after SASL, since logging in is what hands a persistent
+    // session's nick back from its ghost.
+    this.sendRaw(serverId, `NICK ${nickname}`);
     this.sendRaw(serverId, `USER ${nickname} 0 * :${nickname}`);
   }
 
@@ -1814,7 +2042,9 @@ export class IRCClient implements IRCClientContext {
       const parv: string[] = [];
       let i = 0;
       let l: string[];
-      line = line.trim();
+      // We strip only line endings, since a multiline-concat part keeps its
+      // trailing space and trimming it would glue two words together.
+      line = line.replace(/^[\r\n]+|[\r\n]+$/g, "");
 
       // Skip empty lines
       if (!line) continue;
@@ -1828,6 +2058,9 @@ export class IRCClient implements IRCClientContext {
           lineAfterTags = line.substring(spaceIndex + 1);
         }
       }
+      // Servers without server-time leave the time to us, so we stamp one
+      // receive time that the chat and the saved history both read.
+      if (!mtags?.time) mtags = { ...mtags, time: new Date().toISOString() };
 
       // Parse IRC message properly handling colon-prefixed trailing parameter
       const spaceIndex = lineAfterTags.indexOf(" :");
@@ -1868,10 +2101,54 @@ export class IRCClient implements IRCClientContext {
       }
 
       const handler = IRC_DISPATCH[command];
-      if (handler) {
+      if (mtags?.batch && this.isDiskOnlyBatch(serverId, mtags.batch)) {
+        if (command === "BATCH") this.trackNestedDiskOnlyBatch(serverId, parv);
+      } else if (handler) {
         handler(this, serverId, source, parv, mtags, trailing);
       }
+      this.triggerEvent("parsedLine", {
+        serverId,
+        line,
+        command,
+        source,
+        parv,
+        mtags,
+      });
     }
+  }
+
+  // We save history pages fetched for search to disk only, so we pass the
+  // lines of their batches, and of nested batches, to the history recorder
+  // and keep them out of the chat handlers.
+  markDiskOnlyBatch(serverId: string, batchId: string): void {
+    this.diskOnlyBatches.add(`${serverId}\n${batchId}`);
+  }
+
+  endDiskOnlyBatch(serverId: string, batchId: string): boolean {
+    return this.diskOnlyBatches.delete(`${serverId}\n${batchId}`);
+  }
+
+  clearDiskOnlyBatches(serverId: string): void {
+    for (const key of this.diskOnlyBatches)
+      if (key.startsWith(`${serverId}\n`)) this.diskOnlyBatches.delete(key);
+  }
+
+  private isDiskOnlyBatch(serverId: string, batchId: string): boolean {
+    return this.diskOnlyBatches.has(`${serverId}\n${batchId}`);
+  }
+
+  private trackNestedDiskOnlyBatch(serverId: string, parv: string[]): void {
+    const reference = parv[0] ?? "";
+    if (reference.startsWith("+"))
+      this.markDiskOnlyBatch(serverId, reference.slice(1));
+    else if (reference.startsWith("-"))
+      this.endDiskOnlyBatch(serverId, reference.slice(1));
+  }
+
+  // Lines from local history go through the same parser and handlers as
+  // lines from the socket.
+  replayLines(serverId: string, lines: string[]): void {
+    this.handleMessage(lines.join("\r\n"), serverId);
   }
 
   onCapLs(serverId: string, cliCaps: string, isFinal: boolean): void {
@@ -1883,8 +2160,17 @@ export class IRCClient implements IRCClientContext {
 
     const caps = cliCaps.split(" ");
     for (const c of caps) {
-      const [cap, value] = c.split("=", 2);
+      const { cap, value } = splitCapToken(c);
       accumulated.add(cap);
+      if (value) {
+        const server = this.servers.get(serverId);
+        if (server) {
+          server.capabilityValues = {
+            ...(server.capabilityValues ?? {}),
+            [cap]: value,
+          };
+        }
+      }
       if (cap === "sasl" && value) {
         const mechanisms = value.split(",");
         this.saslMechanisms.set(serverId, mechanisms);
@@ -1918,7 +2204,6 @@ export class IRCClient implements IRCClientContext {
         let currentBatch: string[] = [];
         const baseLength = "CAP REQ :".length + 2; // +2 for \r\n
         let currentLength = baseLength;
-        let batchCount = 0;
 
         for (const cap of capsToRequest) {
           const capLength = cap.length + (currentBatch.length > 0 ? 1 : 0); // +1 for space if not first
@@ -1928,7 +2213,6 @@ export class IRCClient implements IRCClientContext {
             // Send current batch
             const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
             this.sendRaw(serverId, reqMessage);
-            batchCount++;
             currentBatch = [];
             currentLength = baseLength;
           }
@@ -1941,11 +2225,9 @@ export class IRCClient implements IRCClientContext {
         if (currentBatch.length > 0) {
           const reqMessage = `CAP REQ :${currentBatch.join(" ")}`;
           this.sendRaw(serverId, reqMessage);
-          batchCount++;
         }
 
-        // Track how many CAP REQ batches we sent
-        this.pendingCapReqs.set(serverId, batchCount);
+        this.pendingCapReqs.set(serverId, new Set(capsToRequest));
 
         // Set a timeout to send CAP END if server doesn't respond
         setTimeout(() => {
@@ -1963,27 +2245,31 @@ export class IRCClient implements IRCClientContext {
                 `[CAP TIMEOUT] SASL in progress for ${serverId}, not timing out CAP negotiation`,
               );
               // Don't send CAP END - let SASL complete naturally
-            } else {
-              // No SASL in progress - safe to timeout
+            } else if (!this.capNegotiationComplete.get(serverId)) {
+              // No SASL in progress and CAP negotiation hasn't been
+              // finalised by another path -- safe to timeout.
               console.log(
                 `[CAP TIMEOUT] Timeout reached for ${serverId}, ending CAP negotiation`,
               );
-              this.sendRaw(serverId, "CAP END");
+              this.sendCapEnd(serverId);
               this.capNegotiationComplete.set(serverId, true);
               this.userOnConnect(serverId);
             }
           }
         }, 5000); // 5 second timeout
 
-        if (capsToRequest.includes("draft/extended-isupport")) {
+        if (
+          capsToRequest.includes("draft/extended-isupport") ||
+          capsToRequest.includes("draft/extended-isupport-0.2")
+        ) {
           this.sendRaw(serverId, "ISUPPORT");
         }
-      } else {
+      } else if (!this.capNegotiationComplete.get(serverId)) {
         // No capabilities to request, end CAP negotiation immediately
         console.log(
           `[CAP LS] No capabilities to request for ${serverId}, ending CAP negotiation`,
         );
-        this.sendRaw(serverId, "CAP END");
+        this.sendCapEnd(serverId);
         this.capNegotiationComplete.set(serverId, true);
         this.userOnConnect(serverId);
       }
@@ -2019,53 +2305,47 @@ export class IRCClient implements IRCClientContext {
     // Trigger the original event for compatibility
     this.triggerEvent("CAP ACK", { serverId, cliCaps });
 
-    // Store the acknowledged capabilities
+    // Values are tracked separately (capabilityValues); every consumer of
+    // `capabilities` matches on the bare name, so store names only.
+    const ackedNames = cliCaps
+      .split(" ")
+      .filter(Boolean)
+      .map((cap) => cap.split("=", 1)[0]);
+
     const server = this.servers.get(serverId);
     if (server) {
-      const caps = cliCaps.split(" ");
       if (!server.capabilities) {
         server.capabilities = [];
       }
-      for (const cap of caps) {
+      for (const cap of ackedNames) {
         if (!server.capabilities.includes(cap)) {
           server.capabilities.push(cap);
         }
       }
     }
 
-    // Decrement pending CAP REQ count
-    const pendingCount = this.pendingCapReqs.get(serverId) || 0;
-    if (pendingCount > 0) {
-      const newCount = pendingCount - 1;
+    const pending = this.pendingCapReqs.get(serverId);
+    if (!pending) return;
+    for (const cap of ackedNames) {
+      pending.delete(cap);
+    }
+    // Caps the server never ACKs (or NAKs) leave the set non-empty; the CAP LS
+    // timeout is the backstop that finalises negotiation in that case.
+    if (pending.size > 0) return;
 
-      if (newCount === 0) {
-        // All CAP REQ batches acknowledged
-        this.pendingCapReqs.delete(serverId);
+    this.pendingCapReqs.delete(serverId);
 
-        // Check if SASL is enabled and was acknowledged
-        const saslEnabled = this.saslEnabled.get(serverId) ?? false;
-        const saslAcknowledged =
-          server?.capabilities?.includes("sasl") ?? false;
+    const saslEnabled = this.saslEnabled.get(serverId) ?? false;
+    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
 
-        if (saslEnabled && saslAcknowledged) {
-          // SASL is enabled and was acknowledged - wait for SASL authentication to complete
-          // The SASL completion handlers (903/904-907) will send CAP END
-          console.log(
-            `[CAP ACK] SASL enabled for ${serverId}, waiting for SASL authentication`,
-          );
-        } else {
-          // No SASL or SASL not acknowledged - complete CAP negotiation now
-          this.sendRaw(serverId, "CAP END");
-          this.capNegotiationComplete.set(serverId, true);
-          this.userOnConnect(serverId);
-        }
-      } else {
-        this.pendingCapReqs.set(serverId, newCount);
-      }
-    } else {
-      console.log(
-        `[CAP ACK] Received unexpected CAP ACK for ${serverId} (no pending requests)`,
-      );
+    // SASL owns the rest of the handshake: its result (903 / 904-907) sends
+    // CAP END, so ending it here would strand the AUTHENTICATE exchange.
+    if (saslEnabled && saslAcknowledged) return;
+
+    if (!this.capNegotiationComplete.get(serverId)) {
+      this.sendCapEnd(serverId);
+      this.capNegotiationComplete.set(serverId, true);
+      this.userOnConnect(serverId);
     }
   }
 
@@ -2101,6 +2381,21 @@ export class IRCClient implements IRCClientContext {
     // If no serverId provided, return null (we need server context now)
     if (!serverId) return null;
     return this.currentUsers.get(serverId) || null;
+  }
+
+  // True while any requested capability is still unacknowledged. Callers that
+  // decide when to end CAP negotiation must wait: the caps that gate the rest
+  // of the handshake (sasl) may land in a later ACK line.
+  hasPendingCapReqs(serverId: string): boolean {
+    return (this.pendingCapReqs.get(serverId)?.size ?? 0) > 0;
+  }
+
+  // What the server said a draft/multiline batch may hold. Unstated means
+  // unlimited, which is what the spec implies.
+  multilineLimits(serverId: string): MultilineLimits {
+    return parseMultilineLimits(
+      this.servers.get(serverId)?.capabilityValues?.["draft/multiline"],
+    );
   }
 
   hasCapability(serverId: string, cap: string): boolean {
@@ -2177,8 +2472,7 @@ export class IRCClient implements IRCClientContext {
       return;
     }
 
-    // connectionState === "connected" or "connecting": leave it alone.
-    // The existing ping/pong mechanism will detect a dead socket within ~40s
-    // and kick the normal reconnection flow.
+    if (server.connectionState === "connected")
+      this.checkAlive(serverId, WAKE_PONG_TIMEOUT_MS);
   }
 }

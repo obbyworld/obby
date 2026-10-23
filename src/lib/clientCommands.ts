@@ -1,6 +1,6 @@
 // Canonical list of slash commands the client itself handles before
 // (or instead of) sending them on the wire.  Kept centralized so the
-// suggestion popover (src/components/ui/SlashCommandPopover.tsx) and
+// slash command completion (src/components/chat/completionProviders.tsx) and
 // the dispatcher (src/hooks/useMessageSending.ts) can't drift apart.
 //
 // Each entry mirrors the fields a draft/bot-cmds schema would publish,

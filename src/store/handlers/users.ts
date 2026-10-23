@@ -1,15 +1,20 @@
 import { t } from "@lingui/core/macro";
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { voiceDisplayName } from "../../lib/channelMentions";
 import ircClient from "../../lib/ircClient";
 import type { Message, User } from "../../types";
 import {
   generateDeterministicId,
   getCurrentSelection,
+  isHistoryEvent,
   resolveUserMetadata,
+  setUserAway,
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { takePendingJoin } from "../pendingJoins";
+import { reportServerReply } from "./serverReplies";
 
 function appendMessage(
   store: StoreApi<AppState>,
@@ -48,6 +53,12 @@ function makeEventMessage(
 }
 
 export function registerUserHandlers(store: StoreApi<AppState>): void {
+  // The server refused a join the user just asked for, so we drop the entry we added for it.
+  ircClient.on("JOIN_REFUSED", ({ serverId, channelName }) => {
+    if (takePendingJoin(serverId, channelName))
+      store.getState().forgetChannel(serverId, channelName);
+  });
+
   ircClient.on(
     "JOIN",
     ({
@@ -85,7 +96,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                   channel.id,
                   makeEventMessage(
                     "join",
-                    t`joined ${channelName}`,
+                    t`joined ${{ channelName: voiceDisplayName(channelName) }}`,
                     username,
                     channel.id,
                     serverId,
@@ -110,6 +121,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       const isOurJoin = username === ourNick;
 
       if (isOurJoin) {
+        takePendingJoin(serverId, channelName);
         // Server-initiated JOIN (Unreal persistence, sajoin, perform list,
         // perform-on-connect): joinChannel() never ran, so the CHATHISTORY
         // + WHO chain that normally lives inside it was never kicked off.
@@ -126,7 +138,9 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
           );
           if (exists) return {};
 
+          // soju bouncer control session has no real chathistory.
           const hasChathistory =
+            !server.isBouncerControl &&
             !!server.capabilities?.includes("draft/chathistory");
           newChannelHadCap = hasChathistory;
 
@@ -159,12 +173,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
         // ircClient I/O OUTSIDE setState: triggerEvent inside setState
         // causes a nested-setState race (see batches.ts:215-218).
         if (newChannelHadCap === true) {
-          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
-          ircClient.triggerEvent("CHATHISTORY_LOADING", {
-            serverId,
-            channelName,
-            isLoading: true,
-          });
+          ircClient.loadLatestHistory(serverId, channelName);
         } else if (newChannelHadCap === false) {
           ircClient.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
         }
@@ -227,7 +236,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             channel.id,
             makeEventMessage(
               "join",
-              t`joined ${channelName}`,
+              t`joined ${{ channelName: voiceDisplayName(channelName) }}`,
               username,
               channel.id,
               serverId,
@@ -552,8 +561,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
                 makeEventMessage(
                   "part",
                   reason
-                    ? t`left ${channelName} (${reason})`
-                    : t`left ${channelName}`,
+                    ? t`left ${{ channelName: voiceDisplayName(channelName) }} (${reason})`
+                    : t`left ${{ channelName: voiceDisplayName(channelName) }}`,
                   username,
                   channel.id,
                   serverId,
@@ -604,8 +613,8 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
               makeEventMessage(
                 "part",
                 reason
-                  ? t`left ${channelName} (${reason})`
-                  : t`left ${channelName}`,
+                  ? t`left ${{ channelName: voiceDisplayName(channelName) }} (${reason})`
+                  : t`left ${{ channelName: voiceDisplayName(channelName) }}`,
                 username,
                 channel.id,
                 serverId,
@@ -650,29 +659,35 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on(
     "KICK",
-    ({ serverId, username, target, channelName, reason }) => {
-      store.setState((state) => {
-        const updatedServers = state.servers.map((server) => {
-          const updatedChannels = server.channels.map((channel) => {
-            if (channel.name.toLowerCase() === channelName.toLowerCase()) {
-              return {
-                ...channel,
-                users: channel.users.filter((user) => user.username !== target),
-              };
-            }
-            return channel;
+    ({ serverId, mtags, username, target, channelName, reason }) => {
+      const historical = isHistoryEvent(store.getState(), serverId, mtags);
+      if (!historical)
+        store.setState((state) => {
+          const updatedServers = state.servers.map((server) => {
+            const updatedChannels = server.channels.map((channel) => {
+              if (channel.name.toLowerCase() === channelName.toLowerCase()) {
+                return {
+                  ...channel,
+                  users: channel.users.filter(
+                    (user) => user.username !== target,
+                  ),
+                };
+              }
+              return channel;
+            });
+            return { ...server, channels: updatedChannels };
           });
-          return { ...server, channels: updatedChannels };
-        });
 
-        return { servers: updatedServers };
-      });
+          return { servers: updatedServers };
+        });
 
       const state = store.getState();
       if (state.globalSettings.showEvents && state.globalSettings.showKicks) {
         const server = state.servers.find((s) => s.id === serverId);
         if (server) {
-          const channel = server.channels.find((c) => c.name === channelName);
+          const channel = server.channels.find(
+            (c) => c.name.toLowerCase() === channelName.toLowerCase(),
+          );
           if (channel) {
             appendMessage(
               store,
@@ -681,17 +696,19 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
               makeEventMessage(
                 "kick",
                 reason
-                  ? t`was kicked from ${channelName} by ${username} (${reason})`
-                  : t`was kicked from ${channelName} by ${username}`,
+                  ? t`was kicked from ${{ channelName: voiceDisplayName(channelName) }} by ${username} (${reason})`
+                  : t`was kicked from ${{ channelName: voiceDisplayName(channelName) }} by ${username}`,
                 target,
                 channel.id,
                 serverId,
-                new Date(),
+                mtags?.time ? new Date(mtags.time) : new Date(),
+                historical,
               ),
             );
           }
         }
       }
+      if (historical) return;
 
       const server = state.servers.find((s) => s.id === serverId);
       if (server) {
@@ -725,8 +742,9 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     },
   );
 
-  ircClient.on("INVITE", ({ serverId, inviter, target, channel }) => {
+  ircClient.on("INVITE", ({ serverId, mtags, inviter, target, channel }) => {
     const state = store.getState();
+    if (isHistoryEvent(state, serverId, mtags)) return;
     const server = state.servers.find((s) => s.id === serverId);
     if (!server) return;
 
@@ -826,7 +844,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
             channel.id,
             makeEventMessage(
               "system",
-              t`Nickname '${nick}' already in use, retrying with '${newNick}'`,
+              t`Nickname “${nick}” already in use, retrying with “${newNick}”`,
               "system",
               channel.id,
               serverId,
@@ -874,20 +892,23 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("FAIL", ({ serverId, command, code, target, message }) => {
-    const state = store.getState();
-    state.addGlobalNotification({
+    reportServerReply(store, {
+      serverId,
       type: "fail",
       command,
       code,
       message,
       target,
-      serverId,
     });
     // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
     // event that normally chains the WHO request will never fire on
     // its own. Synthesise it here so the channel doesn't stay
     // permanently flagged needsWhoRequest=true.
-    if (command === "CHATHISTORY" && target && target.startsWith("#")) {
+    if (
+      command === "CHATHISTORY" &&
+      target &&
+      ircClient.isChannel(serverId, target)
+    ) {
       ircClient.triggerEvent("CHATHISTORY_LOADING", {
         serverId,
         channelName: target,
@@ -898,84 +919,30 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on(
     "WARN",
-    ({ serverId, command, code, target, context, message }) => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server) return;
-      const selectedId = getCurrentSelection(state).selectedChannelId;
-      const channel =
-        server.channels.find((c) => c.id === selectedId) ?? server.channels[0];
-      if (channel) {
-        const notificationMessage: Message = {
-          ...makeEventMessage(
-            "standard-reply",
-            message,
-            "system",
-            channel.id,
-            serverId,
-            new Date(),
-          ),
-          standardReplyType: "WARN",
-          standardReplyCommand: command,
-          standardReplyCode: code,
-          standardReplyTarget: target,
-          standardReplyContext: context,
-          standardReplyMessage: message,
-        };
-        appendMessage(store, serverId, channel.id, notificationMessage);
-      } else {
-        // No channels yet (pre-join WARN): surface as a global notification
-        // instead of dropping it.
-        state.addGlobalNotification({
-          type: "warn",
-          command,
-          code,
-          message,
-          target,
-          serverId,
-        });
-      }
-    },
+    ({ serverId, command, code, target, context, message }) =>
+      reportServerReply(store, {
+        serverId,
+        type: "warn",
+        command,
+        code,
+        message,
+        target,
+        context,
+      }),
   );
 
   ircClient.on(
     "NOTE",
-    ({ serverId, command, code, target, context, message }) => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server) return;
-      const selectedId = getCurrentSelection(state).selectedChannelId;
-      const channel =
-        server.channels.find((c) => c.id === selectedId) ?? server.channels[0];
-      if (channel) {
-        const notificationMessage: Message = {
-          ...makeEventMessage(
-            "standard-reply",
-            message,
-            "system",
-            channel.id,
-            serverId,
-            new Date(),
-          ),
-          standardReplyType: "NOTE",
-          standardReplyCommand: command,
-          standardReplyCode: code,
-          standardReplyTarget: target,
-          standardReplyContext: context,
-          standardReplyMessage: message,
-        };
-        appendMessage(store, serverId, channel.id, notificationMessage);
-      } else {
-        state.addGlobalNotification({
-          type: "note",
-          command,
-          code,
-          message,
-          target,
-          serverId,
-        });
-      }
-    },
+    ({ serverId, command, code, target, context, message }) =>
+      reportServerReply(store, {
+        serverId,
+        type: "note",
+        command,
+        code,
+        message,
+        target,
+        context,
+      }),
   );
 
   ircClient.on("RENAME", ({ serverId, oldName, newName, reason, user }) => {
@@ -1164,40 +1131,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          const updatedChannels = s.channels.map((channel) => {
-            const updatedUsers = channel.users.map((user) => {
-              if (user.username === username) {
-                const newIsAway = !!awayMessage;
-                const newAwayMessage = awayMessage || undefined;
-
-                if (
-                  user.isAway === newIsAway &&
-                  user.awayMessage === newAwayMessage
-                ) {
-                  return user;
-                }
-
-                return {
-                  ...user,
-                  isAway: newIsAway,
-                  awayMessage: newAwayMessage,
-                };
-              }
-              return user;
-            });
-
-            if (updatedUsers === channel.users) {
-              return channel;
-            }
-
-            return { ...channel, users: updatedUsers };
-          });
-
-          if (updatedChannels === s.channels) {
-            return s;
-          }
-
-          return { ...s, channels: updatedChannels };
+          return setUserAway(
+            s,
+            username,
+            !!awayMessage,
+            awayMessage || undefined,
+            ircClient.getNick(serverId),
+          );
         }
         return s;
       });
@@ -1312,11 +1252,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return {
-            ...s,
-            isAway: true,
-            awayMessage: message,
-          };
+          return setUserAway(
+            { ...s, isAway: true, awayMessage: message },
+            ircClient.getNick(serverId),
+            true,
+            message,
+            ircClient.getNick(serverId),
+          );
         }
         return s;
       });
@@ -1340,11 +1282,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     store.setState((state) => {
       const updatedServers = state.servers.map((s) => {
         if (s.id === serverId) {
-          return {
-            ...s,
-            isAway: false,
-            awayMessage: undefined,
-          };
+          return setUserAway(
+            { ...s, isAway: false, awayMessage: undefined },
+            ircClient.getNick(serverId),
+            false,
+            undefined,
+            ircClient.getNick(serverId),
+          );
         }
         return s;
       });

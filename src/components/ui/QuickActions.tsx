@@ -1,802 +1,464 @@
 import { t } from "@lingui/core/macro";
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  FaCog,
-  FaHashtag,
-  FaSearch,
-  FaServer,
-  FaTimes,
-  FaUser,
-} from "react-icons/fa";
-import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { FaArrowLeft, FaSearch, FaTimes } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useSuggestionKeys } from "../../hooks/useSuggestionKeys";
+import { keepInputFocus } from "../../lib/focus";
 import { fuzzyMatch } from "../../lib/fuzzySearch";
 import ircClient from "../../lib/ircClient";
-import { settingsRegistry } from "../../lib/settings";
-import type { SettingSearchResult } from "../../lib/settings/types";
-import useStore from "../../store";
-import type { Channel, PrivateChat } from "../../types";
-import { buildQuickActionContext } from "./QuickActions/context";
-import type {
-  QuickActionResult,
-  UIActionData,
-  UIModalAction,
-  UIToggleAction,
-} from "./QuickActions/types";
+import { isMac } from "../../lib/platformUtils";
 import {
-  getUIActionBadge,
-  getUIActionIcon,
-  getUIActions,
-} from "./QuickActions/uiActionConfig";
+  clearRecentSearches,
+  getRecentPlaces,
+  getRecentSearches,
+} from "../../lib/search/recents";
+import { widenScope } from "../../lib/search/searchQuery";
+import { currentChatScope, scopeLabel } from "../../lib/search/searchScope";
+import useStore from "../../store";
+import type { QuickActionsMode } from "../../store/types";
+import SearchQueryBar, { touchHitArea } from "../search/SearchQueryBar";
+import { useSearchDraft } from "../search/useSearchDraft";
+import { buildQuickActionContext } from "./QuickActions/context";
+import { buildGotoResults } from "./QuickActions/gotoResults";
+import {
+  buildRecentResults,
+  buildUnreadResults,
+} from "./QuickActions/recentResults";
+import {
+  MatchedText,
+  resultGroupTitle,
+  resultIcon,
+  resultTone,
+  UnreadIndicator,
+} from "./QuickActions/resultMeta";
+import type { QuickActionResult } from "./QuickActions/types";
+import { useResultActions } from "./QuickActions/useResultActions";
+import SegmentedControl from "./SegmentedControl";
 import { TextInput } from "./TextInput";
 
+const NO_KEYS: string[] = [];
+
+interface ResultGroup {
+  title: string;
+  start: number;
+  results: QuickActionResult[];
+}
+
+function groupsOf(results: QuickActionResult[]): ResultGroup[] {
+  const groups: ResultGroup[] = [];
+  results.forEach((result, index) => {
+    const title = resultGroupTitle(result);
+    const last = groups[groups.length - 1];
+    if (last?.title === title) last.results.push(result);
+    else groups.push({ title, start: index, results: [result] });
+  });
+  return groups;
+}
+
 const QuickActions: React.FC = () => {
-  const {
-    servers,
-    ui,
-    channelList,
-    globalSettings,
-    currentUser,
-    toggleQuickActions,
-    toggleSettingsModal,
-    setSettingsNavigation,
-    selectChannel,
-    selectPrivateChat,
-    selectServer,
-    openPrivateChat,
-    requestChatInputFocus,
-    toggleMemberList,
-    toggleChannelList,
-    updateGlobalSettings,
-    pinPrivateChat,
-    unpinPrivateChat,
-    toggleChannelListModal,
-    setTopicModalRequest,
-    setProfileViewRequest,
-    toggleUserProfileModal,
-    setChannelSettingsRequest,
-    setInviteUserRequest,
-  } = useStore();
-
+  const servers = useStore((s) => s.servers);
+  const ui = useStore((s) => s.ui);
+  const channelList = useStore((s) => s.channelList);
+  const globalSettings = useStore((s) => s.globalSettings);
+  const currentUser = useStore((s) => s.currentUser);
   const { i18n } = useLingui();
-  const joinAndSelectChannel = useJoinAndSelectChannel();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const runResult = useResultActions();
+  const isTouch = useIsTouchInput();
+  const isSheet = isTouch || ui.isNarrowView;
+  const mode: QuickActionsMode = ui.quickActions?.mode ?? "goto";
+  const isGoto = mode === "goto";
+  const currentServerId = ui.selectedServerId;
+  const currentSelection = currentServerId
+    ? (ui.perServerSelections[currentServerId] ?? null)
+    : null;
+
   const inputRef = useRef<HTMLInputElement>(null);
+  const [returnFocusTo] = useState(() => document.activeElement);
+  const [recentSearches, setRecentSearches] = useState(getRecentSearches);
+  const [recentPlaces] = useState(getRecentPlaces);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [announcement, setAnnouncement] = useState("");
+  const listId = useId();
+  const completionId = useId();
 
-  const handleClose = useCallback(() => {
-    toggleQuickActions(false);
-    setSearchQuery("");
-    setSelectedIndex(0);
-    requestChatInputFocus();
-  }, [toggleQuickActions, requestChatInputFocus]);
+  const draft = useSearchDraft({
+    initialScope:
+      ui.quickActions?.scope ??
+      currentChatScope(servers, currentServerId, currentSelection),
+    inputRef,
+    isMessageSearch: !isGoto,
+  });
+  const { text, scope, completion } = draft;
+  const query = text.trim();
 
-  const searchResults: QuickActionResult[] = useMemo(() => {
-    const query = searchQuery.trim();
-    const results: QuickActionResult[] = [];
-    const currentServerId = ui.selectedServerId;
-    const currentSelection = currentServerId
-      ? ui.perServerSelections[currentServerId]
-      : null;
+  const close = () => {
+    useStore.getState().toggleQuickActions(false);
+    if (isTouch) return;
+    if (returnFocusTo instanceof HTMLElement && returnFocusTo.isConnected)
+      returnFocusTo.focus();
+    else useStore.getState().requestChatInputFocus();
+  };
 
-    // If no search query, show unread mentions and messages
-    if (query.length === 0) {
-      servers.forEach((server) => {
-        const isCurrentServer = server.id === currentServerId;
+  const recentResults = useMemo(
+    () => buildRecentResults(recentSearches, recentPlaces, servers),
+    [recentSearches, recentPlaces, servers],
+  );
 
-        // Add channels with unread mentions or messages (excluding currently selected)
-        server.channels.forEach((channel) => {
-          const isCurrentlySelected =
-            isCurrentServer &&
-            currentSelection?.selectedChannelId === channel.id;
-
-          // Skip currently selected channel
-          if (isCurrentlySelected) return;
-
-          // Only show channels with unread mentions or messages
-          if (channel.isMentioned && channel.unreadCount > 0) {
-            // High priority for mentions (score: 1000 + unreadCount)
-            results.push({
-              type: "channel",
-              id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
-              description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
-              serverId: server.id,
-              score: 1000 + channel.unreadCount,
-              data: channel,
-            });
-          } else if (channel.unreadCount > 0) {
-            // Lower priority for unread messages (score: 500 + unreadCount)
-            results.push({
-              type: "channel",
-              id: `channel-${server.id}-${channel.id}`,
-              title: channel.name,
-              description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
-              serverId: server.id,
-              score: 500 + channel.unreadCount,
-              data: channel,
-            });
-          }
-        });
-
-        // Add private chats with unread mentions or messages (excluding currently selected)
-        server.privateChats.forEach((pm) => {
-          const isCurrentlySelected =
-            isCurrentServer &&
-            currentSelection?.selectedPrivateChatId === pm.id;
-
-          // Skip currently selected PM
-          if (isCurrentlySelected) return;
-
-          // Only show PMs with unread mentions or messages
-          if (pm.isMentioned && pm.unreadCount > 0) {
-            // High priority for mentions (score: 1000 + unreadCount)
-            results.push({
-              type: "dm",
-              id: `dm-${server.id}-${pm.id}`,
-              title: pm.username,
-              description: server.name,
-              serverId: server.id,
-              score: 1000 + pm.unreadCount,
-              data: pm,
-            });
-          } else if (pm.unreadCount > 0) {
-            // Lower priority for unread messages (score: 500 + unreadCount)
-            results.push({
-              type: "dm",
-              id: `dm-${server.id}-${pm.id}`,
-              title: pm.username,
-              description: server.name,
-              serverId: server.id,
-              score: 500 + pm.unreadCount,
-              data: pm,
-            });
-          }
-        });
-
-        // Add servers with mentions (excluding currently selected)
-        const hasMentions =
-          server.channels.some((ch) => ch.isMentioned) ||
-          server.privateChats?.some((pc) => pc.isMentioned);
-        const isCurrentlySelectedServer = server.id === currentServerId;
-
-        if (hasMentions && !isCurrentlySelectedServer) {
-          // Count total mentions in server
-          const totalMentions =
-            server.channels
-              .filter((ch) => ch.isMentioned)
-              .reduce((sum, ch) => sum + ch.unreadCount, 0) +
-            server.privateChats
-              .filter((pc) => pc.isMentioned)
-              .reduce((sum, pc) => sum + pc.unreadCount, 0);
-
-          results.push({
-            type: "server",
-            id: `server-${server.id}`,
-            title: server.name,
-            description: server.host,
-            serverId: server.id,
-            score: 800 + totalMentions, // Between unread messages and mentions
-            data: server,
-          });
-        }
-      });
-
-      return results.sort((a, b) => b.score - a.score).slice(0, 15);
-    }
-
-    settingsRegistry.search(query, { limit: 10 }).forEach((settingResult) => {
-      results.push({
-        type: "setting",
-        id: `setting-${settingResult.setting.id}`,
-        title: i18n._(settingResult.setting.title),
-        description: settingResult.setting.description
-          ? i18n._(settingResult.setting.description)
-          : undefined,
-        score: settingResult.score,
-        data: settingResult,
-      });
-    });
-
-    const actionContext = buildQuickActionContext(
+  const gotoResults = useMemo(() => {
+    if (!isGoto || query.length === 0) return [];
+    return buildGotoResults({
+      query,
       servers,
-      ui,
-      currentServerId,
-      currentSelection,
-      globalSettings,
-      currentUser,
-    );
-
-    getUIActions().forEach((actionConfig) => {
-      if (!actionConfig.availability(actionContext)) {
-        return;
-      }
-
-      const titleMatch = fuzzyMatch(query, actionConfig.title);
-      const keywordMatches = actionConfig.keywords.map((kw) =>
-        fuzzyMatch(query, kw),
-      );
-      const bestMatch = [titleMatch, ...keywordMatches].reduce(
-        (best, current) => (current.score > best.score ? current : best),
-      );
-
-      if (bestMatch.matches) {
-        results.push({
-          type: actionConfig.type,
-          id: actionConfig.id,
-          title: actionConfig.title,
-          description: actionConfig.description,
-          serverId: currentServerId || undefined,
-          score: bestMatch.score + actionConfig.score,
-          data: {
-            ...actionConfig.data,
-            serverId: currentServerId || undefined,
-            channelId: currentSelection?.selectedChannelId || undefined,
-            privateChatId: currentSelection?.selectedPrivateChatId || undefined,
-            username: servers
-              .find((s) => s.id === currentServerId)
-              ?.privateChats.find(
-                (pc) => pc.id === currentSelection?.selectedPrivateChatId,
-              )?.username,
-          },
-        });
-      }
+      channelList,
+      context: buildQuickActionContext(
+        servers,
+        ui,
+        currentServerId,
+        currentSelection,
+        globalSettings,
+        currentUser,
+      ),
+      ownNick: currentServerId
+        ? ircClient.getCurrentUser(currentServerId)?.username
+        : undefined,
+      translate: (descriptor) => i18n._(descriptor),
     });
-
-    servers.forEach((server) => {
-      const isCurrentlySelectedServer = server.id === currentServerId;
-
-      const serverMatch = fuzzyMatch(query, server.name);
-      if (serverMatch.matches) {
-        let scoreAdjustment = 0;
-        if (isCurrentlySelectedServer) {
-          scoreAdjustment = -30;
-        }
-
-        results.push({
-          type: "server",
-          id: `server-${server.id}`,
-          title: server.name,
-          description: server.host,
-          serverId: server.id,
-          score: serverMatch.score + scoreAdjustment,
-          data: server,
-        });
-      }
-
-      server.channels.forEach((channel) => {
-        const channelMatch = fuzzyMatch(query, channel.name);
-        if (channelMatch.matches) {
-          const isCurrentlySelected =
-            isCurrentlySelectedServer &&
-            currentSelection?.selectedChannelId === channel.id;
-
-          let scoreAdjustment = 0;
-          if (isCurrentlySelected) {
-            scoreAdjustment = -30;
-          } else if (isCurrentlySelectedServer) {
-            scoreAdjustment = 20;
-          }
-
-          results.push({
-            type: "channel",
-            id: `channel-${server.id}-${channel.id}`,
-            title: channel.name,
-            description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
-            serverId: server.id,
-            score: channelMatch.score + scoreAdjustment,
-            data: channel,
-          });
-        }
-      });
-
-      server.privateChats.forEach((pm) => {
-        const pmMatch = fuzzyMatch(query, pm.username);
-        if (pmMatch.matches) {
-          const isCurrentlySelected =
-            isCurrentlySelectedServer &&
-            currentSelection?.selectedPrivateChatId === pm.id;
-
-          let scoreAdjustment = 0;
-          if (isCurrentlySelected) {
-            scoreAdjustment = -30;
-          } else if (isCurrentlySelectedServer) {
-            scoreAdjustment = 20;
-          }
-
-          results.push({
-            type: "dm",
-            id: `dm-${server.id}-${pm.id}`,
-            title: pm.username,
-            description: server.name,
-            serverId: server.id,
-            score: pmMatch.score + scoreAdjustment,
-            data: pm,
-          });
-        }
-      });
-
-      if (
-        currentServerId &&
-        server.id === currentServerId &&
-        query.startsWith("#")
-      ) {
-        const channelName = query.trim();
-        const availableChannels = channelList[server.id] || [];
-        const alreadyShown = new Set<string>();
-
-        availableChannels.forEach((availChannel) => {
-          const channelMatch = fuzzyMatch(
-            query.slice(1),
-            availChannel.channel.slice(1),
-          );
-          if (channelMatch.matches) {
-            const alreadyJoined = server.channels.find(
-              (ch) => ch.name === availChannel.channel,
-            );
-            if (!alreadyJoined) {
-              results.push({
-                type: "join-channel",
-                id: `join-channel-${server.id}-${availChannel.channel}`,
-                title: `Join ${availChannel.channel}`,
-                description: `${availChannel.userCount} users - ${server.name}`,
-                serverId: server.id,
-                score: channelMatch.score + 50,
-                data: { channelName: availChannel.channel },
-              });
-              alreadyShown.add(availChannel.channel.toLowerCase());
-            }
-          }
-        });
-
-        if (
-          channelName.length > 1 &&
-          !alreadyShown.has(channelName.toLowerCase())
-        ) {
-          results.push({
-            type: "join-channel",
-            id: `join-channel-${server.id}-${channelName}`,
-            title: `Join ${channelName}`,
-            description: `Join channel on ${server.name}`,
-            serverId: server.id,
-            score: 100,
-            data: { channelName },
-          });
-        }
-      }
-
-      if (currentServerId && server.id === currentServerId) {
-        const allUsers = new Map<
-          string,
-          { username: string; isOnline: boolean }
-        >();
-        for (const channel of server.channels) {
-          for (const user of channel.users) {
-            allUsers.set(user.username, {
-              username: user.username,
-              isOnline: user.isOnline,
-            });
-          }
-        }
-
-        const currentUser = ircClient.getCurrentUser(server.id);
-        const availableUsers = Array.from(allUsers.values()).filter(
-          (user) => user.username !== currentUser?.username,
-        );
-
-        availableUsers.forEach((user) => {
-          const existingPM = server.privateChats.find(
-            (pm) => pm.username === user.username,
-          );
-          if (!existingPM) {
-            const userMatch = fuzzyMatch(query, user.username);
-            if (userMatch.matches) {
-              results.push({
-                type: "start-dm",
-                id: `start-dm-${server.id}-${user.username}`,
-                title: `Message ${user.username}`,
-                description: `Start private message on ${server.name}`,
-                serverId: server.id,
-                score: userMatch.score + (user.isOnline ? 10 : 0),
-                data: undefined,
-              });
-            }
-          }
-        });
-      }
-    });
-
-    return results.sort((a, b) => b.score - a.score).slice(0, 15);
   }, [
-    searchQuery,
+    isGoto,
+    query,
     servers,
     channelList,
     ui,
     globalSettings,
     currentUser,
-    i18n._,
+    currentServerId,
+    currentSelection,
+    i18n,
   ]);
 
-  const handleUIToggle = useCallback(
-    (data: UIActionData) => {
-      switch (data.action as UIToggleAction) {
-        case "toggle-member-list":
-          toggleMemberList();
-          break;
-        case "toggle-channel-list":
-          toggleChannelList();
-          break;
-        case "toggle-notifications": {
-          const newVolume = globalSettings.notificationVolume > 0 ? 0 : 0.4;
-          updateGlobalSettings({ notificationVolume: newVolume });
-          break;
-        }
-        case "pin-private-chat":
-          if (data.serverId && data.privateChatId) {
-            pinPrivateChat(data.serverId, data.privateChatId);
-          }
-          break;
-        case "unpin-private-chat":
-          if (data.serverId && data.privateChatId) {
-            unpinPrivateChat(data.serverId, data.privateChatId);
-          }
-          break;
-      }
+  const results: QuickActionResult[] = useMemo(() => {
+    if (query.length === 0)
+      return [
+        ...recentResults,
+        ...buildUnreadResults(servers, currentServerId, currentSelection),
+      ];
+    const searchRow: QuickActionResult = {
+      type: "search-messages",
+      id: "search-messages",
+      title: t`Search messages for "${query}"`,
+      description: scopeLabel(scope, servers),
+      score: 0,
+    };
+    if (isGoto) return [...gotoResults, searchRow];
+    const matchingSearches = recentResults.filter(
+      (result) =>
+        result.type === "recent-search" &&
+        fuzzyMatch(query, result.title).matches,
+    );
+    return [searchRow, ...matchingSearches];
+  }, [
+    query,
+    isGoto,
+    scope,
+    servers,
+    gotoResults,
+    recentResults,
+    currentServerId,
+    currentSelection,
+  ]);
+  const groups = useMemo(() => groupsOf(results), [results]);
+
+  const select = (result: QuickActionResult) => {
+    if (result.type === "search-messages") {
+      draft.submit();
+      return;
+    }
+    runResult(result);
+    const state = useStore.getState();
+    if (state.ui.quickActions) state.toggleQuickActions(false);
+    if (!isTouch && result.type !== "recent-search")
+      state.requestChatInputFocus();
+  };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we restart at the top whenever the list changes meaning
+  useEffect(() => setSelectedIndex(0), [query, mode]);
+
+  useSuggestionKeys({
+    isActive: !completion.isOpen && !draft.isScopeMenuOpen,
+    count: results.length,
+    selectedIndex,
+    onMove: setSelectedIndex,
+    onAccept: (index) => {
+      if (document.activeElement instanceof HTMLButtonElement) return false;
+      const result = results[index];
+      if (result) select(result);
+      return true;
     },
-    [
-      toggleMemberList,
-      toggleChannelList,
-      updateGlobalSettings,
-      globalSettings.notificationVolume,
-      pinPrivateChat,
-      unpinPrivateChat,
-    ],
-  );
+    onClose: close,
+    closeKeys: NO_KEYS,
+  });
 
-  const handleUIModal = useCallback(
-    (data: UIActionData) => {
-      switch (data.action as UIModalAction) {
-        case "open-channel-settings":
-          if (data.serverId && data.channelId) {
-            setChannelSettingsRequest(data.serverId, data.channelId);
-          }
-          break;
-        case "open-invite-user":
-          if (data.serverId && data.channelId) {
-            setInviteUserRequest(data.serverId, data.channelId);
-          }
-          break;
-        case "open-server-channels":
-          toggleChannelListModal(true);
-          break;
-        case "open-rename-channel":
-          if (data.serverId && data.channelId) {
-            setChannelSettingsRequest(data.serverId, data.channelId);
-          }
-          break;
-        case "open-topic-modal":
-          if (data.serverId && data.channelId) {
-            setTopicModalRequest(data.serverId, data.channelId);
-          }
-          break;
-        case "open-user-profile":
-          if (data.serverId && data.username) {
-            setProfileViewRequest(data.serverId, data.username);
-            toggleUserProfileModal(true);
-          }
-          break;
-      }
-    },
-    [
-      setChannelSettingsRequest,
-      setInviteUserRequest,
-      toggleChannelListModal,
-      setTopicModalRequest,
-      setProfileViewRequest,
-      toggleUserProfileModal,
-    ],
-  );
+  const closeRef = useRef(close);
+  const isScopeMenuOpenRef = useRef(false);
+  closeRef.current = close;
+  isScopeMenuOpenRef.current = draft.isScopeMenuOpen;
 
-  const handleSelect = useCallback(
-    (result: QuickActionResult) => {
-      switch (result.type) {
-        case "setting": {
-          const settingResult = result.data as SettingSearchResult;
-          const setting = settingResult.setting;
-          setSettingsNavigation({
-            category: setting.category as
-              | "profile"
-              | "notifications"
-              | "preferences"
-              | "media"
-              | "account",
-            highlightedSettingId: setting.id,
-          });
-          toggleSettingsModal(true);
-          break;
-        }
-        case "channel": {
-          const channel = result.data as Channel;
-          selectServer(result.serverId || null);
-          selectChannel(channel.id, { navigate: true });
-          break;
-        }
-        case "dm": {
-          const pm = result.data as PrivateChat;
-          selectServer(result.serverId || null);
-          selectPrivateChat(pm.id, { navigate: true });
-          break;
-        }
-        case "server": {
-          selectServer(result.id.replace("server-", ""));
-          break;
-        }
-        case "join-channel": {
-          if (result.serverId && result.data) {
-            const channelName = (result.data as { channelName: string })
-              .channelName;
-            selectServer(result.serverId);
-            joinAndSelectChannel(result.serverId, channelName);
-          }
-          break;
-        }
-        case "start-dm": {
-          if (result.serverId) {
-            const username = result.title.replace("Message ", "");
-            openPrivateChat(result.serverId, username);
-            selectServer(result.serverId);
-            const freshState = useStore.getState();
-            const server = freshState.servers.find(
-              (s) => s.id === result.serverId,
-            );
-            const privateChat = server?.privateChats?.find(
-              (pc) => pc.username === username,
-            );
-            if (privateChat) {
-              selectPrivateChat(privateChat.id, { navigate: true });
-            }
-          }
-          break;
-        }
-        case "ui-toggle": {
-          const actionData = result.data as UIActionData;
-          handleUIToggle(actionData);
-          break;
-        }
-        case "ui-modal": {
-          const actionData = result.data as UIActionData;
-          handleUIModal(actionData);
-          break;
-        }
-      }
-      handleClose();
-    },
-    [
-      setSettingsNavigation,
-      toggleSettingsModal,
-      selectServer,
-      selectChannel,
-      selectPrivateChat,
-      handleClose,
-      joinAndSelectChannel,
-      openPrivateChat,
-      handleUIToggle,
-      handleUIModal,
-    ],
-  );
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, []);
-
-  const searchResultsRef = useRef<QuickActionResult[]>([]);
-  const selectedIndexRef = useRef(selectedIndex);
-  const handleCloseRef = useRef(handleClose);
-  const handleSelectRef = useRef(handleSelect);
-
-  searchResultsRef.current = searchResults;
-  selectedIndexRef.current = selectedIndex;
-  handleCloseRef.current = handleClose;
-  handleSelectRef.current = handleSelect;
-
+  // An open completion list takes Escape first in the capture phase, and
+  // Android back arrives as an Escape on the document.
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        handleCloseRef.current();
-        return;
-      }
-
-      if (searchResultsRef.current.length === 0) return;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setSelectedIndex((prev) =>
-            prev < searchResultsRef.current.length - 1 ? prev + 1 : prev,
-          );
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-          break;
-        case "Tab":
-          e.preventDefault();
-          if (e.shiftKey) {
-            setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-          } else {
-            setSelectedIndex((prev) =>
-              prev < searchResultsRef.current.length - 1 ? prev + 1 : prev,
-            );
-          }
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (searchResultsRef.current[selectedIndexRef.current]) {
-            handleSelectRef.current(
-              searchResultsRef.current[selectedIndexRef.current],
-            );
-          }
-          break;
-      }
+      if (e.key !== "Escape" || isScopeMenuOpenRef.current) return;
+      e.preventDefault();
+      closeRef.current();
     };
-
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const listRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    listRef.current
+      ?.querySelector(`[data-result-index="${selectedIndex}"]`)
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      e.key !== "Backspace" ||
+      e.repeat ||
+      text !== "" ||
+      isGoto ||
+      scope.kind === "everywhere"
+    )
+      return;
+    e.preventDefault();
+    const wider = widenScope(scope);
+    draft.setScope(wider);
+    const label = scopeLabel(wider, servers);
+    setAnnouncement(t`Searching in ${label}`);
+  };
+
+  const clearSearches = () => {
+    clearRecentSearches();
+    setRecentSearches([]);
+  };
+
+  const inputLabel = isGoto
+    ? t`Find channels, people, settings and actions`
+    : t`Search messages, filter with from: in: has:link`;
+  const optionId = (index: number) => `${listId}-${index}`;
+  const shortcut = isMac ? "⌘K" : "Ctrl K";
+
+  const panelStyle: React.CSSProperties = isSheet
+    ? {
+        bottom: "var(--keyboard-height, 0px)",
+        paddingTop: "var(--safe-area-inset-top, 0px)",
+      }
+    : {
+        top: "min(12vh, 96px)",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "min(680px, calc(100vw - 32px))",
+      };
+
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-start justify-center z-50 pt-[15vh]"
-      onClick={handleClose}
+      className={`fixed inset-0 z-50 animate-in fade-in duration-100 ${isSheet ? "" : "scrim"}`}
+      onClick={close}
     >
       <div
-        className="bg-discord-dark-200 rounded-lg w-full max-w-2xl mx-4 shadow-xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label={inputLabel}
+        className={`absolute flex flex-col overflow-hidden ${
+          isSheet ? "inset-x-0 top-0 bg-discord-dark-300" : "surface-floating"
+        }`}
+        style={panelStyle}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center border-b border-discord-dark-500 p-4">
-          <FaSearch className="text-discord-text-muted mr-3" />
+        <div
+          className={`flex items-center gap-2 bar-divider h-12 ${isSheet ? "px-1" : "px-4"}`}
+        >
+          {isSheet ? (
+            <button
+              type="button"
+              onClick={close}
+              aria-label={t`Close`}
+              className="icon-button w-10 h-10 rounded-lg"
+            >
+              <FaArrowLeft />
+            </button>
+          ) : (
+            <FaSearch className="w-4 h-4 text-discord-text-muted shrink-0" />
+          )}
           <TextInput
             ref={inputRef}
-            placeholder={t`Search settings, channels, servers...`}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent text-white placeholder-discord-text-muted outline-none"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={completion.isOpen || results.length > 0}
+            aria-controls={completion.isOpen ? completionId : listId}
+            aria-activedescendant={
+              completion.isOpen
+                ? `${completionId}-${completion.selectedIndex}`
+                : results.length > 0
+                  ? optionId(selectedIndex)
+                  : undefined
+            }
+            aria-label={inputLabel}
+            placeholder={
+              isSheet ? (isGoto ? t`Search` : t`Search messages`) : inputLabel
+            }
+            enterKeyHint="search"
+            {...draft.inputProps}
+            onKeyDown={handleInputKeyDown}
+            className={`flex-1 min-w-0 bg-transparent text-white placeholder:text-discord-text-muted outline-none ${isSheet ? "text-base" : "text-[15px]"}`}
             autoFocus
           />
-          <button
-            onClick={handleClose}
-            className="text-discord-text-muted hover:text-white ml-3"
-          >
-            <FaTimes />
-          </button>
-        </div>
-
-        <div className="max-h-96 overflow-y-auto">
-          {searchResults.length === 0 ? (
-            <div className="p-8 text-center text-discord-text-muted">
-              {searchQuery.trim().length === 0
-                ? t`No unread mentions or messages`
-                : t`No results found`}
-            </div>
-          ) : (
-            <div className="p-2">
-              {searchResults.map((result, index) => {
-                const getIcon = () => {
-                  switch (result.type) {
-                    case "setting":
-                      return <FaCog className="mr-3" />;
-                    case "channel":
-                      return <FaHashtag className="mr-3" />;
-                    case "dm":
-                      return <FaUser className="mr-3" />;
-                    case "server":
-                      return <FaServer className="mr-3" />;
-                    case "join-channel":
-                      return <FaHashtag className="mr-3" />;
-                    case "start-dm":
-                      return <FaUser className="mr-3" />;
-                    case "ui-toggle":
-                    case "ui-modal": {
-                      const icon = getUIActionIcon(result.id);
-                      return icon ? (
-                        <span className="mr-3">{icon}</span>
-                      ) : (
-                        <FaCog className="mr-3" />
-                      );
-                    }
-                  }
-                };
-
-                const getTypeBadge = () => {
-                  switch (result.type) {
-                    case "setting":
-                      return t`Setting`;
-                    case "channel":
-                      return t`Channel`;
-                    case "dm":
-                      return "DM";
-                    case "server":
-                      return t`Server`;
-                    case "join-channel":
-                      return t`Join`;
-                    case "start-dm":
-                      return t`New DM`;
-                    case "ui-toggle":
-                      return t`Toggle`;
-                    case "ui-modal":
-                      return getUIActionBadge(result.id);
-                  }
-                };
-
-                // Get unread indicator for channels and DMs
-                const getUnreadIndicator = () => {
-                  if (result.type === "channel" || result.type === "dm") {
-                    const item = result.data as Channel | PrivateChat;
-                    if (item.isMentioned && item.unreadCount > 0) {
-                      // Red badge with count for mentions
-                      return (
-                        <span className="bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[20px] text-center ml-2">
-                          {item.unreadCount}
-                        </span>
-                      );
-                    }
-                    if (item.unreadCount > 0) {
-                      // Blue dot for unread messages
-                      return (
-                        <span className="w-2 h-2 bg-blue-500 rounded-full ml-2" />
-                      );
-                    }
-                  }
-                  return null;
-                };
-
-                return (
-                  <button
-                    key={result.id}
-                    onClick={() => handleSelect(result)}
-                    className={`w-full flex flex-col px-4 py-3 rounded text-left transition-colors ${
-                      index === selectedIndex
-                        ? "bg-discord-primary text-white"
-                        : "text-discord-text-normal hover:bg-discord-dark-400"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center flex-1 min-w-0">
-                        {getIcon()}
-                        <span className="font-medium truncate">
-                          {result.title}
-                        </span>
-                        {getUnreadIndicator()}
-                      </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded ml-2 whitespace-nowrap ${
-                          index === selectedIndex
-                            ? "bg-white/20"
-                            : "bg-discord-dark-400"
-                        }`}
-                      >
-                        {getTypeBadge()}
-                      </span>
-                    </div>
-                    {result.description && (
-                      <span
-                        className={`text-sm mt-1 ml-8 truncate ${
-                          index === selectedIndex
-                            ? "text-white/80"
-                            : "text-discord-text-muted"
-                        }`}
-                      >
-                        {result.description}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          {!isSheet && (
+            <button
+              type="button"
+              onClick={close}
+              aria-label={t`Close`}
+              className="icon-button w-10 h-10 rounded-lg"
+            >
+              <FaTimes />
+            </button>
           )}
         </div>
+
+        <div
+          className={`flex px-3 ${isSheet ? "pt-2" : "pt-1.5"} ${isGoto ? "pb-2" : ""}`}
+        >
+          <SegmentedControl
+            className="shrink-0"
+            size="sm"
+            value={mode}
+            onChange={(next) =>
+              useStore.getState().openQuickActions(next, ui.quickActions?.scope)
+            }
+            onMouseDown={keepInputFocus}
+            segments={[
+              { value: "goto", label: <Trans>Go to</Trans> },
+              { value: "messages", label: <Trans>Messages</Trans> },
+            ]}
+          />
+        </div>
+
+        {!isGoto && (
+          <SearchQueryBar
+            draft={draft}
+            isLarge={isSheet}
+            completionId={completionId}
+            completionClassName={isSheet ? "flex-1" : ""}
+          />
+        )}
+
+        <div role="status" className="sr-only">
+          {announcement}
+        </div>
+
+        {!completion.isOpen && (
+          <div
+            ref={listRef}
+            id={listId}
+            role="listbox"
+            aria-label={inputLabel}
+            className={`overflow-y-auto overscroll-contain p-2 ${isSheet ? "flex-1" : ""}`}
+            style={isSheet ? undefined : { maxHeight: "min(60vh, 520px)" }}
+          >
+            {results.length === 0 ? (
+              <div className="px-4 py-8 text-center text-sm text-discord-text-muted">
+                {query.length > 0
+                  ? t`No results. Try fewer letters`
+                  : isGoto
+                    ? t`No unread mentions or messages. Type to search`
+                    : t`Type words to search messages`}
+              </div>
+            ) : (
+              groups.map((group) => {
+                const titleId = `${listId}-group-${group.start}`;
+                return (
+                  // biome-ignore lint/a11y/useSemanticElements: a listbox groups its options with role="group", which a fieldset does not give
+                  <div key={group.title} role="group" aria-labelledby={titleId}>
+                    <div className="flex items-center pt-2.5">
+                      <div id={titleId} className="section-label flex-1">
+                        {group.title}
+                      </div>
+                      {group.results[0].type === "recent-search" && (
+                        <button
+                          type="button"
+                          className={`row-meta px-2 rounded hover:text-white ${isTouch ? touchHitArea : ""}`}
+                          onMouseDown={keepInputFocus}
+                          onClick={clearSearches}
+                        >
+                          <Trans>Clear</Trans>
+                        </button>
+                      )}
+                    </div>
+                    {group.results.map((result, offset) => {
+                      const index = group.start + offset;
+                      const isSelected = index === selectedIndex;
+                      return (
+                        <button
+                          key={result.id}
+                          type="button"
+                          id={optionId(index)}
+                          role="option"
+                          aria-selected={isSelected}
+                          tabIndex={-1}
+                          data-result-index={index}
+                          onClick={() => select(result)}
+                          onMouseMove={() =>
+                            !isSelected && setSelectedIndex(index)
+                          }
+                          className={`row-interactive gap-3 ${isSelected ? "row-interactive-active" : ""}`}
+                        >
+                          <span
+                            className={`w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[13px] ${isSelected ? "bg-white/20 text-white" : resultTone(result)}`}
+                          >
+                            {resultIcon(result)}
+                          </span>
+                          <span className="flex-1 min-w-0 flex flex-col">
+                            <span className="truncate">
+                              {isGoto ? (
+                                <MatchedText
+                                  text={result.title}
+                                  query={query}
+                                  isSelected={isSelected}
+                                />
+                              ) : (
+                                result.title
+                              )}
+                            </span>
+                            {result.description && (
+                              <span className="row-meta truncate">
+                                {result.description}
+                              </span>
+                            )}
+                          </span>
+                          <UnreadIndicator result={result} />
+                          {isSelected && !isSheet && (
+                            <span className="row-meta shrink-0">↵</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        )}
+        {!isSheet && (
+          <div className="flex flex-wrap gap-x-4 px-4 py-2 items-center row-meta shadow-[0_-1px_0_rgba(0,0,0,0.25)]">
+            <span>{t`↑ ↓ to move`}</span>
+            <span>{t`↵ to open`}</span>
+            <span>{t`${shortcut} to switch mode`}</span>
+            <span>{t`esc to close`}</span>
+          </div>
+        )}
       </div>
     </div>
   );

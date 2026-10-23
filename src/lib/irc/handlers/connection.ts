@@ -1,4 +1,4 @@
-import { parseIsupport } from "../../ircUtils";
+import { parseIsupportTokens } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 
 export function handlePing(
@@ -88,11 +88,11 @@ export function handleRplWelcome(
 
   ctx.startWebSocketPing(serverId);
 
+  // Registration must complete before these go out: bytes sent while still
+  // unregistered count against the server's handshake-flood limit, which bans
+  // the IP when a client with many channels reconnects.
   const server = ctx.servers.get(serverId);
   if (server && server.channels.length > 0) {
-    console.log(
-      `Rejoining ${server.channels.length} channels after reconnection`,
-    );
     for (const channel of server.channels) {
       ctx.sendRaw(serverId, `JOIN ${channel.name}`);
     }
@@ -118,22 +118,83 @@ export function handleRplYourHost(
   }
 }
 
-export function handleIsupport(
+// Servers prefix each MOTD line with "- " to mark it as a body line.
+const MOTD_LINE_PREFIX = /^- ?/;
+
+export function handleRplMotdStart(
+  ctx: IRCClientContext,
+  serverId: string,
+): void {
+  ctx.motdLines.set(serverId, []);
+}
+
+export function handleRplMotd(
   ctx: IRCClientContext,
   serverId: string,
   _source: string,
   parv: string[],
 ): void {
-  const capabilities = parseIsupport(parv.join(" "));
-  for (const [key, value] of Object.entries(capabilities)) {
-    if (key === "NETWORK") {
+  const line = parv.slice(1).join(" ").replace(MOTD_LINE_PREFIX, "");
+  const lines = ctx.motdLines.get(serverId) ?? [];
+  ctx.motdLines.set(serverId, [...lines, line]);
+}
+
+export function handleRplEndOfMotd(
+  ctx: IRCClientContext,
+  serverId: string,
+): void {
+  const lines = ctx.motdLines.get(serverId);
+  ctx.motdLines.delete(serverId);
+  if (lines && lines.length > 0) ctx.triggerEvent("MOTD", { serverId, lines });
+}
+
+export function handleIsupport(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+  trailing?: string,
+): void {
+  // Strip the leading target nick (parv[0]) and the trailing
+  // "are supported by this server" sentinel — the parser already
+  // colon-strips it and appends it to parv, so match it by value.
+  const tokens = parv.slice(1);
+  if (trailing && tokens[tokens.length - 1] === trailing) tokens.pop();
+  const tokenList = tokens.join(" ");
+
+  // The v0.2 `+=` append form arrives across separate RPL_ISUPPORT
+  // lines, so the accumulator must persist between handleIsupport calls.
+  let perServer = ctx.isupportValues.get(serverId);
+  if (!perServer) {
+    perServer = new Map();
+    ctx.isupportValues.set(serverId, perServer);
+  }
+
+  for (const tok of parseIsupportTokens(tokenList)) {
+    let value: string;
+    if (tok.op === "delete") {
+      perServer.delete(tok.key);
+      value = "";
+    } else if (tok.op === "append") {
+      value = (perServer.get(tok.key) ?? "") + tok.value;
+      perServer.set(tok.key, value);
+    } else {
+      value = tok.value;
+      perServer.set(tok.key, value);
+    }
+
+    if (tok.key === "NETWORK") {
       const server = ctx.servers.get(serverId);
       if (server) {
         server.networkName = value;
         ctx.servers.set(serverId, server);
       }
     }
-    ctx.triggerEvent("ISUPPORT", { serverId, key, value });
+    // Downstream consumers see the cumulative total each time it
+    // changes -- they don't need to know about append vs set
+    // themselves.  For "delete" they receive value "" alongside the
+    // ISUPPORT key being out of the accumulator.
+    ctx.triggerEvent("ISUPPORT", { serverId, key: tok.key, value });
   }
 }
 
@@ -176,7 +237,7 @@ export function handleCap(
   else if (subcommand === "ACK") {
     ctx.onCapAck(serverId, caps);
   } else if (subcommand === "NAK") {
-    ctx.sendRaw(serverId, "CAP END");
+    ctx.sendCapEnd(serverId);
     ctx.capNegotiationComplete.set(serverId, true);
   } else if (subcommand === "NEW") ctx.onCapNew(serverId, caps);
   else if (subcommand === "DEL") ctx.onCapDel(serverId, caps);
@@ -195,15 +256,51 @@ export function handleRplYoureOper(
   });
 }
 
+// 900/901: the server names the account we are logged in to, or none.
+export function handleLoggedIn(
+  ctx: IRCClientContext,
+  serverId: string,
+  _source: string,
+  parv: string[],
+): void {
+  const user = ctx.currentUsers.get(serverId);
+  if (user) ctx.currentUsers.set(serverId, { ...user, account: parv[2] });
+  ctx.triggerEvent("LOGGED_IN", { serverId, account: parv[2] });
+}
+
+export function handleLoggedOut(
+  ctx: IRCClientContext,
+  serverId: string,
+  source: string,
+  parv: string[],
+): void {
+  const user = ctx.currentUsers.get(serverId);
+  if (user) ctx.currentUsers.set(serverId, { ...user, account: undefined });
+  ctx.triggerEvent("LOGGED_OUT", { serverId });
+  handleSaslSuccess(ctx, serverId, source, parv);
+}
+
 export function handleSaslSuccess(
   ctx: IRCClientContext,
   serverId: string,
   _source: string,
   _parv: string[],
 ): void {
-  ctx.sendRaw(serverId, "CAP END");
+  if (ctx.capNegotiationComplete.get(serverId)) return;
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
+}
+
+// 904/905: the server refused our credentials, so we carry on as a guest.
+export function handleSaslRejected(
+  ctx: IRCClientContext,
+  serverId: string,
+  source: string,
+  parv: string[],
+): void {
+  ctx.triggerEvent("saslFailed", { serverId });
+  handleSaslFailure(ctx, serverId, source, parv);
 }
 
 export function handleSaslFailure(
@@ -212,7 +309,8 @@ export function handleSaslFailure(
   _source: string,
   _parv: string[],
 ): void {
-  ctx.sendRaw(serverId, "CAP END");
+  if (ctx.capNegotiationComplete.get(serverId)) return;
+  ctx.sendCapEnd(serverId);
   ctx.capNegotiationComplete.set(serverId, true);
   ctx.userOnConnect(serverId);
 }

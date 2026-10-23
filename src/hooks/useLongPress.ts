@@ -1,6 +1,9 @@
 import { useCallback, useRef } from "react";
 import { haptic } from "../lib/haptic";
 
+export const LONG_PRESS_DELAY_MS = 400;
+export const TOUCH_MOVE_THRESHOLD_PX = 10;
+
 interface UseLongPressOptions {
   delay?: number;
   moveThreshold?: number;
@@ -8,8 +11,8 @@ interface UseLongPressOptions {
 }
 
 export function useLongPress({
-  delay = 400,
-  moveThreshold = 10,
+  delay = LONG_PRESS_DELAY_MS,
+  moveThreshold = TOUCH_MOVE_THRESHOLD_PX,
   onLongPress,
 }: UseLongPressOptions) {
   const timerRef = useRef<number | null>(null);
@@ -22,7 +25,6 @@ export function useLongPress({
       timerRef.current = null;
     }
     startPos.current = null;
-    firedRef.current = false;
     // Restore text selection
     document.body.style.userSelect = "";
     document.body.style.webkitUserSelect = "";

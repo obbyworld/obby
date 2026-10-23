@@ -2,11 +2,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { probeMediaUrl, shouldProbeUrl } from "../../src/lib/mediaProbe";
 
 vi.mock("../../src/lib/mediaUtils", () => ({
+  extractHostname: (url: string) => new URL(url).hostname,
   detectMediaType: vi.fn((url: string) => {
     if (url.endsWith(".mp4")) return "video";
     if (url.endsWith(".mp3")) return "audio";
     if (url.endsWith(".jpg")) return "image";
     if (url.endsWith(".pdf")) return "pdf";
+    if (url.includes("youtu.be")) return "embed";
+    if (url.includes("openstreetmap.org")) return "map";
     return null;
   }),
 }));
@@ -47,7 +50,7 @@ function makeErrorResponse(
 // Use unique URL counters per test to avoid cache collisions
 let urlCounter = 0;
 function uniqueUrl(suffix = "") {
-  return `https://filehost.example.com/unique${++urlCounter}${suffix}`;
+  return `https://host${++urlCounter}.example.com/unique${suffix}`;
 }
 
 beforeEach(() => {
@@ -90,6 +93,19 @@ afterEach(() => {
 });
 
 describe("probeMediaUrl", () => {
+  test("callers of a URL still probing share one probe", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("CORS"));
+    const url = uniqueUrl();
+    const results = await Promise.all(
+      Array.from({ length: 20 }, () => probeMediaUrl(url)),
+    );
+    expect(results.every((r) => r === null)).toBe(true);
+    const mediaElements = vi
+      .mocked(document.createElement)
+      .mock.calls.filter(([tag]) => tag === "video" || tag === "audio");
+    expect(mediaElements).toHaveLength(2);
+  });
+
   test("video/mp4 content-type → type video, skipped false", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       makeResponse({
@@ -236,6 +252,15 @@ describe("probeMediaUrl", () => {
     } as unknown as Response);
     const result = await probeMediaUrl(uniqueUrl());
     expect(result).toBeNull();
+  });
+
+  test("host that blocked both requests is not fetched again", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("CORS"));
+    const first = uniqueUrl();
+    await probeMediaUrl(first);
+    const callsBefore = vi.mocked(fetch).mock.calls.length;
+    await probeMediaUrl(`${new URL(first).origin}/other`);
+    expect(vi.mocked(fetch).mock.calls.length).toBe(callsBefore);
   });
 
   test("network error → null", async () => {
@@ -403,6 +428,22 @@ describe("probeMediaUrl", () => {
     // firstUrl was evicted — should trigger a new fetch
     await probeMediaUrl(firstUrl);
     expect(vi.mocked(fetch).mock.calls.length).toBe(callsBefore + 1);
+  });
+});
+
+describe("pages with no file behind them", () => {
+  test("an embed link resolves without a network request", async () => {
+    const result = await probeMediaUrl("https://youtu.be/dQw4w9WgXcQ");
+    expect(result?.type).toBe("embed");
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
+  });
+
+  test("a map link resolves without a network request", async () => {
+    const result = await probeMediaUrl(
+      "https://www.openstreetmap.org/?mlat=52.5&mlon=13.4",
+    );
+    expect(result?.type).toBe("map");
+    expect(vi.mocked(fetch)).not.toHaveBeenCalled();
   });
 });
 

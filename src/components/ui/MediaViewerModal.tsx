@@ -5,6 +5,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import type { Map as LeafletMap } from "leaflet";
 import {
   Fragment,
   lazy,
@@ -20,6 +21,7 @@ import {
   FaDownload,
   FaExternalLinkAlt,
   FaFilm,
+  FaMapMarkerAlt,
   FaMinus,
   FaMusic,
   FaPlus,
@@ -29,9 +31,20 @@ import {
 } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
+import type { MediaDescriptor } from "../../lib/e2ee/media";
+import { parseLocationShareUrl } from "../../lib/geolocation";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
+import {
+  clampMapZoom,
+  loadLeaflet,
+  MAP_ATTRIBUTION,
+  MAP_MAX_ZOOM,
+  MAP_MIN_ZOOM,
+  MAP_PIN_SVG,
+  stopTouchOutsideMap,
+} from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
-import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
   canShowMedia,
   detectMediaType,
@@ -39,14 +52,24 @@ import {
   extractMediaFromText,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
+  type MediaEntry,
+  type MediaType,
   mediaLevelToSettings,
 } from "../../lib/mediaUtils";
+import {
+  describeAttachment,
+  encryptedDescriptor,
+  kindMediaType,
+} from "../../lib/messageAttachments";
 import { openExternalUrl } from "../../lib/openUrl";
+import { TILE_URL_TEMPLATE } from "../../lib/osmTiles";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { isTauri } from "../../lib/platformUtils";
 import useStore, { getChannelMessages } from "../../store";
 import type { Message } from "../../types";
 import { ResizableSidebar } from "../layout/ResizableSidebar";
-import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "../message/EmbedPlayer";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 import { MediaCommentsSidebar } from "./MediaCommentsSidebar";
 
@@ -62,7 +85,6 @@ const LazyDocument = lazy(() =>
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
 );
-const ReactPlayer = lazy(() => import("react-player"));
 
 const ZOOM_STEP = 0.25;
 export const ZOOM_MIN = 0.5;
@@ -300,7 +322,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             </p>
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-2 bg-discord-brand rounded text-white text-sm hover:opacity-90"
+              className="flex items-center gap-2 px-4 py-2 button-primary rounded text-sm"
               onClick={onRequestOpen}
             >
               <FaExternalLinkAlt className="w-3 h-3" />
@@ -329,7 +351,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
             <div className="w-64 h-96 bg-discord-dark-400/50 animate-pulse rounded" />
           }
         >
-          <PdfErrorBoundary onError={() => setUseNativeViewer(true)}>
+          <MediaErrorBoundary onError={() => setUseNativeViewer(true)}>
             <LazyDocument
               file={url}
               options={PDF_OPTIONS}
@@ -345,7 +367,7 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
                 width={pageWidth}
               />
             </LazyDocument>
-          </PdfErrorBoundary>
+          </MediaErrorBoundary>
         </Suspense>
       </div>
 
@@ -379,6 +401,68 @@ const PdfModalViewer: React.FC<{ url: string; onRequestOpen: () => void }> = ({
   );
 };
 
+/** Interactive OpenStreetMap view. Mounted only while its entry is the one
+ *  currently open, so tiles are never fetched for a map nobody opened. */
+const MapModalViewer: React.FC<{ url: string }> = ({ url }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const location = parseLocationShareUrl(url);
+  const latitude = location?.latitude;
+  const longitude = location?.longitude;
+  const zoom = location?.zoom;
+
+  useEffect(() => {
+    if (
+      latitude === undefined ||
+      longitude === undefined ||
+      zoom === undefined ||
+      !containerRef.current
+    )
+      return;
+    let cancelled = false;
+    let map: LeafletMap | undefined;
+    loadLeaflet().then((L) => {
+      if (cancelled || !containerRef.current) return;
+      const clampedZoom = clampMapZoom(zoom);
+      map = L.map(containerRef.current, {
+        center: [latitude, longitude],
+        zoom: clampedZoom,
+        minZoom: MAP_MIN_ZOOM,
+        maxZoom: MAP_MAX_ZOOM,
+      });
+      L.tileLayer(TILE_URL_TEMPLATE, {
+        attribution: MAP_ATTRIBUTION,
+        maxZoom: MAP_MAX_ZOOM,
+      }).addTo(map);
+      L.marker([latitude, longitude], {
+        icon: L.divIcon({
+          html: MAP_PIN_SVG,
+          className: "",
+          iconSize: [28, 40],
+          iconAnchor: [14, 40],
+        }),
+      }).addTo(map);
+    });
+    return () => {
+      cancelled = true;
+      map?.remove();
+    };
+  }, [latitude, longitude, zoom]);
+
+  if (!location) return null;
+
+  return (
+    <div
+      data-testid="map-viewer"
+      data-no-gesture=""
+      className="pointer-events-auto rounded overflow-hidden shadow-lg"
+      style={{ width: "min(90vw, 900px)", height: "min(80vh, 640px)" }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div ref={containerRef} className="w-full h-full" />
+    </div>
+  );
+};
+
 interface MediaViewerModalProps {
   isOpen: boolean;
   url: string;
@@ -392,6 +476,9 @@ interface MediaViewerModalProps {
   preferTopicEntry?: boolean;
   /** When true, open at the last entry in the filmstrip (media explorer mode). */
   preferLastEntry?: boolean;
+  /** Set when `url` is an attachment decrypted in this tab. Those bytes exist
+   *  only as that blob, so it is shown on its own with no gallery around it. */
+  decryptedType?: MediaType;
 }
 
 export function MediaViewerModal({
@@ -403,6 +490,7 @@ export function MediaViewerModal({
   channelId,
   preferTopicEntry,
   preferLastEntry,
+  decryptedType,
 }: MediaViewerModalProps) {
   // zoom drives the slider/buttons UI; the actual image transform is applied
   // directly via imgRef to avoid React re-renders on every gesture event.
@@ -417,6 +505,10 @@ export function MediaViewerModal({
       msg: Message | null;
       entryKey: string;
       isTopicEntry: boolean;
+      // Present when the file on the host is ciphertext. Its plaintext blob URL
+      // is resolved lazily, because a gallery must not decrypt every
+      // attachment in the channel just to be opened.
+      descriptor?: MediaDescriptor;
     }[]
   >([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -487,6 +579,9 @@ export function MediaViewerModal({
 
   // Derived values for current entry type — kept in a ref so non-reactive handlers can read it
   const currentEntry = mediaEntries[currentIndex] ?? null;
+  // A blob URL is not something to hand to a downloader or to a browser: there
+  // is no remote file behind it, and the plaintext is not on the host at all.
+  const isDecryptedView = !!decryptedType || !!currentEntry?.descriptor;
   const currentEntryRef = useRef(currentEntry);
   currentEntryRef.current = currentEntry;
 
@@ -565,6 +660,21 @@ export function MediaViewerModal({
   // Build navigation index when lightbox opens
   useEffect(() => {
     if (!isOpen) return;
+    if (decryptedType) {
+      setMediaEntries([
+        {
+          url,
+          type: decryptedType,
+          msg: null,
+          entryKey: "decrypted",
+          isTopicEntry: false,
+        },
+      ]);
+      setImageList([url]);
+      setCurrentIndex(0);
+      setEntriesBuilt(true);
+      return;
+    }
     if (!serverId || !channelId) {
       setMediaEntries([]);
       setImageList([]);
@@ -653,7 +763,31 @@ export function MediaViewerModal({
           canShowMedia(e.url, mediaSettings, filehost),
       );
 
-    const entries = [...topicEntries, ...msgEntries];
+    // Encrypted attachments carry no URL in the body, so a body-only scan
+    // never sees them. They come off the tag instead.
+    const encryptedEntries = messages.flatMap((msg) => {
+      const descriptor = encryptedDescriptor(msg);
+      if (!descriptor) return [];
+      const summary = describeAttachment(msg);
+      const type = summary ? kindMediaType(summary.kind) : null;
+      // The descriptor URL is peer-authored, so it faces the same origin trust
+      // decision the plain path makes.
+      if (!type || !canShowMedia(descriptor.url, mediaSettings, filehost)) {
+        return [];
+      }
+      return [
+        {
+          url: descriptor.url,
+          type,
+          msg,
+          entryKey: `${msg.msgid ?? msg.id}:e2ee`,
+          isTopicEntry: false,
+          descriptor,
+        },
+      ];
+    });
+
+    const entries = [...topicEntries, ...msgEntries, ...encryptedEntries];
     setMediaEntries(entries);
     setImageList(entries.map((e) => e.url));
 
@@ -715,6 +849,7 @@ export function MediaViewerModal({
     sourceMsgId,
     preferTopicEntry,
     preferLastEntry,
+    decryptedType,
     showSafeMedia,
     showTrustedSourcesMedia,
     showExternalContent,
@@ -785,6 +920,37 @@ export function MediaViewerModal({
       cancelled = true;
     };
   }, [isOpen, currentUrl, currentEntry]);
+
+  // Swap a ciphertext URL for its plaintext blob, but only for the entry the
+  // user is actually looking at. Resolving the whole list up front would
+  // download and decrypt every attachment in the channel.
+  useEffect(() => {
+    if (!isOpen) return;
+    const entry = mediaEntries[currentIndex];
+    const descriptor = entry?.descriptor;
+    if (!descriptor) return;
+    // Already swapped: the list holds the blob, not the ciphertext URL.
+    if (imageList[currentIndex] !== descriptor.url) return;
+
+    let live = true;
+    getDecryptedObjectUrl(descriptor)
+      .then((objectUrl) => {
+        if (!live) return;
+        setImageList((prev) => {
+          if (prev[currentIndex] !== descriptor.url) return prev;
+          const next = [...prev];
+          next[currentIndex] = objectUrl;
+          return next;
+        });
+      })
+      .catch(() => {
+        // The row in the conversation reports why; the viewer just shows
+        // nothing rather than a broken image.
+      });
+    return () => {
+      live = false;
+    };
+  }, [isOpen, currentIndex, mediaEntries, imageList]);
 
   // Convert wheel to horizontal scroll over the whole filmstrip pill (desktop).
   // filmstripPillEl comes from a callback ref so this effect runs exactly when the
@@ -878,6 +1044,11 @@ export function MediaViewerModal({
       } else if (e.touches.length === 1) {
         lastPinchDistRef.current = null;
         hasDraggedRef.current = false;
+        // Map panning owns single-finger drag; swipe-to-navigate must not fire under it.
+        if (currentEntryRef.current?.type === "map") {
+          singleTouchRef.current = null;
+          return;
+        }
         singleTouchRef.current = {
           startX: e.touches[0].clientX,
           startY: e.touches[0].clientY,
@@ -1177,9 +1348,9 @@ export function MediaViewerModal({
         onMouseMove={handleMouseMove}
         onMouseUp={stopDrag}
         onMouseLeave={stopDrag}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
+        onTouchStart={stopTouchOutsideMap}
+        onTouchMove={stopTouchOutsideMap}
+        onTouchEnd={stopTouchOutsideMap}
       >
         {/* Background layers are direct children of fixed div — immune to flex layout timing */}
         <div
@@ -1265,8 +1436,8 @@ export function MediaViewerModal({
                       <button
                         type="button"
                         onClick={rotateImage}
-                        title="Rotate 90°"
-                        aria-label="Rotate 90°"
+                        title={t`Rotate 90°`}
+                        aria-label={t`Rotate 90°`}
                         className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
                       >
                         <FaRedo className="w-3 h-3" />
@@ -1274,7 +1445,7 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  {isTauri() && isDownloadable && (
+                  {isTauri() && isDownloadable && !isDecryptedView && (
                     <>
                       {isImageEntry && (
                         <div
@@ -1299,15 +1470,17 @@ export function MediaViewerModal({
                     </>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => setShowWarning(true)}
-                    title={t`Open in browser`}
-                    aria-label={t`Open in browser`}
-                    className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    <FaExternalLinkAlt className="w-3.5 h-3.5" />
-                  </button>
+                  {!isDecryptedView && (
+                    <button
+                      type="button"
+                      onClick={() => setShowWarning(true)}
+                      title={t`Open in browser`}
+                      aria-label={t`Open in browser`}
+                      className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                    >
+                      <FaExternalLinkAlt className="w-3.5 h-3.5" />
+                    </button>
+                  )}
 
                   {canShowComments && !currentEntry?.isTopicEntry && (
                     <>
@@ -1440,6 +1613,10 @@ export function MediaViewerModal({
                   onRequestOpen={() => setShowWarning(true)}
                 />
               )}
+              {/* Map — interactive Leaflet view, lazy-loaded */}
+              {effectiveType === "map" && (
+                <MapModalViewer key={currentUrl} url={currentUrl} />
+              )}
               {/* Embed (YouTube, Vimeo, etc.) */}
               {effectiveType === "embed" && (
                 <div
@@ -1455,12 +1632,11 @@ export function MediaViewerModal({
                       <div className="w-full h-64 bg-discord-dark-400/50 animate-pulse rounded" />
                     }
                   >
-                    <ReactPlayer
-                      src={currentUrl}
-                      width="100%"
-                      height="100%"
-                      controls
-                    />
+                    <MediaErrorBoundary>
+                      <div className="aspect-video w-full">
+                        <EmbedPlayer key={currentUrl} url={currentUrl} />
+                      </div>
+                    </MediaErrorBoundary>
                   </Suspense>
                 </div>
               )}
@@ -1558,6 +1734,11 @@ export function MediaViewerModal({
                           {entry?.type === "pdf" && (
                             <div className="w-full h-full flex items-center justify-center bg-discord-dark-600 text-white/60 text-xs font-bold">
                               PDF
+                            </div>
+                          )}
+                          {entry?.type === "map" && (
+                            <div className="w-full h-full flex items-center justify-center bg-discord-dark-600">
+                              <FaMapMarkerAlt className="text-white/60 text-lg" />
                             </div>
                           )}
                           {entry?.type === "embed" &&

@@ -22,7 +22,7 @@ export const Input: React.FC<InputProps> = ({
     )}
     <TextInput
       {...props}
-      className={`w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-discord-primary ${className}`}
+      className={`w-full bg-discord-dark-400 text-discord-text-normal rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary ${className}`}
     />
     {error && <p className="text-red-400 text-sm">{error}</p>}
     {helperText && !error && (

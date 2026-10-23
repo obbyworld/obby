@@ -83,7 +83,9 @@ describe("useScrollToBottom", () => {
 
     mockEndElement = {} as unknown as HTMLElement;
 
-    global.IntersectionObserver = vi.fn().mockImplementation((callback) => {
+    // vitest 4 invokes constructor mocks with `new`, which an arrow
+    // implementation can't satisfy; plain functions returning the instance can.
+    function makeIntersectionObserver(callback: IntersectionObserverCallback) {
       observerCallbacks.push(callback);
       return {
         observe: vi.fn((element) => observedElements.push(element)),
@@ -94,16 +96,20 @@ describe("useScrollToBottom", () => {
         rootMargin: "",
         thresholds: [],
       };
-    });
+    }
+    global.IntersectionObserver = vi
+      .fn()
+      .mockImplementation(makeIntersectionObserver);
 
-    global.ResizeObserver = vi.fn().mockImplementation((callback) => {
+    function makeResizeObserver(callback: ResizeObserverCallback) {
       resizeObserverCallbacks.push(callback);
       return {
         observe: vi.fn((element) => resizeObservedElements.push(element)),
         disconnect: resizeDisconnectSpy,
         unobserve: vi.fn(),
       };
-    });
+    }
+    global.ResizeObserver = vi.fn().mockImplementation(makeResizeObserver);
 
     global.requestAnimationFrame = vi.fn((cb) => {
       setTimeout(cb, 0);
@@ -166,6 +172,38 @@ describe("useScrollToBottom", () => {
     );
   });
 
+  function wheelUp() {
+    const call = vi
+      .mocked(mockContainer.addEventListener)
+      .mock.calls.find(([type]) => type === "wheel");
+    const handler = call?.[1] as (e: WheelEvent) => void;
+    act(() => handler({ deltaY: -40 } as WheelEvent));
+  }
+
+  it("keeps the button hidden when an upward wheel cannot scroll anything", () => {
+    setDim(mockContainer, "scrollHeight", 500);
+    setDim(mockContainer, "clientHeight", 500);
+    const { result } = renderHook(() => {
+      const containerRef = useRef(mockContainer);
+      const endElementRef = useRef(mockEndElement);
+      return useScrollToBottom(containerRef, endElementRef);
+    });
+
+    wheelUp();
+    expect(result.current.isScrolledUp).toBe(false);
+  });
+
+  it("shows the button at once when an upward wheel starts in a long buffer", () => {
+    const { result } = renderHook(() => {
+      const containerRef = useRef(mockContainer);
+      const endElementRef = useRef(mockEndElement);
+      return useScrollToBottom(containerRef, endElementRef);
+    });
+
+    wheelUp();
+    expect(result.current.isScrolledUp).toBe(true);
+  });
+
   it("should update isScrolledUp when IntersectionObserver fires", () => {
     const { result } = renderHook(() => {
       const containerRef = useRef(mockContainer);
@@ -197,15 +235,20 @@ describe("useScrollToBottom", () => {
 
   it("should clean up on unmount", () => {
     const intersectionDisconnectSpy = vi.fn();
-    global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      disconnect: intersectionDisconnectSpy,
-      unobserve: vi.fn(),
-      takeRecords: vi.fn(),
-      root: null,
-      rootMargin: "",
-      thresholds: [],
-    }));
+    function makeUnmountObserver() {
+      return {
+        observe: vi.fn(),
+        disconnect: intersectionDisconnectSpy,
+        unobserve: vi.fn(),
+        takeRecords: vi.fn(),
+        root: null,
+        rootMargin: "",
+        thresholds: [],
+      };
+    }
+    global.IntersectionObserver = vi
+      .fn()
+      .mockImplementation(makeUnmountObserver);
 
     const { unmount } = renderHook(() => {
       const containerRef = useRef(mockContainer);

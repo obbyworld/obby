@@ -2,27 +2,27 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tauri::{Emitter, State};
-use tokio::net::TcpStream;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::sync::{Mutex, mpsc, oneshot};
+use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
+use tokio::net::{lookup_host, TcpStream};
+use tokio::sync::{mpsc, oneshot, Mutex};
 use tokio::task;
 use tokio::time::{timeout, Duration};
 
-const CONNECT_TIMEOUT: Duration = Duration::from_secs(15);
+const ADDRESS_CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
 const TLS_HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(15);
 
 // Platform-specific TLS imports
 #[cfg(not(target_os = "android"))]
-use tokio_native_tls::TlsConnector;
-#[cfg(not(target_os = "android"))]
 use native_tls::TlsConnector as NativeTlsConnector;
+#[cfg(not(target_os = "android"))]
+use tokio_native_tls::TlsConnector;
 
-#[cfg(target_os = "android")]
-use tokio_rustls::TlsConnector;
 #[cfg(target_os = "android")]
 use rustls::pki_types::ServerName;
 #[cfg(target_os = "android")]
 use std::sync::Arc as StdArc;
+#[cfg(target_os = "android")]
+use tokio_rustls::TlsConnector;
 #[cfg(target_os = "android")]
 use webpki_roots;
 
@@ -34,6 +34,7 @@ pub struct ConnectionHandle {
 }
 
 /// Socket state to manage multiple connections
+#[derive(Clone)]
 pub struct SocketState(pub(crate) Arc<Mutex<HashMap<String, ConnectionHandle>>>);
 
 /// Payload we send back to TS whenever we receive data
@@ -73,24 +74,32 @@ async fn read_task<R>(
                 // Connection closed by server
                 // Emit any remaining partial data as a final message
                 if !line_buffer.is_empty() {
-                    let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                        id: client_id.clone(),
-                        event: MessageEvent {
-                            message: Some(MessageData { data: line_buffer.clone() }),
-                            error: None,
-                            connected: None,
+                    let _ = app_handle.emit(
+                        "tcp-message",
+                        ReceivedPayload {
+                            id: client_id.clone(),
+                            event: MessageEvent {
+                                message: Some(MessageData {
+                                    data: line_buffer.clone(),
+                                }),
+                                error: None,
+                                connected: None,
+                            },
                         },
-                    });
+                    );
                 }
 
-                let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                    id: client_id.clone(),
-                    event: MessageEvent {
-                        message: None,
-                        error: None,
-                        connected: Some(false),
+                let _ = app_handle.emit(
+                    "tcp-message",
+                    ReceivedPayload {
+                        id: client_id.clone(),
+                        event: MessageEvent {
+                            message: None,
+                            error: None,
+                            connected: Some(false),
+                        },
                     },
-                });
+                );
 
                 // Remove connection from state
                 let mut connections = state.lock().await;
@@ -101,40 +110,36 @@ async fn read_task<R>(
                 // Append new data to line buffer
                 line_buffer.extend_from_slice(&read_buf[..n]);
 
-                // Extract complete lines (ending with \r\n)
-                loop {
-                    if let Some(pos) = line_buffer.windows(2).position(|w| w == b"\r\n") {
-                        // Extract the complete line including \r\n
-                        let line_data = line_buffer[..pos + 2].to_vec();
+                while let Some(pos) = line_buffer.windows(2).position(|w| w == b"\r\n") {
+                    let line_data = line_buffer[..pos + 2].to_vec();
+                    line_buffer.drain(..pos + 2);
 
-                        // Remove the line from buffer
-                        line_buffer.drain(..pos + 2);
-
-                        // Emit the complete line
-                        let _ = app_handle.emit("tcp-message", ReceivedPayload {
+                    let _ = app_handle.emit(
+                        "tcp-message",
+                        ReceivedPayload {
                             id: client_id.clone(),
                             event: MessageEvent {
                                 message: Some(MessageData { data: line_data }),
                                 error: None,
                                 connected: None,
                             },
-                        });
-                    } else {
-                        // No complete line found, wait for more data
-                        break;
-                    }
+                        },
+                    );
                 }
             }
             Err(e) => {
                 // Read error - emit error event and stop
-                let _ = app_handle.emit("tcp-message", ReceivedPayload {
-                    id: client_id.clone(),
-                    event: MessageEvent {
-                        message: None,
-                        error: Some(format!("Read error: {}", e)),
-                        connected: Some(false),
+                let _ = app_handle.emit(
+                    "tcp-message",
+                    ReceivedPayload {
+                        id: client_id.clone(),
+                        event: MessageEvent {
+                            message: None,
+                            error: Some(format!("Read error: {}", e)),
+                            connected: Some(false),
+                        },
                     },
-                });
+                );
 
                 // Remove connection from state
                 let mut connections = state.lock().await;
@@ -183,6 +188,84 @@ async fn write_task<W>(
     }
 }
 
+// Networks with a dead IPv6 route drop our SYNs silently, so we try IPv4
+// first and give each address its own timeout to reach the next one.
+pub(crate) async fn connect_tcp(host: &str, port: u16) -> Result<TcpStream, String> {
+    let mut addresses: Vec<_> = lookup_host((host, port))
+        .await
+        .map_err(|e| format!("Failed to resolve {}:{}: {}", host, port, e))?
+        .collect();
+    addresses.sort_by_key(|address| address.is_ipv6());
+    let mut last_error = format!("No addresses found for {}:{}", host, port);
+    for address in addresses {
+        match timeout(ADDRESS_CONNECT_TIMEOUT, TcpStream::connect(address)).await {
+            Ok(Ok(stream)) => return Ok(stream),
+            Ok(Err(e)) => last_error = format!("Failed to connect to {}: {}", address, e),
+            Err(_) => {
+                last_error = format!(
+                    "TCP connect timed out after {}s ({})",
+                    ADDRESS_CONNECT_TIMEOUT.as_secs(),
+                    address
+                )
+            }
+        }
+    }
+    Err(last_error)
+}
+
+pub(crate) trait AsyncStream: AsyncRead + AsyncWrite + Unpin + Send {}
+impl<T: AsyncRead + AsyncWrite + Unpin + Send> AsyncStream for T {}
+
+// Android has no system TLS we can reach from Rust, so it verifies against the
+// bundled webpki roots; the other platforms use the OS trust store.
+pub(crate) async fn tls_handshake(
+    host: &str,
+    tcp_stream: TcpStream,
+) -> Result<Box<dyn AsyncStream>, String> {
+    let timed_out = || {
+        format!(
+            "TLS handshake timed out after {}s ({})",
+            TLS_HANDSHAKE_TIMEOUT.as_secs(),
+            host
+        )
+    };
+
+    #[cfg(not(target_os = "android"))]
+    {
+        let connector = TlsConnector::from(
+            NativeTlsConnector::builder()
+                .build()
+                .map_err(|e| format!("Failed to create TLS connector: {}", e))?,
+        );
+        let tls_stream = timeout(TLS_HANDSHAKE_TIMEOUT, connector.connect(host, tcp_stream))
+            .await
+            .map_err(|_| timed_out())?
+            .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        Ok(Box::new(tls_stream))
+    }
+
+    #[cfg(target_os = "android")]
+    {
+        let root_store = rustls::RootCertStore {
+            roots: webpki_roots::TLS_SERVER_ROOTS.to_vec(),
+        };
+        let config = rustls::ClientConfig::builder()
+            .with_root_certificates(root_store)
+            .with_no_client_auth();
+        let connector = TlsConnector::from(StdArc::new(config));
+        let server_name = ServerName::try_from(host.to_string())
+            .map_err(|_| format!("Invalid DNS name: {}", host))?;
+        let tls_stream = timeout(
+            TLS_HANDSHAKE_TIMEOUT,
+            connector.connect(server_name, tcp_stream),
+        )
+        .await
+        .map_err(|_| timed_out())?
+        .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        Ok(Box::new(tls_stream))
+    }
+}
+
 /// Connect to IRC server with real TCP/TLS implementation
 #[tauri::command]
 pub async fn connect(
@@ -194,22 +277,7 @@ pub async fn connect(
     // Parse the address to determine protocol and extract host:port
     let (use_tls, host, port) = parse_address(&address)?;
 
-    // Create TCP connection with a hard timeout so a stalled SYN/SYN-ACK
-    // surfaces as a clear error instead of hanging on kernel retransmits.
-    let tcp_stream = timeout(
-        CONNECT_TIMEOUT,
-        TcpStream::connect(format!("{}:{}", host, port)),
-    )
-    .await
-    .map_err(|_| {
-        format!(
-            "TCP connect timed out after {}s ({}:{})",
-            CONNECT_TIMEOUT.as_secs(),
-            host,
-            port
-        )
-    })?
-    .map_err(|e| format!("Failed to connect to {}:{}: {}", host, port, e))?;
+    let tcp_stream = connect_tcp(&host, port).await?;
 
     // Create channels for write operations
     let (write_tx, write_rx) = mpsc::channel::<String>(100);
@@ -217,92 +285,19 @@ pub async fn connect(
 
     // Handle TLS if needed
     if use_tls {
-        // Create TLS connection based on platform
-        #[cfg(not(target_os = "android"))]
-        {
-            let connector = TlsConnector::from(
-                NativeTlsConnector::builder()
-                    .build()
-                    .map_err(|e| format!("Failed to create TLS connector: {}", e))?
-            );
+        let tls_stream = tls_handshake(&host, tcp_stream).await?;
+        let (reader, writer) = tokio::io::split(tls_stream);
 
-            let tls_stream = timeout(
-                TLS_HANDSHAKE_TIMEOUT,
-                connector.connect(&host, tcp_stream),
-            )
-            .await
-            .map_err(|_| {
-                format!(
-                    "TLS handshake timed out after {}s ({})",
-                    TLS_HANDSHAKE_TIMEOUT.as_secs(),
-                    host
-                )
-            })?
-            .map_err(|e| format!("TLS handshake failed: {}", e))?;
+        let client_id_read = client_id.clone();
+        let app_handle_read = app_handle.clone();
+        let state_clone = state.0.clone();
+        task::spawn(async move {
+            read_task(client_id_read, reader, app_handle_read, state_clone).await;
+        });
 
-            // Split the TLS stream using tokio::io::split
-            let (reader, writer) = tokio::io::split(tls_stream);
-
-            // Spawn read task
-            let client_id_read = client_id.clone();
-            let app_handle_read = app_handle.clone();
-            let state_clone = state.0.clone();
-            task::spawn(async move {
-                read_task(client_id_read, reader, app_handle_read, state_clone).await;
-            });
-
-            // Spawn write task
-            task::spawn(async move {
-                write_task(writer, write_rx, shutdown_rx).await;
-            });
-        }
-
-        #[cfg(target_os = "android")]
-        {
-            // Create rustls config with webpki roots
-            let root_store = rustls::RootCertStore {
-                roots: webpki_roots::TLS_SERVER_ROOTS.to_vec(),
-            };
-
-            let config = rustls::ClientConfig::builder()
-                .with_root_certificates(root_store)
-                .with_no_client_auth();
-
-            let connector = TlsConnector::from(StdArc::new(config));
-
-            let server_name = ServerName::try_from(host.clone())
-                .map_err(|_| format!("Invalid DNS name: {}", host))?;
-
-            let tls_stream = timeout(
-                TLS_HANDSHAKE_TIMEOUT,
-                connector.connect(server_name, tcp_stream),
-            )
-            .await
-            .map_err(|_| {
-                format!(
-                    "TLS handshake timed out after {}s ({})",
-                    TLS_HANDSHAKE_TIMEOUT.as_secs(),
-                    host
-                )
-            })?
-            .map_err(|e| format!("TLS handshake failed: {}", e))?;
-
-            // Split the TLS stream using tokio::io::split
-            let (reader, writer) = tokio::io::split(tls_stream);
-
-            // Spawn read task
-            let client_id_read = client_id.clone();
-            let app_handle_read = app_handle.clone();
-            let state_clone = state.0.clone();
-            task::spawn(async move {
-                read_task(client_id_read, reader, app_handle_read, state_clone).await;
-            });
-
-            // Spawn write task
-            task::spawn(async move {
-                write_task(writer, write_rx, shutdown_rx).await;
-            });
-        }
+        task::spawn(async move {
+            write_task(writer, write_rx, shutdown_rx).await;
+        });
     } else {
         // Plain TCP - use into_split for owned halves
         let (reader, writer) = tcp_stream.into_split();
@@ -323,26 +318,32 @@ pub async fn connect(
 
     // Store the connection handle
     let mut connections = state.0.lock().await;
-    connections.insert(client_id.clone(), ConnectionHandle {
-        write_tx,
-        shutdown_tx: Some(shutdown_tx),
-    });
+    connections.insert(
+        client_id.clone(),
+        ConnectionHandle {
+            write_tx,
+            shutdown_tx: Some(shutdown_tx),
+        },
+    );
 
     // Emit connected event
-    let _ = app_handle.emit("tcp-message", ReceivedPayload {
-        id: client_id,
-        event: MessageEvent {
-            message: None,
-            error: None,
-            connected: Some(true),
+    let _ = app_handle.emit(
+        "tcp-message",
+        ReceivedPayload {
+            id: client_id,
+            event: MessageEvent {
+                message: None,
+                error: None,
+                connected: Some(true),
+            },
         },
-    });
+    );
 
     Ok(())
 }
 
 /// Parse address string to extract protocol, host, and port
-fn parse_address(address: &str) -> Result<(bool, String, u16), String> {
+pub(crate) fn parse_address(address: &str) -> Result<(bool, String, u16), String> {
     if let Some(stripped) = address.strip_prefix("ircs://") {
         let (host, port) = parse_host_port(stripped, 6697)?;
         Ok((true, host, port))
@@ -383,6 +384,15 @@ pub async fn disconnect(client_id: String, state: State<'_, SocketState>) -> Res
         Ok(())
     } else {
         Err(format!("No connection found for client_id: {}", client_id))
+    }
+}
+
+/// Closes every connection, since a page that reloads loses the ids it would close them by.
+pub async fn disconnect_all(state: &SocketState) {
+    for (_, mut handle) in state.0.lock().await.drain() {
+        if let Some(shutdown_tx) = handle.shutdown_tx.take() {
+            let _ = shutdown_tx.send(());
+        }
     }
 }
 

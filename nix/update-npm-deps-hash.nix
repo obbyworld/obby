@@ -1,4 +1,4 @@
-# Recomputes fetchNpmDeps hash from package-lock.json and patches nix/obsidianirc.nix.
+# Recomputes fetchNpmDeps hash from package-lock.json and patches nix/obby.nix.
 # Run: nix run .#update-npm-deps-hash
 { pkgs }:
 
@@ -12,6 +12,6 @@ pkgs.writeShellApplication {
     set -euo pipefail
     hash=$(prefetch-npm-deps package-lock.json)
     echo "updated npmDeps hash: $hash" >&2
-    sed -i "s|hash = \"sha256-[^\"]*\";|hash = \"$hash\";|" nix/obsidianirc.nix
+    sed -i "s|hash = \"sha256-[^\"]*\";|hash = \"$hash\";|" nix/obby.nix
   '';
 }

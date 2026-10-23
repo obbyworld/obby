@@ -2,7 +2,9 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { getStatusPriority } from "../../lib/channelStatus";
 import ircClient from "../../lib/ircClient";
 import {
   getColorStyle,
@@ -13,8 +15,8 @@ import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import OperatorKey from "../ui/OperatorKey";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   let bgColor = "bg-discord-dark-500"; // Default/offline
@@ -28,33 +30,6 @@ const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   }
 
   return <div className={`w-3 h-3 rounded-full ${bgColor}`} />;
-};
-
-const getStatusPriority = (status?: string): number => {
-  if (!status) return 1;
-  let maxPriority = 1;
-  for (const char of status) {
-    let priority = 1;
-    switch (char) {
-      case "~":
-        priority = 6; // owner
-        break;
-      case "&":
-        priority = 5; // admin
-        break;
-      case "@":
-        priority = 4; // chanop
-        break;
-      case "%":
-        priority = 3; // halfop
-        break;
-      case "+":
-        priority = 2; // voice
-        break;
-    }
-    if (priority > maxPriority) maxPriority = priority;
-  }
-  return maxPriority;
 };
 
 const getStatusChar = (status?: string): string => {
@@ -167,15 +142,18 @@ const UserItem: React.FC<{
     setAvatarLoadFailed(false);
   }, []);
 
+  const openMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
+    onContextMenu(e, user.username, serverId, channelId, avatarElement);
+  };
+
   return (
     <div
       ref={refMeasure}
       data-username={user.username}
       className="flex items-center gap-3 py-2 px-3 mx-2 mb-1 rounded cursor-pointer bg-discord-dark-400/30 hover:bg-discord-dark-400/50 transition-colors"
-      onClick={(e) => {
-        const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
-        onContextMenu(e, user.username, serverId, channelId, avatarElement);
-      }}
+      onClick={openMenu}
+      onContextMenu={openMenu}
     >
       {/* Avatar with status indicator */}
       <div className="relative shrink-0">
@@ -195,6 +173,9 @@ const UserItem: React.FC<{
         </div>
         {/* Status indicator overlay */}
         <span
+          role="img"
+          aria-label={user.isAway ? t`Away` : t`Online`}
+          title={user.isAway ? t`Away` : t`Online`}
           className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-discord-dark-200 ${
             user.isAway ? "bg-yellow-500" : "bg-green-500"
           }`}
@@ -205,14 +186,7 @@ const UserItem: React.FC<{
       <div className="flex flex-col truncate min-w-0 flex-1">
         {/* Display name or username with badges */}
         <div className="flex items-center gap-1">
-          {!displayName && isIrcOp && (
-            <span
-              className="inline-flex items-center justify-center p-2.5 w-4 h-4 text-xs text-white bg-blue-500 rounded font-bold"
-              title={t`IRC Operator`}
-            >
-              🔑
-            </span>
-          )}
+          {!displayName && isIrcOp && <OperatorKey className="ml-0.5" />}
           {user.status && (
             <span
               className="shrink-0 bg-blue-600 text-white px-1.5 py-0.5 rounded text-xs font-bold shadow-sm"
@@ -234,14 +208,7 @@ const UserItem: React.FC<{
                 title={t`Verified account`}
               />
             )}
-            {!displayName && isOperator && (
-              <span
-                className="inline ml-1 bg-red-600 text-white px-3 py-0.5 rounded text-xs font-bold"
-                title={t`IRC Operator`}
-              >
-                🔑
-              </span>
-            )}
+            {!displayName && isOperator && <OperatorKey className="ml-0.5" />}
             {!displayName && isBot && (
               <span className="ml-1 group relative">
                 🤖
@@ -270,14 +237,7 @@ const UserItem: React.FC<{
                     title={t`Verified account`}
                   />
                 )}
-                {(isIrcOp || isOperator) && (
-                  <span
-                    className="ml-0.5 inline-flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-500 rounded"
-                    title={t`IRC Operator`}
-                  >
-                    🔑
-                  </span>
-                )}
+                {(isIrcOp || isOperator) && <OperatorKey className="ml-0.5" />}
                 {isBot && <span className="ml-0.5">🤖</span>}
               </span>
               {(user.realname || metadataStatus || website) && (
@@ -326,7 +286,8 @@ export const MemberList: React.FC = () => {
   const { t } = useLingui();
   const {
     servers,
-    ui,
+    selectedServerId,
+    perServerSelections,
     currentUser,
     toggleMemberList,
     openPrivateChat,
@@ -335,10 +296,25 @@ export const MemberList: React.FC = () => {
     kickUser,
     banUserByNick,
     banUserByHostmask,
-  } = useStore();
+    openProfile,
+  } = useStore(
+    useShallow((state) => ({
+      servers: state.servers,
+      selectedServerId: state.ui.selectedServerId,
+      perServerSelections: state.ui.perServerSelections,
+      currentUser: state.currentUser,
+      toggleMemberList: state.toggleMemberList,
+      openPrivateChat: state.openPrivateChat,
+      selectPrivateChat: state.selectPrivateChat,
+      warnUser: state.warnUser,
+      kickUser: state.kickUser,
+      banUserByNick: state.banUserByNick,
+      banUserByHostmask: state.banUserByHostmask,
+      openProfile: state.openProfile,
+    })),
+  );
 
-  const selectedServerId = ui.selectedServerId;
-  const currentSelection = ui.perServerSelections[selectedServerId || ""] || {
+  const currentSelection = perServerSelections[selectedServerId || ""] || {
     selectedChannelId: null,
     selectedPrivateChatId: null,
   };
@@ -441,9 +417,6 @@ export const MemberList: React.FC = () => {
     action: "warn",
     username: "",
   });
-
-  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
-  const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
 
   const selectedServer = servers.find(
     (server) => server.id === selectedServerId,
@@ -621,13 +594,15 @@ export const MemberList: React.FC = () => {
   };
 
   const handleOpenProfile = (username: string) => {
-    setSelectedProfileUsername(username);
-    setUserProfileModalOpen(true);
+    if (selectedServerId) openProfile(selectedServerId, username);
   };
 
   const isMobileView = useMediaQuery();
   return (
-    <div ref={scrollContainerRef} className="px-1 py-3 h-full overflow-y-auto">
+    <div
+      ref={scrollContainerRef}
+      className="px-1 pt-3 pb-[max(0.75rem,var(--safe-area-inset-bottom))] h-full overflow-y-auto"
+    >
       {isMobileView && (
         <button
           onClick={() => toggleMemberList(false)}
@@ -663,7 +638,6 @@ export const MemberList: React.FC = () => {
         y={userContextMenu.y}
         username={userContextMenu.username}
         serverId={userContextMenu.serverId}
-        channelId={userContextMenu.channelId}
         onClose={handleCloseUserContextMenu}
         onOpenPM={handleOpenPM}
         onOpenProfile={handleOpenProfile}
@@ -739,18 +713,6 @@ export const MemberList: React.FC = () => {
         username={moderationModal.username}
         action={moderationModal.action}
       />
-
-      {selectedServerId && (
-        <UserProfileModal
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
-          onShowInBotsMenu={(botNick) => {
-            useStore.getState().requestBotsModalOpen(selectedServerId, botNick);
-          }}
-        />
-      )}
     </div>
   );
 };

@@ -1,0 +1,7 @@
+.obby-server-rail { min-height: 0; overflow: hidden; }
+.obby-server-rail > * { flex-shrink: 0; }
+.obby-server-scroll { flex: 1 1 0%; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; padding: 6px 6px 18px; scrollbar-width: thin; }
+.obby-server-scroll > *, .obby-bouncer-group > *, .obby-server-row { flex-shrink: 0; }
+.obby-server-row { touch-action: pan-y !important; }
+.obby-server-row:focus-visible { outline: 2px solid #a5b4fc; outline-offset: -2px; }
+@media (pointer: coarse) { .obby-server-row { min-height: 44px; } }

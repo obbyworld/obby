@@ -8,6 +8,8 @@ import { defaultUIExtensions } from "../fixtures/uiState";
 // Mock IRC client
 const mockIRCClient = {
   on: vi.fn(),
+  isChannel: (_serverId: string, name?: string) =>
+    !!name && "#&+!^$".includes(name[0]),
 };
 
 describe("MODE Protocol Handler", () => {
@@ -24,19 +26,16 @@ describe("MODE Protocol Handler", () => {
       channelList: {},
       listingInProgress: {},
       ui: {
+        messageJump: null,
         selectedServerId: null,
         perServerSelections: {},
         isNarrowView: false,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         isMemberListVisible: true,
         isChannelListVisible: true,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "serverList",
         isServerMenuOpen: false,
@@ -52,11 +51,9 @@ describe("MODE Protocol Handler", () => {
         // Server notices popup state
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
-        pendingBotsModalOpen: null,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
     });

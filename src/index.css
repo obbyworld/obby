@@ -2,6 +2,210 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shared look for menus and floating panels. */
+@layer components {
+  /* We blur only layers that float over content and stay still while open, since a
+     blurred layer repaints whenever what sits under it changes. */
+  .vibrancy {
+    --vibrancy-tint: 32 34 37;
+    background-color: rgb(var(--vibrancy-tint) / var(--vibrancy-alpha, 0.72));
+    background-image: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.06),
+      rgb(255 255 255 / 0) 56px
+    );
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.1),
+      0 0 0 1px rgb(0 0 0 / 0.5),
+      0 12px 32px rgb(0 0 0 / 0.45);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .vibrancy {
+      background-color: rgb(var(--vibrancy-tint));
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .vibrancy {
+      background-color: rgb(var(--vibrancy-tint));
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+  .surface-floating {
+    @apply vibrancy rounded-lg;
+  }
+  .scrim {
+    @apply bg-black/40;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .tooltip-surface {
+    @apply surface-floating pointer-events-none px-3 py-1.5 text-sm font-normal text-white whitespace-pre-line;
+  }
+  .surface-list {
+    @apply p-1.5;
+  }
+  .row-interactive {
+    @apply w-full px-2 py-1.5 rounded text-left text-sm font-medium flex items-center gap-2.5 text-discord-text-normal transition-colors duration-100 outline-none hover:bg-discord-primary hover:text-white focus-visible:bg-discord-primary focus-visible:text-white;
+  }
+  .row-interactive-active {
+    @apply bg-discord-primary text-white;
+  }
+  .row-interactive-danger {
+    @apply text-red-400 hover:bg-red-600 hover:text-white focus-visible:bg-red-600 focus-visible:text-white;
+  }
+  .row-icon {
+    @apply flex-shrink-0 w-4 flex justify-center opacity-70;
+  }
+  .row-meta {
+    @apply text-xs font-normal text-discord-text-muted;
+  }
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-icon {
+    @apply opacity-100;
+  }
+  :is(.row-interactive:hover, .row-interactive:focus-visible, .row-interactive-active) .row-meta {
+    @apply text-white;
+  }
+  .divider-soft {
+    @apply my-1.5 mx-1 h-px border-0 bg-white/[0.06];
+  }
+  .button-primary {
+    @apply bg-discord-primary text-white hover:bg-discord-primary/90 disabled:opacity-50;
+  }
+  .chip-action {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-discord-dark-300 text-discord-text-normal ring-1 ring-black/40 shadow-[0_2px_8px_rgba(0,0,0,0.35)] transition-colors duration-100 hover:bg-discord-primary hover:text-white disabled:opacity-70 disabled:hover:bg-discord-dark-300 disabled:hover:text-discord-text-normal;
+  }
+  .chip-outline {
+    @apply inline-flex shrink-0 items-center gap-2 px-3 rounded-full border-2 border-discord-primary text-white font-bold text-sm transition-colors duration-100 hover:bg-discord-primary focus-visible:outline-none focus-visible:bg-discord-primary;
+  }
+  .chip-action-active {
+    @apply bg-discord-primary text-white;
+  }
+  .section-label {
+    @apply px-2 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wide text-discord-text-muted;
+  }
+  .surface-sheet {
+    @apply vibrancy rounded-t-2xl flex flex-col overflow-hidden;
+    padding-bottom: var(--safe-area-inset-bottom, 0px);
+  }
+  .sheet-handle {
+    @apply mx-auto mt-2 mb-1 w-9 h-1 shrink-0 rounded-full bg-discord-dark-500;
+  }
+  .sheet-row {
+    @apply w-full min-h-12 flex items-center gap-3 px-4 py-3 rounded-lg text-left text-sm font-medium text-white active:bg-discord-dark-400;
+  }
+  .sheet-action {
+    @apply flex-1 h-11 rounded-lg bg-discord-dark-400 text-discord-text-normal text-sm flex items-center justify-center gap-2 active:bg-discord-dark-500;
+  }
+  .icon-button {
+    @apply w-7 h-7 shrink-0 rounded flex items-center justify-center text-discord-text-muted transition-colors duration-100 hover:bg-discord-dark-500/40 hover:text-white focus-visible:outline-none focus-visible:bg-discord-dark-500/40 focus-visible:text-white;
+  }
+  .hairline {
+    @apply h-px shrink-0 bg-white/[0.06];
+  }
+  .code-text {
+    @apply m-0 font-mono text-xs leading-relaxed whitespace-pre-wrap break-words text-discord-text-normal;
+  }
+  .code-panel {
+    @apply rounded-md bg-discord-dark-400 overflow-hidden;
+  }
+  .modal-sheet .modal-footer {
+    @apply flex-col-reverse items-stretch;
+  }
+  .modal-sheet .modal-footer > button {
+    @apply h-11 w-full;
+  }
+  /* Mention rows already draw their bar with box-shadow, so we mark hits with an outline. */
+  .search-hit {
+    @apply rounded-lg outline outline-1 -outline-offset-1 outline-yellow-400/70;
+    background-color: rgb(250 204 21 / 0.1) !important;
+  }
+  .jump-highlight {
+    @apply rounded-lg outline outline-2 -outline-offset-2 outline-yellow-400;
+    background-color: rgb(250 204 21 / 0.2) !important;
+    animation: blink 0.5s ease-in-out 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .jump-highlight {
+      animation: none;
+    }
+  }
+  .surface-dialog {
+    @apply vibrancy rounded-xl;
+    --vibrancy-tint: 54 57 63;
+    --vibrancy-alpha: 0.86;
+  }
+  .bar-divider {
+    @apply shadow-[0_1px_0_rgba(0,0,0,0.25)];
+  }
+  .page-card {
+    @apply flex flex-col gap-1;
+  }
+  .page-card > * {
+    @apply rounded-md bg-discord-dark-400/30;
+  }
+  .page-body {
+    container-type: inline-size;
+  }
+  .setting-row {
+    container-type: inline-size;
+  }
+  .setting-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .field-input {
+    @apply w-full bg-discord-dark-400 text-discord-text-normal rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50;
+  }
+  .status-badge {
+    @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
+  }
+}
+
+/* A field sits beside its label once the row has room, and wraps under it on a phone. */
+@container (min-width: 28rem) {
+  .setting-field {
+    flex: 0 0 16rem;
+  }
+}
+
+/* We flow a page's setting groups into two columns once the page is wide enough
+   for both to keep fields beside their labels. */
+@container (min-width: 1100px) {
+  .page-columns {
+    display: block;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+  .page-columns > :not(.contents),
+  .page-columns > .contents > * {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+  .page-columns .page-span {
+    column-span: all;
+  }
+}
+
+/* We draw the compact-link glyph from an inline SVG mask, which stays offline. */
+.link-compact::before {
+  content: "";
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-right: 0.3em;
+  vertical-align: -0.05em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
 /* Collapsible message styles */
 .collapsible-message .line-clamp {
   display: -webkit-box;
@@ -109,6 +313,73 @@ html, body, #root {
   background-color: #202225;
 }
 
+/* A message that names us, or answers us. The class is doubled so the tint
+   survives the row's own hover, which Tailwind emits later at equal weight. */
+.message-aimed-at-us.message-aimed-at-us {
+  --message-ground: #3f3e3d;
+  --message-ground-hover: #46423c;
+  box-shadow: inset 2px 0 0 0 rgb(250 166 26 / 0.7);
+  background-color: rgb(250 166 26 / 0.045);
+}
+
+.message-aimed-at-us.message-aimed-at-us:hover {
+  background-color: rgb(250 166 26 / 0.08);
+}
+
+/* What a message row is sitting on, so anything that has to blend into it can
+   ask rather than guess. A row that carries a tint answers with the colour it
+   actually ends up. */
+:root {
+  --message-ground: theme('colors.discord.dark-200');
+  --message-ground-hover: theme('colors.discord.message-hover');
+}
+
+/* Hides the rest of a long message behind the row it sits on. */
+.message-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--message-ground)
+  );
+}
+
+.group:hover .message-fade {
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--message-ground-hover)
+  );
+}
+
+/* Where our name actually appears, so a long message does not have to be read
+   through to find the word that pulled us in. */
+.addressed-name {
+  background-color: rgb(88 101 242 / 0.3);
+  color: #dee0fc;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-weight: 500;
+}
+
+/* The tint is the row's ground and nothing more, so anything drawn on top of
+   it keeps the colour it has on an ordinary row. These are what black/22 and
+   black/32 come to over the chat background. */
+.message-aimed-at-us [data-reply-quote] {
+  background-color: #2a2d31;
+}
+
+.message-aimed-at-us [data-reply-quote]:hover {
+  background-color: #25272b;
+}
+
+/* The desktop app's screen-region windows are see-through: the page must not
+   paint its own background over the desktop showing underneath. */
+html.overlay-window,
+html.overlay-window body,
+html.overlay-window #root {
+  background-color: transparent;
+}
+
 /* SPA — document never scrolls; constrains WKWebView's UIScrollView to viewport */
 html {
   overflow: hidden;
@@ -126,23 +397,6 @@ html {
     height: 100vh;
     height: -webkit-fill-available;
   }
-}
-
-/* Flash animation for message highlighting */
-@keyframes message-flash {
-  0% {
-    background-color: transparent;
-  }
-  10% {
-    background-color: rgba(209, 213, 219, 0.4); /* light gray */
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-.message-flash {
-  animation: message-flash 2s ease-in-out;
 }
 
 /* Media visibility level slider */
@@ -748,15 +1002,42 @@ html.window-blurred .group:hover .message-actions-container {
   background-color: #67060c;
 }
 
-/* Remove input bottom padding when keyboard is visible (iOS) */
-html[data-keyboard-visible] .chat-input-area {
-  padding-bottom: 0;
+/* Only the last control of a page clears the home indicator, so every page
+   background still reaches the bottom edge. We drop the inset only once a
+   keyboard really covers it; focus alone sets data-keyboard-visible, and a
+   floating or hardware keyboard covers nothing. */
+.chat-input-area,
+.user-panel {
+  margin-bottom: max(0.5rem, var(--safe-area-inset-bottom, 0px));
+}
+html[data-keyboard-open] .chat-input-area {
+  margin-bottom: 0.5rem;
 }
 
-/* Override AppLayout's inline paddingBottom (safe-area-inset-bottom) when keyboard is visible.
-   Uses !important because inline styles have higher specificity than class rules. */
-html[data-keyboard-visible] .keyboard-aware-layout {
-  padding-bottom: 0 !important;
+.user-panel {
+  container-type: inline-size;
+}
+.user-panel-wide {
+  display: none;
+}
+@container (min-width: 300px) {
+  .user-panel-wide {
+    display: flex;
+  }
+}
+
+/* We hide the floating call card while typing; on a short screen it would
+   cover the composer, and the call keeps running behind it. */
+html[data-keyboard-open] .voice-pip-card {
+  display: none;
+}
+
+/* A landscape keyboard leaves almost no message list, and the button would
+   float over the header. */
+@media (max-height: 240px) {
+  .scroll-to-bottom-btn {
+    display: none;
+  }
 }
 
 /* Chat input textarea - hide scrollbar when content fits */
@@ -870,4 +1151,11 @@ textarea.resize-none::-webkit-scrollbar-thumb {
 }
 .animate-react-float {
   animation: react-float 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* emoji-picker-react sizes its rows to the list width, so the category grids must span that width too. */
+[data-reaction-picker] .epr-emoji-category-content {
+  margin-left: 0;
+  margin-right: 0;
+  justify-content: space-between;
 }

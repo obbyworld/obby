@@ -3,8 +3,22 @@
 <plist version="1.0">
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>ObsidianIRC uses the microphone for voice calls.</string>
+	<string>Obby uses the microphone for voice calls.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>ObsidianIRC uses the camera for video calls.</string>
+	<string>Obby uses the camera for video calls.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>world.obby.background-check</string>
+	</array>
 </dict>
 </plist>

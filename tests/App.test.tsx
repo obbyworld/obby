@@ -40,10 +40,8 @@ const mockStoreState = {
     },
     isNarrowView: false,
     isAddServerModalOpen: false,
-    isEditServerModalOpen: false,
-    editServerId: null,
-    isSettingsModalOpen: false,
-    isUserProfileModalOpen: false,
+    page: null as { kind: string } | null,
+    sidePane: null,
     isDarkMode: true,
     linkSecurityWarnings: [],
   },
@@ -68,34 +66,40 @@ const mockStoreState = {
   sendRaw: vi.fn(),
   setName: vi.fn(),
   changeNick: vi.fn(),
-  toggleUserProfileModal: vi.fn(),
-  setProfileViewRequest: vi.fn(),
-  clearProfileViewRequest: vi.fn(),
   toggleChannelList: vi.fn(),
   connectToSavedServers: vi.fn(),
   toggleMemberList: vi.fn(),
   setIsNarrowView: vi.fn(),
   updateSidebarPreferences: vi.fn(),
+  toggleQuickActions: vi.fn(),
   toggleAddServerModal: vi.fn((open?: boolean) => {
     mockStoreState.ui.isAddServerModalOpen =
       open ?? !mockStoreState.ui.isAddServerModalOpen;
     storeVersion++;
   }),
-  toggleSettingsModal: vi.fn((open?: boolean) => {
-    mockStoreState.ui.isSettingsModalOpen =
-      open ?? !mockStoreState.ui.isSettingsModalOpen;
+  openPage: vi.fn((page: { kind: string }) => {
+    mockStoreState.ui.page = page;
     storeVersion++;
   }),
 };
 
-vi.mock("../src/store", () => ({
-  default: vi.fn((selector) => {
+vi.mock("../src/store", () => {
+  const getState = () => ({ ...mockStoreState, _version: storeVersion });
+  const useStore = vi.fn((selector) => {
     // Return a new object each time to trigger re-renders
-    const state = { ...mockStoreState, _version: storeVersion };
+    const state = getState();
     return selector ? selector(state) : state;
-  }),
-  loadSavedServers: vi.fn(() => []),
-}));
+  });
+  return {
+    // useChannelTabSwitching reads getState()/subscribe() directly on mount
+    default: Object.assign(useStore, {
+      getState,
+      setState: vi.fn(),
+      subscribe: vi.fn(() => vi.fn()),
+    }),
+    loadSavedServers: vi.fn(() => []),
+  };
+});
 
 describe("App", () => {
   beforeAll(() => {
@@ -107,11 +111,37 @@ describe("App", () => {
   beforeEach(() => {
     // Reset mock state between tests
     mockStoreState.ui.isAddServerModalOpen = false;
-    mockStoreState.ui.isSettingsModalOpen = false;
+    mockStoreState.ui.page = null;
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe("Quick search shortcut", () => {
+    it("ignores a Cmd+K that arrives as the window gains focus", () => {
+      const now = vi.spyOn(performance, "now");
+      render(
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>,
+      );
+      const pressCmdK = () =>
+        document.dispatchEvent(
+          new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+        );
+
+      now.mockReturnValue(10_000);
+      window.dispatchEvent(new Event("focus"));
+      now.mockReturnValue(10_100);
+      pressCmdK();
+      expect(mockStoreState.toggleQuickActions).not.toHaveBeenCalled();
+
+      now.mockReturnValue(11_000);
+      pressCmdK();
+      expect(mockStoreState.toggleQuickActions).toHaveBeenCalledTimes(1);
+      now.mockRestore();
+    });
   });
 
   describe("Server Management", () => {
@@ -208,11 +238,12 @@ describe("App", () => {
       );
       const user = userEvent.setup();
 
-      // Open settings
-      await user.click(screen.getByTestId("user-settings-button"));
+      await user.click(screen.getByTestId("user-panel-button"));
+      await user.click(screen.getByRole("menuitem", { name: /Open settings/ }));
 
-      // Check that toggleSettingsModal was called
-      expect(mockStoreState.toggleSettingsModal).toHaveBeenCalledWith(true);
+      expect(mockStoreState.openPage).toHaveBeenCalledWith({
+        kind: "settings",
+      });
     });
   });
 });

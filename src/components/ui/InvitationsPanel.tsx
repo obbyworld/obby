@@ -25,6 +25,7 @@ import {
   FaSync,
   FaTrash,
 } from "react-icons/fa";
+import { formatRelativeTime } from "../../lib/relativeTime";
 import useStore from "../../store";
 
 interface Props {
@@ -36,12 +37,7 @@ interface Props {
 
 const formatRelative = (iso: string): string => {
   const ts = new Date(iso).getTime();
-  if (!Number.isFinite(ts)) return iso;
-  const secs = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-  if (secs < 60) return t`just now`;
-  if (secs < 3600) return t`${Math.floor(secs / 60)}m ago`;
-  if (secs < 86400) return t`${Math.floor(secs / 3600)}h ago`;
-  return t`${Math.floor(secs / 86400)}d ago`;
+  return Number.isFinite(ts) ? formatRelativeTime(ts) : iso;
 };
 
 const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
@@ -165,7 +161,7 @@ const InvitationsPanel: React.FC<Props> = ({ serverId }) => {
           <button
             type="button"
             onClick={handleCreate}
-            className="bg-discord-primary hover:bg-discord-primary/90 text-white rounded px-4 py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5"
+            className="button-primary rounded px-4 py-2 text-sm font-semibold inline-flex items-center justify-center gap-1.5"
           >
             <FaPlus size={11} />
             <Trans>Create</Trans>

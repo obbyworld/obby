@@ -1,8 +1,12 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import BaseModal from "../../lib/modal/BaseModal";
+import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import useStore from "../../store";
 
 export const TotpStepUpModal: React.FC = () => {
+  const { t } = useLingui();
   const pending = useStore((s) => s.pendingTotpStepUp);
   const submitTotpStepUp = useStore((s) => s.submitTotpStepUp);
   const cancelTotpStepUp = useStore((s) => s.cancelTotpStepUp);
@@ -15,7 +19,6 @@ export const TotpStepUpModal: React.FC = () => {
     if (pending) {
       setCode("");
       setError(null);
-      // Autofocus once the modal mounts.
       requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [pending]);
@@ -26,24 +29,34 @@ export const TotpStepUpModal: React.FC = () => {
     e.preventDefault();
     const trimmed = code.trim();
     if (!/^\d{6}$/.test(trimmed)) {
-      setError("Enter the 6-digit code from your authenticator app.");
+      setError(t`Enter the 6-digit code from your authenticator app.`);
       return;
     }
     submitTotpStepUp(pending.serverId, trimmed);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[100002]">
-      <div className="bg-discord-dark-200 rounded-lg w-full max-w-sm p-5">
-        <h2 className="text-lg font-semibold mb-2 text-white">
-          Two-factor authentication required
-        </h2>
-        <p className="text-sm text-discord-text-muted mb-4">
-          Enter the 6-digit code from your authenticator app to finish signing
-          in
-          {pending.account ? ` as ${pending.account}` : ""}.
-        </p>
-        <form onSubmit={onSubmit}>
+    <BaseModal
+      isOpen
+      onClose={() => cancelTotpStepUp(pending.serverId)}
+      maxWidth="sm"
+      title={t`Two-factor authentication required`}
+    >
+      <form onSubmit={onSubmit} className="flex flex-col min-h-0 flex-1">
+        <ModalBody className="gap-3">
+          <p className="text-sm text-discord-text-muted">
+            {pending.account ? (
+              <Trans>
+                Enter the 6-digit code from your authenticator app to finish
+                signing in as {pending.account}.
+              </Trans>
+            ) : (
+              <Trans>
+                Enter the 6-digit code from your authenticator app to finish
+                signing in.
+              </Trans>
+            )}
+          </p>
           <input
             ref={inputRef}
             type="text"
@@ -56,28 +69,25 @@ export const TotpStepUpModal: React.FC = () => {
               setCode(e.target.value.replace(/\D/g, ""));
               setError(null);
             }}
-            className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white tracking-[0.4em] text-center text-xl font-mono focus:outline-none focus:ring-2 focus:ring-discord-blue"
+            className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white tracking-[0.4em] text-center text-xl font-mono focus:outline-none focus:ring-2 focus:ring-discord-primary"
             placeholder="000000"
           />
-          {error && <p className="text-discord-red text-xs mt-2">{error}</p>}
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={() => cancelTotpStepUp(pending.serverId)}
-              className="px-3 py-2 rounded text-sm text-discord-text-muted hover:text-white"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-discord-blue text-white text-sm font-medium hover:bg-discord-blue-hover"
-            >
-              Verify
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          {error && <p className="text-discord-red text-xs">{error}</p>}
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            variant="secondary"
+            onClick={() => cancelTotpStepUp(pending.serverId)}
+          >
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button type="submit" variant="primary">
+            <Trans>Verify</Trans>
+          </Button>
+        </ModalFooter>
+      </form>
+    </BaseModal>
   );
 };
 

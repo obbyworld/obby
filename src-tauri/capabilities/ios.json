@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "ios",
+  "description": "iOS-only permissions",
+  "windows": [
+    "main"
+  ],
+  "platforms": ["iOS"],
+  "permissions": [
+    "ios-keyboard:allow-listen"
+  ]
+}

@@ -1,9 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
-import { useState } from "react";
-import { createPortal } from "react-dom";
-import { FaTimes } from "react-icons/fa";
+import { useRef, useState } from "react";
+import { BaseModal } from "../../lib/modal/BaseModal";
 import { TextInput } from "./TextInput";
 
 interface GifSelectorProps {
@@ -39,100 +38,142 @@ interface TenorGif {
   title?: string;
 }
 
+interface GifProviderInfo {
+  label: string;
+  apiKey: string | undefined;
+  searchUrl: (query: string, apiKey: string) => string;
+  toGifs: (response: { data?: GiphyGif[]; results?: TenorGif[] }) => Gif[];
+}
+
+const PROVIDERS: Record<GifProvider, GifProviderInfo> = {
+  giphy: {
+    label: "GIPHY",
+    apiKey: import.meta.env.VITE_GIPHY_API_KEY,
+    searchUrl: (query, apiKey) =>
+      `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${query}&limit=20&rating=g`,
+    toGifs: (response) =>
+      (response.data ?? []).map((gif) => ({
+        id: gif.id,
+        url: gif.images.original.url,
+        previewUrl: gif.images.fixed_height_small.url,
+        title: gif.title || "GIF",
+      })),
+  },
+  tenor: {
+    label: "Tenor",
+    apiKey: import.meta.env.VITE_TENOR_API_KEY,
+    searchUrl: (query, apiKey) =>
+      `https://tenor.googleapis.com/v2/search?q=${query}&key=${apiKey}&limit=20&contentfilter=medium`,
+    toGifs: (response) =>
+      (response.results ?? []).map((gif) => ({
+        id: gif.id,
+        url: gif.media_formats.gif.url,
+        previewUrl: gif.media_formats.tinygif.url,
+        title: gif.title || "GIF",
+      })),
+  },
+};
+
+export const gifProviders = (Object.keys(PROVIDERS) as GifProvider[]).filter(
+  (provider) => PROVIDERS[provider].apiKey,
+);
+
+type GifSearch =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "failed" }
+  | { status: "done"; gifs: Gif[] };
+
+const GifResults: React.FC<{
+  search: GifSearch;
+  onPick: (gif: Gif) => void;
+}> = ({ search, onPick }) => {
+  if (search.status === "loading") {
+    return (
+      <p className="text-center text-discord-text-muted py-8">
+        <Trans>Loading GIFs...</Trans>
+      </p>
+    );
+  }
+  if (search.status === "failed") {
+    return (
+      <p className="text-center text-discord-red py-8">
+        <Trans>Could not load GIFs. Search again to retry.</Trans>
+      </p>
+    );
+  }
+  if (search.status === "idle") {
+    return (
+      <p className="text-center text-discord-text-muted py-8">
+        <Trans>Search for GIFs to get started</Trans>
+      </p>
+    );
+  }
+  if (search.gifs.length === 0) {
+    return (
+      <p className="text-center text-discord-text-muted py-8">
+        <Trans>No GIFs found. Try another search.</Trans>
+      </p>
+    );
+  }
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {search.gifs.map((gif) => (
+        <button
+          key={gif.id}
+          type="button"
+          className="rounded-lg overflow-hidden hover:ring-2 hover:ring-discord-primary transition-all"
+          onClick={() => onPick(gif)}
+        >
+          <img
+            src={gif.previewUrl}
+            alt={gif.title}
+            className="w-full h-32 object-cover"
+          />
+        </button>
+      ))}
+    </div>
+  );
+};
+
 const GifSelector: React.FC<GifSelectorProps> = ({
   isOpen,
   onClose,
   onSelectGif,
 }) => {
-  const [activeProvider, setActiveProvider] = useState<GifProvider>("giphy");
+  const [activeProvider, setActiveProvider] = useState<GifProvider>(
+    gifProviders[0] ?? "giphy",
+  );
   const [searchQuery, setSearchQuery] = useState("");
-  const [gifs, setGifs] = useState<Gif[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [search, setSearch] = useState<GifSearch>({ status: "idle" });
+  const searchIdRef = useRef(0);
 
   function handleProviderChange(provider: GifProvider) {
+    searchIdRef.current++;
     setActiveProvider(provider);
-    setGifs([]);
+    setSearch({ status: "idle" });
     setSearchQuery("");
   }
 
-  const handleSearch = async () => {
+  const handleSearch = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!searchQuery.trim()) return;
-
-    setIsLoading(true);
+    const searchId = ++searchIdRef.current;
+    const provider = PROVIDERS[activeProvider];
+    setSearch({ status: "loading" });
     try {
-      let apiUrl = "";
-      let apiKey = "";
-
-      if (activeProvider === "giphy") {
-        // GIPHY API
-        apiKey = import.meta.env.VITE_GIPHY_API_KEY || ""; // You'll need to set this
-        apiUrl = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${encodeURIComponent(searchQuery)}&limit=20&rating=g`;
-      } else {
-        // Tenor API
-        apiKey = import.meta.env.VITE_TENOR_API_KEY || ""; // You'll need to set this
-        apiUrl = `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(searchQuery)}&key=${apiKey}&limit=20&contentfilter=medium`;
-      }
-
-      if (!apiKey) {
-        console.warn(
-          `No API key set for ${activeProvider}. Please add VITE_${activeProvider.toUpperCase()}_API_KEY to your .env file and restart the application`,
-        );
-        throw new Error(`Missing API key for ${activeProvider}`);
-      }
-
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error(
-          `GIF API error (${activeProvider}):`,
-          response.status,
-          data,
-        );
-        throw new Error(`API request failed: ${response.status}`);
-      }
-
-      console.log(`GIF API success (${activeProvider}):`, data);
-
-      let fetchedGifs: Gif[] = [];
-
-      if (activeProvider === "giphy" && data.data) {
-        fetchedGifs = data.data.map((gif: GiphyGif) => ({
-          id: gif.id,
-          url: gif.images.original.url,
-          previewUrl: gif.images.fixed_height_small.url,
-          title: gif.title || "GIF",
-        }));
-      } else if (activeProvider === "tenor" && data.results) {
-        fetchedGifs = data.results.map((gif: TenorGif) => ({
-          id: gif.id,
-          url: gif.media_formats.gif.url,
-          previewUrl: gif.media_formats.tinygif.url,
-          title: gif.title || "GIF",
-        }));
-      }
-
-      setGifs(fetchedGifs);
+      const response = await fetch(
+        provider.searchUrl(
+          encodeURIComponent(searchQuery),
+          provider.apiKey ?? "",
+        ),
+      );
+      if (!response.ok) throw new Error(`GIF search ${response.status}`);
+      const gifs = provider.toGifs(await response.json());
+      if (searchId === searchIdRef.current) setSearch({ status: "done", gifs });
     } catch (error) {
-      console.error("Error searching GIFs:", error);
-      // Fallback to mock data if API fails
-      const mockGifs: Gif[] = [
-        {
-          id: "1",
-          url: "https://media.giphy.com/media/example1/giphy.gif",
-          previewUrl: "https://media.giphy.com/media/example1/giphy.gif",
-          title: "Example GIF 1",
-        },
-        {
-          id: "2",
-          url: "https://media.giphy.com/media/example2/giphy.gif",
-          previewUrl: "https://media.giphy.com/media/example2/giphy.gif",
-          title: "Example GIF 2",
-        },
-      ];
-      setGifs(mockGifs);
-    } finally {
-      setIsLoading(false);
+      console.error("GIF search failed:", error);
+      if (searchId === searchIdRef.current) setSearch({ status: "failed" });
     }
   };
 
@@ -141,107 +182,61 @@ const GifSelector: React.FC<GifSelectorProps> = ({
     onClose();
   };
 
-  if (!isOpen) return null;
-
-  return createPortal(
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+  return (
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      maxWidth="2xl"
+      title={<Trans>Send a GIF</Trans>}
     >
-      <div
-        className="bg-discord-dark-400 rounded-lg shadow-lg border border-discord-dark-300 max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+      {gifProviders.length > 1 && (
+        <div className="p-4 border-b border-discord-dark-300 flex gap-2">
+          {gifProviders.map((provider) => (
+            <button
+              key={provider}
+              type="button"
+              className={`px-4 py-2 rounded ${
+                activeProvider === provider
+                  ? "bg-discord-primary text-white"
+                  : "bg-discord-dark-200 text-discord-text-muted hover:text-white"
+              }`}
+              onClick={() => handleProviderChange(provider)}
+            >
+              {PROVIDERS[provider].label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <form
+        onSubmit={handleSearch}
+        className="p-4 border-b border-discord-dark-300 flex gap-2"
       >
-        {/* Header */}
-        <div className="p-4 border-b border-discord-dark-300 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">
-            <Trans>Send a GIF</Trans>
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-discord-text-muted hover:text-white"
-          >
-            <FaTimes />
-          </button>
-        </div>
-
-        {/* Provider Switcher */}
-        <div className="p-4 border-b border-discord-dark-300">
-          <div className="flex space-x-2">
-            <button
-              className={`px-4 py-2 rounded ${
-                activeProvider === "giphy"
-                  ? "bg-discord-blue text-white"
-                  : "bg-discord-dark-200 text-discord-text-muted hover:text-white"
-              }`}
-              onClick={() => handleProviderChange("giphy")}
-            >
-              GIPHY
-            </button>
-            <button
-              className={`px-4 py-2 rounded ${
-                activeProvider === "tenor"
-                  ? "bg-discord-blue text-white"
-                  : "bg-discord-dark-200 text-discord-text-muted hover:text-white"
-              }`}
-              onClick={() => handleProviderChange("tenor")}
-            >
-              Tenor
-            </button>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="p-4 border-b border-discord-dark-300">
-          <div className="flex space-x-2">
-            <TextInput
-              placeholder={t`Search GIFs...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-              className="flex-1 px-3 py-2 bg-discord-dark-200 border border-discord-dark-300 rounded text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-blue"
-            />
-            <button
-              onClick={handleSearch}
-              disabled={isLoading}
-              className="px-4 py-2 bg-discord-blue text-white rounded hover:bg-discord-blue-hover disabled:opacity-50"
-            >
-              {isLoading ? <Trans>Searching...</Trans> : <Trans>Search</Trans>}
-            </button>
-          </div>
-        </div>
-
-        {/* GIF Grid */}
-        <div className="p-4 max-h-96 overflow-y-auto">
-          {gifs.length === 0 && !isLoading && (
-            <div className="text-center text-discord-text-muted py-8">
-              <Trans>Search for GIFs to get started</Trans>
-            </div>
+        <TextInput
+          type="search"
+          enterKeyHint="search"
+          placeholder={t`Search GIFs...`}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1 min-w-0 px-3 py-2 bg-discord-dark-200 border border-discord-dark-300 rounded text-white placeholder-discord-text-muted focus:outline-none focus:border-discord-primary"
+        />
+        <button
+          type="submit"
+          disabled={search.status === "loading"}
+          className="px-4 py-2 bg-discord-primary text-white rounded hover:bg-discord-primary/90 disabled:opacity-50"
+        >
+          {search.status === "loading" ? (
+            <Trans>Searching...</Trans>
+          ) : (
+            <Trans>Search</Trans>
           )}
-          {isLoading && (
-            <div className="text-center text-discord-text-muted py-8">
-              <Trans>Loading GIFs...</Trans>
-            </div>
-          )}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {gifs.map((gif) => (
-              <div
-                key={gif.id}
-                className="cursor-pointer rounded-lg overflow-hidden hover:ring-2 hover:ring-discord-blue transition-all"
-                onClick={() => handleGifClick(gif)}
-              >
-                <img
-                  src={gif.previewUrl}
-                  alt={gif.title}
-                  className="w-full h-32 object-cover"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        </button>
+      </form>
+
+      <div className="p-4 max-h-96 overflow-y-auto">
+        <GifResults search={search} onPick={handleGifClick} />
       </div>
-    </div>,
-    document.body,
+    </BaseModal>
   );
 };
 

@@ -21,7 +21,6 @@ import {
   chunkSaslPayload,
 } from "../../lib/saslFrames";
 import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
-import { normalizeHost } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
@@ -121,6 +120,17 @@ function clearSession(serverId: string) {
 }
 
 export function registerAuthHandlers(store: StoreApi<AppState>): void {
+  const setAccount = (serverId: string, account: string | undefined) =>
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, account } : server,
+      ),
+    }));
+  ircClient.on("LOGGED_IN", ({ serverId, account }) =>
+    setAccount(serverId, account),
+  );
+  ircClient.on("LOGGED_OUT", ({ serverId }) => setAccount(serverId, undefined));
+
   ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
     if (capabilities?.startsWith("draft/metadata")) {
       const currentSubs =
@@ -261,7 +271,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       // older test fixtures still work.
       if (param !== "+") return;
       const creds = loadCreds(serverId);
-      if (!creds || creds.mech !== "PLAIN") return;
+      if (creds?.mech !== "PLAIN") return;
       ircClient.sendRaw(
         serverId,
         `AUTHENTICATE ${btoa(`${creds.user}\x00${creds.user}\x00${creds.pass}`)}`,
@@ -542,11 +552,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
         const hasLowLinkSecurity = linkSecurityValue < 2;
         const savedServers = storage.servers.load();
         const serverConfig = currentServer
-          ? savedServers.find(
-              (s) =>
-                normalizeHost(s.host) === normalizeHost(currentServer.host) &&
-                s.port === currentServer.port,
-            )
+          ? savedServers.find((s) => s.id === serverId)
           : undefined;
         const shouldWarnLinkSecurity =
           hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
@@ -582,13 +588,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       ircClient.capAck(serverId, capName, capValue ?? null);
     }
 
+    // Names only -- values live in capabilityValues and every consumer of
+    // `capabilities` matches on the bare name.
+    const ackedNames = caps.filter(Boolean).map((cap) => cap.split("=", 1)[0]);
+
     store.setState((state) => {
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {
-          const existing = server.capabilities ?? [];
-          const newCaps = cliCaps.split(" ");
-          const merged = [...existing];
-          for (const cap of newCaps) {
+          const merged = [...(server.capabilities ?? [])];
+          for (const cap of ackedNames) {
             if (!merged.includes(cap)) merged.push(cap);
           }
           return { ...server, capabilities: merged };
@@ -602,7 +610,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     const server = state.servers.find((s) => s.id === serverId);
     let preventCapEnd = false;
 
-    if (caps.some((cap) => cap.startsWith("sasl"))) {
+    // A long CAP REQ is split into batches and the server ACKs in arbitrary
+    // pieces, so ending negotiation before every requested cap is acknowledged
+    // can strand the SASL exchange that a later batch enables.
+    if (ircClient.hasPendingCapReqs(serverId)) {
+      preventCapEnd = true;
+    }
+
+    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
+    if (saslAcknowledged) {
       const servers = storage.servers.load();
       const savedServer = servers.find((s) => s.id === serverId);
       const hasPlain =
@@ -638,8 +654,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       preventCapEnd = true;
     }
 
-    if (!preventCapEnd) {
-      ircClient.sendRaw(serverId, "CAP END");
+    // CAP END is a one-shot but this handler runs per CAP ACK line.
+    // Without the capNegotiationComplete guard a multi-batch CAP REQ
+    // (which the server splits into N ACK lines) would produce N
+    // CAP END + USER pairs, racing with IRCClient.onCapAck's own
+    // counter-driven send.  capNegotiationComplete is the shared
+    // latch -- first writer wins.
+    if (!preventCapEnd && !ircClient.capNegotiationComplete.get(serverId)) {
+      ircClient.sendCapEnd(serverId);
+      ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }
   });
@@ -782,23 +805,25 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  // After CAP ACK we know whether the server supports draft/persistence.
-  // Issue an initial PERSISTENCE GET so the settings panel has fresh
-  // state by the time the user opens it.  We only do this once per
-  // (serverId, account) login -- the spec gates the command on
-  // IsLoggedIn, so we wait for the SASL success path to mark the
-  // session complete.
-  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
-    if (key !== "draft/persistence") return;
-    // Defer the GET until a tick later so SASL has had a chance to
-    // complete; the server returns ACCOUNT_REQUIRED otherwise and
-    // we'd just have to retry.
-    setTimeout(() => {
-      const state = store.getState();
-      const server = state.servers.find((s) => s.id === serverId);
-      if (!server?.isConnected) return;
+  // Persistence needs an account, so we ask once registration is done and the
+  // connection is logged in, whichever comes last.
+  const registeredServers = new Set<string>();
+  const askPersistence = (serverId: string) => {
+    const server = store.getState().servers.find((s) => s.id === serverId);
+    if (
+      server?.account &&
+      registeredServers.has(serverId) &&
+      ircClient.hasCapability(serverId, "draft/persistence")
+    )
       ircClient.persistenceGet(serverId);
-    }, 1500);
+  };
+  ircClient.on("ready", ({ serverId }) => {
+    registeredServers.add(serverId);
+    askPersistence(serverId);
+  });
+  ircClient.on("LOGGED_IN", ({ serverId }) => askPersistence(serverId));
+  ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
+    if (connectionState !== "connected") registeredServers.delete(serverId);
   });
   // obsidianirc/cmdslist: maintain a lowercase set of invocable
   // commands per server.  Additions and removals can arrive in the

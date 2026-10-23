@@ -1,6 +1,16 @@
 import { msg } from "@lingui/core/macro";
+import { CallCameraField } from "../../../components/ui/settings/CallCameraField";
+import { CallMicrophoneField } from "../../../components/ui/settings/CallMicrophoneField";
+import { CallSpeakerField } from "../../../components/ui/settings/CallSpeakerField";
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
+import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
+import { PushMethodField } from "../../../components/ui/settings/PushMethodField";
+import {
+  isTauriAndroid,
+  isTauriDesktop,
+  isTauriIOS,
+} from "../../platformUtils";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -154,7 +164,7 @@ const profileSettings: SettingDefinition[] = [
     description: msg`Message shown when you disconnect from the server`,
     type: "text",
     defaultValue: "",
-    placeholder: msg`ObsidianIRC - Bringing IRC to the future`,
+    placeholder: msg`Obby - Bringing IRC to the future`,
     searchKeywords: ["quit", "disconnect", "message", "leave"],
     priority: 10,
   },
@@ -164,6 +174,61 @@ const profileSettings: SettingDefinition[] = [
  * Notification Settings
  */
 const notificationSettings: SettingDefinition[] = [
+  {
+    id: "notifications.enable",
+    key: "enableNotifications",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Show Notifications`,
+    description: isTauriIOS()
+      ? msg`For private messages and mentions. They stop when you swipe Obby away.`
+      : msg`For private messages and mentions`,
+    type: "toggle",
+    defaultValue: false,
+    searchKeywords: ["notification", "alert", "desktop", "push", "banner"],
+    priority: 0,
+  },
+  {
+    id: "notifications.closeToTray",
+    key: "closeToTray",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Keep Running in the Tray`,
+    description: msg`Closing the window keeps Obby connected in the system tray, so notifications still arrive`,
+    type: "toggle",
+    defaultValue: true,
+    hidden: !isTauriDesktop(),
+    searchKeywords: ["tray", "background", "close", "minimize", "menu bar"],
+    priority: 0,
+  },
+  {
+    id: "notifications.pushMethod",
+    key: "pushMethod",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Notifications Source`,
+    type: "custom",
+    defaultValue: "fcm",
+    hidden: !isTauriAndroid(),
+    searchKeywords: [
+      "push",
+      "unifiedpush",
+      "ntfy",
+      "fcm",
+      "google",
+      "background",
+      "closed",
+      "distributor",
+    ],
+    priority: 4,
+    customComponent: PushMethodField,
+    dependencies: [
+      {
+        settingId: "notifications.enable",
+        condition: (value) => value === true,
+      },
+    ],
+  },
   {
     id: "notifications.enableSounds",
     key: "enableNotificationSounds",
@@ -249,6 +314,18 @@ const preferenceSettings: SettingDefinition[] = [
     defaultValue: true,
     searchKeywords: ["markdown", "formatting", "rich text"],
     priority: 2,
+  },
+  {
+    id: "preferences.showMotd",
+    key: "showMotd",
+    category: "preferences",
+    subcategory: "Chat",
+    title: msg`Show the message of the day`,
+    description: msg`Post each server's message of the day to Server Notices and its welcome page`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: ["motd", "message of the day", "rules", "welcome"],
+    priority: 3,
   },
   {
     id: "preferences.showEvents",
@@ -395,6 +472,63 @@ const preferenceSettings: SettingDefinition[] = [
     priority: 11,
     customComponent: IgnoreListField,
   },
+  {
+    id: "preferences.keepHistory",
+    key: "keepHistory",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`Keep chat history on this device`,
+    description: msg`Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved.`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: [
+      "history",
+      "log",
+      "scrollback",
+      "offline",
+      "storage",
+      "disk",
+    ],
+    priority: 12,
+  },
+  {
+    id: "preferences.historyLimitMb",
+    key: "historyLimitMb",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`History disk limit`,
+    description: msg`Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached.`,
+    type: "select",
+    defaultValue: 500,
+    options: [
+      { value: 100, label: "100 MB" },
+      { value: 250, label: "250 MB" },
+      { value: 500, label: "500 MB" },
+      { value: 1000, label: "1 GB" },
+      { value: 2000, label: "2 GB" },
+      { value: 5000, label: "5 GB" },
+    ],
+    searchKeywords: ["history", "limit", "storage", "disk", "size"],
+    priority: 13,
+    dependencies: [
+      {
+        settingId: "preferences.keepHistory",
+        condition: (value) => value === true,
+      },
+    ],
+  },
+  {
+    id: "preferences.historyUsage",
+    key: "historyUsage",
+    category: "preferences",
+    subcategory: "History",
+    title: msg`Saved history`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: ["history", "clear", "delete", "storage", "disk"],
+    priority: 14,
+    customComponent: HistoryUsageField,
+  },
 ];
 
 /**
@@ -430,6 +564,87 @@ const mediaSettings: SettingDefinition[] = [
 ];
 
 /**
+ * Call Settings
+ */
+const callSettings: SettingDefinition[] = [
+  {
+    id: "calls.microphone",
+    key: "callMicrophoneDevice",
+    category: "calls",
+    subcategory: "Devices",
+    title: msg`Microphone`,
+    description: msg`Choose your microphone and preview its input level`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: ["microphone", "mic", "audio", "input", "call", "voice"],
+    priority: 1,
+    customComponent: CallMicrophoneField,
+  },
+  {
+    id: "calls.camera",
+    key: "callCameraDevice",
+    category: "calls",
+    subcategory: "Devices",
+    title: msg`Camera`,
+    description: msg`Choose your camera and preview what it sees`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: ["camera", "webcam", "video", "call"],
+    priority: 2,
+    customComponent: CallCameraField,
+  },
+  {
+    id: "calls.speaker",
+    key: "callSpeakerDevice",
+    category: "calls",
+    subcategory: "Devices",
+    title: msg`Speaker`,
+    description: msg`Choose which speaker calls play through`,
+    type: "custom",
+    defaultValue: null,
+    searchKeywords: ["speaker", "audio", "output", "call"],
+    priority: 3,
+    customComponent: CallSpeakerField,
+  },
+  {
+    id: "calls.echoCancellation",
+    key: "callEchoCancellation",
+    category: "calls",
+    subcategory: "Audio Processing",
+    title: msg`Echo Cancellation`,
+    description: msg`Reduce echo from your speakers picked up by your microphone`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: ["echo", "cancellation", "audio", "call"],
+    priority: 2,
+  },
+  {
+    id: "calls.noiseSuppression",
+    key: "callNoiseSuppression",
+    category: "calls",
+    subcategory: "Audio Processing",
+    title: msg`Noise Suppression`,
+    description: msg`Reduce background noise on your microphone`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: ["noise", "suppression", "audio", "call"],
+    priority: 3,
+  },
+  {
+    id: "calls.autoGainControl",
+    key: "callAutoGainControl",
+    category: "calls",
+    subcategory: "Audio Processing",
+    title: msg`Auto Gain Control`,
+    description: msg`Automatically adjust your microphone volume`,
+    type: "toggle",
+    defaultValue: true,
+    searchKeywords: ["gain", "volume", "audio", "call"],
+    priority: 4,
+  },
+];
+
+/**
  * Account Settings (Hosted Chat Mode)
  */
 const accountSettings: SettingDefinition[] = [
@@ -445,6 +660,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter default nickname...`,
     searchKeywords: ["nick", "default", "account"],
     priority: 1,
+    hidden: true,
   },
   {
     id: "account.name",
@@ -458,6 +674,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter account name...`,
     searchKeywords: ["account", "login", "username", "auth"],
     priority: 2,
+    hidden: true,
   },
   {
     id: "account.password",
@@ -471,6 +688,7 @@ const accountSettings: SettingDefinition[] = [
     placeholder: msg`Enter password...`,
     searchKeywords: ["password", "auth", "login"],
     priority: 3,
+    hidden: true,
   },
   {
     id: "account.operName",
@@ -532,6 +750,7 @@ export const registerAllSettings = () => {
     ...notificationSettings,
     ...preferenceSettings,
     ...mediaSettings,
+    ...callSettings,
     ...accountSettings,
   ]);
 };
@@ -539,6 +758,7 @@ export const registerAllSettings = () => {
 // Export individual categories for use in components
 export {
   accountSettings,
+  callSettings,
   mediaSettings,
   notificationSettings,
   preferenceSettings,

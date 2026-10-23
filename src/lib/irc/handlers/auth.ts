@@ -16,7 +16,7 @@ export function handleAuthenticate(
 // `description` is the human-readable text, always the trailing param.
 // `context` is zero or more identifiers (channel, nick, account) the
 // description refers to. `command` and `code` are computer-readable tokens.
-function splitStandardReply(
+export function splitStandardReply(
   parv: string[],
   trailing: string,
 ): { command: string; code: string; context: string[]; message: string } {

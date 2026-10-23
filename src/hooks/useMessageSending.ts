@@ -4,16 +4,25 @@
  */
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useShallow } from "zustand/react/shallow";
 import { base64EncodeUtf8 } from "../lib/base64";
+import { botPriority } from "../lib/botPriority";
+import { coerceOptionValue } from "../lib/commandInvocation";
 import ircClient from "../lib/ircClient";
-import { makeLabel, withLabel } from "../lib/labeledResponse";
+import {
+  makeLabel,
+  shouldUseLabeledResponse,
+  withLabel,
+} from "../lib/labeledResponse";
 import {
   type FormattingType,
   formatMessageForIrc,
 } from "../lib/messageFormatter";
-import { createBatchId, splitLongMessage } from "../lib/messageProtocol";
+import { splitLongMessage } from "../lib/messageProtocol";
+import { showOwnPrivateMessage } from "../lib/ownPrivateMessage";
 import { PRIVILEGED_COMMANDS } from "../lib/privilegedCommands";
 import useStore, { serverSupportsMultiline } from "../store";
+import { routeOutgoingPM } from "../store/handlers/e2eeOutbound";
 import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
 
 /**
@@ -26,10 +35,12 @@ import type { BotCommand, Channel, Message, PrivateChat, User } from "../types";
  *
  *   1) explicit `/cmd@botnick` where botnick is a +B user in the
  *      current channel or is the current DM peer (and is +B)
- *   2) otherwise scan +B users in the current channel
+ *   2) otherwise scan +B users in the current channel, ranked by
+ *      botPriority
  *   3) DM target if the peer is +B
  * Privileged names listed in PRIVILEGED_COMMANDS are refused
- * outright.
+ * outright, and a bare name the server lists in its cmdslist runs
+ * on the server.
  */
 function tryDispatchBotCommand(
   serverId: string,
@@ -52,6 +63,7 @@ function tryDispatchBotCommand(
 
   const server = useStore.getState().servers.find((s) => s.id === serverId);
   if (!server?.botCommands) return false;
+  if (!target && server.cmdsAvailable?.includes(lowerCmd)) return false;
   const bots = server.botCommands;
 
   const isKnownBotNick = (nick: string): boolean => {
@@ -99,7 +111,12 @@ function tryDispatchBotCommand(
     }
   }
   if (!matches.length) return false;
-  const { bot, cmd } = matches[0];
+  const { bot, cmd } = matches.reduce((best, match) =>
+    botPriority(server.bots?.[match.bot.toLowerCase()]) <
+    botPriority(server.bots?.[best.bot.toLowerCase()])
+      ? match
+      : best,
+  );
 
   // Naive arg parsing: map positional args onto declared options in
   // order, leftovers concatenated onto the last string-typed option.
@@ -109,22 +126,14 @@ function tryDispatchBotCommand(
     const o = opts[i];
     const isLast = i === opts.length - 1;
     const raw = isLast ? args.slice(i).join(" ") : args[i];
-    if (o.type === "int") options[o.name] = Number.parseInt(raw, 10);
-    else if (o.type === "bool")
-      options[o.name] = raw === "true" || raw === "1" || raw === "yes";
-    else options[o.name] = raw;
+    const value = coerceOptionValue(o.type, raw);
+    if (value !== undefined) options[o.name] = value;
   }
 
   sendBotCommand(serverId, channel, bot, cmd, options);
   return true;
 }
 
-/**
- * Wire-level send for a pre-resolved bot command with structured
- * options (no freeform-arg parsing).  Used both by the freeform-text
- * path above and by the param modal, which collects values directly
- * via form controls.
- */
 // Where a command may be invoked. Prefer the spec `contexts`; fall back to the
 // legacy obby.world/bot-info `visibility`/`scopes` pair so a private command is
 // NEVER routed publicly just because the directory hasn't sent `contexts` yet.
@@ -176,19 +185,6 @@ export function sendBotCommand(
   }
 }
 
-/**
- * labeled-response is only useful when the server will also echo our
- * own messages back: without echo-message, no echo arrives, no
- * acknowledgment, and the placeholder would hang forever.
- */
-function shouldUseLabeledResponse(serverId: string): boolean {
-  return (
-    ircClient.hasCapability(serverId, "labeled-response") &&
-    ircClient.hasCapability(serverId, "echo-message") &&
-    ircClient.hasCapability(serverId, "batch")
-  );
-}
-
 /** How long to wait before flipping a pending message to "failed". */
 const PENDING_TIMEOUT_MS = 30_000;
 
@@ -215,7 +211,9 @@ interface UseMessageSendingOptions {
 }
 
 interface UseMessageSendingReturn {
-  sendMessage: (text: string) => void;
+  // Returns "withheld" when an engaged E2EE lock dropped the message so the
+  // caller can preserve the user's draft; otherwise void.
+  sendMessage: (text: string) => "withheld" | undefined;
 }
 
 interface WhisperContext {
@@ -292,7 +290,13 @@ export function useMessageSending({
   selectedFormatting,
   localReplyTo,
 }: UseMessageSendingOptions): UseMessageSendingReturn {
-  const { globalSettings, setAway, clearAway } = useStore();
+  const { globalSettings, setAway, clearAway } = useStore(
+    useShallow((state) => ({
+      globalSettings: state.globalSettings,
+      setAway: state.setAway,
+      clearAway: state.clearAway,
+    })),
+  );
 
   /**
    * Handle IRC commands like /join, /part, /nick, etc.
@@ -308,12 +312,8 @@ export function useMessageSending({
         ircClient.sendRaw(selectedServerId, `NICK ${args[0]}`);
       } else if (commandName === "join") {
         if (args[0]) {
-          ircClient.joinChannel(selectedServerId, args[0]);
-          ircClient.triggerEvent("JOIN", {
-            serverId: selectedServerId,
-            username: currentUser?.username || "",
-            channelName: args[0],
-          });
+          for (const name of args[0].split(",").filter(Boolean))
+            useStore.getState().joinChannel(selectedServerId, name);
         } else {
           console.error("No channel specified for /join command");
         }
@@ -325,6 +325,9 @@ export function useMessageSending({
       } else if (commandName === "msg") {
         const [target, ...messageParts] = args;
         const message = messageParts.join(" ");
+        const routed = routeOutgoingPM(selectedServerId, target, message);
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
         ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${message}`);
       } else if (commandName === "whisper") {
         const [targetUser, ...messageParts] = args;
@@ -357,32 +360,31 @@ export function useMessageSending({
           );
         } else {
           if (!target) return;
+          const soh = String.fromCharCode(1);
+          const actionContent = `${soh}ACTION ${actionMessage}${soh}`;
+          if (selectedPrivateChat) {
+            const routed = routeOutgoingPM(
+              selectedServerId,
+              selectedPrivateChat.username,
+              actionContent,
+              localReplyTo?.msgid,
+            );
+            if (routed === "withheld") return "withheld" as const;
+            if (routed === "sent") return;
+          }
           ircClient.sendRaw(
             selectedServerId,
             `${localReplyTo?.msgid ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} ` : ""}PRIVMSG ${target} :\u0001ACTION ${actionMessage}\u0001`,
           );
         }
-        // Non-echo fallback: servers without echo-message won't reflect our
-        // ACTION back, so add it locally the same way regular DMs are handled.
-        if (
-          selectedPrivateChat &&
-          currentUser &&
-          !ircClient.hasCapability(selectedServerId, "echo-message")
-        ) {
-          const { addMessage } = useStore.getState();
-          const outgoingMessage: Message = {
-            id: uuidv4(),
-            content: `\u0001ACTION ${actionMessage}\u0001`,
-            timestamp: new Date(),
-            userId: currentUser.username || currentUser.id,
-            channelId: selectedPrivateChat.id,
-            serverId: selectedServerId,
-            type: "message" as const,
-            reactions: [],
-            replyMessage: localReplyTo,
-            mentioned: [],
-          };
-          addMessage(outgoingMessage);
+        if (selectedPrivateChat && currentUser) {
+          showOwnPrivateMessage(
+            selectedServerId,
+            selectedPrivateChat,
+            currentUser,
+            `\u0001ACTION ${actionMessage}\u0001`,
+            localReplyTo,
+          );
         }
       } else if (commandName === "away") {
         const message = args.join(" ");
@@ -445,78 +447,29 @@ export function useMessageSending({
         return;
       }
 
-      const batchId = createBatchId();
       const replyPrefix = localReplyTo?.msgid
         ? `@+reply=${localReplyTo.msgid};+draft/reply=${localReplyTo.msgid} `
         : "";
 
-      ircClient.sendRaw(
-        selectedServerId,
-        `${replyPrefix}BATCH +${batchId} draft/multiline ${target}`,
-      );
-
-      const hasMultipleLines = lines.length > 1;
-
-      if (hasMultipleLines) {
-        lines.forEach((line) => {
-          const formattedLine = formatMessageForIrc(line, {
+      // preserveBoundarySpace=true so concat reconstructs the original
+      // spacing. Without it the receiver sees "AAA BBBCCC" instead of
+      // "AAA BBB CCC".
+      const format = (line: string) =>
+        splitLongMessage(
+          formatMessageForIrc(line, {
             color: selectedColor || "inherit",
             formatting: selectedFormatting,
-          });
+          }),
+          target,
+          true,
+        );
 
-          const maxLineLengthForTarget =
-            512 -
-            (1 + 20 + 1 + 20 + 1 + 63 + 1 + 7 + 1 + target.length + 2 + 2) -
-            10;
-
-          if (formattedLine.length > maxLineLengthForTarget) {
-            // preserveBoundarySpace=true so concat reconstructs the
-            // original spacing.  Without it the receiver sees
-            // "AAA BBBCCC" instead of "AAA BBB CCC".
-            const splitLines = splitLongMessage(formattedLine, target, true);
-            splitLines.forEach((splitLine: string, index: number) => {
-              if (index === 0) {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-                );
-              } else {
-                ircClient.sendRaw(
-                  selectedServerId,
-                  `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-                );
-              }
-            });
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${formattedLine}`,
-            );
-          }
-        });
-      } else {
-        const formattedText = formatMessageForIrc(cleanedText, {
-          color: selectedColor || "inherit",
-          formatting: selectedFormatting,
-        });
-
-        const splitLines = splitLongMessage(formattedText, target, true);
-        splitLines.forEach((splitLine: string, index: number) => {
-          if (index === 0) {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId} PRIVMSG ${target} :${splitLine}`,
-            );
-          } else {
-            ircClient.sendRaw(
-              selectedServerId,
-              `@batch=${batchId};draft/multiline-concat PRIVMSG ${target} :${splitLine}`,
-            );
-          }
-        });
-      }
-
-      ircClient.sendRaw(selectedServerId, `BATCH -${batchId}`);
+      ircClient.sendMultiline(
+        selectedServerId,
+        target,
+        (lines.length > 1 ? lines : [cleanedText]).map(format),
+        replyPrefix,
+      );
     },
     [
       selectedServerId,
@@ -692,14 +645,31 @@ export function useMessageSending({
 
       // Handle commands
       if (cleanedText.startsWith("/")) {
-        handleCommand(cleanedText);
-        return;
+        return handleCommand(cleanedText);
       }
 
       // Handle regular messages
       const target =
         selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
       if (!target) return;
+
+      if (
+        useStore.getState().servers.find((s) => s.id === selectedServerId)
+          ?.isAway
+      )
+        clearAway(selectedServerId);
+
+      // Route PMs through E2EE before any plaintext send path.
+      if (selectedPrivateChat) {
+        const routed = routeOutgoingPM(
+          selectedServerId,
+          selectedPrivateChat.username,
+          cleanedText,
+          localReplyTo?.msgid,
+        );
+        if (routed === "withheld") return "withheld" as const;
+        if (routed === "sent") return;
+      }
 
       const lines = cleanedText.split("\n");
       const supportsMultiline = serverSupportsMultiline(selectedServerId);
@@ -722,27 +692,14 @@ export function useMessageSending({
         sendRegularMessage(cleanedText, target);
       }
 
-      // Only needed for servers that won't echo our outgoing DM back.
-      if (
-        selectedPrivateChat &&
-        currentUser &&
-        !ircClient.hasCapability(selectedServerId, "echo-message")
-      ) {
-        const outgoingMessage: Message = {
-          id: uuidv4(),
-          content: cleanedText,
-          timestamp: new Date(),
-          userId: currentUser.username || currentUser.id,
-          channelId: selectedPrivateChat.id,
-          serverId: selectedServerId,
-          type: "message" as const,
-          reactions: [],
-          replyMessage: localReplyTo,
-          mentioned: [],
-        };
-
-        const { addMessage } = useStore.getState();
-        addMessage(outgoingMessage);
+      if (selectedPrivateChat && currentUser) {
+        showOwnPrivateMessage(
+          selectedServerId,
+          selectedPrivateChat,
+          currentUser,
+          cleanedText,
+          localReplyTo,
+        );
       }
     },
     [
@@ -753,6 +710,7 @@ export function useMessageSending({
       selectedPrivateChat,
       currentUser,
       localReplyTo,
+      clearAway,
       handleCommand,
       sendMultilineMessage,
       sendMultilineFallback,

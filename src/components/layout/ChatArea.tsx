@@ -3,30 +3,64 @@ import type { EmojiClickData } from "emoji-picker-react";
 import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaGift, FaList, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCamera,
+  FaDesktop,
+  FaGift,
+  FaList,
+  FaMapMarkerAlt,
+  FaMicrophone,
+  FaPlus,
+  FaTimes,
+  FaVectorSquare,
+} from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
-import { useEmojiCompletion } from "../../hooks/useEmojiCompletion";
+import { useCommandInvocation } from "../../hooks/useCommandInvocation";
+import { useCompletion } from "../../hooks/useCompletion";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGuard";
 import { useMessageHistory } from "../../hooks/useMessageHistory";
 import { useMessageSending } from "../../hooks/useMessageSending";
 import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
-import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
+import { useWindowFileCapture } from "../../hooks/useWindowFileCapture";
+import {
+  pickRecordingFormat,
+  pickVideoRecordingFormat,
+} from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
-import { getClientCommands } from "../../lib/clientCommands";
+import { voiceDisplayName } from "../../lib/channelMentions";
+import { needsArguments } from "../../lib/commandInvocation";
 import { useEmojiResolver } from "../../lib/customEmoji";
 import {
   emojiClickValue,
   packEntriesForPicker,
 } from "../../lib/customEmojiPicker";
+import {
+  buildMediaDescriptor,
+  CIPHERTEXT_EXTENSION,
+  canEncryptMedia,
+  ciphertextFileName,
+  encryptMedia,
+  type PlainUploadReason,
+  readFileBytes,
+  wrapForUpload,
+} from "../../lib/e2ee/media";
+import { e2eeSessionKey } from "../../lib/e2ee/session";
+import { locationSharingSupported } from "../../lib/geolocation";
+import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
+import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
+  describeUploadFailure,
   fetchUploadInfo,
+  type UploadInfo,
   uploadFile,
   uploadFileTokenless,
   validateFileAgainstInfo,
@@ -36,54 +70,87 @@ import {
   getPreviewStyles,
   isValidFormattingType,
 } from "../../lib/messageFormatter";
-import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
+import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
+import { toggleNotificationSound } from "../../lib/notificationVolume";
+import { showOwnPrivateMessage } from "../../lib/ownPrivateMessage";
+import { isMac, isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
+import { maxRecordingBytes } from "../../lib/recordingLimits";
+import {
+  regionRecordingSupported,
+  screenRecordingAllowed,
+} from "../../lib/screenRecorder";
+import {
+  focusMainWindow,
+  type SelectedRegion,
+  selectScreenRegion,
+} from "../../lib/screenRegion";
 import useStore from "../../store";
+import { sendEncryptedMedia } from "../../store/handlers/e2ee";
+import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
+import {
+  pmEncryptionPosture,
+  routeOutgoingPM,
+} from "../../store/handlers/e2eeOutbound";
 import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
-import type { BotCommand, Message as MessageType, User } from "../../types";
+import type { Channel, Message as MessageType, User } from "../../types";
+import { COMMAND_DETAIL_ID, CommandArgHint } from "../chat/CommandArgHint";
+import { CommandArgPill, CommandChip } from "../chat/CommandChip";
+import {
+  type EmojiItem,
+  emojiProvider,
+  getActiveSlashQuery,
+  nickProvider,
+  type SlashSuggestion,
+  slashProvider,
+  slashSuggestions,
+  typedBotCommand,
+  useEmojiItems,
+} from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
-import AutocompleteDropdown from "../ui/AutocompleteDropdown";
+import { AttachmentTray, type PendingAttachment } from "../ui/AttachmentTray";
 import BlankPage from "../ui/BlankPage";
-import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
-import ChannelSettingsModal from "../ui/ChannelSettingsModal";
+import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
+import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ColorPicker from "../ui/ColorPicker";
-import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
+import CompletionList from "../ui/CompletionList";
+import { E2EERequestBanner } from "../ui/E2EERequestBanner";
+import E2EEVerifyModal from "../ui/E2EEVerifyModal";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
-import GifSelector from "../ui/GifSelector";
+import GifSelector, { gifProviders } from "../ui/GifSelector";
 import DiscoverGrid from "../ui/HomeScreen";
-import { ImagePreviewModal } from "../ui/ImagePreviewModal";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
+import { LocationShareModal } from "../ui/LocationShareModal";
+import MemberPicker from "../ui/MemberPicker";
+import Menu from "../ui/Menu";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import PluginsScreen from "../ui/PluginsScreen";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
-import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
+import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
 import {
-  getActiveSlashQuery,
-  SlashCommandPopover,
-  type SlashSuggestion,
-} from "../ui/SlashCommandPopover";
-import { SlashParamHint } from "../ui/SlashParamHint";
+  type RecordingFailure,
+  RegionRecordingBar,
+} from "../ui/RegionRecordingBar";
+import SuggestionList from "../ui/SuggestionList";
 import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
-import {
-  type UploadJob,
-  UploadProgressOverlay,
-} from "../ui/UploadProgressOverlay";
+import { TypingIndicator } from "../ui/TypingIndicator";
+import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
+import { type UploadJob, UploadProgressBar } from "../ui/UploadProgressBar";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 import {
   MemoChannelMessageList as ChannelMessageList,
   type ChannelMessageListHandle,
   DEFAULT_VISIBLE_MESSAGE_COUNT,
 } from "./ChannelMessageList";
 import { ChatHeader } from "./ChatHeader";
-import { MemberList } from "./MemberList";
-
-const EMPTY_ARRAY: User[] = [];
+import { SidePane } from "./SidePane";
 
 interface AliveChannel {
   key: string;
@@ -92,34 +159,31 @@ interface AliveChannel {
   privateChatId: string | null;
 }
 
-export const TypingIndicator: React.FC<{
-  serverId: string;
-  channelId: string;
-}> = ({ serverId, channelId }) => {
-  const key = `${serverId}-${channelId}`;
-  const { t } = useLingui();
+/** Whether an upload got as far as the network. "held" waits on a person to
+ *  answer the unencrypted-upload warning, which keeps the files itself. */
+type UploadOutcome = "started" | "held" | "failed";
 
-  const typingUsers = useStore(
-    (state) => state.typingUsers[key] ?? EMPTY_ARRAY,
+/** A stable empty list, so a conversation with nothing attached does not hand
+ *  the tray a new array on every render. */
+const NO_ATTACHMENTS: PendingAttachment[] = [];
+
+const NO_COMPLETION_INPUT = { text: "", caret: 0 };
+const NO_CHANNELS: Channel[] = [];
+const MODIFIER_KEYS = ["Shift", "Control", "Alt", "Meta"];
+
+function previewable(file: File): boolean {
+  return (
+    file.type.startsWith("image/") ||
+    file.type.startsWith("video/") ||
+    file.type.startsWith("audio/")
   );
+}
 
-  let message = "";
-  if (typingUsers.length === 1) {
-    message = t`${typingUsers[0].username} is typing...`;
-  } else if (typingUsers.length === 2) {
-    message = t`${typingUsers[0].username} and ${typingUsers[1].username} are typing...`;
-  } else if (typingUsers.length === 3) {
-    message = t`${typingUsers[0].username}, ${typingUsers[1].username} and ${typingUsers[2].username} are typing...`;
-  } else if (typingUsers.length > 3) {
-    message = t`${typingUsers[0].username}, ${typingUsers[1].username}, ${typingUsers[2].username} and ${typingUsers.length - 3} others are typing...`;
+function releasePreview(attachment: PendingAttachment): void {
+  if (attachment.kind === "file" && attachment.previewUrl) {
+    URL.revokeObjectURL(attachment.previewUrl);
   }
-
-  return <div className="h-5 ml-5 text-sm italic">{message}</div>;
-};
-
-const isMac =
-  typeof navigator !== "undefined" &&
-  navigator.platform.toUpperCase().includes("MAC");
+}
 
 export const ChatArea: React.FC<{
   onToggleChanList: () => void;
@@ -141,17 +205,9 @@ export const ChatArea: React.FC<{
   const wasAtBottomBeforeNavRef = useRef(false);
   // messageText is NOT React state — stored in a ref to avoid re-renders on every keystroke.
   // hasText tracks the empty↔non-empty boundary for send-button rendering (rare transitions).
-  // autocompleteInputText is updated only when autocomplete dropdowns are visible.
+  // completionInput mirrors the text only while a completion can be open.
   const [hasText, setHasText] = useState(false);
-  const [autocompleteInputText, setAutocompleteInputText] = useState("");
-  // Slash-command popover state.  Only updated when the input starts
-  // with "/" and we're still completing the command name -- otherwise
-  // typing wouldn't trigger a re-render for this popover at all.
-  const [slashInputValue, setSlashInputValue] = useState("");
-  const [paramModal, setParamModal] = useState<{
-    botNick: string;
-    command: BotCommand;
-  } | null>(null);
+  const [completionInput, setCompletionInput] = useState(NO_COMPLETION_INPUT);
   const [isEmojiSelectorOpen, setIsEmojiSelectorOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -160,30 +216,49 @@ export const ChatArea: React.FC<{
   >([]);
   const [isFormattingInitialized, setIsFormattingInitialized] = useState(false);
   const cursorPositionRef = useRef(0);
-  const [showAutocomplete, setShowAutocomplete] = useState(false);
-  const [showEmojiAutocomplete, setShowEmojiAutocomplete] = useState(false);
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
-  const [imagePreview, setImagePreview] = useState<{
-    isOpen: boolean;
-    file: File | null;
-    previewUrl: string | null;
-  }>({
-    isOpen: false,
-    file: null,
-    previewUrl: null,
-  });
-  // True while a file is being dragged over the input area, so we can
-  // show a drop overlay. A counter avoids the flicker that dragenter/
-  // dragleave cause as the pointer crosses child elements.
-  const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const dragDepthRef = useRef(0);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [recordingRegion, setRecordingRegion] = useState<SelectedRegion | null>(
+    null,
+  );
+  const [regionRecordingReady, setRegionRecordingReady] = useState(false);
+  const [recordingKind, setRecordingKind] = useState<RecordingKind | null>(
+    null,
+  );
+  const plusButtonRef = useRef<HTMLButtonElement>(null);
+  // We check once on mount and again whenever the plus menu opens, so a
+  // device plugged in mid-session is picked up there.
+  const [hasMicrophoneInput, setHasMicrophoneInput] = useState(false);
+  const [hasCameraInput, setHasCameraInput] = useState(false);
+  // We treat null, meaning no queryable policy or a fetch still in flight, as
+  // unrestricted.
+  const [uploadInfo, setUploadInfo] = useState<UploadInfo | null>(null);
+  // Keyed the way drafts are, so walking to another conversation never carries
+  // a file along to be sent there.
+  const [attachmentsByChannel, setAttachmentsByChannel] = useState<
+    Record<string, PendingAttachment[]>
+  >({});
   // Multimedia uploads in flight.  Each job tracks one file's
   // XHR-driven progress; once they all settle we send a single
   // PRIVMSG with the URLs joined.
   const [uploadJobs, setUploadJobs] = useState<UploadJob[]>([]);
   const uploadAbortsRef = useRef<Map<string, AbortController>>(new Map());
+  // Files held back because sending them would break the lock this
+  // conversation is showing. Released only by an explicit confirmation.
+  const [pendingPlainUpload, setPendingPlainUpload] = useState<{
+    files: File[];
+    caption: string;
+    links: string[];
+    replyTo: MessageType | null;
+    reason: PlainUploadReason;
+    // The upload path reads the current selection, so the conversation the
+    // warning was raised about is pinned here. Otherwise a confirmation aimed
+    // at one peer would send to whichever chat is open when it is answered.
+    nick: string;
+  } | null>(null);
   const [isServerNoticesPoppedOut, setIsServerNoticesPoppedOut] =
     useState(false);
   const [serverNoticesPopupPosition, setServerNoticesPopupPosition] = useState({
@@ -231,16 +306,7 @@ export const ChatArea: React.FC<{
     action: "warn",
     username: "",
   });
-  const [channelSettingsModalOpen, setChannelSettingsModalOpen] =
-    useState(false);
-  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
   const [inviteUserModalOpen, setInviteUserModalOpen] = useState(false);
-  const [botsModalOpen, setBotsModalOpen] = useState(false);
-  const [botsModalPreselect, setBotsModalPreselect] = useState<string | null>(
-    null,
-  );
-  const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLTextAreaElement>(null);
   // Per-channel draft storage. messageTextRef is the source of truth for the input value.
   // It is updated imperatively (never from state), so no re-render occurs on each keystroke.
@@ -259,6 +325,22 @@ export const ChatArea: React.FC<{
   const channelListRefs = useRef<Map<string, ChannelMessageListHandle | null>>(
     new Map(),
   );
+  // The lists are memoized and React.memo also compares refs, so each list
+  // keeps one ref callback for its lifetime.
+  const listRefCallbacks = useRef(
+    new Map<string, (handle: ChannelMessageListHandle | null) => void>(),
+  );
+  const listRefFor = (key: string) => {
+    let callback = listRefCallbacks.current.get(key);
+    if (!callback) {
+      callback = (handle) => {
+        if (handle) channelListRefs.current.set(key, handle);
+        else channelListRefs.current.delete(key);
+      };
+      listRefCallbacks.current.set(key, callback);
+    }
+    return callback;
+  };
   // lineHeight/padding are static CSS values — cache them after first read to avoid
   // getComputedStyle on every keystroke, which forces layout flush on mobile WebView.
   const textareaMetricsRef = useRef<{
@@ -321,9 +403,17 @@ export const ChatArea: React.FC<{
     [resizeTextarea],
   );
 
+  const clearCompletion = useCallback(
+    () => setCompletionInput(NO_COMPLETION_INPUT),
+    [],
+  );
+
   const servers = useStore((state) => state.servers);
+  const bouncers = useStore((state) => state.bouncers);
   const ui = useStore((state) => state.ui);
   const globalSettings = useStore((state) => state.globalSettings);
+  const e2eeVerifyTarget = useStore((state) => state.e2eeVerifyTarget);
+  const closeE2EEVerify = useStore((state) => state.closeE2EEVerify);
   const messages = useStore((state) => state.messages);
   const toggleMemberList = useStore((state) => state.toggleMemberList);
   const openPrivateChat = useStore((state) => state.openPrivateChat);
@@ -331,7 +421,9 @@ export const ChatArea: React.FC<{
   const connect = useStore((state) => state.connect);
   const joinChannel = useStore((state) => state.joinChannel);
   const toggleAddServerModal = useStore((state) => state.toggleAddServerModal);
-  const stopActiveMedia = useStore((state) => state.stopActiveMedia);
+  const openPage = useStore((state) => state.openPage);
+  const openProfile = useStore((state) => state.openProfile);
+  const openBot = useStore((state) => state.openBot);
   const redactMessage = useStore((state) => state.redactMessage);
   const warnUser = useStore((state) => state.warnUser);
   const kickUser = useStore((state) => state.kickUser);
@@ -341,29 +433,18 @@ export const ChatArea: React.FC<{
   const shouldFocusChatInput = useStore(
     (state) => state.ui.shouldFocusChatInput,
   );
-  const channelSettingsRequest = useStore(
-    (state) => state.ui.channelSettingsRequest,
-  );
   const inviteUserRequest = useStore((state) => state.ui.inviteUserRequest);
-  const setChannelSettingsRequest = useStore(
-    (state) => state.setChannelSettingsRequest,
-  );
   const setInviteUserRequest = useStore((state) => state.setInviteUserRequest);
 
   const isAnyModalOpen = useStore((state) => {
     const { ui } = state;
     return !!(
       ui.isAddServerModalOpen ||
-      ui.isEditServerModalOpen ||
-      ui.isSettingsModalOpen ||
-      ui.isQuickActionsOpen ||
-      ui.isChannelListModalOpen ||
+      ui.page ||
+      ui.sidePane?.kind === "profile" ||
       ui.contextMenu?.isOpen ||
       ui.isServerNoticesPopupOpen ||
-      ui.profileViewRequest ||
       ui.topicModalRequest ||
-      ui.isUserProfileModalOpen ||
-      ui.channelSettingsRequest ||
       ui.inviteUserRequest ||
       ui.openedMedia ||
       (ui.linkSecurityWarnings?.length ?? 0) > 0
@@ -371,13 +452,6 @@ export const ChatArea: React.FC<{
   });
 
   useAutoFocusTyping(inputRef, () => isAnyModalOpen);
-
-  useEffect(() => {
-    if (channelSettingsRequest) {
-      setChannelSettingsModalOpen(true);
-      setChannelSettingsRequest(null, null);
-    }
-  }, [channelSettingsRequest, setChannelSettingsRequest]);
 
   useEffect(() => {
     if (inviteUserRequest) {
@@ -402,49 +476,16 @@ export const ChatArea: React.FC<{
   const { selectedChannelId, selectedPrivateChatId } = currentSelection;
   const {
     isMemberListVisible,
-    isSettingsModalOpen,
     isAddServerModalOpen,
-    isChannelListModalOpen,
     isServerNoticesPopupOpen,
+    page,
+    sidePane,
   } = ui;
+  const isProfileOpen = sidePane?.kind === "profile";
+  const searchPane = sidePane?.kind === "search" ? sidePane : null;
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCompactInput = useMediaQuery("(max-width: 900px)");
-
-  const pendingBotsModalOpen = useStore(
-    (state) => state.ui.pendingBotsModalOpen,
-  );
-  const clearBotsModalOpenRequest = useStore(
-    (state) => state.clearBotsModalOpenRequest,
-  );
-  const pendingBotCommandPick = useStore(
-    (state) => state.ui.pendingBotCommandPick,
-  );
-  const clearBotCommandPickRequest = useStore(
-    (state) => state.clearBotCommandPickRequest,
-  );
-  useEffect(() => {
-    if (
-      pendingBotsModalOpen &&
-      pendingBotsModalOpen.serverId === selectedServerId
-    ) {
-      setBotsModalPreselect(pendingBotsModalOpen.botNick);
-      setBotsModalOpen(true);
-      clearBotsModalOpenRequest();
-    }
-  }, [pendingBotsModalOpen, selectedServerId, clearBotsModalOpenRequest]);
-  useEffect(() => {
-    if (
-      pendingBotCommandPick &&
-      pendingBotCommandPick.serverId === selectedServerId
-    ) {
-      setParamModal({
-        botNick: pendingBotCommandPick.botNick,
-        command: pendingBotCommandPick.command,
-      });
-      clearBotCommandPickRequest();
-    }
-  }, [pendingBotCommandPick, selectedServerId, clearBotCommandPickRequest]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: intentional — clear reply state whenever the active channel/server changes
   useEffect(() => {
@@ -515,9 +556,6 @@ export const ChatArea: React.FC<{
     return userInChannel?.status;
   }, [selectedServerId, selectedChannelId, servers, currentUser]);
 
-  // Tab completion hook
-  const tabCompletion = useTabCompletion();
-
   // draft/custom-emoji: gather pack URLs (channel-scoped first so it
   // shadows the network-wide pack on shortcode collisions) and surface
   // the resulting shortcodes to the emoji picker + completion.
@@ -540,8 +578,7 @@ export const ChatArea: React.FC<{
     [customEmojiShortcodes],
   );
 
-  // Emoji completion hook
-  const emojiCompletion = useEmojiCompletion(customEmojiShortcodes);
+  const emojiItems = useEmojiItems(customEmojiShortcodes);
 
   // Typing notification hook
   const typingNotification = useTypingNotification({
@@ -580,30 +617,6 @@ export const ChatArea: React.FC<{
     inputRef.current?.focus();
     setLocalReplyTo(message);
   }, []);
-
-  // Toggle notification sound volume
-  const handleToggleNotificationVolume = async () => {
-    const currentVolume = globalSettings.notificationVolume;
-    const newVolume = currentVolume > 0 ? 0 : 0.4; // Toggle between 0 (muted) and 0.4 (40%)
-
-    useStore.getState().updateGlobalSettings({
-      notificationVolume: newVolume,
-    });
-
-    // Play test sound when enabling (not when disabling)
-    if (newVolume > 0) {
-      try {
-        const audio = new Audio();
-        audio.volume = newVolume;
-        audio.src = "/sounds/notif2.mp3";
-        // Wait for the audio to be loaded before playing
-        audio.load();
-        await audio.play();
-      } catch (error) {
-        console.error("Failed to play notification sound:", error);
-      }
-    }
-  };
 
   // Load saved settings from local storage on mount
   useEffect(() => {
@@ -652,6 +665,13 @@ export const ChatArea: React.FC<{
     }
   }, [selectedFormatting, isFormattingInitialized]);
 
+  const homeView = useStore((state) => state.ui.homeView);
+  const searchHitMessageId = useStore((state) =>
+    state.ui.sidePane?.kind === "search"
+      ? state.ui.sidePane.hitMessageId
+      : undefined,
+  );
+
   // Get selected server and channel/private chat - memoized to prevent re-renders
   const selectedServer = useMemo(
     () => servers.find((s) => s.id === selectedServerId),
@@ -662,6 +682,108 @@ export const ChatArea: React.FC<{
   // (obby.world/FILEHOST) or the standard tokenless one (draft/FILEHOST).
   const canUpload = !!(
     selectedServer?.filehost || selectedServer?.fileHosts?.length
+  );
+
+  const isTouch = useIsTouchInput();
+
+  // MediaRecorder support doesn't change at runtime, so these only need
+  // picking once.
+  const audioRecordingFormat = useMemo(() => pickRecordingFormat(), []);
+  const videoRecordingFormat = useMemo(() => pickVideoRecordingFormat(), []);
+
+  useEffect(() => {
+    void listDevices("audioinput").then((devices) => {
+      setHasMicrophoneInput(devices.length > 0);
+    });
+    void listDevices("videoinput").then((devices) => {
+      setHasCameraInput(devices.length > 0);
+    });
+  }, []);
+
+  // Only the vendor token uploader exposes a queryable policy.
+  useEffect(() => {
+    const filehostUrl = selectedServer?.filehost;
+    if (!filehostUrl) {
+      setUploadInfo(null);
+      return;
+    }
+    let cancelled = false;
+    void fetchUploadInfo(filehostUrl).then((info) => {
+      if (!cancelled) setUploadInfo(info);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedServer?.filehost]);
+
+  const extensionAllowed = (extension: string): boolean =>
+    !uploadInfo ||
+    uploadInfo.allowed_extensions.length === 0 ||
+    uploadInfo.allowed_extensions
+      .map((e) => e.toLowerCase())
+      .includes(`.${extension}`);
+
+  const canRecordAudio =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasMicrophoneInput &&
+    !!audioRecordingFormat &&
+    extensionAllowed(audioRecordingFormat.extension);
+
+  const canRecordVideo =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasCameraInput &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  const canRecordScreen =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    screenCaptureSupported() &&
+    !isTouch &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  // Unlike recording, sharing a location never needs the file host -- a
+  // rounded or exact link works with no attachment at all.
+  const canShareLocation = locationSharingSupported();
+  // The native recorder always writes MP4, so it needs none of what the
+  // browser's own screen capture is gated on.
+  const canRecordRegion =
+    canUpload && regionRecordingReady && extensionAllowed("mp4");
+
+  useEffect(() => {
+    void regionRecordingSupported().then(setRegionRecordingReady);
+  }, []);
+
+  const describeRecordingFailure = (failure: RecordingFailure): string =>
+    failure === "screen-gone"
+      ? t`That screen is no longer available. Choose another screen.`
+      : t`The recording could not be made.`;
+
+  // The rectangle is drawn on the desktop first, then the screen it sits on is
+  // captured and cropped to it.
+  const startRegionRecording = async () => {
+    if (!(await screenRecordingAllowed())) {
+      useStore.getState().addGlobalNotification({
+        type: "warn",
+        command: "RECORD SCREEN",
+        code: "SCREEN_PERMISSION",
+        message: t`Allow Obby under Screen Recording in System Settings, then record again.`,
+        serverId: selectedServerId ?? "",
+      });
+      return;
+    }
+    const selection = await selectScreenRegion();
+    if (!selection) return;
+    await focusMainWindow();
+    setRecordingRegion(selection);
+  };
+
+  const recordingMaxBytes = useMemo(
+    () => maxRecordingBytes(uploadInfo),
+    [uploadInfo],
   );
 
   const selectedChannel = useMemo(
@@ -677,17 +799,149 @@ export const ChatArea: React.FC<{
     [selectedServer, selectedPrivateChatId],
   );
 
+  const command = useCommandInvocation({
+    serverId: selectedServerId,
+    channel: selectedChannel ?? null,
+    channels: selectedServer?.channels ?? NO_CHANNELS,
+    textRef: messageTextRef,
+    inputRef,
+    applyText,
+    onBegin: clearCompletion,
+  });
+
+  const pendingBotCommandPick = useStore(
+    (state) => state.ui.pendingBotCommandPick,
+  );
+  const clearBotCommandPickRequest = useStore(
+    (state) => state.clearBotCommandPickRequest,
+  );
+  useEffect(() => {
+    if (
+      pendingBotCommandPick &&
+      pendingBotCommandPick.serverId === selectedServerId
+    ) {
+      command.begin(
+        pendingBotCommandPick.botNick,
+        pendingBotCommandPick.command,
+      );
+      clearBotCommandPickRequest();
+    }
+  }, [
+    pendingBotCommandPick,
+    selectedServerId,
+    clearBotCommandPickRequest,
+    command.begin,
+  ]);
+
+  const beginTypedBotCommand = (text: string, caret: number) => {
+    const typed = typedBotCommand(
+      text,
+      caret,
+      slashSuggestions(selectedServer, selectedChannel),
+    );
+    if (typed && needsArguments(typed))
+      command.begin(typed.source.botNick, {
+        name: typed.name,
+        description: typed.description,
+        options: typed.options,
+      });
+    return typed;
+  };
+
+  const pendingComposerCommand = useStore(
+    (state) => state.ui.pendingComposerCommand,
+  );
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    if (
+      !pendingComposerCommand ||
+      pendingComposerCommand.serverId !== selectedServerId
+    )
+      return;
+    useStore.getState().clearComposerCommandRequest();
+    const { name, botNick } = pendingComposerCommand;
+    if (command.invocation) command.cancel();
+    // We name the bot, since a bare name may belong to the server or another bot.
+    const text = `/${name}@${botNick} `;
+    applyText(text);
+    inputRef.current?.focus();
+    inputRef.current?.setSelectionRange(text.length, text.length);
+    beginTypedBotCommand(text, text.length);
+  }, [pendingComposerCommand, selectedServerId]);
+
+  const completionUsers = useMemo<User[]>(
+    () =>
+      selectedChannel?.users ??
+      (selectedPrivateChat
+        ? [
+            ...(currentUser ? [currentUser] : []),
+            {
+              id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
+              username: selectedPrivateChat.username,
+              isOnline: true,
+            },
+          ]
+        : []),
+    [selectedChannel?.users, selectedPrivateChat, currentUser],
+  );
+  const memberProvider = useMemo(
+    () => nickProvider(completionUsers),
+    [completionUsers],
+  );
+  const slashCommandProvider = useMemo(
+    () =>
+      slashProvider(
+        slashSuggestions(selectedServer, selectedChannel),
+        (cmd) => {
+          if (cmd.source.kind !== "bot") return;
+          command.begin(cmd.source.botNick, {
+            name: cmd.name,
+            description: cmd.description,
+            options: cmd.options,
+          });
+        },
+      ),
+    [selectedServer, selectedChannel, command.begin],
+  );
+  const completionProviders = useMemo(
+    () => [slashCommandProvider, emojiProvider(emojiItems), memberProvider],
+    [slashCommandProvider, emojiItems, memberProvider],
+  );
+  const completion = useCompletion<SlashSuggestion | EmojiItem | User>({
+    providers: completionProviders,
+    text: completionInput.text,
+    caret: completionInput.caret,
+    onReplace: (text, caret) => {
+      applyText(text);
+      setCompletionInput({ text, caret });
+      cursorPositionRef.current = caret;
+      setTimeout(() => {
+        inputRef.current?.setSelectionRange(caret, caret);
+        inputRef.current?.focus();
+      }, 0);
+    },
+  });
+
   const onBeforeInputGuard = useMentionAutocorrectGuard(
     selectedChannel?.users.map((u) => u.username) ?? [],
   );
 
   // Member list overlay: show when desktop is too narrow for sidebar
+  const setSearchChatShown = useStore((state) => state.setSearchChatShown);
+  const closeSearchResults = useStore((state) => state.closeSearchResults);
+  const isOverlayMode = !isNarrowView && isTooNarrowForMemberList;
+  const isSearchOverlayHidden = isOverlayMode && !!searchPane?.isChatShown;
   const showMemberListOverlay =
-    !isNarrowView &&
-    isTooNarrowForMemberList &&
-    isMemberListVisible &&
-    !!selectedChannel &&
-    !selectedPrivateChat;
+    isOverlayMode &&
+    ((isMemberListVisible && !!selectedChannel && !selectedPrivateChat) ||
+      isProfileOpen ||
+      !!searchPane);
+  const showMessages = !showMemberListOverlay || isSearchOverlayHidden;
+  const isHitChatOpen =
+    !!searchPane?.hitChatId &&
+    searchPane.hitChatId === (selectedChannelId ?? selectedPrivateChatId);
+  const showSearchReturn =
+    isHitChatOpen && (isNarrowView || isSearchOverlayHidden);
 
   // Track previous width state to detect transitions
   const prevIsTooNarrowRef = useRef(isTooNarrowForMemberList);
@@ -812,9 +1066,7 @@ export const ChatArea: React.FC<{
             .isAtBottom ?? false;
         navWasActiveRef.current = true;
       }
-      const el = document.querySelector(
-        `[data-message-id="${navHighlightedMsgId}"]`,
-      );
+      const el = findMessageRow(document, navHighlightedMsgId);
       el?.scrollIntoView({ block: "nearest", behavior: "instant" });
     } else if (navWasActiveRef.current) {
       if (wasAtBottomBeforeNavRef.current) {
@@ -857,9 +1109,9 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     const key = channelKey;
     return () => {
-      if (key) draftMap.current.set(key, messageTextRef.current);
+      if (key) draftMap.current.set(key, command.leave());
     };
-  }, [channelKey]);
+  }, [channelKey, command.leave]);
 
   // Save outgoing channel's scroll position on cleanup (same pattern as draftMap).
   useEffect(() => {
@@ -886,54 +1138,54 @@ export const ChatArea: React.FC<{
     }
   }, [channelKey, applyText]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: channelKey intentionally triggers search clear without being used in the body
-  useEffect(() => {
-    setSearchQuery("");
-  }, [channelKey]);
-
-  const handleClearSearch = useCallback(() => setSearchQuery(""), []);
-
   // Keep-alive: maintain last 3 visited channels in an LRU list so their message list
   // DOMs are preserved with display:none (scroll position + media elements stay alive).
-  useEffect(() => {
-    if (!channelKey || !selectedServerId) return;
-    setAliveChannels((prev) => {
-      const filtered = prev.filter((c) => c.key !== channelKey);
-      return [
+  // We update it during render so a newly opened chat mounts its list on the first frame.
+  if (channelKey && selectedServerId && aliveChannels[0]?.key !== channelKey)
+    setAliveChannels((prev) =>
+      [
         {
           key: channelKey,
           serverId: selectedServerId,
           channelId: selectedChannelId,
           privateChatId: selectedPrivateChatId,
         },
-        ...filtered,
-      ].slice(0, 3);
-    });
-  }, [channelKey, selectedServerId, selectedChannelId, selectedPrivateChatId]);
+        ...prev.filter((c) => c.key !== channelKey),
+      ].slice(0, 3),
+    );
 
-  // Stop embed media (YouTube, etc.) when switching channels.
-  // HTML5 video/audio keep playing via MiniMediaPlayer's hidden element,
-  // but embedded iframes are suspended by display:none anyway — stopping them
-  // keeps the store consistent and resets the player for the next visit.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: stopActiveMedia is a stable store action
+  // An embed pauses when we switch channels and keeps its position, so the
+  // next visit shows it where it stopped; HTML5 video and audio keep playing
+  // through MiniMediaPlayer's hidden element.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
-    if (ui.activeMedia?.type === "embed") stopActiveMedia();
+    const active = useStore.getState().ui.activeMedia;
+    if (active?.type === "embed" && active.isPlaying)
+      useStore.getState().pauseActiveMedia();
   }, [channelKey]);
 
-  // Close plus menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showPlusMenu && !(event.target as Element).closest(".plus-menu")) {
-        setShowPlusMenu(false);
-      }
-    };
+  const attachments = attachmentsByChannel[channelKey] ?? NO_ATTACHMENTS;
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showPlusMenu]);
+  const reportUploadFailure = (message: string) =>
+    useStore.getState().addGlobalNotification({
+      type: "fail",
+      command: "UPLOAD",
+      code: "UPLOAD_FAILED",
+      message,
+      serverId: selectedServerId ?? "",
+    });
+
+  const updateAttachments = (
+    key: string,
+    next: (prev: PendingAttachment[]) => PendingAttachment[],
+  ) =>
+    setAttachmentsByChannel((prev) => ({
+      ...prev,
+      [key]: next(prev[key] ?? NO_ATTACHMENTS),
+    }));
 
   const handleSendMessage = () => {
-    if (!hasTextRef.current) return;
+    if (!hasTextRef.current && attachments.length === 0) return;
 
     // Block sending to offline PM targets — isOnline is explicitly false (MONITOR tracked).
     // undefined means the server doesn't support MONITOR, so we let it through.
@@ -949,19 +1201,50 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    channelListRefs.current.get(channelKey)?.setAtBottom();
-    sendMessage(messageTextRef.current);
+    channelListRefs.current.get(channelKey)?.scrollToBottom();
+    if (attachments.length > 0) {
+      const files = attachments.flatMap((a) =>
+        a.kind === "file" ? [a.file] : [],
+      );
+      const links = attachments.flatMap((a) =>
+        a.kind === "link" ? [a.url] : [],
+      );
+      const caption = messageTextRef.current.trim();
+      if (files.length > 0) {
+        if (!canUpload) return;
+        // The composer empties before the host has been reached, so the
+        // thumbnails stay alive until an upload is known to have started and
+        // an upload that never starts hands the words and the files back.
+        const held = attachments;
+        const replyTo = localReplyTo;
+        updateAttachments(channelKey, () => NO_ATTACHMENTS);
+        void handleFilesUpload(files, caption, links, replyTo).then(
+          (outcome) => {
+            if (outcome === "failed") {
+              updateAttachments(channelKey, () => held);
+              applyText(caption);
+              setLocalReplyTo(replyTo);
+              return;
+            }
+            for (const attachment of held) releasePreview(attachment);
+          },
+        );
+      } else {
+        if (sendMessage([caption, ...links].join(" ")) === "withheld") return;
+        clearAttachments();
+      }
+    } else if (sendMessage(messageTextRef.current) === "withheld") {
+      // Withheld under an engaged-but-not-ready lock: keep the draft so the
+      // user doesn't lose what they typed when nothing was actually sent.
+      return;
+    }
 
     applyText("");
-    setAutocompleteInputText("");
+    setCompletionInput(NO_COMPLETION_INPUT);
     draftMap.current.delete(channelKey);
     setLocalReplyTo(null);
     setNavHighlightedMsgId(null);
-    setShowAutocomplete(false);
     messageHistory.resetHistory();
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
 
     // Keep the textarea focused so the keyboard stays open on mobile.
     inputRef.current?.focus();
@@ -970,17 +1253,33 @@ export const ChatArea: React.FC<{
   // Multi-file upload entry point.  Picks up an auth token (one-shot
   // per batch -- the backend accepts the same token across many
   // uploads), kicks off N uploads in parallel, surfaces per-file
-  // progress, and on full success sends a single PRIVMSG containing
-  // all the resulting URLs separated by spaces.
-  const handleFilesUpload = async (files: File[]) => {
-    if (!selectedServerId || files.length === 0) return;
+  // progress, and on full success sends a single PRIVMSG carrying what was
+  // typed and all the resulting URLs.
+  const handleFilesUpload = async (
+    files: File[],
+    caption: string,
+    links: string[],
+    replyTo: MessageType | null,
+    confirmedForNick: string | null = null,
+  ): Promise<UploadOutcome> => {
+    if (!selectedServerId || files.length === 0) return "failed";
     // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
     // fall back to the vendor token-authenticated obby.world/FILEHOST.
     const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
     const filehostUrl = selectedServer?.filehost;
-    if (!tokenlessEndpoint && !filehostUrl) return;
+    if (!tokenlessEndpoint && !filehostUrl) {
+      reportUploadFailure(
+        t`This server has no file host. Connect to a server with a file host to upload files.`,
+      );
+      return "failed";
+    }
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
-    if (!target) return;
+    if (!target) return "failed";
+    // A confirmation names the conversation it was given for. Answering it
+    // after moving to another chat must not redirect the files there.
+    if (confirmedForNick !== null && confirmedForNick !== target)
+      return "failed";
+    const plainUploadConfirmed = confirmedForNick !== null;
 
     // The token path pulls the in-house policy and mints one single-use
     // draft/authtoken Bearer per file (the IRCd burns each on validate, so
@@ -992,7 +1291,9 @@ export const ChatArea: React.FC<{
       info = await fetchUploadInfo(filehostUrl);
       // Serialised because waitForAuthToken resolves on the first matching
       // TOKEN_GENERATE event -- parallel mints would race for the reply.
-      const scope = target.startsWith("#") ? `channel:${target}` : undefined;
+      const scope = ircClient.isChannel(selectedServerId, target)
+        ? `channel:${target}`
+        : undefined;
       for (let i = 0; i < files.length; i++) {
         ircClient.requestToken(selectedServerId, "filehost", scope);
         const tok = await waitForAuthToken(selectedServerId, "filehost");
@@ -1000,21 +1301,90 @@ export const ChatArea: React.FC<{
           console.error(
             "draft/authtoken: server did not return a filehost token",
           );
-          return;
+          reportUploadFailure(t`The file host refused the upload. Try again.`);
+          return "failed";
         }
         tokens.push(tok);
       }
     }
 
+    // Attachments encrypt only in a live Obby PM: OTR has no frame for them,
+    // and a channel has no session at all. A conversation whose lock is
+    // engaged but not ready withholds the upload for the same reason it
+    // withholds text, since the bytes reach the host before any message does.
+    const posture = selectedPrivateChat
+      ? pmEncryptionPosture(selectedServerId, selectedPrivateChat.username)
+      : "plain";
+    if (posture === "blocked" && selectedPrivateChat) {
+      // "Blocked" covers three different states and only one of them is worth
+      // waiting out, so the row says which one the conversation is in.
+      const blockedStatus =
+        useStore.getState().e2eeSessions[
+          e2eeSessionKey(selectedServerId, selectedPrivateChat.username)
+        ]?.status;
+      injectSystemNotice(
+        selectedServerId,
+        selectedPrivateChat.username,
+        blockedStatus === "key-changed"
+          ? t`File not uploaded: the encryption key changed. Review the new key, or end encryption to upload unencrypted.`
+          : blockedStatus === "error"
+            ? t`File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted.`
+            : t`File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted.`,
+      );
+      return "failed";
+    }
+    const encryptHere = posture === "encrypt" && !!selectedPrivateChat;
+    // Each file decides for itself, so one file past the size ceiling cannot
+    // quietly drag the rest of the batch into the clear.
+    const plainFiles = encryptHere
+      ? files.filter((f) => !canEncryptMedia(f.size))
+      : posture === "unencryptable"
+        ? files
+        : [];
+    if (plainFiles.length > 0 && !plainUploadConfirmed) {
+      setPendingPlainUpload({
+        files,
+        caption,
+        links,
+        replyTo,
+        reason: encryptHere ? "too-large" : "scheme",
+        nick: target,
+      });
+      return "held";
+    }
+    const encryptTarget =
+      encryptHere && selectedPrivateChat
+        ? { nick: selectedPrivateChat.username }
+        : null;
+
+    // An encrypted attachment is its own frame and carries no text, so what was
+    // typed goes ahead of the files as a message of its own.
+    const said = [caption, ...links].filter(Boolean).join(" ");
+    if (encryptTarget && said) sendMessage(said);
+
     // Build the job list in one go so the progress strip appears
     // immediately, before any network roundtrip.
-    const initialJobs: UploadJob[] = files.map((f) => ({
-      id: uuidv4(),
-      file: f,
-      loaded: 0,
-      total: f.size,
-      status: "pending",
-    }));
+    const initialJobs: UploadJob[] = files.map((f) => {
+      const encrypts = !!encryptTarget && canEncryptMedia(f.size);
+      // The badge is for conversations that show a lock: a channel or an
+      // unencrypted PM has nothing to contradict, so it stays off there.
+      const underLock = encryptHere || posture === "unencryptable";
+      return {
+        id: uuidv4(),
+        file: f,
+        loaded: 0,
+        total: f.size,
+        status: "pending" as const,
+        encrypted: underLock ? encrypts : undefined,
+        plainReason: !underLock
+          ? undefined
+          : posture === "unencryptable"
+            ? ("scheme" as const)
+            : encrypts
+              ? undefined
+              : ("too-large" as const),
+      };
+    });
     setUploadJobs((prev) => [...prev, ...initialJobs]);
 
     const updateJob = (id: string, patch: Partial<UploadJob>) =>
@@ -1025,29 +1395,59 @@ export const ChatArea: React.FC<{
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
       initialJobs.map(async (job, jobIdx) => {
-        // Cheap client-side validation -- saves a server round-trip
-        // and gives the user immediate feedback.
-        const validationError = validateFileAgainstInfo(job.file, info);
-        if (validationError) {
-          updateJob(job.id, {
-            status: "failed",
-            error: validationError,
-          });
-          return null;
-        }
         const ac = new AbortController();
         uploadAbortsRef.current.set(job.id, ac);
         updateJob(job.id, { status: "uploading" });
         try {
           const onProgress = (loaded: number, total: number) =>
             updateJob(job.id, { loaded, total });
+          // Ciphertext uploads under its own extension and header: the real
+          // name and type travel in the descriptor, where the host can't read
+          // them, and nothing on the host tries to re-encode the bytes.
+          const media =
+            encryptTarget && canEncryptMedia(job.file.size)
+              ? encryptMedia(await readFileBytes(job.file))
+              : null;
+          const upload = media
+            ? new File(
+                // Handed over as the view itself: File copies it once anyway,
+                // and slicing first would hold a second full copy meanwhile.
+                [wrapForUpload(media.ciphertext)],
+                ciphertextFileName(),
+                { type: "application/octet-stream" },
+              )
+            : job.file;
+          // Checked against what actually goes to the host, which for an
+          // encrypted attachment is the ciphertext under its own extension.
+          // Checking the original would clear a jpeg the host never sees and
+          // then fail on the upload it does.
+          let validationError = validateFileAgainstInfo(upload, info);
+          if (validationError && filehostUrl) {
+            // The policy is a server setting that can change while this tab is
+            // open, so a refusal is re-checked against a fresh copy before it
+            // stops an upload the host would now take.
+            const current = await fetchUploadInfo(filehostUrl, {
+              refresh: true,
+            });
+            validationError = validateFileAgainstInfo(upload, current);
+          }
+          if (validationError) {
+            uploadAbortsRef.current.delete(job.id);
+            updateJob(job.id, {
+              status: "failed",
+              error: media
+                ? t`This file host refuses ${CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted.`
+                : validationError,
+            });
+            return null;
+          }
           const url = tokenlessEndpoint
-            ? await uploadFileTokenless(job.file, {
+            ? await uploadFileTokenless(upload, {
                 endpoint: tokenlessEndpoint,
                 signal: ac.signal,
                 onProgress,
               })
-            : await uploadFile(job.file, {
+            : await uploadFile(upload, {
                 // biome-ignore lint/style/noNonNullAssertion: filehostUrl is set when tokenlessEndpoint isn't (guarded above)
                 filehostUrl: filehostUrl!,
                 bearerToken: tokens[jobIdx],
@@ -1061,50 +1461,81 @@ export const ChatArea: React.FC<{
             url,
           });
           uploadAbortsRef.current.delete(job.id);
-          return url;
+          return media ? buildMediaDescriptor(url, media, job.file) : url;
         } catch (err) {
           uploadAbortsRef.current.delete(job.id);
-          const msg = typeof err === "string" ? err : String(err);
-          updateJob(job.id, { status: "failed", error: msg });
+          updateJob(job.id, {
+            status: "failed",
+            error: describeUploadFailure(err),
+          });
           return null;
         }
       }),
     );
 
-    const urls = results.filter((u): u is string => !!u);
-    if (urls.length === 0) {
-      // All failed: leave the strip up so the user sees error reasons.
-      return;
+    let anyFailed = results.some((r) => r === null);
+
+    // Encrypted attachments each become their own frame, since the descriptor
+    // carries the file key and is never message text.
+    if (encryptTarget) {
+      for (const [index, result] of results.entries()) {
+        if (!result || typeof result === "string") continue;
+        // The descriptor holds the only copy of the file key, so a session that
+        // ended mid-upload leaves unreadable bytes on the host. Say so on the
+        // row rather than reporting a delivery that never happened.
+        if (!sendEncryptedMedia(selectedServerId, encryptTarget.nick, result)) {
+          anyFailed = true;
+          updateJob(initialJobs[index].id, {
+            status: "failed",
+            error: t`Encryption ended before this file was sent. It was not delivered.`,
+          });
+        }
+      }
     }
 
-    // Send a single PRIVMSG carrying all successful URLs space-joined.
-    // Channels echo back; PMs need a local insert so the user sees
-    // their own message immediately.
-    const line = urls.join(" ");
-    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${line}`);
-    if (selectedPrivateChat && currentUser) {
-      const outgoing = {
-        id: uuidv4(),
-        content: line,
-        timestamp: new Date(),
-        userId: currentUser.username || currentUser.id,
-        channelId: selectedPrivateChat.id,
-        serverId: selectedServerId,
-        type: "message" as const,
-        reactions: [],
-        replyMessage: null,
-        mentioned: [],
-      };
-      useStore.getState().addMessage(outgoing);
+    // Encrypted attachments have already been delivered as their own frames, so
+    // only plain uploads leave a URL to post.
+    const urls = results.filter((u): u is string => typeof u === "string");
+    if (urls.length > 0 || (!encryptTarget && said)) {
+      const line = [said, ...urls].filter(Boolean).join(" ");
+      const encrypted =
+        !!selectedPrivateChat &&
+        routeOutgoingPM(
+          selectedServerId,
+          selectedPrivateChat.username,
+          line,
+        ) !== "none";
+      if (!encrypted) {
+        const replyTags = replyTo?.msgid
+          ? `@+reply=${replyTo.msgid};+draft/reply=${replyTo.msgid} `
+          : "";
+        ircClient.sendRaw(
+          selectedServerId,
+          `${replyTags}PRIVMSG ${target} :${line}`,
+        );
+        if (selectedPrivateChat && currentUser) {
+          showOwnPrivateMessage(
+            selectedServerId,
+            selectedPrivateChat,
+            currentUser,
+            line,
+            replyTo,
+          );
+        }
+      }
     }
 
-    // Clear the strip after a short pause so the user can see
-    // "done" before it disappears.
-    setTimeout(() => {
-      setUploadJobs((prev) =>
-        prev.filter((j) => !initialJobs.find((i) => i.id === j.id)),
-      );
-    }, 1500);
+    // Clear the strip after a pause so the user can see the outcome first. A
+    // failure is worth reading, so it gets longer than a plain "done".
+    setTimeout(
+      () => {
+        setUploadJobs((prev) =>
+          prev.filter((j) => !initialJobs.some((i) => i.id === j.id)),
+        );
+      },
+      anyFailed ? 8000 : 1500,
+    );
+    return "started";
   };
 
   const cancelUploadJob = (id: string) => {
@@ -1113,84 +1544,119 @@ export const ChatArea: React.FC<{
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
-  // Shared by the file picker and drag-and-drop: a single image keeps the
-  // confirm-then-send preview so the user can eyeball it first; anything
-  // else goes straight to the parallel uploader.
+  // Every path that picks a file lands here, and nothing leaves the device
+  // until the message it belongs to is sent.
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
-    if (files.length === 1 && files[0].type.startsWith("image/")) {
-      const previewUrl = URL.createObjectURL(files[0]);
-      setImagePreview({ isOpen: true, file: files[0], previewUrl });
+    updateAttachments(channelKey, (prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        id: uuidv4(),
+        kind: "file" as const,
+        file,
+        previewUrl: previewable(file) ? URL.createObjectURL(file) : null,
+      })),
+    ]);
+    inputRef.current?.focus();
+  };
+
+  const removeAttachment = (id: string) =>
+    updateAttachments(channelKey, (prev) => {
+      const going = prev.find((a) => a.id === id);
+      if (going) releasePreview(going);
+      return prev.filter((a) => a.id !== id);
+    });
+
+  const clearAttachments = () => {
+    for (const attachment of attachments) releasePreview(attachment);
+    updateAttachments(channelKey, () => NO_ATTACHMENTS);
+  };
+
+  // A drop or a paste anywhere over the app means the conversation on screen.
+  // Touch has no drag and no clipboard gesture of its own, so this is for
+  // pointer devices.
+  const isDraggingFile = useWindowFileCapture({
+    enabled:
+      canUpload && !isTouch && !!(selectedChannel || selectedPrivateChat),
+    onFiles: handleSelectedFiles,
+  });
+
+  // A file on the clipboard is the same gesture as dropping one. A copy from a
+  // file manager carries the name as text too, so the files decide.
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = Array.from(e.clipboardData.files);
+    if (!canUpload || files.length === 0) return;
+    e.preventDefault();
+    handleSelectedFiles(files);
+  };
+
+  // Shared by anything that sends a plain URL as its whole message -- a GIF
+  // pick or a location link with no image to attach.
+  const sendUrlMessage = (url: string) => {
+    const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
+    if (!target || !selectedServerId) return;
+    if (
+      selectedPrivateChat &&
+      routeOutgoingPM(selectedServerId, selectedPrivateChat.username, url) !==
+        "none"
+    ) {
       return;
     }
-    handleFilesUpload(files);
-  };
 
-  // Dropping a file onto the textarea otherwise triggers the browser
-  // default, which pastes the local file path as text. Intercept it on the
-  // input container, mirror the file picker, and ignore non-file drags
-  // (e.g. dragging selected text) so normal text DnD still works.
-  const dragHasFiles = (e: React.DragEvent) =>
-    Array.from(e.dataTransfer.types).includes("Files");
-
-  const handleDragEnter = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
-    e.preventDefault();
-    dragDepthRef.current += 1;
-    setIsDraggingFile(true);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "copy";
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    if (!dragHasFiles(e)) return;
-    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
-    if (dragDepthRef.current === 0) setIsDraggingFile(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
-    e.preventDefault();
-    dragDepthRef.current = 0;
-    setIsDraggingFile(false);
-    handleSelectedFiles(Array.from(e.dataTransfer.files));
-  };
-
-  const handleGifSend = (gifUrl: string) => {
-    // Send the GIF URL directly to the current channel/user
-    const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
-
-    if (target && selectedServerId) {
-      // Send via IRC
-      ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
-
-      // Add to store for immediate display (only for private chats, channels echo back)
-      if (selectedPrivateChat && currentUser) {
-        const outgoingMessage = {
-          id: uuidv4(),
-          content: gifUrl,
-          timestamp: new Date(),
-          userId: currentUser.username || currentUser.id,
-          channelId: selectedPrivateChat.id,
-          serverId: selectedServerId,
-          type: "message" as const,
-          reactions: [],
-          replyMessage: null,
-          mentioned: [],
-        };
-
-        const { addMessage } = useStore.getState();
-        addMessage(outgoingMessage);
-      }
+    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${url}`);
+    if (selectedPrivateChat && currentUser) {
+      showOwnPrivateMessage(
+        selectedServerId,
+        selectedPrivateChat,
+        currentUser,
+        url,
+        null,
+      );
     }
   };
+
+  const handleLocationShare = (url: string) => {
+    updateAttachments(channelKey, (prev) => [
+      ...prev,
+      { id: uuidv4(), kind: "link", url, label: t`Location` },
+    ]);
+    setIsLocationModalOpen(false);
+    inputRef.current?.focus();
+  };
+
+  const invocation = command.invocation;
+  const [argHint, setArgHint] = useState<HTMLDivElement | null>(null);
+  const argFieldWidth =
+    invocation && command.activeParam
+      ? Math.max(
+          (invocation.values[command.activeParam.name] ?? "").length,
+          command.activeParam.name.length,
+        ) + 1
+      : 0;
+
+  const placeholder = (() => {
+    if (command.activeParam) return command.activeParam.name;
+    if (selectedChannel)
+      return globalSettings.enableMultilineInput &&
+        !isNativeMobile &&
+        !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+        : t`Message ${voiceDisplayName(selectedChannel.name)}`;
+    if (selectedPrivateChat)
+      return globalSettings.enableMultilineInput && !isMobile && !isCompactInput
+        ? globalSettings.multilineOnShiftEnter
+          ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
+          : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
+        : t`Message @${selectedPrivateChat.username}`;
+    return t`Type a message...`;
+  })();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const isModKey = isMac ? e.metaKey || e.ctrlKey : e.ctrlKey;
+
+    if (command.handleKey(e)) return;
 
     // Reply navigation: Cmd/Ctrl+↑ moves to older repliable message, ↓ moves newer / cancels
     if (isModKey && e.key === "ArrowUp") {
@@ -1232,37 +1698,11 @@ export const ChatArea: React.FC<{
 
     if (e.key === "Tab") {
       e.preventDefault();
-
-      // If emoji completion is already active, continue with emoji completion
-      if (emojiCompletion.isActive) {
-        handleEmojiCompletion();
-      } else {
-        // Check if we're starting emoji completion context
-        const textBeforeCursor = messageTextRef.current.substring(
-          0,
-          cursorPositionRef.current,
-        );
-        const emojiMatch = textBeforeCursor.match(/:([a-zA-Z_]*)$/);
-
-        if (emojiMatch) {
-          handleEmojiCompletion();
-        } else {
-          handleTabCompletion();
-        }
-      }
-      return;
-    }
-
-    // Handle keys when autocomplete dropdown is visible
-    if (
-      (showAutocomplete || showEmojiAutocomplete) &&
-      (e.key === "ArrowUp" ||
-        e.key === "ArrowDown" ||
-        e.key === "Escape" ||
-        e.key === "Enter" ||
-        e.key === " ")
-    ) {
-      // Let the dropdown handle these keys, don't interfere
+      completion.cycle(
+        messageTextRef.current,
+        cursorPositionRef.current,
+        e.shiftKey ? -1 : 1,
+      );
       return;
     }
 
@@ -1270,6 +1710,11 @@ export const ChatArea: React.FC<{
     if (e.key === "Escape" && navHighlightedMsgId !== null) {
       setNavHighlightedMsgId(null);
       setLocalReplyTo(null);
+      return;
+    }
+
+    if (e.key === "Escape" && attachments.length > 0) {
+      clearAttachments();
       return;
     }
 
@@ -1371,93 +1816,11 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    // Reset tab completion on any other key
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
-    setShowAutocomplete(false);
+    if (!MODIFIER_KEYS.includes(e.key)) completion.stopCycling();
 
     // Any normal keystroke exits nav mode but keeps the reply so the user can type
     if (navHighlightedMsgId !== null) {
       setNavHighlightedMsgId(null);
-    }
-  };
-
-  const handleTabCompletion = () => {
-    if ((!selectedChannel && !selectedPrivateChat) || !inputRef.current) return;
-
-    // For channels, use channel users; for private chats, use both participants
-    const users =
-      selectedChannel?.users ||
-      (selectedPrivateChat
-        ? [
-            ...(currentUser ? [currentUser] : []),
-            {
-              id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-              username: selectedPrivateChat.username,
-              isOnline: true,
-            },
-          ]
-        : []);
-    const result = tabCompletion.handleTabCompletion(
-      messageTextRef.current,
-      cursorPositionRef.current,
-      users,
-    );
-
-    if (result) {
-      applyText(result.newText);
-      setAutocompleteInputText(result.newText);
-      cursorPositionRef.current = result.newCursorPosition;
-
-      // Show dropdown when there are any matches available
-      const shouldShow = tabCompletion.matches.length > 0;
-      setShowAutocomplete(shouldShow);
-
-      // Update input cursor position
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            result.newCursorPosition,
-            result.newCursorPosition,
-          );
-        }
-      }, 0);
-    } else {
-      // No completion result, hide dropdown
-      setShowAutocomplete(false);
-    }
-  };
-
-  const handleEmojiCompletion = () => {
-    if (!inputRef.current) return;
-
-    const result = emojiCompletion.handleEmojiCompletion(
-      messageTextRef.current,
-      cursorPositionRef.current,
-    );
-
-    if (result) {
-      applyText(result.newText);
-      setAutocompleteInputText(result.newText);
-      cursorPositionRef.current = result.newCursorPosition;
-
-      // Show dropdown when there are any matches available
-      const shouldShow = emojiCompletion.matches.length > 0;
-      setShowEmojiAutocomplete(shouldShow);
-
-      // Update input cursor position
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            result.newCursorPosition,
-            result.newCursorPosition,
-          );
-        }
-      }, 0);
-    } else {
-      // No completion result, hide dropdown
-      setShowEmojiAutocomplete(false);
     }
   };
 
@@ -1480,237 +1843,37 @@ export const ChatArea: React.FC<{
     cursorPositionRef.current = newCursorPosition;
     handleUpdatedText(newText);
 
-    // obsidianirc/cmdslist: update slash state only when relevant.
-    // When the input doesn't look like a command (no leading slash,
-    // or already past the command name), re-render only on the
-    // active->inactive transition to clear the popover.
-    const slashActive =
-      getActiveSlashQuery(newText, newCursorPosition) !== null;
-    if (slashActive) {
-      setSlashInputValue(newText);
-      // Lazy bot-cmds discovery: the first time the user starts a
-      // slash command in this channel, query any +B users we don't
-      // already have schemas for so the popover updates as soon as
-      // the response arrives.
-      if (!slashInputValue && selectedServerId && selectedChannel) {
+    // We re-render on keystrokes only while the user types a slash command
+    // name, and once after that to close any open completion.
+    command.onInput(newText);
+
+    if (!command.invocation) beginTypedBotCommand(newText, newCursorPosition);
+
+    if (
+      !command.invocation &&
+      getActiveSlashQuery(newText, newCursorPosition) !== null
+    ) {
+      // The first slash in this channel asks the +B users we have no schema
+      // for, so their commands join the list as soon as they answer.
+      const wasCompletingSlash =
+        getActiveSlashQuery(completionInput.text, completionInput.caret) !==
+        null;
+      if (!wasCompletingSlash && selectedServerId && selectedChannel) {
         queryUncachedBotsInChannel(selectedServerId, selectedChannel.name);
       }
-    } else if (slashInputValue !== "") {
-      setSlashInputValue("");
+      setCompletionInput({ text: newText, caret: newCursorPosition });
+    } else if (completionInput !== NO_COMPLETION_INPUT) {
+      setCompletionInput(NO_COMPLETION_INPUT);
     }
 
     // Exit history mode if user starts typing
     messageHistory.exitHistory();
-
-    // Reset tab completion if text changed from non-tab input
-    if (tabCompletion.isActive) {
-      tabCompletion.resetCompletion();
-    }
-
-    // Reset emoji completion if text changed from non-tab input
-    if (emojiCompletion.isActive) {
-      emojiCompletion.resetCompletion();
-    }
-
-    // Hide autocomplete when typing (only show on Tab completion)
-    if (showAutocomplete) setShowAutocomplete(false);
-    if (showEmojiAutocomplete) setShowEmojiAutocomplete(false);
   };
 
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     const newCursorPos = target.selectionStart || 0;
     cursorPositionRef.current = newCursorPos;
-  };
-
-  const handleUsernameSelect = (username: string) => {
-    if (tabCompletion.isActive) {
-      // Use tab completion state for accurate replacement
-      const isAtMessageStart =
-        tabCompletion.originalText
-          .substring(0, tabCompletion.completionStart)
-          .trim() === tabCompletion.originalPrefix;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        tabCompletion.originalText.substring(0, tabCompletion.completionStart) +
-        username +
-        suffix +
-        tabCompletion.originalText.substring(
-          tabCompletion.completionStart + tabCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        tabCompletion.completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    } else {
-      // Fallback to current logic when tab completion is not active
-      const textBeforeCursor = messageTextRef.current.substring(
-        0,
-        cursorPositionRef.current,
-      );
-      const words = textBeforeCursor.split(/\s+/);
-      const currentWord = words[words.length - 1];
-      const completionStart = cursorPositionRef.current - currentWord.length;
-
-      const isAtMessageStart = textBeforeCursor.trim() === currentWord;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        messageTextRef.current.substring(0, completionStart) +
-        username +
-        suffix +
-        messageTextRef.current.substring(cursorPositionRef.current);
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-
-    setShowAutocomplete(false);
-    tabCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteSelect = (emoji: string) => {
-    if (emojiCompletion.isActive) {
-      // Use emoji completion state for accurate replacement
-      const newText =
-        emojiCompletion.originalText.substring(
-          0,
-          emojiCompletion.completionStart,
-        ) +
-        emoji +
-        emojiCompletion.originalText.substring(
-          emojiCompletion.completionStart +
-            emojiCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition = emojiCompletion.completionStart + emoji.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-
-    setShowEmojiAutocomplete(false);
-    emojiCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteClose = () => {
-    setShowEmojiAutocomplete(false);
-    emojiCompletion.resetCompletion();
-  };
-
-  const handleEmojiAutocompleteNavigate = (emoji: string) => {
-    if (emojiCompletion.isActive) {
-      // Find the index of the selected emoji to sync state
-      const selectedIndex = emojiCompletion.matches.findIndex(
-        (match) => match.emoji === emoji,
-      );
-      if (selectedIndex !== -1) {
-        emojiCompletion.setCurrentIndex(selectedIndex);
-      }
-
-      // Update text in real-time like Tab completion does
-      const newText =
-        emojiCompletion.originalText.substring(
-          0,
-          emojiCompletion.completionStart,
-        ) +
-        emoji +
-        emojiCompletion.originalText.substring(
-          emojiCompletion.completionStart +
-            emojiCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition = emojiCompletion.completionStart + emoji.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      // Update the hook's internal previousTextRef to prevent reset on next tab
-      emojiCompletion.updatePreviousText(newText);
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
-  };
-
-  const handleAutocompleteClose = () => {
-    setShowAutocomplete(false);
-    tabCompletion.resetCompletion();
-  };
-
-  const handleAutocompleteNavigate = (username: string) => {
-    if (tabCompletion.isActive) {
-      // Update text in real-time like Tab completion does
-      const isAtMessageStart =
-        tabCompletion.originalText
-          .substring(0, tabCompletion.completionStart)
-          .trim() === tabCompletion.originalPrefix;
-      const suffix = isAtMessageStart ? ": " : " ";
-      const newText =
-        tabCompletion.originalText.substring(0, tabCompletion.completionStart) +
-        username +
-        suffix +
-        tabCompletion.originalText.substring(
-          tabCompletion.completionStart + tabCompletion.originalPrefix.length,
-        );
-
-      applyText(newText);
-      setAutocompleteInputText(newText);
-      const newCursorPosition =
-        tabCompletion.completionStart + username.length + suffix.length;
-      cursorPositionRef.current = newCursorPosition;
-
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.setSelectionRange(
-            newCursorPosition,
-            newCursorPosition,
-          );
-          inputRef.current.focus();
-        }
-      }, 0);
-    }
   };
 
   const handleInputKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -1724,7 +1887,7 @@ export const ChatArea: React.FC<{
 
   const handleUpdatedText = (text: string) => {
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
-    if (!target) return;
+    if (!target || command.invocation) return;
     typingNotification.notifyTyping(target, text);
   };
 
@@ -1822,10 +1985,12 @@ export const ChatArea: React.FC<{
     }
   };
 
-  const handleOpenProfile = useCallback((username: string) => {
-    setSelectedProfileUsername(username);
-    setUserProfileModalOpen(true);
-  }, []);
+  const handleOpenProfile = useCallback(
+    (username: string) => {
+      if (selectedServerId) openProfile(selectedServerId, username);
+    },
+    [selectedServerId, openProfile],
+  );
 
   // Server notices popup drag handlers
   const handleServerNoticesMouseDown = (e: React.MouseEvent) => {
@@ -1933,10 +2098,12 @@ export const ChatArea: React.FC<{
   };
 
   const handleRedactMessage = useCallback(
-    (message: MessageType) => {
+    async (message: MessageType) => {
       if (message.msgid && selectedServerId) {
-        const confirmed = window.confirm(
+        const confirmed = await confirmDestructive(
+          t`Delete message`,
           t`Are you sure you want to delete this message? This action cannot be undone.`,
+          t`Delete`,
         );
         if (confirmed) {
           const { servers: currentServers } = useStore.getState();
@@ -1971,24 +2138,14 @@ export const ChatArea: React.FC<{
     setIsEmojiSelectorOpen(false);
   };
 
-  const handleEmojiModalBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setIsEmojiSelectorOpen(false);
-    }
-  };
-
   const handleAtButtonClick = () => {
     setShowMembersDropdown((prev) => {
       const newValue = !prev;
       // Close other dropdowns when opening members dropdown
       if (newValue) {
-        setAutocompleteInputText(messageTextRef.current);
-        setShowAutocomplete(false);
-        setShowEmojiAutocomplete(false);
         setIsEmojiSelectorOpen(false);
         setIsColorPickerOpen(false);
-        emojiCompletion.resetCompletion();
-        tabCompletion.resetCompletion();
+        completion.stopCycling();
       }
       return newValue;
     });
@@ -2008,21 +2165,14 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     if (isTauriMobile()) return;
     // Don't steal focus if any modal is open
-    if (
-      isSettingsModalOpen ||
-      userProfileModalOpen ||
-      isAddServerModalOpen ||
-      isChannelListModalOpen
-    )
-      return;
+    if (page || isProfileOpen || isAddServerModalOpen) return;
     inputRef.current?.focus();
   }, [
     selectedChannelId,
     selectedPrivateChatId,
-    isSettingsModalOpen,
-    userProfileModalOpen,
+    page,
+    isProfileOpen,
     isAddServerModalOpen,
-    isChannelListModalOpen,
   ]);
 
   return (
@@ -2038,42 +2188,81 @@ export const ChatArea: React.FC<{
         isMemberListVisible={isMemberListVisible}
         isNarrowView={isNarrowView}
         globalSettings={globalSettings}
-        searchQuery={searchQuery}
         onToggleChanList={onToggleChanList}
         onToggleMemberList={() => toggleMemberList(!isMemberListVisible)}
-        onSearchQueryChange={setSearchQuery}
-        onToggleNotificationVolume={handleToggleNotificationVolume}
-        onOpenChannelSettings={() => setChannelSettingsModalOpen(true)}
+        onToggleNotificationVolume={toggleNotificationSound}
+        onOpenChannelSettings={() =>
+          selectedServerId &&
+          selectedChannel &&
+          openPage({
+            kind: "channelSettings",
+            serverId: selectedServerId,
+            channelName: selectedChannel.name,
+          })
+        }
         onOpenInviteUser={() => setInviteUserModalOpen(true)}
-        onOpenBots={() => setBotsModalOpen(true)}
+        onOpenBots={() => selectedServerId && openBot(selectedServerId)}
       />
 
       {topSlot && (
-        <div className="flex-shrink-0 max-h-[60%] overflow-y-auto border-b border-discord-dark-300">
+        <div className="flex-shrink-0 max-h-[60%] flex flex-col overflow-hidden border-b border-discord-dark-300">
           {topSlot}
         </div>
       )}
 
       <TopicMediaStrip />
       <MiniMediaPlayer />
+      <UploadProgressBar jobs={uploadJobs} onCancel={cancelUploadJob} />
       {/* Member list overlay replaces messages when desktop is too narrow for sidebar */}
       {showMemberListOverlay && (
-        <div className="flex-grow overflow-hidden bg-discord-dark-100">
-          <MemberList />
+        <div
+          className={`flex-grow overflow-hidden bg-discord-dark-100 ${isSearchOverlayHidden ? "hidden" : ""}`}
+        >
+          <SidePane />
+        </div>
+      )}
+      {showSearchReturn && (
+        <div className="shrink-0 flex items-center gap-2 px-3 py-1.5 bar-divider bg-discord-dark-200">
+          <button
+            type="button"
+            className={`chip-action shadow-none min-w-0 ${isTouch ? "min-h-11 px-4 text-sm" : ""}`}
+            onClick={() => setSearchChatShown(false)}
+          >
+            <FaArrowLeft className="text-[10px] shrink-0" />
+            <span className="truncate">
+              <Trans>Show search results</Trans>
+            </span>
+          </button>
+          <button
+            type="button"
+            className={`icon-button ml-auto rounded-lg ${isTouch ? "w-11 h-11" : "w-8 h-8"}`}
+            onClick={closeSearchResults}
+            aria-label={t`Close search`}
+            title={t`Close search`}
+          >
+            <FaTimes className="text-xs" />
+          </button>
         </div>
       )}
       {/* Messages area */}
-      {!showMemberListOverlay && (
+      {showMessages && (
         <>
           {selectedServer &&
             !selectedChannel &&
             !selectedPrivateChat &&
-            selectedChannelId !== "server-notices" && (
-              <div className="flex-grow flex flex-col items-center justify-center bg-discord-dark-200">
+            selectedChannelId !== "server-notices" &&
+            (bouncers[selectedServer.id]?.supported &&
+            !selectedServer.bouncerNetid ? (
+              <div className="flex-grow min-h-0 flex flex-col">
+                <BouncerNetworksPanel bouncerServerId={selectedServer.id} />
+              </div>
+            ) : (
+              <div className="flex-grow min-h-0 overflow-y-auto bg-discord-dark-200">
                 <BlankPage />
               </div>
-            )}
-          {!selectedServer && <DiscoverGrid />}
+            ))}
+          {!selectedServer &&
+            (homeView === "plugins" ? <PluginsScreen /> : <DiscoverGrid />)}
 
           {/* Keep-alive channel message lists — last 3 channels stay in DOM with
               display:none to preserve scroll position across channel switches.
@@ -2103,27 +2292,28 @@ export const ChatArea: React.FC<{
                   <div
                     key={key}
                     className={
-                      isKeyActive ? "flex flex-col flex-grow min-h-0" : "hidden"
+                      isKeyActive
+                        ? `flex flex-col flex-grow min-h-0 ${aChannelId === "server-notices" ? "pb-4" : ""}`
+                        : "hidden"
                     }
                   >
                     <ChannelMessageList
-                      ref={(handle) => {
-                        if (handle) channelListRefs.current.set(key, handle);
-                        else channelListRefs.current.delete(key);
-                      }}
+                      ref={listRefFor(key)}
                       channelKey={key}
                       initialScrollState={savedScrollState}
                       serverId={aServerId}
                       channelId={aChannelId}
                       privateChatId={aPrivateChatId}
                       isActive={isKeyActive}
-                      searchQuery={isKeyActive ? searchQuery : ""}
                       isMemberListVisible={isMemberListVisible}
                       onReply={handleSetReplyTo}
                       highlightedMessageId={
                         isKeyActive
                           ? (navHighlightedMsgId ?? undefined)
                           : undefined
+                      }
+                      searchHitMessageId={
+                        isKeyActive ? searchHitMessageId : undefined
                       }
                       onUsernameContextMenu={handleUsernameClick}
                       onIrcLinkClick={handleIrcLinkClick}
@@ -2134,7 +2324,6 @@ export const ChatArea: React.FC<{
                       onRedactMessage={handleRedactMessage}
                       onOpenProfile={handleOpenProfile}
                       joinChannel={joinChannel}
-                      onClearSearch={handleClearSearch}
                     />
                   </div>
                 );
@@ -2145,20 +2334,34 @@ export const ChatArea: React.FC<{
           {/* Input area */}
           {(selectedChannel || selectedPrivateChat) && (
             <div
-              className={`${!isNarrowView && "px-4"} pb-4 relative chat-input-area`}
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
+              className={`${isNarrowView ? "" : "px-4"} relative chat-input-area`}
             >
-              {isDraggingFile && (
-                <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
-                  <span className="text-discord-text-normal font-medium flex items-center">
-                    <FaPlus className="mr-2" />
-                    <Trans>Drop files to upload</Trans>
-                  </span>
-                </div>
+              {selectedPrivateChat && selectedServerId && (
+                <E2EERequestBanner
+                  serverId={selectedServerId}
+                  nick={selectedPrivateChat.username}
+                />
               )}
+              {e2eeVerifyTarget && (
+                <E2EEVerifyModal
+                  isOpen
+                  serverId={e2eeVerifyTarget.serverId}
+                  nick={e2eeVerifyTarget.nick}
+                  onClose={closeE2EEVerify}
+                />
+              )}
+              {isDraggingFile &&
+                createPortal(
+                  <div className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-discord-dark-100/80 p-6">
+                    <div className="flex h-full w-full items-center justify-center rounded-2xl border-2 border-dashed border-discord-primary">
+                      <span className="flex items-center text-lg font-medium text-discord-text-normal">
+                        <FaPlus className="mr-3" />
+                        <Trans>Drop files to attach</Trans>
+                      </span>
+                    </div>
+                  </div>,
+                  document.body,
+                )}
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}
@@ -2173,131 +2376,205 @@ export const ChatArea: React.FC<{
                 serverId={selectedServerId ?? ""}
                 channelId={selectedChannelId || selectedPrivateChatId || ""}
               />
+              {command.invocation && command.activeParam && (
+                <CommandArgHint
+                  param={command.activeParam}
+                  fallback={command.invocation.command.description}
+                  error={command.invocation.error}
+                  onCancel={command.cancel}
+                  ref={setArgHint}
+                />
+              )}
               <div
-                className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"} flex items-center relative flex-nowrap`}
+                className={`bg-discord-dark-100 ${localReplyTo || command.invocation ? "rounded-b-lg" : "rounded-lg"}`}
               >
-                <button
-                  className="px-2 sm:px-4 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
-                  onClick={() => setShowPlusMenu((prev) => !prev)}
+                <AttachmentTray
+                  attachments={attachments}
+                  onRemove={removeAttachment}
+                />
+                {/* We align to the bottom so the buttons stay beside the last line while the box grows. */}
+                <div
+                  data-composer
+                  className="relative flex flex-nowrap items-end pr-2"
                 >
-                  <FaPlus />
-                </button>
+                  <button
+                    ref={plusButtonRef}
+                    aria-label={t`Attach`}
+                    aria-haspopup="menu"
+                    aria-expanded={showPlusMenu}
+                    className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+                    onClick={() => setShowPlusMenu((prev) => !prev)}
+                  >
+                    <FaPlus />
+                  </button>
 
-                <TextArea
-                  ref={inputRef}
-                  defaultValue=""
-                  onChange={handleInputChange}
-                  onClick={handleInputClick}
-                  onKeyUp={handleInputKeyUp}
-                  onKeyDown={handleKeyDown}
-                  onBeforeInput={onBeforeInputGuard}
-                  autoCorrect={isMobileInput ? "on" : "off"}
-                  autoCapitalize={isMobileInput ? "sentences" : "off"}
-                  spellCheck={isMobileInput}
-                  placeholder={
-                    selectedChannel
-                      ? globalSettings.enableMultilineInput &&
-                        !isNativeMobile &&
-                        !isCompactInput
-                        ? globalSettings.multilineOnShiftEnter
-                          ? t`Message ${selectedChannel.name} (Shift+Enter for new line)`
-                          : t`Message ${selectedChannel.name} (Enter for new line, Shift+Enter to send)`
-                        : t`Message ${selectedChannel.name}`
-                      : selectedPrivateChat
-                        ? globalSettings.enableMultilineInput &&
-                          !isMobile &&
-                          !isCompactInput
-                          ? globalSettings.multilineOnShiftEnter
-                            ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
-                            : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
-                          : t`Message @${selectedPrivateChat.username}`
-                        : t`Type a message...`
-                  }
-                  enterKeyHint={
-                    isNativeMobile && globalSettings.enableMultilineInput
-                      ? "enter"
-                      : "send"
-                  }
-                  className="bg-transparent border-none outline-none py-3 flex-grow text-discord-text-normal resize-none min-h-[44px] overflow-y-auto placeholder:truncate"
-                  style={previewStyle}
-                  rows={1}
-                />
-                <InputToolbar
-                  selectedColor={selectedColor}
-                  onEmojiClick={() => {
-                    setIsEmojiSelectorOpen((prev) => !prev);
-                    setIsColorPickerOpen(false);
-                    setShowMembersDropdown(false);
-                  }}
-                  onColorPickerClick={() => {
-                    setIsColorPickerOpen((prev) => !prev);
-                    setIsEmojiSelectorOpen(false);
-                    setShowMembersDropdown(false);
-                  }}
-                  onAtClick={handleAtButtonClick}
-                  onSendClick={handleSendMessage}
-                  showSendButton={isNativeMobile}
-                  hideEmoji={isNativeMobile}
-                  hasText={hasText}
-                />
+                  <div className="flex min-w-0 flex-1 flex-wrap items-center">
+                    {invocation && (
+                      <CommandChip name={invocation.command.name} />
+                    )}
+                    {invocation &&
+                      command.params.map((p, i) =>
+                        i === invocation.active ? null : (
+                          <CommandArgPill
+                            key={p.name}
+                            label={p.name}
+                            value={invocation.values[p.name] ?? ""}
+                            optional={!p.required}
+                            order={i < invocation.active ? 0 : 2}
+                            onSelect={() => command.select(i)}
+                          />
+                        ),
+                      )}
+                    <TextArea
+                      ref={inputRef}
+                      defaultValue=""
+                      onChange={handleInputChange}
+                      onClick={handleInputClick}
+                      onKeyUp={handleInputKeyUp}
+                      onKeyDown={handleKeyDown}
+                      onPaste={handlePaste}
+                      onBeforeInput={onBeforeInputGuard}
+                      autoCorrect={isMobileInput ? "on" : "off"}
+                      autoCapitalize={isMobileInput ? "sentences" : "off"}
+                      spellCheck={isMobileInput}
+                      placeholder={placeholder}
+                      aria-describedby={
+                        command.invocation ? COMMAND_DETAIL_ID : undefined
+                      }
+                      enterKeyHint={
+                        isNativeMobile && globalSettings.enableMultilineInput
+                          ? "enter"
+                          : "send"
+                      }
+                      className={`resize-none overflow-y-auto border-none leading-[22px] text-discord-text-normal outline-none placeholder:truncate ${
+                        !invocation
+                          ? "min-w-0 flex-1 bg-transparent py-[15px]"
+                          : isTouch
+                            ? "order-3 my-1 mr-1 min-w-0 basis-full rounded bg-discord-primary/15 px-1.5 py-[11px]"
+                            : "order-1 my-[11px] mr-1 max-w-full rounded bg-discord-primary/15 px-1.5 py-1"
+                      }`}
+                      style={
+                        invocation && !isTouch
+                          ? {
+                              ...previewStyle,
+                              width: `calc(${argFieldWidth}ch + 0.75rem)`,
+                            }
+                          : previewStyle
+                      }
+                      rows={1}
+                    />
+                  </div>
+                  <InputToolbar
+                    selectedColor={selectedColor}
+                    onEmojiClick={() => {
+                      setIsEmojiSelectorOpen((prev) => !prev);
+                      setIsColorPickerOpen(false);
+                      setShowMembersDropdown(false);
+                    }}
+                    onColorPickerClick={() => {
+                      setIsColorPickerOpen((prev) => !prev);
+                      setIsEmojiSelectorOpen(false);
+                      setShowMembersDropdown(false);
+                    }}
+                    onAtClick={handleAtButtonClick}
+                    onSendClick={
+                      command.invocation ? command.run : handleSendMessage
+                    }
+                    showSendButton={isNativeMobile}
+                    hideEmoji={isNativeMobile}
+                    hideFormatting={isTouch && invocation !== null}
+                    canSend={
+                      hasText ||
+                      attachments.length > 0 ||
+                      command.invocation !== null
+                    }
+                  />
+                </div>
               </div>
 
-              {/* Plus menu */}
-              {showPlusMenu && (
-                <div
-                  className="plus-menu absolute bg-discord-dark-200 rounded-lg shadow-lg border border-discord-dark-300 min-w-48 z-50"
-                  style={{
-                    bottom: "calc(100% + 8px)",
-                    left: "16px",
-                  }}
-                >
-                  {canUpload && (
-                    <button
-                      className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                      onClick={() => {
-                        // Multi-file picker: images, videos, audio.
-                        // The backend's allowlist is the source of
-                        // truth, but we hint accept= so the OS file
-                        // dialog filters sensibly.
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.multiple = true;
-                        input.accept = "image/*,video/*,audio/*";
-                        input.onchange = (e) => {
-                          handleSelectedFiles(
-                            Array.from(
-                              (e.target as HTMLInputElement).files ?? [],
-                            ),
-                          );
-                        };
-                        input.click();
-                        setShowPlusMenu(false);
-                      }}
-                    >
-                      <FaPlus className="mr-2" />
-                      <Trans>Upload Files</Trans>
-                    </button>
-                  )}
-                  <button
-                    className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                    onClick={() => {
-                      setIsGifSelectorOpen(true);
-                      setShowPlusMenu(false);
-                    }}
-                  >
-                    <FaGift className="mr-2" />
-                    <Trans>Send a GIF</Trans>
-                  </button>
-                  {/* Add more menu items here if needed */}
-                </div>
-              )}
+              <Menu
+                isOpen={showPlusMenu}
+                onClose={() => setShowPlusMenu(false)}
+                anchorElement={plusButtonRef.current}
+                menuItems={[
+                  {
+                    id: "upload",
+                    show: canUpload,
+                    icon: <FaPlus />,
+                    label: <Trans>Upload Files</Trans>,
+                    onClick: () => {
+                      // Multi-file picker: images, videos, audio. The
+                      // backend's allowlist is the source of truth, but we
+                      // hint accept= so the OS file dialog filters sensibly.
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.multiple = true;
+                      input.accept = "image/*,video/*,audio/*";
+                      input.onchange = (e) => {
+                        handleSelectedFiles(
+                          Array.from(
+                            (e.target as HTMLInputElement).files ?? [],
+                          ),
+                        );
+                      };
+                      input.click();
+                    },
+                  },
+                  {
+                    id: "gif",
+                    show: gifProviders.length > 0,
+                    icon: <FaGift />,
+                    label: <Trans>Send a GIF</Trans>,
+                    onClick: () => setIsGifSelectorOpen(true),
+                  },
+                  {
+                    id: "record-audio",
+                    show: canRecordAudio,
+                    divider: canRecordAudio,
+                    icon: <FaMicrophone />,
+                    label: <Trans>Record Audio</Trans>,
+                    onClick: () => setRecordingKind("audio"),
+                  },
+                  {
+                    id: "camera",
+                    show: canRecordVideo,
+                    divider: !canRecordAudio && canRecordVideo,
+                    icon: <FaCamera />,
+                    label: <Trans>Take Photo or Video</Trans>,
+                    onClick: () => setIsCameraOpen(true),
+                  },
+                  {
+                    id: "record-region",
+                    show: canRecordRegion,
+                    icon: <FaVectorSquare />,
+                    label: <Trans>Record Screen Area</Trans>,
+                    onClick: () => void startRegionRecording(),
+                  },
+                  {
+                    id: "record-screen",
+                    show: canRecordScreen,
+                    divider:
+                      !canRecordAudio && !canRecordVideo && canRecordScreen,
+                    icon: <FaDesktop />,
+                    label: <Trans>Record Screen</Trans>,
+                    onClick: () => setRecordingKind("screen"),
+                  },
+                  {
+                    id: "location",
+                    show: canShareLocation,
+                    divider: true,
+                    icon: <FaMapMarkerAlt />,
+                    label: <Trans>Share Location</Trans>,
+                    onClick: () => setIsLocationModalOpen(true),
+                  },
+                ]}
+              />
 
               {isNarrowView && (
                 <EmojiPickerModal
                   isOpen={isEmojiSelectorOpen}
                   onEmojiClick={handleEmojiSelect}
                   onClose={() => setIsEmojiSelectorOpen(false)}
-                  onBackdropClick={handleEmojiModalBackdropClick}
                   customEmojis={pickerCustomEmojis}
                 />
               )}
@@ -2306,8 +2583,7 @@ export const ChatArea: React.FC<{
                 isOpen={isGifSelectorOpen}
                 onClose={() => setIsGifSelectorOpen(false)}
                 onSelectGif={(gifUrl) => {
-                  // Send the GIF URL directly to the channel
-                  handleGifSend(gifUrl);
+                  sendUrlMessage(gifUrl);
                   setIsGifSelectorOpen(false);
                 }}
               />
@@ -2316,7 +2592,10 @@ export const ChatArea: React.FC<{
                 <ColorPicker
                   isNarrowView={isNarrowView}
                   onSelect={(color) => setSelectedColor(color)}
-                  onClose={() => setIsColorPickerOpen(false)}
+                  onClose={() => {
+                    setIsColorPickerOpen(false);
+                    inputRef.current?.focus();
+                  }}
                   selectedColor={selectedColor} // Pass the selected color
                   selectedFormatting={selectedFormatting}
                   toggleFormatting={toggleFormatting}
@@ -2334,290 +2613,51 @@ export const ChatArea: React.FC<{
                 />
               )}
 
-              {/* Multi-file upload progress strip, anchored above input */}
-              <UploadProgressOverlay
-                jobs={uploadJobs}
-                onCancel={cancelUploadJob}
-              />
+              {argHint && command.activeParam && command.choices.length > 0 && (
+                <SuggestionList
+                  title={command.activeParam.name}
+                  items={command.choices}
+                  getKey={(choice) => choice}
+                  renderItem={(choice) => (
+                    <span className="min-w-0 flex-1 truncate">{choice}</span>
+                  )}
+                  selectedIndex={command.highlight}
+                  onHover={command.setHighlight}
+                  onPick={command.pickChoice}
+                  anchor={argHint}
+                  rowClassName={isTouch ? "min-h-12" : ""}
+                />
+              )}
 
-              <AutocompleteDropdown
-                users={
-                  selectedChannel?.users ||
-                  (selectedPrivateChat
-                    ? [
-                        ...(currentUser ? [currentUser] : []),
-                        {
-                          id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-                          username: selectedPrivateChat.username,
-                          isOnline: true,
-                        },
-                      ]
-                    : [])
-                }
-                isVisible={showAutocomplete}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                tabCompletionMatches={tabCompletion.matches}
-                currentMatchIndex={tabCompletion.currentIndex}
-                onSelect={handleUsernameSelect}
-                onClose={handleAutocompleteClose}
-                onNavigate={handleAutocompleteNavigate}
-                inputElement={inputRef.current}
-              />
-
-              <EmojiAutocompleteDropdown
-                isVisible={showEmojiAutocomplete || emojiCompletion.isActive}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                emojiMatches={emojiCompletion.matches}
-                currentMatchIndex={emojiCompletion.currentIndex}
-                onSelect={handleEmojiAutocompleteSelect}
-                onClose={handleEmojiAutocompleteClose}
-                onNavigate={handleEmojiAutocompleteNavigate}
-                inputElement={inputRef.current}
-              />
-
-              {/* obsidianirc/cmdslist + draft/bot-cmds: slash-command suggestion popover */}
-              {(() => {
-                const srv = servers.find((s) => s.id === selectedServerId);
-                const suggestions: SlashSuggestion[] = [];
-                const seen = new Set<string>();
-
-                // 1. Client-side handlers (e.g. /me, /msg, /nick) —
-                // listed first because they own those names and the
-                // server's cmdslist may shadow them.
-                const inChannelView = !!selectedChannel;
-                for (const c of getClientCommands()) {
-                  if (c.scope === "channel-only" && !inChannelView) continue;
-                  suggestions.push({
-                    name: c.name,
-                    description: c.description,
-                    options: c.options,
-                    source: { kind: "client" },
-                  });
-                  seen.add(c.name.toLowerCase());
-                }
-
-                // 2. PushBot schemas — done before the server's
-                // cmdsAvailable so that bot-defined names win the
-                // dedup set.  Channel-scope bots only appear when
-                // they're a member of the active channel; server-
-                // scope bots (helpbot, dicebot) are reachable from
-                // any context and always show.
-                if (srv?.botCommands) {
-                  const chanUsers = new Set<string>(
-                    selectedChannel?.users.map((u) =>
-                      u.username.toLowerCase(),
-                    ) ?? [],
-                  );
-                  for (const [botNick, list] of Object.entries(
-                    srv.botCommands,
-                  )) {
-                    const botScope: "channel" | "server" =
-                      srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick.toLowerCase());
-                    if (
-                      botScope === "channel" &&
-                      (!selectedChannel || !inChannel)
-                    )
-                      continue;
-                    const scope: "channel" | "server" = botScope;
-                    for (const c of list) {
-                      // Cross-bot collisions intentionally NOT dedup'd:
-                      // both /help entries (helpbot + another) should
-                      // show so the user picks which bot to invoke.
-                      // The picker fills `/cmd@botnick` so dispatch
-                      // routes unambiguously.
-                      suggestions.push({
-                        name: c.name,
-                        description: c.description,
-                        options: c.options,
-                        source: { kind: "bot", botNick, scope },
-                      });
-                      // Reserve the bare name so the server's
-                      // cmdsAvailable can't list a duplicate /HELP
-                      // after a bot's /help.
-                      seen.add(c.name.toLowerCase());
-                    }
+              {completion.isOpen && (
+                <CompletionList
+                  completion={completion}
+                  anchor={inputRef.current}
+                  className={
+                    completion.provider === slashCommandProvider
+                      ? "min-w-72"
+                      : ""
                   }
-                }
-
-                // 3. Server-provided permission list (obsidianirc/cmdslist).
-                // No schema -- just names; skip anything the client
-                // or a bot already owns so /help, /report etc. don't
-                // get shadowed by the built-in /HELP.
-                for (const name of srv?.cmdsAvailable ?? []) {
-                  if (seen.has(name.toLowerCase())) continue;
-                  suggestions.push({
-                    name,
-                    source: { kind: "server" },
-                  });
-                  seen.add(name.toLowerCase());
-                }
-                if (suggestions.length === 0) return null;
-                const slashActive =
-                  getActiveSlashQuery(
-                    slashInputValue,
-                    cursorPositionRef.current,
-                  ) !== null;
-                return (
-                  <SlashCommandPopover
-                    isVisible={slashActive}
-                    inputValue={slashInputValue}
-                    commands={suggestions}
-                    inputElement={inputRef.current}
-                    onSelect={(sug) => {
-                      // Bot commands with declared options open the
-                      // param modal so values are entered via typed
-                      // form controls (user/channel pickers, date,
-                      // etc).  Bots without options and non-bot
-                      // sources stay on the freeform inline path.
-                      if (
-                        sug.source.kind === "bot" &&
-                        (sug.options?.length ?? 0) > 0
-                      ) {
-                        const botNick = sug.source.botNick;
-                        setParamModal({
-                          botNick,
-                          command: {
-                            name: sug.name,
-                            description: sug.description,
-                            options: sug.options,
-                          },
-                        });
-                        setSlashInputValue("");
-                        applyText("");
-                        return;
-                      }
-                      const target =
-                        sug.source.kind === "bot"
-                          ? `@${sug.source.botNick}`
-                          : "";
-                      const next = `/${sug.name}${target} `;
-                      applyText(next);
-                      cursorPositionRef.current = next.length;
-                      setSlashInputValue("");
-                      inputRef.current?.focus();
-                      inputRef.current?.setSelectionRange(
-                        next.length,
-                        next.length,
-                      );
-                    }}
-                    onClose={() => {
-                      setSlashInputValue("");
-                    }}
-                  />
-                );
-              })()}
-
-              {/* Per-arg hint shown after the cmd name + a space.
-                  Pulls schemas from both client-side commands and
-                  any cached PushBot schemas. */}
-              {(() => {
-                const srv = servers.find((s) => s.id === selectedServerId);
-                const schemas: Record<
-                  string,
-                  {
-                    command: import("../../types").BotCommand;
-                    source: "client" | "bot";
-                    botNick?: string;
-                    scope: "channel" | "server" | "dm";
-                  }
-                > = {};
-
-                // Client-side commands first; bot schemas overwrite
-                // only if there's a real collision (none in practice
-                // because the client owns /me, /msg, etc).
-                for (const c of getClientCommands()) {
-                  schemas[c.name.toLowerCase()] = {
-                    command: {
-                      name: c.name,
-                      description: c.description,
-                      options: c.options,
-                    },
-                    source: "client",
-                    scope: "dm",
-                  };
-                }
-
-                if (srv?.botCommands) {
-                  const chanUsers = new Set<string>(
-                    selectedChannel?.users.map((u) =>
-                      u.username.toLowerCase(),
-                    ) ?? [],
-                  );
-                  for (const [botNick, list] of Object.entries(
-                    srv.botCommands,
-                  )) {
-                    const botScope: "channel" | "server" =
-                      srv.bots?.[botNick]?.scope ?? "channel";
-                    const inChannel = chanUsers.has(botNick.toLowerCase());
-                    if (
-                      botScope === "channel" &&
-                      (!selectedChannel || !inChannel)
-                    )
-                      continue;
-                    for (const c of list) {
-                      const entry = {
-                        command: c,
-                        source: "bot" as const,
-                        botNick,
-                        scope: botScope,
-                      };
-                      // Specific key handles `/cmd@bot foo` lookups;
-                      // bare key is a fallback for `/cmd foo` (last
-                      // bot wins, which matches dispatch's fallback
-                      // ordering).
-                      schemas[
-                        `${c.name.toLowerCase()}@${botNick.toLowerCase()}`
-                      ] = entry;
-                      schemas[c.name.toLowerCase()] = entry;
-                    }
-                  }
-                }
-
-                if (Object.keys(schemas).length === 0) return null;
-                return (
-                  <SlashParamHint
-                    inputValue={messageTextRef.current ?? ""}
-                    cursorPosition={cursorPositionRef.current}
-                    schemas={schemas}
-                    inputElement={inputRef.current}
-                  />
-                );
-              })()}
+                  rowClassName={isTouch ? "min-h-12" : ""}
+                />
+              )}
 
               {/* Members dropdown triggered by @ button */}
-              <AutocompleteDropdown
+              <MemberPicker
                 isNarrowView={isNarrowView}
-                users={
-                  selectedChannel?.users ||
-                  (selectedPrivateChat
-                    ? [
-                        ...(currentUser ? [currentUser] : []),
-                        {
-                          id: `${selectedPrivateChat.serverId}-${selectedPrivateChat.username}`,
-                          username: selectedPrivateChat.username,
-                          isOnline: true,
-                        },
-                      ]
-                    : [])
-                }
-                isVisible={showMembersDropdown}
-                inputValue={autocompleteInputText}
-                cursorPosition={cursorPositionRef.current}
-                tabCompletionMatches={[]}
-                currentMatchIndex={-1}
+                provider={memberProvider}
+                isOpen={showMembersDropdown}
                 onSelect={(username) => {
                   const isAtMessageStart = messageTextRef.current.trim() === "";
                   const suffix = isAtMessageStart ? ": " : " ";
                   applyText(messageTextRef.current + username + suffix);
                   setShowMembersDropdown(false);
+                  inputRef.current?.focus();
                 }}
-                onClose={() => setShowMembersDropdown(false)}
-                onNavigate={() => {}}
-                inputElement={inputRef.current}
-                isAtButtonTriggered={true}
+                onClose={() => {
+                  setShowMembersDropdown(false);
+                  inputRef.current?.focus();
+                }}
               />
             </div>
           )}
@@ -2629,7 +2669,6 @@ export const ChatArea: React.FC<{
         y={userContextMenu.y}
         username={userContextMenu.username}
         serverId={userContextMenu.serverId}
-        channelId={userContextMenu.channelId}
         onClose={handleCloseUserContextMenu}
         onOpenPM={handleOpenPM}
         onOpenProfile={handleOpenProfile}
@@ -2637,9 +2676,7 @@ export const ChatArea: React.FC<{
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
-        onPickBotCommand={(botNick, command) =>
-          setParamModal({ botNick, command })
-        }
+        onPickBotCommand={command.begin}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -2671,14 +2708,6 @@ export const ChatArea: React.FC<{
         username={moderationModal.username}
         action={moderationModal.action}
       />
-      {selectedChannel && (
-        <ChannelSettingsModal
-          isOpen={channelSettingsModalOpen}
-          onClose={() => setChannelSettingsModalOpen(false)}
-          serverId={selectedServerId || ""}
-          channelName={selectedChannel.name}
-        />
-      )}
       {selectedChannel && selectedServerId && (
         <InviteUserModal
           isOpen={inviteUserModalOpen}
@@ -2687,60 +2716,39 @@ export const ChatArea: React.FC<{
           channelName={selectedChannel.name}
         />
       )}
-      {selectedServerId && (
-        <BotsModal
-          isOpen={botsModalOpen}
-          onClose={() => {
-            setBotsModalOpen(false);
-            setBotsModalPreselect(null);
-          }}
-          serverId={selectedServerId}
-          preselectNick={botsModalPreselect}
-          onPickCommand={(botNick, command) => {
-            setParamModal({ botNick, command });
-          }}
-        />
-      )}
-      {selectedServerId && (
-        <UserProfileModal
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
-        />
-      )}
-      {/* Image Preview Dialog */}
-      <ImagePreviewModal
-        isOpen={imagePreview.isOpen}
-        file={imagePreview.file}
-        previewUrl={imagePreview.previewUrl}
-        onCancel={() => {
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
-        }}
-        onUpload={() => {
-          if (imagePreview.file) {
-            // Route through the new progress-aware path so single-file
-            // uploads also get the "uploading…" overlay.
-            handleFilesUpload([imagePreview.file]);
-          }
-          // Clean up preview URL
-          if (imagePreview.previewUrl) {
-            URL.revokeObjectURL(imagePreview.previewUrl);
-          }
-          setImagePreview({
-            isOpen: false,
-            file: null,
-            previewUrl: null,
-          });
-        }}
+      <CameraCaptureModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCaptured={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
+      />
+      <RegionRecordingBar
+        selection={recordingRegion}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        onError={(failure) =>
+          useStore.getState().addGlobalNotification({
+            type: "fail",
+            command: "RECORD SCREEN",
+            code: "RECORDING_FAILED",
+            message: describeRecordingFailure(failure),
+            serverId: selectedServerId ?? "",
+          })
+        }
+        onFinished={() => setRecordingRegion(null)}
+      />
+      <RecordingPanel
+        kind={recordingKind ?? "audio"}
+        isOpen={recordingKind !== null}
+        anchor={plusButtonRef.current}
+        onClose={() => setRecordingKind(null)}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
+      />
+      <LocationShareModal
+        isOpen={isLocationModalOpen}
+        target={selectedChannel?.name ?? selectedPrivateChat?.username ?? ""}
+        onCancel={() => setIsLocationModalOpen(false)}
+        onShare={handleLocationShare}
       />
       {/* Popped out server notices window */}
       {isServerNoticesPoppedOut &&
@@ -2790,7 +2798,7 @@ export const ChatArea: React.FC<{
                       previousMessage.userId !== message.userId ||
                       new Date(message.timestamp).getTime() -
                         new Date(previousMessage.timestamp).getTime() >
-                        5 * 60 * 1000;
+                        GROUP_WINDOW_MS;
 
                     return (
                       <MessageItem
@@ -2836,25 +2844,20 @@ export const ChatArea: React.FC<{
           </div>,
           document.body,
         )}
-      {paramModal &&
-        selectedServerId &&
-        createPortal(
-          <SlashCommandParamModal
-            serverId={selectedServerId}
-            botNick={paramModal.botNick}
-            command={paramModal.command}
-            channel={selectedChannel ?? null}
-            privateChat={selectedPrivateChat ?? null}
-            channelMembers={selectedChannel?.users.map((u) => u.username) ?? []}
-            joinedChannels={
-              servers
-                .find((s) => s.id === selectedServerId)
-                ?.channels.map((c) => c.name) ?? []
-            }
-            onClose={() => setParamModal(null)}
-          />,
-          document.body,
-        )}
+      {pendingPlainUpload && (
+        <UnencryptedUploadConfirmModal
+          isOpen={true}
+          files={pendingPlainUpload.files}
+          reason={pendingPlainUpload.reason}
+          nick={pendingPlainUpload.nick}
+          onConfirm={() => {
+            const { files, caption, links, replyTo, nick } = pendingPlainUpload;
+            setPendingPlainUpload(null);
+            void handleFilesUpload(files, caption, links, replyTo, nick);
+          }}
+          onCancel={() => setPendingPlainUpload(null)}
+        />
+      )}
     </div>
   );
 };

@@ -6,8 +6,6 @@ import {
   FaEdit,
   FaHashtag,
   FaInfoCircle,
-  FaList,
-  FaPenAlt,
   FaThumbtack,
   FaUserPlus,
 } from "react-icons/fa";
@@ -55,18 +53,6 @@ export function getUIActions(): UIActionConfig[] {
       badge: t`Toggle`,
       data: { action: "toggle-channel-list" },
       availability: () => true,
-    },
-    {
-      id: "open-channel-settings",
-      type: "ui-modal",
-      title: t`Channel Settings`,
-      description: t`Open channel configuration settings`,
-      keywords: ["channel", "settings", "config", "configure"],
-      score: 85,
-      icon: <FaPenAlt className="w-4 h-4" />,
-      badge: t`Modal`,
-      data: { action: "open-channel-settings" },
-      availability: (ctx) => ctx.selectedChannel !== null,
     },
     {
       id: "toggle-notifications",
@@ -118,18 +104,6 @@ export function getUIActions(): UIActionConfig[] {
       availability: (ctx) => ctx.selectedChannel !== null,
     },
     {
-      id: "open-server-channels",
-      type: "ui-modal",
-      title: t`Server Channels`,
-      description: t`Browse all channels on the server`,
-      keywords: ["server", "channels", "browse", "list"],
-      score: 80,
-      icon: <FaList className="w-4 h-4" />,
-      badge: t`Modal`,
-      data: { action: "open-server-channels" },
-      availability: () => true,
-    },
-    {
       id: "open-rename-channel",
       type: "ui-modal",
       title: t`Rename Channel`,
@@ -167,11 +141,6 @@ export function getUIActions(): UIActionConfig[] {
       availability: (ctx) => ctx.selectedPrivateChat !== null,
     },
   ];
-}
-
-export function getUIActionBadge(actionId: string): string {
-  const action = getUIActions().find((a) => a.id === actionId);
-  return action?.badge || t`Action`;
 }
 
 export function getUIActionIcon(actionId: string): React.ReactNode {

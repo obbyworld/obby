@@ -1,116 +1,92 @@
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect } from "react";
-import { FaExclamationTriangle, FaTimesCircle } from "react-icons/fa";
+import {
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaTimes,
+  FaTimesCircle,
+} from "react-icons/fa";
+import { EXIT_HINT_COMMAND, EXIT_WINDOW_MS } from "../../hooks/useBackButton";
+import {
+  JUMP_FAILURE_COMMAND,
+  type JumpFailure,
+} from "../../lib/jumpToMessage";
 import useStore from "../../store";
 
+const TOAST_MS = 5000;
+
+function jumpFailureText(code: string): string {
+  switch (code as JumpFailure) {
+    case "left-channel":
+      return t`Join this channel to jump to the message`;
+    case "not-saved":
+      return t`This message is no longer saved`;
+    default:
+      return t`Could not find this message`;
+  }
+}
+
+const ICONS = {
+  fail: <FaTimesCircle className="text-red-400" />,
+  warn: <FaExclamationTriangle className="text-yellow-400" />,
+  note: <FaInfoCircle className="text-discord-text-muted" />,
+};
+
+/** One toast at a time, for the latest thing the app has to tell the user. */
 export const GlobalNotifications: React.FC = () => {
   const { t } = useLingui();
-  const { globalNotifications, removeGlobalNotification } = useStore();
+  const notifications = useStore((s) => s.globalNotifications);
+  const clearGlobalNotifications = useStore((s) => s.clearGlobalNotifications);
+  const latest = notifications[notifications.length - 1];
 
-  // Auto-remove notifications after 10 seconds
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
-    const timeouts = globalNotifications.map((notification) => {
-      return setTimeout(() => {
-        removeGlobalNotification(notification.id);
-      }, 10000); // 10 seconds
-    });
+    if (!latest) return;
+    const timer = setTimeout(
+      clearGlobalNotifications,
+      latest.command === EXIT_HINT_COMMAND ? EXIT_WINDOW_MS : TOAST_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [latest?.id]);
 
-    return () => {
-      // Clear all timeouts when component unmounts or notifications change
-      timeouts.forEach(clearTimeout);
-    };
-  }, [globalNotifications, removeGlobalNotification]);
-
-  if (globalNotifications.length === 0) {
-    return null;
-  }
-
-  const getIcon = (type: "fail" | "warn" | "note") => {
-    switch (type) {
-      case "fail":
-        return <FaTimesCircle className="text-red-500 flex-shrink-0" />;
-      case "warn":
-        return (
-          <FaExclamationTriangle className="text-yellow-500 flex-shrink-0" />
-        );
-      case "note":
-        return null; // Notes don't need global notification treatment
-      default:
-        return null;
-    }
-  };
-
-  const getBackgroundColor = (type: "fail" | "warn" | "note") => {
-    switch (type) {
-      case "fail":
-        return "bg-red-50 dark:bg-red-950/90 border-red-200 dark:border-red-800";
-      case "warn":
-        return "bg-yellow-50 dark:bg-yellow-950/90 border-yellow-200 dark:border-yellow-800";
-      case "note":
-        return "bg-blue-50 dark:bg-blue-950/90 border-blue-200 dark:border-blue-800";
-      default:
-        return "bg-gray-50 dark:bg-gray-950/90 border-gray-200 dark:border-gray-800";
-    }
-  };
-
-  const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
-
-  // Show FAIL, WARN, and NOTE notifications globally
-  const visibleNotifications = globalNotifications.filter(
-    (n: { type: "fail" | "warn" | "note" }) =>
-      n.type === "fail" || n.type === "warn" || n.type === "note",
-  );
-
-  if (visibleNotifications.length === 0) {
-    return null;
-  }
+  if (!latest) return null;
+  const isJumpFailure = latest.command === JUMP_FAILURE_COMMAND;
+  const otherCount = notifications.length - 1;
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
-      {visibleNotifications.map(
-        (notification: {
-          id: string;
-          type: "fail" | "warn" | "note";
-          command: string;
-          code: string;
-          message: string;
-          target?: string;
-          serverId: string;
-          timestamp: Date;
-        }) => (
-          <div
-            key={notification.id}
-            className={`p-3 rounded-lg border shadow-lg ${getBackgroundColor(notification.type)} animate-in slide-in-from-right-2 fade-in duration-300`}
-          >
-            <div className="flex items-start gap-2">
-              {getIcon(notification.type)}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    {notification.message}
-                  </div>
-                  <button
-                    onClick={() => removeGlobalNotification(notification.id)}
-                    className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0"
-                    aria-label={t`Dismiss notification`}
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {formatTime(notification.timestamp)}
-                </div>
-              </div>
-            </div>
-          </div>
-        ),
-      )}
+    <div
+      role="status"
+      className="fixed z-[10001] flex justify-center left-[calc(0.75rem+var(--safe-area-inset-left,0px))] right-[calc(0.75rem+var(--safe-area-inset-right,0px))] top-[calc(3.75rem+var(--safe-area-inset-top,0px))] md:top-auto md:left-auto md:right-6 md:bottom-6 md:w-[22rem]"
+    >
+      <div className="surface-floating flex w-full max-w-md items-center gap-3 rounded-xl py-2.5 pl-3 pr-1.5 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+        <span className="shrink-0 text-sm">{ICONS[latest.type]}</span>
+        <button
+          type="button"
+          onClick={clearGlobalNotifications}
+          className="flex min-w-0 flex-1 items-center gap-2 text-left text-sm text-discord-text-normal"
+        >
+          <span className="line-clamp-2 min-w-0 flex-1">
+            {latest.command === EXIT_HINT_COMMAND
+              ? t`Press back again to exit`
+              : isJumpFailure
+                ? jumpFailureText(latest.code)
+                : latest.message}
+            {otherCount > 0 && (
+              <span className="row-meta ml-1.5">+{otherCount}</span>
+            )}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={clearGlobalNotifications}
+          aria-label={t`Dismiss notification`}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-discord-text-muted hover:text-white"
+        >
+          <FaTimes className="text-xs" />
+        </button>
+      </div>
     </div>
   );
 };

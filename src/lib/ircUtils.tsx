@@ -1,8 +1,11 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import React from "react";
+import { ChannelLink } from "../components/message/ChannelLink";
 /* eslint-disable no-control-regex */
 import type { Server, User } from "../types";
+import { findChannelMentions } from "./channelMentions";
+import { decodeHtmlEntities, escapeHtml } from "./htmlEntities";
 import { isTauri } from "./platformUtils";
 
 // highlight.js core + a curated ~25-language subset (see ./hljs) instead of the
@@ -14,18 +17,24 @@ import("./hljs").then((m) => {
   hljsModule = m.default;
 });
 
-/** True when `target` is a channel name as opposed to a nick. Mirrors
- * the ircd's CHANTYPES -- standard text (`#`), local text (`&` per
- * RFC 1459/2811), voice (`^`), and stream (`$`) channels. The receive
- * path uses this to choose between the CHANMSG event (channel) and
- * USERMSG event (DM); a hardcoded `startsWith("#")` here was silently
- * routing every PRIVMSG to a $-channel as a DM-from-self, which is
- * why messages on stream channels echoed back to the input but never
- * appeared in the chat. */
-export function isChannelTarget(name: string | undefined | null): boolean {
-  if (!name) return false;
-  const c = name[0];
-  return c === "#" || c === "&" || c === "^" || c === "$";
+// Every channel prefix we know: RFC 1459/2811 (`#&+!`) and ObbyIRCd's voice
+// (`^`) and stream (`$`) channels. We use it where the server's CHANTYPES is
+// unknown; no nick can start with `#&+!`.
+export const KNOWN_CHANTYPES = "#&+!^$";
+
+// A bouncer's control session can advertise an empty CHANTYPES, so we fall
+// back to every prefix we know.
+export function chantypesOf(isupport: Map<string, string> | undefined): string {
+  return isupport?.get("CHANTYPES") || KNOWN_CHANTYPES;
+}
+
+/** True when `name` is a channel as opposed to a nick: it starts with one of
+ * `chantypes`, the server's CHANTYPES when the caller has it. */
+export function isChannelTarget(
+  name: string | undefined | null,
+  chantypes: string = KNOWN_CHANTYPES,
+): boolean {
+  return !!name && chantypes.includes(name[0]);
 }
 
 /** Split an IRCv3 named-modes mode name into its vendor prefix and a
@@ -176,21 +185,62 @@ export function isUserVerified(
   return senderNick.toLowerCase() === messageTags.account.toLowerCase();
 }
 
-export function parseIsupport(tokens: string): Record<string, string> {
-  const tokenMap: Record<string, string> = {};
-  const tokenPairs = tokens.split(" ");
+export interface IsupportToken {
+  key: string;
+  /** "set" -> replace existing value with `value`.
+   *  "append" -> byte-wise concatenate `value` onto existing.
+   *  "delete" -> drop the key entirely. */
+  op: "set" | "append" | "delete";
+  value: string;
+}
 
-  for (const token of tokenPairs) {
-    const [key, value] = token.split("=");
-    if (value) {
-      // Replace \x20 with actual space character
-      tokenMap[key] = value.replace(/\\x20/g, " ");
-    } else {
-      tokenMap[key] = ""; // empty string fallback
+/**
+ * Parse a single RPL_ISUPPORT line.  Returns an ordered list of token
+ * operations because the v0.2 spec (draft/extended-isupport-0.2)
+ * defines three forms:
+ *
+ *   KEY=value     (set / replace)
+ *   KEY+=value    (append; byte-wise concatenation onto the held value)
+ *   -KEY          (delete)
+ *
+ * Trailing ":are supported by this server" sentinel and the leading
+ * target are stripped by the caller, so `tokens` is the space-
+ * separated token list only.
+ */
+export function parseIsupportTokens(tokens: string): IsupportToken[] {
+  const out: IsupportToken[] = [];
+  if (!tokens) return out;
+
+  for (const raw of tokens.split(" ")) {
+    if (!raw) continue;
+    if (raw.startsWith("-")) {
+      const key = raw.slice(1);
+      if (key) out.push({ key, op: "delete", value: "" });
+      continue;
     }
+    const appendIdx = raw.indexOf("+=");
+    if (appendIdx > 0) {
+      out.push({
+        key: raw.slice(0, appendIdx),
+        op: "append",
+        value: raw.slice(appendIdx + 2).replace(/\\x20/g, " "),
+      });
+      continue;
+    }
+    const eqIdx = raw.indexOf("=");
+    if (eqIdx > 0) {
+      out.push({
+        key: raw.slice(0, eqIdx),
+        op: "set",
+        value: raw.slice(eqIdx + 1).replace(/\\x20/g, " "),
+      });
+      continue;
+    }
+    // Flag-form token (no value)
+    out.push({ key: raw, op: "set", value: "" });
   }
 
-  return tokenMap;
+  return out;
 }
 
 // Thanks to Talon
@@ -400,9 +450,32 @@ function applyIrcColorsToHtml(
   );
 }
 
+/** Link text shown in place of a raw URL, keyed by `linkLabelKey`. */
+export type LinkLabels = ReadonlyMap<string, string>;
+
+const MAX_LINK_LABEL = 80;
+
+// The plain and markdown renderers disagree on trailing punctuation and
+// emphasis around a link, so we key labels by the URL without them.
+export const linkLabelKey = (url: string): string =>
+  url.replace(/[.,;:!?)\]*]+$/, "");
+
+export function makeLinkLabels(url: string, label: string): LinkLabels {
+  const oneLine = label.replace(/\s+/g, " ").trim();
+  const capped =
+    oneLine.length > MAX_LINK_LABEL
+      ? `${oneLine.slice(0, MAX_LINK_LABEL - 1)}…`
+      : oneLine;
+  return new Map([[linkLabelKey(url), capped]]);
+}
+
+const labelFor = (labels: LinkLabels | undefined, url: string) =>
+  labels?.get(linkLabelKey(url));
+
 export function renderMarkdown(
   text: string,
   showExternalContent = true,
+  linkLabels?: LinkLabels,
 ): React.ReactNode {
   // Basic input validation and sanitization
   if (!text || typeof text !== "string") {
@@ -464,19 +537,19 @@ export function renderMarkdown(
       ? "text-blue-500 hover:text-blue-700 underline external-link-security"
       : "text-blue-500 hover:text-blue-700 underline";
 
-    return `<a href="${sanitizedHref}"${titleAttr} target="_blank" rel="noopener noreferrer" class="${linkClass}">${text}</a>`;
+    // We compact only bare links; a link written as [text](url) keeps its text.
+    const isBareLink = isExternalLink && text === href;
+    const linkText = isBareLink
+      ? escapeHtml(labelFor(linkLabels, href) ?? compactUrl(href))
+      : text;
+    const compactClass = isBareLink ? " link-compact" : "";
+    return `<a href="${sanitizedHref}"${titleAttr} target="_blank" rel="noopener noreferrer" class="${linkClass}${compactClass}">${linkText}</a>`;
   };
 
   // Custom code renderer for inline code
   renderer.codespan = ({ text }) => {
     // Decode HTML entities back to characters for inline code
-    let decodedText = text
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&apos;/g, "'");
+    let decodedText = decodeHtmlEntities(text);
 
     const hasActualNewlines = decodedText.includes("\n");
     const hasEscapedNewlines = decodedText.includes("\\n");
@@ -487,12 +560,7 @@ export function renderMarkdown(
       }
 
       const codeId = `multiline-inline-code-${Math.random().toString(36).substr(2, 9)}`;
-      const escapedForHtml = decodedText
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+      const escapedForHtml = escapeHtml(decodedText);
 
       return `<div class="code-block-container">
         <div class="code-block-header">
@@ -508,12 +576,7 @@ export function renderMarkdown(
       </div>`;
     }
 
-    const escapedForHtml = decodedText
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    const escapedForHtml = escapeHtml(decodedText);
 
     const codeId = `inline-code-${Math.random().toString(36).substr(2, 9)}`;
     return `<span class="inline-code-container"><code id="${codeId}" class="inline-code">${escapedForHtml}</code><button class="inline-copy-button" data-code-id="${codeId}" title="Copy to clipboard">
@@ -530,15 +593,11 @@ export function renderMarkdown(
     const trimmedText = text.trimEnd();
 
     // Decode HTML entities back to characters for code blocks
-    const decodedText = trimmedText
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&amp;/g, "&")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&apos;/g, "'");
+    const decodedText = decodeHtmlEntities(trimmedText);
 
-    let highlightedCode = decodedText;
+    // hljs escapes what it highlights, so every other path must escape too or
+    // a fenced "<img src>" would load a remote image and leak the reader's IP.
+    let highlightedCode = escapeHtml(decodedText);
     let language = lang;
 
     if (hljsModule) {
@@ -553,7 +612,7 @@ export function renderMarkdown(
             highlightedCode = result.value;
             language = result.language;
           } catch (autoErr) {
-            highlightedCode = decodedText;
+            highlightedCode = escapeHtml(decodedText);
           }
         }
       } else if (!lang) {
@@ -562,7 +621,7 @@ export function renderMarkdown(
           highlightedCode = result.value;
           language = result.language;
         } catch (autoErr) {
-          highlightedCode = decodedText;
+          highlightedCode = escapeHtml(decodedText);
         }
       }
     }
@@ -689,10 +748,11 @@ export function processMarkdownInText(
   showExternalContent = true,
   enableMarkdown = false,
   keyPrefix = "",
+  linkLabels?: LinkLabels,
 ): React.ReactNode {
   // Check if text contains markdown syntax patterns
   const markdownPatterns = [
-    /^#{1,6}/m, // Headers (# ## ### etc.)
+    /^#{1,6}\s/m, // Headers need the space, so a line starting with "#channel" stays plain
     /\*\*.*?\*\*/, // Bold (**text**)
     /\*.*?\*/, // Italic (*text*) or (*text*) but not single * at word boundaries
     /_.*?_/, // Italic (_text_)
@@ -713,13 +773,17 @@ export function processMarkdownInText(
 
   if (hasMarkdown && enableMarkdown) {
     // If markdown syntax is detected and markdown is enabled, render the entire text as markdown
-    return renderMarkdown(text, showExternalContent);
+    return renderMarkdown(text, showExternalContent, linkLabels);
   }
   // Otherwise, use the existing IRC formatting
-  return mircToHtml(text, keyPrefix);
+  return mircToHtml(text, keyPrefix, linkLabels);
 }
 
-export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
+export function mircToHtml(
+  text: string,
+  keyPrefix = "",
+  linkLabels?: LinkLabels,
+): React.ReactNode {
   const state = {
     bold: false,
     underline: false,
@@ -846,6 +910,7 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
           props.style,
           keyPrefix,
           elementIndexRef,
+          linkLabels,
         );
         processedResult.push(...urlProcessed);
       } else {
@@ -859,19 +924,88 @@ export function mircToHtml(text: string, keyPrefix = ""): React.ReactNode {
   return <>{processedResult}</>;
 }
 
-// Helper function to detect and render URLs in text
+/** Splits a run of plain text so every channel name in it becomes a link.
+ * Runs inside the URL tokenizer, on the parts left over between URLs, so a
+ * fragment identifier can never be mistaken for a channel. */
+function processChannelsInText(
+  text: string,
+  style: React.CSSProperties | undefined,
+  keyPrefix: string,
+  nextIndex: () => number,
+): React.ReactNode[] {
+  const mentions = findChannelMentions(text);
+  if (mentions.length === 0) {
+    return [
+      <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+        {text}
+      </span>,
+    ];
+  }
+
+  const parts: React.ReactNode[] = [];
+  let cursor = 0;
+  for (const mention of mentions) {
+    if (mention.start > cursor) {
+      parts.push(
+        <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+          {text.slice(cursor, mention.start)}
+        </span>,
+      );
+    }
+    parts.push(
+      <ChannelLink
+        key={`${keyPrefix}chan-${nextIndex()}`}
+        name={mention.name}
+        style={style}
+      />,
+    );
+    cursor = mention.end;
+  }
+  if (cursor < text.length) {
+    parts.push(
+      <span key={`${keyPrefix}text-${nextIndex()}`} style={style}>
+        {text.slice(cursor)}
+      </span>,
+    );
+  }
+  return parts;
+}
+
+// Matches http(s), irc(s) and bare www. links the way chat makes them clickable.
+// A link ends on a character that is not sentence punctuation, so "see x.com."
+// leaves the dot out; parentheses belong to the link only as a pair, as in
+// wiki/Foo_(bar).
+// A factory, so every caller gets its own lastIndex on the global regex.
+export const makeUrlRegex = () =>
+  /(?:(?:https?|ircs?):\/\/|www\.)(?:[^\s<>"{}|\\^`[\]()]|\([^\s()<>]*\))*(?:\([^\s()<>]*\)|[^\s<>"{}|\\^`[\]().,;:!?'])/gi;
+
+/** A web address as people read it: no scheme, no "www." and no trailing slash. */
+export function compactUrl(url: string): string {
+  return url
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/$/, "");
+}
+
+/** The first web link in `text`, exactly as chat would linkify it. */
+export function findFirstUrl(text: string): string | null {
+  for (const match of text.matchAll(makeUrlRegex())) {
+    if (/^https?:\/\//i.test(match[0])) return match[0];
+  }
+  return null;
+}
+
 function processUrlsInText(
   text: string,
   style?: React.CSSProperties,
   keyPrefix = "",
   elementIndexRef?: { current: number },
+  linkLabels?: LinkLabels,
 ): React.ReactNode[] {
   // Check if running in Tauri native environment
   const isTauriEnv = isTauri();
 
-  // URL regex pattern - matches http://, https://, irc://, ircs://, and www. URLs
-  const urlRegex =
-    /((?:https?|ircs?):\/\/[^\s<>"{}|\\^`[\]]+|www\.[^\s<>"{}|\\^`[\]]+)/gi;
+  const urlRegex = makeUrlRegex();
 
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
@@ -882,9 +1016,12 @@ function processUrlsInText(
     // Add text before the URL
     if (match.index > lastIndex) {
       parts.push(
-        <span key={`${keyPrefix}text-${elementIndex++}`} style={style}>
-          {text.slice(lastIndex, match.index)}
-        </span>,
+        ...processChannelsInText(
+          text.slice(lastIndex, match.index),
+          style,
+          keyPrefix,
+          () => elementIndex++,
+        ),
       );
     }
 
@@ -912,22 +1049,22 @@ function processUrlsInText(
       const linkClass = isIrcLink
         ? "text-blue-500 hover:text-blue-700 underline irc-link"
         : isExternalLink
-          ? "text-blue-500 hover:text-blue-700 underline external-link-security"
+          ? "text-blue-500 hover:text-blue-700 underline external-link-security link-compact"
           : "text-blue-500 hover:text-blue-700 underline";
 
       parts.push(
-        // inline-block + max-w + truncate: CSS ellipsis so the full URL text is in the
-        // DOM (copy-paste works) while long URLs don't overflow the message bubble.
         <a
           key={`${keyPrefix}url-${elementIndex++}`}
           href={isIrcLink ? url : fullUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${linkClass} inline-block max-w-[40ch] truncate align-bottom`}
+          className={`${linkClass} inline-block max-w-[min(40ch,100%)] truncate align-bottom`}
           style={style}
-          title={url}
+          title={isExternalLink ? undefined : url}
         >
-          {url}
+          {isExternalLink
+            ? (labelFor(linkLabels, url) ?? compactUrl(url))
+            : url}
         </a>,
       );
     }
@@ -939,9 +1076,12 @@ function processUrlsInText(
   // Add remaining text
   if (lastIndex < text.length) {
     parts.push(
-      <span key={`${keyPrefix}text-${elementIndex++}`} style={style}>
-        {text.slice(lastIndex)}
-      </span>,
+      ...processChannelsInText(
+        text.slice(lastIndex),
+        style,
+        keyPrefix,
+        () => elementIndex++,
+      ),
     );
   }
 

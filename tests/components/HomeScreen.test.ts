@@ -5,7 +5,7 @@ interface DiscoverServer {
   description: string;
   wss?: string;
   ircs?: string;
-  obsidian?: boolean;
+  obby?: boolean;
 }
 
 interface PrefillResult {

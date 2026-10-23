@@ -11,12 +11,14 @@
  */
 import type { StoreApi } from "zustand";
 import { base64DecodeUtf8 } from "../../lib/base64";
+import { SYNTHESISED_BOT_ID_PREFIX } from "../../lib/botPriority";
 import ircClient from "../../lib/ircClient";
 import {
   botCanRegisterPrivileged,
   PRIVILEGED_COMMANDS,
 } from "../../lib/privilegedCommands";
 import type { BotCommand, PushBotInfo } from "../../types";
+import { isHistoryEvent } from "../helpers";
 import useStore, { type AppState } from "../index";
 
 function decodeB64Json(value: string): unknown | null {
@@ -94,20 +96,13 @@ function commitBotCmds(
       const filteredCmds = botCanRegisterPrivileged(existingBot)
         ? cmds
         : cmds.filter((c) => {
-            if (PRIVILEGED_COMMANDS.has(c.name.toLowerCase())) {
-              console.warn(
-                "[pushbot] dropping privileged command from non-config bot",
-                { bot: senderNick, cmd: c.name },
-              );
-              return false;
-            }
-            return true;
+            return !PRIVILEGED_COMMANDS.has(c.name.toLowerCase());
           });
       const sharedChannels = s.channels
         .filter((c) => c.users.some((u) => u.username.toLowerCase() === key))
         .map((c) => c.name);
       const synthesisedBot: PushBotInfo = existingBot ?? {
-        bot_id: `draft-bot-cmds:${key}`,
+        bot_id: `${SYNTHESISED_BOT_ID_PREFIX}${key}`,
         nick: senderNick,
         realname: "",
         scope: "channel",
@@ -158,7 +153,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("WHO_END", ({ serverId, mask }) => {
-    if (!mask?.startsWith("#")) return;
+    if (!mask || !ircClient.isChannel(serverId, mask)) return;
     const server = store.getState().servers.find((s) => s.id === serverId);
     if (!server) return;
     const channel = server.channels.find(
@@ -176,7 +171,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("TAGMSG", (response) => {
     const { serverId, sender, mtags } = response;
-    if (!mtags) return;
+    if (!mtags || isHistoryEvent(store.getState(), serverId, mtags)) return;
 
     // obby.world/bot-info: server-pushed bot directory entries
     // (initial burst + per-bot 'add'/'update'/'remove' events).
@@ -249,7 +244,6 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("BATCH_START", ({ serverId, batchId, type, sender }) => {
     if (type !== "draft/bot-cmds") return;
-    console.log("[bot-cmds] BATCH start", { batchId, sender });
     botCmdsBatches.set(`${serverId}:${batchId}`, {
       sender: sender ?? "",
       fragments: [],
@@ -277,7 +271,7 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
             : {
                 ...(s.bots ?? {}),
                 [key]: {
-                  bot_id: `draft-bot-cmds:${key}`,
+                  bot_id: `${SYNTHESISED_BOT_ID_PREFIX}${key}`,
                   nick: sender,
                   realname: "",
                   scope: "channel",
@@ -311,16 +305,9 @@ export function registerPushBotHandlers(store: StoreApi<AppState>): void {
       }));
     }
     const joined = entry.fragments.join("");
-    console.log("[bot-cmds] BATCH end", {
-      batchId,
-      sender: entry.sender,
-      fragments: entry.fragments.length,
-      joinedLength: joined.length,
-    });
     if (!entry.fragments.length) return;
     const cmds = decodeBotCmds(joined);
     if (cmds) {
-      console.log("[bot-cmds] decoded ok", { count: cmds.length });
       commitBotCmds(store, serverId, entry.sender, cmds);
     } else {
       console.warn(

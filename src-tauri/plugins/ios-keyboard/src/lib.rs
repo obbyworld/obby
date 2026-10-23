@@ -32,7 +32,7 @@ impl<R: Runtime, T: Manager<R>> crate::KeyboardExt<R> for T {
 }
 
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
-    Builder::new("keyboard")
+    Builder::new("ios-keyboard")
         .invoke_handler(tauri::generate_handler![commands::ping])
         .setup(|app, api| {
             #[cfg(mobile)]

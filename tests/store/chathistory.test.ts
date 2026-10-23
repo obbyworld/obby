@@ -1,10 +1,10 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
 import {
   chathistoryBuffers,
-  reactionBuffers,
+  historyEditBuffers,
 } from "../../src/store/handlers/batches";
 import type { Channel, Message } from "../../src/types";
 
@@ -448,7 +448,7 @@ describe("chathistory batch — reactions and replies", () => {
   beforeEach(() => {
     setupServer();
     chathistoryBuffers.clear();
-    reactionBuffers.clear();
+    historyEditBuffers.clear();
     useStore.setState({
       processedMessageIds: new Set(),
       activeBatches: {
@@ -570,5 +570,151 @@ describe("chathistory batch — reactions and replies", () => {
     const reply = msgs?.find((m) => m.msgid === "msg-reply");
     expect(reply).toBeDefined();
     expect(reply?.replyMessage?.msgid).toBe("msg-orig");
+  });
+
+  it("applies a replayed redaction to a message from the same batch", () => {
+    ircClient.triggerEvent("CHANMSG", {
+      serverId: "srv-1",
+      sender: "alice",
+      channelName: "#test",
+      message: "oops",
+      timestamp: new Date("2026-01-01T10:03:00.000Z"),
+      mtags: { batch: "batchRR", msgid: "msg-redacted" },
+    });
+    ircClient.triggerEvent("REDACT", {
+      serverId: "srv-1",
+      sender: "alice",
+      target: "#test",
+      msgid: "msg-redacted",
+      reason: "",
+      mtags: { batch: "batchRR" },
+    });
+    ircClient.triggerEvent("BATCH_END", {
+      serverId: "srv-1",
+      batchId: "batchRR",
+    });
+
+    const target = useStore
+      .getState()
+      .messages["srv-1-chan-1"]?.find((m) => m.msgid === "msg-redacted");
+    expect(target?.content).toBe("");
+    expect(target?.tags?.["obby-redacted-by"]).toBe("sender");
+  });
+
+  it("applies a replayed reaction aimed at one line of a multiline message", () => {
+    ircClient.triggerEvent("MULTILINE_MESSAGE", {
+      serverId: "srv-1",
+      sender: "alice",
+      channelName: "#test",
+      target: "#test",
+      message: "line one\nline two",
+      lines: ["line one", "line two"],
+      messageIds: ["line-1", "line-2"],
+      timestamp: new Date("2026-01-01T10:04:00.000Z"),
+      mtags: { batch: "batchRR", msgid: "multi-1" },
+    });
+    ircClient.triggerEvent("TAGMSG", {
+      serverId: "srv-1",
+      sender: "bob",
+      channelName: "#test",
+      timestamp: new Date("2026-01-01T10:04:01.000Z"),
+      mtags: {
+        batch: "batchRR",
+        "+draft/react": "👍",
+        "+draft/reply": "line-2",
+      },
+    });
+    ircClient.triggerEvent("BATCH_END", {
+      serverId: "srv-1",
+      batchId: "batchRR",
+    });
+
+    const multi = useStore
+      .getState()
+      .messages["srv-1-chan-1"]?.find((m) => m.msgid === "multi-1");
+    expect(multi?.reactions).toEqual([{ emoji: "👍", userId: "bob" }]);
+  });
+
+  it("does not answer a CTCP request replayed from history", () => {
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    ircClient.triggerEvent("CHANMSG", {
+      serverId: "srv-1",
+      sender: "alice",
+      channelName: "#test",
+      message: "\u0001VERSION\u0001",
+      timestamp: new Date("2026-01-01T10:05:00.000Z"),
+      mtags: { batch: "batchRR", msgid: "ctcp-1" },
+    });
+    expect(sendRaw).not.toHaveBeenCalled();
+    sendRaw.mockRestore();
+  });
+});
+
+describe("chathistory for a private chat", () => {
+  const privateChat = () =>
+    useStore
+      .getState()
+      .servers.find((s) => s.id === "srv-1")
+      ?.privateChats?.find((pc) => pc.username === "Bob");
+
+  beforeEach(() => {
+    setupServer();
+    chathistoryBuffers.clear();
+    useStore.setState((state) => ({
+      servers: state.servers.map((server) => ({
+        ...server,
+        privateChats: [
+          {
+            id: "pm-1",
+            username: "Bob",
+            serverId: "srv-1",
+            unreadCount: 0,
+            isMentioned: false,
+          },
+        ],
+      })),
+    }));
+  });
+
+  it("marks the private chat as loading and not loading again", () => {
+    ircClient.triggerEvent("CHATHISTORY_LOADING", {
+      serverId: "srv-1",
+      channelName: "bob",
+      isLoading: true,
+    });
+    expect(privateChat()?.isLoadingHistory).toBe(true);
+
+    ircClient.triggerEvent("CHATHISTORY_LOADING", {
+      serverId: "srv-1",
+      channelName: "bob",
+      isLoading: false,
+    });
+    expect(privateChat()?.isLoadingHistory).toBe(false);
+  });
+
+  it.each([
+    ["has messages", [makeMessage({ id: "f1", msgid: "f1" })], true],
+    ["is empty", [], false],
+  ])("sets hasMoreHistory when the batch %s", (_name, buffered, expected) => {
+    useStore.setState({
+      activeBatches: {
+        "srv-1": {
+          batchPM: {
+            type: "chathistory",
+            parameters: ["bob"],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    });
+    chathistoryBuffers.set("batchPM", buffered);
+
+    ircClient.triggerEvent("BATCH_END", {
+      serverId: "srv-1",
+      batchId: "batchPM",
+    });
+
+    expect(privateChat()?.hasMoreHistory).toBe(expected);
   });
 });

@@ -1,6 +1,13 @@
-import { isChannelTarget } from "../../ircUtils";
+import type { WhoisSession } from "../../../types";
+import { chantypesOf, isChannelTarget } from "../../ircUtils";
 import type { IRCClientContext } from "../IRCClientContext";
 import { getNickFromNuh, getTimestampFromTags } from "../utils";
+
+const isChannelOn = (
+  ctx: IRCClientContext,
+  serverId: string,
+  name: string | undefined,
+) => isChannelTarget(name, chantypesOf(ctx.isupportValues.get(serverId)));
 
 // Labeled-response wraps every multi-line server reply (e.g. PRIVMSG-to-away,
 // where the server emits both 301 RPL_AWAY and the echo) in a batch whose
@@ -28,7 +35,7 @@ export function handlePrivmsg(
   mtags: Record<string, string> | undefined,
 ): void {
   const target = parv[0];
-  const isChannel = isChannelTarget(target);
+  const isChannel = isChannelOn(ctx, serverId, target);
   const sender = getNickFromNuh(source);
   const message = parv.slice(1).join(" ");
 
@@ -96,7 +103,7 @@ export function handleNotice(
   mtags: Record<string, string> | undefined,
 ): void {
   const target = parv[0];
-  const isChannel = isChannelTarget(target);
+  const isChannel = isChannelOn(ctx, serverId, target);
   const sender = getNickFromNuh(source);
   const message = parv.slice(1).join(" ");
 
@@ -149,7 +156,7 @@ export function handleRedact(
 ): void {
   const target = parv[0];
   const msgid = parv[1];
-  const reason = parv[2] ? parv[2].substring(1) : "";
+  const reason = parv[2] ?? "";
   const sender = getNickFromNuh(source);
   ctx.triggerEvent("REDACT", {
     serverId,
@@ -194,6 +201,37 @@ export function handleBatch(
       batchTags: mtags,
     });
 
+    // Begin tracking obby.world/whois parent batch.  Sessions accumulate
+    // into builder.sessionsByRef as obby.world/whois-session sub-batches
+    // open and per-session numerics arrive.
+    if (batchType === "obby.world/whois") {
+      const target = parameters[0] ?? "";
+      if (!ctx.whoisBuilders.has(serverId)) {
+        ctx.whoisBuilders.set(serverId, new Map());
+      }
+      ctx.whoisBuilders.get(serverId)?.set(batchId, {
+        target,
+        sessionsByRef: new Map(),
+        securityGroups: [],
+      });
+    } else if (batchType === "obby.world/whois-session") {
+      // Sub-batch: identify parent via @batch mtag, create the session
+      // record up front so per-numeric handlers can find it by sub-ref.
+      const parentRef = mtags?.batch;
+      const parent = parentRef
+        ? ctx.whoisBuilders.get(serverId)?.get(parentRef)
+        : undefined;
+      if (parent) {
+        const ordinal = Number.parseInt(parameters[0] ?? "0", 10) || 0;
+        const totalRaw = Number.parseInt(parameters[1] ?? "", 10);
+        parent.sessionsByRef.set(batchId, {
+          ordinal,
+          total: Number.isFinite(totalRaw) ? totalRaw : undefined,
+          since: mtags?.["obby.world/since"],
+        });
+      }
+    }
+
     ctx.triggerEvent("BATCH_START", {
       serverId,
       batchId,
@@ -236,7 +274,7 @@ export function handleBatch(
           batch.batchTags ||
           (batch.batchMsgId ? { msgid: batch.batchMsgId } : undefined),
         sender,
-        channelName: isChannelTarget(target) ? target : undefined,
+        channelName: isChannelOn(ctx, serverId, target) ? target : undefined,
         target,
         message: combinedMessage,
         lines: batch.messages,
@@ -247,6 +285,64 @@ export function handleBatch(
             ? new Date(Math.min(...batch.timestamps.map((t) => t.getTime())))
             : getTimestampFromTags(mtags)),
       });
+    }
+
+    // Finalize obby.world/whois parent batch: emit a single completion
+    // event with the assembled sessions array + summary count.
+    //
+    // The builder may contain real per-session sub-batch records AND
+    // a synthesized "implicit" record populated from per-session
+    // numerics that landed in the parent batch (single-session /
+    // bot / non-privileged-querier path). Prefer the real sub-batch
+    // records when present; fall back to the implicit one only when
+    // it has substantive data (so we don't show an empty Session 1
+    // card for truly minimal WHOIS replies).
+    if (batch?.type === "obby.world/whois") {
+      const builder = ctx.whoisBuilders.get(serverId)?.get(batchId);
+      if (builder) {
+        const realSessions: WhoisSession[] = [];
+        let implicit: WhoisSession | undefined;
+        for (const [key, session] of builder.sessionsByRef.entries()) {
+          if (key === "__implicit__") {
+            implicit = session;
+          } else {
+            realSessions.push(session);
+          }
+        }
+        let sessions: WhoisSession[] = realSessions.sort(
+          (a, b) => a.ordinal - b.ordinal,
+        );
+        if (sessions.length === 0 && implicit) {
+          // Only emit the implicit if it has at least one populated
+          // field beyond `ordinal`. The bot / single-session case
+          // typically populates host / TLS / idle etc.; if even that
+          // is missing, hide the Sessions section entirely.
+          const hasData = Object.keys(implicit).some(
+            (k) =>
+              k !== "ordinal" &&
+              k !== "total" &&
+              (implicit as unknown as Record<string, unknown>)[k] !== undefined,
+          );
+          if (hasData) sessions = [implicit];
+        }
+        const sessionCount =
+          builder.summaryCount !== undefined
+            ? builder.summaryCount
+            : sessions.length > 0
+              ? sessions.length
+              : undefined;
+        ctx.triggerEvent("OBBY_WHOIS_COMPLETE", {
+          serverId,
+          nick: builder.target,
+          sessions,
+          sessionCount,
+          securityGroups:
+            builder.securityGroups.length > 0
+              ? builder.securityGroups
+              : undefined,
+        });
+        ctx.whoisBuilders.get(serverId)?.delete(batchId);
+      }
     }
 
     serverBatches?.delete(batchId);

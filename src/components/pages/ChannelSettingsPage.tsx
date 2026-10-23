@@ -1,0 +1,1427 @@
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  FaCheck,
+  FaEdit,
+  FaPlus,
+  FaSpinner,
+  FaTimes,
+  FaTrash,
+} from "react-icons/fa";
+import ircClient from "../../lib/ircClient";
+import {
+  hasOpPermission,
+  humanizeNamedMode,
+  isAbsoluteHttpUrl,
+} from "../../lib/ircUtils";
+import { Button } from "../../lib/modal/components";
+import {
+  lookupNamedModeMeta,
+  NAMED_MODE_GROUP_LABELS,
+  NAMED_MODE_GROUP_ORDER,
+  type NamedModeGroup,
+} from "../../lib/namedModeRegistry";
+import useStore from "../../store";
+import type { Channel, NamedModeSpec } from "../../types";
+import AvatarUpload from "../ui/AvatarUpload";
+import FloodSettingsModal from "../ui/FloodSettingsModal";
+import { PageShell } from "../ui/page/PageShell";
+import { SettingGroup, SettingRow, Switch } from "../ui/page/SettingRow";
+import type { PageProps } from "./PageHost";
+import {
+  getChannelSettingsAccess,
+  getChannelSettingsSections,
+} from "./pageSections";
+
+interface FloodRule {
+  amount: number;
+  type: "c" | "j" | "k" | "m" | "n" | "t" | "r";
+  action?: string;
+  time?: number;
+}
+
+interface ChannelMode {
+  type: "b" | "e" | "I";
+  mask: string;
+  setter?: string;
+  timestamp?: number;
+}
+
+type ListSection = "bans" | "exceptions" | "invites";
+type ParsedModes = Record<string, string | null>;
+type ModeEdit = { sign: "+" | "-"; letter: string; arg?: string };
+
+const LIST_TYPE: Record<ListSection, ChannelMode["type"]> = {
+  bans: "b",
+  exceptions: "e",
+  invites: "I",
+};
+
+// The server hides the +k, +H and +L arguments from non-operators, so we use a placeholder that never reads as an empty value.
+const HIDDEN_PARAM = "__HIDDEN__";
+const FLAG_LETTERS = [
+  "i",
+  "m",
+  "s",
+  "t",
+  "n",
+  "c",
+  "C",
+  "D",
+  "G",
+  "K",
+  "M",
+  "N",
+  "O",
+  "p",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "V",
+  "z",
+];
+const VALUE_LETTERS = ["l", "k", "H", "L", "F", "f"];
+const UNSET_NEEDS_ARG = new Set(["k", "H", "L", "F", "f"]);
+// We send modes in a fixed order, so the MODE line stays the same every time.
+const MODE_SEND_ORDER = [
+  "l",
+  "i",
+  "k",
+  "m",
+  "s",
+  "t",
+  "n",
+  "c",
+  "C",
+  "D",
+  "G",
+  "H",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "p",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "V",
+  "z",
+  "F",
+  "f",
+];
+
+const isListSection = (id: string): id is ListSection => id in LIST_TYPE;
+
+function flagEdit(
+  letter: string,
+  wanted: boolean,
+  original: ParsedModes,
+): ModeEdit | null {
+  const isSet = letter in original;
+  if (wanted === isSet) return null;
+  return { sign: wanted ? "+" : "-", letter };
+}
+
+function valueEdit(
+  letter: string,
+  wanted: string,
+  original: ParsedModes,
+): ModeEdit | null {
+  if (wanted) {
+    return wanted === original[letter]
+      ? null
+      : { sign: "+", letter, arg: wanted };
+  }
+  if (!(letter in original) || original[letter] === HIDDEN_PARAM) return null;
+  return {
+    sign: "-",
+    letter,
+    arg: UNSET_NEEDS_ARG.has(letter) ? "*" : undefined,
+  };
+}
+
+function buildModeCommand(
+  channelName: string,
+  edits: Array<ModeEdit | null>,
+): string | null {
+  const present = edits.filter((e): e is ModeEdit => e !== null);
+  if (present.length === 0) return null;
+  const sets = present.filter((e) => e.sign === "+");
+  const unsets = present.filter((e) => e.sign === "-");
+  const letters = [
+    sets.length ? `+${sets.map((e) => e.letter).join("")}` : "",
+    unsets.length ? `-${unsets.map((e) => e.letter).join("")}` : "",
+  ].join("");
+  const args = [...sets, ...unsets].flatMap((e) => (e.arg ? [e.arg] : []));
+  return ["MODE", channelName, letters, ...args].join(" ");
+}
+
+function parseCurrentChannelModes(
+  modestring: string,
+  modeargs: string[],
+  chanmodes?: string,
+): ParsedModes {
+  const modeGroups = chanmodes ? chanmodes.split(",") : [];
+  const groupA = modeGroups[0] || "";
+  const groupB = modeGroups[1] || "";
+  const groupC = modeGroups[2] || "";
+
+  const parsedModes: ParsedModes = {};
+  let argIndex = 0;
+  let currentAction: "+" | "-" = "+";
+
+  for (const char of modestring) {
+    if (char === "+" || char === "-") {
+      currentAction = char;
+      continue;
+    }
+
+    let hasParam = false;
+    if (groupA.includes(char) || groupB.includes(char)) {
+      hasParam = true;
+    } else if (groupC.includes(char)) {
+      hasParam = currentAction === "+";
+    }
+
+    let param =
+      hasParam && argIndex < modeargs.length ? modeargs[argIndex++] : null;
+    if ((char === "k" || char === "H" || char === "L") && param === null) {
+      param = HIDDEN_PARAM;
+    }
+
+    if (currentAction === "+") {
+      parsedModes[char] = param;
+    } else {
+      delete parsedModes[char];
+    }
+  }
+
+  return parsedModes;
+}
+
+const displayValue = (parsed: ParsedModes, letter: string): string => {
+  const stored = parsed[letter];
+  return stored === undefined || stored === null || stored === HIDDEN_PARAM
+    ? ""
+    : stored;
+};
+
+const FlagRow: React.FC<{
+  letter: string;
+  title: string;
+  description: string;
+  checked: boolean;
+  onChange: (on: boolean) => void;
+}> = ({ letter, title, description, checked, onChange }) => (
+  <SettingRow
+    id={`channel.${letter}`}
+    title={title}
+    description={description}
+    control={<Switch checked={checked} onChange={onChange} label={title} />}
+  />
+);
+
+const EmptyRow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="px-4 py-3 text-sm text-discord-text-muted">{children}</div>
+);
+
+const AUTOSAVE_DELAY_MS = 400;
+// We pass the avatar size token as a value, since Lingui reads a literal {size} as its own placeholder.
+const sizeToken = "{size}";
+
+const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
+  page,
+}) => {
+  const { serverId } = page;
+  const servers = useStore((state) => state.servers);
+  const metadataSet = useStore((state) => state.metadataSet);
+  const server = servers.find((s) => s.id === serverId);
+  const channel = server?.channels.find(
+    (c) => c.name.toLowerCase() === page.channelName.toLowerCase(),
+  );
+  const channelName = channel?.name ?? page.channelName;
+
+  const [modes, setModes] = useState<ChannelMode[]>([]);
+  const [loading, setLoading] = useState(false);
+  const originalModesRef = useRef<ParsedModes>({});
+  const modeFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flushModesRef = useRef<() => Promise<void>>(async () => {});
+  const flushAllRef = useRef<() => void>(() => {});
+  const queuedModesRef = useRef(new Set<string>());
+  const sentValuesRef = useRef(new Map<string, string | boolean>());
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const addTimeout = useCallback((fn: () => void, delay: number) => {
+    const t = setTimeout(fn, delay);
+    timeoutsRef.current.push(t);
+    return t;
+  }, []);
+  const clearPendingTimeouts = useCallback(() => {
+    for (const t of timeoutsRef.current) clearTimeout(t);
+    timeoutsRef.current = [];
+  }, []);
+
+  const [sectionId, setSectionId] = useState(page.section ?? "general");
+  useEffect(() => {
+    setSectionId(page.section ?? "general");
+  }, [page.section]);
+
+  const [newMask, setNewMask] = useState("");
+  const [editingMask, setEditingMask] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [removingMasks, setRemovingMasks] = useState(new Set<string>());
+
+  // We keep only the user's edits here, keyed by field or mode letter, and show the server's value for everything else.
+  const [draft, setDraft] = useState<Record<string, string | boolean>>({});
+  const [renameReason, setRenameReason] = useState("");
+  const [pendingNamedModes, setPendingNamedModes] = useState<
+    Record<string, { sign: "+" | "-"; param?: string }>
+  >({});
+  const [isFloodModalOpen, setIsFloodModalOpen] = useState(false);
+
+  useEffect(
+    () => () => {
+      if (modeFlushTimerRef.current) clearTimeout(modeFlushTimerRef.current);
+      flushAllRef.current();
+    },
+    [],
+  );
+
+  const liveModes = parseCurrentChannelModes(
+    channel?.modes || "",
+    channel?.modeArgs || [],
+    server?.chanmodes,
+  );
+  const serverText: Record<string, string> = {
+    topic: channel?.topic || "",
+    avatar: channel?.metadata?.avatar?.value || "",
+    "display-name": channel?.metadata?.["display-name"]?.value || "",
+    "draft/emoji": channel?.metadata?.["draft/emoji"]?.value || "",
+    name: channel?.name || "",
+  };
+  const text = (key: string) =>
+    (draft[key] as string | undefined) ?? serverText[key];
+  const flag = (letter: string) =>
+    (draft[letter] as boolean | undefined) ?? letter in liveModes;
+  const value = (letter: string) =>
+    (draft[letter] as string | undefined) ?? displayValue(liveModes, letter);
+  const edit = (key: string, next: string | boolean) =>
+    setDraft((prev) => ({ ...prev, [key]: next }));
+  const queueModes = (...keys: string[]) => {
+    for (const key of keys) queuedModesRef.current.add(key);
+    if (modeFlushTimerRef.current) clearTimeout(modeFlushTimerRef.current);
+    modeFlushTimerRef.current = setTimeout(() => {
+      modeFlushTimerRef.current = null;
+      void flushModesRef.current();
+    }, AUTOSAVE_DELAY_MS);
+  };
+  const setFlag = (letter: string, on: boolean) => {
+    edit(letter, on);
+    queueModes(letter);
+  };
+
+  const currentUser = ircClient.getCurrentUser(serverId);
+  const currentUserInChannel = channel?.users.find(
+    (u) => u.username === currentUser?.username,
+  );
+  const userHasOpPermission = hasOpPermission(currentUserInChannel?.status);
+  const { canEditMetadata, canEditAdvanced } =
+    server && channel
+      ? getChannelSettingsAccess(server, channel)
+      : { canEditMetadata: false, canEditAdvanced: false };
+
+  const clearLists = useCallback(() => {
+    useStore.setState((state) => {
+      const updatedServers = state.servers.map((server) => {
+        if (server.id === serverId) {
+          const updatedChannels = server.channels.map((ch) => {
+            if (ch.name === channelName) {
+              return { ...ch, bans: [], invites: [], exceptions: [] };
+            }
+            return ch;
+          });
+          return { ...server, channels: updatedChannels };
+        }
+        return server;
+      });
+      return { servers: updatedServers };
+    });
+  }, [serverId, channelName]);
+
+  const parseChannelModes = useCallback((currentChannel: Channel) => {
+    const parsedModes: ChannelMode[] = [
+      ...(currentChannel.bans ?? []).map((ban) => ({
+        type: "b" as const,
+        mask: ban.mask,
+        setter: ban.setter,
+        timestamp: ban.timestamp,
+      })),
+      ...(currentChannel.exceptions ?? []).map((exception) => ({
+        type: "e" as const,
+        mask: exception.mask,
+        setter: exception.setter,
+        timestamp: exception.timestamp,
+      })),
+      ...(currentChannel.invites ?? []).map((invite) => ({
+        type: "I" as const,
+        mask: invite.mask,
+        setter: invite.setter,
+        timestamp: invite.timestamp,
+      })),
+    ];
+    setModes(parsedModes);
+  }, []);
+
+  const loadCurrentChannelModes = useCallback(() => {
+    const currentServer = useStore
+      .getState()
+      .servers.find((s) => s.id === serverId);
+    const currentChannel = currentServer?.channels.find(
+      (c) => c.name === channelName,
+    );
+    if (!currentChannel) return;
+    originalModesRef.current = parseCurrentChannelModes(
+      currentChannel.modes || "",
+      currentChannel.modeArgs || [],
+      currentServer?.chanmodes,
+    );
+  }, [serverId, channelName]);
+
+  const refreshLists = useCallback(() => {
+    clearLists();
+    void Promise.all([
+      ircClient.sendRaw(serverId, `MODE ${channelName} +b`),
+      ircClient.sendRaw(serverId, `MODE ${channelName} +e`),
+      ircClient.sendRaw(serverId, `MODE ${channelName} +I`),
+    ]).catch((error) => {
+      console.error("Failed to refresh channel mode lists:", error);
+    });
+  }, [serverId, channelName, clearLists]);
+
+  const syncFromChannel = useCallback(() => {
+    const updatedChannel = useStore
+      .getState()
+      .servers.find((s) => s.id === serverId)
+      ?.channels.find((c) => c.name === channelName);
+    if (updatedChannel) {
+      parseChannelModes(updatedChannel);
+      loadCurrentChannelModes();
+    }
+  }, [serverId, channelName, parseChannelModes, loadCurrentChannelModes]);
+
+  const fetchChannelModes = useCallback(async () => {
+    setLoading(true);
+    try {
+      clearLists();
+      await ircClient.sendRaw(serverId, `MODE ${channelName}`);
+      await ircClient.sendRaw(serverId, `MODE ${channelName} +b`);
+      await ircClient.sendRaw(serverId, `MODE ${channelName} +e`);
+      await ircClient.sendRaw(serverId, `MODE ${channelName} +I`);
+
+      addTimeout(() => {
+        syncFromChannel();
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Failed to fetch channel modes:", error);
+      setLoading(false);
+    }
+  }, [serverId, channelName, clearLists, syncFromChannel, addTimeout]);
+
+  const addMode = async (type: ChannelMode["type"], mask: string) => {
+    setIsAdding(true);
+    try {
+      await ircClient.sendRaw(serverId, `MODE ${channelName} +${type} ${mask}`);
+      setNewMask("");
+      addTimeout(() => {
+        refreshLists();
+        addTimeout(() => {
+          syncFromChannel();
+          setIsAdding(false);
+        }, 1000);
+      }, 500);
+    } catch (error) {
+      console.error(`Failed to add ${type} mode:`, error);
+      setIsAdding(false);
+    }
+  };
+
+  const removeMode = async (type: ChannelMode["type"], mask: string) => {
+    setRemovingMasks((prev) => new Set(prev).add(mask));
+    const stopRemoving = () =>
+      setRemovingMasks((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(mask);
+        return newSet;
+      });
+    try {
+      await ircClient.sendRaw(serverId, `MODE ${channelName} -${type} ${mask}`);
+      addTimeout(() => {
+        refreshLists();
+        addTimeout(() => {
+          syncFromChannel();
+          stopRemoving();
+        }, 1000);
+      }, 500);
+    } catch (error) {
+      console.error(`Failed to remove ${type} mode:`, error);
+      stopRemoving();
+    }
+  };
+
+  const cancelEditing = () => {
+    setEditingMask(null);
+    setEditValue("");
+  };
+
+  const saveEdit = async (
+    type: ChannelMode["type"],
+    oldMask: string,
+    newMask: string,
+  ) => {
+    if (oldMask === newMask) {
+      cancelEditing();
+      return;
+    }
+
+    try {
+      await ircClient.sendRaw(
+        serverId,
+        `MODE ${channelName} -${type} ${oldMask}`,
+      );
+      await ircClient.sendRaw(
+        serverId,
+        `MODE ${channelName} +${type} ${newMask}`,
+      );
+      cancelEditing();
+      addTimeout(() => {
+        refreshLists();
+        addTimeout(syncFromChannel, 1000);
+      }, 500);
+    } catch (error) {
+      console.error(`Failed to edit ${type} mode:`, error);
+    }
+  };
+
+  const isPendingSend = (key: string, next: string | boolean | undefined) =>
+    next !== undefined && sentValuesRef.current.get(key) !== next;
+
+  const commitText = async (key: string, next = draft[key] as string) => {
+    if (!isPendingSend(key, next)) return;
+    const wanted = key === "draft/emoji" ? next.trim() : next;
+    if (wanted === serverText[key]) return;
+    sentValuesRef.current.set(key, next);
+    if (key === "topic") ircClient.setTopic(serverId, channelName, wanted);
+    else await metadataSet(serverId, channelName, key, wanted || undefined);
+  };
+
+  const commitRename = () => {
+    const typedName = draft.name as string | undefined;
+    if (typedName === undefined || !isPendingSend("name", typedName)) return;
+    const newName = typedName.trim();
+    if (!newName || newName === channel?.name) return;
+    sentValuesRef.current.set("name", typedName);
+    ircClient.renameChannel(
+      serverId,
+      channelName,
+      newName,
+      renameReason.trim() || undefined,
+    );
+    setRenameReason("");
+  };
+
+  const sendModeEdits = async (edits: Array<ModeEdit | null>) => {
+    const command = buildModeCommand(channelName, edits);
+    if (!command) return;
+    await ircClient.sendRaw(serverId, command);
+    // We record what we sent as the new baseline, so the next autosave does
+    // not resend a change while the server's echo is still on its way.
+    const next = { ...originalModesRef.current };
+    for (const edit of edits) {
+      if (!edit) continue;
+      if (edit.sign === "+") next[edit.letter] = edit.arg ?? null;
+      else delete next[edit.letter];
+    }
+    originalModesRef.current = next;
+  };
+
+  flushModesRef.current = async () => {
+    const queued = queuedModesRef.current;
+    queuedModesRef.current = new Set();
+    const original = originalModesRef.current;
+    const letters = MODE_SEND_ORDER.filter(
+      (letter) => queued.has(letter) && draft[letter] !== undefined,
+    );
+    for (const letter of letters)
+      sentValuesRef.current.set(letter, draft[letter]);
+    await sendModeEdits(
+      letters.map((letter) => {
+        if (!VALUE_LETTERS.includes(letter)) {
+          return flagEdit(letter, flag(letter), original);
+        }
+        const wanted = value(letter).trim();
+        return valueEdit(
+          letter,
+          letter === "f" && wanted === "Default" ? "" : wanted,
+          original,
+        );
+      }),
+    );
+    const items = Object.entries(pendingNamedModes).map(([name, change]) => ({
+      sign: change.sign,
+      name,
+      param: change.param,
+    }));
+    if (!queued.has("named-modes") || !items.length || !server) return;
+    ircClient.sendNamedMode(serverId, channelName, items, server.namedModes);
+    setPendingNamedModes({});
+  };
+
+  // We send every edit still waiting when the page closes, so nothing typed is lost.
+  flushAllRef.current = () => {
+    for (const key of Object.keys(serverText)) {
+      if (key === "name") commitRename();
+      else void commitText(key);
+    }
+    for (const key of Object.keys(draft))
+      if (!(key in serverText)) queuedModesRef.current.add(key);
+    if (Object.keys(pendingNamedModes).length)
+      queuedModesRef.current.add("named-modes");
+    void flushModesRef.current();
+  };
+
+  useEffect(() => () => clearPendingTimeouts(), [clearPendingTimeouts]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Using channelName instead of channel to avoid infinite loop from object reference changes
+  useEffect(() => {
+    if (channel) {
+      setModes([]);
+      fetchChannelModes();
+    }
+  }, [channelName, fetchChannelModes]);
+
+  // A server update settles what we sent, so we drop those edits and show the server's value again.
+  useEffect(() => {
+    if (!channel) return;
+    const sent = sentValuesRef.current;
+    if (sent.size > 0) {
+      sentValuesRef.current = new Map();
+      setDraft((prev) =>
+        Object.fromEntries(
+          Object.entries(prev).filter(([key, next]) => sent.get(key) !== next),
+        ),
+      );
+    }
+    loadCurrentChannelModes();
+  }, [channel, loadCurrentChannelModes]);
+
+  if (!channel) {
+    return (
+      <PageShell title={page.channelName}>
+        <p className="text-sm text-discord-text-muted">
+          <Trans>You are no longer in this channel</Trans>
+        </p>
+      </PageShell>
+    );
+  }
+
+  const sections = getChannelSettingsSections({
+    canEditMetadata,
+    canEditAdvanced,
+  });
+  const activeId = sections.some((s) => s.id === sectionId)
+    ? sectionId
+    : "bans";
+
+  const handleFloodSettingsSave = (
+    newFloodProfile: string,
+    floodRules: Array<FloodRule & { id: string }>,
+    seconds: number,
+  ) => {
+    edit("F", newFloodProfile);
+    const rulesString = floodRules
+      .map(
+        (rule) =>
+          `${rule.amount}${rule.type}${rule.action ? `#${rule.action}` : ""}${rule.time ? `:${rule.time}` : ""}`,
+      )
+      .join(",");
+    edit("f", rulesString ? `[${rulesString}]:${seconds}` : "Default");
+    setIsFloodModalOpen(false);
+    queueModes("F", "f");
+  };
+
+  const generalSection = (
+    <>
+      <SettingGroup>
+        <SettingRow
+          id="channel.topic"
+          title={t`Topic`}
+          description={t`Set the topic shown for this channel. Everyone can see it.`}
+        >
+          <input
+            type="text"
+            value={text("topic")}
+            onChange={(e) => edit("topic", e.target.value)}
+            onBlur={() => void commitText("topic")}
+            placeholder={t`Welcome to the channel!`}
+            className="field-input w-full"
+          />
+        </SettingRow>
+        <SettingRow
+          id="channel.avatar"
+          title={t`Avatar`}
+          description={
+            server?.filehost
+              ? t`Upload an image or enter a URL. Use ${sizeToken} in the URL for dynamic sizing.`
+              : t`Enter a URL. Use ${sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/${sizeToken}/channel.jpg`
+          }
+        >
+          {server?.filehost ? (
+            <AvatarUpload
+              currentAvatarUrl={text("avatar")}
+              onAvatarUrlChange={(url) => {
+                edit("avatar", url);
+                void commitText("avatar", url);
+              }}
+              serverId={serverId}
+              channelName={channelName}
+            />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <input
+                type="text"
+                value={text("avatar")}
+                onChange={(e) => edit("avatar", e.target.value)}
+                onBlur={() => void commitText("avatar")}
+                placeholder={t`https://example.com/avatar/${sizeToken}/channel.jpg`}
+                className="field-input w-full"
+              />
+              {isAbsoluteHttpUrl(text("avatar")) && (
+                <img
+                  src={text("avatar").replace("{size}", "64")}
+                  alt={t`Channel avatar preview`}
+                  className="w-16 h-16 rounded-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              )}
+            </div>
+          )}
+        </SettingRow>
+        <SettingRow
+          id="channel.display-name"
+          title={t`Display name`}
+          description={t`Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name (${channelName}).`}
+          field={
+            <input
+              type="text"
+              value={text("display-name")}
+              onChange={(e) => edit("display-name", e.target.value)}
+              onBlur={() => void commitText("display-name")}
+              placeholder={t`General Support Channel`}
+              className="field-input w-full"
+            />
+          }
+        />
+        <SettingRow
+          id="channel.draft/emoji"
+          title={t`Custom emoji pack`}
+          description={t`Enter the URL of an IRCv3 custom-emoji pack JSON document. Its shortcodes override the network pack in this channel. Leave blank for the network default.`}
+          field={
+            <input
+              type="url"
+              value={text("draft/emoji")}
+              onChange={(e) => edit("draft/emoji", e.target.value)}
+              onBlur={() => void commitText("draft/emoji")}
+              placeholder="https://example.com/emoji/channel/general.json"
+              className="field-input w-full"
+            />
+          }
+        />
+      </SettingGroup>
+      <SettingGroup>
+        <SettingRow
+          id="channel.name"
+          title={t`Channel name`}
+          description={t`Rename this channel. Everyone sees the new name.`}
+        >
+          {/* We rename once focus leaves both fields, so the reason goes with it. */}
+          <div
+            className="flex flex-col gap-2"
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null))
+                commitRename();
+            }}
+          >
+            <input
+              type="text"
+              value={text("name")}
+              onChange={(e) => edit("name", e.target.value)}
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              placeholder={t`#new-channel-name`}
+              className="field-input w-full"
+            />
+            <input
+              type="text"
+              value={renameReason}
+              onChange={(e) => setRenameReason(e.target.value)}
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              placeholder={t`Reason (optional)`}
+              className="field-input w-full"
+            />
+          </div>
+        </SettingRow>
+      </SettingGroup>
+      <p className="text-xs text-discord-text-muted px-1">
+        <Trans>
+          Note: Channel metadata requires operator (@) or higher permissions to
+          modify. Changes will be visible to all users who support the METADATA
+          specification.
+        </Trans>
+      </p>
+    </>
+  );
+
+  const settingsSection = (
+    <>
+      <SettingGroup>
+        <SettingRow
+          id="channel.l"
+          title={t`Client limit (+l)`}
+          description={t`Set the maximum number of users. Leave empty for no limit.`}
+          field={
+            <input
+              type="number"
+              value={value("l")}
+              onChange={(e) => edit("l", e.target.value)}
+              onBlur={() => queueModes("l")}
+              placeholder={t`No limit`}
+              min="1"
+              className="field-input w-full"
+            />
+          }
+        />
+        <FlagRow
+          letter="i"
+          title={t`Invite-only (+i)`}
+          description={t`Require an invite to join.`}
+          checked={flag("i")}
+          onChange={(on) => setFlag("i", on)}
+        />
+        <SettingRow
+          id="channel.k"
+          title={t`Channel key (+k)`}
+          description={t`Set the password needed to join. Leave empty to remove the key.`}
+          field={
+            <input
+              type="password"
+              value={value("k")}
+              onChange={(e) => edit("k", e.target.value)}
+              onBlur={() => queueModes("k")}
+              placeholder={t`No key`}
+              className="field-input w-full"
+            />
+          }
+        />
+        <FlagRow
+          letter="m"
+          title={t`Moderated (+m)`}
+          description={t`Let only users with voice or higher speak.`}
+          checked={flag("m")}
+          onChange={(on) => setFlag("m", on)}
+        />
+        <FlagRow
+          letter="s"
+          title={t`Secret (+s)`}
+          description={t`Hide the channel from LIST and NAMES.`}
+          checked={flag("s")}
+          onChange={(on) => setFlag("s", on)}
+        />
+        <FlagRow
+          letter="t"
+          title={t`Protected topic (+t)`}
+          description={t`Let only operators change the topic.`}
+          checked={flag("t")}
+          onChange={(on) => setFlag("t", on)}
+        />
+        <FlagRow
+          letter="n"
+          title={t`No external messages (+n)`}
+          description={t`Block messages from users outside the channel.`}
+          checked={flag("n")}
+          onChange={(on) => setFlag("n", on)}
+        />
+      </SettingGroup>
+    </>
+  );
+
+  const namedModeRow = (spec: NamedModeSpec) => {
+    if (spec.type === 1 || spec.type === 5) return null;
+    const meta = lookupNamedModeMeta(spec.name);
+    if (meta?.hidden) return null;
+
+    const fallback = humanizeNamedMode(spec.name);
+    const label = meta?.label ?? fallback.display;
+    const description = meta?.description ?? "";
+    const group: NamedModeGroup = meta?.group ?? "properties";
+
+    const stored = spec.letter
+      ? originalModesRef.current[spec.letter]
+      : undefined;
+    const live = { set: stored !== undefined, param: stored ?? null };
+    const staged = pendingNamedModes[spec.name];
+    const title = (
+      <span className="flex items-center gap-2 min-w-0">
+        <span className="truncate">{label}</span>
+        {fallback.vendor && (
+          <span className="text-[10px] tracking-wide px-1.5 py-0.5 rounded bg-discord-dark-400 text-discord-text-muted flex-shrink-0 lowercase">
+            {fallback.vendor}
+          </span>
+        )}
+      </span>
+    );
+
+    if (spec.type === 4) {
+      const checked = staged ? staged.sign === "+" : live.set;
+      return {
+        group,
+        node: (
+          <SettingRow
+            key={spec.name}
+            id={`channel.${spec.name}`}
+            title={title}
+            description={description}
+            control={
+              <Switch
+                checked={checked}
+                label={label}
+                onChange={(next) => {
+                  stageNamedMode(
+                    spec.name,
+                    next === live.set ? null : { sign: next ? "+" : "-" },
+                  );
+                  queueModes("named-modes");
+                }}
+              />
+            }
+          />
+        ),
+      };
+    }
+
+    const placeholder = live.set
+      ? t`(set, edit to change)`
+      : (meta?.paramPlaceholder ?? t`(not set)`);
+    return {
+      group,
+      node: (
+        <SettingRow
+          key={spec.name}
+          id={`channel.${spec.name}`}
+          title={title}
+          description={description}
+          field={
+            <input
+              type="text"
+              value={staged?.param ?? live.param ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === (live.param ?? "")) {
+                  stageNamedMode(spec.name, null);
+                } else if (!v) {
+                  stageNamedMode(spec.name, { sign: "-" });
+                } else {
+                  stageNamedMode(spec.name, { sign: "+", param: v });
+                }
+              }}
+              onBlur={() => queueModes("named-modes")}
+              placeholder={placeholder}
+              className="field-input w-full"
+            />
+          }
+        />
+      ),
+    };
+  };
+
+  const stageNamedMode = (
+    name: string,
+    next: { sign: "+" | "-"; param?: string } | null,
+  ) => {
+    setPendingNamedModes((prev) => {
+      const out = { ...prev };
+      if (next === null) delete out[name];
+      else out[name] = next;
+      return out;
+    });
+  };
+
+  const namedAdvancedSection = () => {
+    const grouped = new Map<NamedModeGroup, React.ReactNode[]>();
+    for (const spec of server?.namedModes?.channelModes ?? []) {
+      const result = namedModeRow(spec);
+      if (!result) continue;
+      const list = grouped.get(result.group) ?? [];
+      list.push(result.node);
+      grouped.set(result.group, list);
+    }
+    const groups = NAMED_MODE_GROUP_ORDER.filter(
+      (g) => (grouped.get(g)?.length ?? 0) > 0,
+    );
+    if (groups.length === 0) {
+      return (
+        <p className="text-sm text-discord-text-muted italic">
+          <Trans>No advanced modes on this server.</Trans>
+        </p>
+      );
+    }
+    return (
+      <>
+        {groups.map((g) => (
+          <SettingGroup key={g} title={NAMED_MODE_GROUP_LABELS[g]}>
+            {grouped.get(g)}
+          </SettingGroup>
+        ))}
+      </>
+    );
+  };
+
+  const fallbackAdvancedSection = (
+    <>
+      <SettingGroup title={t`Flood protection`}>
+        <SettingRow
+          id="channel.F"
+          title={t`Flood profile (+F)`}
+          description={t`Pick a preset flood protection profile. This works only on UnrealIRCd servers.`}
+        >
+          <select
+            value={value("F")}
+            onChange={(e) => edit("F", e.target.value)}
+            onBlur={() => queueModes("F")}
+            className="field-input w-full"
+          >
+            <option value="">
+              <Trans>No flood profile</Trans>
+            </option>
+            <option value="very-strict">
+              <Trans>Very Strict</Trans>
+            </option>
+            <option value="strict">
+              <Trans>Strict</Trans>
+            </option>
+            <option value="normal">
+              <Trans>Normal</Trans>
+            </option>
+            <option value="relaxed">
+              <Trans>Relaxed</Trans>
+            </option>
+            <option value="very-relaxed">
+              <Trans>Very Relaxed</Trans>
+            </option>
+          </select>
+        </SettingRow>
+        <SettingRow
+          id="channel.f"
+          title={t`Flood parameters (+f)`}
+          description={t`Enter parameters as [rules]:seconds, or build them with Configure.`}
+        >
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={value("f")}
+              onChange={(e) => edit("f", e.target.value)}
+              onBlur={() => queueModes("f")}
+              placeholder={t`Default`}
+              className="field-input flex-1 min-w-0"
+            />
+            <Button
+              variant="secondary"
+              onClick={() => setIsFloodModalOpen(true)}
+            >
+              <Trans>Configure</Trans>
+            </Button>
+          </div>
+        </SettingRow>
+      </SettingGroup>
+
+      <SettingGroup title={t`Content filtering`}>
+        <FlagRow
+          letter="c"
+          title={t`Block color codes (+c)`}
+          description={t`Block messages containing mIRC color codes`}
+          checked={flag("c")}
+          onChange={(on) => setFlag("c", on)}
+        />
+        <FlagRow
+          letter="C"
+          title={t`No CTCPs (+C)`}
+          description={t`Block CTCP commands in the channel`}
+          checked={flag("C")}
+          onChange={(on) => setFlag("C", on)}
+        />
+        <FlagRow
+          letter="G"
+          title={t`Filter bad words (+G)`}
+          description={t`Replace bad words with <censored>`}
+          checked={flag("G")}
+          onChange={(on) => setFlag("G", on)}
+        />
+        <FlagRow
+          letter="S"
+          title={t`Strip color codes (+S)`}
+          description={t`Strip mIRC color codes from messages`}
+          checked={flag("S")}
+          onChange={(on) => setFlag("S", on)}
+        />
+      </SettingGroup>
+
+      <SettingGroup title={t`Channel behavior`}>
+        <FlagRow
+          letter="D"
+          title={t`Delay joins (+D)`}
+          description={t`Hide users who join until they send a message`}
+          checked={flag("D")}
+          onChange={(on) => setFlag("D", on)}
+        />
+        <FlagRow
+          letter="K"
+          title={t`No knocks (+K)`}
+          description={t`Block the /KNOCK command.`}
+          checked={flag("K")}
+          onChange={(on) => setFlag("K", on)}
+        />
+        <FlagRow
+          letter="N"
+          title={t`No nick changes (+N)`}
+          description={t`Block nickname changes.`}
+          checked={flag("N")}
+          onChange={(on) => setFlag("N", on)}
+        />
+        <FlagRow
+          letter="Q"
+          title={t`No kicks (+Q)`}
+          description={t`Block kicks.`}
+          checked={flag("Q")}
+          onChange={(on) => setFlag("Q", on)}
+        />
+        <FlagRow
+          letter="T"
+          title={t`No notices (+T)`}
+          description={t`Block NOTICE.`}
+          checked={flag("T")}
+          onChange={(on) => setFlag("T", on)}
+        />
+        <FlagRow
+          letter="V"
+          title={t`No invites (+V)`}
+          description={t`Block the /INVITE command.`}
+          checked={flag("V")}
+          onChange={(on) => setFlag("V", on)}
+        />
+      </SettingGroup>
+
+      <SettingGroup title={t`Access control`}>
+        <FlagRow
+          letter="M"
+          title={t`Registered nick required (+M)`}
+          description={t`Require a registered nickname (+r) to talk.`}
+          checked={flag("M")}
+          onChange={(on) => setFlag("M", on)}
+        />
+        <FlagRow
+          letter="R"
+          title={t`Registered users only (+R)`}
+          description={t`Let only registered users (+r) join.`}
+          checked={flag("R")}
+          onChange={(on) => setFlag("R", on)}
+        />
+        <FlagRow
+          letter="O"
+          title={t`IRC operator only (+O)`}
+          description={t`Let only IRC operators join. Only IRCops can set this.`}
+          checked={flag("O")}
+          onChange={(on) => setFlag("O", on)}
+        />
+        <FlagRow
+          letter="z"
+          title={t`Secure connection required (+z)`}
+          description={t`Let only clients on secure connections (SSL/TLS) join.`}
+          checked={flag("z")}
+          onChange={(on) => setFlag("z", on)}
+        />
+      </SettingGroup>
+
+      <SettingGroup title={t`Channel properties`}>
+        <FlagRow
+          letter="p"
+          title={t`Private channel (+p)`}
+          description={t`Mark the channel as private.`}
+          checked={flag("p")}
+          onChange={(on) => setFlag("p", on)}
+        />
+        <FlagRow
+          letter="P"
+          title={t`Permanent channel (+P)`}
+          description={t`Keep the channel after everyone leaves. Only IRCops can set this.`}
+          checked={flag("P")}
+          onChange={(on) => setFlag("P", on)}
+        />
+        <SettingRow
+          id="channel.H"
+          title={t`Channel history (+H)`}
+          description={t`Record history as max-lines:max-minutes. Leave empty to disable.`}
+          field={
+            <input
+              type="text"
+              value={value("H")}
+              onChange={(e) => edit("H", e.target.value)}
+              onBlur={() => queueModes("H")}
+              placeholder={t`e.g., 100:1440`}
+              className="field-input w-full"
+            />
+          }
+        />
+        <SettingRow
+          id="channel.L"
+          title={t`Channel link (+L)`}
+          description={t`Enter a channel to send users to when they cannot join this one. Leave empty to disable.`}
+          field={
+            <input
+              type="text"
+              value={value("L")}
+              onChange={(e) => edit("L", e.target.value)}
+              onBlur={() => queueModes("L")}
+              placeholder={t`#overflow`}
+              className="field-input w-full"
+            />
+          }
+        />
+      </SettingGroup>
+    </>
+  );
+
+  const renderMaskList = (listSection: ListSection) => {
+    const type = LIST_TYPE[listSection];
+    const copy = {
+      bans: {
+        placeholder: t`Add ban mask (e.g., nick!*@*, *!*@host.com)`,
+        add: t`Add ban`,
+        empty: userHasOpPermission
+          ? t`No bans yet, add one above`
+          : t`No bans yet, ask a channel operator to add one`,
+      },
+      exceptions: {
+        placeholder: t`Add exception mask (e.g., nick!*@*, *!*@host.com)`,
+        add: t`Add exception`,
+        empty: userHasOpPermission
+          ? t`No exceptions yet, add one above`
+          : t`No exceptions yet, ask a channel operator to add one`,
+      },
+      invites: {
+        placeholder: t`Add invitation mask (e.g., nick!*@*, *!*@host.com)`,
+        add: t`Add invitation`,
+        empty: userHasOpPermission
+          ? t`No invitations yet, add one above`
+          : t`No invitations yet, ask a channel operator to add one`,
+      },
+    }[listSection];
+    const masks = modes.filter((mode) => mode.type === type);
+    const canAdd = !!newMask.trim() && !isAdding;
+
+    return (
+      <>
+        {!userHasOpPermission && masks.length > 0 && (
+          <p className="text-sm text-discord-text-muted px-1">
+            <Trans>Ask a channel operator to change this list.</Trans>
+          </p>
+        )}
+        <SettingGroup>
+          {userHasOpPermission && (
+            <div className="flex items-center gap-2 px-4 py-3">
+              <input
+                type="text"
+                value={newMask}
+                onChange={(e) => setNewMask(e.target.value)}
+                placeholder={copy.placeholder}
+                className="field-input flex-1 min-w-0"
+              />
+              <button
+                type="button"
+                onClick={() => canAdd && addMode(type, newMask.trim())}
+                disabled={!canAdd}
+                aria-label={copy.add}
+                title={copy.add}
+                className="button-primary w-9 h-9 shrink-0 rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAdding ? (
+                  <FaSpinner className="animate-spin" size={14} />
+                ) : (
+                  <FaPlus size={14} />
+                )}
+              </button>
+            </div>
+          )}
+          {loading ? (
+            <EmptyRow>
+              <Trans>Loading channel modes...</Trans>
+            </EmptyRow>
+          ) : masks.length === 0 ? (
+            <EmptyRow>{copy.empty}</EmptyRow>
+          ) : (
+            masks.map((mode) => {
+              const editing = editingMask === mode.mask;
+              const removing = removingMasks.has(mode.mask);
+              return (
+                <div
+                  key={`${mode.type}-${mode.mask}`}
+                  className="flex items-center gap-3 px-4 py-3"
+                >
+                  <div className="flex-1 min-w-0">
+                    {editing ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        className="field-input w-full"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            saveEdit(type, mode.mask, editValue);
+                          } else if (e.key === "Escape") {
+                            e.stopPropagation();
+                            cancelEditing();
+                          }
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <div className="text-sm text-white break-all">
+                          {mode.mask}
+                        </div>
+                        <div className="text-xs text-discord-text-muted">
+                          {mode.setter && t`set by ${mode.setter}`}
+                          {mode.setter && mode.timestamp && " • "}
+                          {mode.timestamp &&
+                            new Date(mode.timestamp * 1000).toLocaleString()}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  {userHasOpPermission && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      {editing ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => saveEdit(type, mode.mask, editValue)}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Save`}
+                            title={t`Save`}
+                          >
+                            <FaCheck size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelEditing}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Cancel`}
+                            title={t`Cancel`}
+                          >
+                            <FaTimes size={13} />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingMask(mode.mask);
+                              setEditValue(mode.mask);
+                            }}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Edit`}
+                            title={t`Edit`}
+                          >
+                            <FaEdit size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeMode(type, mode.mask)}
+                            disabled={removing}
+                            className="icon-button w-10 h-10 rounded-lg"
+                            aria-label={t`Remove`}
+                            title={t`Remove`}
+                          >
+                            {removing ? (
+                              <FaSpinner className="animate-spin" size={13} />
+                            ) : (
+                              <FaTrash size={13} />
+                            )}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </SettingGroup>
+        {userHasOpPermission && (
+          <p className="text-xs text-discord-text-muted px-1">
+            <Trans>
+              Use wildcards: * matches any sequence, ? matches any single
+              character. Examples: nick!*@*, *!*@host.com, *!*user@*
+            </Trans>
+          </p>
+        )}
+      </>
+    );
+  };
+
+  const body = (() => {
+    if (isListSection(activeId)) return renderMaskList(activeId);
+    if (activeId === "general") return generalSection;
+    if (activeId === "settings") return settingsSection;
+    if (server?.namedModes?.supported) return namedAdvancedSection();
+    return fallbackAdvancedSection;
+  })();
+
+  return (
+    <>
+      <PageShell
+        title={channelName}
+        sections={sections}
+        activeSection={activeId}
+        onSectionChange={setSectionId}
+        startOnSection={!!page.section}
+        columns={!isListSection(activeId)}
+      >
+        {body}
+      </PageShell>
+      <FloodSettingsModal
+        isOpen={isFloodModalOpen}
+        onClose={() => setIsFloodModalOpen(false)}
+        onSave={handleFloodSettingsSave}
+        initialFloodProfile={value("F")}
+        initialFloodParams={value("f")}
+      />
+    </>
+  );
+};
+
+export default ChannelSettingsPage;

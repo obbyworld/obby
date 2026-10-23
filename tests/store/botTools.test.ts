@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
+import { effectiveWorkflowState } from "../../src/lib/botTools";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
@@ -7,7 +8,10 @@ const SID = "srv-1";
 const CHAN = "#ai";
 const BOT = "researchbot";
 
-function emit(type: "TAGMSG", payload: Record<string, unknown>): void {
+function emit(
+  type: "TAGMSG" | "CHANMSG",
+  payload: Record<string, unknown>,
+): void {
   // biome-ignore lint/suspicious/noExplicitAny: triggerEvent is dynamically typed
   ircClient.triggerEvent(type as any, payload as any);
 }
@@ -44,6 +48,35 @@ describe("botTools store handler", () => {
       collapsed: true,
       dismissed: false,
     });
+  });
+
+  test("a run replayed from history keeps its server time and reads as over", () => {
+    useStore.setState({
+      activeBatches: {
+        [SID]: {
+          hist: {
+            type: "chathistory",
+            parameters: [CHAN],
+            events: [],
+            startTime: new Date(),
+          },
+        },
+      },
+    } as Partial<AppState>);
+    emit("TAGMSG", {
+      serverId: SID,
+      mtags: {
+        ...tag('{"msg":"workflow","id":"old","state":"start"}'),
+        batch: "hist",
+        time: "2026-01-01T10:00:00.000Z",
+      },
+      sender: BOT,
+      channelName: CHAN,
+    });
+    const wf = useStore.getState().aiWorkflows[SID]?.old;
+    expect(wf?.startedAt).toBe(Date.parse("2026-01-01T10:00:00.000Z"));
+    expect(wf?.historical).toBe(true);
+    expect(wf && effectiveWorkflowState(wf)).toBe("failed");
   });
 
   test("subsequent workflow update merges over existing state", () => {
@@ -192,5 +225,110 @@ describe("botTools store handler", () => {
     const wf = useStore.getState().aiWorkflows[SID]?.w1;
     expect(wf?.dismissed).toBe(true);
     expect(wf?.state).toBe("complete");
+  });
+
+  describe("the run's row in the chat", () => {
+    const CHAN_ID = "chan-ai";
+    const rows = () => useStore.getState().messages[`${SID}-${CHAN_ID}`] ?? [];
+    const startRun = () =>
+      emit("TAGMSG", {
+        serverId: SID,
+        mtags: tag(
+          '{"msg":"workflow","id":"w9","state":"start","name":"agent"}',
+        ),
+        sender: BOT,
+        channelName: CHAN,
+      });
+
+    beforeEach(() => {
+      useStore.setState({
+        servers: [
+          {
+            id: SID,
+            name: "srv",
+            host: "h",
+            port: 1,
+            channels: [
+              {
+                id: CHAN_ID,
+                name: CHAN,
+                isPrivate: false,
+                serverId: SID,
+                unreadCount: 0,
+                isMentioned: false,
+                messages: [],
+                users: [],
+              },
+            ],
+            privateChats: [],
+            isConnected: true,
+            users: [],
+          },
+        ],
+        messages: {},
+      } as Partial<AppState>);
+    });
+
+    test("stays as a finished row when the run ends with a TAGMSG", () => {
+      startRun();
+      expect(rows()).toHaveLength(1);
+      emit("TAGMSG", {
+        serverId: SID,
+        mtags: tag('{"msg":"workflow","id":"w9","state":"complete"}'),
+        sender: BOT,
+        channelName: CHAN,
+      });
+      expect(rows()).toHaveLength(1);
+      expect(rows()[0]).toMatchObject({
+        botToolsWorkflowId: "w9",
+        botToolsPending: false,
+      });
+    });
+
+    test("becomes the bot's reply when the final PRIVMSG is tagged", () => {
+      startRun();
+      emit("CHANMSG", {
+        serverId: SID,
+        mtags: {
+          ...tag('{"msg":"workflow","id":"w9","state":"complete"}'),
+          msgid: "final-1",
+        },
+        sender: BOT,
+        channelName: CHAN,
+        message: "done",
+      });
+      expect(rows()[0]).toMatchObject({
+        botToolsWorkflowId: "w9",
+        botToolsPending: false,
+        content: "done",
+      });
+    });
+
+    test("finishes the run when the final answer arrives as a multiline batch", () => {
+      startRun();
+      const done = tag('{"msg":"workflow","id":"w9","state":"complete"}')[
+        "+draft/bot-tools"
+      ];
+      const feed = (line: string) =>
+        (
+          ircClient as unknown as {
+            handleMessage(data: string, serverId: string): void;
+          }
+        ).handleMessage(`${line}\r\n`, SID);
+      feed(
+        `@+draft/bot-tools=${done};msgid=b-1 :irc.test BATCH +ml1 draft/multiline ${CHAN}`,
+      );
+      feed(`@batch=ml1;msgid=l-1 :${BOT}!b@h PRIVMSG ${CHAN} :first line`);
+      feed(`@batch=ml1;msgid=l-2 :${BOT}!b@h PRIVMSG ${CHAN} :second line`);
+      feed(":irc.test BATCH -ml1");
+
+      expect(useStore.getState().aiWorkflows[SID]?.w9?.state).toBe("complete");
+      expect(rows()).toHaveLength(1);
+      expect(rows()[0]).toMatchObject({
+        botToolsWorkflowId: "w9",
+        botToolsPending: false,
+        content: "first line\nsecond line",
+      });
+    });
   });
 });

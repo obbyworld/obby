@@ -1,4 +1,4 @@
-import { detectMediaType, type MediaType } from "./mediaUtils";
+import { detectMediaType, extractHostname, type MediaType } from "./mediaUtils";
 
 export interface ProbeResult {
   type: MediaType;
@@ -19,6 +19,9 @@ function cacheSet(url: string, result: ProbeResult | null): void {
   cache.set(url, result);
   keyOrder.push(url);
 }
+
+// The browser logs every request a host blocks with CORS, so we stop asking a host once it refuses.
+const fetchBlockedHosts = new Set<string>();
 
 /** Returns true if the URL has no detectable type and should be HEAD-probed. */
 export function shouldProbeUrl(url: string): boolean {
@@ -87,6 +90,7 @@ async function tryHttpFetch(
  */
 async function fetchContentType(
   url: string,
+  host: string | null,
 ): Promise<{ contentType: string; contentLength?: number } | null> {
   const head = await tryHttpFetch(url, "HEAD");
   if (head?.ok && head.contentType) {
@@ -98,6 +102,8 @@ async function fetchContentType(
     return null;
   }
   const get = await tryHttpFetch(url, "GET");
+  if (head === null && get === null && host !== null)
+    fetchBlockedHosts.add(host);
   if (get?.ok && get.contentType) {
     return { contentType: get.contentType, contentLength: get.contentLength };
   }
@@ -143,12 +149,37 @@ function classifyContentType(
   return { type, size: contentLength, streamable, skipped: false };
 }
 
-export async function probeMediaUrl(url: string): Promise<ProbeResult | null> {
-  if (cache.has(url)) return cache.get(url) ?? null;
+const inFlight = new Map<string, Promise<ProbeResult | null>>();
+
+// Every caller of a URL shares one probe: each one opens hidden media elements,
+// and WebKit can deadlock while it cancels many of those at once.
+export function probeMediaUrl(url: string): Promise<ProbeResult | null> {
+  if (cache.has(url)) return Promise.resolve(cache.get(url) ?? null);
+  let probe = inFlight.get(url);
+  if (!probe) {
+    probe = probeUncached(url).finally(() => inFlight.delete(url));
+    inFlight.set(url, probe);
+  }
+  return probe;
+}
+
+async function probeUncached(url: string): Promise<ProbeResult | null> {
+  // A provider page or a map link is a web page with no file behind it, so the
+  // host answers a content-type request with a CORS failure and nothing else.
+  const pageType = detectMediaType(url);
+  if (pageType === "embed" || pageType === "map") {
+    const result = { type: pageType, streamable: false, skipped: false };
+    cacheSet(url, result);
+    return result;
+  }
 
   // Primary path: HTTP Content-Type is the single source of truth.
   // HEAD is tried first; GET fallback covers servers that reject HEAD (e.g. Icecast).
-  const fetched = await fetchContentType(url);
+  const host = extractHostname(url);
+  const fetched =
+    host !== null && fetchBlockedHosts.has(host)
+      ? null
+      : await fetchContentType(url, host);
   if (fetched) {
     const result = classifyContentType(
       fetched.contentType,

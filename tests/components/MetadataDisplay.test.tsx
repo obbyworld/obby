@@ -10,6 +10,8 @@ import { defaultUIExtensions } from "../fixtures/uiState";
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    isChannel: (_serverId: string, name?: string) =>
+      !!name && "#&+!^$".includes(name[0]),
     sendTyping: vi.fn(),
     on: vi.fn(),
     getCurrentUser: vi.fn(() => ({ id: "test-user", username: "tester" })),
@@ -125,6 +127,7 @@ describe("Metadata Display Features", () => {
         },
       },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -136,13 +139,9 @@ describe("Metadata Display Features", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "serverList",
         isServerMenuOpen: false,
@@ -158,11 +157,9 @@ describe("Metadata Display Features", () => {
         // Server notices popup state
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
-        pendingBotsModalOpen: null,
         pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       messages: {
@@ -183,6 +180,10 @@ describe("Metadata Display Features", () => {
         showKicks: true,
         customMentions: [],
         ignoreList: ["HistServ!*@*"],
+        keepHistory: true,
+        closeToTray: true,
+        pushMethod: "fcm",
+        historyLimitMb: 500,
         nickname: "",
         accountName: "",
         accountPassword: "",
@@ -191,8 +192,16 @@ describe("Metadata Display Features", () => {
         autoFallbackToSingleLine: true,
         mediaVisibilityLevel: 3,
         enableMarkdownRendering: false,
+        showMotd: true,
         awayMessage: "",
-        quitMessage: "ObsidianIRC - Bringing IRC to the future",
+        quitMessage: "Obby - Bringing IRC to the future",
+        callAudioInput: null,
+        callVideoInput: null,
+        callAudioOutput: null,
+        callCameraFacing: "user",
+        callEchoCancellation: true,
+        callNoiseSuppression: true,
+        callAutoGainControl: true,
       },
     });
 

@@ -1,5 +1,7 @@
+import { isLiveChannel } from "../lib/channelFolders";
 import type { ServerConfig } from "../types";
 import type {
+  ChannelFoldersMap,
   ChannelOrderMap,
   GlobalSettings,
   PinnedPrivateChatsMap,
@@ -12,10 +14,27 @@ const KEYS = {
   METADATA: "serverMetadata",
   SETTINGS: "globalSettings",
   CHANNEL_ORDER: "channelOrder",
+  CHANNEL_FOLDERS: "channelFolders",
   PINNED_PMS: "pinnedPrivateChats",
   UI_SELECTION: "uiSelections",
   MIGRATION_VERSION: "migrationVersion",
+  BOUNCER_GROUP_ACCENTS: "bouncerGroupAccents",
 } as const;
+
+export const bouncerGroupAccents = {
+  load: (): Record<string, string> => {
+    try {
+      return JSON.parse(
+        localStorage.getItem(KEYS.BOUNCER_GROUP_ACCENTS) || "{}",
+      );
+    } catch {
+      return {};
+    }
+  },
+  save: (map: Record<string, string>) => {
+    localStorage.setItem(KEYS.BOUNCER_GROUP_ACCENTS, JSON.stringify(map));
+  },
+};
 
 export const servers = {
   load: (): ServerConfig[] => {
@@ -39,6 +58,7 @@ export const servers = {
 // hang around in localStorage forever.
 try {
   localStorage.removeItem(KEYS.METADATA);
+  localStorage.removeItem("ownMetadata");
 } catch {
   // private-window or storage-disabled -- not fatal
 }
@@ -93,6 +113,20 @@ export const channelOrder = {
   },
 };
 
+export const channelFolders = {
+  load: (): ChannelFoldersMap => {
+    try {
+      return JSON.parse(localStorage.getItem(KEYS.CHANNEL_FOLDERS) || "{}");
+    } catch {
+      return {};
+    }
+  },
+
+  save: (data: ChannelFoldersMap) => {
+    localStorage.setItem(KEYS.CHANNEL_FOLDERS, JSON.stringify(data));
+  },
+};
+
 export const pinnedChats = {
   load: (): PinnedPrivateChatsMap => {
     try {
@@ -107,6 +141,28 @@ export const pinnedChats = {
   },
 };
 
+// Opening a voice or stream channel joins its call, so we never restore one at
+// startup; the app opens on the server instead.
+function withoutLiveChannels(selections: UISelections): UISelections {
+  const perServerSelections = Object.fromEntries(
+    Object.entries(selections.perServerSelections ?? {}).map(
+      ([serverId, selection]) => [
+        serverId,
+        selection.selectedChannelName &&
+        isLiveChannel(selection.selectedChannelName)
+          ? { ...selection, selectedChannelId: null, selectedChannelName: null }
+          : selection,
+      ],
+    ),
+  );
+  const lastSelection =
+    selections.lastSelection?.channelName &&
+    isLiveChannel(selections.lastSelection.channelName)
+      ? { ...selections.lastSelection, channelName: null }
+      : selections.lastSelection;
+  return { ...selections, perServerSelections, lastSelection };
+}
+
 export const uiSelections = {
   load: (): UISelections => {
     try {
@@ -114,7 +170,7 @@ export const uiSelections = {
       if (!saved) {
         return { selectedServerId: null, perServerSelections: {} };
       }
-      return JSON.parse(saved);
+      return withoutLiveChannels(JSON.parse(saved));
     } catch {
       return { selectedServerId: null, perServerSelections: {} };
     }

@@ -8,6 +8,7 @@
 // The tag name is fixed across all message kinds. The discriminator lives
 // in the JSON body as the `msg` field.
 
+import type { AiStep } from "../store";
 import { base64DecodeUtf8, base64EncodeUtf8 } from "./base64";
 
 export const BOT_TOOLS_TAG = "+draft/bot-tools";
@@ -140,6 +141,17 @@ const ACTION_TYPES: ReadonlySet<AiActionType> = new Set([
 // Returns null on any decode/parse failure or schema mismatch rather than
 // throwing, per spec §Security: malformed or oversized payloads are silently
 // discarded.
+/** The workflow a bot message belongs to, read from its bot-tools tag. */
+export function workflowIdFromTags(
+  tags: Record<string, string> | undefined,
+): string | undefined {
+  const raw = tags?.[BOT_TOOLS_TAG];
+  const decoded = raw ? decodeBotToolsValue(raw) : null;
+  if (decoded?.msg === "workflow") return decoded.id;
+  if (decoded?.msg === "step") return decoded.wid;
+  return undefined;
+}
+
 export function decodeBotToolsValue(raw: string): BotToolsMessage | null {
   if (!raw) return null;
   let parsed: unknown;
@@ -225,34 +237,64 @@ export function encodeBotToolsValue(msg: BotToolsMessage): string {
   return base64EncodeUtf8(JSON.stringify(msg));
 }
 
-// User-facing step count: "reasoning" frames don't count (they're the
-// bot planning, not work), and a tool-call + matching tool-result
-// pair counts as a single step (they're the two sides of one tool
-// invocation, paired FIFO by tool name).
-export function countableSteps(
-  steps: readonly { type: string; tool?: string }[],
-): number {
+export type StepGroup =
+  | { kind: "single"; key: string; step: AiStep }
+  | { kind: "tool-pair"; key: string; call?: AiStep; result?: AiStep };
+
+// We pair each tool call with the next unpaired result of the same tool, in
+// arrival order, so one tool invocation reads as one step.
+export function groupWorkflowSteps(steps: readonly AiStep[]): StepGroup[] {
+  const groups: StepGroup[] = [];
   const paired = new Set<number>();
-  let count = 0;
-  for (let i = 0; i < steps.length; i++) {
-    if (paired.has(i)) continue;
-    const s = steps[i];
-    if (s.type === "reasoning") continue;
-    if (s.type === "tool-call") {
-      for (let j = i + 1; j < steps.length; j++) {
-        if (paired.has(j)) continue;
-        const t = steps[j];
-        if (t.type === "tool-result" && t.tool === s.tool) {
-          paired.add(j);
-          break;
-        }
-      }
-      count++;
-      continue;
+  steps.forEach((step, i) => {
+    if (paired.has(i)) return;
+    if (step.type === "tool-call") {
+      const j = steps.findIndex(
+        (other, k) =>
+          k > i &&
+          !paired.has(k) &&
+          other.type === "tool-result" &&
+          other.tool === step.tool,
+      );
+      if (j !== -1) paired.add(j);
+      groups.push({
+        kind: "tool-pair",
+        key: step.sid,
+        call: step,
+        result: j === -1 ? undefined : steps[j],
+      });
+    } else if (step.type === "tool-result") {
+      groups.push({ kind: "tool-pair", key: step.sid, result: step });
+    } else {
+      groups.push({ kind: "single", key: step.sid, step });
     }
-    count++;
-  }
-  return count;
+  });
+  return groups;
+}
+
+export const stepGroupSteps = (group: StepGroup): AiStep[] =>
+  group.kind === "single"
+    ? [group.step]
+    : [group.call, group.result].filter((s): s is AiStep => !!s);
+
+export const stepGroupState = (group: StepGroup): AiStep["state"] =>
+  stepGroupSteps(group).at(-1)?.state ?? "running";
+
+const SETTLED_STEP_STATES: ReadonlySet<AiStep["state"]> = new Set([
+  "complete",
+  "failed",
+  "cancelled",
+  "pending-approval",
+]);
+
+export const isStepGroupRunning = (group: StepGroup): boolean =>
+  !SETTLED_STEP_STATES.has(stepGroupState(group));
+
+// Reasoning is the bot planning, so we leave it out of the user-facing count.
+export function countableSteps(steps: readonly AiStep[]): number {
+  return groupWorkflowSteps(steps).filter(
+    (group) => !(group.kind === "single" && group.step.type === "reasoning"),
+  ).length;
 }
 
 // IRC tag-value escape — applied just before putting the value on the

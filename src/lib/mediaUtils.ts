@@ -1,4 +1,6 @@
+import { invoke } from "@tauri-apps/api/core";
 import type { Message } from "../types/index";
+import { parseLocationShareUrl } from "./geolocation";
 import {
   isAbsoluteHttpUrl,
   isUrlFromFilehost,
@@ -6,7 +8,7 @@ import {
 } from "./ircUtils";
 import { stripIrcFormatting } from "./messageFormatter";
 
-export type MediaType = "image" | "video" | "audio" | "pdf" | "embed";
+export type MediaType = "image" | "video" | "audio" | "pdf" | "embed" | "map";
 
 export interface MediaEntry {
   url: string;
@@ -24,10 +26,11 @@ export const TRUSTED_EMBED_DOMAINS: Record<string, MediaType> = {
   "media.giphy.com": "image",
   "giphy.com": "image",
   "imgur.com": "image",
+  "openstreetmap.org": "map",
 };
 
 /** Extract and normalise the hostname from a URL, stripping a leading www. Returns null on parse failure. */
-function extractHostname(url: string): string | null {
+export function extractHostname(url: string): string | null {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
@@ -66,18 +69,37 @@ function isEmbeddablePath(url: string): boolean {
   }
 }
 
+// Only a link that actually names a position (mlat/mlon) previews as a map --
+// a bare openstreetmap.org homepage or search link gets no card.
+function isLocationSharePath(url: string): boolean {
+  return parseLocationShareUrl(url) !== null;
+}
+
+function matchingTrustedDomain(hostname: string): string | null {
+  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
+    if (hostname === domain || hostname.endsWith(`.${domain}`)) return domain;
+  }
+  return null;
+}
+
+/** Resolves a trusted domain's declared type, applying that type's own
+ *  path gating (an embed needs an embeddable path, a map needs mlat/mlon).
+ *  Caller must already know `hostname` matches a trusted domain. */
+function trustedDomainType(url: string, hostname: string): MediaType | null {
+  const domain = matchingTrustedDomain(hostname);
+  if (!domain) return null;
+  const type = TRUSTED_EMBED_DOMAINS[domain];
+  if (type === "embed" && !isEmbeddablePath(url)) return null;
+  if (type === "map" && !isLocationSharePath(url)) return null;
+  return type;
+}
+
 /** Detect media type from a URL. Returns null if not recognised. */
 export function detectMediaType(url: string): MediaType | null {
   const hostname = extractHostname(url);
   if (hostname === null) return null;
 
-  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
-    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-      const type = TRUSTED_EMBED_DOMAINS[domain];
-      if (type === "embed" && !isEmbeddablePath(url)) return null;
-      return type;
-    }
-  }
+  if (matchingTrustedDomain(hostname)) return trustedDomainType(url, hostname);
 
   const lower = url.toLowerCase().split("?")[0].split("#")[0];
 
@@ -120,21 +142,24 @@ const VIDEO_MIME_BY_EXT: Record<string, string[]> = {
 
 const _canPlayCache = new Map<string, boolean>();
 
-function _probeCanPlay(mimes: string[]): boolean {
+// WebKit answers canPlayType with a blocking call to its GPU process, which
+// deadlocks while that process cancels a video load, so we ask once at startup.
+export function probeVideoSupport(): void {
   const el = document.createElement("video");
   // Require "probably" — WKWebView returns "maybe" for VP9/WebM even when it can't reliably decode it.
-  return mimes.some((m) => el.canPlayType(m) === "probably");
+  for (const [ext, mimes] of Object.entries(VIDEO_MIME_BY_EXT))
+    _canPlayCache.set(
+      ext,
+      mimes.some((m) => el.canPlayType(m) === "probably"),
+    );
 }
 
 /** Returns false when the platform definitely cannot play the video; true when unknown (optimistic). */
 export function canPlayVideoUrl(url: string): boolean {
   const ext = url.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
-  const mimes = VIDEO_MIME_BY_EXT[ext];
-  if (!mimes) return true; // unknown extension — optimistic, let it try
-  if (_canPlayCache.has(ext)) return _canPlayCache.get(ext) as boolean;
-  const supported = _probeCanPlay(mimes);
-  _canPlayCache.set(ext, supported);
-  return supported;
+  if (!VIDEO_MIME_BY_EXT[ext]) return true;
+  if (_canPlayCache.size === 0) probeVideoSupport();
+  return _canPlayCache.get(ext) ?? true;
 }
 
 /** Like detectMediaType but trusted domains only — no extension guessing.
@@ -144,14 +169,7 @@ export function canPlayVideoUrl(url: string): boolean {
 function detectTrustedDomainType(url: string): MediaType | null {
   const hostname = extractHostname(url);
   if (hostname === null) return null;
-  for (const domain of Object.keys(TRUSTED_EMBED_DOMAINS)) {
-    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-      const type = TRUSTED_EMBED_DOMAINS[domain];
-      if (type === "embed" && !isEmbeddablePath(url)) return null;
-      return type;
-    }
-  }
-  return null;
+  return trustedDomainType(url, hostname);
 }
 
 export function isImageLikeUrl(url: string): boolean {
@@ -215,27 +233,44 @@ export function mediaLevelToSettings(
  * Currently supports YouTube (CDN thumbnail, no API key needed).
  */
 export function getEmbedThumbnailUrl(url: string): string | null {
+  const videoId = getYouTubeVideoId(url);
+  return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null;
+}
+
+function getYouTubeVideoId(url: string): string | null {
   try {
     const u = new URL(url);
     const host = u.hostname.replace(/^www\./, "");
-    if (host === "youtube.com" || host === "youtu.be") {
-      let videoId: string | null = null;
-      if (host === "youtu.be") {
-        videoId = u.pathname.slice(1).split("/")[0] || null;
-      } else {
-        videoId = u.searchParams.get("v");
-        if (!videoId) {
-          const parts = u.pathname.split("/").filter(Boolean);
-          if (parts[0] === "embed" || parts[0] === "shorts")
-            videoId = parts[1] ?? null;
-        }
-      }
-      if (videoId) return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-    }
+    if (host === "youtu.be") return u.pathname.slice(1).split("/")[0] || null;
+    if (host !== "youtube.com") return null;
+    const fromQuery = u.searchParams.get("v");
+    if (fromQuery) return fromQuery;
+    const parts = u.pathname.split("/").filter(Boolean);
+    return parts[0] === "embed" || parts[0] === "shorts"
+      ? (parts[1] ?? null)
+      : null;
   } catch {
-    // ignore invalid URLs
+    return null;
   }
-  return null;
+}
+
+// iOS and macOS load the app from the tauri: scheme, which sends YouTube no
+// referrer, so the app serves the player page from loopback and we embed that.
+let youtubePlayerOrigin: string | null = null;
+if (typeof window !== "undefined" && window.location.protocol === "tauri:") {
+  invoke<number | null>("youtube_player_port").then((port) => {
+    if (port) youtubePlayerOrigin = `http://127.0.0.1:${port}`;
+  });
+}
+
+/** The loopback player page for a YouTube link under the tauri: scheme, or
+ *  null where a regular embed works. */
+export function getAppYouTubeEmbedUrl(url: string, startAt = 0): string | null {
+  if (!youtubePlayerOrigin) return null;
+  const videoId = getYouTubeVideoId(url);
+  if (!videoId) return null;
+  const start = startAt > 0 ? `&start=${Math.floor(startAt)}` : "";
+  return `${youtubePlayerOrigin}/youtube-embed.html?v=${encodeURIComponent(videoId)}${start}`;
 }
 
 const SPOTIFY_CONTENT_TYPES: Record<string, string> = {

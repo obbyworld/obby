@@ -91,8 +91,8 @@ export function registerISupportHandler(
     }
 
     // Standard tokenless IRCv3 draft/FILEHOST: a space-separated list of
-    // upload endpoints the client POSTs to directly (no auth). parseIsupport
-    // has already turned \x20 back into spaces, so just split.
+    // upload endpoints the client POSTs to directly (no auth). The ISUPPORT
+    // tokenizer has already turned \x20 back into spaces, so just split.
     if (key === "draft/FILEHOST") {
       const hosts = value.split(/\s+/).filter((u) => /^https?:\/\//i.test(u));
       useStore.setState((state) => {
@@ -125,6 +125,19 @@ export function registerISupportHandler(
         const updatedServers = state.servers.map((server: Server) => {
           if (server.id === serverId) {
             return { ...server, emojiPackUrl: value };
+          }
+          return server;
+        });
+        return { servers: updatedServers };
+      });
+      return;
+    }
+
+    if (key === "VAPID") {
+      useStore.setState((state) => {
+        const updatedServers = state.servers.map((server: Server) => {
+          if (server.id === serverId) {
+            return { ...server, vapidKey: value };
           }
           return server;
         });
