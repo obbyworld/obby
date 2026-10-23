@@ -381,6 +381,34 @@ describe("local history with a chathistory server", () => {
       expect((await w.stored()).map((row) => row.msgid)).toEqual(["x0"]);
     });
 
+    it("drops saved messages that a page no longer has inside its span", async () => {
+      w.feed(
+        privmsg("m1", 1, "before the page"),
+        privmsg("m2", 2, "two"),
+        privmsg("m3", 3, "redacted while away"),
+        privmsg("m4", 4, "four"),
+        reactionTag("r1", 5, "+draft/react", "👍", "m3"),
+      );
+      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(4));
+
+      w.ircClient.sendRaw(SERVER, "CHATHISTORY LATEST #chan * 50");
+      w.feed(
+        ...inBatch("h1", "#chan", [
+          privmsg("m2", 2, "two"),
+          privmsg("m4", 4, "four"),
+        ]),
+      );
+
+      await vi.waitFor(async () =>
+        expect((await w.stored()).map((row) => row.msgid)).toEqual([
+          "m1",
+          "m2",
+          "m4",
+        ]),
+      );
+      expect(await w.db.refRowsFor(SERVER, ["m3"])).toEqual([]);
+    });
+
     it.each([
       ["an empty", []],
       ["a short", [privmsg("p1", 10, "p one"), privmsg("p2", 11, "p two")]],
@@ -1286,6 +1314,34 @@ describe("loading older saved messages", () => {
     await vi.waitFor(() => expect(pmMessages()).toHaveLength(100));
     await vi.waitFor(() =>
       expect(w.privateChat("bob")?.hasMoreHistory).toBe(true),
+    );
+  });
+
+  it("shows saved private messages on a chathistory server, once each", async () => {
+    w = await boot(FULL_CAPS);
+    w.addPrivateChat("bob");
+    w.feed(
+      privmsg("p1", 1, "first", "bob", OWN_NICK),
+      privmsg("p2", 2, "second", "bob", OWN_NICK),
+    );
+    await vi.waitFor(async () => expect(await w.stored("bob")).toHaveLength(2));
+    w.restart();
+
+    w.showSaved(SERVER, "bob");
+    await vi.waitFor(() => expect(pmMessages()).toHaveLength(2));
+    w.feed(
+      ...inBatch("latest", "bob", [
+        privmsg("p2", 2, "second", "bob", OWN_NICK),
+        privmsg("p3", 3, "third", "bob", OWN_NICK),
+      ]),
+    );
+
+    await vi.waitFor(() =>
+      expect(pmMessages().map((m) => m.content)).toEqual([
+        "first",
+        "second",
+        "third",
+      ]),
     );
   });
 

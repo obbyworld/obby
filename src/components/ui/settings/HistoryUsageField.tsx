@@ -43,7 +43,7 @@ export const HistoryUsageField: React.FC<SettingComponentProps> = ({
       ? ""
       : bytes === 0
         ? isKeepingHistory
-          ? t`Chat to start saving history`
+          ? t`Send or receive a message to start saving history`
           : t`Turn on Keep chat history to start saving`
         : bytes < BYTES_PER_MB
           ? t`${kb} KB used`

@@ -77,14 +77,38 @@ export function resultIcon(result: QuickActionResult): React.ReactNode {
   }
 }
 
-export const MatchedText: React.FC<{ text: string; query: string }> = ({
-  text,
-  query,
-}) => (
+// Each kind of result gets its own tile color so a glance tells them apart.
+export function resultTone(result: QuickActionResult): string {
+  switch (result.type) {
+    case "channel":
+    case "join-channel":
+      return "bg-discord-primary text-white";
+    case "dm":
+    case "start-dm":
+      return "bg-discord-green text-white";
+    case "server":
+      return "bg-discord-fuchsia text-white";
+    case "search-messages":
+      return "bg-discord-text-link text-white";
+    case "setting":
+    case "page":
+    case "ui-toggle":
+    case "ui-modal":
+    case "recent-search":
+    case "recent-place":
+      return "bg-discord-dark-500 text-white";
+  }
+}
+
+export const MatchedText: React.FC<{
+  text: string;
+  query: string;
+  isSelected: boolean;
+}> = ({ text, query, isSelected }) => (
   <HighlightedText
     text={text}
     ranges={query ? fuzzyMatch(query, text).ranges : []}
-    markClassName="bg-transparent font-semibold underline decoration-2 underline-offset-[3px]"
+    markClassName={`bg-transparent font-bold ${isSelected ? "text-white underline" : "text-discord-yellow"}`}
   />
 );
 

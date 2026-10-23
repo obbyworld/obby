@@ -8,6 +8,7 @@ import { type HistoryRow, readSearchIndex } from "./historyDb";
 import { awaitRequest } from "./idb";
 import {
   indexTermOf,
+  isIndexedPrefix,
   matchesTerms,
   mentionsNick,
   type QueryTerms,
@@ -104,6 +105,7 @@ function matches(candidate: SearchCandidate, filter: Filter): boolean {
     (!filter.from || candidate.nick.toLowerCase() === filter.from) &&
     (!query.hasLink || candidate.hasLink) &&
     (!query.aboutMe || !!aboutMeOf(candidate, filter.ownNicks)) &&
+    (!query.mentions || mentionsNick(candidate.text, query.mentions)) &&
     matchesTerms(candidate.text, filter.terms)
   );
 }
@@ -325,6 +327,10 @@ function scopeDriver(rows: IDBObjectStore, filter: Filter): Driver {
   return indexDriver(rows.index("time"), IDBKeyRange.bound(lower, upper));
 }
 
+// A nick's longest word picks its postings, and `matches` checks the whole nick.
+const nickTermOf = (nick: string): string | undefined =>
+  termsOf(nick).sort((a, b) => b.length - a.length)[0];
+
 // Replies to us come from their own index and mentions from the postings of
 // our nick's longest word. A nick without an indexed word cannot drive.
 function aboutMeDriver(
@@ -337,11 +343,10 @@ function aboutMeDriver(
     scope.kind === "everywhere"
       ? Object.values(filter.ownNicks)
       : [filter.ownNicks[scope.serverId]].filter(Boolean);
-  const nickTerms = nicks.map(
-    (nick) => termsOf(nick).sort((a, b) => b.length - a.length)[0],
-  );
-  if (nickTerms.some((term) => term === undefined)) return;
-  const words = [...new Set(nickTerms)];
+  const nickTerms = nicks.map(nickTermOf);
+  const found = nickTerms.filter((term) => term !== undefined);
+  if (found.length < nickTerms.length) return;
+  const words = [...new Set(found)];
   const replies = IDBKeyRange.bound([1, filter.lower], [1, filter.upper]);
   const replyIndex = rows.index("replyToOwn");
   return {
@@ -387,6 +392,9 @@ function otherDrivers(
     const driver = aboutMeDriver(rows, terms, filter);
     if (driver) drivers.push(driver);
   }
+  const mentionTerm =
+    filter.query.mentions && nickTermOf(filter.query.mentions);
+  if (mentionTerm) drivers.push(exactTerm(terms, mentionTerm, filter).driver);
   return drivers;
 }
 
@@ -421,7 +429,7 @@ async function planSearch(
 ): Promise<{ driver: Driver; keep: (id: number) => boolean }> {
   const text = [
     ...filter.terms.exact.map((term) => exactTerm(terms, term, filter)),
-    ...(filter.terms.prefix
+    ...(filter.terms.prefix && isIndexedPrefix(filter.terms.prefix)
       ? [prefixTerm(terms, filter.terms.prefix, filter)]
       : []),
   ];

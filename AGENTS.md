@@ -189,6 +189,23 @@ Do not call `openExternalUrl` directly from any UI element without this protecti
 
 ---
 
+## Credentials: long-lived secrets go only to the IRCd
+
+**Critical invariant:** a long-lived credential (the SASL or server password, a personal
+access token, a client certificate key) is sent only to the IRC server the user logs in to.
+Never send one to a file host, an API or any other HTTP endpoint, even one the server
+advertises, and even over https.
+
+A service that needs to know who the user is gets a short-lived, single-purpose token
+minted by the IRCd: `draft/authtoken` (`TOKEN GENERATE <service>`, one token per request).
+The vendor `obby.world/FILEHOST` uploader works this way.
+
+- `draft/FILEHOST` hosts are passwordless: POST the file with no credentials.
+- We do not support `soju.im/FILEHOST`, since it logs in to the file host with the IRC
+  credentials. See https://github.com/obbyworld/obby/issues/203#issuecomment-4512606251.
+
+---
+
 ## Zustand + React Gotchas
 
 **Store action refs are unstable.** Functions from `useStore((s) => s.someAction)` change
@@ -214,6 +231,7 @@ for WKWebView's `IntersectionObserver`.
 ## Menus, panels and touch
 
 - Dropdown menus go through `Menu` (`src/components/ui/Menu.tsx`); other floating panels go through `Popover`. Style their contents with the shared classes in the `@layer components` block of `src/index.css` (`surface-floating`, `row-interactive`, `row-meta`, …) so every panel stays one look.
+- Hover hints use one look, the `tooltip-surface` class. A plain `title` attribute is enough: `TitleTooltipLayer` shows it in that style. Wrap richer content in `HoverTooltip`, and never style a tooltip by hand.
 - Touch UI (bottom sheets, long-press, drag handles) follows `useIsTouchInput()`. Window width only decides layout, so a narrow desktop window still gets mouse UI.
 - Lists that suggest completions above the chat input (members, emojis, slash commands) render through `SuggestionList` and take their arrow, Enter and Escape keys from `useSuggestionKeys`.
 - Bottom sheets build on `BottomSheet` with the `sheet-row` and `sheet-action` classes; taps and holds go through `useShortTap` and `useLongPress`, which share one delay so they never fire together.

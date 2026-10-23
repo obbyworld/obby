@@ -96,7 +96,7 @@ describe("jumpToMessage", () => {
       time: TIME,
     });
 
-    expect(found).toEqual({ ok: true });
+    expect(found).toEqual({ ok: true, messageId: "internal-1" });
     expect(useStore.getState().ui.selectedServerId).toBe("server1");
     expect(selection()?.selectedChannelId).toBe("chan1");
     expect(useStore.getState().ui.messageJump).toEqual({
@@ -121,12 +121,13 @@ describe("jumpToMessage", () => {
       time: TIME,
     });
 
-    expect(found).toEqual({ ok: true });
+    expect(found).toMatchObject({ ok: true });
     expect(loadAround).toHaveBeenCalledWith(
       useStore,
       "server1",
       "#general",
       TIME,
+      expect.any(Function),
     );
     expect(useStore.getState().ui.messageJump).toEqual({
       messageId: "internal-2",
@@ -207,7 +208,7 @@ describe("jumpToMessage", () => {
       time: TIME,
     });
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toMatchObject({ ok: true });
     expect(useStore.getState().ui.messageJump).toEqual({ messageId: "mine" });
   });
 

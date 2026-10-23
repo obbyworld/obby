@@ -1,5 +1,6 @@
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { useBackButton } from "../../hooks/useBackButton";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useSwipeNavigation } from "../../hooks/useSwipeNavigation";
@@ -10,10 +11,12 @@ import PageHost, { preloadPages } from "../pages/PageHost";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
 import LinkHoverLayer from "../ui/LinkHoverLayer";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
-import { stepBackWithinPage } from "../ui/page/PageShell";
+import { goBackInPage } from "../ui/page/PageShell";
+import TitleTooltipLayer from "../ui/TitleTooltipLayer";
 import { VoicePipOverlay } from "../voice/VoicePipOverlay";
 import { ChannelList } from "./ChannelList";
 import { ChatArea } from "./ChatArea";
+import { PageLayer } from "./PageLayer";
 import { ResizableSidebar } from "./ResizableSidebar";
 import { ServerList } from "./ServerList";
 import { SidePane } from "./SidePane";
@@ -26,24 +29,55 @@ const getColumnFromPage = (page: number): layoutColumn => PAGE_ORDER[page];
 
 export const AppLayout: React.FC = () => {
   const {
-    ui,
+    sidebarPreferences,
+    selectedServerId,
+    perServerSelections,
+    isDarkMode,
+    isMobileMenuOpen,
+    isMemberListVisible,
+    isChannelListVisible,
+    mobileViewActiveColumn,
+    page,
+    sidePane,
+    isNarrowView,
+    openedMedia,
     toggleMobileMenu,
     toggleMemberList,
     toggleChannelList,
     setMobileViewActiveColumn,
     setIsNarrowView,
     closeMedia,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      sidebarPreferences: state.ui.sidebarPreferences,
+      selectedServerId: state.ui.selectedServerId,
+      perServerSelections: state.ui.perServerSelections,
+      isDarkMode: state.ui.isDarkMode,
+      isMobileMenuOpen: state.ui.isMobileMenuOpen,
+      isMemberListVisible: state.ui.isMemberListVisible,
+      isChannelListVisible: state.ui.isChannelListVisible,
+      mobileViewActiveColumn: state.ui.mobileViewActiveColumn,
+      page: state.ui.page,
+      sidePane: state.ui.sidePane,
+      isNarrowView: state.ui.isNarrowView,
+      openedMedia: state.ui.openedMedia,
+      toggleMobileMenu: state.toggleMobileMenu,
+      toggleMemberList: state.toggleMemberList,
+      toggleChannelList: state.toggleChannelList,
+      setMobileViewActiveColumn: state.setMobileViewActiveColumn,
+      setIsNarrowView: state.setIsNarrowView,
+      closeMedia: state.closeMedia,
+    })),
+  );
 
   const [channelListWidth, setChannelListWidth] = useState<number>(
-    ui.sidebarPreferences?.channelList.width ?? 264,
+    sidebarPreferences?.channelList.width ?? 264,
   );
   const [memberListWidth, setMemberListWidth] = useState<number>(
-    ui.sidebarPreferences?.memberList.width ?? 280,
+    sidebarPreferences?.memberList.width ?? 280,
   );
 
-  const selectedServerId = ui.selectedServerId;
-  const currentSelection = ui.perServerSelections[selectedServerId || ""] || {
+  const currentSelection = perServerSelections[selectedServerId || ""] || {
     selectedChannelId: null,
     selectedPrivateChatId: null,
   };
@@ -60,15 +94,6 @@ export const AppLayout: React.FC = () => {
   const isVoiceChannel =
     !!selectedChannel?.name.startsWith("^") ||
     !!selectedChannel?.name.startsWith("$");
-  const {
-    isDarkMode,
-    isMobileMenuOpen,
-    isMemberListVisible,
-    isChannelListVisible,
-    mobileViewActiveColumn,
-    page,
-    sidePane,
-  } = ui;
   const hasSidePane = !!sidePane;
 
   const isBouncerControlSelected = useStore(
@@ -142,7 +167,6 @@ export const AppLayout: React.FC = () => {
 
   const isNarrowViewFromHook = useMediaQuery();
   const isTooNarrowForMemberList = useMediaQuery("(max-width: 1080px)");
-  const isNarrowView = ui.isNarrowView;
 
   // Desktop narrow: member list shows as overlay in ChatArea instead of sidebar
   const showMemberListAsOverlay = !isNarrowView && isTooNarrowForMemberList;
@@ -251,7 +275,7 @@ export const AppLayout: React.FC = () => {
           </>
         );
       case "chatView": {
-        const overlay = page && <PageHost page={page} />;
+        const overlay = page && !isNarrowView && <PageHost page={page} />;
         // A page covers the chat and keeps it mounted, so the draft, the
         // scroll position and a running call survive opening Settings.
         const voiceTopSlot =
@@ -350,9 +374,7 @@ export const AppLayout: React.FC = () => {
       mobileViewActiveColumn: activeColumn,
     } = useStore.getState().ui;
     if (openedPage) {
-      (document.activeElement as HTMLElement | null)?.blur();
-      if (stepBackWithinPage()) return false;
-      useStore.getState().closePage();
+      if (!goBackInPage()) useStore.getState().closePage();
       return false;
     }
     if (openedPane?.kind === "profile") {
@@ -395,7 +417,8 @@ export const AppLayout: React.FC = () => {
         {isNarrowView ? (
           <div
             ref={containerRef}
-            className="relative w-full h-full overflow-hidden"
+            // We clip so a field focused in an off-screen column cannot scroll the pager sideways.
+            className="relative w-full h-full overflow-clip"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
@@ -406,6 +429,8 @@ export const AppLayout: React.FC = () => {
           >
             <div
               className="flex w-full h-full"
+              inert={!!page}
+              aria-hidden={!!page || undefined}
               style={{
                 transform: `translateX(calc(-${currentPageIndex * 100}% + ${offset}px))`,
                 transition: isTransitioning
@@ -425,6 +450,7 @@ export const AppLayout: React.FC = () => {
                 </div>
               ))}
             </div>
+            {page && <PageLayer page={page} />}
           </div>
         ) : (
           <>
@@ -438,17 +464,18 @@ export const AppLayout: React.FC = () => {
         <VoicePipOverlay />
         {/* Rendered here so window resizes never unmount it */}
         <MediaViewerModal
-          isOpen={!!ui.openedMedia}
-          url={ui.openedMedia?.url ?? ""}
-          sourceMsgId={ui.openedMedia?.sourceMsgId}
+          isOpen={!!openedMedia}
+          url={openedMedia?.url ?? ""}
+          sourceMsgId={openedMedia?.sourceMsgId}
           onClose={closeMedia}
-          serverId={ui.openedMedia?.serverId}
-          channelId={ui.openedMedia?.channelId}
-          preferTopicEntry={ui.openedMedia?.preferTopicEntry}
-          preferLastEntry={ui.openedMedia?.preferLastEntry}
-          decryptedType={ui.openedMedia?.decryptedType}
+          serverId={openedMedia?.serverId}
+          channelId={openedMedia?.channelId}
+          preferTopicEntry={openedMedia?.preferTopicEntry}
+          preferLastEntry={openedMedia?.preferLastEntry}
+          decryptedType={openedMedia?.decryptedType}
         />
         <LinkHoverLayer />
+        <TitleTooltipLayer />
       </div>
     </ChannelLinkProvider>
   );

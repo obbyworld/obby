@@ -36,7 +36,7 @@ import {
 import { findServerUser } from "../../store/helpers";
 import type { Server } from "../../types";
 import { MessageAvatar } from "../message/MessageAvatar";
-import SearchQueryBar from "../search/SearchQueryBar";
+import SearchQueryBar, { touchHitArea } from "../search/SearchQueryBar";
 import { useSearchDraft } from "../search/useSearchDraft";
 import HighlightedText, { type TextRange } from "../ui/HighlightedText";
 import LoadingSpinner from "../ui/LoadingSpinner";
@@ -107,9 +107,9 @@ const HitRow = memo<{
   showNetwork: boolean;
   pattern: RegExp | null;
   locale: string;
-  isLarge: boolean;
+  isOpened: boolean;
   onOpen: (hit: SearchHit) => void;
-}>(({ hit, server, showNetwork, pattern, locale, isLarge, onOpen }) => {
+}>(({ hit, server, showNetwork, pattern, locale, isOpened, onOpen }) => {
   const chat = chatLabel(server, hit.target);
   const where = showNetwork && server ? `${chat} · ${server.name}` : chat;
   const { shown, ranges } = snippetOf(hit.text, pattern);
@@ -118,7 +118,8 @@ const HitRow = memo<{
       <button
         type="button"
         onClick={() => onOpen(hit)}
-        className={`row-interactive items-start ${isLarge ? "min-h-14 py-2.5" : "py-2"}`}
+        aria-current={isOpened || undefined}
+        className={`row-interactive items-start py-2 ${isOpened ? "search-hit" : ""}`}
       >
         <MessageAvatar
           userId={hit.nick}
@@ -192,10 +193,13 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     initialScope: query.scope,
     inputRef,
     keysActive: isInputFocused,
-    submitsOnChange: true,
+    isInPane: true,
   });
+  const [searchBar, setSearchBar] = useState<HTMLFormElement | null>(null);
   const { completion } = draft;
   const [hits, setHits] = useState<SearchHit[]>([]);
+  // The query behind the hits on screen, which lag the typed one while loading.
+  const [shownQuery, setShownQuery] = useState(query);
   const [nextCursor, setNextCursor] = useState<SearchCursor>();
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
@@ -228,22 +232,19 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     [scopeKey, fillRound],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the pane mounts once per query, so we focus once
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the pane mounts once per search session, so we focus once
   useEffect(() => {
     if (!isTouch) inputRef.current?.focus();
   }, []);
 
+  // We keep the previous results on screen until the new ones arrive, so typing does not flicker.
   // biome-ignore lint/correctness/useExhaustiveDependencies: attempt reruns the same query after an error, fetchedPages after each page of missed messages
   useEffect(() => {
     let isCurrent = true;
     searchRunRef.current += 1;
     const isFillRefresh = isFillRefreshRef.current;
     isFillRefreshRef.current = false;
-    if (!isFillRefresh) {
-      setStatus("loading");
-      setHits([]);
-      setNextCursor(undefined);
-    }
+    if (!isFillRefresh) setStatus("loading");
     // On a refresh for fetched messages we read as many hits as are already
     // shown, so the list keeps its length and scroll position.
     const limit = isFillRefresh
@@ -253,6 +254,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
       (page) => {
         if (!isCurrent) return;
         setHits(page.hits);
+        setShownQuery(query);
         setNextCursor(cursorOf(page));
         setStatus("ready");
       },
@@ -264,7 +266,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
   }, [query, attempt, fetchedPages]);
 
   const loadMore = () => {
-    if (!nextCursor || isLoadingMoreRef.current) return;
+    if (!nextCursor || status !== "ready" || isLoadingMoreRef.current) return;
     isLoadingMoreRef.current = true;
     setIsLoadingMore(true);
     const run = searchRunRef.current;
@@ -291,7 +293,9 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     if (!isTouch) requestChatInputFocus();
   };
 
+  const [openedHit, setOpenedHit] = useState<SearchHit | null>(null);
   const openHit = useCallback(async (hit: SearchHit) => {
+    setOpenedHit(hit);
     const result = await jumpToMessage(hit).catch(
       (error: unknown): JumpResult => {
         if (!(error instanceof DOMException)) throw error;
@@ -300,18 +304,23 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     );
     // A failed jump may already have selected the chat, so we bring the
     // results back where both cannot show at once.
-    useStore.getState().setSearchChatShown(result.ok);
+    useStore
+      .getState()
+      .setSearchChatShown(result.ok, result.ok ? result.messageId : undefined);
     if (!result.ok) reportJumpFailure(hit.serverId, result.reason);
   }, []);
 
   const shownHits = useMemo(() => {
-    if (!query.aboutMe || tab === "all") return hits;
+    if (!shownQuery.aboutMe || tab === "all") return hits;
     return hits.filter((hit) => hit.aboutMe === tab);
-  }, [hits, tab, query.aboutMe]);
+  }, [hits, tab, shownQuery.aboutMe]);
   const keys = useMemo(() => hitKeys(shownHits), [shownHits]);
 
-  const pattern = useMemo(() => termPattern(query.text), [query.text]);
-  const scopeName = scopeLabel(query.scope, servers);
+  const pattern = useMemo(
+    () => termPattern(`${shownQuery.text} ${shownQuery.mentions ?? ""}`),
+    [shownQuery.text, shownQuery.mentions],
+  );
+  const scopeName = scopeLabel(shownQuery.scope, servers);
   const hasMore = nextCursor !== undefined;
   const slots = gapSlots(gapFill.gaps, shownHits, hasMore);
   const gapSlot = (index: number) =>
@@ -334,7 +343,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     ? t`${count}+ results`
     : plural(count, { one: "# result", other: "# results" });
   const inputLabel = t`Search messages, filter with from: in: has:link`;
-  const touchTarget = isTouch ? "min-h-11 px-4 text-sm" : "";
+  const touchTarget = isTouch ? `min-h-8 ${touchHitArea}` : "";
 
   const handleListScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const list = e.currentTarget;
@@ -349,7 +358,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
     <button
       type="button"
       onClick={close}
-      className={`icon-button rounded-lg ${isLarge ? "w-11 h-11" : "w-10 h-10"}`}
+      className={"icon-button rounded-lg w-10 h-10"}
       title={t`Close search`}
       aria-label={t`Close search`}
     >
@@ -367,6 +376,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
       }}
     >
       <form
+        ref={setSearchBar}
         className="h-12 shrink-0 flex items-center gap-1.5 px-2 border-b border-white/[0.06]"
         onSubmit={(e) => {
           e.preventDefault();
@@ -386,7 +396,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
               : undefined
           }
           aria-label={inputLabel}
-          placeholder={inputLabel}
+          placeholder={isLarge ? t`Search messages` : inputLabel}
           enterKeyHint="search"
           {...draft.inputProps}
           onFocus={() => setIsInputFocused(true)}
@@ -401,16 +411,24 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
         isLarge={isLarge}
         completionId={completionId}
         showCompletion={isInputFocused}
-        completionClassName="border-b border-white/[0.06]"
+        completionAnchor={searchBar ?? undefined}
       />
 
       <div
         role="status"
+        aria-busy={status === "loading"}
         className="px-3 pb-2 row-meta flex items-center gap-2 min-w-0"
       >
         <span className="truncate">
-          {status === "ready" && t`${countLabel} · newest first · ${scopeName}`}
+          {status === "error"
+            ? t`Search failed`
+            : hits.length || status === "ready"
+              ? t`${countLabel} in ${scopeName}`
+              : t`Searching…`}
         </span>
+        {status === "loading" && hits.length > 0 && (
+          <LoadingSpinner size="sm" text="" />
+        )}
         {gapFill.isFetching && (
           <span className="ml-auto shrink-0 flex items-center gap-1.5">
             <LoadingSpinner size="sm" text="" />
@@ -422,7 +440,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
       {query.aboutMe && (
         <SegmentedControl
           className="mx-3 mb-2"
-          size={isLarge ? "lg" : "sm"}
+          size="sm"
           value={tab}
           onChange={setTab}
           segments={[
@@ -437,7 +455,7 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
         className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pb-3"
         onScroll={handleListScroll}
       >
-        {status === "loading" ? (
+        {status === "loading" && hits.length === 0 ? (
           <div className="py-10 flex justify-center">
             <LoadingSpinner size="md" text={t`Searching…`} />
           </div>
@@ -454,29 +472,33 @@ export const SearchPane: React.FC<{ query: SearchQuery }> = ({ query }) => {
           </div>
         ) : shownHits.length === 0 && !hasMore && slots.size === 0 ? (
           <div className="px-4 py-10 flex flex-col items-center gap-3 text-center text-sm text-discord-text-muted">
-            <Trans>No messages match. Widen the scope or change filters</Trans>
+            <Trans>
+              No messages match. Search more chats or change the filters
+            </Trans>
             {query.scope.kind !== "everywhere" && (
               <button
                 type="button"
                 className={`chip-action ${touchTarget}`}
                 onClick={() => draft.setScope(widenScope(query.scope))}
               >
-                <Trans>Widen the scope</Trans>
+                <Trans>Search more chats</Trans>
               </button>
             )}
           </div>
         ) : (
-          <ul className="flex flex-col gap-0.5">
+          <ul
+            className={`flex flex-col gap-0.5 transition-opacity ${status === "loading" ? "opacity-60" : ""}`}
+          >
             {shownHits.map((hit, index) => [
               gapSlot(index),
               <HitRow
                 key={keys[index]}
                 hit={hit}
                 server={servers.find((s) => s.id === hit.serverId)}
-                showNetwork={query.scope.kind === "everywhere"}
+                showNetwork={shownQuery.scope.kind === "everywhere"}
                 pattern={pattern}
                 locale={i18n.locale}
-                isLarge={isLarge}
+                isOpened={hit === openedHit}
                 onOpen={openHit}
               />,
             ])}

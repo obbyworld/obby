@@ -143,9 +143,21 @@ function classifyContentType(
   return { type, size: contentLength, streamable, skipped: false };
 }
 
-export async function probeMediaUrl(url: string): Promise<ProbeResult | null> {
-  if (cache.has(url)) return cache.get(url) ?? null;
+const inFlight = new Map<string, Promise<ProbeResult | null>>();
 
+// Every caller of a URL shares one probe: each one opens hidden media elements,
+// and WebKit can deadlock while it cancels many of those at once.
+export function probeMediaUrl(url: string): Promise<ProbeResult | null> {
+  if (cache.has(url)) return Promise.resolve(cache.get(url) ?? null);
+  let probe = inFlight.get(url);
+  if (!probe) {
+    probe = probeUncached(url).finally(() => inFlight.delete(url));
+    inFlight.set(url, probe);
+  }
+  return probe;
+}
+
+async function probeUncached(url: string): Promise<ProbeResult | null> {
   // A provider page or a map link is a web page with no file behind it, so the
   // host answers a content-type request with a CORS failure and nothing else.
   const pageType = detectMediaType(url);

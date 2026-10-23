@@ -22,10 +22,6 @@ msgstr "Obby - 將 IRC 帶入未來"
 msgid "— open in viewer"
 msgstr "— 在檢視器中開啟"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(handled by Obby)"
-msgstr "(由 Obby 處理)"
-
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -35,6 +31,10 @@ msgstr "（繼承）"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(not set)"
 msgstr "（未設定）"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "(run by Obby)"
+msgstr "（由 Obby 執行）"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
@@ -146,8 +146,8 @@ msgid "{count}+ results"
 msgstr "{count}+ 筆結果"
 
 #: src/components/layout/SearchPane.tsx
-msgid "{countLabel} · newest first · {scopeName}"
-msgstr "{countLabel} · 最新優先 · {scopeName}"
+msgid "{countLabel} in {scopeName}"
+msgstr "{scopeName} 中的 {countLabel}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -198,8 +198,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} 已結束加密。"
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
-msgstr "{nick} 正在傳送本裝置無法讀取的加密訊息。需要重新開始加密，它們才能開啟。"
+msgid "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
+msgstr "{nick} 正在傳送此裝置無法解密的加密訊息。請重新開始加密以閱讀這些訊息。"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -210,8 +210,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} 想要開始加密聊天"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
-msgstr "{nick} 的加密金鑰變了。換新裝置時會這樣，攻擊者也是這個樣子。請在此聊天之外與 {nick} 核對新的指紋，然後接受。"
+msgid "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
+msgstr "{nick} 的加密金鑰已變更。{nick} 使用新裝置時會發生這種情況，攻擊者攔截聊天時也會發生。請在此聊天之外與 {nick} 核對新的指紋，然後接受。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -234,16 +234,16 @@ msgid "{safeName} is no longer available on the server."
 msgstr "{safeName} 在伺服器上已不存在。"
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} was changed on the server, so it no longer decrypts."
-msgstr "{safeName} 在伺服器上被更動過，已無法解密。"
-
-#: src/store/handlers/e2ee.ts
-msgid "{sender} restarted encryption, so this conversation is being set up again."
-msgstr "{sender} 重新啟動了加密，因此正在重新建立這個對話。"
+msgid "{safeName} was changed on the server, so it cannot be decrypted."
+msgstr "{safeName} 已在伺服器上被變更，因此無法解密。"
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} 重新啟動了加密。在你接受之前，這個對話不會加密。"
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. Wait a moment before you send a message."
+msgstr "{sender} 已重新啟動加密。請稍候片刻再傳送訊息。"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -627,6 +627,10 @@ msgstr "在設定中允許存取麥克風以說話"
 msgid "Allow microphone access to record sound."
 msgstr "允許存取麥克風以錄製聲音。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "請在系統設定的「螢幕錄製」中允許 Obby，然後再錄製一次。"
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -691,6 +695,7 @@ msgstr "請伺服器管理員公告後端 URL（draft/authtoken 或 obby.world/F
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -921,6 +926,10 @@ msgstr "机器人"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "機器人建構器"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Bot 指令"
@@ -955,6 +964,11 @@ msgstr "瀏覽器未提供 WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "瀏覽器只有在您允許存取麥克風或攝影機後，才會顯示您的喇叭。不會錄製任何內容。"
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "作者：{0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1136,6 +1150,10 @@ msgstr "頻道屬性"
 msgid "Channel settings"
 msgstr "頻道設定"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "頻道統計"
+
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
 msgstr "要加入的頻道 (#name)"
@@ -1166,10 +1184,6 @@ msgstr "頻道"
 #: src/components/pages/SettingsPage.tsx
 msgid "Chat"
 msgstr "聊天"
-
-#: src/components/ui/settings/HistoryUsageField.tsx
-msgid "Chat to start saving history"
-msgstr "開始聊天即可開始儲存歷史"
 
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
@@ -1338,6 +1352,10 @@ msgstr "關閉工作流程"
 msgid "Code accepted."
 msgstr "代碼已接受。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "程式碼片段"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1360,9 +1378,17 @@ msgstr "颜色"
 msgid "Color & Formatting"
 msgstr "颜色与格式"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "即將推出"
+
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "IRC伺服器提供的命令"
+
+#: src/components/chat/completionProviders.tsx
+msgid "Command run by Obby"
+msgstr "由 Obby 執行的指令"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
@@ -1579,8 +1605,8 @@ msgid "Could not find this message"
 msgstr "找不到這則訊息"
 
 #: src/lib/geolocation.ts
-msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
-msgstr "無法即時取得定位。請在視野較開闊的地方再試一次。"
+msgid "Could not find your location in time. Try again somewhere with a clearer view of the sky."
+msgstr "未能及時找到你的位置。請到天空視野更開闊的地方重試。"
 
 #: src/lib/geolocation.ts
 msgid "Could not get your location."
@@ -1593,6 +1619,11 @@ msgstr "無法載入 GIF。請重新搜尋。"
 #: src/lib/mediaUpload.ts
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "無法連線至檔案主機。請檢查網路連線後重試。"
+
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Could not set the new password: {0}"
+msgstr "無法設定新密碼：{0}"
 
 #. placeholder {0}: p.code
 #: src/components/ui/ChangePasswordModal.tsx
@@ -1721,10 +1752,6 @@ msgstr "預設暱稱"
 msgid "Delay joins (+D)"
 msgstr "延遲加入 (+D)"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Delay showing joins until someone speaks"
-msgstr "在有人發言前不顯示加入訊息"
-
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -1792,6 +1819,10 @@ msgstr "描述（選填，例如「第三季 Beta 測試者」）"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "描述（選填）"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "設計你自己的配色並作為主題分享。"
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2004,10 +2035,6 @@ msgstr "嵌入"
 msgid "Emojis"
 msgstr "表情符號"
 
-#: src/components/pages/EmojiPacksPage.tsx
-msgid "Empty pack. Add some emoji."
-msgstr "表情包是空的。請新增一些表情。"
-
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
@@ -2138,6 +2165,10 @@ msgid "Enter a channel name for channel-scoped packs."
 msgstr "請為頻道範圍的表情包輸入頻道名稱。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+msgstr "輸入一個頻道，當使用者無法加入此頻道時將其轉到該頻道。留空則停用。"
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "可包含空格、表情符號或符號。IRC 指令仍使用真實名稱（{channelName}）。"
 
@@ -2239,6 +2270,10 @@ msgstr "輸入你的帳號名稱。我們會將 6 位數復原碼寄送到已驗
 msgid "esc to close"
 msgstr "esc 關閉"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "活動規劃"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "事件"
@@ -2327,8 +2362,8 @@ msgid "Fetching missed messages…"
 msgstr "正在取得錯過的訊息…"
 
 #: src/components/layout/ChatArea.tsx
-msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
-msgstr "檔案未上傳：加密仍在建立中。加密生效後即可傳送，或結束加密後傳送。"
+msgid "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
+msgstr "檔案未上傳：加密仍在設定中。請在加密生效後重新上傳，或結束加密以不加密上傳。"
 
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
@@ -2344,8 +2379,8 @@ msgstr "檔案託管圖片"
 
 #. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
-msgstr "超過 {0} 的檔案將按原樣傳送。檔案託管方會以可讀形式儲存，任何取得連結的人都可以開啟。"
+msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
+msgstr "大於 {0} 的檔案將不加密傳送。檔案主機可以讀取這些檔案，任何擁有連結的人都可以開啟。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -2354,10 +2389,6 @@ msgstr "過濾不當詞語 (+G)"
 #: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "筛选成员…"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Filter out bad words with <censored>"
-msgstr "以 <censored> 取代不當詞語"
 
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Filters"
@@ -2431,6 +2462,10 @@ msgstr "忘記密碼"
 msgid "Forgot password?"
 msgstr "忘記密碼？"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "設定文字格式"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -2466,6 +2501,10 @@ msgstr "一般"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "通用支持频道"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "有人說出你關注的詞時收到通知。"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
@@ -2503,10 +2542,6 @@ msgstr "GZ-Line（全域 Z-Line）"
 msgid "Halfop"
 msgstr "半管理员"
 
-#: src/components/chat/completionProviders.tsx
-msgid "Handled by Obby before being sent"
-msgstr "在傳送前由Obby處理"
-
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "包含連結"
@@ -2518,6 +2553,10 @@ msgstr "隱藏評論"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "在 LIST 與 NAMES 中隱藏此頻道。"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide users who join until they send a message"
+msgstr "隱藏加入後未傳送訊息的使用者"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2627,11 +2666,6 @@ msgstr "第 {0} 張，共 {1} 張"
 msgid "Image preview"
 msgstr "图片预览"
 
-#. Search filter chip: messages in a chat or network
-#: src/components/search/SearchQueryBar.tsx
-msgid "In"
-msgstr "位於"
-
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
 msgstr "通話中"
@@ -2652,6 +2686,10 @@ msgstr "輸入"
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
 msgstr "插入表情"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "安裝"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2815,8 +2853,12 @@ msgid "Keep credentials"
 msgstr "保留憑證"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Keep the channel when it empties. Only IRCops can set this."
-msgstr "頻道清空後仍保留。僅 IRCops 可以設定。"
+msgid "Keep the channel after everyone leaves. Only IRCops can set this."
+msgstr "所有人離開後保留頻道。只有 IRCop 可以設定。"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "關鍵字提醒"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2927,6 +2969,10 @@ msgstr "透過 {0} 連結"
 msgid "Live"
 msgstr "直播中"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "即時翻譯"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "載入儲存在此裝置上的更早訊息"
@@ -3001,6 +3047,10 @@ msgstr "链路安全级别较低（级别 {securityLevel}）"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "放下手"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "無需程式碼，建立能回應指令的簡單機器人。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3105,6 +3155,10 @@ msgstr "成員"
 msgid "Members — {0}"
 msgstr "成员 — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "提及某人"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3113,6 +3167,11 @@ msgstr "提及"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Mentions & replies"
 msgstr "提及與回覆"
+
+#. Search filter: messages that mention a person
+#: src/components/search/messageSearchProviders.tsx
+msgid "Mentions of"
+msgstr "提及對象"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
@@ -3161,8 +3220,8 @@ msgid "Message not sent: encryption stopped working. End encryption to send unen
 msgstr "訊息未送出：加密已停止運作。請結束加密以未加密方式傳送。"
 
 #: src/store/handlers/e2eeOutbound.ts
-msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
-msgstr "訊息未送出：加密金鑰已變更。請先驗證新金鑰，或結束加密後再以明文傳送。"
+msgid "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
+msgstr "訊息未傳送：加密金鑰已變更。請驗證新金鑰，或結束加密以不加密傳送。"
 
 #: src/components/ui/BlankPage.tsx
 msgid "Message of the day"
@@ -3389,8 +3448,8 @@ msgid "Nickname"
 msgstr "昵称"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "暱稱 '{nick}' 已被使用，正在用 '{newNick}' 重試"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "暱稱 “{nick}” 已被使用，正在用 “{newNick}” 重試"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -3506,8 +3565,8 @@ msgid "no message"
 msgstr "無訊息"
 
 #: src/components/layout/SearchPane.tsx
-msgid "No messages match. Widen the scope or change filters"
-msgstr "沒有符合的訊息。請擴大範圍或變更篩選條件"
+msgid "No messages match. Search more chats or change the filters"
+msgstr "沒有符合的訊息。請搜尋更多聊天或變更篩選條件"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3528,6 +3587,10 @@ msgstr "尚無 OPER 憑證。請輸入名稱與密碼。"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "No packs yet. Create one to start."
 msgstr "尚無表情包。建立一個即可開始。"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "找不到外掛。"
 
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -3812,10 +3875,6 @@ msgstr "可選的當機報告以改善應用程式"
 msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 msgstr "此次變更會同時登出此帳號的其他已開啟工作階段。雙重驗證設定（如有）保持不變。"
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "OTR does not encrypt files, sent as-is"
-msgstr "OTR 不加密檔案，已按原樣傳送"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Output"
 msgstr "輸出"
@@ -3863,6 +3922,10 @@ msgstr "密碼已更新。現在可以登入。"
 msgid "Passwords don't match."
 msgstr "兩次輸入的密碼不一致。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "貼上帶有語法醒目提示和行號的程式碼。"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "模式已存在"
@@ -3894,6 +3957,7 @@ msgstr "等待中"
 
 #: src/components/layout/StartPrivateChatRow.tsx
 #: src/components/search/messageSearchProviders.tsx
+#: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "People"
 msgstr "使用者"
@@ -3921,8 +3985,8 @@ msgid "Pick a password (3 characters or more)."
 msgstr "請設定密碼（至少 3 個字元）。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Pick a preset flood protection profile. UnrealIRCd only."
-msgstr "選擇預設的防洗版設定檔。僅適用於 UnrealIRCd。"
+msgid "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
+msgstr "選擇預設的防洗版保護設定檔。僅適用於 UnrealIRCd 伺服器。"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
@@ -3985,6 +4049,11 @@ msgstr "請輸入使用者名稱"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "请稍候..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "外掛"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4139,6 +4208,10 @@ msgstr "对此消息做出了回应"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "閱讀全部"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "用你自己的語言閱讀每則訊息。"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4301,6 +4374,10 @@ msgstr "移除憑證"
 msgid "remove every attachment"
 msgstr "移除所有附件"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Remove from folder"
+msgstr "從資料夾中移除"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "删除规则"
@@ -4344,6 +4421,10 @@ msgstr "在訊息中渲染 Markdown 格式"
 #: src/components/layout/NetworkMenu.tsx
 msgid "Reorder list"
 msgstr "重新排序清單"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Replace bad words with <censored>"
+msgstr "將髒話替換為 <censored>"
 
 #: src/components/layout/SearchPane.tsx
 msgid "Replies"
@@ -4439,6 +4520,10 @@ msgstr "保存"
 msgid "Save failed: {msg}"
 msgstr "儲存失敗：{msg}"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+msgstr "將訊息儲存在此裝置上，以便你捲動到比伺服器歷史記錄更早的內容。關閉後將不再儲存新訊息，已儲存的訊息會保留。加密的私人訊息永遠不會被儲存。"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save settings"
 msgstr "儲存設定"
@@ -4468,9 +4553,9 @@ msgstr "正在儲存..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "用驗證器應用程式掃描此 QR 碼，然後輸入它顯示的 6 位數驗證碼確認。"
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
-msgstr "可向前翻閱超出伺服器保留範圍的訊息。關閉後將停止儲存，已儲存的內容會保留。加密的私訊永遠不會被儲存。"
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "安排聚會並在開始前提醒頻道。"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4483,6 +4568,7 @@ msgstr "滚动到底部"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "搜索"
 
@@ -4504,6 +4590,7 @@ msgid "Search emojis..."
 msgstr "搜尋表情符號..."
 
 #: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
 msgid "Search failed"
 msgstr "搜尋失敗"
 
@@ -4516,6 +4603,8 @@ msgid "Search GIFs..."
 msgstr "搜索 GIF..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "搜尋訊息"
 
@@ -4527,6 +4616,14 @@ msgstr "在訊息中搜尋「{query}」"
 #: src/components/ui/QuickActions.tsx
 msgid "Search messages, filter with from: in: has:link"
 msgstr "搜尋訊息，可用 from: in: has:link 篩選"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Search more chats"
+msgstr "搜尋更多聊天"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "搜尋外掛..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4540,6 +4637,7 @@ msgstr "正在 {label} 中搜尋"
 msgid "Searching..."
 msgstr "搜尋中..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/layout/SearchPane.tsx
 msgid "Searching…"
 msgstr "正在搜尋…"
@@ -4586,14 +4684,14 @@ msgstr "檢視頻道資訊"
 msgid "See profile"
 msgstr "查看個人資料"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "查看伺服器通知"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "查看觀眾"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "查看誰發言最多以及頻道何時最熱鬧。"
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4641,6 +4739,10 @@ msgstr "傳送動作 / 表情"
 msgid "Send Invite"
 msgstr "傳送邀請"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "傳送訊息"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "傳送訊息"
@@ -4648,6 +4750,10 @@ msgstr "傳送訊息"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Send OPER with the name and password above now."
 msgstr "立即使用上方的名稱與密碼傳送 OPER。"
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Send or receive a message to start saving history"
+msgstr "傳送或接收訊息以開始儲存歷史記錄"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4665,10 +4771,6 @@ msgstr "傳送正在輸入通知"
 msgid "Send unencrypted"
 msgstr "未加密傳送"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Send users here when they can't join. Leave empty to disable."
-msgstr "無法加入的使用者將被轉至此處。留空則停用。"
-
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "傳送中"
@@ -4676,6 +4778,14 @@ msgstr "傳送中"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Sending…"
 msgstr "正在寄送…"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because OTR encrypts text only"
+msgstr "未加密傳送，因為 OTR 只加密文字"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because the file is too large to encrypt"
+msgstr "未加密傳送，因為檔案太大無法加密"
 
 #: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4797,8 +4907,8 @@ msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "設定在計數器重設前統計洗版活動的秒數"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Set how much history to keep. The oldest messages go first."
-msgstr "設定要保留多少歷史。最舊的訊息會先被刪除。"
+msgid "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
+msgstr "設定已儲存的歷史記錄可使用多少磁碟空間。達到上限時，最舊的訊息會最先被刪除。"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4819,11 +4929,6 @@ msgstr "設定此頻道顯示的主題。所有人都能看到。"
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "設為離開"
-
-#. placeholder {0}: p.code
-#: src/components/ui/PasswordRecoveryModal.tsx
-msgid "SETPASS failed: {0}"
-msgstr "SETPASS 失敗：{0}"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4949,16 +5054,16 @@ msgid "Show search results"
 msgstr "顯示搜尋結果"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show the MOTD"
-msgstr "顯示 MOTD"
+msgid "Show the message of the day"
+msgstr "顯示每日訊息"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Show video"
 msgstr "顯示影片"
 
 #: src/components/pages/TwoFactorPage.tsx
-msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
-msgstr "透過該服務商登入，將其身分綁定至您的帳號，以便之後的連線可使用 SASL OAUTHBEARER 與 IRCV3BEARER。"
+msgid "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
+msgstr "使用提供者登入，將其連結到你的帳號。之後你可以在以後的連線中使用它登入（SASL OAUTHBEARER 和 IRCV3BEARER）。"
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -5036,6 +5141,10 @@ msgstr "在 {0} 上開始私訊"
 msgid "Start recording"
 msgstr "開始錄製"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "圓點變紅後開始說話"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "開啟視訊"
@@ -5054,14 +5163,6 @@ msgstr "状态"
 msgid "Status Messages"
 msgstr "状态消息"
 
-#: src/lib/voiceErrors.ts
-msgid "Stay here while we rejoin. The server limits how often you can rejoin."
-msgstr "請留在此頁面，我們正在重新加入。伺服器限制了重新加入的頻率。"
-
-#: src/components/voice/VoiceDock.tsx
-msgid "Step off stream"
-msgstr "退出直播"
-
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -5078,6 +5179,10 @@ msgstr "停止錄製"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
 msgstr "停止分享"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop streaming"
+msgstr "停止直播"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
@@ -5112,8 +5217,8 @@ msgid "Strip mIRC color codes from messages"
 msgstr "從訊息中移除 mIRC 顏色代碼"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Strongest, but only with other Obby users"
-msgstr "最強，但僅限於其他 Obby 使用者"
+msgid "Strongest encryption. Works only with other Obby users"
+msgstr "最強加密。僅適用於其他 Obby 使用者"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Suspend"
@@ -5134,10 +5239,6 @@ msgstr "系统"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "系統預設"
-
-#: src/components/layout/ChannelContextMenu.tsx
-msgid "Take out of folder"
-msgstr "移出資料夾"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5161,24 +5262,24 @@ msgid "That device is not available right now."
 msgstr "此裝置目前無法使用。"
 
 #: src/components/layout/ChatArea.tsx
-msgid "That screen is no longer there."
-msgstr "該螢幕已不存在。"
+msgid "That screen is no longer available. Choose another screen."
+msgstr "該螢幕已無法使用。請選擇其他螢幕。"
 
 #: src/lib/voiceErrors.ts
-msgid "The call server refused that. Try again in a moment."
-msgstr "通話伺服器拒絕了該請求。請稍後重試。"
+msgid "The call server refused the request. Try again in a moment."
+msgstr "通話伺服器拒絕了請求。請稍後重試。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "与 <0>{serverName}</0> 的连接存在以下安全问题："
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
-msgstr "檔案主機以可讀形式保存它，拿到連結的人都能開啟。若要加密傳送檔案，請改用 Obby 加密。"
+msgid "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
+msgstr "檔案主機可以讀取這些檔案，任何擁有連結的人都可以開啟。請切換到 Obby 加密以加密傳送檔案。"
 
 #: src/components/layout/ChatArea.tsx
-msgid "The file host would not let this through."
-msgstr "檔案伺服器拒絕了它。"
+msgid "The file host refused the upload. Try again."
+msgstr "檔案主機拒絕了上傳。請重試。"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
@@ -5204,6 +5305,10 @@ msgstr "伺服器拒絕了你的加入。請檢查頻道模式後再試一次。
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "使用者將收到加入 {channelName} 的邀請。"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "主題工作室"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
 msgstr "此瀏覽器無法錄音。"
@@ -5218,32 +5323,32 @@ msgid "This chat"
 msgstr "此聊天"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr "此聊天使用 Obby 的原生機制加密。請透過其他管道比對指紋，然後標記為已驗證。"
+msgid "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "此聊天使用 Obby 加密。請在此聊天之外與聯絡人核對指紋，然後將其標記為已驗證。"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr "此聊天使用 OTR 加密，與其他 IRC 客戶端相容。請透過其他管道比對指紋，然後標記為已驗證。"
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "此聊天使用 OTR 加密，與其他 IRC 用戶端相容。請在此聊天之外與聯絡人核對指紋，然後將其標記為已驗證。"
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "此命令不需要參數。"
 
 #: src/lib/geolocation.ts
-msgid "This device could not get a location fix right now."
-msgstr "此裝置目前無法取得定位。"
+msgid "This device could not find your location right now. Try again in a moment."
+msgstr "此裝置暫時無法找到你的位置。請稍後重試。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "此欄位為必填"
 
+#: src/components/layout/ChatArea.tsx
+msgid "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+msgstr "此檔案主機拒絕 {CIPHERTEXT_EXTENSION} 檔案，這是 Obby 用於加密附件的格式。請結束加密以不加密傳送檔案。"
+
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "此檔案未加密。任何擁有連結的人都可以開啟它。"
-
-#: src/components/layout/ChatArea.tsx
-msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
-msgstr "該主機不接受 {CIPHERTEXT_EXTENSION} 檔案，加密附件正是以這種形式儲存的。結束加密後，檔案將按原樣傳送。"
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
@@ -5262,6 +5367,14 @@ msgstr "已透過此連結註冊的人數"
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "無法解密這則訊息。它是為本裝置已不再持有金鑰的工作階段加密的。"
 
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by a member of staff"
+msgstr "此訊息已被管理人員刪除"
+
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by the sender"
+msgstr "此訊息已被傳送者刪除"
+
 #: src/components/ui/GlobalNotifications.tsx
 msgid "This message is no longer saved"
 msgstr "這則訊息已不再儲存"
@@ -5274,6 +5387,10 @@ msgstr "此訊息未加密。它可能來自對方另一個未使用加密的用
 msgid "This network"
 msgstr "此網路"
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "This pack has no emoji yet. Add one above."
+msgstr "此表情貼包還沒有表情符號。請在上方新增。"
+
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "這會從您的 soju bouncer 移除該網路。若要再次使用，您需要重新新增它。"
@@ -5283,8 +5400,8 @@ msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>
 msgstr "此伺服器不支援邀請連結（未公告<0>obby.world/invitation</0>功能）。您仍可正常聊天；此面板僅適用於採用 obbyircd 的網路。"
 
 #: src/components/layout/ChatArea.tsx
-msgid "This server has nowhere to put a file."
-msgstr "此伺服器沒有地方存放檔案。"
+msgid "This server has no file host. Connect to a server with a file host to upload files."
+msgstr "此伺服器沒有檔案主機。請連線到有檔案主機的伺服器以上傳檔案。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -5354,10 +5471,6 @@ msgstr "切换成员列表"
 msgid "Toggle Notifications"
 msgstr "切换通知"
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "Too large to encrypt, sent unencrypted"
-msgstr "檔案過大無法加密，已未加密傳送"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "工具"
@@ -5390,6 +5503,10 @@ msgstr "已截斷"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "受信任来源"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "重試"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."
@@ -5717,6 +5834,10 @@ msgstr "音量"
 msgid "Volume for {0}"
 msgstr "{0} 的音量"
 
+#: src/lib/voiceErrors.ts
+msgid "Wait here to rejoin. The server limits how often you can rejoin."
+msgstr "請在此等候以重新加入。伺服器限制了重新加入的頻率。"
+
 #. placeholder {0}: open.opponent
 #: src/components/ui/TicTacToeModal.tsx
 msgid "Waiting for {0} to accept…"
@@ -5804,10 +5925,6 @@ msgstr "在目前頻道情境中對使用者悄悄話"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
 msgstr "寬泛 – 更廣的保護範圍"
-
-#: src/components/layout/SearchPane.tsx
-msgid "Widen the scope"
-msgstr "擴大範圍"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
@@ -5925,18 +6042,18 @@ msgid "Your messages could be intercepted when relayed between servers"
 msgstr "您的消息在服务器之间转发时可能被截获"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
-msgstr "你與 {nick} 的訊息使用只傳輸文字的 OTR 加密。這些檔案將以明文傳送。"
+msgid "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
+msgstr "你與 {nick} 的訊息使用 OTR 加密，而 OTR 只加密文字。這些檔案將不加密傳送。"
 
 #. placeholder {0}: affected.length
 #. placeholder {1}: files.length
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
-msgstr "您與 {nick} 的訊息已加密。{1} 個檔案中有 {0} 個過大無法加密，將以明文傳送。其餘檔案仍保持加密。"
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
+msgstr "你與 {nick} 的訊息已加密。{1} 個檔案中有 {0} 個太大無法加密，將不加密傳送。其他檔案將加密傳送。"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
-msgstr "您與 {nick} 的訊息已加密。這些檔案過大無法加密，將以明文傳送。"
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+msgstr "你與 {nick} 的訊息已加密。這些檔案太大無法加密，將不加密傳送。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

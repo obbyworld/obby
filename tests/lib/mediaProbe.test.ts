@@ -92,6 +92,19 @@ afterEach(() => {
 });
 
 describe("probeMediaUrl", () => {
+  test("callers of a URL still probing share one probe", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("CORS"));
+    const url = uniqueUrl();
+    const results = await Promise.all(
+      Array.from({ length: 20 }, () => probeMediaUrl(url)),
+    );
+    expect(results.every((r) => r === null)).toBe(true);
+    const mediaElements = vi
+      .mocked(document.createElement)
+      .mock.calls.filter(([tag]) => tag === "video" || tag === "audio");
+    expect(mediaElements).toHaveLength(2);
+  });
+
   test("video/mp4 content-type → type video, skipped false", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       makeResponse({

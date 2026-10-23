@@ -356,52 +356,6 @@ function restoreServerMetadata(serverId: string) {
   });
 }
 
-// Fetch our own metadata from the server and update saved values
-async function fetchAndMergeOwnMetadata(serverId: string): Promise<void> {
-  return new Promise((resolve) => {
-    const nickname = ircClient.getNick(serverId);
-    if (!nickname) {
-      resolve();
-      return;
-    }
-
-    // Mark as fetching
-    useStore.setState((state) => ({
-      metadataFetchInProgress: {
-        ...state.metadataFetchInProgress,
-        [serverId]: true,
-      },
-    }));
-
-    // Request all metadata for ourselves (target "*" means us)
-    const defaultKeys = [
-      "url",
-      "website",
-      "status",
-      "location",
-      "avatar",
-      "color",
-      "display-name",
-      "pronouns",
-    ];
-
-    // Get our metadata from the server
-    ircClient.metadataGet(serverId, "*", defaultKeys);
-
-    // Wait a bit for responses to come in, then resolve
-    // The METADATA_KEYVALUE handler will update saved values
-    setTimeout(() => {
-      useStore.setState((state) => ({
-        metadataFetchInProgress: {
-          ...state.metadataFetchInProgress,
-          [serverId]: false,
-        },
-      }));
-      resolve();
-    }, 1000);
-  });
-}
-
 // Fetch channel metadata for the channel list modal
 // Uses caching to avoid refetching and rate limiting
 function fetchChannelMetadata(serverId: string, channelNames: string[]) {
@@ -494,13 +448,14 @@ interface UIState {
   } | null;
   quickActions: QuickActionsState | null;
   // The message list holding this id scrolls to it and flashes it.
-  messageJump?: { messageId: string } | null;
+  messageJump: { messageId: string } | null;
   isDarkMode: boolean;
   isNarrowView: boolean;
   isMobileMenuOpen: boolean;
   isMemberListVisible: boolean;
   isChannelListVisible: boolean;
   mobileViewActiveColumn: layoutColumn;
+  homeView?: "plugins";
   isServerMenuOpen: boolean;
   contextMenu: {
     isOpen: boolean;
@@ -710,7 +665,6 @@ export interface AppState {
     }
   >; // batchId -> batch info
   activeBatches: Record<string, Record<string, BatchInfo>>; // serverId -> batchId -> batch info
-  metadataFetchInProgress: Record<string, boolean>; // serverId -> is fetching own metadata
   userMetadataRequested: Record<string, Set<string>>; // serverId -> Set of usernames we've requested metadata for
   metadataChangeCounter: number; // Counter incremented on metadata changes for reactivity
   // soju.im/bouncer-networks: per-bouncer (i.e. per control-connection)
@@ -1049,9 +1003,12 @@ export interface AppState {
   // With no argument: closed opens Go to, open flips the mode.
   toggleQuickActions: (isOpen?: boolean) => void;
   openQuickActions: (mode: QuickActionsMode, scope?: SearchScope) => void;
-  openSearchResults: (query: SearchQuery) => void;
+  openSearchResults: (
+    query: SearchQuery,
+    options?: { isLive?: boolean; isPaneKept?: boolean },
+  ) => void;
   closeSearchResults: () => void;
-  setSearchChatShown: (isChatShown: boolean) => void;
+  setSearchChatShown: (isChatShown: boolean, hitMessageId?: string) => void;
   // Selects the joined channel or the private chat with this nick, opening it
   // when needed, and returns its id.
   openChat: (serverId: string, target: string) => string | null;
@@ -1117,6 +1074,7 @@ export interface AppState {
   ) => void;
   hideContextMenu: () => void;
   setMobileViewActiveColumn: (column: layoutColumn) => void;
+  setHomeView: (view: "plugins" | undefined) => void;
   setMobileView: (view: layoutColumn) => void;
   // Server notices popup actions
   toggleServerNoticesPopup: (isOpen?: boolean) => void;
@@ -1240,6 +1198,8 @@ export function resolveCallReturnTarget(
 }
 
 // Create store with Zustand
+let searchSession = 0;
+
 const useStore = create<AppState>((set, get) => ({
   servers: [],
   currentUser: null,
@@ -1268,7 +1228,6 @@ const useStore = create<AppState>((set, get) => ({
   metadataSubscriptions: {},
   metadataBatches: {},
   activeBatches: {},
-  metadataFetchInProgress: {},
   userMetadataRequested: {},
   metadataChangeCounter: 0,
   bouncers: {},
@@ -1415,7 +1374,7 @@ const useStore = create<AppState>((set, get) => ({
         s.isConnected,
     );
     if (existingServer) {
-      // Already connected, just return the existing server
+      if (isNewServer) get().selectServer(existingServer.id);
       return existingServer;
     }
 
@@ -1424,6 +1383,30 @@ const useStore = create<AppState>((set, get) => ({
       isAddingNewServer: isNewServer,
       connectionError: null,
     });
+
+    const knownServer = state.servers.find(
+      (s) => normalizeHost(s.host) === normalizeHost(host) && s.port === port,
+    );
+    const newServerId = isNewServer && !knownServer ? uuidv4() : undefined;
+    if (newServerId) {
+      set((state) => ({
+        servers: [
+          ...state.servers,
+          {
+            id: newServerId,
+            name: name || normalizeHost(host),
+            host: normalizeHost(host),
+            port,
+            channels: [],
+            privateChats: [],
+            isConnected: false,
+            connectionState: "connecting",
+            users: [],
+          },
+        ],
+      }));
+      get().selectServer(newServerId);
+    }
 
     try {
       // Look up saved server to get its ID
@@ -1456,7 +1439,7 @@ const useStore = create<AppState>((set, get) => ({
         password,
         saslAccountName,
         saslPassword,
-        existingSavedServer?.id, // Pass the saved server ID if it exists
+        existingSavedServer?.id ?? newServerId,
         oauthBearerEnabled,
       );
 
@@ -2126,8 +2109,10 @@ const useStore = create<AppState>((set, get) => ({
       });
 
       // Cap per-channel history to prevent unbounded memory growth in long sessions.
+      // A detached window moves its newer lines to the present right after, so we leave it whole.
       const cappedMessages =
-        updatedMessages.length > MAX_MESSAGES_PER_CHANNEL
+        updatedMessages.length > MAX_MESSAGES_PER_CHANNEL &&
+        !state.historyWindows[channelKey]
           ? updatedMessages.slice(-MAX_MESSAGES_PER_CHANNEL)
           : updatedMessages;
 
@@ -2155,9 +2140,12 @@ const useStore = create<AppState>((set, get) => ({
       const next = list.map((msg) => {
         if (msg.pendingLabel !== label) return msg;
         matched = true;
+        // We keep the time we sent it: a server that delays a burst stamps
+        // later times, and the next sort would shuffle our own lines.
         return {
           ...msg,
           ...updates,
+          timestamp: msg.timestamp,
           pendingLabel: undefined,
           status: undefined,
         };
@@ -3553,17 +3541,10 @@ const useStore = create<AppState>((set, get) => ({
     }));
   },
 
+  // On a phone a page covers whichever column opened it, so closing it
+  // returns there.
   openPage: (page) => {
-    set((state) => ({
-      ui: {
-        ...state.ui,
-        page,
-        quickActions: null,
-        mobileViewActiveColumn: state.ui.isNarrowView
-          ? "chatView"
-          : state.ui.mobileViewActiveColumn,
-      },
-    }));
+    set((state) => ({ ui: { ...state.ui, page, quickActions: null } }));
   },
 
   closePage: () => {
@@ -3610,8 +3591,9 @@ const useStore = create<AppState>((set, get) => ({
     set((state) => ({ ui: { ...state.ui, quickActions: { mode, scope } } }));
   },
 
-  openSearchResults: (query) => {
+  openSearchResults: (query, { isLive = false, isPaneKept = false } = {}) => {
     if (
+      !isLive &&
       get().globalSettings.keepHistory !== false &&
       serializeSearchQuery(query)
     )
@@ -3620,7 +3602,14 @@ const useStore = create<AppState>((set, get) => ({
       ui: {
         ...state.ui,
         page: null,
-        sidePane: { kind: "search", query },
+        sidePane: {
+          kind: "search",
+          query,
+          session:
+            isPaneKept && state.ui.sidePane?.kind === "search"
+              ? state.ui.sidePane.session
+              : ++searchSession,
+        },
         quickActions: null,
         mobileViewActiveColumn: state.ui.isNarrowView
           ? "memberList"
@@ -3645,7 +3634,7 @@ const useStore = create<AppState>((set, get) => ({
     );
   },
 
-  setSearchChatShown: (isChatShown) => {
+  setSearchChatShown: (isChatShown, hitMessageId) => {
     set((state) => {
       const { sidePane, selectedServerId, perServerSelections, isNarrowView } =
         state.ui;
@@ -3662,6 +3651,7 @@ const useStore = create<AppState>((set, get) => ({
             ...sidePane,
             isChatShown,
             hitChatId: isChatShown ? (chatId ?? undefined) : sidePane.hitChatId,
+            hitMessageId: hitMessageId ?? sidePane.hitMessageId,
           },
           mobileViewActiveColumn: isNarrowView
             ? isChatShown
@@ -4064,6 +4054,9 @@ const useStore = create<AppState>((set, get) => ({
       },
     }));
   },
+
+  setHomeView: (view) =>
+    set((state) => ({ ui: { ...state.ui, homeView: view } })),
 
   setMobileViewActiveColumn: (column: layoutColumn) => {
     // Dismiss mobile keyboard when navigating away

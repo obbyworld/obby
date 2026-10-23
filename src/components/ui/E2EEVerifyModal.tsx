@@ -98,13 +98,14 @@ const E2EEVerifyModal: React.FC<E2EEVerifyModalProps> = ({
             {isOtr ? (
               <Trans>
                 This chat is encrypted with OTR, compatible with other IRC
-                clients. Compare the fingerprints out of band, then mark it
-                verified.
+                clients. Compare the fingerprints with your contact outside this
+                chat, then mark it verified.
               </Trans>
             ) : (
               <Trans>
-                This chat is encrypted with Obby's native scheme. Compare the
-                fingerprints out of band, then mark it verified.
+                This chat is encrypted with Obby encryption. Compare the
+                fingerprints with your contact outside this chat, then mark it
+                verified.
               </Trans>
             )}
           </p>

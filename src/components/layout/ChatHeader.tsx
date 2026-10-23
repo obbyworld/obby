@@ -22,6 +22,7 @@ import {
   FaUser,
   FaUserPlus,
 } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import {
   getChannelAvatarUrl,
@@ -121,7 +122,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     setTopicModalRequest,
     clearTopicModalRequest,
     openMediaExplorer,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      openPage: state.openPage,
+      openProfile: state.openProfile,
+      toggleMemberList: state.toggleMemberList,
+      setMobileViewActiveColumn: state.setMobileViewActiveColumn,
+      pinPrivateChat: state.pinPrivateChat,
+      unpinPrivateChat: state.unpinPrivateChat,
+      setTopicModalRequest: state.setTopicModalRequest,
+      clearTopicModalRequest: state.clearTopicModalRequest,
+      openMediaExplorer: state.openMediaExplorer,
+    })),
+  );
   const ui = useStore((state) => state.ui);
   const topicModalRequest = useStore((state) => state.ui.topicModalRequest);
   const botsLoadingCount = useStore(
@@ -327,7 +340,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         {(isNarrowView || !isChanListVisible) && (
           <button
             onClick={onToggleChanList}
-            className="p-2 md:p-0 text-discord-channels-default hover:text-white flex-shrink-0"
+            className="p-3 -m-1 md:p-0 md:m-0 text-discord-channels-default hover:text-white flex-shrink-0"
             aria-label={t`Expand channel list`}
           >
             {isNarrowView ? <FaChevronLeft /> : <FaChevronRight />}
@@ -441,7 +454,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {(isNarrowView || !isChanListVisible) && (
             <button
               onClick={onToggleChanList}
-              className="p-2 md:p-0 text-discord-channels-default hover:text-white flex-shrink-0"
+              className="p-3 -m-1 md:p-0 md:m-0 text-discord-channels-default hover:text-white flex-shrink-0"
               aria-label={t`Expand channel list`}
             >
               {isNarrowView ? <FaChevronLeft /> : <FaChevronRight />}
@@ -565,7 +578,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {selectedServerId && (
             <div className="flex items-center gap-0 md:gap-3 text-discord-text-muted flex-shrink-0">
               <button
-                className="p-2 md:hidden hover:text-discord-text-normal"
+                className="p-3 -m-1 md:hidden hover:text-discord-text-normal"
                 onClick={onToggleNotificationVolume}
                 aria-label={
                   globalSettings.notificationVolume > 0
@@ -646,7 +659,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               {/* Overflow menu */}
               <button
                 ref={overflowButtonRef}
-                className="md:hidden p-2 hover:text-discord-text-normal"
+                className="md:hidden p-3 -m-1 hover:text-discord-text-normal"
                 onClick={() => setIsOverflowMenuOpen(!isOverflowMenuOpen)}
                 aria-label={t`More actions`}
                 aria-expanded={isOverflowMenuOpen}
@@ -666,7 +679,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             {(isNarrowView || !isChanListVisible) && (
               <button
                 onClick={onToggleChanList}
-                className="p-2 md:p-0 text-discord-channels-default hover:text-white mr-4 flex-shrink-0"
+                className="p-3 -m-1 md:p-0 md:m-0 text-discord-channels-default hover:text-white mr-4 flex-shrink-0"
                 aria-label={t`Expand channel list`}
               >
                 {isNarrowView ? <FaChevronLeft /> : <FaChevronRight />}
@@ -850,7 +863,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             {(isNarrowView || !isChanListVisible) && (
               <button
                 onClick={onToggleChanList}
-                className="p-2 md:p-0 text-discord-channels-default hover:text-white mr-4 flex-shrink-0"
+                className="p-3 -m-1 md:p-0 md:m-0 text-discord-channels-default hover:text-white mr-4 flex-shrink-0"
                 aria-label={t`Expand channel list`}
               >
                 {isNarrowView ? <FaChevronLeft /> : <FaChevronRight />}

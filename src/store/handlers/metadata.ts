@@ -200,9 +200,6 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
   ircClient.on(
     "METADATA_KEYVALUE",
     ({ serverId, target, key, visibility, value }) => {
-      const state = store.getState();
-      const isFetchingOwn = state.metadataFetchInProgress[serverId];
-
       // Handle individual key-value responses (similar to METADATA)
       store.setState((state) => {
         // Resolve the target - if it's "*", it refers to the current user
@@ -212,27 +209,6 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
               state.currentUser?.username ||
               target
             : target.split("!")[0]; // Extract nickname from mask
-
-        // If we're fetching our own metadata, update saved values
-        if (isFetchingOwn && target === "*") {
-          const savedMetadata = storage.metadata.load();
-          if (!savedMetadata[serverId]) {
-            savedMetadata[serverId] = {};
-          }
-          if (!savedMetadata[serverId][resolvedTarget]) {
-            savedMetadata[serverId][resolvedTarget] = {};
-          }
-          // Only overwrite saved value with server value if server actually has a value
-          // Empty/null values from server mean "not set", so keep our local value
-          if (value !== null && value !== undefined && value !== "") {
-            savedMetadata[serverId][resolvedTarget][key] = {
-              value,
-              visibility,
-            };
-            storage.metadata.save(savedMetadata);
-          }
-          // If server has the key but no value, and we have a local value, we'll send ours later
-        }
 
         let hasChanges = false;
 
@@ -258,10 +234,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
                     }
                   } else {
                     // Deleting key
-                    if (
-                      (!isFetchingOwn || target !== "*") &&
-                      existingValue !== undefined
-                    ) {
+                    if (existingValue !== undefined) {
                       hasChanges = true;
                       const metadata = { ...(user.metadata || {}) };
                       delete metadata[key];
@@ -338,10 +311,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
               updatedCurrentUser = { ...state.currentUser, metadata };
             }
           } else {
-            if (
-              (!isFetchingOwn || target !== "*") &&
-              existingValue !== undefined
-            ) {
+            if (existingValue !== undefined) {
               hasChanges = true;
               const metadata = { ...(state.currentUser.metadata || {}) };
               delete metadata[key];
@@ -352,28 +322,25 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
 
         // Save valid metadata for any user, not just channel members.
         // Also marks hasChanges so metadataChangeCounter increments for DM re-renders.
-        if (!isFetchingOwn || target !== "*") {
-          const savedMetadata = storage.metadata.load();
-          if (value !== null && value !== undefined && value !== "") {
-            if (!savedMetadata[serverId]) {
-              savedMetadata[serverId] = {};
-            }
-            if (!savedMetadata[serverId][resolvedTarget]) {
-              savedMetadata[serverId][resolvedTarget] = {};
-            }
-            if (savedMetadata[serverId][resolvedTarget][key]?.value !== value) {
-              savedMetadata[serverId][resolvedTarget][key] = {
-                value,
-                visibility,
-              };
-              storage.metadata.save(savedMetadata);
-              hasChanges = true;
-            }
-          } else if (savedMetadata[serverId]?.[resolvedTarget]?.[key]) {
-            // Key was deleted on server — remove from localStorage too
-            delete savedMetadata[serverId][resolvedTarget][key];
-            storage.metadata.save(savedMetadata);
+        const savedMetadata = storage.metadata.load();
+        if (value !== null && value !== undefined && value !== "") {
+          if (!savedMetadata[serverId]) {
+            savedMetadata[serverId] = {};
           }
+          if (!savedMetadata[serverId][resolvedTarget]) {
+            savedMetadata[serverId][resolvedTarget] = {};
+          }
+          if (savedMetadata[serverId][resolvedTarget][key]?.value !== value) {
+            savedMetadata[serverId][resolvedTarget][key] = {
+              value,
+              visibility,
+            };
+            storage.metadata.save(savedMetadata);
+            hasChanges = true;
+          }
+        } else if (savedMetadata[serverId]?.[resolvedTarget]?.[key]) {
+          delete savedMetadata[serverId][resolvedTarget][key];
+          storage.metadata.save(savedMetadata);
         }
 
         // Update channel metadata cache if this is for a channel
@@ -451,7 +418,6 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
 
   ircClient.on("METADATA_KEYNOTSET", ({ serverId, target, key }) => {
     const state = store.getState();
-    const isFetchingOwn = state.metadataFetchInProgress[serverId];
 
     // Resolve the target - if it's "*", it refers to the current user
     const resolvedTarget =
@@ -459,14 +425,10 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
         ? ircClient.getNick(serverId) || state.currentUser?.username || target
         : target.split("!")[0]; // Extract nickname from mask
 
-    // Skip on reconnect GET responses — server lacking the key doesn't mean we should erase it;
-    // the sync that follows will push our local copy back up.
-    if (!isFetchingOwn) {
-      const savedMetadata = storage.metadata.load();
-      if (savedMetadata[serverId]?.[resolvedTarget]?.[key]) {
-        delete savedMetadata[serverId][resolvedTarget][key];
-        storage.metadata.save(savedMetadata);
-      }
+    const savedMetadata = storage.metadata.load();
+    if (savedMetadata[serverId]?.[resolvedTarget]?.[key]) {
+      delete savedMetadata[serverId][resolvedTarget][key];
+      storage.metadata.save(savedMetadata);
     }
 
     // Handle key not set responses — only update state if the key actually exists

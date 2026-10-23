@@ -1,14 +1,26 @@
 import type React from "react";
-import { useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 
 const TOOLTIP_MAX_WIDTH = 260;
-const SHOW_DELAY_MS = 200;
+export const TOOLTIP_SHOW_DELAY_MS = 200;
 
-// Portaled tooltip pinned above its trigger. Shared by reaction pills and inline
-// message affordances so every hover hint reads identically.
-const TooltipPanel: React.FC<{
-  anchor: { x: number; y: number };
+export interface TooltipAnchor {
+  x: number;
+  y: number;
+  bottom: number;
+}
+
+export const tooltipAnchorOf = (rect: DOMRect): TooltipAnchor => ({
+  x: rect.left + rect.width / 2,
+  y: rect.top,
+  bottom: rect.bottom,
+});
+
+// Every hover hint in the app renders through this panel, so they all share one look.
+export const TooltipPanel: React.FC<{
+  anchor: TooltipAnchor;
   id: string;
   children: React.ReactNode;
 }> = ({ anchor, id, children }) => {
@@ -24,7 +36,8 @@ const TooltipPanel: React.FC<{
       8,
       Math.min(anchor.x - width / 2, window.innerWidth - width - 8),
     );
-    const top = Math.max(8, anchor.y - height - gap);
+    const above = anchor.y - height - gap;
+    const top = above >= 8 ? above : anchor.bottom + gap;
     setPos({ left, top, visibility: "visible" });
   }, [anchor]);
 
@@ -39,7 +52,7 @@ const TooltipPanel: React.FC<{
         maxWidth: TOOLTIP_MAX_WIDTH,
         ...pos,
       }}
-      className="pointer-events-none rounded-lg bg-discord-dark-100 px-3 py-2 text-sm text-white shadow-[0_8px_32px_rgba(0,0,0,0.7)] ring-1 ring-white/10"
+      className="tooltip-surface"
     >
       {children}
     </div>
@@ -52,37 +65,73 @@ export const HoverTooltip: React.FC<{
   className?: string;
 }> = ({ content, children, className }) => {
   const [show, setShow] = useState(false);
-  const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
+  const [anchor, setAnchor] = useState<TooltipAnchor | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<HTMLSpanElement>(null);
   const panelId = useId();
+  const descriptionId = `${panelId}-description`;
+  // iOS replays a tap as mouseenter and focus, so on touch we open on tap only.
+  const isTouch = useIsTouchInput();
+
+  function open() {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) setAnchor(tooltipAnchorOf(rect));
+    setShow(true);
+  }
 
   function handleEnter() {
+    if (isTouch) return;
     const rect = ref.current?.getBoundingClientRect();
-    if (rect) setAnchor({ x: rect.left + rect.width / 2, y: rect.top });
-    timerRef.current = setTimeout(() => setShow(true), SHOW_DELAY_MS);
+    if (rect) setAnchor(tooltipAnchorOf(rect));
+    timerRef.current = setTimeout(() => setShow(true), TOOLTIP_SHOW_DELAY_MS);
   }
 
   function handleLeave() {
+    if (isTouch) return;
     if (timerRef.current) clearTimeout(timerRef.current);
     setShow(false);
   }
 
-  // Focusable and described, so the hint is not a mouse-only affordance. Some of
-  // these carry the only explanation a row has (an undecryptable message says
-  // nothing else about why it cannot be read).
+  function handleTap() {
+    if (!isTouch) return;
+    if (show) setShow(false);
+    else open();
+  }
+
+  useEffect(() => {
+    if (!isTouch || !show) return;
+    const closeOutside = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setShow(false);
+    };
+    document.addEventListener("pointerdown", closeOutside, true);
+    return () =>
+      document.removeEventListener("pointerdown", closeOutside, true);
+  }, [isTouch, show]);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
+  // Some of these carry the only explanation a row has, so screen readers get it on any device.
   return (
     <span
       ref={ref}
       tabIndex={0}
-      aria-describedby={show ? panelId : undefined}
+      aria-describedby={descriptionId}
       className={`relative inline-flex ${className ?? ""}`}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       onFocus={handleEnter}
       onBlur={handleLeave}
+      onClick={handleTap}
     >
       {children}
+      <span id={descriptionId} className="sr-only">
+        {content}
+      </span>
       {show &&
         anchor &&
         createPortal(

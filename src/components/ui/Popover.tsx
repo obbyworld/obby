@@ -40,7 +40,7 @@ const rectOf = (anchor: PopoverAnchor): DOMRect =>
     ? anchor.getBoundingClientRect()
     : new DOMRect(anchor.x, anchor.y, 0, 0);
 
-const VIEWPORT_MARGIN = 8;
+export const VIEWPORT_MARGIN = 8;
 const ANCHOR_GAP = 6;
 const MIN_PANEL_HEIGHT = 160;
 const AUTO_MIN_WIDTH = 180;
@@ -162,7 +162,7 @@ export const Popover: React.FC<PopoverProps> = ({
         <div
           aria-hidden="true"
           onClick={() => onCloseRef.current()}
-          className="fixed inset-0 bg-black/60 animate-in fade-in duration-150"
+          className="fixed inset-0 scrim animate-in fade-in duration-150"
           style={{ zIndex: Z_INDEX }}
         />
         <div

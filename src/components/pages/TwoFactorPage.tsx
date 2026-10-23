@@ -18,7 +18,7 @@ import {
 import useStore, { loadSavedServers } from "../../store";
 import { PageShell } from "../ui/page/PageShell";
 import { SettingGroup, SettingRow } from "../ui/page/SettingRow";
-import type { PageProps } from "./PageHost";
+import { type PageProps, parentPageOf } from "./PageHost";
 
 function decodeChallenge(blob: string): unknown {
   try {
@@ -268,7 +268,7 @@ const TwoFactorPage: React.FC<PageProps<"twoFactor">> = ({ page }) => {
       title={t`Two-factor authentication`}
       back={{
         label: t`Back to Settings`,
-        onBack: () => openPage({ kind: "settings", section: "account" }),
+        onBack: () => openPage(parentPageOf(page) ?? { kind: "settings" }),
       }}
     >
       <SettingGroup>
@@ -401,9 +401,9 @@ const TwoFactorPage: React.FC<PageProps<"twoFactor">> = ({ page }) => {
               title={t`Link with ${p.providerLabel}`}
               description={
                 <Trans>
-                  Sign in with the provider to bind its identity to your
-                  account, so SASL OAUTHBEARER and IRCV3BEARER work on later
-                  connections.
+                  Sign in with the provider to link it to your account. Then you
+                  can log in with it on later connections (SASL OAUTHBEARER and
+                  IRCV3BEARER).
                 </Trans>
               }
               control={

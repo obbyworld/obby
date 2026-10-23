@@ -23,18 +23,9 @@ export interface MessageLocation {
 // not-found: the chat is open but the message is gone.
 export type JumpFailure = "left-channel" | "not-saved" | "not-found";
 
-export type JumpResult = { ok: true } | { ok: false; reason: JumpFailure };
-
-const FLASH_MS = 2000;
-
-export function flashMessageRow(
-  row: Element,
-  behavior: ScrollBehavior = "smooth",
-): void {
-  row.scrollIntoView({ behavior, block: "center" });
-  row.classList.add("message-flash");
-  setTimeout(() => row.classList.remove("message-flash"), FLASH_MS);
-}
+export type JumpResult =
+  | { ok: true; messageId?: string }
+  | { ok: false; reason: JumpFailure };
 
 // Replay rewrites our own lines to our current nick, so a saved own line
 // can carry either that or the nick we had when we sent it.
@@ -109,6 +100,7 @@ export async function jumpToMessage(
       serverId,
       target,
       time,
+      () => jump === latestJump,
     );
     // A newer jump owns the screen and reports its own result.
     if (jump !== latestJump) return { ok: true };
@@ -117,7 +109,7 @@ export async function jumpToMessage(
   const message = findIn(shownMessages(key), location);
   if (!message) return fail("not-found");
   useStore.getState().revealMessage(message.id);
-  return { ok: true };
+  return { ok: true, messageId: message.id };
 }
 
 export const JUMP_FAILURE_COMMAND = "SEARCH_JUMP";

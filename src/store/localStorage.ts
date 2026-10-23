@@ -58,6 +58,7 @@ export const servers = {
 // hang around in localStorage forever.
 try {
   localStorage.removeItem(KEYS.METADATA);
+  localStorage.removeItem("ownMetadata");
 } catch {
   // private-window or storage-disabled -- not fatal
 }

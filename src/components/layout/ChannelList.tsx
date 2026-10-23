@@ -91,11 +91,28 @@ export const ChannelList: React.FC = () => {
     setMobileViewActiveColumn,
     reorderChannels,
     openProfile,
-  } = useStore();
+    setHomeView,
+  } = useStore(
+    useShallow((state) => ({
+      selectChannel: state.selectChannel,
+      selectPrivateChat: state.selectPrivateChat,
+      leaveChannel: state.leaveChannel,
+      deletePrivateChat: state.deletePrivateChat,
+      pinPrivateChat: state.pinPrivateChat,
+      unpinPrivateChat: state.unpinPrivateChat,
+      reorderPrivateChats: state.reorderPrivateChats,
+      openPage: state.openPage,
+      setMobileViewActiveColumn: state.setMobileViewActiveColumn,
+      reorderChannels: state.reorderChannels,
+      openProfile: state.openProfile,
+      setHomeView: state.setHomeView,
+    })),
+  );
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
 
   const selectedServerId = useStore((state) => state.ui.selectedServerId);
+  const homeView = useStore((state) => state.ui.homeView);
   const selectedChannelId = useStore((state) => {
     if (!state.ui.selectedServerId) return null;
     return (
@@ -525,15 +542,27 @@ export const ChannelList: React.FC = () => {
             <div className="text-discord-channels-default font-medium mb-1 text-xs">
               <Trans>HOME</Trans>
             </div>
-            <div
-              className={`
-                px-2 py-1 mb-1 rounded flex items-center gap-2 cursor-pointer
-                ${selectedChannelId === null ? "bg-discord-dark-400 text-white" : hoverSubtle}
-              `}
-              onClick={() => selectChannel(null, { navigate: true })}
-            >
-              <Trans>Discover</Trans>
-            </div>
+            {(
+              [
+                [undefined, <Trans key="discover">Discover</Trans>],
+                ["plugins", <Trans key="plugins">Plugins</Trans>],
+              ] as const
+            ).map(([view, label]) => (
+              <button
+                type="button"
+                key={view ?? "discover"}
+                className={`
+                  w-full text-left px-2 py-1 mb-1 rounded flex items-center gap-2 cursor-pointer
+                  ${homeView === view ? "bg-discord-dark-400 text-white" : hoverSubtle}
+                `}
+                onClick={() => {
+                  setHomeView(view);
+                  selectChannel(null, { navigate: true });
+                }}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         )}
 
@@ -581,7 +610,7 @@ export const ChannelList: React.FC = () => {
                   type="button"
                   aria-expanded={isPrivateChatsOpen}
                   onClick={() => setIsPrivateChatsOpen(!isPrivateChatsOpen)}
-                  className="flex items-center gap-1.5 flex-1 min-w-0 h-6 text-left text-xs font-semibold whitespace-nowrap hover:text-discord-text-normal"
+                  className={`flex items-center gap-1.5 flex-1 min-w-0 ${isTouch ? "h-10" : "h-6"} text-left text-xs font-semibold whitespace-nowrap hover:text-discord-text-normal`}
                 >
                   <span className="truncate">
                     <Trans>Private messages</Trans>

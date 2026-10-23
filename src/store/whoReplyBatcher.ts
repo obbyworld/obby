@@ -12,7 +12,9 @@
 
 import type { StoreApi } from "zustand";
 import type { User } from "../types";
+import { resolveUserMetadata } from "./helpers";
 import type { AppState } from "./index";
+import * as storage from "./localStorage";
 
 // 60 ms: long enough for a single WHO burst to coalesce on common
 // networks, short enough that the perceived "loading" is brief.
@@ -64,6 +66,7 @@ function applyBucket(store: StoreApi<AppState>, bucket: ChannelBucket): void {
     const updatedServers = state.servers.map((s) => {
       if (s.id !== bucket.serverId) return s;
 
+      const serverMetadata = storage.metadata.load()[s.id];
       const updatedChannels = s.channels.map((ch) => {
         if (ch.name.toLowerCase() !== bucket.channel.toLowerCase()) return ch;
         const usersByNick = new Map(
@@ -77,7 +80,15 @@ function applyBucket(store: StoreApi<AppState>, bucket: ChannelBucket): void {
               mergeUser(existing, entry),
             );
           } else {
-            usersByNick.set(entry.nick.toLowerCase(), entryToUser(entry));
+            usersByNick.set(entry.nick.toLowerCase(), {
+              ...entryToUser(entry),
+              metadata: resolveUserMetadata(
+                entry.nick,
+                serverMetadata,
+                s.channels,
+                ch.name,
+              ),
+            });
           }
         }
         return { ...ch, users: Array.from(usersByNick.values()) };

@@ -18,7 +18,8 @@ export function formatDate(time: number): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-// Tokens we cannot understand stay in the text so the user sees them searched literally.
+// Tokens we cannot understand stay in the text so the user sees them searched
+// literally, except an `in:` naming no chat, which is still being typed.
 export function parseSearchInput(
   input: string,
   scope: SearchScope,
@@ -28,10 +29,9 @@ export function parseSearchInput(
   const words: string[] = [];
   for (const word of input.split(/\s+/).filter(Boolean)) {
     const match = FILTER_TOKEN.exec(word);
-    if (
-      !match ||
-      !applyFilter(query, match[1].toLowerCase(), match[2], resolveIn)
-    )
+    const key = match?.[1].toLowerCase();
+    if (!match || !key) words.push(word);
+    else if (!applyFilter(query, key, match[2], resolveIn) && key !== "in")
       words.push(word);
   }
   query.text = words.join(" ");
@@ -54,8 +54,8 @@ function applyFilter(
       return scope !== null;
     }
     case "mentions":
-      if (value.toLowerCase() !== "me") return false;
-      query.aboutMe = true;
+      if (value.toLowerCase() === "me") query.aboutMe = true;
+      else query.mentions = value.replace(/^@/, "");
       return true;
     case "has":
       if (value.toLowerCase() !== "link") return false;
@@ -83,6 +83,7 @@ export function serializeSearchQuery(query: SearchQuery): string {
     query.text,
     query.from && `from:${query.from}`,
     query.aboutMe && "mentions:me",
+    query.mentions && `mentions:${query.mentions}`,
     query.hasLink && "has:link",
     query.after !== undefined && `after:${formatDate(query.after)}`,
     query.before !== undefined && `before:${formatDate(query.before)}`,
@@ -121,6 +122,13 @@ export function toggleSearchToken(text: string, token: string): string {
   if (!hasSearchToken(text, token)) return appendSearchToken(text, `${token} `);
   return wordsOf(text)
     .filter((word) => word.toLowerCase() !== token)
+    .join(" ");
+}
+
+export function removeSearchFilter(text: string, key: string): string {
+  const prefix = `${key}:`;
+  return wordsOf(text)
+    .filter((word) => !word.toLowerCase().startsWith(prefix))
     .join(" ");
 }
 

@@ -25,7 +25,6 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
   onUsernameContextMenu,
 }) => {
   const { t, i18n } = useLingui();
-  const [showTooltip, setShowTooltip] = useState(false);
   const [failedAvatars, setFailedAvatars] = useState<Set<string>>(new Set());
   const serverId = eventGroup.messages[0]?.serverId || "";
   const channelId = eventGroup.messages[0]?.channelId || "";
@@ -87,8 +86,7 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
     return (
       <div
         className="relative px-4 py-1 mt-1 hover:bg-discord-dark-500 transition-colors duration-75"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
+        title={tooltip || undefined}
       >
         {eventGroup.userSummaries.map((us) => {
           const displayName =
@@ -114,12 +112,6 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
             </div>
           );
         })}
-
-        {showTooltip && tooltip && (
-          <div className="absolute bottom-full left-4 mb-1 px-2 py-1 bg-discord-dark-100 text-white text-xs rounded shadow-lg z-20 whitespace-pre-line">
-            {tooltip}
-          </div>
-        )}
       </div>
     );
   }
@@ -135,8 +127,7 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
   return (
     <div
       className="group relative flex items-center px-4 py-1 mt-2 hover:bg-discord-dark-500 transition-colors duration-75"
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
+      title={tooltip || undefined}
     >
       <div className="flex-shrink-0 mr-3 flex items-center">
         <div className="flex -space-x-1">
@@ -158,11 +149,6 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
       <div className="opacity-70 text-xs text-discord-text-muted ml-2">
         {formatTime(eventGroup.timestamp)}
       </div>
-      {showTooltip && tooltip && (
-        <div className="absolute bottom-full left-12 mb-1 px-2 py-1 bg-discord-dark-100 text-white text-xs rounded shadow-lg z-20 whitespace-pre-line">
-          {tooltip}
-        </div>
-      )}
     </div>
   );
 };

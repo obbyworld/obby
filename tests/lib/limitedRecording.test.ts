@@ -42,10 +42,21 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-function start(maxBytes: number, onFile = vi.fn(), onProgress = vi.fn()) {
+function fakeStream(audioTracks: number): MediaStream {
+  return {
+    getAudioTracks: () => Array.from({ length: audioTracks }),
+  } as unknown as MediaStream;
+}
+
+function start(
+  maxBytes: number,
+  onFile = vi.fn(),
+  onProgress = vi.fn(),
+  { stream = fakeStream(1), format = FORMAT } = {},
+) {
   const handle = startLimitedRecording(
-    {} as MediaStream,
-    { format: FORMAT, filePrefix: "video-message", maxBytes, video: true },
+    stream,
+    { format, filePrefix: "video-message", maxBytes, video: true },
     { onProgress, onFile },
   );
   // biome-ignore lint/style/noNonNullAssertion: the recorder is constructed above
@@ -64,6 +75,20 @@ describe("startLimitedRecording", () => {
     expect(file.name).toMatch(/^video-message-.*\.webm$/);
     expect(file.type).toBe("video/webm");
     expect(reason).toBeNull();
+  });
+
+  // Firefox never fires onstop for a vp8,opus recorder on a stream with no
+  // audio track, which is what window capture and a lone camera hand us.
+  test("drops the audio codec when the stream has no audio track", () => {
+    const { handle, recorder, onFile } = start(1_000, vi.fn(), vi.fn(), {
+      stream: fakeStream(0),
+      format: { mimeType: "video/webm;codecs=vp8,opus", extension: "webm" },
+    });
+
+    handle.stop();
+
+    expect(recorder.options.mimeType).toBe("video/webm;codecs=vp8");
+    expect(onFile.mock.calls[0][0].type).toBe("video/webm;codecs=vp8");
   });
 
   // A take that outgrows the server's cap can never be sent, so it stops

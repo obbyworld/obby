@@ -151,14 +151,19 @@ export interface ProfilePane {
 }
 
 // isChatShown hides the results behind the chat where both cannot fit;
-// hitChatId is the chat a result opened, so the way back shows only there.
+// hitChatId is the chat a result opened, so the way back shows only there,
+// and hitMessageId is the message it landed on, which the chat keeps marked.
+// session changes when a search starts outside the pane, and stays while the
+// pane searches as the reader types.
 export type SidePane =
   | ({ kind: "profile" } & ProfilePane)
   | {
       kind: "search";
       query: SearchQuery;
+      session: number;
       isChatShown?: boolean;
       hitChatId?: string;
+      hitMessageId?: string;
     };
 
 export type QuickActionsMode = "goto" | "messages";

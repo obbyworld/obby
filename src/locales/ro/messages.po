@@ -22,10 +22,6 @@ msgstr "Obby - Aducem IRC în viitor"
 msgid "— open in viewer"
 msgstr "— deschide în vizualizator"
 
-#: src/components/ui/SlashParamHint.tsx
-msgid "(handled by Obby)"
-msgstr "(gestionat de Obby)"
-
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -35,6 +31,10 @@ msgstr "(moștenit)"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(not set)"
 msgstr "(nesetat)"
+
+#: src/components/ui/SlashParamHint.tsx
+msgid "(run by Obby)"
+msgstr "(rulat de Obby)"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "(set, edit to change)"
@@ -146,8 +146,8 @@ msgid "{count}+ results"
 msgstr "{count}+ rezultate"
 
 #: src/components/layout/SearchPane.tsx
-msgid "{countLabel} · newest first · {scopeName}"
-msgstr "{countLabel} · cele mai noi primele · {scopeName}"
+msgid "{countLabel} in {scopeName}"
+msgstr "{countLabel} în {scopeName}"
 
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
@@ -198,8 +198,8 @@ msgid "{nick} ended encryption."
 msgstr "{nick} a oprit criptarea."
 
 #: src/store/handlers/e2ee.ts
-msgid "{nick} is sending encrypted messages this device cannot read. Encryption has to be started again before they open."
-msgstr "{nick} trimite mesaje criptate pe care acest dispozitiv nu le poate citi. Criptarea trebuie pornită din nou ca să se deschidă."
+msgid "{nick} is sending encrypted messages this device cannot decrypt. Start encryption again to read them."
+msgstr "{nick} trimite mesaje criptate pe care acest dispozitiv nu le poate decripta. Începe din nou criptarea pentru a le citi."
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "{nick} uses an encryption version this client can't read."
@@ -210,8 +210,8 @@ msgid "{nick} wants to start an encrypted chat"
 msgstr "{nick} dorește să înceapă o conversație criptată"
 
 #: src/components/ui/E2EERequestBanner.tsx
-msgid "{nick}'s encryption key changed. That happens on a new device, and it is also what an attacker looks like. Compare the new fingerprint with {nick} somewhere other than this chat, then accept it."
-msgstr "Cheia de criptare a lui {nick} s-a schimbat. Asta se întâmplă pe un dispozitiv nou și așa arată și un atacator. Compară noua amprentă cu {nick} în altă parte decât în acest chat, apoi acceptă-o."
+msgid "{nick}'s encryption key changed. This happens when {nick} uses a new device, and also when an attacker intercepts the chat. Compare the new fingerprint with {nick} outside this chat, then accept it."
+msgstr "Cheia de criptare a lui {nick} s-a schimbat. Asta se întâmplă când {nick} folosește un dispozitiv nou, dar și când un atacator interceptează conversația. Compară noua amprentă cu {nick} în afara acestei conversații, apoi acceptă-o."
 
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "{nick}'s fingerprint"
@@ -234,16 +234,16 @@ msgid "{safeName} is no longer available on the server."
 msgstr "{safeName} nu mai este disponibil pe server."
 
 #: src/components/message/EncryptedMediaPreview.tsx
-msgid "{safeName} was changed on the server, so it no longer decrypts."
-msgstr "{safeName} a fost modificat pe server, așa că nu se mai decriptează."
-
-#: src/store/handlers/e2ee.ts
-msgid "{sender} restarted encryption, so this conversation is being set up again."
-msgstr "{sender} a repornit criptarea, așa că această conversație se configurează din nou."
+msgid "{safeName} was changed on the server, so it cannot be decrypted."
+msgstr "{safeName} a fost modificat pe server, deci nu poate fi decriptat."
 
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} a repornit criptarea. Această conversație rămâne necriptată până când accepți."
+
+#: src/store/handlers/e2ee.ts
+msgid "{sender} restarted encryption. Wait a moment before you send a message."
+msgstr "{sender} a repornit criptarea. Așteaptă puțin înainte de a trimite un mesaj."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -627,6 +627,10 @@ msgstr "Permite accesul la microfon din setări pentru a vorbi"
 msgid "Allow microphone access to record sound."
 msgstr "Permite accesul la microfon pentru a înregistra sunet."
 
+#: src/components/layout/ChatArea.tsx
+msgid "Allow Obby under Screen Recording in System Settings, then record again."
+msgstr "Permite Obby la Înregistrare ecran în Configurări sistem, apoi înregistrează din nou."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -691,6 +695,7 @@ msgstr "Cereți administratorului serverului să anunțe un URL de backend (draf
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/RecordingPanel.tsx
 msgid "Attach"
@@ -921,6 +926,10 @@ msgstr "Bot"
 msgid "BOT"
 msgstr "BOT"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Bot Builder"
+msgstr "Constructor de boți"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Bot Commands"
 msgstr "Comenzi bot"
@@ -955,6 +964,11 @@ msgstr "Browserul nu expune WebAuthn"
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
 msgstr "Browserele afișează difuzoarele doar după ce permiteți accesul la microfon sau cameră. Nimic nu este înregistrat."
+
+#. placeholder {0}: plugin.author
+#: src/components/ui/PluginsScreen.tsx
+msgid "by {0}"
+msgstr "de {0}"
 
 #: src/components/pages/pageSections.tsx
 msgid "Calls"
@@ -1136,6 +1150,10 @@ msgstr "Proprietățile canalului"
 msgid "Channel settings"
 msgstr "Setările canalului"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Channel Stats"
+msgstr "Statistici canal"
+
 #: src/lib/clientCommands.ts
 msgid "Channel to join (#name)"
 msgstr "Canal de intrat (#nume)"
@@ -1166,10 +1184,6 @@ msgstr "Canale"
 #: src/components/pages/SettingsPage.tsx
 msgid "Chat"
 msgstr "Chat"
-
-#: src/components/ui/settings/HistoryUsageField.tsx
-msgid "Chat to start saving history"
-msgstr "Conversează pentru a începe salvarea istoricului"
 
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
@@ -1338,6 +1352,10 @@ msgstr "Închideți fluxul de lucru"
 msgid "Code accepted."
 msgstr "Cod acceptat."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Code Snippets"
+msgstr "Fragmente de cod"
+
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
 msgid "Collapse"
@@ -1360,9 +1378,17 @@ msgstr "Culoare"
 msgid "Color & Formatting"
 msgstr "Culoare și formatare"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Coming soon"
+msgstr "În curând"
+
 #: src/components/chat/completionProviders.tsx
 msgid "Command provided by the IRC server"
 msgstr "Comandă furnizată de serverul IRC"
+
+#: src/components/chat/completionProviders.tsx
+msgid "Command run by Obby"
+msgstr "Comandă rulată de Obby"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Commands are loading…"
@@ -1579,8 +1605,8 @@ msgid "Could not find this message"
 msgstr "Mesajul nu a fost găsit"
 
 #: src/lib/geolocation.ts
-msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
-msgstr "Nu s-a putut obține locația la timp. Încercați din nou într-un loc cu vizibilitate mai bună spre cer."
+msgid "Could not find your location in time. Try again somewhere with a clearer view of the sky."
+msgstr "Nu ți-am putut găsi locația la timp. Încearcă din nou într-un loc cu vedere mai bună spre cer."
 
 #: src/lib/geolocation.ts
 msgid "Could not get your location."
@@ -1593,6 +1619,11 @@ msgstr "Nu s-au putut încărca GIF-urile. Caută din nou pentru a reîncerca."
 #: src/lib/mediaUpload.ts
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Nu s-a putut contacta gazda de fișiere. Verifică conexiunea și încearcă din nou."
+
+#. placeholder {0}: p.code
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Could not set the new password: {0}"
+msgstr "Nu s-a putut seta parola nouă: {0}"
 
 #. placeholder {0}: p.code
 #: src/components/ui/ChangePasswordModal.tsx
@@ -1721,10 +1752,6 @@ msgstr "Pseudonim implicit"
 msgid "Delay joins (+D)"
 msgstr "Întârzie alăturările (+D)"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Delay showing joins until someone speaks"
-msgstr "Afișați alăturările abia când vorbește cineva"
-
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/pages/BotsPage.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -1792,6 +1819,10 @@ msgstr "Descriere (opțional, ex. „Testeri beta T3”)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Description (optional)"
 msgstr "Descriere (opțional)"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Design your own colors and share them as themes."
+msgstr "Creează-ți propriile culori și distribuie-le ca teme."
 
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
@@ -2004,10 +2035,6 @@ msgstr "Încorporare"
 msgid "Emojis"
 msgstr "Emoji"
 
-#: src/components/pages/EmojiPacksPage.tsx
-msgid "Empty pack. Add some emoji."
-msgstr "Pachet gol. Adaugă câteva emoji."
-
 #: src/components/pages/TwoFactorPage.tsx
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Enable 2FA"
@@ -2138,6 +2165,10 @@ msgid "Enter a channel name for channel-scoped packs."
 msgstr "Introdu un nume de canal pentru pachetele specifice canalului."
 
 #: src/components/pages/ChannelSettingsPage.tsx
+msgid "Enter a channel to send users to when they cannot join this one. Leave empty to disable."
+msgstr "Introdu un canal către care să fie trimiși utilizatorii când nu pot intra pe acesta. Lasă gol pentru a dezactiva."
+
+#: src/components/pages/ChannelSettingsPage.tsx
 msgid "Enter a name with any spaces, emoji, or symbols. IRC commands still use the real name ({channelName})."
 msgstr "Introduceți un nume cu spații, emoji sau simboluri. Comenzile IRC folosesc în continuare numele real ({channelName})."
 
@@ -2239,6 +2270,10 @@ msgstr "Introdu numele contului. Vom trimite un cod de recuperare din 6 cifre la
 msgid "esc to close"
 msgstr "esc pentru a închide"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Event Planner"
+msgstr "Planificator de evenimente"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Events"
 msgstr "Evenimente"
@@ -2327,8 +2362,8 @@ msgid "Fetching missed messages…"
 msgstr "Se preiau mesajele ratate…"
 
 #: src/components/layout/ChatArea.tsx
-msgid "File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption."
-msgstr "Fișierul nu a fost încărcat: criptarea încă se configurează. Va pleca odată ce criptarea este activă, sau după ce o închei."
+msgid "File not uploaded: encryption is still being set up. Upload it again once encryption is active, or end encryption to upload unencrypted."
+msgstr "Fișier netrimis: criptarea este încă în curs de configurare. Încarcă-l din nou când criptarea este activă sau oprește criptarea pentru a-l încărca necriptat."
 
 #: src/components/layout/ChatArea.tsx
 msgid "File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted."
@@ -2344,8 +2379,8 @@ msgstr "Imagine filehost"
 
 #. placeholder {0}: formatFileSize(MAX_ENCRYPTABLE_BYTES)
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Files above {0} are sent as-is. The file host stores it readable, and anyone who obtains the link can open it."
-msgstr "Fișierele peste {0} sunt trimise ca atare. Gazda le păstrează în clar, iar oricine obține linkul le poate deschide."
+msgid "Files larger than {0} are sent unencrypted. The file host can read them, and anyone with the link can open them."
+msgstr "Fișierele mai mari de {0} sunt trimise necriptate. Gazda de fișiere le poate citi, iar oricine are linkul le poate deschide."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Filter bad words (+G)"
@@ -2354,10 +2389,6 @@ msgstr "Filtrează cuvintele nepotrivite (+G)"
 #: src/components/ui/MemberPicker.tsx
 msgid "Filter members…"
 msgstr "Filtrează membri…"
-
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Filter out bad words with <censored>"
-msgstr "Înlocuiește cuvintele nepotrivite cu <censored>"
 
 #: src/components/pages/ChannelBrowserPage.tsx
 msgid "Filters"
@@ -2431,6 +2462,10 @@ msgstr "Am uitat parola"
 msgid "Forgot password?"
 msgstr "Ați uitat parola?"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Format text"
+msgstr "Formatează textul"
+
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
 msgid "from"
@@ -2466,6 +2501,10 @@ msgstr "General"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "General Support Channel"
 msgstr "Canal general de suport"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Get notified when someone says the words you follow."
+msgstr "Primește notificări când cineva spune cuvintele urmărite."
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Getting more messages..."
@@ -2503,10 +2542,6 @@ msgstr "GZ-Line (Z-Line globală)"
 msgid "Halfop"
 msgstr "Halfop"
 
-#: src/components/chat/completionProviders.tsx
-msgid "Handled by Obby before being sent"
-msgstr "Procesat de Obby înainte de a fi trimis"
-
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Are link"
@@ -2518,6 +2553,10 @@ msgstr "Ascundeți comentariile"
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Hide the channel from LIST and NAMES."
 msgstr "Ascunde canalul din LIST și NAMES."
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Hide users who join until they send a message"
+msgstr "Ascunde utilizatorii care intră până trimit un mesaj"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Highlight messages that mention you"
@@ -2627,11 +2666,6 @@ msgstr "Imaginea {0} din {1}"
 msgid "Image preview"
 msgstr "Previzualizare imagine"
 
-#. Search filter chip: messages in a chat or network
-#: src/components/search/SearchQueryBar.tsx
-msgid "In"
-msgstr "În"
-
 #: src/components/layout/ChannelRow.tsx
 msgid "in call"
 msgstr "în apel"
@@ -2652,6 +2686,10 @@ msgstr "Intrare"
 #: src/components/ui/InputToolbar.tsx
 msgid "Insert emoji"
 msgstr "Inserează emoji"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Install"
+msgstr "Instalează"
 
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
@@ -2815,8 +2853,12 @@ msgid "Keep credentials"
 msgstr "Păstrați credențialele"
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Keep the channel when it empties. Only IRCops can set this."
-msgstr "Păstrați canalul când se golește. Doar IRCops pot seta asta."
+msgid "Keep the channel after everyone leaves. Only IRCops can set this."
+msgstr "Păstrează canalul după ce pleacă toată lumea. Doar IRCops pot seta asta."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Keyword Alerts"
+msgstr "Alerte pentru cuvinte cheie"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -2927,6 +2969,10 @@ msgstr "Leagă cu {0}"
 msgid "Live"
 msgstr "În direct"
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Live Translate"
+msgstr "Traducere live"
+
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load earlier messages saved on this device"
 msgstr "Încarcă mesajele anterioare salvate pe acest dispozitiv"
@@ -3001,6 +3047,10 @@ msgstr "Securitate scăzută a legăturii (Nivel {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Coboară mâna"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Make simple bots that answer commands, with no code."
+msgstr "Creează boți simpli care răspund la comenzi, fără cod."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -3105,6 +3155,10 @@ msgstr "Membri"
 msgid "Members — {0}"
 msgstr "Membri — {0}"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Mention someone"
+msgstr "Menționează pe cineva"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/SettingsPage.tsx
 msgid "Mentions"
@@ -3113,6 +3167,11 @@ msgstr "Mențiuni"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Mentions & replies"
 msgstr "Mențiuni și răspunsuri"
+
+#. Search filter: messages that mention a person
+#: src/components/search/messageSearchProviders.tsx
+msgid "Mentions of"
+msgstr "Mențiuni despre"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Message"
@@ -3161,8 +3220,8 @@ msgid "Message not sent: encryption stopped working. End encryption to send unen
 msgstr "Mesajul nu a fost trimis: criptarea a încetat să funcționeze. Oprește criptarea pentru a trimite necriptat."
 
 #: src/store/handlers/e2eeOutbound.ts
-msgid "Message not sent: the encryption key changed. Verify the new key or end encryption before sending in the clear."
-msgstr "Mesajul nu a fost trimis: cheia de criptare s-a schimbat. Verifică noua cheie sau oprește criptarea înainte de a trimite necriptat."
+msgid "Message not sent: the encryption key changed. Verify the new key, or end encryption to send unencrypted."
+msgstr "Mesaj netrimis: cheia de criptare s-a schimbat. Verifică noua cheie sau oprește criptarea pentru a trimite necriptat."
 
 #: src/components/ui/BlankPage.tsx
 msgid "Message of the day"
@@ -3389,8 +3448,8 @@ msgid "Nickname"
 msgstr "Poreclă"
 
 #: src/store/handlers/users.ts
-msgid "Nickname '{nick}' already in use, retrying with '{newNick}'"
-msgstr "Porecla '{nick}' este deja utilizată, reîncercare cu '{newNick}'"
+msgid "Nickname “{nick}” already in use, retrying with “{newNick}”"
+msgstr "Porecla “{nick}” este deja utilizată, reîncercare cu “{newNick}”"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -3506,8 +3565,8 @@ msgid "no message"
 msgstr "niciun mesaj"
 
 #: src/components/layout/SearchPane.tsx
-msgid "No messages match. Widen the scope or change filters"
-msgstr "Niciun mesaj nu se potrivește. Extinde aria sau schimbă filtrele"
+msgid "No messages match. Search more chats or change the filters"
+msgstr "Niciun mesaj nu se potrivește. Caută în mai multe conversații sau schimbă filtrele"
 
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
@@ -3528,6 +3587,10 @@ msgstr "Nu există încă credențiale OPER. Introduceți un nume și o parolă.
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "No packs yet. Create one to start."
 msgstr "Niciun pachet încă. Creați unul pentru a începe."
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "No plugins found."
+msgstr "Nu s-au găsit pluginuri."
 
 #: src/components/pages/RawLogPage.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -3812,10 +3875,6 @@ msgstr "Rapoarte opționale de erori pentru îmbunătățirea aplicației"
 msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
 msgstr "Celelalte sesiuni deschise ale acestui cont vor fi deconectate în urma modificării. Setările autentificării în doi pași, dacă există, rămân neschimbate."
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "OTR does not encrypt files, sent as-is"
-msgstr "OTR nu criptează fișiere, trimis ca atare"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Output"
 msgstr "Ieșire"
@@ -3863,6 +3922,10 @@ msgstr "Parola a fost actualizată. Vă puteți autentifica acum."
 msgid "Passwords don't match."
 msgstr "Parolele nu se potrivesc."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Paste code with syntax highlighting and line numbers."
+msgstr "Lipește cod cu evidențiere de sintaxă și numere de linie."
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
 msgstr "Modelul există deja"
@@ -3894,6 +3957,7 @@ msgstr "în așteptare"
 
 #: src/components/layout/StartPrivateChatRow.tsx
 #: src/components/search/messageSearchProviders.tsx
+#: src/components/ui/InviteUserModal.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "People"
 msgstr "Persoane"
@@ -3921,8 +3985,8 @@ msgid "Pick a password (3 characters or more)."
 msgstr "Alege o parolă (cel puțin 3 caractere)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
-msgid "Pick a preset flood protection profile. UnrealIRCd only."
-msgstr "Alegeți un profil predefinit de protecție împotriva inundării. Doar UnrealIRCd."
+msgid "Pick a preset flood protection profile. This works only on UnrealIRCd servers."
+msgstr "Alege un profil prestabilit de protecție împotriva flood. Funcționează doar pe servere UnrealIRCd."
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Pick a single-word name (no spaces)."
@@ -3985,6 +4049,11 @@ msgstr "Introduceți un nume de utilizator"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Please wait..."
 msgstr "Vă rugăm așteptați..."
+
+#: src/components/layout/ChannelList.tsx
+#: src/components/ui/PluginsScreen.tsx
+msgid "Plugins"
+msgstr "Pluginuri"
 
 #: src/components/layout/SearchPane.tsx
 msgid "PM with {peer}"
@@ -4139,6 +4208,10 @@ msgstr "a reacționat la acest mesaj"
 #: src/components/message/CollapsibleMessage.tsx
 msgid "Read all"
 msgstr "Citește tot"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Read every message in your own language."
+msgstr "Citește fiecare mesaj în limba ta."
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Real name"
@@ -4301,6 +4374,10 @@ msgstr "Eliminați credențiala"
 msgid "remove every attachment"
 msgstr "elimină toate atașamentele"
 
+#: src/components/layout/ChannelContextMenu.tsx
+msgid "Remove from folder"
+msgstr "Elimină din dosar"
+
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
 msgstr "Elimină șablon"
@@ -4344,6 +4421,10 @@ msgstr "Afișați formatarea Markdown în mesaje"
 #: src/components/layout/NetworkMenu.tsx
 msgid "Reorder list"
 msgstr "Reordonează lista"
+
+#: src/components/pages/ChannelSettingsPage.tsx
+msgid "Replace bad words with <censored>"
+msgstr "Înlocuiește cuvintele urâte cu <censored>"
 
 #: src/components/layout/SearchPane.tsx
 msgid "Replies"
@@ -4439,6 +4520,10 @@ msgstr "Salvează"
 msgid "Save failed: {msg}"
 msgstr "Salvare eșuată: {msg}"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
+msgstr "Salvează mesajele pe acest dispozitiv pentru a derula mai departe decât istoricul serverului. Dezactivarea oprește salvarea mesajelor noi și le păstrează pe cele deja salvate. Mesajele private criptate nu sunt salvate niciodată."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Save settings"
 msgstr "Salvați setările"
@@ -4468,9 +4553,9 @@ msgstr "Se salvează..."
 msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
 msgstr "Scanează acest cod QR cu aplicația de autentificare, apoi confirmă cu codul din 6 cifre afișat."
 
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved."
-msgstr "Derulează înapoi dincolo de ce păstrează serverul. Dacă dezactivezi opțiunea, salvarea se oprește, iar ce este deja salvat rămâne. Mesajele private criptate nu sunt salvate niciodată."
+#: src/components/ui/PluginsScreen.tsx
+msgid "Schedule meetups and remind the channel before they start."
+msgstr "Programează întâlniri și amintește-le canalului înainte de început."
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
@@ -4483,6 +4568,7 @@ msgstr "Derulează în jos"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/ui/GifSelector.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search"
 msgstr "Caută"
 
@@ -4504,6 +4590,7 @@ msgid "Search emojis..."
 msgstr "Caută emoji-uri..."
 
 #: src/components/layout/SearchPane.tsx
+#: src/components/layout/SearchPane.tsx
 msgid "Search failed"
 msgstr "Căutarea a eșuat"
 
@@ -4516,6 +4603,8 @@ msgid "Search GIFs..."
 msgstr "Caută GIF-uri..."
 
 #: src/components/layout/ChatHeader.tsx
+#: src/components/layout/SearchPane.tsx
+#: src/components/ui/QuickActions.tsx
 msgid "Search messages"
 msgstr "Caută în mesaje"
 
@@ -4527,6 +4616,14 @@ msgstr "Caută „{query}\" în mesaje"
 #: src/components/ui/QuickActions.tsx
 msgid "Search messages, filter with from: in: has:link"
 msgstr "Caută în mesaje, filtrează cu from: in: has:link"
+
+#: src/components/layout/SearchPane.tsx
+msgid "Search more chats"
+msgstr "Caută în mai multe conversații"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "Search plugins..."
+msgstr "Caută pluginuri..."
 
 #: src/components/ui/HomeScreen.tsx
 msgid "Search servers..."
@@ -4540,6 +4637,7 @@ msgstr "Se caută în {label}"
 msgid "Searching..."
 msgstr "Se caută..."
 
+#: src/components/layout/SearchPane.tsx
 #: src/components/layout/SearchPane.tsx
 msgid "Searching…"
 msgstr "Se caută…"
@@ -4586,14 +4684,14 @@ msgstr "Vezi informațiile canalului"
 msgid "See profile"
 msgstr "Vezi profilul"
 
-#: src/components/ui/GlobalNotifications.tsx
-msgid "See server notices"
-msgstr "Vezi notificările serverului"
-
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
 msgid "See viewers"
 msgstr "Vezi spectatorii"
+
+#: src/components/ui/PluginsScreen.tsx
+msgid "See who talks most and when your channel is busy."
+msgstr "Vezi cine vorbește cel mai mult și când canalul e activ."
 
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -4641,6 +4739,10 @@ msgstr "Trimite o acțiune / emote"
 msgid "Send Invite"
 msgstr "Trimiteți invitația"
 
+#: src/components/ui/InputToolbar.tsx
+msgid "Send message"
+msgstr "Trimite mesajul"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Send Message"
 msgstr "Trimite mesaj"
@@ -4648,6 +4750,10 @@ msgstr "Trimite mesaj"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Send OPER with the name and password above now."
 msgstr "Trimiteți OPER cu numele și parola de mai sus acum."
+
+#: src/components/ui/settings/HistoryUsageField.tsx
+msgid "Send or receive a message to start saving history"
+msgstr "Trimite sau primește un mesaj pentru a începe salvarea istoricului"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Send recovery code"
@@ -4665,10 +4771,6 @@ msgstr "Trimiteți notificări de tastare"
 msgid "Send unencrypted"
 msgstr "Trimite necriptat"
 
-#: src/components/pages/ChannelSettingsPage.tsx
-msgid "Send users here when they can't join. Leave empty to disable."
-msgstr "Trimiteți aici utilizatorii care nu pot intra. Lăsați gol pentru a dezactiva."
-
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Sending"
 msgstr "Se trimite"
@@ -4676,6 +4778,14 @@ msgstr "Se trimite"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Sending…"
 msgstr "Se trimite…"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because OTR encrypts text only"
+msgstr "Trimis necriptat deoarece OTR criptează doar text"
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Sent unencrypted because the file is too large to encrypt"
+msgstr "Trimis necriptat deoarece fișierul este prea mare pentru a fi criptat"
 
 #: src/components/chat/completionProviders.tsx
 #: src/components/pages/BotsPage.tsx
@@ -4797,8 +4907,8 @@ msgid "Set how many seconds to count flood activity before the counters reset"
 msgstr "Setați câte secunde să numărați activitatea de inundare înainte ca contoarele să se reseteze"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Set how much history to keep. The oldest messages go first."
-msgstr "Setează cât istoric să păstrezi. Cele mai vechi mesaje sunt șterse primele."
+msgid "Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached."
+msgstr "Setează cât spațiu pe disc poate folosi istoricul salvat. Cele mai vechi mesaje sunt șterse primele când se atinge limita."
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Set new password"
@@ -4819,11 +4929,6 @@ msgstr "Setați subiectul afișat pentru acest canal. Îl poate vedea oricine."
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Setează-te ca absent"
-
-#. placeholder {0}: p.code
-#: src/components/ui/PasswordRecoveryModal.tsx
-msgid "SETPASS failed: {0}"
-msgstr "SETPASS a eșuat: {0}"
 
 #. placeholder {0}: modeParts.join(" ")
 #: src/protocol/mode.ts
@@ -4949,16 +5054,16 @@ msgid "Show search results"
 msgstr "Arată rezultatele căutării"
 
 #: src/lib/settings/definitions/allSettings.ts
-msgid "Show the MOTD"
-msgstr "Afișează MOTD"
+msgid "Show the message of the day"
+msgstr "Afișează mesajul zilei"
 
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Show video"
 msgstr "Arată videoclipul"
 
 #: src/components/pages/TwoFactorPage.tsx
-msgid "Sign in with the provider to bind its identity to your account, so SASL OAUTHBEARER and IRCV3BEARER work on later connections."
-msgstr "Autentificați-vă la furnizor pentru a lega identitatea acestuia de contul dvs., astfel încât SASL OAUTHBEARER și IRCV3BEARER să funcționeze la conexiunile următoare."
+msgid "Sign in with the provider to link it to your account. Then you can log in with it on later connections (SASL OAUTHBEARER and IRCV3BEARER)."
+msgstr "Autentifică-te la furnizor pentru a-l lega de contul tău. Apoi te poți conecta cu el la conexiunile viitoare (SASL OAUTHBEARER și IRCV3BEARER)."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -5036,6 +5141,10 @@ msgstr "Începe un mesaj privat pe {0}"
 msgid "Start recording"
 msgstr "Începe înregistrarea"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "Start talking once the dot turns red"
+msgstr "Începe să vorbești când punctul devine roșu"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Pornește camera video"
@@ -5054,14 +5163,6 @@ msgstr "Stare"
 msgid "Status Messages"
 msgstr "Mesaje de stare"
 
-#: src/lib/voiceErrors.ts
-msgid "Stay here while we rejoin. The server limits how often you can rejoin."
-msgstr "Rămâi aici cât timp ne reconectăm. Serverul limitează cât de des poți intra din nou."
-
-#: src/components/voice/VoiceDock.tsx
-msgid "Step off stream"
-msgstr "Renunță la transmisie"
-
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
@@ -5078,6 +5179,10 @@ msgstr "Oprește înregistrarea"
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
 msgstr "Oprește distribuirea"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop streaming"
+msgstr "Oprește transmiterea"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop video"
@@ -5112,8 +5217,8 @@ msgid "Strip mIRC color codes from messages"
 msgstr "Elimină codurile de culoare mIRC din mesaje"
 
 #: src/components/ui/E2EELockControl.tsx
-msgid "Strongest, but only with other Obby users"
-msgstr "Cea mai puternică, dar doar cu alți utilizatori Obby"
+msgid "Strongest encryption. Works only with other Obby users"
+msgstr "Cea mai puternică criptare. Funcționează doar cu alți utilizatori Obby"
 
 #: src/components/pages/BotsPage.tsx
 msgid "Suspend"
@@ -5134,10 +5239,6 @@ msgstr "Sistem"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Setare implicită a sistemului"
-
-#: src/components/layout/ChannelContextMenu.tsx
-msgid "Take out of folder"
-msgstr "Scoate din folder"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
@@ -5161,24 +5262,24 @@ msgid "That device is not available right now."
 msgstr "Acest dispozitiv nu este disponibil momentan."
 
 #: src/components/layout/ChatArea.tsx
-msgid "That screen is no longer there."
-msgstr "Ecranul acela nu mai există."
+msgid "That screen is no longer available. Choose another screen."
+msgstr "Acel ecran nu mai este disponibil. Alege alt ecran."
 
 #: src/lib/voiceErrors.ts
-msgid "The call server refused that. Try again in a moment."
-msgstr "Serverul de apeluri a refuzat. Încearcă din nou în scurt timp."
+msgid "The call server refused the request. Try again in a moment."
+msgstr "Serverul de apeluri a refuzat cererea. Încearcă din nou într-un moment."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Conexiunea la <0>{serverName}</0> prezintă următoarele probleme de securitate:"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
-msgstr "Serverul de fișiere îl stochează lizibil, iar oricine obține linkul îl poate deschide. Treci la criptarea Obby pentru a trimite fișiere criptate."
+msgid "The file host can read these files, and anyone with the link can open them. Switch to Obby encryption to send files encrypted."
+msgstr "Gazda de fișiere poate citi aceste fișiere, iar oricine are linkul le poate deschide. Treci la criptarea Obby pentru a trimite fișiere criptate."
 
 #: src/components/layout/ChatArea.tsx
-msgid "The file host would not let this through."
-msgstr "Serverul de fișiere nu a permis asta."
+msgid "The file host refused the upload. Try again."
+msgstr "Gazda de fișiere a refuzat încărcarea. Încearcă din nou."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
@@ -5204,6 +5305,10 @@ msgstr "Serverul ți-a refuzat intrarea. Verifică modurile canalului și încea
 msgid "The user will receive an invitation to join {channelName}."
 msgstr "Utilizatorul va primi o invitație să se alăture {channelName}."
 
+#: src/components/ui/PluginsScreen.tsx
+msgid "Theme Studio"
+msgstr "Studio de teme"
+
 #: src/components/ui/RecordingPanel.tsx
 msgid "This browser cannot record audio."
 msgstr "Acest browser nu poate înregistra audio."
@@ -5218,32 +5323,32 @@ msgid "This chat"
 msgstr "Această conversație"
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
-msgstr "Această conversație este criptată cu schema nativă Obby. Comparați amprentele pe un canal separat, apoi marcați-o ca verificată."
+msgid "This chat is encrypted with Obby encryption. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Această conversație este criptată cu criptarea Obby. Compară amprentele cu contactul tău în afara acestei conversații, apoi marcheaz-o ca verificată."
 
 #: src/components/ui/E2EEVerifyModal.tsx
-msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints out of band, then mark it verified."
-msgstr "Această conversație este criptată cu OTR, compatibil cu alți clienți IRC. Comparați amprentele pe un canal separat, apoi marcați-o ca verificată."
+msgid "This chat is encrypted with OTR, compatible with other IRC clients. Compare the fingerprints with your contact outside this chat, then mark it verified."
+msgstr "Această conversație este criptată cu OTR, compatibil cu alți clienți IRC. Compară amprentele cu contactul tău în afara acestei conversații, apoi marcheaz-o ca verificată."
 
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Această comandă nu acceptă parametri."
 
 #: src/lib/geolocation.ts
-msgid "This device could not get a location fix right now."
-msgstr "Acest dispozitiv nu a putut obține locația chiar acum."
+msgid "This device could not find your location right now. Try again in a moment."
+msgstr "Acest dispozitiv nu ți-a putut găsi locația acum. Încearcă din nou într-un moment."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
 msgstr "Acest câmp este obligatoriu"
 
+#: src/components/layout/ChatArea.tsx
+msgid "This file host refuses {CIPHERTEXT_EXTENSION} files, the format Obby uses for encrypted attachments. End encryption to send the file unencrypted."
+msgstr "Această gazdă de fișiere refuză fișierele {CIPHERTEXT_EXTENSION}, formatul pe care Obby îl folosește pentru atașamentele criptate. Oprește criptarea pentru a trimite fișierul necriptat."
+
 #: src/components/message/MessageItem.tsx
 msgid "This file isn't encrypted. Anyone with the link can open it."
 msgstr "Acest fișier nu este criptat. Oricine are linkul îl poate deschide."
-
-#: src/components/layout/ChatArea.tsx
-msgid "This host does not accept {CIPHERTEXT_EXTENSION} files, which is how an encrypted attachment is stored. Ending encryption sends the file as-is."
-msgstr "Acest host nu acceptă fișiere {CIPHERTEXT_EXTENSION}, forma în care este stocat un atașament criptat. După încheierea criptării, fișierul pleacă ca atare."
 
 #: src/components/message/MediaPreview.tsx
 msgid "This image has expired"
@@ -5262,6 +5367,14 @@ msgstr "Atâtea persoane s-au înregistrat prin acest link"
 msgid "This message could not be decrypted. It was encrypted for a session this device no longer holds the keys to."
 msgstr "Acest mesaj nu a putut fi decriptat. A fost criptat pentru o sesiune ale cărei chei acest dispozitiv nu le mai are."
 
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by a member of staff"
+msgstr "Acest mesaj a fost șters de un membru al echipei"
+
+#: src/components/message/SystemMessage.tsx
+msgid "This message has been deleted by the sender"
+msgstr "Acest mesaj a fost șters de expeditor"
+
 #: src/components/ui/GlobalNotifications.tsx
 msgid "This message is no longer saved"
 msgstr "Acest mesaj nu mai este salvat"
@@ -5274,6 +5387,10 @@ msgstr "Acest mesaj nu a fost criptat. Poate proveni de la un alt client al aces
 msgid "This network"
 msgstr "Această rețea"
 
+#: src/components/pages/EmojiPacksPage.tsx
+msgid "This pack has no emoji yet. Add one above."
+msgstr "Acest pachet nu are încă emoji. Adaugă unul mai sus."
+
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
 msgid "This removes the network from your soju bouncer. To use it again, you'll need to add it back."
 msgstr "Aceasta elimină rețeaua de pe bouncer-ul tău soju. Pentru a o folosi din nou, va trebui să o adaugi la loc."
@@ -5283,8 +5400,8 @@ msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>
 msgstr "Acest server nu acceptă linkuri de invitație (capabilitatea<0>obby.world/invitation</0>nu este anunțată). Poți discuta în continuare normal; acest panou este pentru rețelele bazate pe obbyircd."
 
 #: src/components/layout/ChatArea.tsx
-msgid "This server has nowhere to put a file."
-msgstr "Acest server nu are unde să pună un fișier."
+msgid "This server has no file host. Connect to a server with a file host to upload files."
+msgstr "Acest server nu are gazdă de fișiere. Conectează-te la un server cu gazdă de fișiere pentru a încărca fișiere."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -5354,10 +5471,6 @@ msgstr "Comută lista de membri"
 msgid "Toggle Notifications"
 msgstr "Comută notificările"
 
-#: src/components/ui/UploadProgressOverlay.tsx
-msgid "Too large to encrypt, sent unencrypted"
-msgstr "Prea mare pentru criptare, trimis necriptat"
-
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "tool"
 msgstr "instrument"
@@ -5390,6 +5503,10 @@ msgstr "trunchiat"
 #: src/components/pages/SettingsPage.tsx
 msgid "Trusted Sources"
 msgstr "Surse de încredere"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Try again"
+msgstr "Încearcă din nou"
 
 #: src/lib/mediaUpload.ts
 msgid "Try the upload again."
@@ -5717,6 +5834,10 @@ msgstr "Volum"
 msgid "Volume for {0}"
 msgstr "Volum pentru {0}"
 
+#: src/lib/voiceErrors.ts
+msgid "Wait here to rejoin. The server limits how often you can rejoin."
+msgstr "Așteaptă aici pentru a intra din nou. Serverul limitează cât de des poți intra din nou."
+
 #. placeholder {0}: open.opponent
 #: src/components/ui/TicTacToeModal.tsx
 msgid "Waiting for {0} to accept…"
@@ -5804,10 +5925,6 @@ msgstr "Șoptește unui utilizator în contextul canalului curent"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Wide - Broader protection scope"
 msgstr "Larg – Domeniu de protecție mai amplu"
-
-#: src/components/layout/SearchPane.tsx
-msgid "Widen the scope"
-msgstr "Extinde aria"
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Will default to 'no reason' if left empty"
@@ -5925,18 +6042,18 @@ msgid "Your messages could be intercepted when relayed between servers"
 msgstr "Mesajele tale pot fi interceptate când sunt transmise între servere"
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted with OTR, which carries text only. These files would be sent in the clear."
-msgstr "Mesajele tale cu {nick} sunt criptate cu OTR, care transportă doar text. Aceste fișiere ar fi trimise necriptate."
+msgid "Your messages with {nick} are encrypted with OTR, which encrypts text only. These files will be sent unencrypted."
+msgstr "Mesajele tale cu {nick} sunt criptate cu OTR, care criptează doar text. Aceste fișiere vor fi trimise necriptate."
 
 #. placeholder {0}: affected.length
 #. placeholder {1}: files.length
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and would be sent in the clear. The rest stay encrypted."
-msgstr "Mesajele tale cu {nick} sunt criptate. {0} din {1} fișiere sunt prea mari pentru criptare și ar fi trimise în clar. Restul rămân criptate."
+msgid "Your messages with {nick} are encrypted. {0} of {1} files are too large to encrypt and will be sent unencrypted. The other files will be sent encrypted."
+msgstr "Mesajele tale cu {nick} sunt criptate. {0} din {1} fișiere sunt prea mari pentru a fi criptate și vor fi trimise necriptate. Celelalte fișiere vor fi trimise criptate."
 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and would be sent in the clear."
-msgstr "Mesajele tale cu {nick} sunt criptate. Aceste fișiere sunt prea mari pentru criptare și ar fi trimise în clar."
+msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+msgstr "Mesajele tale cu {nick} sunt criptate. Aceste fișiere sunt prea mari pentru a fi criptate și vor fi trimise necriptate."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

@@ -142,21 +142,24 @@ const VIDEO_MIME_BY_EXT: Record<string, string[]> = {
 
 const _canPlayCache = new Map<string, boolean>();
 
-function _probeCanPlay(mimes: string[]): boolean {
+// WebKit answers canPlayType with a blocking call to its GPU process, which
+// deadlocks while that process cancels a video load, so we ask once at startup.
+export function probeVideoSupport(): void {
   const el = document.createElement("video");
   // Require "probably" — WKWebView returns "maybe" for VP9/WebM even when it can't reliably decode it.
-  return mimes.some((m) => el.canPlayType(m) === "probably");
+  for (const [ext, mimes] of Object.entries(VIDEO_MIME_BY_EXT))
+    _canPlayCache.set(
+      ext,
+      mimes.some((m) => el.canPlayType(m) === "probably"),
+    );
 }
 
 /** Returns false when the platform definitely cannot play the video; true when unknown (optimistic). */
 export function canPlayVideoUrl(url: string): boolean {
   const ext = url.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
-  const mimes = VIDEO_MIME_BY_EXT[ext];
-  if (!mimes) return true; // unknown extension — optimistic, let it try
-  if (_canPlayCache.has(ext)) return _canPlayCache.get(ext) as boolean;
-  const supported = _probeCanPlay(mimes);
-  _canPlayCache.set(ext, supported);
-  return supported;
+  if (!VIDEO_MIME_BY_EXT[ext]) return true;
+  if (_canPlayCache.size === 0) probeVideoSupport();
+  return _canPlayCache.get(ext) ?? true;
 }
 
 /** Like detectMediaType but trusted domains only — no extension guessing.

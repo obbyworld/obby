@@ -1,8 +1,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  goBackInPage,
   PageShell,
-  stepBackWithinPage,
 } from "../../../src/components/ui/page/PageShell";
 import useStore from "../../../src/store";
 
@@ -14,10 +14,18 @@ const sections = [
 describe("PageShell back on a phone", () => {
   beforeEach(() => {
     const state = useStore.getState();
-    useStore.setState({ ui: { ...state.ui, isNarrowView: true, page: null } });
+    useStore.setState({
+      ui: {
+        ...state.ui,
+        isNarrowView: true,
+        mobileViewActiveColumn: "serverList",
+        page: null,
+      },
+    });
   });
 
-  it("steps from a section to the section list, then lets the page close", () => {
+  it("steps from a section to the section list, then closes the page", () => {
+    act(() => useStore.getState().openPage({ kind: "settings" }));
     render(
       <PageShell
         title="Settings"
@@ -30,14 +38,37 @@ describe("PageShell back on a phone", () => {
     );
     expect(screen.getByText("beta body")).toBeInTheDocument();
 
-    let isHandled = false;
     act(() => {
-      isHandled = stepBackWithinPage();
+      expect(goBackInPage()).toBe(true);
     });
-    expect(isHandled).toBe(true);
     expect(screen.getByText("Alpha")).toBeInTheDocument();
     expect(screen.queryByText("beta body")).not.toBeInTheDocument();
+    expect(useStore.getState().ui.page).toEqual({ kind: "settings" });
 
-    expect(stepBackWithinPage()).toBe(false);
+    act(() => {
+      expect(goBackInPage()).toBe(true);
+    });
+    expect(useStore.getState().ui.page).toBeNull();
+    expect(useStore.getState().ui.mobileViewActiveColumn).toBe("serverList");
+  });
+
+  it("goes back where a sub-page says", () => {
+    let wentBack = false;
+    render(
+      <PageShell
+        title="Two-factor"
+        back={{ label: "Settings", onBack: () => (wentBack = true) }}
+      >
+        <p>body</p>
+      </PageShell>,
+    );
+    act(() => {
+      goBackInPage();
+    });
+    expect(wentBack).toBe(true);
+  });
+
+  it("has nothing to step back to without a page", () => {
+    expect(goBackInPage()).toBe(false);
   });
 });

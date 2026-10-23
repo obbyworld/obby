@@ -10,6 +10,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
+import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import ircClient from "../../lib/ircClient";
@@ -238,14 +239,25 @@ export const ServerList: React.FC = () => {
   const { t } = useLingui();
   const {
     servers,
-    ui: { selectedServerId },
+    selectedServerId,
     selectServer,
     toggleAddServerModal,
     reconnectServer,
     openPage,
     editBouncerNetwork,
     requestDeleteServer,
-  } = useStore();
+  } = useStore(
+    useShallow((state) => ({
+      servers: state.servers,
+      selectedServerId: state.ui.selectedServerId,
+      selectServer: state.selectServer,
+      toggleAddServerModal: state.toggleAddServerModal,
+      reconnectServer: state.reconnectServer,
+      openPage: state.openPage,
+      editBouncerNetwork: state.editBouncerNetwork,
+      requestDeleteServer: state.requestDeleteServer,
+    })),
+  );
 
   const [shimmeringServers, setShimmeringServers] = useState<Set<string>>(
     new Set(),

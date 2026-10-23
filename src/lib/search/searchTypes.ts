@@ -8,6 +8,7 @@ export interface SearchQuery {
   scope: SearchScope;
   from?: string;
   aboutMe?: boolean;
+  mentions?: string;
   hasLink?: boolean;
   before?: number;
   after?: number;

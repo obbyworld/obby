@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useReducer, useRef } from "react";
 import { createPortal } from "react-dom";
-import { placePanel } from "./Popover";
+import { placePanel, VIEWPORT_MARGIN } from "./Popover";
 
 type SuggestionPlacement = "above" | "below" | "inline";
 
@@ -34,8 +34,9 @@ function getListStyle(
   if (!rect || placement === "inline") return undefined;
   if (placement === "above")
     return { bottom: window.innerHeight - rect.top + GAP_PX, left: rect.left };
-  const { left, verticalStyle } = placePanel(rect, rect.width, "below");
-  return { ...verticalStyle, left, width: rect.width };
+  const width = Math.min(rect.width, window.innerWidth - 2 * VIEWPORT_MARGIN);
+  const { left, verticalStyle } = placePanel(rect, width, "below");
+  return { ...verticalStyle, left, width };
 }
 
 export function SuggestionList<T>({
@@ -115,7 +116,7 @@ export function SuggestionList<T>({
     </div>
   );
   // We portal the overlay so the sidebar's scroll box and page transform leave it alone.
-  return isFloatingBelow ? createPortal(list, document.body) : list;
+  return rect ? createPortal(list, document.body) : list;
 }
 
 export default SuggestionList;

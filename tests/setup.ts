@@ -13,7 +13,10 @@ window.HTMLElement.prototype.scrollTo = vi.fn();
 window.HTMLVideoElement.prototype.canPlayType = vi.fn(
   () => "probably" as CanPlayTypeResult,
 );
-window.matchMedia = vi.fn(() => ({
+// A plain function so a test's vi.spyOn replaces it: useMediaQuery caches its
+// lists until window.matchMedia itself changes.
+window.matchMedia = ((query: string) => ({
+  media: query,
   matches: false,
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),

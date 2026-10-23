@@ -23,7 +23,7 @@ describe("BottomSheet", () => {
         <p>sheet body</p>
       </BottomSheet>,
     );
-    fireEvent.click(document.querySelector(".bg-black\\/50") as HTMLElement);
+    fireEvent.click(document.querySelector(".scrim") as HTMLElement);
     expect(onClose).toHaveBeenCalledOnce();
   });
 });

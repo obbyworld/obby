@@ -216,8 +216,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       });
     }
 
-    // Sync our own metadata in the background -- don't await so channel
-    // joins happen immediately.
+    // We read our metadata from the server, which keeps it.
     //
     // We deliberately do NOT send METADATA SUB any more. The server's
     // join-time push of every subscribed key for every existing channel
@@ -232,25 +231,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     // visible to us, but display-name / avatar don't change often and
     // the profile modal re-GETs anyway.
     if (serverSupportsMetadata(store.getState(), serverId)) {
-      fetchAndMergeOwnMetadata(store, serverId).then(() => {
-        const savedMetadataAfterMerge = storage.metadata.load();
-        const serverMetadataAfterMerge = savedMetadataAfterMerge[serverId];
-        const ourNick = ircClient.getNick(serverId);
-        if (serverMetadataAfterMerge && ourNick) {
-          const ourMetadata = serverMetadataAfterMerge[ourNick];
-          if (ourMetadata) {
-            Object.entries(ourMetadata).forEach(
-              ([key, { value, visibility }]) => {
-                if (value !== undefined) {
-                  store
-                    .getState()
-                    .metadataSet(serverId, "*", key, value, visibility);
-                }
-              },
-            );
-          }
-        }
-      });
+      ircClient.metadataGet(serverId, "*", OWN_METADATA_KEYS);
     }
 
     store.setState((state) => {
@@ -644,50 +625,13 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
   });
 }
 
-// Inlined from fetchAndMergeOwnMetadata in index.ts — uses store instead of useStore
-async function fetchAndMergeOwnMetadata(
-  store: StoreApi<AppState>,
-  serverId: string,
-): Promise<void> {
-  return new Promise((resolve) => {
-    const nickname = ircClient.getNick(serverId);
-    if (!nickname) {
-      resolve();
-      return;
-    }
-
-    // Mark as fetching
-    store.setState((state) => ({
-      metadataFetchInProgress: {
-        ...state.metadataFetchInProgress,
-        [serverId]: true,
-      },
-    }));
-
-    // Request all metadata for ourselves (target "*" means us)
-    const defaultKeys = [
-      "url",
-      "website",
-      "status",
-      "location",
-      "avatar",
-      "color",
-      "display-name",
-    ];
-
-    // Get our metadata from the server
-    ircClient.metadataGet(serverId, "*", defaultKeys);
-
-    // Wait a bit for responses to come in, then resolve
-    // The METADATA_KEYVALUE handler will update saved values
-    setTimeout(() => {
-      store.setState((state) => ({
-        metadataFetchInProgress: {
-          ...state.metadataFetchInProgress,
-          [serverId]: false,
-        },
-      }));
-      resolve();
-    }, 1000);
-  });
-}
+// The profile fields the settings page edits.
+const OWN_METADATA_KEYS = [
+  "display-name",
+  "avatar",
+  "homepage",
+  "status",
+  "color",
+  "bot",
+  "pronouns",
+];

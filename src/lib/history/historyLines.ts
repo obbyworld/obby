@@ -56,6 +56,8 @@ export type HistoryAction =
 export interface HistoryPage {
   size: number;
   oldest: number | undefined;
+  newest: number | undefined;
+  msgids: string[];
 }
 
 interface OpenBatch {
@@ -69,6 +71,8 @@ interface OpenBatch {
   redacts: string[];
   size: number;
   oldest: number | undefined;
+  newest: number | undefined;
+  msgids: string[];
 }
 
 const nickOf = (source: string) => source.split("!")[0];
@@ -199,6 +203,8 @@ export class HistoryRecorder {
         redacts: [],
         size: 0,
         oldest: undefined,
+        newest: undefined,
+        msgids: [],
       });
       if (outer && isMultiline(outer.type)) outer.lines.push(parsed.line);
       return [];
@@ -217,7 +223,12 @@ export class HistoryRecorder {
               target: target.toLowerCase(),
               rows: batch.rows,
               redacts: batch.redacts,
-              page: { size: batch.size, oldest: batch.oldest },
+              page: {
+                size: batch.size,
+                oldest: batch.oldest,
+                newest: batch.newest,
+                msgids: batch.msgids,
+              },
             },
           ]
         : [];
@@ -366,12 +377,11 @@ function countPageItem(
   mtags: Record<string, string> | undefined,
 ) {
   batch.size += 1;
+  if (mtags?.msgid) batch.msgids.push(mtags.msgid);
   const time = mtags?.time ? Date.parse(mtags.time) : Number.NaN;
-  if (
-    !Number.isNaN(time) &&
-    (batch.oldest === undefined || time < batch.oldest)
-  )
-    batch.oldest = time;
+  if (Number.isNaN(time)) return;
+  if (batch.oldest === undefined || time < batch.oldest) batch.oldest = time;
+  if (batch.newest === undefined || time > batch.newest) batch.newest = time;
 }
 
 function isMultiline(type: string) {
@@ -430,7 +440,7 @@ type GapDecision = { kind: "none" } | { kind: "add"; from: number; to: number };
 // we had when we asked, the messages in between are not on disk.
 export function decideAfterLatest(input: {
   newestStoredTime: number | undefined;
-  page: HistoryPage;
+  page: Pick<HistoryPage, "size" | "oldest">;
 }): GapDecision {
   const { newestStoredTime, page } = input;
   if (newestStoredTime === undefined || page.oldest === undefined)
@@ -449,7 +459,7 @@ type GapFillDecision =
 // as several), so we treat only an empty page as the end of their history.
 export function decideAfterGapFill(input: {
   gap: HistoryGap;
-  page: HistoryPage;
+  page: Pick<HistoryPage, "size" | "oldest">;
   inserted: boolean[];
 }): GapFillDecision {
   const { gap, page, inserted } = input;

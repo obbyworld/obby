@@ -3,7 +3,6 @@ import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect } from "react";
 import {
-  FaChevronRight,
   FaExclamationTriangle,
   FaInfoCircle,
   FaTimes,
@@ -15,7 +14,6 @@ import {
   type JumpFailure,
 } from "../../lib/jumpToMessage";
 import useStore from "../../store";
-import { SERVER_NOTICES_ID } from "../../store/handlers/serverReplies";
 
 const TOAST_MS = 5000;
 
@@ -36,16 +34,12 @@ const ICONS = {
   note: <FaInfoCircle className="text-discord-text-muted" />,
 };
 
-/** One toast at a time for the problem the user most likely just caused; the
- *  server's notices keep every reply, so the toast can vanish quickly. */
+/** One toast at a time, for the latest thing the app has to tell the user. */
 export const GlobalNotifications: React.FC = () => {
   const { t } = useLingui();
   const notifications = useStore((s) => s.globalNotifications);
   const clearGlobalNotifications = useStore((s) => s.clearGlobalNotifications);
   const latest = notifications[notifications.length - 1];
-  const hasServer = useStore((s) =>
-    s.servers.some((server) => server.id === latest?.serverId),
-  );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
@@ -59,14 +53,6 @@ export const GlobalNotifications: React.FC = () => {
 
   if (!latest) return null;
   const isJumpFailure = latest.command === JUMP_FAILURE_COMMAND;
-  const opensNotices = hasServer && !isJumpFailure;
-
-  const openNotices = () => {
-    const { selectServer, selectChannel } = useStore.getState();
-    selectServer(latest.serverId);
-    selectChannel(SERVER_NOTICES_ID, { navigate: true });
-    clearGlobalNotifications();
-  };
   const otherCount = notifications.length - 1;
 
   return (
@@ -78,9 +64,8 @@ export const GlobalNotifications: React.FC = () => {
         <span className="shrink-0 text-sm">{ICONS[latest.type]}</span>
         <button
           type="button"
-          onClick={opensNotices ? openNotices : clearGlobalNotifications}
+          onClick={clearGlobalNotifications}
           className="flex min-w-0 flex-1 items-center gap-2 text-left text-sm text-discord-text-normal"
-          title={opensNotices ? t`See server notices` : undefined}
         >
           <span className="line-clamp-2 min-w-0 flex-1">
             {latest.command === EXIT_HINT_COMMAND
@@ -92,9 +77,6 @@ export const GlobalNotifications: React.FC = () => {
               <span className="row-meta ml-1.5">+{otherCount}</span>
             )}
           </span>
-          {opensNotices && (
-            <FaChevronRight className="shrink-0 text-xs text-discord-text-muted" />
-          )}
         </button>
         <button
           type="button"

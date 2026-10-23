@@ -42,6 +42,7 @@ import {
   MAP_MAX_ZOOM,
   MAP_MIN_ZOOM,
   MAP_PIN_SVG,
+  stopTouchOutsideMap,
 } from "../../lib/leafletMap";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import {
@@ -1347,9 +1348,9 @@ export function MediaViewerModal({
         onMouseMove={handleMouseMove}
         onMouseUp={stopDrag}
         onMouseLeave={stopDrag}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
+        onTouchStart={stopTouchOutsideMap}
+        onTouchMove={stopTouchOutsideMap}
+        onTouchEnd={stopTouchOutsideMap}
       >
         {/* Background layers are direct children of fixed div — immune to flex layout timing */}
         <div

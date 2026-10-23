@@ -259,7 +259,7 @@ const preferenceSettings: SettingDefinition[] = [
     key: "showMotd",
     category: "preferences",
     subcategory: "Chat",
-    title: msg`Show the MOTD`,
+    title: msg`Show the message of the day`,
     description: msg`Post each server's message of the day to Server Notices and its welcome page`,
     type: "toggle",
     defaultValue: true,
@@ -417,7 +417,7 @@ const preferenceSettings: SettingDefinition[] = [
     category: "preferences",
     subcategory: "History",
     title: msg`Keep chat history on this device`,
-    description: msg`Scroll back past what the server keeps. Turning this off stops saving and keeps what is saved. Encrypted private messages are never saved.`,
+    description: msg`Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved.`,
     type: "toggle",
     defaultValue: true,
     searchKeywords: [
@@ -436,7 +436,7 @@ const preferenceSettings: SettingDefinition[] = [
     category: "preferences",
     subcategory: "History",
     title: msg`History disk limit`,
-    description: msg`Set how much history to keep. The oldest messages go first.`,
+    description: msg`Set how much disk space saved history can use. The oldest messages are deleted first when the limit is reached.`,
     type: "select",
     defaultValue: 500,
     options: [

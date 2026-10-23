@@ -104,7 +104,7 @@ export const LocationPicker: React.FC<{
       <div
         ref={containerRef}
         data-testid="location-picker"
-        className="h-full"
+        className="absolute inset-0"
       />
       <FaMapMarkerAlt
         aria-hidden="true"

@@ -17,6 +17,11 @@ import {
 } from "../../lib/search/searchScope";
 import type { SearchScope } from "../../lib/search/searchTypes";
 import useStore from "../../store";
+
+// We keep touch chips compact and stretch only their hit area to a finger's size.
+export const touchHitArea =
+  "relative before:absolute before:-inset-y-2 before:inset-x-0 before:content-['']";
+
 import type { Server } from "../../types";
 import CompletionList from "../ui/CompletionList";
 import Menu, { type MenuItem } from "../ui/Menu";
@@ -87,12 +92,14 @@ export const SearchQueryBar: React.FC<{
   completionId: string;
   showCompletion?: boolean;
   completionClassName?: string;
+  completionAnchor?: HTMLElement;
 }> = ({
   draft,
   isLarge,
   completionId,
   showCompletion = true,
   completionClassName = "",
+  completionAnchor,
 }) => {
   const servers = useStore((s) => s.servers);
   const selectedServerId = useStore((s) => s.ui.selectedServerId);
@@ -104,7 +111,7 @@ export const SearchQueryBar: React.FC<{
   const isTouch = useIsTouchInput();
   const [scopeChip, setScopeChip] = useState<HTMLButtonElement | null>(null);
   const { text, scope, completion } = draft;
-  const chipClass = `chip-action shadow-none whitespace-nowrap ${isLarge ? "min-h-11 px-4 text-sm shrink-0" : ""}`;
+  const chipClass = `chip-action shadow-none whitespace-nowrap ${isLarge ? `min-h-8 shrink-0 ${touchHitArea}` : ""}`;
 
   const closeScopeMenu = () => {
     draft.setIsScopeMenuOpen(false);
@@ -141,7 +148,7 @@ export const SearchQueryBar: React.FC<{
   return (
     <>
       <div
-        className={`flex gap-2 px-3 py-2 min-w-0 ${isLarge ? "overflow-x-auto overscroll-x-contain" : "flex-wrap"}`}
+        className={`flex gap-2 px-3 py-2 min-w-0 ${isLarge ? "overflow-x-auto overscroll-x-contain scrollbar-none" : "flex-wrap"}`}
       >
         <button
           ref={setScopeChip}
@@ -162,12 +169,6 @@ export const SearchQueryBar: React.FC<{
             From
           </Trans>,
         )}
-        {insertChip(
-          "in:",
-          <Trans comment="Search filter chip: messages in a chat or network">
-            In
-          </Trans>,
-        )}
         {toggleChip(MENTIONS_TOKEN, <Trans>Mentions & replies</Trans>)}
         {toggleChip(LINK_TOKEN, <Trans>Has link</Trans>)}
         {insertChip(
@@ -177,7 +178,16 @@ export const SearchQueryBar: React.FC<{
           </Trans>,
         )}
       </div>
-      {showCompletion && completion.isOpen && (
+      {showCompletion && completion.isOpen && completionAnchor && (
+        <CompletionList
+          completion={completion}
+          id={completionId}
+          anchor={completionAnchor}
+          placement="below"
+          rowClassName={isLarge ? "min-h-10" : ""}
+        />
+      )}
+      {showCompletion && completion.isOpen && !completionAnchor && (
         <div
           className={`overflow-y-auto overscroll-contain p-1 ${completionClassName}`}
         >
@@ -186,7 +196,7 @@ export const SearchQueryBar: React.FC<{
             id={completionId}
             placement="inline"
             embedded
-            rowClassName={isLarge ? "min-h-12" : ""}
+            rowClassName={isLarge ? "min-h-10" : ""}
           />
         </div>
       )}
