@@ -2,8 +2,10 @@ import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { workflowIdFromTags } from "../../lib/botTools";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
 import { decodeMediaDescriptor } from "../../lib/e2ee/media";
@@ -14,15 +16,20 @@ import {
   isUnprotectedMessage,
 } from "../../lib/e2ee/messageFlags";
 import { highlightNames } from "../../lib/highlightNames";
+import { decodeHtmlEntities } from "../../lib/htmlEntities";
 import ircClient from "../../lib/ircClient";
 import {
+  findFirstUrl,
   isUrlFromFilehost,
   isUserVerified,
+  type LinkLabels,
+  makeLinkLabels,
   processMarkdownInText,
   serverFilehosts,
 } from "../../lib/ircUtils";
 import {
   canShowMedia,
+  extractHostname,
   extractMediaFromMessage,
   type MediaEntry,
   type MediaType,
@@ -32,12 +39,10 @@ import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore, { loadSavedMetadata } from "../../store";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
+import MessageReaderSheet from "../mobile/MessageReaderSheet";
 import HoverTooltip from "../ui/HoverTooltip";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 import { BotInvocationChip } from "./BotInvocationChip";
-import { BotToolsMessagePill } from "./BotToolsMessagePill";
-import { BotToolsPlaceholderBody } from "./BotToolsPlaceholderBody";
-import type { CollapsibleMessageHandle } from "./CollapsibleMessage";
 import EncryptedMediaPreview from "./EncryptedMediaPreview";
 import { InviteMessage } from "./InviteMessage";
 import {
@@ -57,6 +62,7 @@ import {
 } from "./index";
 import { MediaPreview } from "./MediaPreview";
 import { MessageStatusIndicator } from "./MessageStatusIndicator";
+import WorkflowLine from "./WorkflowLine";
 
 interface MessageItemProps {
   message: MessageType;
@@ -176,11 +182,10 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const mediaChannelId = channelId ?? privateChatId;
   const pmUserCache = useRef(new Map<string, User>());
   const isNarrowView = useMediaQuery();
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
-  const collapsibleRef = useRef<CollapsibleMessageHandle>(null);
-  const [messageNeedsCollapsing, setMessageNeedsCollapsing] = useState(false);
+  const isTouchDevice = useIsTouchInput();
   const messageRowRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [isReaderOpen, setIsReaderOpen] = useState(false);
   const longPress = useLongPress({
     onLongPress: () => setSheetOpen(true),
   });
@@ -406,6 +411,24 @@ export const MessageItem = memo((props: MessageItemProps) => {
     server?.emojiPackUrl,
   ]);
 
+  // We label only plaintext messages, and lead with the real host because the linked page supplies the title.
+  const isEncrypted = isFromEncryptedSession(message) || !!encryptedMedia;
+  const workflowId = useMemo(
+    () => message.botToolsWorkflowId ?? workflowIdFromTags(message.tags),
+    [message.botToolsWorkflowId, message.tags],
+  );
+  const linkLabels = useMemo<LinkLabels | undefined>(() => {
+    if (!message.linkPreviewTitle || isEncrypted) return undefined;
+    const url = findFirstUrl(stripIrcFormatting(message.content));
+    const host = url && extractHostname(url);
+    return url && host
+      ? makeLinkLabels(
+          url,
+          `${host} · ${decodeHtmlEntities(message.linkPreviewTitle)}`,
+        )
+      : undefined;
+  }, [message.content, message.linkPreviewTitle, isEncrypted]);
+
   const htmlContent = useMemo(() => {
     const keyPrefix = message.id || message.msgid || "msg";
     const body = renderWithCustomEmoji(
@@ -417,6 +440,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
           showExternalContent,
           enableMarkdownRendering,
           key,
+          linkLabels,
         ),
       `${keyPrefix}-em`,
     );
@@ -431,6 +455,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     message.msgid,
     message.mentioned,
     resolveEmoji,
+    linkLabels,
   ]);
 
   // Ciphertext this device holds no key for keeps its place in the thread: a
@@ -452,9 +477,8 @@ export const MessageItem = memo((props: MessageItemProps) => {
     </HoverTooltip>
   ) : (
     <CollapsibleMessage
-      ref={collapsibleRef}
       content={htmlContent}
-      onNeedsCollapsing={setMessageNeedsCollapsing}
+      onRequestRead={() => setIsReaderOpen(true)}
     />
   );
 
@@ -893,10 +917,6 @@ export const MessageItem = memo((props: MessageItemProps) => {
                   onRenderFailed={handleRenderFailed}
                 />
               ) : (
-                // The workflow pill is absolutely positioned in the
-                // avatar gutter to the LEFT of the body, so the body
-                // stays at its natural alignment and isn't pushed
-                // sideways by the pill's width.
                 <div
                   className="relative"
                   style={{
@@ -905,23 +925,14 @@ export const MessageItem = memo((props: MessageItemProps) => {
                     wordBreak: "break-word",
                   }}
                 >
-                  <span
-                    className="absolute top-[5px] z-10"
-                    style={{ right: "100%", marginRight: "4px" }}
-                  >
-                    <BotToolsMessagePill
+                  {workflowId && (
+                    <WorkflowLine
                       serverId={message.serverId}
-                      tags={message.tags}
+                      workflowId={workflowId}
+                      isPending={!!message.botToolsPending}
                     />
-                  </span>
-                  {message.botToolsPending && message.botToolsWorkflowId ? (
-                    <BotToolsPlaceholderBody
-                      serverId={message.serverId}
-                      workflowId={message.botToolsWorkflowId}
-                    />
-                  ) : (
-                    collapsibleContent
                   )}
+                  {!message.botToolsPending && collapsibleContent}
                 </div>
               )}
             </EnhancedLinkWrapper>
@@ -1031,18 +1042,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
               })()}
 
             {/* Render link preview if available */}
-            {(message.linkPreviewTitle ||
-              message.linkPreviewSnippet ||
-              message.linkPreviewMeta) && (
-              <LinkPreview
-                title={message.linkPreviewTitle}
-                snippet={message.linkPreviewSnippet}
-                imageUrl={message.linkPreviewMeta}
-                theme={theme}
-                messageContent={message.content}
-                serverId={serverId}
-              />
-            )}
+            {!isEncrypted &&
+              (message.linkPreviewTitle ||
+                message.linkPreviewSnippet ||
+                message.linkPreviewMeta) && (
+                <LinkPreview
+                  title={message.linkPreviewTitle}
+                  snippet={message.linkPreviewSnippet}
+                  imageUrl={message.linkPreviewMeta}
+                  messageContent={message.content}
+                  serverId={serverId}
+                />
+              )}
           </div>
 
           <ReactionsWithActions
@@ -1099,6 +1110,18 @@ export const MessageItem = memo((props: MessageItemProps) => {
           canDelete={canRedact}
           canOpenMedia={canOpenMedia}
         />
+      )}
+      {isReaderOpen && (
+        <MessageReaderSheet
+          isOpen
+          onClose={() => setIsReaderOpen(false)}
+          author={displayName || message.userId}
+          time={copyTime}
+          copyText={stripIrcFormatting(message.content)}
+          onReply={canReply ? () => setReplyTo(message) : undefined}
+        >
+          {htmlContent}
+        </MessageReaderSheet>
       )}
     </div>
   );

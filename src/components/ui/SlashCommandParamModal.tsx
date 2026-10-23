@@ -131,7 +131,11 @@ export const SlashCommandParamModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 px-4"
+      role="dialog"
+      aria-modal="true"
+    >
       <form
         onSubmit={submit}
         className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5 max-h-[85vh] flex flex-col"

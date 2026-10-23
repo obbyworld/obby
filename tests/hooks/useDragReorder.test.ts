@@ -146,12 +146,11 @@ describe("useDragReorder", () => {
       );
     });
 
-    expect(onReorder).toHaveBeenCalledWith([
-      "item-2",
-      "item-3",
+    expect(onReorder).toHaveBeenCalledWith(
+      ["item-2", "item-3", "item-1", "item-4"],
       "item-1",
-      "item-4",
-    ]);
+      "item-3",
+    );
     expect(result.current.isDragging).toBe(false);
     expect(result.current.draggedItemId).toBeNull();
     expect(result.current.dragOverItemId).toBeNull();

@@ -67,7 +67,11 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+      role="dialog"
+      aria-modal="true"
+    >
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-white">Change password</h2>

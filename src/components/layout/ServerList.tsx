@@ -10,8 +10,8 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
 import ircClient from "../../lib/ircClient";
 import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
@@ -234,7 +234,7 @@ export const ServerList: React.FC = () => {
   const [shimmeringServers, setShimmeringServers] = useState<Set<string>>(
     new Set(),
   );
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+  const isTouchDevice = useIsTouchInput();
 
   useEffect(() => {
     const handleServerReady = ({ serverId }: { serverId: string }) => {

@@ -1,5 +1,6 @@
 import type { ServerConfig } from "../types";
 import type {
+  ChannelFoldersMap,
   ChannelOrderMap,
   GlobalSettings,
   PinnedPrivateChatsMap,
@@ -12,6 +13,7 @@ const KEYS = {
   METADATA: "serverMetadata",
   SETTINGS: "globalSettings",
   CHANNEL_ORDER: "channelOrder",
+  CHANNEL_FOLDERS: "channelFolders",
   PINNED_PMS: "pinnedPrivateChats",
   UI_SELECTION: "uiSelections",
   MIGRATION_VERSION: "migrationVersion",
@@ -106,6 +108,20 @@ export const channelOrder = {
 
   save: (data: ChannelOrderMap) => {
     localStorage.setItem(KEYS.CHANNEL_ORDER, JSON.stringify(data));
+  },
+};
+
+export const channelFolders = {
+  load: (): ChannelFoldersMap => {
+    try {
+      return JSON.parse(localStorage.getItem(KEYS.CHANNEL_FOLDERS) || "{}");
+    } catch {
+      return {};
+    }
+  },
+
+  save: (data: ChannelFoldersMap) => {
+    localStorage.setItem(KEYS.CHANNEL_FOLDERS, JSON.stringify(data));
   },
 };
 

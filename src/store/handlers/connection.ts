@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
 import type { PrivateChat } from "../../types";
@@ -14,6 +15,28 @@ import * as storage from "../localStorage";
 export const readyProcessedServers = new Set<string>();
 
 export function registerConnectionHandlers(store: StoreApi<AppState>): void {
+  ircClient.on("MOTD", ({ serverId, lines }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, motd: lines } : server,
+      ),
+    }));
+    const { globalSettings, servers, addMessage } = store.getState();
+    if (!globalSettings.showMotd) return;
+    addMessage({
+      id: uuidv4(),
+      type: "notice",
+      content: lines.join("\n"),
+      timestamp: new Date(),
+      userId: servers.find((s) => s.id === serverId)?.name ?? "MOTD",
+      channelId: "server-notices",
+      serverId,
+      reactions: [],
+      replyMessage: null,
+      mentioned: [],
+    });
+  });
+
   ircClient.on("rateLimited", ({ serverId, message }) => {
     const server = store.getState().servers.find((s) => s.id === serverId);
     store.getState().addGlobalNotification({
@@ -51,6 +74,14 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
+  ircClient.on("saslFailed", ({ serverId }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, saslFailed: true } : s,
+      ),
+    }));
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
@@ -81,6 +112,8 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          saslFailed:
+            connectionState === "connecting" ? false : server.saslFailed,
         };
       });
 

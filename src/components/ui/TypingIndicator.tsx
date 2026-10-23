@@ -78,5 +78,6 @@ export const TypingIndicator: React.FC<{
     );
   }
 
-  return <div className="h-5 ml-5 text-sm italic">{content}</div>;
+  // We always keep this line's height so someone starting to type never shifts the conversation.
+  return <div className="h-5 ml-5 text-sm italic leading-5">{content}</div>;
 };

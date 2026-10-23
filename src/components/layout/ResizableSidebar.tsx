@@ -14,8 +14,6 @@ interface ResizableSidebarProps {
   minWidth: number;
   maxWidth: number;
   side: "left" | "right";
-  handleColor?: string;
-  handleHoverColor?: string;
   bypass: boolean;
   onMinReached?: () => void;
   initialWidth?: number;
@@ -29,8 +27,6 @@ export const ResizableSidebar: React.FC<ResizableSidebarProps> = ({
   minWidth,
   maxWidth,
   side,
-  handleColor = "bg-discord-dark-200",
-  handleHoverColor = "bg-discord-dark-400",
   onMinReached,
   bypass,
   initialWidth,
@@ -134,8 +130,11 @@ export const ResizableSidebar: React.FC<ResizableSidebarProps> = ({
     }
   }, [isResizing, handleResize, handleResizeEnd]);
 
+  // We widen the grab area past the edge so it is easy to hit, and keep the visuals on the edge.
   const handleStyle =
-    side === "left" ? "right-0 cursor-col-resize" : "left-0 cursor-col-resize";
+    side === "left"
+      ? "-right-1.5 cursor-col-resize"
+      : "-left-1.5 cursor-col-resize";
 
   return (
     <div
@@ -148,23 +147,29 @@ export const ResizableSidebar: React.FC<ResizableSidebarProps> = ({
     >
       {/* Resize handle */}
       <div
-        className={`absolute top-0 w-1 h-full transition-all duration-150 group ${handleStyle} ${
+        className={`absolute top-0 w-3 h-full z-30 group ${handleStyle} ${
           !isVisible ? "hidden" : ""
-        } ${
-          isResizing
-            ? side === "left"
-              ? "shadow-[inset_-3px_0_8px_rgba(0,0,0,0.5)]"
-              : "shadow-[inset_3px_0_8px_rgba(0,0,0,0.5)]"
-            : side === "left"
-              ? "hover:shadow-[inset_-2px_0_6px_rgba(0,0,0,0.35)]"
-              : "hover:shadow-[inset_2px_0_6px_rgba(0,0,0,0.35)]"
         }`}
         onMouseDown={handleResizeStart}
         data-testid="resize-handle"
       >
         <div
-          className={`absolute ${side === "left" ? "right-0" : "left-0"} w-[1px] h-full ${handleColor} group-hover:${handleHoverColor} ${isResizing ? handleHoverColor : ""}`}
-        />
+          className={`absolute top-0 w-1 h-full transition-all duration-150 ${
+            side === "left" ? "right-1.5" : "left-1.5"
+          } ${
+            isResizing
+              ? side === "left"
+                ? "shadow-[inset_-3px_0_8px_rgba(0,0,0,0.5)]"
+                : "shadow-[inset_3px_0_8px_rgba(0,0,0,0.5)]"
+              : side === "left"
+                ? "group-hover:shadow-[inset_-2px_0_6px_rgba(0,0,0,0.35)]"
+                : "group-hover:shadow-[inset_2px_0_6px_rgba(0,0,0,0.35)]"
+          }`}
+        >
+          <div
+            className={`absolute ${side === "left" ? "right-0" : "left-0"} w-[1px] h-full bg-discord-dark-200`}
+          />
+        </div>
       </div>
       {/* Content */}
       <div className="flex-1 overflow-hidden">{children}</div>

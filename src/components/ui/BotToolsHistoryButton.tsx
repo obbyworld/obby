@@ -1,13 +1,8 @@
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useMemo, useRef, useState } from "react";
-import {
-  FaCheck,
-  FaChevronRight,
-  FaProjectDiagram,
-  FaSpinner,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { FaCaretDown, FaCaretRight, FaProjectDiagram } from "react-icons/fa";
 import {
   countableSteps,
   effectiveWorkflowState,
@@ -16,6 +11,7 @@ import {
 import type { AiWorkflow } from "../../store";
 import useStore from "../../store";
 import Popover from "./Popover";
+import WorkflowStatusBadge from "./WorkflowStatusBadge";
 
 interface BotToolsHistoryButtonProps {
   serverId: string;
@@ -31,20 +27,6 @@ const ACTIVE_STATES: ReadonlySet<AiWorkflow["state"]> = new Set([
 function isActive(w: AiWorkflow): boolean {
   if (isStale(w)) return false;
   return ACTIVE_STATES.has(w.state);
-}
-
-function stateGlyph(state: AiWorkflow["state"]) {
-  switch (state) {
-    case "complete":
-      return <FaCheck className="text-green-400 text-[10px]" />;
-    case "failed":
-    case "cancelled":
-      return <FaTimesCircle className="text-red-400 text-[10px]" />;
-    default:
-      return (
-        <FaSpinner className="text-discord-text-muted text-[10px] animate-spin" />
-      );
-  }
 }
 
 function fmtAgo(ts: number): string {
@@ -74,7 +56,6 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
       .sort((a, b) => b.startedAt - a.startedAt);
   }, [serverWorkflows, channel]);
 
-  // Sorted latest-first so the submenu reads newest-to-oldest.
   const byBot = useMemo(() => {
     const map = new Map<string, AiWorkflow[]>();
     for (const w of workflows) {
@@ -88,7 +69,6 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
         nick,
         list,
         latestAt: list[0]?.startedAt ?? 0,
-        activeCount: list.filter(isActive).length,
       }))
       .sort((a, b) => b.latestAt - a.latestAt);
   }, [workflows]);
@@ -99,13 +79,16 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
   );
 
   const [open, setOpen] = useState(false);
-  const [expandedBot, setExpandedBot] = useState<string | null>(null);
+  const [foldedBots, setFoldedBots] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
+  const toggleBot = (nick: string) =>
+    setFoldedBots((folded) => {
+      const next = new Set(folded);
+      if (!next.delete(nick)) next.add(nick);
+      return next;
+    });
   const triggerRef = useRef<HTMLButtonElement>(null);
-
-  const closeMenu = () => {
-    setOpen(false);
-    setExpandedBot(null);
-  };
 
   if (workflows.length === 0) return null;
 
@@ -135,7 +118,7 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
       </button>
       <Popover
         isOpen={open}
-        onClose={closeMenu}
+        onClose={() => setOpen(false)}
         anchor={triggerRef.current}
         width={320}
         title={<Trans>Workflow history</Trans>}
@@ -144,110 +127,60 @@ export const BotToolsHistoryButton: React.FC<BotToolsHistoryButtonProps> = ({
         }
         bodyClassName="max-h-[60vh] md:max-h-none"
       >
-        <ul className="divide-y divide-discord-dark-400/60">
-          {byBot.map(({ nick, list, activeCount }) => {
-            const isExpanded = expandedBot === nick;
-            return (
-              <li key={nick}>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setExpandedBot((prev) => (prev === nick ? null : nick))
-                  }
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left hover:bg-discord-dark-400/60 transition-colors"
-                  aria-expanded={isExpanded}
-                >
-                  <span className="w-4 h-4 flex items-center justify-center shrink-0">
-                    <FaProjectDiagram
-                      className={`text-[10px] ${
-                        activeCount > 0
-                          ? "text-blue-500 animate-pulse-bright"
-                          : "text-discord-text-muted"
-                      }`}
-                    />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-sm font-semibold text-white truncate">
-                        {nick}
-                      </span>
-                      <span className="text-[10px] text-discord-text-muted shrink-0">
-                        {fmtAgo(list[0].startedAt)}
-                      </span>
-                    </div>
-                    <div className="text-[10px] text-discord-text-muted">
-                      <Trans>{list.length} workflow(s)</Trans>
-                      {activeCount > 0 && (
-                        <span>
-                          {" · "}
-                          <Trans>{activeCount} active</Trans>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <FaChevronRight
-                    className={`text-discord-text-muted text-[10px] transition-transform ${
-                      isExpanded ? "rotate-90" : ""
-                    }`}
-                    aria-hidden="true"
-                  />
-                </button>
-                {isExpanded && (
-                  <ul className="bg-discord-dark-200/60 border-t border-discord-dark-400/60">
-                    {list.map((w) => (
-                      <li key={w.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            reopen(w.serverId, w.id);
-                            closeMenu();
-                          }}
-                          className="w-full flex items-start gap-2.5 pl-9 pr-3 py-2.5 md:py-2 text-left hover:bg-discord-dark-400/60 transition-colors"
-                        >
-                          <span className="mt-0.5 w-4 h-4 flex items-center justify-center shrink-0">
-                            {stateGlyph(effectiveWorkflowState(w))}
+        <div className="surface-list">
+          {byBot.map(({ nick, list }) => (
+            <section key={nick}>
+              <button
+                type="button"
+                onClick={() => toggleBot(nick)}
+                aria-expanded={!foldedBots.has(nick)}
+                className="section-label normal-case tracking-normal w-full flex items-center gap-1.5 rounded hover:text-white"
+              >
+                {foldedBots.has(nick) ? <FaCaretRight /> : <FaCaretDown />}
+                <span className="truncate">{nick}</span>
+                <span className="font-normal tabular-nums">{list.length}</span>
+              </button>
+              <ul hidden={foldedBots.has(nick)}>
+                {list.map((w) => (
+                  <li key={w.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        reopen(w.serverId, w.id);
+                        setOpen(false);
+                      }}
+                      className="row-interactive"
+                      title={w.prompt}
+                    >
+                      <WorkflowStatusBadge
+                        state={effectiveWorkflowState(w)}
+                        isTimedOut={isStale(w)}
+                        className="w-5 h-5 text-[9px]"
+                      />
+                      <span className="flex-1 min-w-0">
+                        <span className="flex items-baseline gap-1.5">
+                          <span className="truncate">
+                            {w.name ?? t`Workflow`}
                           </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-baseline gap-1.5">
-                              <span className="text-xs font-medium text-discord-text-normal truncate">
-                                {w.name ?? t`Workflow`}
-                              </span>
-                              <span className="text-[10px] text-discord-text-muted shrink-0">
-                                {fmtAgo(w.startedAt)}
-                              </span>
-                            </div>
-                            <div className="text-[10px] text-discord-text-muted">
-                              <Trans>{countableSteps(w.steps)} step(s)</Trans>
-                              {(() => {
-                                const eff = effectiveWorkflowState(w);
-                                if (eff === "running" || eff === "start")
-                                  return null;
-                                let label: string;
-                                if (isStale(w)) label = t`timed out`;
-                                else if (eff === "complete")
-                                  label = t`complete`;
-                                else if (eff === "failed") label = t`failed`;
-                                else if (eff === "cancelled")
-                                  label = t`cancelled`;
-                                else label = eff;
-                                return (
-                                  <span>
-                                    {" · "}
-                                    {label}
-                                  </span>
-                                );
-                              })()}
-                            </div>
-                          </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                          <span className="row-meta shrink-0 ml-auto tabular-nums">
+                            {fmtAgo(w.startedAt)}
+                          </span>
+                        </span>
+                        <span className="row-meta block truncate">
+                          {w.prompt ||
+                            plural(countableSteps(w.steps), {
+                              one: "# step",
+                              other: "# steps",
+                            })}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </Popover>
     </>
   );

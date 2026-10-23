@@ -7,6 +7,7 @@ import useStore from "../../store";
 import type { layoutColumn } from "../../store/types";
 import { ChannelLinkProvider } from "../message/ChannelLinkProvider";
 import { GlobalNotifications } from "../ui/GlobalNotifications";
+import LinkHoverLayer from "../ui/LinkHoverLayer";
 import { MediaViewerModal } from "../ui/MediaViewerModal";
 import RawLogViewer from "../ui/RawLogViewer";
 import { VoicePipOverlay } from "../voice/VoicePipOverlay";
@@ -73,7 +74,10 @@ export const AppLayout: React.FC = () => {
   );
 
   const shouldShowMemberList =
-    isMemberListVisible && !selectedPrivateChatId && !isBouncerControlSelected;
+    isMemberListVisible &&
+    !!selectedChannel &&
+    !selectedPrivateChatId &&
+    !isBouncerControlSelected;
 
   const handleChannelListWidthChange = useCallback((width: number) => {
     setChannelListWidth(width);
@@ -207,9 +211,7 @@ export const AppLayout: React.FC = () => {
                 </div>
               )}
               <div className="w-[calc(100vw-72px)] h-full bg-discord-dark-100">
-                <ChannelList
-                  onToggle={() => toggleChannelList(!isChannelListVisible)}
-                />
+                <ChannelList />
               </div>
             </div>
           );
@@ -233,9 +235,7 @@ export const AppLayout: React.FC = () => {
               onWidthChange={handleChannelListWidthChange}
             >
               <div className="channel-list w-full h-full bg-discord-dark-100 md:block z-20">
-                <ChannelList
-                  onToggle={() => toggleChannelList(!isChannelListVisible)}
-                />
+                <ChannelList />
               </div>
             </ResizableSidebar>
           </>
@@ -412,6 +412,7 @@ export const AppLayout: React.FC = () => {
           decryptedType={ui.openedMedia?.decryptedType}
         />
         <RawLogViewer />
+        <LinkHoverLayer />
       </div>
     </ChannelLinkProvider>
   );

@@ -1,80 +1,64 @@
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { useLingui } from "@lingui/react/macro";
+import { plural } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
-import {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
-import { isTauriMobile } from "../../lib/platformUtils";
+import { useShortTap } from "../../hooks/useShortTap";
 
 export const COLLAPSIBLE_MAX_LINES = 8;
-
-export interface CollapsibleMessageHandle {
-  toggle: () => void;
-}
 
 interface CollapsibleMessageProps {
   content: React.ReactNode;
   maxLines?: number;
-  onNeedsCollapsing?: (needs: boolean) => void;
+  // Touch users read a folded message whole; the owner opens it for them.
+  onRequestRead?: () => void;
 }
 
-export const CollapsibleMessage = forwardRef<
-  CollapsibleMessageHandle,
-  CollapsibleMessageProps
->(({ content, maxLines = COLLAPSIBLE_MAX_LINES, onNeedsCollapsing }, ref) => {
-  const { t } = useLingui();
+function findScrollContainer(from: HTMLElement): HTMLElement | null {
+  let el = from.parentElement;
+  while (el) {
+    if (el.scrollHeight > el.clientHeight) return el;
+    el = el.parentElement;
+  }
+  return null;
+}
+
+// Mouse users unfold in place with a sticky "Show less"; touch users open the
+// whole message elsewhere so the chat stays still under their thumb.
+export const CollapsibleMessage: React.FC<CollapsibleMessageProps> = ({
+  content,
+  maxLines = COLLAPSIBLE_MAX_LINES,
+  onRequestRead,
+}) => {
+  const isTouch = useIsTouchInput();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [needsCollapsing, setNeedsCollapsing] = useState(false);
   const [contentHeight, setContentHeight] = useState<number | null>(null);
-  const [collapsedMaxHeight, setCollapsedMaxHeight] = useState<string>("none");
+  const [lineHeight, setLineHeight] = useState(16);
+  const rootRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  // Inner wrapper whose box size changes freely — the outer contentRef is
-  // max-height-clamped, so ResizeObserver on it would never fire for growing content
+  // The outer content box is max-height-clamped, so we measure this unclamped wrapper.
   const measuredContentRef = useRef<HTMLDivElement>(null);
-  // Stays false through the initial measurement render so the first collapse is instant.
-  // Flipped to true via RAF after that render commits; user expand/collapse animates after.
+  // Stays false through the first measurement so the initial fold is instant.
   const allowTransitionRef = useRef(false);
-  // Touch tracking for tap-to-toggle on Tauri mobile (iOS/Android only).
-  // Distinguishes short taps from long-press (haptic) and scroll gestures.
-  const touchStartRef = useRef<{ t: number; x: number; y: number } | null>(
-    null,
-  );
-  const isMobile = isTauriMobile();
 
   useLayoutEffect(() => {
-    if (!contentRef.current || !measuredContentRef.current) return;
-
     const element = contentRef.current;
     const measuredContent = measuredContentRef.current;
-
-    // Track the RAF ID so it can be cancelled in cleanup or before a new one fires.
-    // Initialized to 0 so cancelAnimationFrame is always safe to call first.
+    if (!element || !measuredContent) return;
     let rafId = 0;
 
     const measure = () => {
-      // Skip when display:none collapses all dimensions — would corrupt state.
-      // Both must be 0: jsdom always has clientHeight=0, so the dual condition
-      // ensures we only bail in genuine display:none (scrollHeight also collapses).
+      // jsdom reports clientHeight 0 everywhere, so we only bail when both are 0 (display:none).
       if (element.clientHeight === 0 && measuredContent.scrollHeight === 0) {
         allowTransitionRef.current = false;
         return;
       }
-      const computedStyle = window.getComputedStyle(element);
-      const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 16;
-      const maxHeight = lineHeight * maxLines;
-      // Use the unclamped inner wrapper's scrollHeight for accurate measurement
-      const fullHeight = measuredContent.scrollHeight;
-      setContentHeight(fullHeight);
-      setCollapsedMaxHeight(`${lineHeight * maxLines}px`);
-      const needs = fullHeight > maxHeight;
-      setNeedsCollapsing(needs);
-      onNeedsCollapsing?.(needs);
+      setLineHeight(
+        Number.parseFloat(window.getComputedStyle(element).lineHeight) || 16,
+      );
+      setContentHeight(measuredContent.scrollHeight);
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         allowTransitionRef.current = true;
@@ -82,99 +66,64 @@ export const CollapsibleMessage = forwardRef<
     };
 
     measure();
-
-    // Re-measure when the inner content's rendered size changes (images loading,
-    // dynamic embeds, etc.). Observing the inner element avoids the false-no-op
-    // from the clamped outer container staying the same size.
     const resizeObserver = new ResizeObserver(measure);
     resizeObserver.observe(measuredContent);
     return () => {
       resizeObserver.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, [maxLines, onNeedsCollapsing]);
+  }, []);
 
-  const toggleExpanded = useCallback(() => {
-    const willExpand = !isExpanded;
+  const collapsedHeight = lineHeight * maxLines;
+  const isCollapsible =
+    contentHeight !== null && contentHeight > collapsedHeight;
+  const totalLines = Math.round((contentHeight ?? 0) / lineHeight);
+  const hiddenLines = Math.max(1, totalLines - maxLines);
 
-    if (willExpand && contentRef.current) {
-      let scrollContainer: HTMLElement | null = null;
-      let el: HTMLElement | null = contentRef.current.parentElement;
-      while (el) {
-        if (el.scrollHeight > el.clientHeight) {
-          scrollContainer = el;
-          break;
-        }
-        el = el.parentElement;
-      }
-
-      // Anchor scroll position during expand so users at the bottom stay there
-      if (scrollContainer && isScrolledToBottom(scrollContainer)) {
-        const container = scrollContainer;
-        const observer = new ResizeObserver(() => {
-          container.scrollTop = container.scrollHeight;
-        });
-        observer.observe(contentRef.current);
-        setTimeout(() => observer.disconnect(), 350);
-      }
+  const expand = useCallback(() => {
+    const element = contentRef.current;
+    const scrollContainer = element && findScrollContainer(element);
+    // We keep a reader at the bottom pinned there while the message grows.
+    if (element && scrollContainer && isScrolledToBottom(scrollContainer)) {
+      const observer = new ResizeObserver(() => {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      });
+      observer.observe(element);
+      setTimeout(() => observer.disconnect(), 350);
     }
-
-    setIsExpanded(willExpand);
-  }, [isExpanded]);
-
-  useImperativeHandle(ref, () => ({ toggle: toggleExpanded }), [
-    toggleExpanded,
-  ]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const t = e.touches[0];
-    touchStartRef.current = { t: Date.now(), x: t.clientX, y: t.clientY };
+    setIsExpanded(true);
   }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!touchStartRef.current) return;
-    const t = e.touches[0];
-    const dx = Math.abs(t.clientX - touchStartRef.current.x);
-    const dy = Math.abs(t.clientY - touchStartRef.current.y);
-    // Cancel if the finger moved enough to be a scroll gesture
-    if (dx > 10 || dy > 10) touchStartRef.current = null;
+  const collapse = useCallback(() => {
+    const root = rootRef.current;
+    const scrollContainer = root && findScrollContainer(root);
+    // We pin the message top before folding, so the fold shrinks below the
+    // reader and they stay on this message.
+    if (
+      root &&
+      scrollContainer &&
+      root.getBoundingClientRect().top <
+        scrollContainer.getBoundingClientRect().top
+    )
+      root.scrollIntoView({ block: "start" });
+    setIsExpanded(false);
   }, []);
 
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      const start = touchStartRef.current;
-      touchStartRef.current = null;
-      if (!start) return;
-      const elapsed = Date.now() - start.t;
-      // Stay well below the 400ms long-press threshold so we never fire alongside haptics
-      if (elapsed >= 380) return;
-      // Ignore taps on interactive elements — let them handle their own events
-      const target = e.target as HTMLElement;
-      if (target.closest("a, button, input, select, textarea, video, audio"))
-        return;
-      // Prevent the browser's synthetic click event that would fire after touchend
-      e.preventDefault();
-      toggleExpanded();
-    },
-    [toggleExpanded],
-  );
+  const canRead = isTouch && isCollapsible && !!onRequestRead;
+  const isOpenInline = isExpanded && !canRead;
+  const shortTap = useShortTap(() => onRequestRead?.());
 
   return (
-    <div
-      className="collapsible-message"
-      onTouchStart={isMobile && needsCollapsing ? handleTouchStart : undefined}
-      onTouchMove={isMobile && needsCollapsing ? handleTouchMove : undefined}
-      onTouchEnd={isMobile && needsCollapsing ? handleTouchEnd : undefined}
-    >
-      <div className="relative">
+    <div ref={rootRef} className="collapsible-message">
+      <div className="relative" {...(canRead ? shortTap : {})}>
         <div
           ref={contentRef}
           className="overflow-hidden"
           style={{
-            maxHeight: isExpanded
+            maxHeight: isOpenInline
               ? `${contentHeight}px`
-              : needsCollapsing
-                ? collapsedMaxHeight
+              : isCollapsible
+                ? `${collapsedHeight}px`
                 : "none",
             transition: allowTransitionRef.current
               ? "max-height 300ms ease-in-out"
@@ -183,29 +132,46 @@ export const CollapsibleMessage = forwardRef<
         >
           <div ref={measuredContentRef}>{content}</div>
         </div>
-        {needsCollapsing && !isExpanded && (
+        {isCollapsible && !isOpenInline && (
           <div className="absolute bottom-0 left-0 right-0 h-14 message-fade pointer-events-none" />
         )}
       </div>
-      {needsCollapsing && (
-        <>
-          {!isExpanded && <div className="border-b border-white/30" />}
-          <div className="flex justify-start mt-0.5 ml-3">
-            <button
-              onClick={toggleExpanded}
-              title={isExpanded ? t`Show less` : t`Read more`}
-              className="opacity-80 hover:opacity-100 transition-opacity p-0.5 rounded"
-            >
-              <ChevronDownIcon
-                className={`w-5 h-5 text-discord-text-muted transition-transform duration-300 ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-          </div>
-        </>
+      {canRead && (
+        <button
+          type="button"
+          className="flex min-h-11 items-center"
+          onClick={onRequestRead}
+        >
+          <span className="chip-action">
+            <Trans>Read all</Trans>
+            <span className="row-meta">
+              {plural(totalLines, { one: "# line", other: "# lines" })}
+            </span>
+          </span>
+        </button>
+      )}
+      {isCollapsible && !canRead && !isExpanded && (
+        <div className="relative -mt-3.5 flex justify-center">
+          <button type="button" className="chip-action" onClick={expand}>
+            <Trans>Show more</Trans>
+            <span className="row-meta">
+              {plural(hiddenLines, {
+                one: "# more line",
+                other: "# more lines",
+              })}
+            </span>
+            <FaChevronDown className="text-[10px]" />
+          </button>
+        </div>
+      )}
+      {isCollapsible && isOpenInline && (
+        <div className="sticky bottom-3 z-10 mt-2 flex justify-center">
+          <button type="button" className="chip-action" onClick={collapse}>
+            <FaChevronUp className="text-[10px]" />
+            <Trans>Show less</Trans>
+          </button>
+        </div>
       )}
     </div>
   );
-});
-CollapsibleMessage.displayName = "CollapsibleMessage";
+};

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { create } from "zustand";
+import { arrangeChannels } from "../lib/channelFolders";
 import {
   getSelectionHistory,
   recordSelection,
@@ -8,6 +9,7 @@ import {
 } from "../lib/channelHistory";
 import { isTauri } from "../lib/platformUtils";
 import useStore from "../store";
+import { useChannelFolders } from "../store/channelFolders";
 
 // Small store so ChannelList can reactively read which item is "previous"
 // (the one Ctrl+Tab will jump to on next press)
@@ -26,8 +28,7 @@ type StoreState = ReturnType<typeof useStore.getState>;
 type NavItem = { id: string; type: "channel" | "pm" };
 
 // Returns all navigable items in visual sidebar order:
-//   Text channels (sorted) → Private chats (pinned-first, then by order)
-// Matches the sort logic in ChannelList.tsx exactly.
+//   Channels (loose, then each folder) → Private chats (pinned-first, then by order)
 function getSortedItems(state: StoreState): NavItem[] {
   const { selectedServerId } = state.ui;
   if (!selectedServerId) return [];
@@ -36,20 +37,11 @@ function getSortedItems(state: StoreState): NavItem[] {
   if (!server) return [];
 
   // ── Channels ────────────────────────────────────────────────────────────
-  const savedOrder = state.channelOrder[selectedServerId];
-  const channels = server.channels.filter((c) => !c.isPrivate);
-
-  const sortedChannels =
-    !savedOrder || savedOrder.length === 0
-      ? channels
-      : [...channels].sort((a, b) => {
-          const ia = savedOrder.indexOf(a.name);
-          const ib = savedOrder.indexOf(b.name);
-          if (ia !== -1 && ib !== -1) return ia - ib;
-          if (ia !== -1) return -1;
-          if (ib !== -1) return 1;
-          return 0;
-        });
+  const sortedChannels = arrangeChannels(
+    server.channels.filter((c) => !c.isPrivate),
+    state.channelOrder[selectedServerId],
+    useChannelFolders.getState().folders[selectedServerId] ?? [],
+  ).flatMap((group) => group.channels);
 
   const seen = new Set<string>();
   const channelItems: NavItem[] = sortedChannels
