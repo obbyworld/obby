@@ -1984,6 +1984,14 @@ msgstr "Bitti"
 msgid "Download"
 msgstr "İndir"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "İndiriliyor…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "İndiriliyor… %{percent}"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Drag a handle to move a channel or chat, or a channel into a folder"
 msgstr "Bir kanalı veya sohbeti ya da bir kanalı klasöre taşımak için tutamacı sürükleyin"
@@ -2749,6 +2757,10 @@ msgstr "Yükle"
 msgid "Install a UnifiedPush app first"
 msgstr "Önce bir UnifiedPush uygulaması yükleyin"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Yükle ve yeniden başlat"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Geçersiz biçim"
@@ -2938,6 +2950,10 @@ msgstr "Kullanıcıyı at"
 #: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "Dil"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Daha sonra"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -4418,6 +4434,10 @@ msgstr "Rahat"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Rahat - Daha az agresif koruma"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Sürüm notları"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
@@ -4529,6 +4549,10 @@ msgstr "Obby kapalıyken bildirim almak için tarayıcını yeniden başlat"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Yeniden çek"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Yeniden dene"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -5665,6 +5689,14 @@ msgstr "Bu özel mesaj konuşmasının sabitlemesini kaldır"
 msgid "Unsuspend"
 msgstr "Askıdan al"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Güncelleme mevcut"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Güncelleme başarısız oldu. Lütfen tekrar deneyin."
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
 msgstr "Bir resim yükleyin veya bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın."
@@ -5813,6 +5845,12 @@ msgstr "Doğrula…"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Verifying…"
 msgstr "Doğrulanıyor…"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "Sürüm {0} mevcut — sizde {1} var."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"

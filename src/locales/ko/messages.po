@@ -1984,6 +1984,14 @@ msgstr "완료"
 msgid "Download"
 msgstr "다운로드"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "다운로드 중…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "다운로드 중… {percent}%"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Drag a handle to move a channel or chat, or a channel into a folder"
 msgstr "핸들을 끌어 채널이나 채팅을 옮기거나 채널을 폴더로 옮기세요"
@@ -2749,6 +2757,10 @@ msgstr "설치"
 msgid "Install a UnifiedPush app first"
 msgstr "먼저 UnifiedPush 앱을 설치하세요"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "설치하고 다시 시작"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "잘못된 형식"
@@ -2938,6 +2950,10 @@ msgstr "사용자 연결 끊기"
 #: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "언어"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "나중에"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -4418,6 +4434,10 @@ msgstr "완화"
 msgid "Relaxed - Less aggressive protection"
 msgstr "완화 - 덜 공격적인 보호"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "릴리스 노트"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
@@ -4529,6 +4549,10 @@ msgstr "Obby가 닫혀 있을 때도 알림을 받으려면 브라우저를 다�
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "다시 찍기"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "다시 시도"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -5665,6 +5689,14 @@ msgstr "이 비공개 메시지 대화 고정 해제"
 msgid "Unsuspend"
 msgstr "정지 해제"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "업데이트 사용 가능"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "업데이트에 실패했습니다. 다시 시도해 주세요."
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
 msgstr "이미지를 업로드하거나 URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요."
@@ -5813,6 +5845,12 @@ msgstr "확인…"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Verifying…"
 msgstr "확인하는 중…"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "버전 {0}을(를) 사용할 수 있습니다 — 현재 {1}입니다."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"

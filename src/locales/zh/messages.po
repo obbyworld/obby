@@ -1984,6 +1984,14 @@ msgstr "完成"
 msgid "Download"
 msgstr "下载"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "正在下载…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "正在下载… {percent}%"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Drag a handle to move a channel or chat, or a channel into a folder"
 msgstr "拖动手柄以移动频道或聊天，或将频道移入文件夹"
@@ -2749,6 +2757,10 @@ msgstr "安装"
 msgid "Install a UnifiedPush app first"
 msgstr "请先安装 UnifiedPush 应用"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "安装并重启"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "格式无效"
@@ -2938,6 +2950,10 @@ msgstr "踢出用户"
 #: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "语言"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "稍后"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -4418,6 +4434,10 @@ msgstr "宽松"
 msgid "Relaxed - Less aggressive protection"
 msgstr "宽松 – 较弱的保护"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "更新说明"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
@@ -4529,6 +4549,10 @@ msgstr "重启浏览器，以便在 Obby 关闭时接收通知"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "重拍"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "重试"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -5665,6 +5689,14 @@ msgstr "取消置顶此私信对话"
 msgid "Unsuspend"
 msgstr "取消停用"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "有可用更新"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "更新失败，请重试。"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
 msgstr "上传图片或输入 URL。在 URL 中使用 {sizeToken} 可动态调整尺寸。"
@@ -5813,6 +5845,12 @@ msgstr "验证…"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Verifying…"
 msgstr "正在验证…"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "版本 {0} 可用 — 您当前为 {1}。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"
