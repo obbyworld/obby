@@ -4518,11 +4518,11 @@ msgstr "Require a registered nickname (+r) to talk."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Require an invite to join.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Require an invite to join."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Restart your browser to get notifications while Obby is closed>>>>>>> stack/qa-round"
+msgstr "Restart your browser to get notifications while Obby is closed"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

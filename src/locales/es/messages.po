@@ -4519,11 +4519,11 @@ msgstr "Requiere un nick registrado (+r) para hablar."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Requiere invitación para entrar.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Requiere invitación para entrar."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Reinicia el navegador para recibir notificaciones con Obby cerrado>>>>>>> stack/qa-round"
+msgstr "Reinicia el navegador para recibir notificaciones con Obby cerrado"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

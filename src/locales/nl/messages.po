@@ -4519,11 +4519,11 @@ msgstr "Vereis een geregistreerde nick om te praten (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Vereis een uitnodiging om te joinen.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Vereis een uitnodiging om te joinen."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Start je browser opnieuw om meldingen te krijgen als Obby gesloten is>>>>>>> stack/qa-round"
+msgstr "Start je browser opnieuw om meldingen te krijgen als Obby gesloten is"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

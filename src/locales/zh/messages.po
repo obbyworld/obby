@@ -4519,11 +4519,11 @@ msgstr "发言需要已注册昵称（+r）。"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "需要邀请才能加入。<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "需要邀请才能加入。"
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "重启浏览器，以便在 Obby 关闭时接收通知>>>>>>> stack/qa-round"
+msgstr "重启浏览器，以便在 Obby 关闭时接收通知"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

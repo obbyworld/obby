@@ -4519,11 +4519,11 @@ msgstr "Vaadi rekisteröity nimimerkki puhumiseen (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Vaadi kutsu liittymiseen.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Vaadi kutsu liittymiseen."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Käynnistä selain uudelleen, jotta saat ilmoituksia Obbyn ollessa suljettuna>>>>>>> stack/qa-round"
+msgstr "Käynnistä selain uudelleen, jotta saat ilmoituksia Obbyn ollessa suljettuna"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx

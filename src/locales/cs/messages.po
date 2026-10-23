@@ -4519,11 +4519,11 @@ msgstr "Pro mluvení vyžadovat registrovanou přezdívku (+r)."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Require an invite to join."
-msgstr "Pro připojení vyžadovat pozvánku.<<<<<<< HEAD||||||| b0cc70a2"
+msgstr "Pro připojení vyžadovat pozvánku."
 
 #: src/components/ui/settings/WebPushFailureLine.tsx
 msgid "Restart your browser to get notifications while Obby is closed"
-msgstr "Restartujte prohlížeč, abyste dostávali oznámení i při zavřeném Obby>>>>>>> stack/qa-round"
+msgstr "Restartujte prohlížeč, abyste dostávali oznámení i při zavřeném Obby"
 
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
