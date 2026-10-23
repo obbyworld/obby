@@ -47,7 +47,7 @@ export const PersistenceSettingsPanel: React.FC<Props> = ({ serverId }) => {
   const [error, setError] = useState<string | null>(null);
 
   const supported =
-    server?.capabilities?.includes("draft/persistence") ?? false;
+    !!server?.account && !!server.capabilities?.includes("draft/persistence");
   const isConnected = server?.isConnected ?? false;
   const preference = server?.persistencePreference ?? "DEFAULT";
   const effective = server?.persistenceEffective;

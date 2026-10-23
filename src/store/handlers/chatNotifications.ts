@@ -1,0 +1,70 @@
+import { t } from "@lingui/core/macro";
+import type { StoreApi } from "zustand";
+import {
+  areChatNotificationsOn,
+  type ChatNotification,
+  notificationBody,
+  requestChatNotificationPermission,
+  showChatNotification,
+} from "../../lib/notifications";
+import { isTauri } from "../../lib/platformUtils";
+import type { AppState } from "../index";
+import { settings as settingsStorage } from "../localStorage";
+
+// We ask for permission inside the toggle's click so browsers accept the request.
+export function registerNotificationPermission(
+  store: StoreApi<AppState>,
+): void {
+  store.subscribe((state, previous) => {
+    if (
+      !state.globalSettings.enableNotifications ||
+      previous.globalSettings.enableNotifications
+    )
+      return;
+    void requestChatNotificationPermission().then((isGranted) => {
+      if (isGranted) return;
+      store.getState().updateGlobalSettings({ enableNotifications: false });
+      store.getState().addGlobalNotification({
+        type: "note",
+        command: "NOTIFICATIONS",
+        code: "PERMISSION_DENIED",
+        message: t`Allow notifications for Obby in your system settings to turn them on`,
+        serverId: store.getState().ui.selectedServerId ?? "",
+      });
+    });
+  });
+}
+
+// The apps ask on a fresh install only, so we keep whatever an existing user
+// chose; browsers accept the request only from a click.
+export function offerNotificationsOnce(store: StoreApi<AppState>): void {
+  if (!isTauri() || "enableNotifications" in settingsStorage.load()) return;
+  void requestChatNotificationPermission().then((isGranted) => {
+    store.getState().updateGlobalSettings({ enableNotifications: isGranted });
+  });
+}
+
+export function notifyChatMessage(
+  store: StoreApi<AppState>,
+  notification: ChatNotification,
+): void {
+  if (!areChatNotificationsOn(store.getState().globalSettings)) return;
+  void showChatNotification(notification)
+    .then((isShown) => {
+      if (isShown) return;
+      const { sender, target, isPrivate, serverId } = notification;
+      const body = notificationBody(notification.text);
+      store.getState().addGlobalNotification({
+        type: "note",
+        command: isPrivate ? "PRIVMSG" : "MENTION",
+        code: isPrivate ? "DM" : "HIGHLIGHT",
+        message: isPrivate
+          ? t`${sender} sent you a message: ${body}`
+          : t`${sender} mentioned you in ${target}: ${body}`,
+        serverId,
+      });
+    })
+    .catch((error) =>
+      console.warn("could not show a chat notification", error),
+    );
+}

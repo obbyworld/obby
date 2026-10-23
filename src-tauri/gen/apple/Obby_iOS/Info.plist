@@ -68,6 +68,11 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>world.obby.background-check</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>

@@ -1,8 +1,4 @@
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
-import {
-  isPermissionGranted,
-  requestPermission,
-} from "@tauri-apps/plugin-notification";
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -21,26 +17,20 @@ import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
+import { useDesktopTray } from "./hooks/useDesktopTray";
 import { useKeyboardResize } from "./hooks/useKeyboardResize";
 import { whenHistoryIdle } from "./lib/history/historyDb";
+import { useHistoryPoll } from "./lib/historyPoll/useHistoryPoll";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isChannelTarget } from "./lib/ircUtils";
+import { handleNotificationTaps } from "./lib/notifications";
+import { openNotificationTarget } from "./lib/openNotificationTarget";
 import { isTauri } from "./lib/platformUtils";
 import useStore, { type AppState, loadSavedServers } from "./store";
+import { offerNotificationsOnce } from "./store/handlers/chatNotifications";
 import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
-
-const askPermissions = async () => {
-  // Do you have permission to send a notification?
-  let permissionGranted = await isPermissionGranted();
-
-  // If not we need to request it
-  if (!permissionGranted) {
-    const permission = await requestPermission();
-    permissionGranted = permission === "granted";
-  }
-};
 
 /* Channel auto-join from URL query string.
  *
@@ -212,12 +202,15 @@ const App: React.FC = () => {
   useKeyboardResize();
   useConnectionResilience();
   useChannelTabSwitching();
+  useDesktopTray();
+  useHistoryPoll();
 
-  // askPermissions();
   const hasInitialized = useRef(false);
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
+    void handleNotificationTaps(openNotificationTarget);
+    offerNotificationsOnce(useStore);
     initializeEnvSettings(toggleAddServerModal, joinChannel);
     connectToSavedServers();
 

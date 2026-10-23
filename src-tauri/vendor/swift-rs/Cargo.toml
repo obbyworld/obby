@@ -1,11 +1,11 @@
-# swift-rs 1.0.8 from crates.io plus the Xcode 27 fix in
+# swift-rs 1.0.9 from crates.io plus the Xcode 27 fix in
 # https://github.com/Brendonovich/swift-rs/pull/82 (src-rs/build.rs,
 # globalize_cdecl_symbols). We can drop this copy once a release includes it.
 
 [package]
 edition = "2021"
 name = "swift-rs"
-version = "1.0.8"
+version = "1.0.9"
 authors = ["The swift-rs contributors"]
 build = "src-rs/test-build.rs"
 exclude = [

@@ -232,6 +232,14 @@ msgstr "{safeName} artık sunucuda yok."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} sunucuda değiştirildi, bu yüzden şifresi çözülemiyor."
 
+#: src/lib/notifications.ts
+msgid "{sender} in {target}"
+msgstr "{target} içinde {sender}"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} mentioned you in {target}: {body}"
+msgstr "{sender} sizi {target} içinde andı: {body}"
+
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} şifrelemeyi yeniden başlattı. Siz kabul edene kadar bu sohbet şifresiz kalıyor."
@@ -239,6 +247,10 @@ msgstr "{sender} şifrelemeyi yeniden başlattı. Siz kabul edene kadar bu sohbe
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. Wait a moment before you send a message."
 msgstr "{sender} şifrelemeyi yeniden başlattı. Mesaj göndermeden önce biraz bekleyin."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} sent you a message: {body}"
+msgstr "{sender} size bir mesaj gönderdi: {body}"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -582,6 +594,10 @@ msgstr "Sonra"
 msgid "Album"
 msgstr "Albüm"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Alerts"
+msgstr "Uyarılar"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
@@ -621,6 +637,10 @@ msgstr "Konuşmak için ayarlardan mikrofon erişimine izin ver"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Allow microphone access to record sound."
 msgstr "Ses kaydetmek için mikrofon erişimine izin verin."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "Allow notifications for Obby in your system settings to turn them on"
+msgstr "Açmak için sistem ayarlarından Obby bildirimlerine izin verin"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Allow Obby under Screen Recording in System Settings, then record again."
@@ -1351,6 +1371,10 @@ msgstr "Görüntüleyiciyi kapat"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "İş akışını kapat"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
+msgstr "Pencereyi kapatmak Obby'yi sistem tepsisinde bağlı tutar, böylece bildirimler gelmeye devam eder"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -2873,6 +2897,10 @@ msgstr "Kimlik bilgilerini sakla"
 msgid "Keep passwords"
 msgstr "Parolaları sakla"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep Running in the Tray"
+msgstr "Tepside çalışmaya devam et"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Herkes ayrıldıktan sonra kanalı koru. Bunu yalnızca IRCops ayarlayabilir."
@@ -3250,6 +3278,7 @@ msgstr "birine mesaj gönder"
 
 #: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
+#: src/lib/notifications.ts
 msgid "Messages"
 msgstr "Mesajlar"
 
@@ -3409,6 +3438,10 @@ msgstr "Ağ Adı"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Networks on {0}"
 msgstr "{0} üzerindeki ağlar"
+
+#: src/lib/notifications.ts
+msgid "New encrypted message"
+msgstr "Yeni şifreli mesaj"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -4199,6 +4232,10 @@ msgstr "ayrıldı ({reason})"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "Ayrılma Mesajı"
+
+#: src/lib/desktopTray.ts
+msgid "Quit Obby"
+msgstr "Obby'den çık"
 
 #: src/components/message/EventMessage.tsx
 msgid "Quit the server"
@@ -5022,6 +5059,10 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
+msgstr "O sohbete bakmıyorken özel mesajlar ve anmalar için sistem bildirimi göster"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Tüm Olayları Göster"
 
@@ -5069,6 +5110,14 @@ msgstr "Hoparlörlerimi göster"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Takma Ad Değişikliklerini Göster"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show Notifications"
+msgstr "Bildirimleri göster"
+
+#: src/lib/desktopTray.ts
+msgid "Show Obby"
+msgstr "Obby'yi göster"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Show or hide the channel list sidebar"

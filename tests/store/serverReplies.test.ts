@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
 import { playNotificationSound } from "../../src/lib/notificationSounds";
-import { showMentionNotification } from "../../src/lib/notifications";
+import { showChatNotification } from "../../src/lib/notifications";
 import useStore from "../../src/store";
 import {
   registerServerReplyHandlers,
@@ -15,7 +15,7 @@ vi.mock("../../src/lib/notificationSounds", () => ({
 
 vi.mock("../../src/lib/notifications", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../src/lib/notifications")>()),
-  showMentionNotification: vi.fn(),
+  showChatNotification: vi.fn(),
 }));
 
 const serverId = "s1";
@@ -55,7 +55,7 @@ function notices() {
 function expectQuiet() {
   const state = useStore.getState();
   expect(playNotificationSound).not.toHaveBeenCalled();
-  expect(showMentionNotification).not.toHaveBeenCalled();
+  expect(showChatNotification).not.toHaveBeenCalled();
   expect(state.globalNotifications).toHaveLength(0);
   expect(state.servers[0].channels.some((c) => c.isMentioned)).toBe(false);
   expect(state.servers[0].privateChats).toHaveLength(0);

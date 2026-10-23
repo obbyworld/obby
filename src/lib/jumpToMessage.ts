@@ -81,10 +81,22 @@ async function selectChat(
 const shownMessages = (key: string) => useStore.getState().messages[key] ?? [];
 
 let latestJump = 0;
+let runningJumps = 0;
+
+export const isJumping = () => runningJumps > 0;
 
 export async function jumpToMessage(
   location: MessageLocation,
 ): Promise<JumpResult> {
+  runningJumps++;
+  try {
+    return await jumpTo(location);
+  } finally {
+    runningJumps--;
+  }
+}
+
+async function jumpTo(location: MessageLocation): Promise<JumpResult> {
   const jump = ++latestJump;
   const chat = await selectChat(location);
   if (typeof chat === "string") return fail(chat);

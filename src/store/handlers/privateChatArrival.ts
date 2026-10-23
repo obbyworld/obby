@@ -1,5 +1,5 @@
 // Everything a private message causes besides the row itself: last activity,
-// the notification sound, and the browser notification. Encrypted messages are decrypted on a separate path and never
+// the notification sound, and the system notification. Encrypted messages are decrypted on a separate path and never
 // reach the inbound PRIVMSG handler, so this lives on its own rather than
 // inside either one: an encrypted conversation has to be as noticeable as a
 // plaintext one.
@@ -10,13 +10,11 @@ import {
   playNotificationSound,
   shouldPlayNotificationSound,
 } from "../../lib/notificationSounds";
-import {
-  privateMessageNotificationName,
-  showMentionNotification,
-} from "../../lib/notifications";
+import { encryptedNotificationText } from "../../lib/notifications";
 import type { Message } from "../../types";
 import { getViewedSelection } from "../helpers";
 import type { AppState } from "../index";
+import { notifyChatMessage } from "./chatNotifications";
 
 export interface PrivateMessageArrival {
   serverId: string;
@@ -25,6 +23,7 @@ export interface PrivateMessageArrival {
   message: Message;
   body: string;
   isHistorical: boolean;
+  isEncrypted?: boolean;
 }
 
 export function notePrivateMessageArrived(
@@ -60,30 +59,20 @@ export function notePrivateMessageArrived(
     }),
   }));
 
-  const current = store.getState();
   const isActiveChat =
-    getViewedSelection(current).selectedPrivateChatId === privateChatId;
-  if (
-    isActiveChat ||
-    isHistorical ||
-    !current.globalSettings.enableNotifications
-  )
-    return;
-  showMentionNotification(
+    getViewedSelection(store.getState()).selectedPrivateChatId ===
+    privateChatId;
+  if (isActiveChat || isHistorical) return;
+  notifyChatMessage(store, {
     serverId,
-    privateMessageNotificationName(sender),
+    target: sender,
     sender,
-    body,
-    (id, msg) => {
-      store.getState().addGlobalNotification({
-        type: "note",
-        command: "PRIVMSG",
-        code: "DM",
-        message: msg,
-        serverId: id,
-      });
-    },
-  );
+    // We keep decrypted text out of the system's notification center.
+    text: arrival.isEncrypted ? encryptedNotificationText() : body,
+    isPrivate: true,
+    time: new Date(arrival.message.timestamp).getTime(),
+    msgid: arrival.message.msgid,
+  });
 }
 
 // A replayed message carries its own server-time and must never move a chat

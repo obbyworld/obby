@@ -6,6 +6,7 @@ import android.view.ViewTreeObserver
 import android.view.View
 import android.graphics.Rect
 import android.app.PictureInPictureParams
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Rational
@@ -18,6 +19,13 @@ class MainActivity : TauriActivity() {
   private lateinit var wv: WebView
   private var isKeyboardOpen = false
   @Volatile private var isInCall = false
+
+  // Android restores a killed app with its first intent and hands a notification tap over
+  // as a new intent, so we keep the tap as the intent the plugins read when they load.
+  override fun onNewIntent(intent: Intent) {
+    setIntent(intent)
+    super.onNewIntent(intent)
+  }
 
   override fun onWebViewCreate(webView: WebView) {
     wv = webView

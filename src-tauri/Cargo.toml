@@ -21,23 +21,28 @@ tauri-build = { version = "2.0", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 log = "0.4"
-tauri = { version = "2.11", features = ["macos-private-api"] }
+tauri = { version = "2.11", features = ["macos-private-api", "tray-icon", "image-png"] }
 tauri-plugin-log = "2.0.0-rc"
-tauri-plugin-notification = "2.3"
+# Pinned because the mobile-notifications plugin reuses this plugin's private tap extras.
+tauri-plugin-notification = "=2.7.0"
 tauri-plugin-os = "2.3"
 tauri-plugin-opener = "2"
 tauri-plugin-deep-link = "2.4"
 tokio = { version = "1.52.3", features = ["rt-multi-thread", "macros", "net", "io-util", "time"] }
 base64 = "0.22"
+futures-util = { version = "0.3", default-features = false, features = ["sink"] }
+chrono = { version = "0.4", default-features = false, features = ["std"] }
 
 # Use rustls for Android, native-tls for other platforms
 [target.'cfg(not(target_os = "android"))'.dependencies]
 tokio-native-tls = "0.3"
+tokio-tungstenite = { version = "0.30", features = ["native-tls"] }
 native-tls = "0.2"
 reqwest = { version = "0.12", default-features = false, features = ["native-tls"] }
 
 [target.'cfg(target_os = "android")'.dependencies]
 tokio-rustls = { version = "0.26", default-features = false }
+tokio-tungstenite = { version = "0.30", features = ["rustls-tls-webpki-roots"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
 webpki-roots = "0.26"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
@@ -70,6 +75,7 @@ tauri-plugin-share-sheet = { path = "plugins/share-sheet" }
 
 [target.'cfg(any(target_os = "ios", target_os = "android"))'.dependencies]
 tauri-plugin-haptics = "2"
+tauri-plugin-mobile-notifications = { path = "plugins/mobile-notifications" }
 tauri-plugin-geolocation = "2"
 
 [patch.crates-io]

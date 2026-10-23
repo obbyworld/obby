@@ -7,6 +7,13 @@
   ],
   "permissions": [
     "core:default",
+    "core:window:allow-show",
+    "core:window:allow-unminimize",
+    "core:window:allow-set-focus",
+    "core:window:allow-hide",
+    "core:window:allow-destroy",
+    "core:window:allow-set-badge-count",
+    "core:app:allow-default-window-icon",
     "notification:default",
     "opener:default",
     "os:default",

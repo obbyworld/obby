@@ -21,6 +21,13 @@ interface MessageJumpOptions {
   wasAtBottomRef: MutableRefObject<boolean>;
 }
 
+function isInView(container: HTMLElement, row: HTMLElement | null): boolean {
+  if (!row?.isConnected) return false;
+  const view = container.getBoundingClientRect();
+  const box = row.getBoundingClientRect();
+  return box.bottom > view.top && box.top < view.bottom;
+}
+
 // After a jump we hold the target row in the middle of the list until the
 // reader scrolls, so live messages, media loads and newer pages leave it there.
 // isHoldingRef flips in the same commit as the jump, ahead of any effect that reads it.
@@ -114,8 +121,13 @@ export function useMessageJump({
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !isHolding) return;
+    // A jump to a row near the end lands at the bottom too, so we keep holding while the row is in view.
     const releaseAtBottom = () => {
-      if (container.clientHeight > 0 && isScrolledToBottom(container))
+      if (
+        container.clientHeight > 0 &&
+        isScrolledToBottom(container) &&
+        !isInView(container, heldRowRef.current)
+      )
         releaseJump();
     };
     for (const type of USER_SCROLL_EVENTS)
@@ -130,6 +142,7 @@ export function useMessageJump({
 
   return {
     isHoldingRef,
+    isHoldingRow: () => isHoldingRef.current && heldRowRef.current !== null,
     isHoldingJump: isHolding,
     holdRow: hold,
     releaseJump,

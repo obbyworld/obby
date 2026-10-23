@@ -232,6 +232,14 @@ msgstr "{safeName} ya no está disponible en el servidor."
 msgid "{safeName} was changed on the server, so it cannot be decrypted."
 msgstr "{safeName} se cambió en el servidor, por lo que no se puede descifrar."
 
+#: src/lib/notifications.ts
+msgid "{sender} in {target}"
+msgstr "{sender} en {target}"
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} mentioned you in {target}: {body}"
+msgstr "{sender} te mencionó en {target}: {body}"
+
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. This conversation stays unencrypted until you accept."
 msgstr "{sender} reinició el cifrado. Esta conversación sigue sin cifrar hasta que lo aceptes."
@@ -239,6 +247,10 @@ msgstr "{sender} reinició el cifrado. Esta conversación sigue sin cifrar hasta
 #: src/store/handlers/e2ee.ts
 msgid "{sender} restarted encryption. Wait a moment before you send a message."
 msgstr "{sender} reinició el cifrado. Espera un momento antes de enviar un mensaje."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "{sender} sent you a message: {body}"
+msgstr "{sender} te envió un mensaje: {body}"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -582,6 +594,10 @@ msgstr "Después"
 msgid "Album"
 msgstr "Álbum"
 
+#: src/components/pages/SettingsPage.tsx
+msgid "Alerts"
+msgstr "Alertas"
+
 #: src/components/layout/SearchPane.tsx
 #: src/components/pages/BotsPage.tsx
 msgid "All"
@@ -621,6 +637,10 @@ msgstr "Permite el acceso al micrófono en los ajustes para hablar"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Allow microphone access to record sound."
 msgstr "Permite el acceso al micrófono para grabar sonido."
+
+#: src/store/handlers/chatNotifications.ts
+msgid "Allow notifications for Obby in your system settings to turn them on"
+msgstr "Permite las notificaciones de Obby en los ajustes del sistema para activarlas"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Allow Obby under Screen Recording in System Settings, then record again."
@@ -1351,6 +1371,10 @@ msgstr "Cerrar visor"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Cerrar flujo de trabajo"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Closing the window keeps Obby connected in the system tray, so notifications still arrive"
+msgstr "Al cerrar la ventana, Obby sigue conectado en la bandeja del sistema y las notificaciones siguen llegando"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -2873,6 +2897,10 @@ msgstr "Mantener credenciales"
 msgid "Keep passwords"
 msgstr "Conservar contraseñas"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Keep Running in the Tray"
+msgstr "Seguir ejecutándose en la bandeja"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Mantener el canal después de que todos salgan. Solo los IRCops pueden establecerlo."
@@ -3250,6 +3278,7 @@ msgstr "escribir a alguien"
 
 #: src/components/ui/QuickActions.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
+#: src/lib/notifications.ts
 msgid "Messages"
 msgstr "Mensajes"
 
@@ -3409,6 +3438,10 @@ msgstr "Nombre de red"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Networks on {0}"
 msgstr "Redes en {0}"
+
+#: src/lib/notifications.ts
+msgid "New encrypted message"
+msgstr "Nuevo mensaje cifrado"
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
@@ -4199,6 +4232,10 @@ msgstr "salió ({reason})"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Quit Message"
 msgstr "Mensaje de salida"
+
+#: src/lib/desktopTray.ts
+msgid "Quit Obby"
+msgstr "Salir de Obby"
 
 #: src/components/message/EventMessage.tsx
 msgid "Quit the server"
@@ -5022,6 +5059,10 @@ msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "El shortcode debe cumplir [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
+msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
+msgstr "Muestra una notificación del sistema para mensajes privados y menciones mientras no estás viendo ese chat"
+
+#: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
 msgstr "Mostrar todos los eventos"
 
@@ -5069,6 +5110,14 @@ msgstr "Mostrar mis altavoces"
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
 msgstr "Mostrar cambios de apodo"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Show Notifications"
+msgstr "Mostrar notificaciones"
+
+#: src/lib/desktopTray.ts
+msgid "Show Obby"
+msgstr "Mostrar Obby"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Show or hide the channel list sidebar"

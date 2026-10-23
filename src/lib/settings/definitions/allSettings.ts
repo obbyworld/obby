@@ -5,6 +5,7 @@ import { CallSpeakerField } from "../../../components/ui/settings/CallSpeakerFie
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
 import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
+import { isTauriDesktop } from "../../platformUtils";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -168,6 +169,31 @@ const profileSettings: SettingDefinition[] = [
  * Notification Settings
  */
 const notificationSettings: SettingDefinition[] = [
+  {
+    id: "notifications.enable",
+    key: "enableNotifications",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Show Notifications`,
+    description: msg`Show a system notification for private messages and mentions while you are not looking at that chat`,
+    type: "toggle",
+    defaultValue: false,
+    searchKeywords: ["notification", "alert", "desktop", "push", "banner"],
+    priority: 0,
+  },
+  {
+    id: "notifications.closeToTray",
+    key: "closeToTray",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Keep Running in the Tray`,
+    description: msg`Closing the window keeps Obby connected in the system tray, so notifications still arrive`,
+    type: "toggle",
+    defaultValue: true,
+    hidden: !isTauriDesktop(),
+    searchKeywords: ["tray", "background", "close", "minimize", "menu bar"],
+    priority: 0,
+  },
   {
     id: "notifications.enableSounds",
     key: "enableNotificationSounds",

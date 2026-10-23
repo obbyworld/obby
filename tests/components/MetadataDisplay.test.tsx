@@ -180,6 +180,7 @@ describe("Metadata Display Features", () => {
         customMentions: [],
         ignoreList: ["HistServ!*@*"],
         keepHistory: true,
+        closeToTray: true,
         historyLimitMb: 500,
         nickname: "",
         accountName: "",
