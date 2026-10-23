@@ -54,6 +54,7 @@ import type {
 } from "../../lib/search/searchTypes";
 import type { Message, Server } from "../../types";
 import {
+  compareMessageOrder,
   MAX_MESSAGES_PER_CHANNEL,
   messageTime,
   normalizeHost,
@@ -1354,7 +1355,7 @@ function joinPresent(present: Message[], arrived: Message[]): Message[] {
     ...present,
     ...arrived.filter((m) => !known.has(m.id) && !known.has(m.msgid)),
   ]
-    .sort((a, b) => messageTime(a) - messageTime(b))
+    .sort(compareMessageOrder)
     .slice(-MAX_MESSAGES_PER_CHANNEL);
 }
 

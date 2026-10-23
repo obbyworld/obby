@@ -1,10 +1,10 @@
 import { renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useMessageSending } from "../../src/hooks/useMessageSending";
 import { base64DecodeUtf8 } from "../../src/lib/base64";
 import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
-import type { Channel, Server } from "../../src/types";
+import type { Channel, Server, User } from "../../src/types";
 
 const bot = (username: string) => ({
   id: username,
@@ -38,7 +38,9 @@ const server = {
   cmdsAvailable: ["whois"],
 } as unknown as Server;
 
-function runCommand(text: string) {
+const me = { id: "me", username: "me", isOnline: true };
+
+function runCommand(text: string, currentUser: User | null = null) {
   const { result } = renderHook(() =>
     useMessageSending({
       selectedServerId: "s1",
@@ -46,7 +48,7 @@ function runCommand(text: string) {
       selectedPrivateChatId: null,
       selectedChannel: channel,
       selectedPrivateChat: null,
-      currentUser: null,
+      currentUser,
       selectedColor: null,
       selectedFormatting: [],
       localReplyTo: null,
@@ -89,5 +91,39 @@ describe("slash commands shared by the server and bots", () => {
       name: "pkg",
       bot: "netbot",
     });
+  });
+});
+
+describe("our own line on a server that echoes it", () => {
+  const withCaps = (...caps: string[]) =>
+    vi
+      .spyOn(ircClient, "hasCapability")
+      .mockImplementation((_, cap) => caps.includes(cap));
+  const ownLines = () => useStore.getState().messages["s1-c1"] ?? [];
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    useStore.setState({ servers: [server], messages: {} });
+    vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it("shows it as pending and marks it failed when no echo arrives", () => {
+    withCaps("labeled-response", "echo-message", "batch");
+    runCommand("hello", me);
+    expect(ownLines()).toMatchObject([{ content: "hello", status: "pending" }]);
+
+    vi.advanceTimersByTime(30_000);
+    expect(ownLines()).toMatchObject([{ content: "hello", status: "failed" }]);
+  });
+
+  it("waits for the echo before it shows the line", () => {
+    withCaps("echo-message");
+    runCommand("hello", me);
+    expect(ownLines()).toEqual([]);
   });
 });

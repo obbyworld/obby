@@ -235,6 +235,16 @@ describe("local history with a chathistory server", () => {
         expect(message.tags?.["obby-local"]).toBeDefined();
     });
 
+    it("stores our own line once, at the time on the server's echo", async () => {
+      w.ircClient.sendRaw(SERVER, "PRIVMSG #chan :mine");
+      w.feed(privmsg("m7", 7, "mine", OWN_NICK));
+
+      await vi.waitFor(async () => expect(await w.stored()).toHaveLength(1));
+      const [row] = await w.stored();
+      expect(row.time).toBe(BASE + 7000);
+      expect(row.raw).toContain(`time=${at(7)}`);
+    });
+
     it("replays only the page above the oldest message on screen", async () => {
       w.feed(
         privmsg("m1", 1, "one"),

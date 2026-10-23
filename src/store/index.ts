@@ -56,6 +56,7 @@ import {
 import { markChatRead } from "./handlers/readMarker";
 import * as tictactoeActions from "./handlers/tictactoeActions";
 import {
+  compareMessageOrder,
   ensureUrlFormat,
   isAppInFront,
   MAX_MESSAGES_PER_CHANNEL,
@@ -2116,18 +2117,9 @@ const useStore = create<AppState>((set, get) => ({
         return state; // Don't add duplicate message
       }
 
-      // Add message and sort chronologically by timestamp
-      const updatedMessages = [...currentMessages, message].sort((a, b) => {
-        const timeA =
-          a.timestamp instanceof Date
-            ? a.timestamp.getTime()
-            : new Date(a.timestamp).getTime();
-        const timeB =
-          b.timestamp instanceof Date
-            ? b.timestamp.getTime()
-            : new Date(b.timestamp).getTime();
-        return timeA - timeB;
-      });
+      const updatedMessages = [...currentMessages, message].sort(
+        compareMessageOrder,
+      );
 
       // Cap per-channel history to prevent unbounded memory growth in long sessions.
       // A detached window moves its newer lines to the present right after, so we leave it whole.
@@ -2161,12 +2153,9 @@ const useStore = create<AppState>((set, get) => ({
       const next = list.map((msg) => {
         if (msg.pendingLabel !== label) return msg;
         matched = true;
-        // We keep the time we sent it: a server that delays a burst stamps
-        // later times, and the next sort would shuffle our own lines.
         return {
           ...msg,
           ...updates,
-          timestamp: msg.timestamp,
           pendingLabel: undefined,
           status: undefined,
         };
@@ -2175,7 +2164,7 @@ const useStore = create<AppState>((set, get) => ({
       return {
         messages: {
           ...state.messages,
-          [channelKey]: next,
+          [channelKey]: next.sort(compareMessageOrder),
         },
       };
     });

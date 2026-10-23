@@ -15,6 +15,7 @@ import {
 import { checkForMention, extractMentions } from "../../lib/notifications";
 import type { Channel, Message, PrivateChat, User } from "../../types";
 import {
+  compareMessageOrder,
   generateDeterministicId,
   getViewedSelection,
   isHistoryEvent,
@@ -273,19 +274,8 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
             return state;
           }
 
-          // Add message and sort chronologically
           const updatedMessages = [...currentMessages, newMessage].sort(
-            (a, b) => {
-              const timeA =
-                a.timestamp instanceof Date
-                  ? a.timestamp.getTime()
-                  : new Date(a.timestamp).getTime();
-              const timeB =
-                b.timestamp instanceof Date
-                  ? b.timestamp.getTime()
-                  : new Date(b.timestamp).getTime();
-              return timeA - timeB;
-            },
+            compareMessageOrder,
           );
 
           // Remove typing user
