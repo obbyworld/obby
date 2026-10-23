@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { FaFileAlt, FaPlay } from "react-icons/fa";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
 import {
@@ -39,7 +40,7 @@ export const TopicMediaStrip: React.FC = () => {
   const topic = selectedChannel?.topic ?? null;
 
   const filehost = useMemo(
-    () => servers.find((s) => s.id === selectedServerId)?.filehost ?? null,
+    () => serverFilehosts(servers.find((s) => s.id === selectedServerId)),
     [servers, selectedServerId],
   );
 
@@ -50,8 +51,10 @@ export const TopicMediaStrip: React.FC = () => {
 
   const candidates = useMemo(() => {
     if (!topic) return [];
-    return extractMediaFromText(topic).filter((e) =>
-      canShowMedia(e.url, mediaSettings, filehost),
+    // A location link renders as its own inline card, not a strip thumbnail --
+    // so it's left out of this compact attachment list.
+    return extractMediaFromText(topic).filter(
+      (e) => e.type !== "map" && canShowMedia(e.url, mediaSettings, filehost),
     );
   }, [topic, mediaSettings, filehost]);
 

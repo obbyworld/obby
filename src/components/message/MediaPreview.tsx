@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import exifr from "exifr";
 import type * as React from "react";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
 import {
   FaFileAlt,
   FaPause,
@@ -11,6 +11,7 @@ import {
   FaVolumeMute,
   FaVolumeUp,
 } from "react-icons/fa";
+import { useNearViewport } from "../../hooks/useNearViewport";
 import { getAudio } from "../../lib/audioManager";
 import ircClient from "../../lib/ircClient";
 import { probeMediaUrl } from "../../lib/mediaProbe";
@@ -22,16 +23,25 @@ import {
   type MediaEntry,
   type MediaType,
 } from "../../lib/mediaUtils";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { useMediaController } from "../../lib/useMediaController";
 import {
   getVideoPosition,
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "./EmbedPlayer";
+import { MapPreview } from "./MapPreview";
 
-const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
-  import("react-pdf").then((m) => ({ default: m.Document })),
+  import("react-pdf").then((m) => {
+    // Set here on the lazy path, not at startup, to keep pdfjs out of the main bundle.
+    if (m.pdfjs?.GlobalWorkerOptions) {
+      m.pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    }
+    return { default: m.Document };
+  }),
 );
 const LazyPage = lazy(() =>
   import("react-pdf").then((m) => ({ default: m.Page })),
@@ -135,6 +145,7 @@ const ImagePreview: React.FC<{
   serverId?: string;
   channelId?: string;
   onOpenProfile?: (username: string) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -142,6 +153,7 @@ const ImagePreview: React.FC<{
   serverId,
   channelId,
   onOpenProfile,
+  onRenderFailed,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -255,12 +267,16 @@ const ImagePreview: React.FC<{
 
   const displayUrl = resolvedUrl || url;
 
+  // Filehost images embed a JWT in the URL — expiry is the likely cause, and
+  // that case renders its own "expired" card. Every other image has nothing
+  // to show on error, so the caller falls back to the message's URL text.
+  const showsNothing = imageError && !isFilehostImage;
+
+  useEffect(() => {
+    if (showsNothing) onRenderFailed?.(url);
+  }, [showsNothing, onRenderFailed, url]);
+
   if (imageError) {
-    // Filehost images embed a JWT in the URL — expiry is the likely cause.
-    // For all other images, return null and let the URL text in the message
-    // body serve as the fallback (the probe already confirmed it was an image,
-    // so the server likely returned the image but it failed to render — e.g.
-    // expired CDN token, corrupted file).
     if (!isFilehostImage) return null;
     return (
       <div className="max-w-md">
@@ -284,10 +300,15 @@ const ImagePreview: React.FC<{
             <FaSpinner className="text-discord-text-muted animate-spin text-lg" />
           </div>
         )}
+        {/* Hidden with opacity rather than `display: none`: a lazy image that
+            is not rendered never loads, so `onLoad` would never arrive to
+            reveal it. */}
         <img
           src={displayUrl}
+          loading="lazy"
+          decoding="async"
           alt={isFilehostImage ? t`Filehost image` : t`GIF`}
-          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "block" : "hidden"}`}
+          className={`max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity ${imageCanHaveTransparency(displayUrl) ? "transparency-grid" : "bg-white"} ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           onClick={() => openMedia(displayUrl, msgid, serverId, channelId)}
           onLoad={() => setImageLoaded(true)}
           onError={() => setImageError(true)}
@@ -351,7 +372,10 @@ const VideoPlayer: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onAudioOnly: () => void;
+}> = ({ url, msgid, serverId, channelId, onAudioOnly }) => {
+  const onAudioOnlyRef = useRef(onAudioOnly);
+  onAudioOnlyRef.current = onAudioOnly;
   const openMedia = useStore((state) => state.openMedia);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -364,6 +388,9 @@ const VideoPlayer: React.FC<{
   const [loadError, setLoadError] = useState(false);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const thumbnailCapturedRef = useRef(false);
+  // Grabbing a poster frame costs a second download of the video. Off-screen
+  // messages must not pay it, or a media-heavy channel opens dozens at once.
+  const nearViewport = useNearViewport(containerRef);
 
   const { isActive, isPlaying, play, pause } = useMediaController({
     url,
@@ -422,6 +449,11 @@ const VideoPlayer: React.FC<{
     };
 
     const onLoadedMetadata = () => {
+      // Voice messages share the .webm extension with videos.
+      if (video.videoWidth === 0) {
+        onAudioOnlyRef.current();
+        return;
+      }
       const d = video.duration ?? 0;
       setDuration(d);
       if (seekRef.current) seekRef.current.max = String(d);
@@ -442,18 +474,21 @@ const VideoPlayer: React.FC<{
     // is never affected by crossOrigin restrictions. Falls back silently if the
     // server doesn't support CORS.
     thumbnailCapturedRef.current = false;
-    let thumbVideo: HTMLVideoElement | null = document.createElement("video");
-    thumbVideo.crossOrigin = "anonymous";
-    thumbVideo.preload = "auto";
-    thumbVideo.muted = true;
-    thumbVideo.src = url;
+    let thumbVideo: HTMLVideoElement | null = null;
     const releaseThumbVideo = () => {
       if (thumbVideo) {
         thumbVideo.src = "";
         thumbVideo = null;
       }
     };
-    thumbVideo.addEventListener(
+    if (nearViewport) {
+      thumbVideo = document.createElement("video");
+      thumbVideo.crossOrigin = "anonymous";
+      thumbVideo.preload = "auto";
+      thumbVideo.muted = true;
+      thumbVideo.src = url;
+    }
+    thumbVideo?.addEventListener(
       "loadeddata",
       () => {
         if (!thumbVideo || thumbVideo.videoWidth === 0) {
@@ -481,7 +516,7 @@ const VideoPlayer: React.FC<{
       },
       { once: true },
     );
-    thumbVideo.addEventListener("error", releaseThumbVideo, { once: true });
+    thumbVideo?.addEventListener("error", releaseThumbVideo, { once: true });
 
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("loadedmetadata", onLoadedMetadata);
@@ -497,7 +532,7 @@ const VideoPlayer: React.FC<{
       video.removeEventListener("error", onError);
       setThumbnail(null);
     };
-  }, [url]);
+  }, [url, nearViewport]);
 
   function handlePlayPause() {
     if (isPlaying) {
@@ -661,6 +696,17 @@ const VideoPreview: React.FC<{
   serverId?: string;
   channelId?: string;
 }> = ({ url, msgid, serverId, channelId }) => {
+  const [isAudioOnly, setIsAudioOnly] = useState(false);
+  if (isAudioOnly) {
+    return (
+      <AudioPreview
+        url={url}
+        msgid={msgid}
+        serverId={serverId}
+        channelId={channelId}
+      />
+    );
+  }
   // canPlayVideoUrl() is a synchronous HTMLVideoElement.canPlayType() probe — no
   // network request. Skipping the player entirely prevents the zombie mini-player
   // (play → store active → codec error → mini-bar playing nothing).
@@ -680,6 +726,7 @@ const VideoPreview: React.FC<{
       msgid={msgid}
       serverId={serverId}
       channelId={channelId}
+      onAudioOnly={() => setIsAudioOnly(true)}
     />
   );
 };
@@ -788,12 +835,16 @@ const SoundCloudEmbed: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedError, setEmbedError] = useState(false);
+  // Same reasoning as the other embeds: no widget until playback is asked for.
+  const [activated, setActivated] = useState(false);
 
   const height = /\/sets\//.test(url) ? 350 : 166;
-  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
+  // The widget only mounts after the user asks to play, so it starts itself.
+  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=true&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false`;
 
   const pauseWidget = () => {
     iframeRef.current?.contentWindow?.postMessage(
@@ -850,7 +901,27 @@ const SoundCloudEmbed: React.FC<{
     return () => window.removeEventListener("message", handleMessage);
   }, [url, msgid, serverId, channelId]);
 
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
+
   if (embedError) return null;
+
+  if (!activated) {
+    return (
+      <div className="max-w-md relative">
+        <button
+          type="button"
+          onClick={() => setActivated(true)}
+          aria-label={t`Play`}
+          className="w-full flex items-center justify-center rounded bg-discord-dark-400/50"
+          style={{ height }}
+        >
+          <FaPlay className="text-white text-2xl drop-shadow-lg" />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md relative">
@@ -876,12 +947,17 @@ const EmbedPreview: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const mediaViewerOpen = useStore((state) => state.ui.openedMedia !== null);
   const [playerKey, setPlayerKey] = useState(0);
   const [embedError, setEmbedError] = useState(false);
+  // A provider iframe is the most expensive thing a message can mount, so it
+  // stays unbuilt until someone asks for playback.
+  const [activated, setActivated] = useState(false);
+  const positionRef = useRef(0);
 
-  const { isActive, isPlaying } = useMediaController({
+  const { isActive, isPlaying, play } = useMediaController({
     url,
     type: "embed",
     thumbnailUrl: getEmbedThumbnailUrl(url) ?? undefined,
@@ -889,8 +965,17 @@ const EmbedPreview: React.FC<{
     serverId,
     channelId,
     // Remount the iframe when this embed goes from active → inactive so YouTube/Vimeo resets.
-    onExternalStop: () => setPlayerKey((k) => k + 1),
-    inlineVisibility: {},
+    onExternalStop: () => {
+      positionRef.current = 0;
+      setPlayerKey((k) => k + 1);
+    },
+    inlineVisibility: {
+      getPosition: () => {
+        const time = positionRef.current;
+        if (time > 0) setVideoPosition(url, time);
+        return time;
+      },
+    },
   });
 
   // undefined when inactive: leave the iframe uncontrolled so the user can
@@ -907,7 +992,53 @@ const EmbedPreview: React.FC<{
       : 380
     : null;
 
+  // Every way of starting playback goes through the store, including the mini
+  // player and another tile handing over.
+  useEffect(() => {
+    if (isActive) setActivated(true);
+  }, [isActive]);
+
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
+
   if (embedError) return null;
+
+  // A paused player reports no time, so we seed the position it hands over
+  // with where it starts.
+  positionRef.current = getVideoPosition(url) ?? positionRef.current;
+
+  if (!activated) {
+    const thumbnailUrl = getEmbedThumbnailUrl(url);
+    return (
+      <div className="max-w-md relative group">
+        <button
+          type="button"
+          onClick={() => {
+            setActivated(true);
+            play();
+          }}
+          aria-label={t`Play`}
+          className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
+          style={spotifyHeight ? { height: spotifyHeight } : undefined}
+        >
+          {thumbnailUrl && (
+            <img
+              src={thumbnailUrl}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          )}
+          <span className="absolute inset-0 flex items-center justify-center">
+            <FaPlay className="text-white text-3xl drop-shadow-lg" />
+          </span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md relative group">
@@ -923,42 +1054,41 @@ const EmbedPreview: React.FC<{
           className={spotifyHeight ? undefined : "aspect-video"}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
-          <ReactPlayer
-            key={playerKey}
-            src={url}
-            width="100%"
-            height="100%"
-            controls
-            playing={playing}
-            config={{
-              youtube: { disablekb: 1 },
-              vimeo: { keyboard: false },
-            }}
-            style={{ borderRadius: "4px", overflow: "hidden" }}
-            onPlay={() => {
-              // Guard against spurious onPlay events fired by YouTube.
-              // If the user explicitly paused (isPlaying=false in store), ignore the event.
-              const current = useStore.getState().ui.activeMedia;
-              if (current?.url === url && current.isPlaying === false) return;
-              useStore
-                .getState()
-                .playMedia(
-                  url,
-                  "embed",
-                  getEmbedThumbnailUrl(url) ?? undefined,
-                  msgid,
-                  serverId,
-                  channelId,
-                );
-            }}
-            onPause={() => useStore.getState().pauseActiveMedia()}
-            onEnded={() => {
-              // Reset player to beginning and pause — prevents YouTube recommendations screen
-              setPlayerKey((k) => k + 1);
-              useStore.getState().pauseActiveMedia();
-            }}
-            onError={() => setEmbedError(true)}
-          />
+          <MediaErrorBoundary onError={() => setEmbedError(true)}>
+            <EmbedPlayer
+              key={playerKey}
+              url={url}
+              playing={playing}
+              startAt={positionRef.current}
+              onTime={(time) => {
+                positionRef.current = time;
+              }}
+              onPlay={() => {
+                // Guard against spurious onPlay events fired by YouTube.
+                // If the user explicitly paused (isPlaying=false in store), ignore the event.
+                const current = useStore.getState().ui.activeMedia;
+                if (current?.url === url && current.isPlaying === false) return;
+                useStore
+                  .getState()
+                  .playMedia(
+                    url,
+                    "embed",
+                    getEmbedThumbnailUrl(url) ?? undefined,
+                    msgid,
+                    serverId,
+                    channelId,
+                  );
+              }}
+              onPause={() => useStore.getState().pauseActiveMedia()}
+              onEnded={() => {
+                // Reset player to beginning and pause — prevents YouTube recommendations screen
+                positionRef.current = 0;
+                setPlayerKey((k) => k + 1);
+                useStore.getState().pauseActiveMedia();
+              }}
+              onError={() => setEmbedError(true)}
+            />
+          </MediaErrorBoundary>
         </div>
       </Suspense>
     </div>
@@ -1021,20 +1151,22 @@ const PdfPreview: React.FC<{
         />
       }
     >
-      <LazyDocument
-        file={url}
-        options={{ isEvalSupported: false }}
-        loading={null}
-        onLoadError={() => setPdfError(true)}
-      >
-        <LazyPage
-          pageNumber={1}
-          width={PDF_THUMB_W}
-          canvasBackground="white"
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-        />
-      </LazyDocument>
+      <MediaErrorBoundary onError={() => setPdfError(true)}>
+        <LazyDocument
+          file={url}
+          options={PDF_OPTIONS}
+          loading={null}
+          onLoadError={() => setPdfError(true)}
+        >
+          <LazyPage
+            pageNumber={1}
+            width={PDF_THUMB_W}
+            canvasBackground="white"
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+          />
+        </LazyDocument>
+      </MediaErrorBoundary>
     </Suspense>,
   );
 };
@@ -1050,6 +1182,7 @@ const ProbeablePreview: React.FC<{
   channelId?: string;
   onOpenProfile?: (username: string) => void;
   onTypeResolved?: (url: string, type: MediaType) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -1058,6 +1191,7 @@ const ProbeablePreview: React.FC<{
   channelId,
   onOpenProfile,
   onTypeResolved,
+  onRenderFailed,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [resolvedType, setResolvedType] = useState<MediaType | null>(null);
@@ -1099,6 +1233,7 @@ const ProbeablePreview: React.FC<{
         serverId={serverId}
         channelId={channelId}
         onOpenProfile={onOpenProfile}
+        onRenderFailed={onRenderFailed}
       />
     );
   } else if (resolvedType === "video") {
@@ -1135,6 +1270,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     ) : (
       <EmbedPreview
@@ -1142,6 +1278,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1156,15 +1293,7 @@ const ProbeablePreview: React.FC<{
   );
 };
 
-export const MediaPreview: React.FC<{
-  entry: MediaEntry;
-  msgid?: string;
-  isFilehostImage?: boolean;
-  serverId?: string;
-  channelId?: string;
-  onOpenProfile?: (username: string) => void;
-  onTypeResolved?: (url: string, type: MediaType) => void;
-}> = ({
+export const MediaPreview = memo(function MediaPreview({
   entry,
   msgid,
   isFilehostImage,
@@ -1172,7 +1301,18 @@ export const MediaPreview: React.FC<{
   channelId,
   onOpenProfile,
   onTypeResolved,
-}) => {
+  onRenderFailed,
+}: {
+  entry: MediaEntry;
+  msgid?: string;
+  isFilehostImage?: boolean;
+  serverId?: string;
+  channelId?: string;
+  onOpenProfile?: (username: string) => void;
+  onTypeResolved?: (url: string, type: MediaType) => void;
+  /** Fires once the preview has nothing to show, so the caller can fall back to the URL text. */
+  onRenderFailed?: (url: string) => void;
+}) {
   if (entry.type === null) {
     return (
       <ProbeablePreview
@@ -1183,6 +1323,7 @@ export const MediaPreview: React.FC<{
         channelId={channelId}
         onOpenProfile={onOpenProfile}
         onTypeResolved={onTypeResolved}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1197,6 +1338,7 @@ export const MediaPreview: React.FC<{
           serverId={serverId}
           channelId={channelId}
           onOpenProfile={onOpenProfile}
+          onRenderFailed={onRenderFailed}
         />
       );
     case "video":
@@ -1234,6 +1376,7 @@ export const MediaPreview: React.FC<{
             msgid={msgid}
             serverId={serverId}
             channelId={channelId}
+            onRenderFailed={onRenderFailed}
           />
         );
       }
@@ -1243,7 +1386,21 @@ export const MediaPreview: React.FC<{
           msgid={msgid}
           serverId={serverId}
           channelId={channelId}
+          onRenderFailed={onRenderFailed}
+        />
+      );
+    case "map":
+      // Keyed by url so a changed link remounts fresh instead of carrying over
+      // the previous link's failed-tile state.
+      return (
+        <MapPreview
+          key={entry.url}
+          url={entry.url}
+          msgid={msgid}
+          serverId={serverId}
+          channelId={channelId}
+          onRenderFailed={onRenderFailed}
         />
       );
   }
-};
+});

@@ -1,0 +1,6 @@
+"$schema" = "schemas/schema.json"
+
+[[permission]]
+identifier = "allow-listen"
+description = "Lets the app subscribe to keyboard show and hide events."
+commands.allow = ["registerListener", "register_listener", "removeListener", "remove_listener"]

@@ -1,13 +1,13 @@
 # Uncomment the next line to define a global platform for your project
 
-target 'ObsidianIRC_iOS' do
+target 'Obby_iOS' do
 platform :ios, '13.0'
-  # Pods for ObsidianIRC_iOS
+  # Pods for Obby_iOS
 end
 
-target 'ObsidianIRC_macOS' do
+target 'Obby_macOS' do
 platform :osx, '11.0'
-  # Pods for ObsidianIRC_macOS
+  # Pods for Obby_macOS
 end
 
 # Delete the deployment target for iOS and macOS, causing it to be inherited from the Podfile

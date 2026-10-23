@@ -1,4 +1,4 @@
-# https://obsidianirc.github.io
+# https://hello.obby.world
 
 name: Deploy to GitHub Pages
 
@@ -14,12 +14,14 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Build
         run: npm install && npm run build
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
         with:
           personal_token: ${{ secrets.GH_PAGES_TOKEN }}
           publish_dir: ./dist

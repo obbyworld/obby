@@ -2,11 +2,11 @@ import { t } from "@lingui/core/macro";
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
 import ircClient from "../../lib/ircClient";
-import { isChannelTarget } from "../../lib/ircUtils";
 import type { Message } from "../../types";
-import { resolveUserMetadata, serverSupportsMetadata } from "../helpers";
+import { isHistoryEvent, resolveUserMetadata } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { bufferChathistoryMessage } from "./batches";
 
 function applyUserModeDelta(prev: string, delta: string): string {
   const currentModes = new Set(
@@ -31,7 +31,7 @@ function applyUserModeDelta(prev: string, delta: string): string {
 export function registerChannelHandlers(store: StoreApi<AppState>): void {
   ircClient.on("MODE", ({ serverId, sender, target, modestring, modeargs }) => {
     // Channel modes are handled via RPL_CHANNELMODEIS (324); only handle user modes here
-    if (!isChannelTarget(target)) {
+    if (!ircClient.isChannel(serverId, target)) {
       store.setState((state) => {
         const currentUser = state.currentUser;
         if (
@@ -229,33 +229,38 @@ export function registerChannelHandlers(store: StoreApi<AppState>): void {
   });
 
   // Topic handlers
-  ircClient.on("TOPIC", ({ serverId, channelName, topic, sender }) => {
-    store.setState((state) => {
-      const updatedServers = state.servers.map((server) => {
-        if (server.id === serverId) {
-          const updatedChannels = server.channels.map((channel) => {
-            if (channel.name.toLowerCase() === channelName.toLowerCase()) {
-              return { ...channel, topic };
-            }
-            return channel;
-          });
-          return { ...server, channels: updatedChannels };
-        }
-        return server;
+  ircClient.on("TOPIC", ({ serverId, mtags, channelName, topic, sender }) => {
+    const historical = isHistoryEvent(store.getState(), serverId, mtags);
+    if (!historical)
+      store.setState((state) => {
+        const updatedServers = state.servers.map((server) => {
+          if (server.id === serverId) {
+            const updatedChannels = server.channels.map((channel) => {
+              if (channel.name.toLowerCase() === channelName.toLowerCase()) {
+                return { ...channel, topic };
+              }
+              return channel;
+            });
+            return { ...server, channels: updatedChannels };
+          }
+          return server;
+        });
+        return { servers: updatedServers };
       });
-      return { servers: updatedServers };
-    });
 
     // Optionally add a system message showing the topic change
     const server = store.getState().servers.find((s) => s.id === serverId);
-    const channel = server?.channels.find((c) => c.name === channelName);
+    const channel = server?.channels.find(
+      (c) => c.name.toLowerCase() === channelName.toLowerCase(),
+    );
     if (channel) {
       const topicMessage: Message = {
-        id: `topic-${Date.now()}`,
+        id: `topic-${mtags?.msgid ?? Date.now()}`,
+        msgid: mtags?.msgid,
         channelId: channel.id,
         userId: sender,
         content: t`changed the topic to: ${topic}`,
-        timestamp: new Date(),
+        timestamp: mtags?.time ? new Date(mtags.time) : new Date(),
         serverId: serverId,
         reactions: [],
         type: "system",
@@ -263,6 +268,10 @@ export function registerChannelHandlers(store: StoreApi<AppState>): void {
         mentioned: [],
       };
 
+      if (historical && mtags?.batch) {
+        bufferChathistoryMessage(mtags.batch, topicMessage);
+        return;
+      }
       const key = `${serverId}-${channel.id}`;
       store.setState((state) => ({
         messages: {
@@ -405,25 +414,6 @@ export function registerChannelHandlers(store: StoreApi<AppState>): void {
         }
         return server;
       });
-
-      // Request metadata for users who don't have it yet
-      if (serverSupportsMetadata(state, serverId)) {
-        const serverData = updatedServers.find((s) => s.id === serverId);
-        const channelData = serverData?.channels.find(
-          (c) => c.name.toLowerCase() === channelName.toLowerCase(),
-        );
-
-        if (channelData) {
-          // Request metadata for users who don't have it
-          channelData.users.forEach((user) => {
-            const hasMetadata =
-              user.metadata && Object.keys(user.metadata).length > 0;
-            if (!hasMetadata) {
-              store.getState().metadataList(serverId, user.username);
-            }
-          });
-        }
-      }
 
       // Check if current user has operator status in this channel and update their modes
       const currentUser = state.currentUser;

@@ -96,6 +96,7 @@ describe("AppLayout Swipe Navigation", () => {
       servers: [mockServer],
       currentUser: { id: "user1", username: "testuser", isOnline: true },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -107,13 +108,9 @@ describe("AppLayout Swipe Navigation", () => {
         isMemberListVisible: false,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "serverList",
         isServerMenuOpen: false,
@@ -128,9 +125,9 @@ describe("AppLayout Swipe Navigation", () => {
         inputAttachments: [],
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       messages: {},
@@ -168,7 +165,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should change to chatView when swiping left", () => {
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
       expect(container).toBeTruthy();
 
@@ -207,7 +204,7 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       act(() => {
@@ -246,7 +243,7 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       act(() => {
@@ -277,7 +274,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should not change page when swipe is below threshold", () => {
       renderAppLayout();
       const container = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
 
       const initialColumn = useStore.getState().ui.mobileViewActiveColumn;
@@ -343,7 +340,7 @@ describe("AppLayout Swipe Navigation", () => {
     it("should not render swipe container on desktop", () => {
       renderAppLayout();
       const swipeContainer = document.querySelector(
-        ".relative.w-full.h-full.overflow-hidden",
+        ".relative.w-full.h-full.overflow-clip",
       );
       expect(swipeContainer).toBeFalsy();
     });
@@ -418,7 +415,7 @@ describe("AppLayout Swipe Navigation", () => {
       expect(result).toBe(false);
     });
 
-    it("should allow app exit from serverList on back", () => {
+    it("should allow app exit from serverList on a second back", () => {
       useStore.setState({
         ui: {
           ...useStore.getState().ui,
@@ -428,9 +425,8 @@ describe("AppLayout Swipe Navigation", () => {
 
       renderAppLayout();
 
-      const result = window.androidBackCallback?.();
-
-      expect(result).toBe(true);
+      expect(window.androidBackCallback?.()).toBe(false);
+      expect(window.androidBackCallback?.()).toBe(true);
     });
   });
 });

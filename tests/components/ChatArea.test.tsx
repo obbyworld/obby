@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatArea } from "../../src/components/layout/ChatArea";
@@ -10,6 +10,8 @@ import { defaultUIExtensions } from "../fixtures/uiState";
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    isChannel: (_serverId: string, name?: string) =>
+      !!name && "#&+!^$".includes(name[0]),
     sendTyping: vi.fn(),
     on: vi.fn(),
     getCurrentUser: vi.fn(() => ({ id: "test-user", username: "tester" })),
@@ -64,6 +66,7 @@ describe("ChatArea Tab Completion Integration", () => {
       servers: [mockServer],
       currentUser: { id: "user1", username: "testuser", isOnline: true },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -75,13 +78,9 @@ describe("ChatArea Tab Completion Integration", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "serverList",
         isServerMenuOpen: false,
@@ -97,9 +96,9 @@ describe("ChatArea Tab Completion Integration", () => {
         // Server notices popup state
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       messages: {},
@@ -325,6 +324,95 @@ describe("ChatArea Tab Completion Integration", () => {
       expect.stringContaining("PRIVMSG #general :admin: hello"),
     );
   });
+
+  it("opens the member list on the second Tab, where Enter takes the nick instead of sending", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "hi a");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("hi alice ");
+
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(input).toHaveValue("hi alice ");
+    expect(ircClient.sendRaw).not.toHaveBeenCalledWith(
+      "server1",
+      expect.stringContaining("PRIVMSG"),
+    );
+
+    fireEvent.keyDown(input, { key: "Enter", code: "Enter" });
+    expect(ircClient.sendRaw).toHaveBeenCalledWith(
+      "server1",
+      expect.stringContaining("PRIVMSG #general :hi alice"),
+    );
+  });
+
+  it("cycles backwards with Shift+Tab", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "a");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("admin: ");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab", shiftKey: true });
+    expect(input).toHaveValue("alice: ");
+  });
+
+  it("completes a slash command name with Tab", async () => {
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    await userEvent.type(input, "/joi");
+    fireEvent.keyDown(input, { key: "Tab", code: "Tab" });
+    expect(input).toHaveValue("/join ");
+  });
+
+  it("starts a bot command from a ran chip as if it were typed", async () => {
+    useStore.setState({
+      servers: [
+        {
+          ...mockServer,
+          channels: [
+            {
+              ...mockChannel,
+              users: [
+                ...mockUsers,
+                { id: "5", username: "_cloudbot", isOnline: true },
+              ],
+            },
+          ],
+          botCommands: {
+            _cloudbot: [
+              { name: "catfact" },
+              {
+                name: "cakeday",
+                options: [{ name: "user", type: "user", required: true }],
+              },
+            ],
+          },
+        },
+      ],
+    });
+    render(<ChatArea onToggleChanList={() => {}} isChanListVisible={true} />);
+    const input = screen.getByPlaceholderText(/Message #general/i);
+
+    act(() => {
+      useStore
+        .getState()
+        .requestComposerCommand("server1", "_cloudbot", "catfact");
+    });
+    expect(input).toHaveValue("/catfact@_cloudbot ");
+    expect(useStore.getState().ui.pendingComposerCommand).toBeNull();
+
+    act(() => {
+      useStore
+        .getState()
+        .requestComposerCommand("server1", "_cloudbot", "cakeday");
+    });
+    expect(await screen.findByText("/cakeday")).toBeInTheDocument();
+    expect(ircClient.sendRaw).not.toHaveBeenCalled();
+  });
 });
 
 const makeMsg = (
@@ -357,6 +445,7 @@ describe("ChatArea reply keyboard navigation", () => {
         [NAV_CHANNEL_KEY]: [makeMsg("msg-old"), makeMsg("msg-new")],
       },
       ui: {
+        messageJump: null,
         selectedServerId: "server1",
         perServerSelections: {
           server1: {
@@ -368,13 +457,9 @@ describe("ChatArea reply keyboard navigation", () => {
         isMemberListVisible: true,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "serverList",
         isServerMenuOpen: false,
@@ -389,9 +474,9 @@ describe("ChatArea reply keyboard navigation", () => {
         inputAttachments: [],
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       typingUsers: {},

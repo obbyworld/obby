@@ -1,4 +1,5 @@
 import type { IRCClientContext } from "../IRCClientContext";
+import { splitStandardReply } from "./auth";
 
 export function handleMetadata(
   ctx: IRCClientContext,
@@ -153,34 +154,19 @@ export function handleMetadataFail(
   _source: string,
   parv: string[],
   _mtags: Record<string, string> | undefined,
+  trailing = "",
 ): void {
-  const subcommand = parv[1];
-  const code = parv[2];
-
-  let paramCount = parv.length;
-  let _errorMessage = "";
-
-  if (paramCount > 3) {
-    const lastParam = parv[paramCount - 1];
-    if (lastParam && Number.isNaN(Number.parseInt(lastParam, 10))) {
-      _errorMessage = lastParam;
-      paramCount = paramCount - 1;
-    }
-  }
-
-  let target: string | undefined;
-  let key: string | undefined;
-  let retryAfter: number | undefined;
-
-  if (paramCount > 3) target = parv[3];
-  if (paramCount > 4) key = parv[4];
-  if (paramCount > 5 && code === "RATE_LIMITED") {
-    retryAfter = Number.parseInt(parv[5], 10);
-  }
+  const { code, context } = splitStandardReply(parv, trailing);
+  const keyOnly = code === "KEY_INVALID" || code === "TOO_MANY_SUBS";
+  const target = keyOnly ? undefined : context[0];
+  const key = keyOnly ? context[0] : context[1];
+  const retryAfter =
+    code === "RATE_LIMITED" && context[2]
+      ? Number.parseInt(context[2], 10)
+      : undefined;
 
   ctx.triggerEvent("METADATA_FAIL", {
     serverId,
-    subcommand,
     code,
     target,
     key,

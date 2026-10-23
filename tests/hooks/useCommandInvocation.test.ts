@@ -1,0 +1,125 @@
+import { act, renderHook } from "@testing-library/react";
+import type React from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useCommandInvocation } from "../../src/hooks/useCommandInvocation";
+import type { BotCommand, Channel } from "../../src/types";
+
+const sendBotCommand = vi.hoisted(() => vi.fn());
+vi.mock("../../src/hooks/useMessageSending", () => ({ sendBotCommand }));
+
+const say: BotCommand = {
+  name: "say",
+  options: [
+    { name: "channel", type: "channel" },
+    { name: "message", required: true },
+  ],
+};
+const channels = [{ name: "#dev" }, { name: "#ops" }] as Channel[];
+
+function setup() {
+  const input = document.createElement("textarea");
+  const textRef = { current: "" };
+  const applyText = (text: string) => {
+    textRef.current = text;
+    input.value = text;
+  };
+  const hook = renderHook(() =>
+    useCommandInvocation({
+      serverId: "srv",
+      channel: null,
+      channels,
+      textRef,
+      inputRef: { current: input },
+      applyText,
+      onBegin: () => {},
+    }),
+  );
+  const type = (text: string) =>
+    act(() => {
+      applyText(text);
+      hook.result.current.onInput(text);
+    });
+  const key = (k: string, shiftKey = false) => {
+    const preventDefault = vi.fn();
+    act(() => {
+      hook.result.current.handleKey({
+        key: k,
+        shiftKey,
+        preventDefault,
+        nativeEvent: { isComposing: false },
+      } as unknown as React.KeyboardEvent);
+    });
+  };
+  const pressOnDocument = (k: string) =>
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent("keydown", { key: k, cancelable: true }),
+      );
+    });
+  return { hook, input, type, key, pressOnDocument };
+}
+
+describe("useCommandInvocation", () => {
+  beforeEach(() => sendBotCommand.mockClear());
+
+  it("sends a command without options at once", () => {
+    const { hook } = setup();
+    act(() =>
+      hook.result.current.begin("bot", { name: "aimodels", options: [] }),
+    );
+    expect(sendBotCommand).toHaveBeenCalledWith(
+      "srv",
+      null,
+      "bot",
+      { name: "aimodels", options: [] },
+      {},
+    );
+    expect(hook.result.current.invocation).toBeNull();
+  });
+
+  it("moves to the next argument on Tab and back on Shift+Tab", () => {
+    const { hook, input, type, key } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    type("x");
+    key("Tab");
+    expect(hook.result.current.activeParam?.name).toBe("message");
+    expect(input.value).toBe("");
+    key("Tab", true);
+    expect(hook.result.current.activeParam?.name).toBe("channel");
+    expect(input.value).toBe("x");
+  });
+
+  it("picks the highlighted choice and moves on", () => {
+    const { hook, type, pressOnDocument } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    type("op");
+    expect(hook.result.current.choices).toEqual(["#ops"]);
+    pressOnDocument("Tab");
+    expect(hook.result.current.invocation?.values.channel).toBe("#ops");
+    expect(hook.result.current.activeParam?.name).toBe("message");
+  });
+
+  it("goes back a field on Backspace in an empty field, then cancels", () => {
+    const { hook, key } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    key("Tab");
+    key("Backspace");
+    expect(hook.result.current.activeParam?.name).toBe("channel");
+    key("Backspace");
+    expect(hook.result.current.invocation).toBeNull();
+  });
+
+  it("focuses the missing required argument on Enter, then sends", () => {
+    const { hook, type, key } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    key("Enter");
+    expect(sendBotCommand).not.toHaveBeenCalled();
+    expect(hook.result.current.activeParam?.name).toBe("message");
+    expect(hook.result.current.invocation?.error?.kind).toBe("required");
+    type("hello");
+    key("Enter");
+    expect(sendBotCommand).toHaveBeenCalledWith("srv", null, "bot", say, {
+      message: "hello",
+    });
+  });
+});

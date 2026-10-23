@@ -1,4 +1,4 @@
-import { detectMediaType, type MediaType } from "./mediaUtils";
+import { detectMediaType, extractHostname, type MediaType } from "./mediaUtils";
 
 export interface ProbeResult {
   type: MediaType;
@@ -20,6 +20,9 @@ function cacheSet(url: string, result: ProbeResult | null): void {
   keyOrder.push(url);
 }
 
+// The browser logs every request a host blocks with CORS, so we stop asking a host once it refuses.
+const fetchBlockedHosts = new Set<string>();
+
 /** Returns true if the URL has no detectable type and should be HEAD-probed. */
 export function shouldProbeUrl(url: string): boolean {
   return detectMediaType(url) === null;
@@ -38,10 +41,17 @@ export function getCachedProbeResult(
   return cache.get(url) ?? null;
 }
 
+interface HttpProbe {
+  contentType: string;
+  contentLength?: number;
+  ok: boolean;
+  status: number;
+}
+
 async function tryHttpFetch(
   url: string,
   method: "HEAD" | "GET",
-): Promise<{ contentType: string; contentLength?: number } | null> {
+): Promise<HttpProbe | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 5_000);
   try {
@@ -54,15 +64,19 @@ async function tryHttpFetch(
       signal: controller.signal,
     });
     clearTimeout(timer);
-    const ct = (response.headers.get("Content-Type") ?? "")
+    const contentType = (response.headers.get("Content-Type") ?? "")
       .split(";")[0]
       .trim()
       .toLowerCase();
-    if (!ct) return null;
     const lengthHeader = response.headers.get("Content-Length");
     const contentLength =
       lengthHeader !== null ? Number(lengthHeader) : undefined;
-    return { contentType: ct, contentLength };
+    return {
+      contentType,
+      contentLength,
+      ok: response.ok,
+      status: response.status,
+    };
   } catch (_err) {
     clearTimeout(timer);
     return null;
@@ -70,15 +84,30 @@ async function tryHttpFetch(
 }
 
 /**
- * Tries HEAD then GET (with Range: bytes=0-0) to read the Content-Type header.
- * Some streaming servers (e.g. Icecast) reject HEAD but respond correctly to GET.
+ * Reads the Content-Type via HEAD, falling back to a ranged GET. Some streaming
+ * servers (e.g. Icecast, suno) reject HEAD with 405/501 but answer GET correctly,
+ * so a non-2xx HEAD must not be trusted as the resource's real type.
  */
 async function fetchContentType(
   url: string,
+  host: string | null,
 ): Promise<{ contentType: string; contentLength?: number } | null> {
   const head = await tryHttpFetch(url, "HEAD");
-  if (head) return head;
-  return tryHttpFetch(url, "GET");
+  if (head?.ok && head.contentType) {
+    return { contentType: head.contentType, contentLength: head.contentLength };
+  }
+  // Only the GET retry can help when HEAD threw (CORS), was rejected as a method
+  // (405/501), or returned 2xx without a type. A 404/410/5xx won't improve on GET.
+  if (head !== null && !head.ok && head.status !== 405 && head.status !== 501) {
+    return null;
+  }
+  const get = await tryHttpFetch(url, "GET");
+  if (head === null && get === null && host !== null)
+    fetchBlockedHosts.add(host);
+  if (get?.ok && get.contentType) {
+    return { contentType: get.contentType, contentLength: get.contentLength };
+  }
+  return null;
 }
 
 /** Maps a Content-Type to a ProbeResult. Single source of truth for media classification. */
@@ -120,12 +149,37 @@ function classifyContentType(
   return { type, size: contentLength, streamable, skipped: false };
 }
 
-export async function probeMediaUrl(url: string): Promise<ProbeResult | null> {
-  if (cache.has(url)) return cache.get(url) ?? null;
+const inFlight = new Map<string, Promise<ProbeResult | null>>();
+
+// Every caller of a URL shares one probe: each one opens hidden media elements,
+// and WebKit can deadlock while it cancels many of those at once.
+export function probeMediaUrl(url: string): Promise<ProbeResult | null> {
+  if (cache.has(url)) return Promise.resolve(cache.get(url) ?? null);
+  let probe = inFlight.get(url);
+  if (!probe) {
+    probe = probeUncached(url).finally(() => inFlight.delete(url));
+    inFlight.set(url, probe);
+  }
+  return probe;
+}
+
+async function probeUncached(url: string): Promise<ProbeResult | null> {
+  // A provider page or a map link is a web page with no file behind it, so the
+  // host answers a content-type request with a CORS failure and nothing else.
+  const pageType = detectMediaType(url);
+  if (pageType === "embed" || pageType === "map") {
+    const result = { type: pageType, streamable: false, skipped: false };
+    cacheSet(url, result);
+    return result;
+  }
 
   // Primary path: HTTP Content-Type is the single source of truth.
   // HEAD is tried first; GET fallback covers servers that reject HEAD (e.g. Icecast).
-  const fetched = await fetchContentType(url);
+  const host = extractHostname(url);
+  const fetched =
+    host !== null && fetchBlockedHosts.has(host)
+      ? null
+      : await fetchContentType(url, host);
   if (fetched) {
     const result = classifyContentType(
       fetched.contentType,

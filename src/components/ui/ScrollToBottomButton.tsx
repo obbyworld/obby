@@ -28,7 +28,7 @@ export const ScrollToBottomButton: React.FC<ScrollToBottomButtonProps> = ({
         >
           <FaArrowDown className="w-4 h-4" />
           {unreadCount && unreadCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-discord-accent text-white text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
+            <span className="absolute -top-2 -right-2 bg-discord-primary text-white text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
               {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}

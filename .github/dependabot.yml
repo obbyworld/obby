@@ -66,9 +66,10 @@ updates:
 
   - package-ecosystem: github-actions
     directory: "/"
+    # Monthly, grouped into one PR. Actions are SHA-pinned with a `# vX.Y.Z`
+    # comment, so Dependabot bumps both the SHA and the comment in place.
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: "06:00"
       timezone: Etc/UTC
     open-pull-requests-limit: 3
@@ -79,6 +80,10 @@ updates:
       actions-all:
         patterns:
           - "*"
+    ignore:
+      # Pinned to the stable/nightly branch tip on purpose — the channel resolves
+      # at runtime, so there's no version for Dependabot to track.
+      - dependency-name: "dtolnay/rust-toolchain"
 
   - package-ecosystem: docker
     directory: "/"

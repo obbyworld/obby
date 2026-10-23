@@ -1,6 +1,8 @@
 import type React from "react";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
+import { stopTouchOutsideMap } from "../../lib/leafletMap";
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -13,6 +15,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onClose,
   children,
 }) => {
+  const sheetRef = useSwipeToDismiss(onClose);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
@@ -24,22 +28,25 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   if (!isOpen) return null;
 
+  // React bubbles portal events through the component tree, so we stop touches
+  // here or the long-press and swipe handlers around the opener would fire too.
   return createPortal(
-    <div className="fixed inset-0 z-[9998]">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      {/* Sheet */}
+    <div
+      className="fixed inset-0 z-[9998]"
+      data-no-gesture=""
+      onTouchStart={stopTouchOutsideMap}
+      onTouchMove={stopTouchOutsideMap}
+      onTouchEnd={stopTouchOutsideMap}
+    >
+      <div className="absolute inset-0 scrim" onClick={onClose} />
       <div
-        className="absolute bottom-0 left-0 right-0 bg-discord-dark-500 rounded-t-2xl"
-        style={{
-          animation: "bottom-sheet-slide-up 200ms ease-out",
-          paddingBottom: "calc(0.5rem + var(--safe-area-inset-bottom, 0px))",
-        }}
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        className="absolute bottom-0 left-0 right-0 surface-sheet"
+        style={{ animation: "bottom-sheet-slide-up 200ms ease-out" }}
       >
-        {/* Handle */}
-        <div className="flex justify-center pt-3 pb-2">
-          <div className="w-10 h-1 rounded-full bg-discord-dark-300" />
-        </div>
+        <span className="sheet-handle mb-2" aria-hidden />
         {children}
       </div>
     </div>,

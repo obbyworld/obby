@@ -33,23 +33,34 @@ const mockSaveServersToLocalStorage = vi.mocked(saveServersToLocalStorage);
 vi.mock("../../src/lib/ircClient", () => ({
   default: {
     sendRaw: vi.fn(),
+    sendCapEnd: vi.fn(),
     userOnConnect: vi.fn(),
+    // CAP END is gated on this map being empty/false for the
+    // current server -- see LinkSecurityWarningModal.handleContinue.
+    capNegotiationComplete: new Map(),
   },
 }));
 
 // Mock Audio
-const mockPlay = vi.fn();
-global.Audio = vi.fn().mockImplementation(() => ({
-  play: mockPlay,
-  volume: 0,
-}));
+const mockPlay = vi.fn().mockResolvedValue(undefined);
+function makeAudio() {
+  return {
+    play: mockPlay,
+    volume: 0,
+  };
+}
+global.Audio = vi.fn().mockImplementation(makeAudio);
 
-// Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+// Mock ResizeObserver. vitest 4 invokes constructor mocks with `new`, which an
+// arrow implementation can't satisfy; a plain function returning the instance can.
+function makeResizeObserver() {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+}
+global.ResizeObserver = vi.fn().mockImplementation(makeResizeObserver);
 
 describe("LinkSecurityWarningModal", () => {
   // biome-ignore lint/suspicious/noExplicitAny: Test mock state doesn't need full typing
@@ -83,13 +94,12 @@ describe("LinkSecurityWarningModal", () => {
         selectedChannelId: null,
         selectedPrivateChatId: null,
         isAddServerModalOpen: false,
-        isSettingsModalOpen: false,
-        isUserProfileModalOpen: false,
+        page: null,
+        sidePane: null,
         isDarkMode: false,
         isMobileMenuOpen: false,
         isMemberListVisible: false,
         isChannelListVisible: false,
-        isChannelListModalOpen: false,
         // biome-ignore lint/suspicious/noExplicitAny: Partial mock type
         mobileViewActiveColumn: "chat" as any,
         isServerMenuOpen: false,
@@ -260,9 +270,9 @@ describe("LinkSecurityWarningModal", () => {
 
     const backdrops = screen.getAllByText("Security Warning");
     if (backdrops.length > 0) {
-      const backdrop = backdrops[0].closest(".fixed");
+      const backdrop = backdrops[0].closest('[role="dialog"]');
       if (backdrop) {
-        fireEvent.click(backdrop);
+        fireEvent.mouseDown(backdrop);
       }
     }
 
@@ -327,9 +337,9 @@ describe("LinkSecurityWarningModal", () => {
     });
 
     // Mock scroll to bottom
-    const scrollContainers = document.querySelectorAll(".overflow-y-auto");
-    if (scrollContainers.length > 0) {
-      const container = scrollContainers[0] as HTMLElement;
+    const container =
+      linkSecurityCheckbox.closest<HTMLElement>(".overflow-y-auto");
+    if (container) {
       Object.defineProperty(container, "scrollHeight", {
         value: 1000,
         writable: true,

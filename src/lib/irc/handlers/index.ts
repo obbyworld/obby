@@ -12,7 +12,9 @@ import {
   handleVerify,
   handleWarn,
 } from "./auth";
+import { handleBouncer, handleBouncerFail } from "./bouncer";
 import {
+  handleJoinRefused,
   handleListChannel,
   handleListEnd,
   handleMode,
@@ -35,14 +37,21 @@ import {
   handleCap,
   handleError,
   handleIsupport,
+  handleLoggedIn,
+  handleLoggedOut,
   handlePing,
   handlePong,
+  handleRplEndOfMotd,
+  handleRplMotd,
+  handleRplMotdStart,
   handleRplWelcome,
   handleRplYoureOper,
   handleRplYourHost,
   handleSaslFailure,
+  handleSaslRejected,
   handleSaslSuccess,
 } from "./connection";
+import { handleInvitelink } from "./invitelink";
 import {
   handleBatch,
   handleNotice,
@@ -100,10 +109,15 @@ import {
 import {
   handleWhoEnd,
   handleWhoisAccount,
+  handleWhoisAsn,
   handleWhoisBot,
+  handleWhoisCertfp,
   handleWhoisChannels,
+  handleWhoisCountry,
   handleWhoisEnd,
+  handleWhoisHost,
   handleWhoisIdle,
+  handleWhoisModes,
   handleWhoisSecure,
   handleWhoisServer,
   handleWhoisSpecial,
@@ -134,25 +148,31 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleRplWelcome(ctx, serverId, source, parv),
   "002": (ctx, serverId, source, parv) =>
     handleRplYourHost(ctx, serverId, source, parv),
-  "005": (ctx, serverId, source, parv) =>
-    handleIsupport(ctx, serverId, source, parv),
+  "005": (ctx, serverId, source, parv, _mtags, trailing) =>
+    handleIsupport(ctx, serverId, source, parv, trailing),
+  "375": (ctx, serverId) => handleRplMotdStart(ctx, serverId),
+  "372": (ctx, serverId, source, parv) =>
+    handleRplMotd(ctx, serverId, source, parv),
+  "376": (ctx, serverId) => handleRplEndOfMotd(ctx, serverId),
   CAP: (ctx, serverId, source, parv, mtags, trailing) =>
     handleCap(ctx, serverId, source, parv, mtags, trailing),
   "381": (ctx, serverId, source, parv) =>
     handleRplYoureOper(ctx, serverId, source, parv),
 
-  // SASL authentication successful (901, 902, 903): finish CAP negotiation
+  "900": (ctx, serverId, source, parv) =>
+    handleLoggedIn(ctx, serverId, source, parv),
   "901": (ctx, serverId, source, parv) =>
-    handleSaslSuccess(ctx, serverId, source, parv),
+    handleLoggedOut(ctx, serverId, source, parv),
+  // SASL authentication successful (902, 903): finish CAP negotiation
   "902": (ctx, serverId, source, parv) =>
     handleSaslSuccess(ctx, serverId, source, parv),
   "903": (ctx, serverId, source, parv) =>
     handleSaslSuccess(ctx, serverId, source, parv),
   // SASL failure: 904-907
   "904": (ctx, serverId, source, parv) =>
-    handleSaslFailure(ctx, serverId, source, parv),
+    handleSaslRejected(ctx, serverId, source, parv),
   "905": (ctx, serverId, source, parv) =>
-    handleSaslFailure(ctx, serverId, source, parv),
+    handleSaslRejected(ctx, serverId, source, parv),
   "906": (ctx, serverId, source, parv) =>
     handleSaslFailure(ctx, serverId, source, parv),
   "907": (ctx, serverId, source, parv) =>
@@ -179,6 +199,28 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleChghost(ctx, serverId, source, parv, mtags),
   JOIN: (ctx, serverId, source, parv, mtags) =>
     handleJoin(ctx, serverId, source, parv, mtags),
+  // UnrealIRCd answers a join over set::anti-flood::join-flood with 500.
+  "500": (ctx, serverId, _source, parv) =>
+    handleJoinRefused(ctx, serverId, parv, true),
+  ...Object.fromEntries(
+    [
+      "403",
+      "405",
+      "471",
+      "473",
+      "474",
+      "475",
+      "476",
+      "477",
+      "479",
+      "489",
+      "520",
+    ].map((code) => [
+      code,
+      ((ctx, serverId, _source, parv) =>
+        handleJoinRefused(ctx, serverId, parv, false)) satisfies HandlerFn,
+    ]),
+  ),
   PART: (ctx, serverId, source, parv, mtags) =>
     handlePart(ctx, serverId, source, parv, mtags),
   KICK: (ctx, serverId, source, parv, mtags) =>
@@ -249,10 +291,16 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleWhoisChannels(ctx, serverId, source, parv, mtags),
   "320": (ctx, serverId, source, parv, mtags) =>
     handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+  "276": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisCertfp(ctx, serverId, source, parv, mtags),
   "378": (ctx, serverId, source, parv, mtags) =>
-    handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+    handleWhoisHost(ctx, serverId, source, parv, mtags),
   "379": (ctx, serverId, source, parv, mtags) =>
-    handleWhoisSpecial(ctx, serverId, source, parv, mtags),
+    handleWhoisModes(ctx, serverId, source, parv, mtags),
+  "344": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisCountry(ctx, serverId, source, parv, mtags),
+  "569": (ctx, serverId, source, parv, mtags) =>
+    handleWhoisAsn(ctx, serverId, source, parv, mtags),
   "330": (ctx, serverId, source, parv, mtags) =>
     handleWhoisAccount(ctx, serverId, source, parv, mtags),
   "671": (ctx, serverId, source, parv, mtags) =>
@@ -285,11 +333,18 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
 
   AUTHENTICATE: (ctx, serverId, source, parv, mtags) =>
     handleAuthenticate(ctx, serverId, source, parv, mtags),
-  // FAIL METADATA is a distinct protocol — route to the metadata handler
-  FAIL: (ctx, serverId, source, parv, mtags, trailing) =>
-    parv[0] === "METADATA"
-      ? handleMetadataFail(ctx, serverId, source, parv, mtags)
-      : handleFail(ctx, serverId, source, parv, mtags, trailing),
+  // soju.im/bouncer-networks: BOUNCER NETWORK / ADDNETWORK / etc.
+  BOUNCER: (ctx, serverId, source, parv, mtags) =>
+    handleBouncer(ctx, serverId, source, parv, mtags),
+  // FAIL <command> has per-command sub-protocols; dispatch on the
+  // command token rather than letting handleFail swallow them.
+  FAIL: (ctx, serverId, source, parv, mtags, trailing) => {
+    if (parv[0] === "METADATA")
+      return handleMetadataFail(ctx, serverId, source, parv, mtags, trailing);
+    if (parv[0] === "BOUNCER")
+      return handleBouncerFail(ctx, serverId, source, parv);
+    return handleFail(ctx, serverId, source, parv, mtags, trailing);
+  },
   WARN: (ctx, serverId, source, parv, mtags, trailing) =>
     handleWarn(ctx, serverId, source, parv, mtags, trailing),
   NOTE: (ctx, serverId, source, parv, mtags, trailing) =>
@@ -308,6 +363,8 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleExtjwt(ctx, serverId, source, parv, mtags),
   PERSISTENCE: (ctx, serverId, source, parv, mtags) =>
     handlePersistence(ctx, serverId, source, parv, mtags),
+  INVITELINK: (ctx, serverId, source, parv, mtags) =>
+    handleInvitelink(ctx, serverId, source, parv, mtags),
   MARKREAD: (ctx, serverId, source, parv, mtags) =>
     handleMarkread(ctx, serverId, source, parv, mtags),
   CMDSLIST: (ctx, serverId, source, parv, mtags) =>

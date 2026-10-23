@@ -1,0 +1,11 @@
+node_modules/**
+dist/**
+build/**
+coverage/**
+src-tauri/target/**
+src-tauri/plugins/*/target/**
+src-tauri/plugins/*/.tauri/**
+src-tauri/gen/**
+.serena/**
+.playwright-mcp/**
+.husky/**

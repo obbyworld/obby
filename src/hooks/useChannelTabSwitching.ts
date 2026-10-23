@@ -1,7 +1,15 @@
 import { useEffect, useRef } from "react";
 import { create } from "zustand";
+import { arrangeChannels } from "../lib/channelFolders";
+import {
+  getSelectionHistory,
+  recordSelection,
+  resumeRecording,
+  suspendRecording,
+} from "../lib/channelHistory";
 import { isTauri } from "../lib/platformUtils";
 import useStore from "../store";
+import { useChannelFolders } from "../store/channelFolders";
 
 // Small store so ChannelList can reactively read which item is "previous"
 // (the one Ctrl+Tab will jump to on next press)
@@ -20,8 +28,7 @@ type StoreState = ReturnType<typeof useStore.getState>;
 type NavItem = { id: string; type: "channel" | "pm" };
 
 // Returns all navigable items in visual sidebar order:
-//   Text channels (sorted) → Private chats (pinned-first, then by order)
-// Matches the sort logic in ChannelList.tsx exactly.
+//   Channels (loose, then each folder) → Private chats (pinned-first, then by order)
 function getSortedItems(state: StoreState): NavItem[] {
   const { selectedServerId } = state.ui;
   if (!selectedServerId) return [];
@@ -30,20 +37,11 @@ function getSortedItems(state: StoreState): NavItem[] {
   if (!server) return [];
 
   // ── Channels ────────────────────────────────────────────────────────────
-  const savedOrder = state.channelOrder[selectedServerId];
-  const channels = server.channels.filter((c) => !c.isPrivate);
-
-  const sortedChannels =
-    !savedOrder || savedOrder.length === 0
-      ? channels
-      : [...channels].sort((a, b) => {
-          const ia = savedOrder.indexOf(a.name);
-          const ib = savedOrder.indexOf(b.name);
-          if (ia !== -1 && ib !== -1) return ia - ib;
-          if (ia !== -1) return -1;
-          if (ib !== -1) return 1;
-          return 0;
-        });
+  const sortedChannels = arrangeChannels(
+    server.channels.filter((c) => !c.isPrivate),
+    state.channelOrder[selectedServerId],
+    useChannelFolders.getState().folders[selectedServerId] ?? [],
+  ).flatMap((group) => group.channels);
 
   const seen = new Set<string>();
   const channelItems: NavItem[] = sortedChannels
@@ -89,8 +87,6 @@ function getCurrentId(state: StoreState): string | null {
 // so you always see where Ctrl+Tab will land before pressing it.
 
 export function useChannelTabSwitching() {
-  // Per-server MRU list: [current, prev, prev-prev, ...]
-  const mruRef = useRef<Map<string, string[]>>(new Map());
   // Tracks last known selected ID per server to detect changes
   const lastIdRef = useRef<Map<string, string | null>>(new Map());
 
@@ -98,22 +94,16 @@ export function useChannelTabSwitching() {
   const sessionIndexRef = useRef(-1);
 
   useEffect(() => {
-    if (!isTauri()) return;
-
     const { setPrevItemId } = useChannelMru.getState();
 
-    const updateMru = (serverId: string, currentId: string) => {
-      const mru = mruRef.current.get(serverId) ?? [];
-      const updated = [
-        currentId,
-        ...mru.filter((id) => id !== currentId),
-      ].slice(0, 30);
-      mruRef.current.set(serverId, updated);
-      setPrevItemId(updated[1] ?? null);
-      return updated;
+    const syncIndicator = (serverId: string) => {
+      setPrevItemId(getSelectionHistory(serverId)[1] ?? null);
     };
 
-    // Subscribe to store to keep MRU + indicator current
+    // History recording itself lives in the store (src/store/index.ts) so it
+    // covers every platform and every way a selection can arrive, including
+    // a restored startup selection. This subscription only keeps the amber
+    // "previous item" indicator current -- and, on Tauri, feeds Ctrl+Tab.
     const unsubscribe = useStore.subscribe((state: StoreState) => {
       if (sessionActiveRef.current) return;
 
@@ -125,9 +115,20 @@ export function useChannelTabSwitching() {
 
       if (currentId !== lastId) {
         lastIdRef.current.set(serverId, currentId);
-        if (currentId) updateMru(serverId, currentId);
+        if (currentId) syncIndicator(serverId);
       }
     });
+
+    const initialServerId = useStore.getState().ui.selectedServerId;
+    if (initialServerId) {
+      lastIdRef.current.set(initialServerId, getCurrentId(useStore.getState()));
+      syncIndicator(initialServerId);
+    }
+
+    // Browsers already own Ctrl+Tab, so only Tauri gets the shortcut itself.
+    if (!isTauri()) {
+      return unsubscribe;
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.ctrlKey || e.key !== "Tab") return;
@@ -145,8 +146,9 @@ export function useChannelTabSwitching() {
       if (!sessionActiveRef.current) {
         // ── First keypress: jump to last-used item ─────────────────────────
         sessionActiveRef.current = true;
+        suspendRecording();
 
-        const mru = mruRef.current.get(serverId) ?? [];
+        const mru = getSelectionHistory(serverId);
         const itemIds = items.map((i) => i.id);
 
         if (!e.shiftKey) {
@@ -187,6 +189,7 @@ export function useChannelTabSwitching() {
       if (e.key !== "Control" || !sessionActiveRef.current) return;
 
       sessionActiveRef.current = false;
+      resumeRecording();
 
       const state = useStore.getState();
       const serverId = state.ui.selectedServerId;
@@ -194,9 +197,9 @@ export function useChannelTabSwitching() {
 
       const currentId = getCurrentId(state);
       if (currentId) {
-        const updated = updateMru(serverId, currentId);
+        recordSelection(serverId, currentId);
         lastIdRef.current.set(serverId, currentId);
-        setPrevItemId(updated[1] ?? null);
+        syncIndicator(serverId);
       }
     };
 

@@ -1,17 +1,40 @@
+import "./lib/deploymentConfig";
 import { i18n, type Messages } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { locale as tauriLocale } from "@tauri-apps/plugin-os";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { pdfjs } from "react-pdf";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import "@fontsource/roboto-mono/400.css";
+import "@fontsource/roboto-mono/500.css";
+import "@fontsource/roboto-mono/600.css";
+import "@fontsource/roboto-mono/700.css";
+import "@fontsource/roboto-mono/400-italic.css";
+import "@fontsource/roboto-mono/700-italic.css";
 import "./index.css";
+import { RecordingControlsOverlay } from "./components/ui/RecordingControlsOverlay";
+import { RegionMarkerOverlay } from "./components/ui/RegionMarkerOverlay";
+import { RegionSelectOverlay } from "./components/ui/RegionSelectOverlay";
+import { probeVideoSupport } from "./lib/mediaUtils";
+import {
+  markOverlayDocument,
+  overlayKind,
+  overlayMonitor,
+} from "./lib/overlayWindow";
 import { registerHostedServiceWorker } from "./lib/registerServiceWorker";
+import { closeStaleRegionWindows } from "./lib/screenRegion";
 
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-
-registerHostedServiceWorker();
+const overlay = overlayKind();
+if (overlay) {
+  markOverlayDocument();
+} else {
+  probeVideoSupport();
+  registerHostedServiceWorker();
+  // A crash or a dev reload leaves the picker covering the desktop with no way
+  // to dismiss it, so the main window clears any of them left behind.
+  void closeStaleRegionWindows();
+}
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -89,9 +112,17 @@ async function loadCatalog(locale: string) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
       <I18nProvider i18n={i18n}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        {overlay === "region" ? (
+          <RegionSelectOverlay monitor={overlayMonitor()} />
+        ) : overlay === "marker" ? (
+          <RegionMarkerOverlay />
+        ) : overlay === "recording" ? (
+          <RecordingControlsOverlay />
+        ) : (
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        )}
       </I18nProvider>
     </React.StrictMode>,
   );

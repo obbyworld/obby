@@ -1,6 +1,48 @@
 import { v5 as uuidv5 } from "uuid";
-import type { Channel, Message, User } from "../types";
+import type { Channel, Message, Server, User } from "../types";
 import type { AppState } from "./index";
+import type { HistoryWindow } from "./types";
+
+export function findServerUser(
+  server: Server | undefined,
+  nick: string,
+): User | undefined {
+  const lower = nick.toLowerCase();
+  for (const channel of server?.channels ?? []) {
+    const user = channel.users.find((u) => u.username.toLowerCase() === lower);
+    if (user) return user;
+  }
+  return undefined;
+}
+
+// Our own away state lives on the server and on our channel entries, so we write both together.
+export function setUserAway(
+  server: Server,
+  nick: string | undefined,
+  isAway: boolean,
+  awayMessage: string | undefined,
+  ownNick: string | undefined,
+): Server {
+  if (!nick) return server;
+  const lowerNick = nick.toLowerCase();
+  let hasChanged = false;
+  const channels = server.channels.map((channel) => {
+    const index = channel.users.findIndex(
+      (user) => user.username.toLowerCase() === lowerNick,
+    );
+    const user = channel.users[index];
+    if (!user || (user.isAway === isAway && user.awayMessage === awayMessage))
+      return channel;
+    hasChanged = true;
+    const users = [...channel.users];
+    users[index] = { ...user, isAway, awayMessage };
+    return { ...channel, users };
+  });
+  const isOwn = lowerNick === ownNick?.toLowerCase();
+  if (isOwn && (server.isAway !== isAway || server.awayMessage !== awayMessage))
+    return { ...server, channels, isAway, awayMessage };
+  return hasChanged ? { ...server, channels } : server;
+}
 
 // Namespace UUID for generating deterministic channel/chat IDs
 export const CHANNEL_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
@@ -40,6 +82,233 @@ export function ensureUrlFormat(host: string, port: number): string {
 }
 
 export const MAX_MESSAGES_PER_CHANNEL = 1500;
+
+export const messageTime = (message: Message) =>
+  new Date(message.timestamp).getTime();
+
+// A line waiting for its echo has no server time yet, so we keep it below
+// every line the server stamped, in the order we sent it.
+export function compareMessageOrder(a: Message, b: Message): number {
+  const isPendingA = a.status === "pending";
+  const isPendingB = b.status === "pending";
+  if (isPendingA !== isPendingB) return isPendingA ? 1 : -1;
+  if (isPendingA) return 0;
+  return messageTime(a) - messageTime(b);
+}
+
+export const isChatMessage = (message: Message) =>
+  message.type === "message" || message.type === undefined;
+
+// The newest message we hold for a chat, counting live messages a history
+// window is keeping aside.
+export function newestMessageTime(
+  state: AppState,
+  key: string,
+): number | undefined {
+  const messages = state.historyWindows[key]?.present ?? state.messages[key];
+  let newest: number | undefined;
+  for (const message of messages ?? []) {
+    if (message.status) continue;
+    // Our own lines keep their send time, so we read the server's from the echo.
+    const time = message.tags?.time
+      ? Date.parse(message.tags.time)
+      : messageTime(message);
+    if (isChatMessage(message) && !Number.isNaN(time))
+      newest = newest === undefined ? time : Math.max(newest, time);
+  }
+  return newest;
+}
+
+// The message a "New messages" line goes above: the first message from someone
+// else that is newer than the read marker.
+export function firstUnreadMessageId(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+): string | undefined {
+  return messages.find((message) => isUnread(message, readUpTo, ownNick))?.id;
+}
+
+export const isOwnMessage = (message: Message, ownNick: string | undefined) =>
+  !!ownNick && message.userId.toLowerCase() === ownNick.toLowerCase();
+
+const isUnread = (message: Message, readUpTo: number, ownNick?: string) =>
+  isChatMessage(message) &&
+  messageTime(message) > readUpTo &&
+  !isOwnMessage(message, ownNick);
+
+export type UnreadCounts = {
+  unreadCount: number;
+  mentionCount: number;
+  isMentioned: boolean;
+};
+
+// Unread messages are the ones from someone else newer than the read marker.
+// Every private message is addressed to the user, so each one is a mention.
+export function countUnread(
+  messages: Message[],
+  readUpTo: number,
+  ownNick: string | undefined,
+  isPrivate: boolean,
+): UnreadCounts {
+  const counted = new Set<string>();
+  let unreadCount = 0;
+  let mentionCount = 0;
+  for (const message of messages) {
+    const id = message.msgid ?? message.id;
+    if (counted.has(id) || !isUnread(message, readUpTo, ownNick)) continue;
+    counted.add(id);
+    unreadCount += 1;
+    if (
+      isPrivate ||
+      message.mentioned.length > 0 ||
+      (!!message.replyMessage && isOwnMessage(message.replyMessage, ownNick))
+    )
+      mentionCount += 1;
+  }
+  return { unreadCount, mentionCount, isMentioned: mentionCount > 0 };
+}
+
+export function serverTracksReadMarker(
+  state: AppState,
+  serverId: string,
+): boolean {
+  const server = state.servers.find((s) => s.id === serverId);
+  return (
+    !!server?.capabilities?.includes("draft/read-marker") &&
+    !!server.account &&
+    !server.readMarkerRefused
+  );
+}
+
+const replaceAt = <T>(list: T[], index: number, item: T): T[] =>
+  list.map((existing, i) => (i === index ? item : existing));
+
+// A detached chat keeps its newest messages in the window's present, so we
+// look there too. `update` returns null to leave the message as it is.
+// A redacted message keeps who removed it as a code, and the row translates it.
+export const REDACTED_BY_TAG = "obby-redacted-by";
+
+export function withReaction(
+  message: Message,
+  emoji: string,
+  userId: string,
+): Message | null {
+  return message.reactions.some((r) => r.emoji === emoji && r.userId === userId)
+    ? null
+    : { ...message, reactions: [...message.reactions, { emoji, userId }] };
+}
+
+export function withoutReaction(
+  message: Message,
+  emoji: string,
+  userId: string,
+): Message | null {
+  const reactions = message.reactions.filter(
+    (r) => !(r.emoji === emoji && r.userId === userId),
+  );
+  return reactions.length === message.reactions.length
+    ? null
+    : { ...message, reactions };
+}
+
+// A multiline message answers to its own msgid and to each of its lines' msgids.
+export function hasMsgid(message: Message, msgid: string): boolean {
+  return (
+    message.msgid === msgid || !!message.multilineMessageIds?.includes(msgid)
+  );
+}
+
+// Replayed history (server CHATHISTORY or our local replay) updates what was
+// said, never live state such as typing, presence, notifications or bot runs.
+export function isHistoryEvent(
+  state: Pick<AppState, "activeBatches">,
+  serverId: string,
+  mtags: Record<string, string> | undefined,
+): boolean {
+  const batchId = mtags?.batch;
+  return (
+    !!batchId &&
+    state.activeBatches[serverId]?.[batchId]?.type === "chathistory"
+  );
+}
+
+export function redactedMessage(original: Message, sender: string): Message {
+  return {
+    id: original.id,
+    msgid: original.msgid,
+    content: "",
+    timestamp: original.timestamp,
+    userId: "system",
+    channelId: original.channelId,
+    serverId: original.serverId,
+    type: "system",
+    reactions: [],
+    replyMessage: null,
+    mentioned: [],
+    tags: {
+      ...original.tags,
+      [REDACTED_BY_TAG]: original.userId === sender ? "sender" : "staff",
+    },
+  };
+}
+
+export function updateMessageByMsgid(
+  state: Pick<AppState, "messages" | "historyWindows">,
+  key: string,
+  msgid: string,
+  update: (message: Message) => Message | null,
+): Partial<AppState> {
+  const shown = state.messages[key] ?? [];
+  const index = shown.findIndex((m) => hasMsgid(m, msgid));
+  if (index >= 0) {
+    const next = update(shown[index]);
+    return next
+      ? {
+          messages: { ...state.messages, [key]: replaceAt(shown, index, next) },
+        }
+      : {};
+  }
+  const window = state.historyWindows[key];
+  const presentIndex =
+    window?.present.findIndex((m) => hasMsgid(m, msgid)) ?? -1;
+  if (!window || presentIndex < 0) return {};
+  const next = update(window.present[presentIndex]);
+  if (!next) return {};
+  return {
+    historyWindows: {
+      ...state.historyWindows,
+      [key]: {
+        ...window,
+        present: replaceAt(window.present, presentIndex, next),
+      },
+    },
+  };
+}
+
+// Older messages past the cap would push themselves straight out again, so we
+// drop the newest end instead and keep it as the present of a history window.
+export function capMergedMessages(
+  existing: Message[],
+  merged: Message[],
+  window: HistoryWindow | undefined,
+): { messages: Message[]; window?: HistoryWindow } {
+  const isOlder =
+    existing.length > 0 && messageTime(merged[0]) < messageTime(existing[0]);
+  if (merged.length <= MAX_MESSAGES_PER_CHANNEL || (!isOlder && window))
+    return { messages: merged };
+  if (!isOlder) return { messages: merged.slice(-MAX_MESSAGES_PER_CHANNEL) };
+  const kept = merged.slice(0, MAX_MESSAGES_PER_CHANNEL);
+  return {
+    messages: kept,
+    window: {
+      ...window,
+      until: messageTime(kept[kept.length - 1]),
+      untilRowId: undefined,
+      present: window?.present ?? existing,
+    },
+  };
+}
 
 // ============================================================================
 // Batch Event Types
@@ -132,6 +401,29 @@ export function getCurrentSelection(state: AppState) {
   return getServerSelection(state, state.ui.selectedServerId);
 }
 
+// A phone shows one app at a time, so a visible app there has the user's eyes,
+// while a desktop window also needs focus.
+export function isAppInFront(): boolean {
+  if (typeof document === "undefined" || typeof window === "undefined")
+    return true;
+  if (document.visibilityState !== "visible") return false;
+  return (
+    document.hasFocus() ||
+    window.matchMedia?.("(pointer: coarse)").matches === true
+  );
+}
+
+// The chat the user is looking at right now: selected, with the app in front
+// and, on a phone, the chat column showing. Messages anywhere else are unread.
+export function getViewedSelection(state: AppState) {
+  const isInView =
+    state.ui.isAppFocused !== false &&
+    (!state.ui.isNarrowView || state.ui.mobileViewActiveColumn === "chatView");
+  return isInView
+    ? getCurrentSelection(state)
+    : { selectedChannelId: null, selectedPrivateChatId: null };
+}
+
 // ============================================================================
 // Server Capability Helpers (pure versions)
 // ============================================================================
@@ -149,6 +441,15 @@ export function serverSupportsMetadata(
       (cap) => cap === "draft/metadata-2" || cap.startsWith("draft/metadata"),
     ) ?? false;
   return supports;
+}
+
+export function serverSupportsChathistory(
+  state: AppState,
+  serverId: string,
+): boolean {
+  return !!state.servers
+    .find((s) => s.id === serverId)
+    ?.capabilities?.includes("draft/chathistory");
 }
 
 /**
@@ -217,8 +518,20 @@ export function resolveReplyMessage(
   channelId: string,
   messages: Message[],
 ): Message | null {
-  const replyId =
-    (mtags?.["+reply"] ?? mtags?.["+draft/reply"])?.trim() || null;
+  return findReplyTarget(
+    (mtags?.["+reply"] ?? mtags?.["+draft/reply"])?.trim() || null,
+    messages,
+  );
+}
+
+/**
+ * Find the message a reply points at, for callers that already hold the id
+ * rather than the tags it arrived in.
+ */
+export function findReplyTarget(
+  replyId: string | null | undefined,
+  messages: Message[],
+): Message | null {
   if (!replyId) {
     return null;
   }

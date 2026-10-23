@@ -19,6 +19,7 @@ import { useScrollToBottom } from "../../hooks/useScrollToBottom";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { canShowImageUrl } from "../../lib/imageUtils";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
 import {
   detectMediaType,
   getEmbedThumbnailUrl,
@@ -29,20 +30,23 @@ import {
   getPreviewStyles,
   stripIrcFormatting,
 } from "../../lib/messageFormatter";
+import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
 import useStore from "../../store";
 import type { Message } from "../../types";
+import { nickProvider } from "../chat/completionProviders";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReactions } from "../message/MessageReactions";
-import AutocompleteDropdown from "./AutocompleteDropdown";
 import ColorPicker from "./ColorPicker";
 import { EmojiPickerInline } from "./EmojiPickerInline";
 import { EmojiPickerModal } from "./EmojiPickerModal";
 import { InputToolbar } from "./InputToolbar";
+import MemberPicker from "./MemberPicker";
 import ReactionModal from "./ReactionModal";
 import { ReactionPopover } from "./ReactionPopover";
 import { ScrollToBottomButton } from "./ScrollToBottomButton";
 import { TextArea } from "./TextInput";
+import { TypingIndicator } from "./TypingIndicator";
 
 interface MediaCommentsSidebarProps {
   sourceMessage: Message;
@@ -116,9 +120,9 @@ export function MediaCommentsSidebar({
   const { mediaVisibilityLevel, sendTypingNotifications } = useStore(
     (state) => state.globalSettings,
   );
-  const filehost = useStore
-    .getState()
-    .servers.find((s) => s.id === serverId)?.filehost;
+  const filehost = serverFilehosts(
+    useStore.getState().servers.find((s) => s.id === serverId),
+  );
 
   // Look up Channel object — useMessageSending needs channel.name for PRIVMSG target
   const selectedChannel = useStore((state) => {
@@ -501,10 +505,14 @@ export function MediaCommentsSidebar({
               onReactionUnreact={unreact}
               onOpenReactionModal={(msg, _pos) => openReactionModal(msg)}
               onDirectReaction={directReaction}
-              onRedactMessage={(msg) => {
+              onRedactMessage={async (msg) => {
                 if (!msg.msgid || !channelName) return;
                 if (
-                  window.confirm(t`Delete this message? This cannot be undone.`)
+                  await confirmDestructive(
+                    t`Delete message`,
+                    t`Delete this message? This cannot be undone.`,
+                    t`Delete`,
+                  )
                 ) {
                   redactMessage(serverId, channelName, msg.msgid);
                 }
@@ -518,20 +526,8 @@ export function MediaCommentsSidebar({
       </div>
       <ScrollToBottomButton isVisible={isScrolledUp} onClick={scrollToBottom} />
 
-      {/* Input — same structure as main ChatArea input.
-          keyboard-aware-layout: CSS rule zeroes padding-bottom when keyboard is visible
-          (using !important to beat the inline safe-area style below). */}
-      <div
-        className="px-3 pb-3 pt-1 relative keyboard-aware-layout"
-        style={
-          isMobile
-            ? {
-                paddingBottom:
-                  "calc(0.75rem + var(--safe-area-inset-bottom, 0px))",
-              }
-            : undefined
-        }
-      >
+      <div className="px-3 pt-1 relative chat-input-area">
+        <TypingIndicator serverId={serverId} channelId={channelId} />
         <div className="bg-discord-dark-100 rounded-lg flex items-center relative flex-nowrap">
           <button
             type="button"
@@ -586,7 +582,7 @@ export function MediaCommentsSidebar({
             onSendClick={handleSend}
             showSendButton={isNativeMobile}
             hideEmoji={isNativeMobile}
-            hasText={commentText.trim().length > 0}
+            canSend={commentText.trim().length > 0}
           />
         </div>
         {isColorPickerOpen && (
@@ -611,21 +607,13 @@ export function MediaCommentsSidebar({
             isOpen={isEmojiSelectorOpen}
             onEmojiClick={handleEmojiSelect}
             onClose={() => setIsEmojiSelectorOpen(false)}
-            onBackdropClick={(e) => {
-              if (e.target === e.currentTarget) setIsEmojiSelectorOpen(false);
-            }}
-            zIndex={9999}
           />
         )}
-        <AutocompleteDropdown
-          users={selectedChannel?.users ?? []}
-          isVisible={showMentionDropdown}
-          inputValue={commentText}
-          cursorPosition={cursorPosition}
+        <MemberPicker
+          provider={nickProvider(selectedChannel?.users ?? [])}
+          isOpen={showMentionDropdown}
           onSelect={handleUsernameSelect}
           onClose={() => setShowMentionDropdown(false)}
-          inputElement={textareaRef.current}
-          isAtButtonTriggered={showMentionDropdown}
           isNarrowView={isMobile}
         />
       </div>
@@ -635,7 +623,6 @@ export function MediaCommentsSidebar({
           isOpen={reactionModal.isOpen}
           onClose={closeReactionModal}
           onSelectEmoji={selectReaction}
-          zIndex={10000}
           reactedEmojis={reactedEmojis}
         />
       ) : (

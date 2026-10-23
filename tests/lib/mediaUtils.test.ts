@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { serverFilehosts } from "../../src/lib/ircUtils";
 import {
   canShowAvatarUrl,
   canShowMedia,
@@ -103,6 +104,16 @@ describe("detectMediaType", () => {
   });
   test("strips query string before extension check", () => {
     expect(detectMediaType("https://example.com/video.mp4?t=10")).toBe("video");
+  });
+  test("returns 'map' for an OpenStreetMap location link", () => {
+    expect(
+      detectMediaType(
+        "https://www.openstreetmap.org/?mlat=51.5&mlon=-0.12#map=14/51.5/-0.12",
+      ),
+    ).toBe("map");
+  });
+  test("returns null for an openstreetmap.org link with no position", () => {
+    expect(detectMediaType("https://www.openstreetmap.org/about")).toBeNull();
   });
 });
 
@@ -345,6 +356,32 @@ describe("canShowMedia", () => {
       ),
     ).toBe(true);
   });
+  test("an OpenStreetMap location link previews under trusted sources, not external content", () => {
+    const url =
+      "https://www.openstreetmap.org/?mlat=51.5&mlon=-0.12#map=14/51.5/-0.12";
+    expect(
+      canShowMedia(
+        url,
+        {
+          showSafeMedia: true,
+          showTrustedSourcesMedia: false,
+          showExternalContent: false,
+        },
+        null,
+      ),
+    ).toBe(false);
+    expect(
+      canShowMedia(
+        url,
+        {
+          showSafeMedia: false,
+          showTrustedSourcesMedia: true,
+          showExternalContent: false,
+        },
+        null,
+      ),
+    ).toBe(true);
+  });
   test("similar but non-matching domain is denied", () => {
     expect(
       canShowMedia(
@@ -357,6 +394,73 @@ describe("canShowMedia", () => {
         null,
       ),
     ).toBe(false);
+  });
+});
+
+describe("canShowMedia — filehost trust is origin-based", () => {
+  const settings = {
+    showSafeMedia: true,
+    showTrustedSourcesMedia: false,
+    showExternalContent: false,
+  };
+
+  // girafiles: the upload endpoint is https://host/api/ but files are served
+  // from the host root, so trust must ignore the filehost's path.
+  test("trusts a root file when the filehost endpoint has a path", () => {
+    expect(
+      canShowMedia(
+        "https://s.h4ks.com/HrE.txt",
+        settings,
+        "https://s.h4ks.com/api/",
+      ),
+    ).toBe(true);
+  });
+
+  test("still denies a different origin when the filehost has a path", () => {
+    expect(
+      canShowMedia(
+        "https://evil.com/x.jpg",
+        settings,
+        "https://s.h4ks.com/api/",
+      ),
+    ).toBe(false);
+  });
+
+  test("accepts a list of filehosts (vendor + tokenless)", () => {
+    expect(
+      canShowMedia("https://s.h4ks.com/HrE.txt", settings, [
+        "https://obby.t3ks.com",
+        "https://s.h4ks.com/api/",
+      ]),
+    ).toBe(true);
+  });
+
+  test("an empty filehost list trusts nothing under safe-media", () => {
+    expect(canShowMedia("https://s.h4ks.com/x.txt", settings, [])).toBe(false);
+  });
+});
+
+describe("serverFilehosts", () => {
+  test("combines the vendor filehost and the tokenless fileHosts", () => {
+    expect(
+      serverFilehosts({
+        filehost: "https://obby.t3ks.com",
+        fileHosts: ["https://s.h4ks.com/api/", "https://x.example/"],
+      }),
+    ).toEqual([
+      "https://obby.t3ks.com",
+      "https://s.h4ks.com/api/",
+      "https://x.example/",
+    ]);
+  });
+
+  test("tolerates missing fields and no server", () => {
+    expect(serverFilehosts({ fileHosts: ["https://b"] })).toEqual([
+      "https://b",
+    ]);
+    expect(serverFilehosts({ filehost: "https://a" })).toEqual(["https://a"]);
+    expect(serverFilehosts({})).toEqual([]);
+    expect(serverFilehosts(undefined)).toEqual([]);
   });
 });
 

@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
 import type * as React from "react";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { FaSoundcloud, FaSpotify, FaVimeoV, FaYoutube } from "react-icons/fa";
 import { getAudio } from "../../lib/audioManager";
 import {
@@ -13,8 +13,8 @@ import {
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
-
-const ReactPlayer = lazy(() => import("react-player"));
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { EmbedPlayer } from "../message/EmbedPlayer";
 
 const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <button
@@ -493,25 +493,31 @@ export const MiniMediaPlayer: React.FC = () => {
               aria-hidden="true"
             >
               <Suspense fallback={null}>
-                <ReactPlayer
-                  src={url}
-                  playing={isPlaying}
-                  controls={false}
-                  width="1px"
-                  height="1px"
-                  onPlay={() =>
-                    playMedia(
-                      url,
-                      "embed",
-                      getEmbedThumbnailUrl(url) ?? undefined,
-                      activeMedia.msgid,
-                      activeMedia.serverId,
-                      activeMedia.channelId,
-                    )
-                  }
-                  onPause={() => pauseActiveMedia()}
-                  onEnded={() => stopActiveMedia()}
-                />
+                <MediaErrorBoundary onError={stopActiveMedia}>
+                  <EmbedPlayer
+                    url={url}
+                    playing={isPlaying}
+                    controls={false}
+                    startAt={getVideoPosition(url) ?? activeMedia.currentTime}
+                    onTime={(time) => setVideoPosition(url, time)}
+                    onPlay={() => {
+                      // Loading a provider fires a play event, which must
+                      // not start a video the user paused.
+                      if (!useStore.getState().ui.activeMedia?.isPlaying)
+                        return;
+                      playMedia(
+                        url,
+                        "embed",
+                        getEmbedThumbnailUrl(url) ?? undefined,
+                        activeMedia.msgid,
+                        activeMedia.serverId,
+                        activeMedia.channelId,
+                      );
+                    }}
+                    onPause={() => pauseActiveMedia()}
+                    onEnded={() => stopActiveMedia()}
+                  />
+                </MediaErrorBoundary>
               </Suspense>
             </div>
           )}

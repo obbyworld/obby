@@ -96,64 +96,67 @@ export const OAuthSection: React.FC<OAuthSectionProps> = ({
   // Centralize the parent notification so every state setter goes through
   // the same shape. Pass overrides for the field that just changed, since
   // useState's setters won't have flushed yet.
+  // We let a patch key override even when it is undefined, so sign-out can clear the tokens.
   const emit = (patch: Partial<ServerOAuthConfig> = {}) => {
-    if (!enabled && patch.enabled !== true) {
-      onChange(undefined);
-      return;
-    }
-    onChange({
-      enabled: patch.enabled ?? enabled,
-      providerLabel: patch.providerLabel ?? providerLabel,
-      issuer: patch.issuer ?? issuer,
-      clientId: patch.clientId ?? clientId,
-      scopes: patch.scopes ?? scopes,
-      redirectUri: patch.redirectUri ?? redirectUri ?? undefined,
-      accessToken: patch.accessToken ?? accessToken ?? undefined,
-      idToken: patch.idToken ?? idToken ?? undefined,
-      refreshToken: patch.refreshToken ?? refreshToken ?? undefined,
-      tokenExpiresAt: patch.tokenExpiresAt ?? tokenExpiresAt,
-      tokenKind: patch.tokenKind ?? tokenKind,
-      serverProvider: patch.serverProvider ?? serverProvider ?? undefined,
-    });
+    const next: ServerOAuthConfig = {
+      enabled,
+      providerLabel,
+      issuer,
+      clientId,
+      scopes,
+      redirectUri,
+      accessToken,
+      idToken,
+      refreshToken,
+      tokenExpiresAt,
+      tokenKind,
+      serverProvider,
+      authorizeEndpoint,
+      tokenEndpoint,
+      ...patch,
+    };
+    onChange(next.enabled ? next : undefined);
   };
 
   const onPresetChange = (next: string) => {
     setPresetId(next);
     const np = OAUTH_PRESETS.find((p) => p.id === next) ?? OAUTH_PRESETS[0];
+    const patch: Partial<ServerOAuthConfig> = {};
     if (!providerLabel.trim() || providerLabel === preset.label) {
+      patch.providerLabel = np.label;
       setProviderLabel(np.label);
-      emit({ providerLabel: np.label });
     }
     if (!scopes.trim() || scopes === preset.defaultScopes) {
+      patch.scopes = np.defaultScopes;
       setScopes(np.defaultScopes);
-      emit({ scopes: np.defaultScopes });
     }
     if (np.issuer && (!issuer.trim() || issuer === preset.issuer)) {
+      patch.issuer = np.issuer;
       setIssuer(np.issuer);
-      emit({ issuer: np.issuer });
     }
     // Apply token kind + manual endpoints baked into the preset (GitHub
     // is opaque + non-OIDC; Google is jwt + OIDC; etc.). For "custom"
     // we don't override anything.
     if (np.tokenKind && np.id !== "custom") {
+      patch.tokenKind = np.tokenKind;
       setTokenKind(np.tokenKind);
-      emit({ tokenKind: np.tokenKind });
     }
     if (np.authorizeEndpoint !== undefined) {
+      patch.authorizeEndpoint = np.authorizeEndpoint;
       setAuthorizeEndpoint(np.authorizeEndpoint);
-      emit({ authorizeEndpoint: np.authorizeEndpoint });
     }
     if (np.tokenEndpoint !== undefined) {
+      patch.tokenEndpoint = np.tokenEndpoint;
       setTokenEndpoint(np.tokenEndpoint);
-      emit({ tokenEndpoint: np.tokenEndpoint });
     }
     // Default the server-provider hint to the preset id for opaque flows
     // so the user sees a sensible default ("github") matching what
     // obbyircd's oauth-provider {} block would typically be named.
     if (np.tokenKind === "opaque" && !serverProvider.trim()) {
+      patch.serverProvider = np.id;
       setServerProvider(np.id);
-      emit({ serverProvider: np.id });
     }
+    emit(patch);
   };
 
   const handleSignIn = async () => {
@@ -283,7 +286,7 @@ export const OAuthSection: React.FC<OAuthSectionProps> = ({
             setEnabled(e.target.checked);
             emit({ enabled: e.target.checked });
           }}
-          className="accent-discord-accent rounded"
+          className="accent-discord-primary rounded"
         />
         <label
           htmlFor="oauthEnabled"

@@ -9,7 +9,8 @@ export type SettingValue =
   | number
   | boolean
   | string[]
-  | Record<string, unknown>;
+  | Record<string, unknown>
+  | null;
 
 /**
  * Setting control types for UI rendering
@@ -131,7 +132,9 @@ export type SettingCategory =
   | "preferences"
   | "privacy"
   | "media"
+  | "calls"
   | "account"
+  | "invitations"
   | "advanced"
   | "experimental"
   | "accessibility"

@@ -28,13 +28,14 @@ export function handleTopic(
   serverId: string,
   source: string,
   parv: string[],
-  _mtags: Record<string, string> | undefined,
+  mtags: Record<string, string> | undefined,
 ): void {
   const channelName = parv[0];
   const topic = parv.slice(1).join(" ");
   const sender = getNickFromNuh(source);
   ctx.triggerEvent("TOPIC", {
     serverId,
+    mtags,
     channelName,
     topic,
     sender,
@@ -153,6 +154,19 @@ export function handleListEnd(
   _mtags: Record<string, string> | undefined,
 ): void {
   ctx.triggerEvent("LIST_END", { serverId });
+}
+
+export function handleJoinRefused(
+  ctx: IRCClientContext,
+  serverId: string,
+  parv: string[],
+  isThrottled: boolean,
+): void {
+  ctx.triggerEvent("JOIN_REFUSED", {
+    serverId,
+    channelName: parv[1],
+    isThrottled,
+  });
 }
 
 export function handleRplChannelModeIs(

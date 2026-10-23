@@ -58,47 +58,41 @@ describe("StandardReplyNotification", () => {
     expect(screen.queryByText(/^FAIL$/)).not.toBeInTheDocument();
   });
 
-  test("FAIL applies red severity styling", () => {
-    render(<StandardReplyNotification {...baseProps} type="FAIL" />);
-    const card = document.querySelector(".bg-red-100");
-    expect(card).toHaveClass("bg-red-100", "border-red-300");
-    expect(card).toHaveClass("dark:bg-red-950/50", "dark:border-red-700");
+  test("reads as a plain event row with only the failure text tinted red", () => {
+    const { rerender } = render(
+      <StandardReplyNotification {...baseProps} type="FAIL" />,
+    );
+    expect(
+      screen.getByTestId("enhanced-link-wrapper").closest(".text-red-300"),
+    ).not.toBeNull();
+    rerender(<StandardReplyNotification {...baseProps} type="NOTE" />);
+    expect(document.querySelector(".text-red-300")).toBeNull();
+    expect(
+      document.querySelector(
+        "[class*='bg-red-'],[class*='bg-blue-'],[class*='border-']",
+      ),
+    ).toBeNull();
   });
 
-  test("WARN applies yellow severity styling", () => {
-    render(<StandardReplyNotification {...baseProps} type="WARN" />);
-    const card = document.querySelector(".bg-yellow-100");
-    expect(card).toHaveClass("bg-yellow-100", "border-yellow-300");
-  });
-
-  test("NOTE applies blue severity styling", () => {
-    render(<StandardReplyNotification {...baseProps} type="NOTE" />);
-    const card = document.querySelector(".bg-blue-100");
-    expect(card).toHaveClass("bg-blue-100", "border-blue-300");
-  });
-
-  test("renders context strings as chips alongside the description", () => {
+  test("keeps context identifiers off the row and on its title", () => {
     render(
       <StandardReplyNotification
         {...baseProps}
-        type="FAIL"
-        context={["#foo", "alice"]}
+        type="NOTE"
+        context={["172.18.0.1", "*"]}
       />,
     );
-    expect(screen.getByText("#foo")).toBeInTheDocument();
-    expect(screen.getByText("alice")).toBeInTheDocument();
-  });
-
-  test("legacy `target` is rendered as a chip when no `context` is supplied", () => {
-    render(
-      <StandardReplyNotification {...baseProps} type="FAIL" target="#foo" />,
+    expect(screen.queryByText("172.18.0.1")).not.toBeInTheDocument();
+    expect(document.querySelector("[title]")?.getAttribute("title")).toContain(
+      "172.18.0.1",
     );
-    expect(screen.getByText("#foo")).toBeInTheDocument();
   });
 
-  test("falls back to '(no description)' when message is empty", () => {
+  test("shows the code when the server sent no description", () => {
     render(<StandardReplyNotification {...baseProps} type="FAIL" message="" />);
-    expect(screen.getByText("(no description)")).toBeInTheDocument();
+    expect(screen.getByTestId("enhanced-link-wrapper")).toHaveTextContent(
+      "INVALID_CREDENTIALS",
+    );
   });
 
   test("exposes computer-readable info via the title attribute", () => {

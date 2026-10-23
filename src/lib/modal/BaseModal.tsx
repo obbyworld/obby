@@ -1,9 +1,12 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { t } from "@lingui/core/macro";
 import type React from "react";
-import { type ReactNode, useCallback, useEffect, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
+import { useSwipeToDismiss } from "../../hooks/useSwipeToDismiss";
+import { findTextField } from "../focus";
+import { stopTouchOutsideMap } from "../leafletMap";
 
 export interface BaseModalProps {
   isOpen: boolean;
@@ -20,6 +23,17 @@ export interface BaseModalProps {
   animate?: boolean;
 }
 
+const maxWidthClasses = {
+  sm: "sm:max-w-sm",
+  md: "sm:max-w-md",
+  lg: "sm:max-w-lg",
+  xl: "sm:max-w-xl",
+  "2xl": "sm:max-w-2xl",
+  full: "sm:max-w-full",
+};
+
+// One dialog for every platform: a centered card for a mouse and a bottom
+// sheet on touch, so each dialog is written once.
 export const BaseModal: React.FC<BaseModalProps> = ({
   isOpen,
   onClose,
@@ -36,68 +50,71 @@ export const BaseModal: React.FC<BaseModalProps> = ({
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTouch = useIsTouchInput();
+  const swipeRef = useSwipeToDismiss(onClose);
+  const setModal = useCallback(
+    (el: HTMLDivElement | null) => {
+      modalRef.current = el;
+      swipeRef(el);
+    },
+    [swipeRef],
+  );
+  const titleId = useId();
 
-  // Handle ESC key press
   useEffect(() => {
     if (!isOpen || !closeOnEsc) return;
-
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
         onClose();
       }
     };
-
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
   }, [isOpen, onClose, closeOnEsc]);
 
-  // Focus management
   useEffect(() => {
     if (isOpen) {
       previousActiveElement.current = document.activeElement as HTMLElement;
+      // A touch keyboard opening on its own would cover the sheet, so we only
+      // move focus into a text field for a mouse and keyboard.
+      if (isTouch) return;
       setTimeout(() => {
-        modalRef.current?.focus();
+        const modal = modalRef.current;
+        if (!modal || modal.contains(document.activeElement)) return;
+        (findTextField(modal) ?? modal).focus();
       }, 50);
     } else {
       previousActiveElement.current?.focus();
     }
-  }, [isOpen]);
+  }, [isOpen, isTouch]);
 
-  // Handle mouse down outside (desktop only)
   const handleOverlayMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (closeOnClickOutside && e.target === e.currentTarget) {
+      if (closeOnClickOutside && !modalRef.current?.contains(e.target as Node))
         onClose();
-      }
     },
     [closeOnClickOutside, onClose],
   );
 
   if (!isOpen) return null;
 
-  const maxWidthClasses = {
-    sm: "sm:max-w-sm",
-    md: "sm:max-w-md",
-    lg: "sm:max-w-lg",
-    xl: "sm:max-w-xl",
-    "2xl": "sm:max-w-2xl",
-    full: "sm:max-w-full",
-  };
-
   const header = (title || showCloseButton) && (
-    <div className="flex items-center justify-between p-4 border-b border-discord-dark-500 flex-shrink-0">
+    <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-1 flex-shrink-0">
       {title && (
-        <h2 id="modal-title" className="text-lg font-semibold text-white">
+        <h2
+          id={titleId}
+          className="text-base font-semibold text-white min-w-0 truncate"
+        >
           {title}
         </h2>
       )}
       {showCloseButton && (
         <button
+          type="button"
           onClick={onClose}
-          className="p-1 rounded-lg hover:bg-discord-dark-400 transition-colors text-discord-text-muted hover:text-white"
-          aria-label={t`Close modal`}
+          className={`icon-button ml-auto rounded-lg ${isTouch ? "w-10 h-10" : "w-8 h-8"}`}
+          aria-label={t`Close`}
         >
           <XMarkIcon className="w-5 h-5" />
         </button>
@@ -107,70 +124,79 @@ export const BaseModal: React.FC<BaseModalProps> = ({
 
   const portalTarget = document.getElementById("root") || document.body;
 
-  if (isMobile) {
-    // Mobile: full-page view
-    const mobileContent = (
+  if (isTouch) {
+    // React bubbles portal events through the component tree, so we stop
+    // touches here or the gesture handlers around the opener would fire too.
+    return createPortal(
       <div
-        ref={modalRef}
-        tabIndex={-1}
-        className={`fixed inset-0 z-[9999] bg-discord-dark-200 flex flex-col focus:outline-none overflow-x-hidden ${
-          animate ? "animate-in fade-in" : ""
-        } ${className} ${contentClassName}`}
-        style={{
-          paddingTop: "var(--safe-area-inset-top, 0px)",
-          paddingBottom: "var(--safe-area-inset-bottom, 0px)",
-          paddingLeft: "var(--safe-area-inset-left, 0px)",
-          paddingRight: "var(--safe-area-inset-right, 0px)",
-        }}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={title ? "modal-title" : undefined}
+        className={`fixed inset-0 z-[9999] ${overlayClassName}`}
+        data-no-gesture=""
+        onTouchStart={stopTouchOutsideMap}
+        onTouchMove={stopTouchOutsideMap}
+        onTouchEnd={stopTouchOutsideMap}
       >
-        {header}
-        <div className="modal-body overflow-y-auto overflow-x-hidden flex-1 flex flex-col">
-          {children}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 scrim animate-in fade-in duration-150"
+          onClick={closeOnClickOutside ? onClose : undefined}
+        />
+        <div
+          ref={setModal}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          className={`modal-sheet absolute inset-x-0 surface-sheet focus:outline-none ${className} ${contentClassName}`}
+          style={{
+            bottom: "var(--keyboard-height, 0px)",
+            maxHeight:
+              "calc(100% - var(--keyboard-height, 0px) - var(--safe-area-inset-top, 0px) - 1rem)",
+            animation: animate
+              ? "bottom-sheet-slide-up 200ms ease-out"
+              : undefined,
+          }}
+        >
+          <span className="sheet-handle" aria-hidden />
+          {header}
+          <div className="modal-body overflow-y-auto overscroll-contain min-h-0">
+            {children}
+          </div>
         </div>
-      </div>
+      </div>,
+      portalTarget,
     );
-
-    return createPortal(mobileContent, portalTarget);
   }
 
-  // Desktop: original centered floating card
-  const desktopContent = (
+  return createPortal(
     <div
       className={`fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto p-4 ${
-        animate ? "animate-in fade-in" : ""
+        animate ? "animate-in fade-in duration-150" : ""
       } ${overlayClassName}`}
       onMouseDown={handleOverlayMouseDown}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={title ? "modal-title" : undefined}
+      aria-labelledby={title ? titleId : undefined}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
-
-      {/* Modal Content */}
+      <div className="absolute inset-0 scrim" aria-hidden="true" />
       <div
         ref={modalRef}
         tabIndex={-1}
         className={`relative w-full my-auto focus:outline-none ${maxWidthClasses[maxWidth]} ${
-          animate ? "animate-in zoom-in-95 slide-in-from-bottom-2" : ""
+          animate ? "animate-in zoom-in-95 duration-150" : ""
         } ${className}`}
       >
         <div
-          className={`bg-discord-dark-200 rounded-lg shadow-xl max-h-[calc(100vh-2rem)] flex flex-col ${contentClassName}`}
+          className={`surface-dialog max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden ${contentClassName}`}
         >
           {header}
-          <div className="modal-body overflow-y-auto flex-1 flex flex-col">
+          <div className="modal-body overflow-y-auto overscroll-contain min-h-0">
             {children}
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    portalTarget,
   );
-
-  return createPortal(desktopContent, portalTarget);
 };
 
 export default BaseModal;

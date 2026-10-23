@@ -1,5 +1,12 @@
+import { Trans } from "@lingui/react/macro";
 import type React from "react";
+import { isE2EEWarningNotice } from "../../lib/e2ee/messageFlags";
+import {
+  HISTORY_GAP_CODE,
+  LOCAL_HISTORY_TAG,
+} from "../../lib/history/historyLines";
 import { processMarkdownInText } from "../../lib/ircUtils";
+import { REDACTED_BY_TAG } from "../../store/helpers";
 import type { MessageType } from "../../types";
 import { EnhancedLinkWrapper } from "../ui/LinkWrapper";
 
@@ -26,13 +33,37 @@ export const SystemMessage: React.FC<SystemMessageProps> = ({
     message.id || message.msgid || "system",
   );
 
+  const isWarning = isE2EEWarningNotice(message);
+
   return (
-    <div className="px-4 py-1 text-discord-text-muted text-sm opacity-80">
+    <div
+      className={`px-4 py-1 text-sm ${
+        isWarning
+          ? "text-amber-400 font-medium"
+          : "text-discord-text-muted opacity-80"
+      }`}
+    >
       <div className="flex items-center gap-2">
-        <div className="w-1 h-1 rounded-full bg-discord-text-muted" />
-        <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
-          {htmlContent}
-        </EnhancedLinkWrapper>
+        <div
+          className={`w-1 h-1 rounded-full ${isWarning ? "bg-amber-400" : "bg-discord-text-muted"}`}
+        />
+        {message.tags?.[LOCAL_HISTORY_TAG] === HISTORY_GAP_CODE ? (
+          <span>
+            <Trans>Messages from this time may be missing</Trans>
+          </span>
+        ) : message.tags?.[REDACTED_BY_TAG] === "sender" ? (
+          <span>
+            <Trans>This message has been deleted by the sender</Trans>
+          </span>
+        ) : message.tags?.[REDACTED_BY_TAG] ? (
+          <span>
+            <Trans>This message has been deleted by a member of staff</Trans>
+          </span>
+        ) : (
+          <EnhancedLinkWrapper onIrcLinkClick={onIrcLinkClick}>
+            {htmlContent}
+          </EnhancedLinkWrapper>
+        )}
         <div className="text-xs opacity-70">
           {formatTime(new Date(message.timestamp))}
         </div>

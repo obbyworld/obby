@@ -1,6 +1,13 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { FaTimes } from "react-icons/fa";
+import {
+  FaFileAlt,
+  FaFilePdf,
+  FaFilm,
+  FaImage,
+  FaLock,
+  FaVolumeUp,
+} from "react-icons/fa";
 
 // Inlined from react-icons/ri — avoids loading the entire RI icon sub-package (~2.1MB).
 const RiReplyFill = ({ className }: { className?: string }) => (
@@ -18,10 +25,30 @@ const RiReplyFill = ({ className }: { className?: string }) => (
 );
 
 import { canShowImageUrl } from "../../lib/imageUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { imageCanHaveTransparency } from "../../lib/mediaUtils";
+import {
+  type AttachmentKind,
+  bodyWithoutAttachmentLinks,
+  describeAttachment,
+} from "../../lib/messageAttachments";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import useStore from "../../store";
 import type { MessageType } from "../../types";
+import { CloseButton } from "../ui/CloseButton";
+
+const KIND_ICONS = {
+  image: FaImage,
+  video: FaFilm,
+  audio: FaVolumeUp,
+  pdf: FaFilePdf,
+  file: FaFileAlt,
+} as const;
+
+const AttachmentIcon = ({ kind }: { kind: AttachmentKind }) => {
+  const Icon = KIND_ICONS[kind];
+  return <Icon className="flex-shrink-0" />;
+};
 
 interface MessageReplyProps {
   replyMessage: MessageType;
@@ -30,18 +57,6 @@ interface MessageReplyProps {
   onIrcLinkClick?: (url: string) => void;
   onReplyClick?: () => void;
   onClose?: () => void;
-}
-
-const IMAGE_URL_RE = /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i;
-
-function extractFirstImageUrl(content: string): string | null {
-  const stripped = stripIrcFormatting(content).trim();
-  const urlRegex = /https?:\/\/[^\s,]+/gi;
-  for (const raw of stripped.match(urlRegex) ?? []) {
-    const url = raw.replace(/[.,!?;:)>\]]+$/, "");
-    if (IMAGE_URL_RE.test(url) || url.includes("/images/")) return url;
-  }
-  return null;
 }
 
 export const MessageReply: React.FC<MessageReplyProps> = ({
@@ -66,16 +81,32 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
     onUsernameClick?.(e);
   };
 
-  const plainContent = stripIrcFormatting(replyMessage.content)
+  const attachment = describeAttachment(replyMessage);
+  const plainContent = stripIrcFormatting(
+    attachment
+      ? bodyWithoutAttachmentLinks(replyMessage)
+      : replyMessage.content,
+  )
     .replace(/\n+/g, " ")
     .trim();
 
-  const firstImageUrl = extractFirstImageUrl(replyMessage.content);
+  const thumbnailUrl =
+    attachment?.thumbnailUrl &&
+    canShowImageUrl(
+      attachment.thumbnailUrl,
+      mediaVisibilityLevel,
+      serverFilehosts(server),
+    )
+      ? attachment.thumbnailUrl
+      : null;
 
   const isClickable = !!onReplyClick && !onClose;
 
   return (
     <div
+      // The quote sits on a translucent ground, so a tinted row would otherwise
+      // show straight through it. This lets the row paint an opaque one.
+      data-reply-quote={onClose ? undefined : ""}
       className={`flex min-w-0 w-full overflow-hidden transition-colors
         ${
           onClose
@@ -97,39 +128,35 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
             {replyUsername}
           </span>
         </div>
-        <div
-          className={`text-xs text-${theme}-text-muted opacity-80 ${onClose ? "line-clamp-3" : "truncate"}`}
-        >
-          {plainContent}
-        </div>
-      </div>
-      {firstImageUrl &&
-        canShowImageUrl(
-          firstImageUrl,
-          mediaVisibilityLevel,
-          server?.filehost,
-        ) && (
-          <img
-            src={firstImageUrl}
-            alt=""
-            className={`w-10 h-10 rounded object-cover flex-shrink-0 self-center mr-1.5 my-1.5 ${imageCanHaveTransparency(firstImageUrl) ? "transparency-grid" : ""}`}
-            draggable={false}
-          />
+        {plainContent && (
+          <div
+            className={`text-xs text-${theme}-text-muted opacity-80 ${onClose ? "line-clamp-3" : "truncate"}`}
+          >
+            {plainContent}
+          </div>
         )}
-      {onClose && (
-        <button
-          type="button"
-          className="flex-shrink-0 self-center p-3 mr-1 rounded-lg hover:bg-white/10 text-discord-text-muted hover:text-discord-text-normal transition-colors"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          aria-label={t`Cancel reply`}
-        >
-          <FaTimes className="text-base" />
-        </button>
+        {attachment && (
+          <div className="flex items-center gap-1.5 text-xs text-discord-text-muted opacity-80 min-w-0">
+            {attachment.encrypted ? (
+              <FaLock className="flex-shrink-0 text-discord-green" />
+            ) : (
+              <AttachmentIcon kind={attachment.kind} />
+            )}
+            <span className="truncate">{attachment.name}</span>
+          </div>
+        )}
+      </div>
+      {thumbnailUrl && (
+        <img
+          src={thumbnailUrl}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className={`w-10 h-10 rounded object-cover flex-shrink-0 self-center mr-1.5 my-1.5 ${imageCanHaveTransparency(thumbnailUrl) ? "transparency-grid" : ""}`}
+          draggable={false}
+        />
       )}
+      {onClose && <CloseButton label={t`Cancel reply`} onClick={onClose} />}
     </div>
   );
 };

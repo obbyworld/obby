@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Privacy Policy - ObsidianIRC";
+    document.title = "Privacy Policy - Obby";
   }, []);
 
   return (
@@ -17,14 +17,14 @@ const PrivacyPolicy = () => {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 bg-discord-primary rounded-lg flex items-center justify-center">
               <img
-                src="/images/obsidian.png"
-                alt={t`ObsidianIRC`}
+                src="/images/obby.png"
+                alt={t`Obby`}
                 className="w-full h-full rounded-lg"
               />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-discord-channels-active">
-                ObsidianIRC
+                Obby
               </h1>
               <p className="text-discord-text-muted text-lg">Privacy Policy</p>
             </div>
@@ -58,8 +58,8 @@ const PrivacyPolicy = () => {
             </h2>
             <div className="space-y-4 text-discord-text-normal leading-relaxed">
               <p>
-                ObsidianIRC is a modern IRC client that connects you to Internet
-                Relay Chat (IRC) servers of your choice. We are committed to
+                Obby is a modern IRC client that connects you to Internet Relay
+                Chat (IRC) servers of your choice. We are committed to
                 protecting your privacy and being transparent about how we
                 handle your data.
               </p>
@@ -455,10 +455,10 @@ const PrivacyPolicy = () => {
               Children's Privacy
             </h2>
             <p className="text-discord-text-normal leading-relaxed">
-              ObsidianIRC is not directed to children under 13. We do not
-              knowingly collect personal information from children under 13. If
-              we become aware that we have collected such information, we will
-              delete it promptly.
+              Obby is not directed to children under 13. We do not knowingly
+              collect personal information from children under 13. If we become
+              aware that we have collected such information, we will delete it
+              promptly.
             </p>
           </section>
 
@@ -543,7 +543,7 @@ const PrivacyPolicy = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="mailto:obsidianirc@gmail.com"
+                  href="mailto:support@obby.world"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-discord-dark-200 text-discord-text-normal rounded-lg hover:bg-discord-dark-300 transition-colors border border-discord-dark-500/30"
                 >
                   <svg
@@ -559,10 +559,10 @@ const PrivacyPolicy = () => {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  obsidianirc@gmail.com
+                  support@obby.world
                 </a>
                 <a
-                  href="https://github.com/ObsidianIRC/ObsidianIRC"
+                  href="https://github.com/obbyworld/obby"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-discord-dark-200 text-discord-text-normal rounded-lg hover:bg-discord-dark-300 transition-colors border border-discord-dark-500/30"
@@ -585,11 +585,11 @@ const PrivacyPolicy = () => {
         <footer className="mt-8 pt-8 border-t border-discord-dark-500/30">
           <div className="text-center">
             <p className="text-discord-text-muted text-sm mb-4">
-              &copy; 2025 ObsidianIRC. Open source IRC client.
+              &copy; 2025 Obby. Open source IRC client.
             </p>
             <button
               onClick={() => navigate("/")}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-discord-primary text-white rounded-lg hover:bg-discord-primary/80 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-2.5 button-primary rounded-lg transition-all"
             >
               <svg
                 className="w-4 h-4"

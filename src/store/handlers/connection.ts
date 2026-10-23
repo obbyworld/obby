@@ -1,4 +1,6 @@
+import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { isLiveChannel } from "../../lib/channelFolders";
 import ircClient from "../../lib/ircClient";
 import type { PrivateChat } from "../../types";
 import {
@@ -9,15 +11,85 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { reportServerReply } from "./serverReplies";
 
 // Track which servers have had their ready handler run to prevent duplicate processing
 export const readyProcessedServers = new Set<string>();
 
 export function registerConnectionHandlers(store: StoreApi<AppState>): void {
+  ircClient.on("MOTD", ({ serverId, lines }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, motd: lines } : server,
+      ),
+    }));
+    const { globalSettings, servers, addMessage } = store.getState();
+    if (!globalSettings.showMotd) return;
+    addMessage({
+      id: uuidv4(),
+      type: "notice",
+      content: lines.join("\n"),
+      timestamp: new Date(),
+      userId: servers.find((s) => s.id === serverId)?.name ?? "MOTD",
+      channelId: "server-notices",
+      serverId,
+      reactions: [],
+      replyMessage: null,
+      mentioned: [],
+    });
+  });
+
+  ircClient.on("rateLimited", ({ serverId, message }) =>
+    reportServerReply(store, {
+      serverId,
+      type: "warn",
+      command: "ERROR",
+      code: "RATE_LIMITED",
+      message,
+    }),
+  );
+
+  // A dropped link reconnects on its own and the connection strip shows it, so we file it as a note.
+  ircClient.on("serverError", ({ serverId, message }) =>
+    reportServerReply(store, {
+      serverId,
+      type: "note",
+      command: "ERROR",
+      code: "SERVER_ERROR",
+      message,
+    }),
+  );
+
+  ircClient.on("rawLine", ({ serverId, direction, line }) => {
+    store.getState().appendRawLogLine({ serverId, direction, line });
+  });
+
+  ircClient.on("ISUPPORT", ({ serverId, key, value }) => {
+    if (key !== "NETWORK" || !value) return;
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, networkName: value } : s,
+      ),
+    }));
+  });
+
+  ircClient.on("saslFailed", ({ serverId }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId ? { ...s, saslFailed: true } : s,
+      ),
+    }));
+  });
+
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
       readyProcessedServers.delete(serverId);
+      // e2ee ratchet keys live only in memory and can't survive a dropped
+      // connection, so tear the sessions down rather than keep showing a lock
+      // that no longer protects anything. Encryption resumes after reconnecting,
+      // which is why this is not the same call the user's End encryption makes.
+      store.getState().dropE2EESessionsForServer(serverId);
     }
 
     store.setState((state) => {
@@ -39,6 +111,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           channels,
           connectionState,
           isConnected: connectionState === "connected",
+          isRegistered: false,
+          webPushFailure: undefined,
+          account: connectionState === "connected" ? server.account : undefined,
+          saslFailed:
+            connectionState === "connecting" ? false : server.saslFailed,
         };
       });
 
@@ -72,6 +149,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("ready", ({ serverId, serverName, nickname }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, isRegistered: true } : server,
+      ),
+    }));
     // Prevent processing the same server's ready event multiple times
     if (readyProcessedServers.has(serverId)) {
       return;
@@ -143,41 +225,22 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       });
     }
 
-    // Subscribe and sync own metadata in the background — don't await so channel joins
-    // happen immediately. The metadata send runs 1 s later inside fetchAndMergeOwnMetadata.
+    // We read our metadata from the server, which keeps it.
+    //
+    // We deliberately do NOT send METADATA SUB any more. The server's
+    // join-time push of every subscribed key for every existing channel
+    // member is the "metadata firehose": on a 500-user channel that's
+    // hundreds of pushes in a burst, in the server's internal iteration
+    // order (which on rejoin appears reverse-of-set, so users see
+    // avatars/display-names trickling in from the bottom of the
+    // nicklist). Since the client already lazy-GETs metadata as nicks
+    // come into view (MemberList.flushVisible), SUB is pure overhead --
+    // we'd be paying the firehose cost twice (once for SUB push, once
+    // for our own GETs). Live updates after the initial GET are not
+    // visible to us, but display-name / avatar don't change often and
+    // the profile modal re-GETs anyway.
     if (serverSupportsMetadata(store.getState(), serverId)) {
-      // Always re-send SUB on every connect — some servers don't persist subscriptions across sessions.
-      const defaultKeys = [
-        "url",
-        "website",
-        "status",
-        "location",
-        "avatar",
-        "color",
-        "display-name",
-        "bot",
-      ];
-      store.getState().metadataSub(serverId, defaultKeys);
-
-      fetchAndMergeOwnMetadata(store, serverId).then(() => {
-        const savedMetadataAfterMerge = storage.metadata.load();
-        const serverMetadataAfterMerge = savedMetadataAfterMerge[serverId];
-        const ourNick = ircClient.getNick(serverId);
-        if (serverMetadataAfterMerge && ourNick) {
-          const ourMetadata = serverMetadataAfterMerge[ourNick];
-          if (ourMetadata) {
-            Object.entries(ourMetadata).forEach(
-              ([key, { value, visibility }]) => {
-                if (value !== undefined) {
-                  store
-                    .getState()
-                    .metadataSet(serverId, "*", key, value, visibility);
-                }
-              },
-            );
-          }
-        }
-      });
+      ircClient.metadataGet(serverId, "*", OWN_METADATA_KEYS);
     }
 
     store.setState((state) => {
@@ -243,6 +306,14 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
+      // Skip client-side rejoin for bouncer sessions; soju replays after BIND.
+      const reconnectingServer = store
+        .getState()
+        .servers.find((s) => s.id === serverId);
+      const isBouncerSession =
+        !!reconnectingServer?.isBouncerControl ||
+        !!reconnectingServer?.bouncerNetid;
+
       // Get the saved channel order for this server
       const savedChannelOrder = store.getState().channelOrder[serverId];
 
@@ -256,24 +327,26 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         channelsToJoin = savedServer.channels;
       }
 
-      for (const channelName of channelsToJoin) {
-        if (channelName) {
-          store.getState().joinChannel(serverId, channelName);
+      if (!isBouncerSession) {
+        for (const channelName of channelsToJoin) {
+          if (channelName) {
+            store.getState().joinChannel(serverId, channelName);
+          }
         }
       }
 
-      // chathistoryRequested is reset to false on disconnect — re-fetch missed history
-      // for channels that were already joined (ircClient.joinChannel early-returns for them,
-      // so CHATHISTORY never gets sent through the normal join path)
+      // Re-fetch CHATHISTORY for already-joined channels: ircClient.joinChannel
+      // early-returns for them, so the normal join path doesn't send it.
+      // soju bouncer control sessions have no real channels — skip.
       setTimeout(() => {
         const reconnectedServer = store
           .getState()
           .servers.find((s) => s.id === serverId);
         if (!reconnectedServer) return;
+        if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
-          if (!ch.chathistoryRequested) {
-            ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${ch.name} * 50`);
-          }
+          if (!ch.chathistoryRequested)
+            ircClient.loadLatestHistory(serverId, ch.name);
         }
       }, 50);
 
@@ -290,18 +363,22 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         const savedPrivateChatId = serverSelection?.selectedPrivateChatId;
         const server = currentState.servers.find((s) => s.id === serverId);
 
-        if (server && savedChannelId) {
-          const channelExists = server.channels.some(
-            (c) => c.id === savedChannelId,
-          );
+        const savedChannel = server?.channels.find(
+          (c) => c.id === savedChannelId,
+        );
+        if (savedChannel && isLiveChannel(savedChannel.name)) {
+          store.getState().selectChannel(null);
+        } else if (server && savedChannelId) {
+          const channelExists = !!savedChannel;
           if (!channelExists) {
             // ID mismatch - try to restore by name
             const savedName = serverSelection?.selectedChannelName;
-            const matchedByName = savedName
-              ? server.channels.find(
-                  (c) => c.name.toLowerCase() === savedName.toLowerCase(),
-                )
-              : null;
+            const matchedByName =
+              savedName && !isLiveChannel(savedName)
+                ? server.channels.find(
+                    (c) => c.name.toLowerCase() === savedName.toLowerCase(),
+                  )
+                : null;
 
             if (matchedByName) {
               console.log(
@@ -493,7 +570,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       // Request chathistory for each pinned PM
       setTimeout(() => {
         for (const { username } of sortedPinnedChats) {
-          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${username} * 50`);
+          ircClient.requestChathistoryLatest(serverId, username);
         }
       }, 50);
 
@@ -556,50 +633,13 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
   });
 }
 
-// Inlined from fetchAndMergeOwnMetadata in index.ts — uses store instead of useStore
-async function fetchAndMergeOwnMetadata(
-  store: StoreApi<AppState>,
-  serverId: string,
-): Promise<void> {
-  return new Promise((resolve) => {
-    const nickname = ircClient.getNick(serverId);
-    if (!nickname) {
-      resolve();
-      return;
-    }
-
-    // Mark as fetching
-    store.setState((state) => ({
-      metadataFetchInProgress: {
-        ...state.metadataFetchInProgress,
-        [serverId]: true,
-      },
-    }));
-
-    // Request all metadata for ourselves (target "*" means us)
-    const defaultKeys = [
-      "url",
-      "website",
-      "status",
-      "location",
-      "avatar",
-      "color",
-      "display-name",
-    ];
-
-    // Get our metadata from the server
-    ircClient.metadataGet(serverId, "*", defaultKeys);
-
-    // Wait a bit for responses to come in, then resolve
-    // The METADATA_KEYVALUE handler will update saved values
-    setTimeout(() => {
-      store.setState((state) => ({
-        metadataFetchInProgress: {
-          ...state.metadataFetchInProgress,
-          [serverId]: false,
-        },
-      }));
-      resolve();
-    }, 1000);
-  });
-}
+// The profile fields the settings page edits.
+const OWN_METADATA_KEYS = [
+  "display-name",
+  "avatar",
+  "homepage",
+  "status",
+  "color",
+  "bot",
+  "pronouns",
+];

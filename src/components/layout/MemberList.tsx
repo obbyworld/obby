@@ -1,16 +1,22 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
+import { useShallow } from "zustand/react/shallow";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { getStatusPriority } from "../../lib/channelStatus";
 import ircClient from "../../lib/ircClient";
-import { getColorStyle, processMarkdownInText } from "../../lib/ircUtils";
+import {
+  getColorStyle,
+  processMarkdownInText,
+  serverFilehosts,
+} from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
+import OperatorKey from "../ui/OperatorKey";
 import UserContextMenu from "../ui/UserContextMenu";
-import UserProfileModal from "../ui/UserProfileModal";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   let bgColor = "bg-discord-dark-500"; // Default/offline
@@ -24,33 +30,6 @@ const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
   }
 
   return <div className={`w-3 h-3 rounded-full ${bgColor}`} />;
-};
-
-const getStatusPriority = (status?: string): number => {
-  if (!status) return 1;
-  let maxPriority = 1;
-  for (const char of status) {
-    let priority = 1;
-    switch (char) {
-      case "~":
-        priority = 6; // owner
-        break;
-      case "&":
-        priority = 5; // admin
-        break;
-      case "@":
-        priority = 4; // chanop
-        break;
-      case "%":
-        priority = 3; // halfop
-        break;
-      case "+":
-        priority = 2; // voice
-        break;
-    }
-    if (priority > maxPriority) maxPriority = priority;
-  }
-  return maxPriority;
 };
 
 const getStatusChar = (status?: string): string => {
@@ -96,7 +75,17 @@ const UserItem: React.FC<{
     channelId: string,
     avatarElement?: Element | null,
   ) => void;
-}> = ({ user, serverId, channelId, currentUser, onContextMenu }) => {
+  // The very first member item gets refMeasure(el) so the parent can
+  // sample offsetHeight for its scrollTop-based visibility math.
+  refMeasure?: (el: HTMLDivElement | null) => void;
+}> = ({
+  user,
+  serverId,
+  channelId,
+  currentUser,
+  onContextMenu,
+  refMeasure,
+}) => {
   const { t } = useLingui();
   const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
 
@@ -146,20 +135,25 @@ const UserItem: React.FC<{
     user.username.toLowerCase() === user.account.toLowerCase();
 
   const shouldShowAvatar =
-    canShowAvatarUrl(avatarUrl, server?.filehost, mediaSettings) &&
+    canShowAvatarUrl(avatarUrl, serverFilehosts(server), mediaSettings) &&
     !avatarLoadFailed;
   // Reset avatar load failed state when avatar URL changes
   useEffect(() => {
     setAvatarLoadFailed(false);
   }, []);
 
+  const openMenu = (e: React.MouseEvent<HTMLDivElement>) => {
+    const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
+    onContextMenu(e, user.username, serverId, channelId, avatarElement);
+  };
+
   return (
     <div
+      ref={refMeasure}
+      data-username={user.username}
       className="flex items-center gap-3 py-2 px-3 mx-2 mb-1 rounded cursor-pointer bg-discord-dark-400/30 hover:bg-discord-dark-400/50 transition-colors"
-      onClick={(e) => {
-        const avatarElement = e.currentTarget.querySelector(".w-10.h-10");
-        onContextMenu(e, user.username, serverId, channelId, avatarElement);
-      }}
+      onClick={openMenu}
+      onContextMenu={openMenu}
     >
       {/* Avatar with status indicator */}
       <div className="relative shrink-0">
@@ -179,6 +173,9 @@ const UserItem: React.FC<{
         </div>
         {/* Status indicator overlay */}
         <span
+          role="img"
+          aria-label={user.isAway ? t`Away` : t`Online`}
+          title={user.isAway ? t`Away` : t`Online`}
           className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-discord-dark-200 ${
             user.isAway ? "bg-yellow-500" : "bg-green-500"
           }`}
@@ -189,14 +186,7 @@ const UserItem: React.FC<{
       <div className="flex flex-col truncate min-w-0 flex-1">
         {/* Display name or username with badges */}
         <div className="flex items-center gap-1">
-          {!displayName && isIrcOp && (
-            <span
-              className="inline-flex items-center justify-center p-2.5 w-4 h-4 text-xs text-white bg-blue-500 rounded font-bold"
-              title={t`IRC Operator`}
-            >
-              🔑
-            </span>
-          )}
+          {!displayName && isIrcOp && <OperatorKey className="ml-0.5" />}
           {user.status && (
             <span
               className="shrink-0 bg-blue-600 text-white px-1.5 py-0.5 rounded text-xs font-bold shadow-sm"
@@ -218,14 +208,7 @@ const UserItem: React.FC<{
                 title={t`Verified account`}
               />
             )}
-            {!displayName && isOperator && (
-              <span
-                className="inline ml-1 bg-red-600 text-white px-3 py-0.5 rounded text-xs font-bold"
-                title={t`IRC Operator`}
-              >
-                🔑
-              </span>
-            )}
+            {!displayName && isOperator && <OperatorKey className="ml-0.5" />}
             {!displayName && isBot && (
               <span className="ml-1 group relative">
                 🤖
@@ -254,14 +237,7 @@ const UserItem: React.FC<{
                     title={t`Verified account`}
                   />
                 )}
-                {(isIrcOp || isOperator) && (
-                  <span
-                    className="ml-0.5 inline-flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-500 rounded"
-                    title={t`IRC Operator`}
-                  >
-                    🔑
-                  </span>
-                )}
+                {(isIrcOp || isOperator) && <OperatorKey className="ml-0.5" />}
                 {isBot && <span className="ml-0.5">🤖</span>}
               </span>
               {(user.realname || metadataStatus || website) && (
@@ -310,7 +286,8 @@ export const MemberList: React.FC = () => {
   const { t } = useLingui();
   const {
     servers,
-    ui,
+    selectedServerId,
+    perServerSelections,
     currentUser,
     toggleMemberList,
     openPrivateChat,
@@ -319,14 +296,101 @@ export const MemberList: React.FC = () => {
     kickUser,
     banUserByNick,
     banUserByHostmask,
-  } = useStore();
+    openProfile,
+  } = useStore(
+    useShallow((state) => ({
+      servers: state.servers,
+      selectedServerId: state.ui.selectedServerId,
+      perServerSelections: state.ui.perServerSelections,
+      currentUser: state.currentUser,
+      toggleMemberList: state.toggleMemberList,
+      openPrivateChat: state.openPrivateChat,
+      selectPrivateChat: state.selectPrivateChat,
+      warnUser: state.warnUser,
+      kickUser: state.kickUser,
+      banUserByNick: state.banUserByNick,
+      banUserByHostmask: state.banUserByHostmask,
+      openProfile: state.openProfile,
+    })),
+  );
 
-  const selectedServerId = ui.selectedServerId;
-  const currentSelection = ui.perServerSelections[selectedServerId || ""] || {
+  const currentSelection = perServerSelections[selectedServerId || ""] || {
     selectedChannelId: null,
     selectedPrivateChatId: null,
   };
   const { selectedChannelId } = currentSelection;
+
+  // Lazy-metadata wiring: on scroll-stop, compute which slice of
+  // sortedUsers is currently inside the scroll container's viewport
+  // (from scrollTop + clientHeight, not IntersectionObserver -- IO was
+  // misreporting on this layout, fetching members from the bottom of
+  // the list upward instead of from the visible top). Then dispatch
+  // METADATA LIST for that slice in top-to-bottom order. The store
+  // dedups and the lazy queue drips so a burst of new visible nicks
+  // can't hammer the server (issue #116).
+  const SCROLL_IDLE_MS = 250;
+  // Cap per scroll-stop so a sudden landing on a wall of unfetched
+  // nicks doesn't queue hundreds at once.
+  const MAX_FETCH_PER_FLUSH = 30;
+  // Render a couple of off-screen rows ahead/behind so the avatars are
+  // ready by the time the user scrolls to them.
+  const VISIBILITY_OVERSCAN = 5;
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const firstItemRef = useRef<HTMLDivElement | null>(null);
+  // Mirror of the current sorted member list so flushVisible can map an
+  // index back to a nick without going through React state.
+  const sortedOrderRef = useRef<string[]>([]);
+  const flushTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  const flushVisible = useCallback(() => {
+    if (!selectedServerId) return;
+    const root = scrollContainerRef.current;
+    const order = sortedOrderRef.current;
+    if (!root || order.length === 0) return;
+    const itemHeight = firstItemRef.current?.offsetHeight || 56;
+    const start = Math.max(
+      0,
+      Math.floor(root.scrollTop / itemHeight) - VISIBILITY_OVERSCAN,
+    );
+    const end = Math.min(
+      order.length,
+      Math.ceil((root.scrollTop + root.clientHeight) / itemHeight) +
+        VISIBILITY_OVERSCAN,
+    );
+    if (end <= start) return;
+    const list = useStore.getState().metadataList;
+    let queued = 0;
+    for (let i = start; i < end && queued < MAX_FETCH_PER_FLUSH; i++) {
+      const username = order[i];
+      if (!username) continue;
+      list(selectedServerId, username);
+      queued++;
+    }
+  }, [selectedServerId]);
+
+  const scheduleFlush = useCallback(() => {
+    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    flushTimerRef.current = setTimeout(flushVisible, SCROLL_IDLE_MS);
+  }, [flushVisible]);
+
+  useEffect(() => {
+    const root = scrollContainerRef.current;
+    if (!root) return;
+    const onScroll = () => scheduleFlush();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    // Initial sweep once layout has settled so the topmost visible
+    // chunk gets fetched without requiring user interaction.
+    scheduleFlush();
+    return () => {
+      root.removeEventListener("scroll", onScroll);
+      if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
+    };
+  }, [scheduleFlush]);
+
+  // (Initial-sweep re-arm useEffect moved below sortedUsers declaration
+  //  -- see "memberlist sweep" comment further down.)
 
   const [userContextMenu, setUserContextMenu] = useState<{
     isOpen: boolean;
@@ -353,9 +417,6 @@ export const MemberList: React.FC = () => {
     action: "warn",
     username: "",
   });
-
-  const [userProfileModalOpen, setUserProfileModalOpen] = useState(false);
-  const [selectedProfileUsername, setSelectedProfileUsername] = useState("");
 
   const selectedServer = servers.find(
     (server) => server.id === selectedServerId,
@@ -396,6 +457,22 @@ export const MemberList: React.FC = () => {
     }
     return a.username.localeCompare(b.username);
   });
+  // Keep an order ref so flushVisible (a stable useCallback) can find
+  // each visible nick's on-screen position without going back into the
+  // store. Updated synchronously during render -- read in callbacks
+  // that fire after.
+  sortedOrderRef.current = sortedUsers?.map((u) => u.username) ?? [];
+
+  // memberlist sweep: re-arm flushVisible whenever (a) the channel
+  // changes or (b) the user count changes -- in particular when it
+  // jumps from 0 to N as the batched WHO reply lands. Without this the
+  // very first flushVisible runs while sortedOrderRef is still empty
+  // (returns early, no fetch) and we then wait for a scroll event
+  // before any metadata is requested.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scheduleFlush identity is stable
+  useEffect(() => {
+    scheduleFlush();
+  }, [selectedChannelId, sortedUsers?.length]);
 
   const handleUsernameClick = (
     e: React.MouseEvent,
@@ -517,13 +594,15 @@ export const MemberList: React.FC = () => {
   };
 
   const handleOpenProfile = (username: string) => {
-    setSelectedProfileUsername(username);
-    setUserProfileModalOpen(true);
+    if (selectedServerId) openProfile(selectedServerId, username);
   };
 
   const isMobileView = useMediaQuery();
   return (
-    <div className="px-1 py-3 h-full overflow-y-auto">
+    <div
+      ref={scrollContainerRef}
+      className="px-1 pt-3 pb-[max(0.75rem,var(--safe-area-inset-bottom))] h-full overflow-y-auto"
+    >
       {isMobileView && (
         <button
           onClick={() => toggleMemberList(false)}
@@ -535,7 +614,7 @@ export const MemberList: React.FC = () => {
       <h3 className="text-xs font-semibold text-discord-channels-default uppercase mb-2 px-2">
         <Trans>Members — {sortedUsers?.length || 0}</Trans>
       </h3>
-      {sortedUsers?.map((user) => (
+      {sortedUsers?.map((user, idx) => (
         <UserItem
           key={user.id}
           user={user}
@@ -543,6 +622,13 @@ export const MemberList: React.FC = () => {
           channelId={selectedChannelId || ""}
           currentUser={currentUser}
           onContextMenu={handleUsernameClick}
+          refMeasure={
+            idx === 0
+              ? (el) => {
+                  firstItemRef.current = el;
+                }
+              : undefined
+          }
         />
       ))}
 
@@ -552,7 +638,6 @@ export const MemberList: React.FC = () => {
         y={userContextMenu.y}
         username={userContextMenu.username}
         serverId={userContextMenu.serverId}
-        channelId={userContextMenu.channelId}
         onClose={handleCloseUserContextMenu}
         onOpenPM={handleOpenPM}
         onOpenProfile={handleOpenProfile}
@@ -560,6 +645,11 @@ export const MemberList: React.FC = () => {
         currentUsername={
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
+        onPickBotCommand={(botNick, command) => {
+          useStore
+            .getState()
+            .requestBotCommandPick(userContextMenu.serverId, botNick, command);
+        }}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
@@ -623,15 +713,6 @@ export const MemberList: React.FC = () => {
         username={moderationModal.username}
         action={moderationModal.action}
       />
-
-      {selectedServerId && (
-        <UserProfileModal
-          isOpen={userProfileModalOpen}
-          onClose={() => setUserProfileModalOpen(false)}
-          serverId={selectedServerId}
-          username={selectedProfileUsername}
-        />
-      )}
     </div>
   );
 };

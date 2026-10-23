@@ -1,5 +1,7 @@
+import { t } from "@lingui/core/macro";
 import type React from "react";
 import { useState } from "react";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 
@@ -14,6 +16,7 @@ interface MessageAvatarProps {
   onClick?: (e: React.MouseEvent) => void;
   isClickable?: boolean;
   serverId?: string;
+  showPresence?: boolean;
 }
 
 export const MessageAvatar: React.FC<MessageAvatarProps> = ({
@@ -27,6 +30,7 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
   onClick,
   isClickable = false,
   serverId,
+  showPresence = true,
 }) => {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const username = userId;
@@ -40,7 +44,7 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
 
   const shouldShowAvatar = canShowAvatarUrl(
     avatarUrl,
-    server?.filehost,
+    serverFilehosts(server),
     mediaSettings,
   );
 
@@ -70,10 +74,14 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
         ) : (
           username.charAt(0).toUpperCase()
         )}
-        {/* Presence indicator - green if here, yellow if away */}
-        <div
-          className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-discord-dark-600 ${isAway ? "bg-discord-yellow" : "bg-discord-green"}`}
-        />
+        {showPresence && (
+          <div
+            role="img"
+            aria-label={isAway ? t`Away` : t`Online`}
+            title={isAway ? t`Away` : t`Online`}
+            className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-discord-dark-600 ${isAway ? "bg-discord-yellow" : "bg-discord-green"}`}
+          />
+        )}
         {userStatus && (
           <div className="absolute -bottom-1 -left-1 bg-discord-dark-600 rounded-full p-1">
             <div className="w-3 h-3 bg-yellow-400 rounded-full flex items-center justify-center">

@@ -1,4 +1,4 @@
-# Home Manager module: `programs.obsidianirc`.
+# Home Manager module: `programs.obby`.
 #
 # Consumer patterns (Home Manager manual — Nix Flakes):
 # - Pin inputs: prefer `inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs"` in the *consumer* flake so HM and
@@ -6,7 +6,7 @@
 # - NixOS: import `home-manager.nixosModules.home-manager`; set `home-manager.useGlobalPkgs = true`, and normally
 #   `home-manager.useUserPackages = true` (recommended for `/etc/profiles`/build-vm ergonomics).
 # - Pass `home-manager.extraSpecialArgs = { inherit inputs; };` when modules need flake inputs (unlocks
-#   `inputs.obsidianirc.packages.${pkgs.system}.default` overrides).
+#   `inputs.obby.packages.${pkgs.system}.default` overrides).
 #
 # Overlay note: With `useGlobalPkgs`, `home-manager.users.<you>.nixpkgs.overlays` does not mutate the shared `pkgs`;
 # merge ./overlay.nix into the `nixpkgs` instantiation that feeds Home Manager (`nixpkgs.overlays`, flake `nixpkgs` import, …).
@@ -17,7 +17,7 @@
   ...
 }:
 let
-  cfg = config.programs.obsidianirc;
+  cfg = config.programs.obby;
 
   inherit (lib)
     all
@@ -45,25 +45,25 @@ let
 
 in
 {
-  options.programs.obsidianirc = {
-    enable = mkEnableOption "ObsidianIRC — Modern IRC Client for the web, desktop and mobile.";
+  options.programs.obby = {
+    enable = mkEnableOption "Obby — Modern IRC Client for the web, desktop and mobile.";
 
     package = mkOption {
       type = types.package;
       default =
-        if hasAttr "obsidianirc" pkgs then
-          pkgs.obsidianirc
+        if hasAttr "obby" pkgs then
+          pkgs.obby
         else
           throw ''
-            obsidianirc home-manager module: pkgs.obsidianirc missing.
+            obby home-manager module: pkgs.obby missing.
             Add this flake's overlay (outputs.overlays.default) to `nixpkgs.overlays`,
-            or set `programs.obsidianirc.package`, e.g. to
-            inputs.obsidianirc.packages.${pkgs.stdenv.hostPlatform.system}.default.
+            or set `programs.obby.package`, e.g. to
+            inputs.obby.packages.${pkgs.stdenv.hostPlatform.system}.default.
           '';
-      defaultText = literalExpression "pkgs.obsidianirc";
+      defaultText = literalExpression "pkgs.obby";
       description = ''
-        ObsidianIRC package.
-        Defaults to `pkgs.obsidianirc` after merging `outputs.overlays.default` into nixpkgs.
+        Obby package.
+        Defaults to `pkgs.obby` after merging `outputs.overlays.default` into nixpkgs.
         Use `.override { viteBuildEnv = { ... }; }` or the `viteBuildEnv` option below to set Vite env.
       '';
     };
@@ -82,13 +82,13 @@ in
         }
       '';
       description = ''
-        Bake-time overrides forwarded into `nix/obsidianirc.nix` (every key must start with `VITE_`).
+        Bake-time overrides forwarded into `nix/obby.nix` (every key must start with `VITE_`).
         The `example` is not a full list; omit a key to keep the source default. Full names: `vite.config.ts` (`define`),
         GIF/Tenor API keys in client code (`import.meta.env`), and **BUILD.md**.
       '';
     };
 
-    autostart = mkEnableOption "Launch ObsidianIRC when your graphical session starts (XDG autostart). Requires Home Manager's XDG integration: xdg.enable should be true (usually the default).";
+    autostart = mkEnableOption "Launch Obby when your graphical session starts (XDG autostart). Requires Home Manager's XDG integration: xdg.enable should be true (usually the default).";
   };
 
   # mkMerge lets autostart stay a separate fragment; assertions still gate the whole enable=true subtree.
@@ -98,15 +98,15 @@ in
       assertions = [
         {
           assertion = !cfg.autostart || config.xdg.enable;
-          message = "programs.obsidianirc.autostart needs `xdg.enable = true` in Home Manager.";
+          message = "programs.obby.autostart needs `xdg.enable = true` in Home Manager.";
         }
         {
           assertion = viteKeysOk;
-          message = "programs.obsidianirc.viteBuildEnv: every key must start with VITE_.";
+          message = "programs.obby.viteBuildEnv: every key must start with VITE_.";
         }
         {
           assertion = cfg.viteBuildEnv == { } || (cfg.package ? override);
-          message = "programs.obsidianirc.viteBuildEnv requires a package produced by ObsidianIRC’s flake/overlay (`callPackage` .override support). Replace `programs.obsidianirc.package` or simplify `viteBuildEnv`.";
+          message = "programs.obby.viteBuildEnv requires a package produced by Obby’s flake/overlay (`callPackage` .override support). Replace `programs.obby.package` or simplify `viteBuildEnv`.";
         }
       ];
 
@@ -114,10 +114,10 @@ in
     }
 
     (mkIf cfg.autostart {
-      xdg.configFile."autostart/obsidianirc.desktop".text = generators.toINI { } {
+      xdg.configFile."autostart/obby.desktop".text = generators.toINI { } {
         "Desktop Entry" = {
           Type = "Application";
-          Name = "ObsidianIRC";
+          Name = "Obby";
           Comment = "Modern IRC Client for the web, desktop and mobile.";
           Exec = getExe finalPackage;
           Terminal = "false";

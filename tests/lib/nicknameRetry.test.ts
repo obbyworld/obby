@@ -34,6 +34,7 @@ describe("Nickname retry functionality", () => {
         },
       ],
       ui: {
+        messageJump: null,
         selectedServerId: "test-server",
         perServerSelections: {
           "test-server": {
@@ -43,15 +44,11 @@ describe("Nickname retry functionality", () => {
         },
         isNarrowView: false,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: false,
         isMobileMenuOpen: false,
         isMemberListVisible: true,
         isChannelListVisible: true,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "chatView",
         isServerMenuOpen: false,
@@ -67,12 +64,13 @@ describe("Nickname retry functionality", () => {
         // Server notices popup state
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore.getState to return our mock state
@@ -131,6 +129,7 @@ describe("Nickname retry functionality", () => {
         },
       ],
       ui: {
+        messageJump: null,
         selectedServerId: "test-server",
         perServerSelections: {
           "test-server": {
@@ -140,15 +139,11 @@ describe("Nickname retry functionality", () => {
         },
         isNarrowView: false,
         isAddServerModalOpen: false,
-        isEditServerModalOpen: false,
-        editServerId: null,
-        isSettingsModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: false,
         isMobileMenuOpen: false,
         isMemberListVisible: true,
         isChannelListVisible: true,
-        isChannelListModalOpen: false,
         linkSecurityWarnings: [],
         mobileViewActiveColumn: "chatView",
         isServerMenuOpen: false,
@@ -164,12 +159,13 @@ describe("Nickname retry functionality", () => {
         // Server notices popup state
         isServerNoticesPopupOpen: false,
         serverNoticesPopupMinimized: false,
-        profileViewRequest: null,
-        settingsNavigation: null,
         shouldFocusChatInput: false,
+        pendingBotCommandPick: null,
+        pendingComposerCommand: null,
         ...defaultUIExtensions,
       },
       addGlobalNotification: vi.fn(),
+      appendRawLogLine: vi.fn(),
     };
 
     // Mock useStore methods

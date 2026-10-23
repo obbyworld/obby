@@ -137,7 +137,10 @@ export function useScrollToBottom(
     // scroll events, so we use it to immediately clear wasAtBottomRef and arm
     // the suppression window.
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY < 0) {
+      // A short buffer cannot move, so no scroll event would ever clear the flag.
+      const canScroll =
+        container.scrollHeight - container.clientHeight > tolerance;
+      if (e.deltaY < 0 && canScroll) {
         wheelUpActive = true;
         wasAtBottomRef.current = false;
         setIsScrolledUp(true);
@@ -146,6 +149,7 @@ export function useScrollToBottom(
         wheelUpCooldown = setTimeout(() => {
           wheelUpActive = false;
           wheelUpCooldown = null;
+          checkIfScrolledToBottom();
         }, 400);
       }
     };

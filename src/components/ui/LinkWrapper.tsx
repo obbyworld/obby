@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { compactUrl, makeUrlRegex } from "../../lib/ircUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
 
@@ -16,19 +17,6 @@ interface EnhancedLinkWrapperProps {
   children: React.ReactNode;
   onIrcLinkClick?: (url: string) => void;
 }
-
-// Factory so each call gets a fresh lastIndex (global-flag regex is stateful)
-const makeUrlRegex = () => /\b(?:https?|irc|ircs):\/\/[^\s<>"']+/gi;
-
-const truncateUrl = (url: string, maxLength = 60): string => {
-  if (url.length <= maxLength) return url;
-
-  const charsToShow = maxLength - 3; // Account for "..."
-  const frontChars = Math.ceil(charsToShow / 2);
-  const backChars = Math.floor(charsToShow / 2);
-
-  return `${url.substring(0, frontChars)}...${url.substring(url.length - backChars)}`;
-};
 
 export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
   children,
@@ -74,25 +62,6 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
     }
   }, [onIrcLinkClick]);
 
-  const handleLinkClick = useCallback(
-    (e: React.MouseEvent, url: string) => {
-      if (
-        (url.startsWith("ircs://") || url.startsWith("irc://")) &&
-        onIrcLinkClick
-      ) {
-        e.preventDefault();
-        onIrcLinkClick(url);
-        return;
-      }
-
-      if (url.startsWith("http://") || url.startsWith("https://")) {
-        e.preventDefault();
-        setPendingUrl(url);
-      }
-    },
-    [onIrcLinkClick],
-  );
-
   const handleConfirmOpen = async () => {
     if (pendingUrl) {
       await openExternalUrl(pendingUrl);
@@ -104,39 +73,38 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
     setPendingUrl(null);
   };
 
-  const parseContent = useCallback(
-    (content: string): React.ReactNode[] => {
-      const parts = content.split(makeUrlRegex());
-      const matches = content.match(makeUrlRegex()) || [];
+  const parseContent = useCallback((content: string): React.ReactNode[] => {
+    const parts = content.split(makeUrlRegex());
+    const matches = content.match(makeUrlRegex()) || [];
 
-      return parts.map((part, index) => {
-        const partKey = `text-${part}-${index}`;
-        const textPart = <span key={partKey}>{part}</span>;
+    return parts.map((part, index) => {
+      const partKey = `text-${part}-${index}`;
+      const textPart = <span key={partKey}>{part}</span>;
 
-        if (index < matches.length) {
-          const fragmentKey = `fragment-${matches[index]}-${index}`;
-          return (
-            <Fragment key={fragmentKey}>
-              {textPart}
-              <a
-                href={matches[index]}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline hover:text-blue-700 break-all"
-                onClick={(e) => handleLinkClick(e, matches[index])}
-                title={matches[index]}
-              >
-                {truncateUrl(matches[index])}
-              </a>
-            </Fragment>
-          );
-        }
+      if (index < matches.length) {
+        const url = matches[index];
+        const isWebLink = !/^ircs?:\/\//i.test(url);
+        const fragmentKey = `fragment-${url}-${index}`;
+        return (
+          <Fragment key={fragmentKey}>
+            {textPart}
+            <a
+              href={/^www\./i.test(url) ? `https://${url}` : url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`text-blue-500 underline hover:text-blue-700 break-all ${
+                isWebLink ? "external-link-security link-compact" : "irc-link"
+              }`}
+            >
+              {isWebLink ? compactUrl(url) : url}
+            </a>
+          </Fragment>
+        );
+      }
 
-        return textPart;
-      });
-    },
-    [handleLinkClick],
-  );
+      return textPart;
+    });
+  }, []);
 
   const processChildren = (node: React.ReactNode): React.ReactNode[] => {
     return (
@@ -177,7 +145,9 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
         onConfirm={handleConfirmOpen}
         onCancel={handleCancelOpen}
       />
-      <div ref={containerRef}>{processChildren(children)}</div>
+      <div ref={containerRef} data-link-wrapper>
+        {processChildren(children)}
+      </div>
     </>
   );
 };

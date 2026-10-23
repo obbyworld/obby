@@ -7,7 +7,7 @@ let
   pkg = builtins.fromJSON (builtins.readFile (root + "/package.json"));
   inherit (pkg) version;
   src = builtins.path {
-    name = "obsidianirc-src";
+    name = "obby-src";
     path = root;
     # Exclude files irrelevant to the build so doc/test edits don't invalidate the derivation hash.
     filter =

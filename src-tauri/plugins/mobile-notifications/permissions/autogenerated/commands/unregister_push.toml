@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-unregister-push"
+description = "Enables the unregister_push command without any pre-configured scope."
+commands.allow = ["unregister_push"]
+
+[[permission]]
+identifier = "deny-unregister-push"
+description = "Denies the unregister_push command without any pre-configured scope."
+commands.deny = ["unregister_push"]

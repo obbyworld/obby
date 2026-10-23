@@ -1,15 +1,14 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import type {
   SettingDefinition,
   SettingValue,
 } from "../../../lib/settings/types";
+import { SettingRow, Switch } from "../page/SettingRow";
 import { TextArea, TextInput } from "../TextInput";
 
-// Defined at module level so React sees a stable component identity across renders.
-// Native <input type="file"> labels ("Choose file" / "No file chosen") render in the
-// browser's language, not the app's — this custom wrapper translates them.
+// The browser renders native file input labels in its own language, so we translate them here.
 const FileInputField: React.FC<{
   setting: SettingDefinition;
   disabled: boolean;
@@ -40,16 +39,72 @@ const FileInputField: React.FC<{
         type="button"
         disabled={disabled}
         onClick={() => fileRef.current?.click()}
-        className="py-2 px-4 rounded border-0 bg-discord-primary text-white hover:bg-discord-primary-hover disabled:opacity-50 text-sm"
+        className="button-primary h-8 px-3 rounded-lg text-sm"
       >
         <Trans>Choose file</Trans>
       </button>
-      <span className="text-sm text-discord-text-muted">
+      <span className="text-sm text-discord-text-muted truncate">
         {fileName ?? <Trans>No file chosen</Trans>}
       </span>
     </div>
   );
 };
+
+// We save on blur, so each text setting is written once after the user finishes typing.
+// A field with isComplete saves as soon as the draft is complete and never saves an incomplete one.
+export const TextDraftInput: React.FC<{
+  value: string;
+  onCommit: (value: string) => void;
+  isComplete?: (draft: string) => boolean;
+  placeholder?: string;
+  disabled?: boolean;
+}> = ({ value, onCommit, isComplete, placeholder, disabled }) => {
+  const [draft, setDraft] = useState(value);
+  useEffect(() => setDraft(value), [value]);
+  return (
+    <TextInput
+      className="field-input"
+      value={draft}
+      placeholder={placeholder}
+      disabled={disabled}
+      onChange={(e) => {
+        const next = e.target.value;
+        setDraft(next);
+        if (isComplete?.(next) && next !== value) onCommit(next);
+      }}
+      onBlur={() => {
+        if (draft !== value && (isComplete?.(draft) ?? true)) onCommit(draft);
+      }}
+    />
+  );
+};
+
+const isCompleteColor = (color: string) =>
+  color === "" || /^#[0-9a-f]{6}$/i.test(color);
+
+const ColorField: React.FC<{
+  value: string;
+  onChange: (value: SettingValue) => void;
+  placeholder?: string;
+  disabled: boolean;
+}> = ({ value, onChange, placeholder, disabled }) => (
+  <div className="flex items-center gap-2">
+    <input
+      type="color"
+      value={value || "#000000"}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="w-10 h-9 shrink-0 rounded-lg border-none cursor-pointer bg-transparent disabled:opacity-50"
+    />
+    <TextDraftInput
+      value={value}
+      onCommit={onChange}
+      isComplete={isCompleteColor}
+      placeholder={placeholder ?? "#000000"}
+      disabled={disabled}
+    />
+  </div>
+);
 
 export interface SettingRendererProps {
   setting: SettingDefinition;
@@ -57,72 +112,52 @@ export interface SettingRendererProps {
   onChange: (value: SettingValue) => void;
   error?: string;
   disabled?: boolean;
-  isHighlighted?: boolean;
 }
 
-/**
- * Renders a setting field based on its type definition
- */
 export const SettingRenderer: React.FC<SettingRendererProps> = ({
   setting,
   value,
   onChange,
   error,
   disabled = false,
-  isHighlighted = false,
 }) => {
   const { i18n } = useLingui();
-  const handleChange = useCallback(
-    (newValue: SettingValue) => {
-      onChange(newValue);
-    },
-    [onChange],
-  );
 
-  // Render custom component if specified
   if (setting.customComponent) {
     const CustomComponent = setting.customComponent;
     return (
       <CustomComponent
         setting={setting}
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
         error={error}
         disabled={disabled}
       />
     );
   }
 
-  // Render based on type
+  const placeholder = setting.placeholder
+    ? i18n._(setting.placeholder)
+    : undefined;
+
   switch (setting.type) {
     case "toggle":
       return (
-        <label className="flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={value as boolean}
-            onChange={(e) => handleChange(e.target.checked)}
-            disabled={disabled}
-            className="mr-3 accent-discord-primary disabled:opacity-50"
-          />
-          <span className="text-discord-text-normal">
-            {i18n._(setting.title)}
-          </span>
-        </label>
+        <Switch
+          checked={value === true}
+          onChange={onChange}
+          label={i18n._(setting.title)}
+          disabled={disabled}
+        />
       );
 
     case "text":
       return (
-        <TextInput
-          value={value as string}
-          onChange={(e) => handleChange(e.target.value)}
-          placeholder={
-            setting.placeholder ? i18n._(setting.placeholder) : undefined
-          }
+        <TextDraftInput
+          value={(value as string) ?? ""}
+          onCommit={onChange}
+          placeholder={placeholder}
           disabled={disabled}
-          className={`w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50 ${
-            error ? "border-2 border-red-500" : ""
-          }`}
         />
       );
 
@@ -130,44 +165,42 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
       return (
         <input
           type="number"
+          className="field-input"
           value={value as number}
-          onChange={(e) => handleChange(Number(e.target.value))}
-          placeholder={
-            setting.placeholder ? i18n._(setting.placeholder) : undefined
-          }
+          onChange={(e) => onChange(Number(e.target.value))}
+          placeholder={placeholder}
           min={setting.min}
           max={setting.max}
           step={setting.step}
           disabled={disabled}
-          className={`w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50 ${
-            error ? "border-2 border-red-500" : ""
-          }`}
         />
       );
 
     case "textarea":
       return (
         <TextArea
+          className="field-input"
           value={value as string}
-          onChange={(e) => handleChange(e.target.value)}
-          placeholder={
-            setting.placeholder ? i18n._(setting.placeholder) : undefined
-          }
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
           disabled={disabled}
           rows={4}
-          className={`w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50 ${
-            error ? "border-2 border-red-500" : ""
-          }`}
         />
       );
 
     case "select":
       return (
         <select
+          className="field-input"
           value={value as string}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={(e) =>
+            onChange(
+              setting.options?.find(
+                (option) => String(option.value) === e.target.value,
+              )?.value ?? e.target.value,
+            )
+          }
           disabled={disabled}
-          className="w-full bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50"
         >
           {setting.options?.map((option) => (
             <option
@@ -183,28 +216,30 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
 
     case "radio":
       return (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           {setting.options?.map((option) => (
             <label
               key={option.value}
-              className="flex items-center cursor-pointer"
+              className="flex items-start gap-3 cursor-pointer"
             >
               <input
                 type="radio"
                 value={option.value}
                 checked={value === option.value}
-                onChange={() => handleChange(option.value)}
+                onChange={() => onChange(option.value)}
                 disabled={disabled || option.disabled}
-                className="mr-3 accent-discord-primary disabled:opacity-50"
+                className="mt-1 accent-discord-primary disabled:opacity-50"
               />
-              <div>
-                <div className="text-discord-text-normal">{option.label}</div>
+              <span className="flex flex-col">
+                <span className="text-sm text-discord-text-normal">
+                  {option.label}
+                </span>
                 {option.description && (
-                  <div className="text-sm text-discord-text-muted">
+                  <span className="text-[13px] text-discord-text-muted">
                     {option.description}
-                  </div>
+                  </span>
                 )}
-              </div>
+              </span>
             </label>
           ))}
         </div>
@@ -212,45 +247,31 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
 
     case "color":
       return (
-        <div className="flex items-center space-x-2">
-          <input
-            type="color"
-            value={value as string}
-            onChange={(e) => handleChange(e.target.value)}
-            disabled={disabled}
-            className="w-12 h-8 rounded border-none cursor-pointer disabled:opacity-50"
-          />
-          <TextInput
-            value={value as string}
-            onChange={(e) => handleChange(e.target.value)}
-            placeholder={
-              setting.placeholder ? i18n._(setting.placeholder) : "#000000"
-            }
-            disabled={disabled}
-            className="flex-1 bg-discord-dark-400 text-discord-text-normal rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50"
-          />
-        </div>
+        <ColorField
+          value={(value as string) ?? ""}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+        />
       );
 
     case "range":
       return (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <input
-              type="range"
-              value={value as number}
-              onChange={(e) => handleChange(Number(e.target.value))}
-              min={setting.min}
-              max={setting.max}
-              step={setting.step}
-              disabled={disabled}
-              className="flex-1 accent-discord-primary disabled:opacity-50"
-            />
-            <span className="ml-4 text-discord-text-normal font-medium">
-              {String(value)}
-              {setting.unit || ""}
-            </span>
-          </div>
+        <div className="flex items-center gap-4">
+          <input
+            type="range"
+            value={value as number}
+            onChange={(e) => onChange(Number(e.target.value))}
+            min={setting.min}
+            max={setting.max}
+            step={setting.step}
+            disabled={disabled}
+            className="flex-1 accent-discord-primary disabled:opacity-50"
+          />
+          <span className="min-w-12 text-right text-sm font-medium tabular-nums text-discord-text-normal">
+            {String(value)}
+            {setting.unit || ""}
+          </span>
         </div>
       );
 
@@ -259,88 +280,80 @@ export const SettingRenderer: React.FC<SettingRendererProps> = ({
         <FileInputField
           setting={setting}
           disabled={disabled}
-          onChange={handleChange}
+          onChange={onChange}
         />
       );
 
-    case "custom":
-      return (
-        <div className="text-discord-text-muted text-sm">
-          Custom renderer not implemented for {setting.id}
-        </div>
-      );
-
     default:
-      return (
-        <div className="text-red-400 text-sm">
-          Unknown setting type: {setting.type}
-        </div>
-      );
+      return null;
   }
 };
 
-/**
- * Wrapper component for a setting with label and description
- */
+const ONE_LINE_TYPES: SettingDefinition["type"][] = [
+  "text",
+  "number",
+  "select",
+  "color",
+];
+
 export const SettingField: React.FC<{
   setting: SettingDefinition;
   value: SettingValue;
   onChange: (value: SettingValue) => void;
   error?: string;
   disabled?: boolean;
-  isHighlighted?: boolean;
-  showLabel?: boolean;
-}> = ({
-  setting,
-  value,
-  onChange,
-  error,
-  disabled,
-  isHighlighted,
-  showLabel = true,
-}) => {
+  children?: ReactNode;
+}> = ({ setting, value, onChange, error, disabled, children }) => {
   const { i18n } = useLingui();
-  return (
-    <div
-      id={`setting-${setting.id}`}
-      className={`space-y-2 p-4 rounded-lg transition-all duration-300 ${
-        isHighlighted ? "bg-yellow-400/20 ring-2 ring-yellow-400" : ""
-      }`}
-      style={
-        isHighlighted
-          ? {
-              animation: "blink 0.5s ease-in-out 1",
-            }
-          : undefined
-      }
+  const title = i18n._(setting.title);
+  const description = setting.description
+    ? i18n._(setting.description)
+    : undefined;
+  const renderer = (
+    <SettingRenderer
+      setting={setting}
+      value={value}
+      onChange={onChange}
+      error={error}
+      disabled={disabled}
+    />
+  );
+
+  if (setting.type === "toggle" && !setting.customComponent) {
+    return (
+      <SettingRow
+        id={setting.id}
+        title={title}
+        description={description}
+        control={renderer}
+      >
+        {children}
+      </SettingRow>
+    );
+  }
+
+  const isOneLine =
+    !setting.customComponent && ONE_LINE_TYPES.includes(setting.type);
+  const below = (error || children) && (
+    <>
+      {error && <p className="mt-2 text-xs text-discord-red">{error}</p>}
+      {children}
+    </>
+  );
+  return isOneLine ? (
+    <SettingRow
+      id={setting.id}
+      title={title}
+      description={description}
+      field={renderer}
     >
-      {showLabel && (
-        <div>
-          <label className="block text-discord-text-normal text-sm font-medium">
-            {i18n._(setting.title)}
-          </label>
-          {setting.description && (
-            <p className="text-discord-text-muted text-xs mt-1">
-              {i18n._(setting.description)}
-            </p>
-          )}
-          {setting.tooltip && (
-            <p className="text-discord-text-muted text-xs italic mt-1">
-              💡 {setting.tooltip}
-            </p>
-          )}
-        </div>
-      )}
-      <SettingRenderer
-        setting={setting}
-        value={value}
-        onChange={onChange}
-        error={error}
-        disabled={disabled}
-        isHighlighted={isHighlighted}
-      />
-      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
-    </div>
+      {below}
+    </SettingRow>
+  ) : (
+    <SettingRow id={setting.id} title={title} description={description}>
+      {renderer}
+      {below}
+    </SettingRow>
   );
 };
 

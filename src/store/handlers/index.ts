@@ -2,26 +2,50 @@ import type { StoreApi } from "zustand";
 import type { AppState } from "../index";
 import { registerAuthHandlers } from "./auth";
 import { registerBatchHandlers } from "./batches";
+import { registerBotToolsHandlers } from "./botTools";
+import { registerBouncerHandlers } from "./bouncer";
 import { registerChannelHandlers } from "./channels";
+import { registerNotificationPermission } from "./chatNotifications";
 import { registerConnectionHandlers } from "./connection";
+import { registerE2EEHandlers } from "./e2ee";
+import { registerHistoryHandlers } from "./history";
+import { registerInvitelinkHandlers } from "./invitelink";
 import { registerMessageHandlers } from "./messages";
 import { registerMetadataHandlers } from "./metadata";
 import { registerNamedModesHandlers } from "./named-modes";
+import { registerNativePushHandlers } from "./nativePush";
+import { registerPushBotHandlers } from "./pushbot";
 import { registerReadMarkerHandlers } from "./readMarker";
+import { registerServerReplyHandlers } from "./serverReplies";
 import { registerTicTacToeHandlers } from "./tictactoe";
 import { registerUserHandlers } from "./users";
+import { registerWebPushHandlers } from "./webPush";
 import { registerWhoisHandlers } from "./whois";
 
 export function registerAllHandlers(store: StoreApi<AppState>): void {
   registerConnectionHandlers(store);
+  // botTools fires before message handlers so the workflow-PRIVMSG can
+  // morph an existing placeholder Message in place (and pre-add its
+  // msgid to processedMessageIds) before the generic CHANMSG handler
+  // would otherwise append a duplicate row.
+  registerBotToolsHandlers(store);
   registerMessageHandlers(store);
   registerUserHandlers(store);
   registerChannelHandlers(store);
   registerWhoisHandlers(store);
   registerMetadataHandlers(store);
+  registerInvitelinkHandlers(store);
   registerBatchHandlers(store);
   registerAuthHandlers(store);
   registerNamedModesHandlers(store);
   registerReadMarkerHandlers(store);
   registerTicTacToeHandlers(store);
+  registerBouncerHandlers(store);
+  registerPushBotHandlers(store);
+  registerE2EEHandlers(store);
+  registerServerReplyHandlers(store);
+  registerHistoryHandlers(store);
+  registerNotificationPermission(store);
+  registerWebPushHandlers(store);
+  registerNativePushHandlers(store);
 }

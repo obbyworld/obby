@@ -1,4 +1,7 @@
+import type { MessageDescriptor } from "@lingui/core";
+import { i18n } from "@lingui/core";
 import { t } from "@lingui/core/macro";
+import { fuzzyMatch } from "../fuzzySearch";
 import type {
   CategoryMetadata,
   SettingCategory,
@@ -9,6 +12,23 @@ import type {
   SettingValue,
 } from "./types";
 
+// Lingui generates a hashed id for every message, so a descriptor's `id` is
+// something like "mVdvNU". Searching that matches nothing a person would type,
+// which is why titles were never findable. We search the source text instead.
+function sourceText(d: MessageDescriptor | undefined): string[] {
+  return d?.message ? [d.message.toLowerCase()] : [];
+}
+
+// So somebody searching in their own language finds a setting too. Kept apart
+// from the source text because the registry is built while this module is
+// imported, which is before i18n.activate runs, and asking for a translation
+// then throws.
+function translatedText(d: MessageDescriptor | undefined): string[] {
+  if (!d || !i18n.locale) return [];
+  const translated = i18n._(d);
+  return translated && translated !== d.id ? [translated.toLowerCase()] : [];
+}
+
 /**
  * Settings Registry - Central management for all settings definitions
  */
@@ -16,7 +36,6 @@ class SettingsRegistry {
   private settings: Map<string, SettingDefinition> = new Map();
   private categories: Map<SettingCategory, CategoryMetadata> = new Map();
   private quickActions: Map<string, SettingQuickAction> = new Map();
-  private searchIndex: Map<string, string[]> = new Map();
 
   constructor() {
     this.initializeCategories();
@@ -56,6 +75,12 @@ class SettingsRegistry {
         title: "Media",
         description: "Media and file handling",
         order: 5,
+      },
+      {
+        id: "calls",
+        title: "Calls",
+        description: "Microphone, camera, and speaker for voice calls",
+        order: 5.5,
       },
       {
         id: "account",
@@ -105,7 +130,6 @@ class SettingsRegistry {
    */
   register(setting: SettingDefinition): void {
     this.settings.set(setting.id, setting);
-    this.updateSearchIndex(setting);
   }
 
   /**
@@ -124,7 +148,6 @@ class SettingsRegistry {
     const setting = this.settings.get(settingId);
     if (setting) {
       this.settings.delete(settingId);
-      this.searchIndex.delete(settingId);
       return true;
     }
     return false;
@@ -181,22 +204,6 @@ class SettingsRegistry {
   }
 
   /**
-   * Update search index for a setting
-   */
-  private updateSearchIndex(setting: SettingDefinition): void {
-    const searchableText = [
-      setting.title.id.toLowerCase(),
-      setting.description?.id.toLowerCase() || "",
-      setting.category.toLowerCase(),
-      setting.subcategory?.toLowerCase() || "",
-      ...(setting.searchKeywords?.map((k) => k.toLowerCase()) || []),
-      ...(setting.tags?.map((t) => t.toLowerCase()) || []),
-    ];
-
-    this.searchIndex.set(setting.id, searchableText);
-  }
-
-  /**
    * Search settings with fuzzy matching
    */
   search(
@@ -204,80 +211,51 @@ class SettingsRegistry {
     options: {
       categories?: SettingCategory[];
       limit?: number;
-      threshold?: number;
     } = {},
   ): SettingSearchResult[] {
-    const { categories, limit = 50, threshold = 0.3 } = options;
-
-    const queryLower = query.toLowerCase();
-    const queryTerms = queryLower.split(/\s+/).filter(Boolean);
+    const { categories, limit = 50 } = options;
+    const best = (texts: string[]) =>
+      Math.max(0, ...texts.map((text) => fuzzyMatch(query, text).score));
 
     const results: SettingSearchResult[] = [];
-
     for (const setting of this.settings.values()) {
-      // Filter by category if specified
-      if (categories && !categories.includes(setting.category)) {
-        continue;
-      }
+      if (categories && !categories.includes(setting.category)) continue;
+      if (setting.hidden) continue;
 
-      // Skip hidden or disabled settings in search
-      if (setting.hidden) {
-        continue;
-      }
+      const titleScore = best([
+        ...sourceText(setting.title),
+        ...translatedText(setting.title),
+      ]);
+      const keywordScore = best(setting.searchKeywords ?? []) * 0.9;
+      // A description only counts when the query starts one of its words,
+      // since loose matches inside long sentences rank noise first.
+      const descriptionScore = best([
+        ...sourceText(setting.description),
+        ...translatedText(setting.description),
+      ]);
+      const usableDescriptionScore =
+        descriptionScore >= 70 ? descriptionScore * 0.6 : 0;
+      const categoryScore = best([setting.category]) * 0.5;
 
-      const searchableText = this.searchIndex.get(setting.id) || [];
-
-      // Calculate score based on matches
-      let score = 0;
-      const matches: SettingSearchResult["matches"] = {};
-
-      // Exact title match gets highest score
-      if (setting.title.id.toLowerCase() === queryLower) {
-        score += 1.0;
-        matches.title = true;
-      } else if (setting.title.id.toLowerCase().includes(queryLower)) {
-        score += 0.7;
-        matches.title = true;
-      }
-
-      // Check individual terms
-      for (const term of queryTerms) {
-        if (setting.title.id.toLowerCase().includes(term)) {
-          score += 0.3;
-          matches.title = true;
-        }
-        if (setting.description?.id.toLowerCase().includes(term)) {
-          score += 0.2;
-          matches.description = true;
-        }
-        if (
-          setting.searchKeywords?.some((k) => k.toLowerCase().includes(term))
-        ) {
-          score += 0.25;
-          matches.keywords = true;
-        }
-        if (setting.category.toLowerCase().includes(term)) {
-          score += 0.15;
-          matches.category = true;
-        }
-      }
-
-      // Apply priority boost
-      if (setting.priority) {
-        score *= 1 + setting.priority * 0.1;
-      }
-
-      // Add to results if score meets threshold
-      if (score >= threshold) {
-        results.push({
-          setting,
-          score,
-          matches,
-        });
-      }
+      const score = Math.max(
+        titleScore,
+        keywordScore,
+        usableDescriptionScore,
+        categoryScore,
+      );
+      if (score <= 0) continue;
+      results.push({
+        setting,
+        score: Math.min(100, score + (setting.priority ?? 0)),
+        matches: {
+          title: titleScore > 0,
+          keywords: keywordScore > 0,
+          description: usableDescriptionScore > 0,
+          category: categoryScore > 0,
+        },
+      });
     }
 
-    // Sort by score and apply limit
     return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
@@ -431,7 +409,6 @@ class SettingsRegistry {
    */
   clear(): void {
     this.settings.clear();
-    this.searchIndex.clear();
     this.quickActions.clear();
   }
 }

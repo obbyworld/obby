@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       google-playstore-version:
-        description: 'Optional: Override Google Play version code'
+        description: "Optional: Override Google Play version code"
         required: false
         type: string
 
@@ -35,9 +35,11 @@ jobs:
       draft: "false"
       prerelease: ${{ github.ref_type != 'tag' && 'true' || 'false' }}
       release_body: ${{ steps.release-notes.outputs.release_body }}
-      name: ObsidianIRC ${{ steps.package-version.outputs.tag_name }}
+      name: Obby ${{ steps.package-version.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Get Node project version
         id: package-version
         run: |
@@ -83,6 +85,47 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.package-version.outputs.tag_name }}
 
+  update-linux-nix:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Update npmDeps hash on main
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git checkout main
+          git pull --rebase origin main
+
+          nix run .#update-npm-deps-hash
+
+          if git diff --exit-code --quiet -- nix/obby.nix; then
+            echo "npmDeps hash on main is already up to date."
+            exit 0
+          fi
+
+          nix flake check && nix build .#obby --no-link --print-build-logs
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nix/obby.nix
+          git commit -m "build(nix): update npmDeps hash [skip ci]"
+          git push origin main
+
   publish-tauri:
     needs: collect-version
     permissions:
@@ -91,9 +134,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above).
+          - platform: "macos-15" # for Arm based macs (M1 and above).
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # for Intel based macs.
+          - platform: "macos-15" # for Intel based macs.
             args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04" # Use 22.04 for glibc 2.35 compatibility
             args: ""
@@ -102,7 +145,15 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode 16.4 (macOS only)
+        # Xcode 26 runners lack the Swift back-compat static libs that swift-rs's
+        # libapp.a force-loads, breaking the link. 16.4 has them. runner-images#13135.
+        if: startsWith(matrix.platform, 'macos')
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
@@ -111,26 +162,26 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf pkg-config zsync
 
       - name: setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: lts/*
           cache: "npm"
 
       - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ startsWith(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           workspaces: "./src-tauri -> target"
 
       - name: install frontend dependencies
         run: npm install
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -165,7 +216,7 @@ jobs:
                 echo "Embedding update info in $appimage"
                 # Embed update URL at ELF .upd_info offset (33651 bytes) per AppImageUpdate spec.
                 # Format: gh-releases-zsync|ORG|REPO|CHANNEL|FILENAME_GLOB
-                printf 'gh-releases-zsync|ObsidianIRC|ObsidianIRC|latest|ObsidianIRC_*_amd64.AppImage.zsync' | \
+                printf 'gh-releases-zsync|obbyworld|obby|latest|Obby_*_amd64.AppImage.zsync' | \
                   dd of="$appimage" bs=1 seek=33651 count=512 conv=notrunc
               fi
             done
@@ -173,7 +224,7 @@ jobs:
 
       - name: Upload zsync files
         if: matrix.platform == 'ubuntu-22.04'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           files: |
@@ -185,23 +236,25 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: install dependencies (ubuntu only)
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends --no-install-suggests curl libwebkit2gtk-4.1-dev build-essential libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev patchelf libfuse2 file pkg-config xdg-utils zsync
 
       - name: setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: lts/*
           cache: "npm"
 
       - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           workspaces: "./src-tauri -> target"
 
@@ -213,7 +266,7 @@ jobs:
 
       - name: Generate zsync files
         run: |
-          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
+          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
           if [ -f "$APPIMAGE_PATH" ]; then
             echo "Generating zsync for $APPIMAGE_PATH"
             zsyncmake -o "${APPIMAGE_PATH}.zsync" "$APPIMAGE_PATH"
@@ -221,17 +274,17 @@ jobs:
 
       - name: Embed update information in AppImage
         run: |
-          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
+          APPIMAGE_PATH="./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage"
           if [ -f "$APPIMAGE_PATH" ]; then
             echo "Embedding update info in $APPIMAGE_PATH"
             # Embed update URL at ELF .upd_info offset (33651 bytes) per AppImageUpdate spec.
             # Format: gh-releases-zsync|ORG|REPO|CHANNEL|FILENAME_GLOB
-            printf 'gh-releases-zsync|ObsidianIRC|ObsidianIRC|latest|ObsidianIRC_*_aarch64.AppImage.zsync' | \
+            printf 'gh-releases-zsync|obbyworld|obby|latest|Obby_*_aarch64.AppImage.zsync' | \
               dd of="$APPIMAGE_PATH" bs=1 seek=33651 count=512 conv=notrunc
           fi
 
       - name: Publish
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -240,10 +293,10 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./src-tauri/target/release/bundle/deb/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_arm64.deb
-            ./src-tauri/target/release/bundle/rpm/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-1.aarch64.rpm
-            ./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage
-            ./src-tauri/target/release/bundle/appimage/ObsidianIRC_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage.zsync
+            ./src-tauri/target/release/bundle/deb/Obby_${{ needs.collect-version.outputs.current_version}}_arm64.deb
+            ./src-tauri/target/release/bundle/rpm/Obby-${{ needs.collect-version.outputs.current_version}}-1.aarch64.rpm
+            ./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage
+            ./src-tauri/target/release/bundle/appimage/Obby_${{ needs.collect-version.outputs.current_version}}_aarch64.AppImage.zsync
 
   publish-android:
     runs-on: ubuntu-latest
@@ -251,34 +304,38 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
         with:
           distribution: "zulu"
           java-version: "22"
           cache: "gradle"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          packages: platform-tools
 
       - name: Install NDK
         run: sdkmanager "ndk;27.0.11902837"
 
       - name: setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: lts/*
           cache: "npm"
 
       - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           workspaces: "./src-tauri -> target"
           shared-key: "android-builds"
@@ -317,18 +374,18 @@ jobs:
 
       - name: Rename APK and AAB file
         run: |
-          mv ./src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk ./src-tauri/gen/android/app/build/outputs/apk/universal/release/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.apk
-          mv ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release-signed.aab ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.aab
+          mv ./src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk ./src-tauri/gen/android/app/build/outputs/apk/universal/release/Obby-${{ needs.collect-version.outputs.current_version}}.apk
+          mv ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release-signed.aab ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version}}.aab
 
       - name: Upload signed AAB artifact for Google Play
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: signed-aab
-          path: ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}.aab
+          path: ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version }}.aab
           retention-days: 1
 
       - name: Publish
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -337,8 +394,8 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./src-tauri/gen/android/app/build/outputs/apk/universal/release/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.apk
-            ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/ObsidianIRC-${{ needs.collect-version.outputs.current_version}}.aab
+            ./src-tauri/gen/android/app/build/outputs/apk/universal/release/Obby-${{ needs.collect-version.outputs.current_version}}.apk
+            ./src-tauri/gen/android/app/build/outputs/bundle/universalRelease/Obby-${{ needs.collect-version.outputs.current_version}}.aab
 
   publish-android-google-play-internal:
     runs-on: ubuntu-latest
@@ -349,43 +406,47 @@ jobs:
     # Only run on pushes to main branch OR manual workflow dispatch
     if: (github.ref_type == 'branch' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GOOGLE_WIF_PROVIDER }}
           service_account: ${{ secrets.GOOGLE_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'
-          access_token_scopes: 'https://www.googleapis.com/auth/androidpublisher'
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5.5.0
         with:
           distribution: "zulu"
           java-version: "22"
           cache: "gradle"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
+        with:
+          packages: platform-tools
 
       - name: Install NDK
         run: sdkmanager "ndk;27.0.11902837"
 
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: lts/*
           cache: "npm"
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           workspaces: "./src-tauri -> target"
           shared-key: "android-builds"
@@ -455,7 +516,7 @@ jobs:
               src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab
 
       - name: Upload to Google Play - Internal Track
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.obsidianirc.dev
@@ -472,43 +533,53 @@ jobs:
       id-token: write
     if: github.ref_type == 'tag'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@v3
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           workload_identity_provider: ${{ secrets.GOOGLE_WIF_PROVIDER }}
           service_account: ${{ secrets.GOOGLE_WIF_SERVICE_ACCOUNT }}
-          token_format: 'access_token'
-          access_token_scopes: 'https://www.googleapis.com/auth/androidpublisher'
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/androidpublisher"
 
       - name: Download signed AAB artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: signed-aab
           path: ./
 
       - name: Upload to Google Play - Production Track
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.obsidianirc.dev
-          releaseFiles: ./ObsidianIRC-${{ needs.collect-version.outputs.current_version }}.aab
+          releaseFiles: ./Obby-${{ needs.collect-version.outputs.current_version }}.aab
           track: production
           status: completed
-          releaseName: ObsidianIRC v${{ needs.collect-version.outputs.current_version }}
+          releaseName: Obby v${{ needs.collect-version.outputs.current_version }}
 
   publish-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
     needs: collect-version
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode 16.4
+        # Xcode 26 on the runners ships without the Swift back-compat static libs
+        # (swiftCompatibility56 / swiftCompatibilityConcurrency) that swift-rs's
+        # libapp.a force-loads, so the link fails. 16.4 has them. runner-images#13135.
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: "lts/*"
           cache: npm
@@ -517,19 +588,19 @@ jobs:
         run: npm ci
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
+        uses: dtolnay/rust-toolchain@5b842231ba77f5c045dba54ac5560fed2db780e2 # nightly
         with:
           targets: aarch64-apple-ios
 
       - name: Rust cache
-        uses: swatinem/rust-cache@v2
+        uses: swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           workspaces: "./src-tauri -> target"
 
       - name: Start Tauri iOS build with WS server
         run: |
           npm run tauri ios build -- --open &
-          ADDR_FILE="${TMPDIR%/}/com.obsidianirc.dev-server-addr"
+          ADDR_FILE="src-tauri/gen/apple/.tauri/cli-options-server.json"
           echo "Waiting for $ADDR_FILE…"
           for i in $(seq 1 120); do
             [ -f "$ADDR_FILE" ] && { echo "Addr file ready after ${i}s"; break; }
@@ -540,12 +611,12 @@ jobs:
       - name: Archive iOS (unsigned)
         run: |
           xcodebuild \
-            -project src-tauri/gen/apple/ObsidianIRC.xcodeproj \
-            -scheme ObsidianIRC_iOS \
+            -project src-tauri/gen/apple/Obby.xcodeproj \
+            -scheme Obby_iOS \
             -sdk iphoneos \
             -configuration release \
             -destination 'generic/platform=iOS' \
-            -archivePath ${{ runner.temp }}/ObsidianIRC.xcarchive \
+            -archivePath ${{ runner.temp }}/Obby.xcarchive \
             clean archive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -553,7 +624,7 @@ jobs:
 
       - name: Package unsigned .ipa
         run: |
-          ARCHIVE_PATH="${{ runner.temp }}/ObsidianIRC.xcarchive"
+          ARCHIVE_PATH="${{ runner.temp }}/Obby.xcarchive"
           WORK_DIR="${{ runner.temp }}/ipa-build"
 
           # Create working directory
@@ -578,18 +649,18 @@ jobs:
 
           # Create IPA
           cd "$WORK_DIR"
-          zip -r -0 -y ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload SwiftSupport 2>/dev/null || \
-            zip -r -0 -y ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload
+          zip -r -0 -y Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload SwiftSupport 2>/dev/null || \
+            zip -r -0 -y Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa Payload
 
           # Move to expected location
-          mv ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa "${{ runner.temp }}/"
+          mv Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa "${{ runner.temp }}/"
 
           # Verify IPA structure
           echo "IPA contents:"
-          unzip -l "${{ runner.temp }}/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa" | head -n 20
+          unzip -l "${{ runner.temp }}/Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa" | head -n 20
 
       - name: Publish
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -598,7 +669,7 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ${{ runner.temp }}/ObsidianIRC-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa
+            ${{ runner.temp }}/Obby-${{ needs.collect-version.outputs.current_version }}-unsigned.ipa
 
   publish-web:
     runs-on: ubuntu-latest
@@ -606,10 +677,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: "lts/*"
           cache: npm
@@ -620,10 +693,10 @@ jobs:
       - name: Build
         run: |
           npm run build
-          zip -r ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-web.zip ./dist
+          zip -r Obby-${{ needs.collect-version.outputs.current_version}}-web.zip ./dist
 
       - name: Publish
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           draft: ${{ needs.collect-version.outputs.draft == 'true' }}
           prerelease: ${{ needs.collect-version.outputs.prerelease == 'true' }}
@@ -632,4 +705,4 @@ jobs:
           tag_name: ${{ needs.collect-version.outputs.tag_name }}
           make_latest: ${{ needs.collect-version.outputs.prerelease != 'true' }}
           files: |
-            ./ObsidianIRC-${{ needs.collect-version.outputs.current_version}}-web.zip
+            ./Obby-${{ needs.collect-version.outputs.current_version}}-web.zip

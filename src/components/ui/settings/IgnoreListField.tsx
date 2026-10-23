@@ -71,7 +71,7 @@ export const IgnoreListField: React.FC<SettingComponentProps> = ({
             className={`flex-1 rounded border px-3 py-2 text-discord-text-normal placeholder-discord-text-muted focus:outline-none disabled:opacity-50 ${
               validationError
                 ? "border-red-500 bg-red-900/20 focus:border-red-400"
-                : "border-discord-button-secondary-default bg-discord-input-bg focus:border-discord-text-link"
+                : "border-discord-button-secondary-default bg-discord-dark-400 focus:border-discord-text-link"
             }`}
           />
           <button

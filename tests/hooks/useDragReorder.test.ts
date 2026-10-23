@@ -1,13 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
 import type React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from "vitest";
 import { useDragReorder } from "../../src/hooks/useDragReorder";
 
 describe("useDragReorder", () => {
-  let onReorder: ReturnType<typeof vi.fn>;
+  let onReorder: Mock<(reorderedIds: string[]) => void>;
 
   beforeEach(() => {
-    onReorder = vi.fn();
+    onReorder = vi.fn<(reorderedIds: string[]) => void>();
     document.body.innerHTML = "";
   });
 
@@ -138,12 +146,11 @@ describe("useDragReorder", () => {
       );
     });
 
-    expect(onReorder).toHaveBeenCalledWith([
-      "item-2",
-      "item-3",
+    expect(onReorder).toHaveBeenCalledWith(
+      ["item-2", "item-3", "item-1", "item-4"],
       "item-1",
-      "item-4",
-    ]);
+      "item-3",
+    );
     expect(result.current.isDragging).toBe(false);
     expect(result.current.draggedItemId).toBeNull();
     expect(result.current.dragOverItemId).toBeNull();

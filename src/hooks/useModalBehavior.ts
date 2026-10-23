@@ -31,6 +31,8 @@ export const useModalBehavior = ({
   }, [isOpen, escapeKeyEnabled]);
 
   const getBackdropProps = () => ({
+    role: "dialog" as const,
+    "aria-modal": true,
     onClick: clickOutsideEnabled ? onClose : undefined,
   });
 

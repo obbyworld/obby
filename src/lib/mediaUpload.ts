@@ -5,8 +5,9 @@
 // bar while large videos are streaming up.
 //
 // uploadFile() resolves with the absolute saved URL on success and
-// rejects with a `string` describing the failure (string -- not Error
-// -- so the UI can show server text verbatim without unwrapping).
+// rejects with an UploadFailure code that describeUploadFailure() translates.
+
+import { t } from "@lingui/core/macro";
 
 export interface UploadInfo {
   max_size: number;
@@ -14,7 +15,14 @@ export interface UploadInfo {
   scanning_enabled: boolean;
 }
 
-let cachedInfo: { url: string; info: UploadInfo } | null = null;
+let cachedInfo: { url: string; info: UploadInfo; fetchedAt: number } | null =
+  null;
+
+// The policy is a server-side setting that can change under a running tab, and
+// a client that caches it for the tab's lifetime keeps refusing uploads the
+// server would now accept. Short enough that a deployment is picked up on its
+// own, long enough that a batch of files costs one request.
+const INFO_TTL_MS = 5 * 60_000;
 
 /**
  * Fetch the backend's upload policy.  Cached per filehost URL so
@@ -24,18 +32,49 @@ let cachedInfo: { url: string; info: UploadInfo } | null = null;
  */
 export async function fetchUploadInfo(
   filehostUrl: string,
+  options?: { refresh?: boolean },
 ): Promise<UploadInfo | null> {
-  if (cachedInfo && cachedInfo.url === filehostUrl) return cachedInfo.info;
+  const cached =
+    cachedInfo?.url === filehostUrl &&
+    Date.now() - cachedInfo.fetchedAt < INFO_TTL_MS;
+  if (cached && !options?.refresh && cachedInfo) return cachedInfo.info;
   try {
     const res = await fetch(`${filehostUrl}/upload/info`, {
       headers: { Accept: "application/json" },
     });
     if (!res.ok) return null;
     const info = (await res.json()) as UploadInfo;
-    cachedInfo = { url: filehostUrl, info };
+    cachedInfo = { url: filehostUrl, info, fetchedAt: Date.now() };
     return info;
   } catch {
     return null;
+  }
+}
+
+type UploadFailure =
+  | "network"
+  | "cancelled"
+  | "too-large"
+  | "refused"
+  | "bad-response";
+
+const failureForStatus = (status: number): UploadFailure =>
+  status === 413 ? "too-large" : "refused";
+
+export function describeUploadFailure(failure: unknown): string {
+  switch (failure) {
+    case "network":
+      return t`Could not reach the file host. Check your connection and try again.`;
+    case "cancelled":
+      return t`Upload cancelled.`;
+    case "too-large":
+      return t`Choose a smaller file. This one is too large for the file host.`;
+    case "refused":
+      return t`Choose a different file. The file host refused this one.`;
+    case "bad-response":
+      return t`Try the upload again. The file host sent back an answer we could not read.`;
+    default:
+      return t`Try the upload again.`;
   }
 }
 
@@ -66,26 +105,26 @@ export function uploadFile(file: File, opts: UploadOptions): Promise<string> {
 
     xhr.addEventListener("load", () => {
       if (xhr.status < 200 || xhr.status >= 300) {
-        reject(xhr.responseText || `${xhr.status} ${xhr.statusText}`);
+        reject(failureForStatus(xhr.status));
         return;
       }
       try {
         const body = JSON.parse(xhr.responseText) as { saved_url?: string };
         if (!body.saved_url) {
-          reject("Backend response did not include saved_url");
+          reject("bad-response");
           return;
         }
         resolve(`${opts.filehostUrl.replace(/\/$/, "")}${body.saved_url}`);
       } catch {
-        reject("Backend returned invalid JSON");
+        reject("bad-response");
       }
     });
-    xhr.addEventListener("error", () => reject("Network error during upload"));
-    xhr.addEventListener("abort", () => reject("Upload cancelled"));
+    xhr.addEventListener("error", () => reject("network"));
+    xhr.addEventListener("abort", () => reject("cancelled"));
 
     if (opts.signal) {
       if (opts.signal.aborted) {
-        reject("Upload cancelled");
+        reject("cancelled");
         return;
       }
       opts.signal.addEventListener("abort", () => xhr.abort());
@@ -103,6 +142,101 @@ export function uploadFile(file: File, opts: UploadOptions): Promise<string> {
   });
 }
 
+export interface TokenlessUploadOptions {
+  /** Endpoint from draft/FILEHOST; we POST the file here as-is. */
+  endpoint: string;
+  onProgress?: (loaded: number, total: number) => void;
+  signal?: AbortSignal;
+}
+
+/**
+ * Extract the uploaded file's URL from a draft/FILEHOST response. The spec
+ * uses the `Location` header (201), but real filehosts vary, so we accept
+ * (in order): the Location header, a JSON body with `url`/`saved_url`, or a
+ * plain-text URL body. Returns null when none is present.
+ */
+export function parseFilehostUploadResponse(
+  location: string | null,
+  body: string,
+): string | null {
+  if (location) return location;
+  const text = body.trim();
+  try {
+    const parsed = JSON.parse(text) as { url?: string; saved_url?: string };
+    const u = parsed.url ?? parsed.saved_url;
+    if (u) return u;
+  } catch {
+    // not JSON -- fall through to plain-text handling
+  }
+  if (/^https?:\/\/\S+$/.test(text)) return text;
+  return null;
+}
+
+/**
+ * Upload via the standard tokenless IRCv3 draft/FILEHOST flow: POST the
+ * file (multipart `file` field) directly to an advertised endpoint, no auth.
+ *
+ * The spec returns 201 + a `Location` header, but real filehosts vary, so we
+ * accept (in order): the `Location` header, a JSON body with `url`/`saved_url`,
+ * or a plain-text URL body. Resolves with the file URL.
+ *
+ * Note: from a browser this only works if the endpoint serves CORS
+ * (`Access-Control-Allow-Origin`), and reading a 201 `Location` cross-origin
+ * additionally needs `Access-Control-Expose-Headers: Location`. Native clients
+ * have no such restriction.
+ */
+export function uploadFileTokenless(
+  file: File,
+  opts: TokenlessUploadOptions,
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (!e.lengthComputable) return;
+      opts.onProgress?.(e.loaded, e.total);
+    });
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status < 200 || xhr.status >= 300) {
+        reject(failureForStatus(xhr.status));
+        return;
+      }
+      const url = parseFilehostUploadResponse(
+        xhr.getResponseHeader("Location"),
+        xhr.responseText || "",
+      );
+      if (url) {
+        resolve(url);
+        return;
+      }
+      reject("bad-response");
+    });
+    xhr.addEventListener("error", () => reject("network"));
+    xhr.addEventListener("abort", () => reject("cancelled"));
+
+    if (opts.signal) {
+      if (opts.signal.aborted) {
+        reject("cancelled");
+        return;
+      }
+      opts.signal.addEventListener("abort", () => xhr.abort());
+    }
+
+    xhr.open("POST", opts.endpoint);
+    const form = new FormData();
+    form.append("file", file);
+    xhr.send(form);
+  });
+}
+
+/** Byte count at the largest unit that keeps it readable. */
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
 /**
  * Best-effort client-side validation against fetchUploadInfo() output.
  * Returns null when the file is OK; otherwise a human-readable reason
@@ -114,13 +248,16 @@ export function validateFileAgainstInfo(
 ): string | null {
   if (!info) return null;
   if (info.max_size > 0 && file.size > info.max_size) {
-    return `File is too large (${(file.size / 1024 / 1024).toFixed(1)} MB > ${(info.max_size / 1024 / 1024).toFixed(0)} MB).`;
+    const limit = formatFileSize(info.max_size);
+    return t`Choose a file under ${limit}, the most the file host accepts.`;
   }
   if (info.allowed_extensions.length > 0) {
     const dot = file.name.lastIndexOf(".");
     const ext = dot === -1 ? "" : file.name.slice(dot).toLowerCase();
     if (!info.allowed_extensions.map((e) => e.toLowerCase()).includes(ext)) {
-      return `File type "${ext || "(none)"}" is not allowed.`;
+      return ext
+        ? t`Choose a different file type. The file host does not accept ${ext} files.`
+        : t`Choose a file with an extension. The file host does not accept files without one.`;
     }
   }
   return null;
