@@ -3,7 +3,17 @@ import type { EmojiClickData } from "emoji-picker-react";
 import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaGift, FaList, FaPlus, FaTimes } from "react-icons/fa";
+import {
+  FaCamera,
+  FaDesktop,
+  FaGift,
+  FaList,
+  FaMapMarkerAlt,
+  FaMicrophone,
+  FaPlus,
+  FaTimes,
+  FaVectorSquare,
+} from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 import { useAutoFocusTyping } from "../../hooks/useAutoFocusTyping";
@@ -16,6 +26,11 @@ import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
 import { useTabCompletion } from "../../hooks/useTabCompletion";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
+import { useWindowFileCapture } from "../../hooks/useWindowFileCapture";
+import {
+  pickRecordingFormat,
+  pickVideoRecordingFormat,
+} from "../../lib/audioRecording";
 import { waitForAuthToken } from "../../lib/authToken";
 import { voiceDisplayName } from "../../lib/channelMentions";
 import { getClientCommands } from "../../lib/clientCommands";
@@ -35,10 +50,13 @@ import {
   wrapForUpload,
 } from "../../lib/e2ee/media";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
+import { locationSharingSupported } from "../../lib/geolocation";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
+import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   fetchUploadInfo,
+  type UploadInfo,
   uploadFile,
   uploadFileTokenless,
   validateFileAgainstInfo,
@@ -50,6 +68,13 @@ import {
 } from "../../lib/messageFormatter";
 import { GROUP_WINDOW_MS } from "../../lib/messageGrouping";
 import { isMobileDevice, isTauriMobile } from "../../lib/platformUtils";
+import { maxRecordingBytes } from "../../lib/recordingLimits";
+import { regionRecordingSupported } from "../../lib/screenRecorder";
+import {
+  focusMainWindow,
+  type SelectedRegion,
+  selectScreenRegion,
+} from "../../lib/screenRegion";
 import useStore from "../../store";
 import { sendEncryptedMedia } from "../../store/handlers/e2ee";
 import { injectSystemNotice } from "../../store/handlers/e2eeConversation";
@@ -61,11 +86,13 @@ import { queryUncachedBotsInChannel } from "../../store/handlers/pushbot";
 import type { BotCommand, Message as MessageType } from "../../types";
 import { MessageItem } from "../message/MessageItem";
 import { MessageReply } from "../message/MessageReply";
+import { AttachmentTray, type PendingAttachment } from "../ui/AttachmentTray";
 import AutocompleteDropdown from "../ui/AutocompleteDropdown";
 import BlankPage from "../ui/BlankPage";
 import BotsModal from "../ui/BotsModal";
 import { BotToolsTray } from "../ui/BotToolsTray";
 import { BouncerNetworksPanel } from "../ui/BouncerNetworksPanel";
+import { CameraCaptureModal } from "../ui/CameraCaptureModal";
 import ChannelSettingsModal from "../ui/ChannelSettingsModal";
 import ColorPicker from "../ui/ColorPicker";
 import { E2EERequestBanner } from "../ui/E2EERequestBanner";
@@ -74,14 +101,21 @@ import EmojiAutocompleteDropdown from "../ui/EmojiAutocompleteDropdown";
 import { EmojiPickerInline } from "../ui/EmojiPickerInline";
 import { EmojiPickerModal } from "../ui/EmojiPickerModal";
 import GifSelector from "../ui/GifSelector";
+import HeaderOverflowMenu from "../ui/HeaderOverflowMenu";
 import DiscoverGrid from "../ui/HomeScreen";
 import { InputToolbar } from "../ui/InputToolbar";
 import InviteUserModal from "../ui/InviteUserModal";
+import { LocationShareModal } from "../ui/LocationShareModal";
 import { MiniMediaPlayer } from "../ui/MiniMediaPlayer";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import ProfileModalRouter from "../ui/ProfileModalRouter";
 import ReactionModal from "../ui/ReactionModal";
 import { ReactionPopover } from "../ui/ReactionPopover";
+import { type RecordingKind, RecordingPanel } from "../ui/RecordingPanel";
+import {
+  type RecordingFailure,
+  RegionRecordingBar,
+} from "../ui/RegionRecordingBar";
 import { SlashCommandParamModal } from "../ui/SlashCommandParamModal";
 import {
   getActiveSlashQuery,
@@ -93,7 +127,6 @@ import { TextArea } from "../ui/TextInput";
 import { TopicMediaStrip } from "../ui/TopicMediaStrip";
 import { TypingIndicator } from "../ui/TypingIndicator";
 import UnencryptedUploadConfirmModal from "../ui/UnencryptedUploadConfirmModal";
-import { UploadPreviewModal } from "../ui/UploadPreviewModal";
 import {
   type UploadJob,
   UploadProgressOverlay,
@@ -117,6 +150,28 @@ interface AliveChannel {
 const isMac =
   typeof navigator !== "undefined" &&
   navigator.platform.toUpperCase().includes("MAC");
+
+/** Whether an upload got as far as the network. "held" waits on a person to
+ *  answer the unencrypted-upload warning, which keeps the files itself. */
+type UploadOutcome = "started" | "held" | "failed";
+
+/** A stable empty list, so a conversation with nothing attached does not hand
+ *  the tray a new array on every render. */
+const NO_ATTACHMENTS: PendingAttachment[] = [];
+
+function previewable(file: File): boolean {
+  return (
+    file.type.startsWith("image/") ||
+    file.type.startsWith("video/") ||
+    file.type.startsWith("audio/")
+  );
+}
+
+function releasePreview(attachment: PendingAttachment): void {
+  if (attachment.kind === "file" && attachment.previewUrl) {
+    URL.revokeObjectURL(attachment.previewUrl);
+  }
+}
 
 export const ChatArea: React.FC<{
   onToggleChanList: () => void;
@@ -162,20 +217,28 @@ export const ChatArea: React.FC<{
   const [showMembersDropdown, setShowMembersDropdown] = useState(false);
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isGifSelectorOpen, setIsGifSelectorOpen] = useState(false);
-  const [pendingUpload, setPendingUpload] = useState<{
-    isOpen: boolean;
-    files: File[];
-    previewUrl: string | null;
-  }>({
-    isOpen: false,
-    files: [],
-    previewUrl: null,
-  });
-  // True while a file is being dragged over the input area, so we can
-  // show a drop overlay. A counter avoids the flicker that dragenter/
-  // dragleave cause as the pointer crosses child elements.
-  const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const dragDepthRef = useRef(0);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [recordingRegion, setRecordingRegion] = useState<SelectedRegion | null>(
+    null,
+  );
+  const [regionRecordingReady, setRegionRecordingReady] = useState(false);
+  const [recordingKind, setRecordingKind] = useState<RecordingKind | null>(
+    null,
+  );
+  const plusButtonRef = useRef<HTMLButtonElement>(null);
+  // We check once on mount and again whenever the plus menu opens, so a
+  // device plugged in mid-session is picked up there.
+  const [hasMicrophoneInput, setHasMicrophoneInput] = useState(false);
+  const [hasCameraInput, setHasCameraInput] = useState(false);
+  // We treat null, meaning no queryable policy or a fetch still in flight, as
+  // unrestricted.
+  const [uploadInfo, setUploadInfo] = useState<UploadInfo | null>(null);
+  // Keyed the way drafts are, so walking to another conversation never carries
+  // a file along to be sent there.
+  const [attachmentsByChannel, setAttachmentsByChannel] = useState<
+    Record<string, PendingAttachment[]>
+  >({});
   // Multimedia uploads in flight.  Each job tracks one file's
   // XHR-driven progress; once they all settle we send a single
   // PRIVMSG with the URLs joined.
@@ -185,6 +248,8 @@ export const ChatArea: React.FC<{
   // conversation is showing. Released only by an explicit confirmation.
   const [pendingPlainUpload, setPendingPlainUpload] = useState<{
     files: File[];
+    caption: string;
+    links: string[];
     reason: PlainUploadReason;
     // The upload path reads the current selection, so the conversation the
     // warning was raised about is pinned here. Otherwise a confirmation aimed
@@ -674,6 +739,98 @@ export const ChatArea: React.FC<{
     selectedServer?.filehost || selectedServer?.fileHosts?.length
   );
 
+  const isTouch = useMediaQuery("(pointer: coarse)");
+
+  // MediaRecorder support doesn't change at runtime, so these only need
+  // picking once.
+  const audioRecordingFormat = useMemo(() => pickRecordingFormat(), []);
+  const videoRecordingFormat = useMemo(() => pickVideoRecordingFormat(), []);
+
+  useEffect(() => {
+    void listDevices("audioinput").then((devices) => {
+      setHasMicrophoneInput(devices.length > 0);
+    });
+    void listDevices("videoinput").then((devices) => {
+      setHasCameraInput(devices.length > 0);
+    });
+  }, []);
+
+  // Only the vendor token uploader exposes a queryable policy.
+  useEffect(() => {
+    const filehostUrl = selectedServer?.filehost;
+    if (!filehostUrl) {
+      setUploadInfo(null);
+      return;
+    }
+    let cancelled = false;
+    void fetchUploadInfo(filehostUrl).then((info) => {
+      if (!cancelled) setUploadInfo(info);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedServer?.filehost]);
+
+  const extensionAllowed = (extension: string): boolean =>
+    !uploadInfo ||
+    uploadInfo.allowed_extensions.length === 0 ||
+    uploadInfo.allowed_extensions
+      .map((e) => e.toLowerCase())
+      .includes(`.${extension}`);
+
+  const canRecordAudio =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasMicrophoneInput &&
+    !!audioRecordingFormat &&
+    extensionAllowed(audioRecordingFormat.extension);
+
+  const canRecordVideo =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    hasCameraInput &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  const canRecordScreen =
+    canUpload &&
+    typeof window.MediaRecorder !== "undefined" &&
+    screenCaptureSupported() &&
+    !isTouch &&
+    !!videoRecordingFormat &&
+    extensionAllowed(videoRecordingFormat.extension);
+
+  // Unlike recording, sharing a location never needs the file host -- a
+  // rounded or exact link works with no attachment at all.
+  const canShareLocation = locationSharingSupported();
+  // The native recorder always writes MP4, so it needs none of what the
+  // browser's own screen capture is gated on.
+  const canRecordRegion =
+    canUpload && regionRecordingReady && extensionAllowed("mp4");
+
+  useEffect(() => {
+    void regionRecordingSupported().then(setRegionRecordingReady);
+  }, []);
+
+  const describeRecordingFailure = (failure: RecordingFailure): string =>
+    failure === "screen-gone"
+      ? t`That screen is no longer there.`
+      : t`The recording could not be made.`;
+
+  // The rectangle is drawn on the desktop first, then the screen it sits on is
+  // captured and cropped to it.
+  const startRegionRecording = async () => {
+    const selection = await selectScreenRegion();
+    if (!selection) return;
+    await focusMainWindow();
+    setRecordingRegion(selection);
+  };
+
+  const recordingMaxBytes = useMemo(
+    () => maxRecordingBytes(uploadInfo),
+    [uploadInfo],
+  );
+
   const selectedChannel = useMemo(
     () => selectedServer?.channels.find((c) => c.id === selectedChannelId),
     [selectedServer, selectedChannelId],
@@ -930,20 +1087,28 @@ export const ChatArea: React.FC<{
     if (ui.activeMedia?.type === "embed") stopActiveMedia();
   }, [channelKey]);
 
-  // Close plus menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showPlusMenu && !(event.target as Element).closest(".plus-menu")) {
-        setShowPlusMenu(false);
-      }
-    };
+  const attachments = attachmentsByChannel[channelKey] ?? NO_ATTACHMENTS;
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showPlusMenu]);
+  const reportUploadFailure = (message: string) =>
+    useStore.getState().addGlobalNotification({
+      type: "fail",
+      command: "UPLOAD",
+      code: "UPLOAD_FAILED",
+      message,
+      serverId: selectedServerId ?? "",
+    });
+
+  const updateAttachments = (
+    key: string,
+    next: (prev: PendingAttachment[]) => PendingAttachment[],
+  ) =>
+    setAttachmentsByChannel((prev) => ({
+      ...prev,
+      [key]: next(prev[key] ?? NO_ATTACHMENTS),
+    }));
 
   const handleSendMessage = () => {
-    if (!hasTextRef.current) return;
+    if (!hasTextRef.current && attachments.length === 0) return;
 
     // Block sending to offline PM targets — isOnline is explicitly false (MONITOR tracked).
     // undefined means the server doesn't support MONITOR, so we let it through.
@@ -960,9 +1125,38 @@ export const ChatArea: React.FC<{
     }
 
     channelListRefs.current.get(channelKey)?.setAtBottom();
-    // Withheld under an engaged-but-not-ready lock: keep the draft so the user
-    // doesn't lose what they typed when nothing was actually sent.
-    if (sendMessage(messageTextRef.current) === "withheld") return;
+    if (attachments.length > 0) {
+      const files = attachments.flatMap((a) =>
+        a.kind === "file" ? [a.file] : [],
+      );
+      const links = attachments.flatMap((a) =>
+        a.kind === "link" ? [a.url] : [],
+      );
+      const caption = messageTextRef.current.trim();
+      if (files.length > 0) {
+        if (!canUpload) return;
+        // The composer empties before the host has been reached, so the
+        // thumbnails stay alive until an upload is known to have started and
+        // an upload that never starts hands the words and the files back.
+        const held = attachments;
+        updateAttachments(channelKey, () => NO_ATTACHMENTS);
+        void handleFilesUpload(files, caption, links).then((outcome) => {
+          if (outcome === "failed") {
+            updateAttachments(channelKey, () => held);
+            applyText(caption);
+            return;
+          }
+          for (const attachment of held) releasePreview(attachment);
+        });
+      } else {
+        if (sendMessage([caption, ...links].join(" ")) === "withheld") return;
+        clearAttachments();
+      }
+    } else if (sendMessage(messageTextRef.current) === "withheld") {
+      // Withheld under an engaged-but-not-ready lock: keep the draft so the
+      // user doesn't lose what they typed when nothing was actually sent.
+      return;
+    }
 
     applyText("");
     setAutocompleteInputText("");
@@ -982,23 +1176,29 @@ export const ChatArea: React.FC<{
   // Multi-file upload entry point.  Picks up an auth token (one-shot
   // per batch -- the backend accepts the same token across many
   // uploads), kicks off N uploads in parallel, surfaces per-file
-  // progress, and on full success sends a single PRIVMSG containing
-  // all the resulting URLs separated by spaces.
+  // progress, and on full success sends a single PRIVMSG carrying what was
+  // typed and all the resulting URLs.
   const handleFilesUpload = async (
     files: File[],
+    caption: string,
+    links: string[],
     confirmedForNick: string | null = null,
-  ): Promise<void> => {
-    if (!selectedServerId || files.length === 0) return;
+  ): Promise<UploadOutcome> => {
+    if (!selectedServerId || files.length === 0) return "failed";
     // Prefer the standard tokenless draft/FILEHOST when offered; otherwise
     // fall back to the vendor token-authenticated obby.world/FILEHOST.
     const tokenlessEndpoint = selectedServer?.fileHosts?.[0];
     const filehostUrl = selectedServer?.filehost;
-    if (!tokenlessEndpoint && !filehostUrl) return;
+    if (!tokenlessEndpoint && !filehostUrl) {
+      reportUploadFailure(t`This server has nowhere to put a file.`);
+      return "failed";
+    }
     const target = selectedChannel?.name ?? selectedPrivateChat?.username;
-    if (!target) return;
+    if (!target) return "failed";
     // A confirmation names the conversation it was given for. Answering it
     // after moving to another chat must not redirect the files there.
-    if (confirmedForNick !== null && confirmedForNick !== target) return;
+    if (confirmedForNick !== null && confirmedForNick !== target)
+      return "failed";
     const plainUploadConfirmed = confirmedForNick !== null;
 
     // The token path pulls the in-house policy and mints one single-use
@@ -1019,7 +1219,8 @@ export const ChatArea: React.FC<{
           console.error(
             "draft/authtoken: server did not return a filehost token",
           );
-          return;
+          reportUploadFailure(t`The file host would not let this through.`);
+          return "failed";
         }
         tokens.push(tok);
       }
@@ -1048,7 +1249,7 @@ export const ChatArea: React.FC<{
             ? t`File not uploaded: encryption stopped working. Start encryption again, or end encryption to upload unencrypted.`
             : t`File not uploaded: encryption is still being set up. It can go once encryption is active, or after ending encryption.`,
       );
-      return;
+      return "failed";
     }
     const encryptHere = posture === "encrypt" && !!selectedPrivateChat;
     // Each file decides for itself, so one file past the size ceiling cannot
@@ -1061,15 +1262,22 @@ export const ChatArea: React.FC<{
     if (plainFiles.length > 0 && !plainUploadConfirmed) {
       setPendingPlainUpload({
         files,
+        caption,
+        links,
         reason: encryptHere ? "too-large" : "scheme",
         nick: target,
       });
-      return;
+      return "held";
     }
     const encryptTarget =
       encryptHere && selectedPrivateChat
         ? { nick: selectedPrivateChat.username }
         : null;
+
+    // An encrypted attachment is its own frame and carries no text, so what was
+    // typed goes ahead of the files as a message of its own.
+    const said = [caption, ...links].filter(Boolean).join(" ");
+    if (encryptTarget && said) sendMessage(said);
 
     // Build the job list in one go so the progress strip appears
     // immediately, before any network roundtrip.
@@ -1203,8 +1411,8 @@ export const ChatArea: React.FC<{
     // Encrypted attachments have already been delivered as their own frames, so
     // only plain uploads leave a URL to post.
     const urls = results.filter((u): u is string => typeof u === "string");
-    if (urls.length > 0) {
-      const line = urls.join(" ");
+    if (urls.length > 0 || (!encryptTarget && said)) {
+      const line = [said, ...urls].filter(Boolean).join(" ");
       const encrypted =
         !!selectedPrivateChat &&
         routeOutgoingPM(
@@ -1242,6 +1450,7 @@ export const ChatArea: React.FC<{
       },
       anyFailed ? 8000 : 1500,
     );
+    return "started";
   };
 
   const cancelUploadJob = (id: string) => {
@@ -1250,56 +1459,42 @@ export const ChatArea: React.FC<{
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
-  // An upload is sent the moment it finishes and IRC has no unsend, so every
-  // path that picks a file confirms first.
+  // Every path that picks a file lands here, and nothing leaves the device
+  // until the message it belongs to is sent.
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
-    const previewUrl =
-      files.length === 1 && files[0].type.startsWith("image/")
-        ? URL.createObjectURL(files[0])
-        : null;
-    setPendingUpload({ isOpen: true, files, previewUrl });
+    updateAttachments(channelKey, (prev) => [
+      ...prev,
+      ...files.map((file) => ({
+        id: uuidv4(),
+        kind: "file" as const,
+        file,
+        previewUrl: previewable(file) ? URL.createObjectURL(file) : null,
+      })),
+    ]);
+    inputRef.current?.focus();
   };
 
-  const closePendingUpload = () => {
-    if (pendingUpload.previewUrl) URL.revokeObjectURL(pendingUpload.previewUrl);
-    setPendingUpload({ isOpen: false, files: [], previewUrl: null });
+  const removeAttachment = (id: string) =>
+    updateAttachments(channelKey, (prev) => {
+      const going = prev.find((a) => a.id === id);
+      if (going) releasePreview(going);
+      return prev.filter((a) => a.id !== id);
+    });
+
+  const clearAttachments = () => {
+    for (const attachment of attachments) releasePreview(attachment);
+    updateAttachments(channelKey, () => NO_ATTACHMENTS);
   };
 
-  // Dropping a file onto the textarea otherwise triggers the browser
-  // default, which pastes the local file path as text. Intercept it on the
-  // input container and ignore non-file drags (e.g. dragging selected text)
-  // so normal text DnD still works.
-  const dragHasFiles = (e: React.DragEvent) =>
-    Array.from(e.dataTransfer.types).includes("Files");
-
-  const handleDragEnter = (e: React.DragEvent) => {
-    if (!canUpload || !dragHasFiles(e)) return;
-    e.preventDefault();
-    dragDepthRef.current += 1;
-    setIsDraggingFile(true);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    if (!dragHasFiles(e)) return;
-    e.preventDefault();
-    e.dataTransfer.dropEffect = canUpload ? "copy" : "none";
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    if (!dragHasFiles(e)) return;
-    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
-    if (dragDepthRef.current === 0) setIsDraggingFile(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    if (!dragHasFiles(e)) return;
-    e.preventDefault();
-    dragDepthRef.current = 0;
-    setIsDraggingFile(false);
-    if (!canUpload) return;
-    handleSelectedFiles(Array.from(e.dataTransfer.files));
-  };
+  // A drop or a paste anywhere over the app means the conversation on screen.
+  // Touch has no drag and no clipboard gesture of its own, so this is for
+  // pointer devices.
+  const isDraggingFile = useWindowFileCapture({
+    enabled:
+      canUpload && !isTouch && !!(selectedChannel || selectedPrivateChat),
+    onFiles: handleSelectedFiles,
+  });
 
   // A file on the clipboard is the same gesture as dropping one. A copy from a
   // file manager carries the name as text too, so the files decide.
@@ -1310,28 +1505,32 @@ export const ChatArea: React.FC<{
     handleSelectedFiles(files);
   };
 
-  const handleGifSend = (gifUrl: string) => {
-    // Send the GIF URL directly to the current channel/user
+  // Shared by anything that sends a plain URL as its whole message -- a GIF
+  // pick or a location link with no image to attach.
+  const sendUrlMessage = (url: string) => {
     const target = selectedChannel?.name ?? selectedPrivateChat?.username ?? "";
     if (!target || !selectedServerId) return;
     if (
       selectedPrivateChat &&
-      routeOutgoingPM(
-        selectedServerId,
-        selectedPrivateChat.username,
-        gifUrl,
-      ) !== "none"
+      routeOutgoingPM(selectedServerId, selectedPrivateChat.username, url) !==
+        "none"
     ) {
       return;
     }
 
-    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${gifUrl}`);
+    ircClient.sendRaw(selectedServerId, `PRIVMSG ${target} :${url}`);
 
-    // Add to store for immediate display (only for private chats, channels echo back)
-    if (selectedPrivateChat && currentUser) {
+    // A channel echoes our own line back, and so does a private message once
+    // the server negotiates echo-message, so we only place a local copy where
+    // nothing is coming back to place it for us.
+    if (
+      selectedPrivateChat &&
+      currentUser &&
+      !ircClient.hasCapability(selectedServerId, "echo-message")
+    ) {
       const outgoingMessage = {
         id: uuidv4(),
-        content: gifUrl,
+        content: url,
         timestamp: new Date(),
         userId: currentUser.username || currentUser.id,
         channelId: selectedPrivateChat.id,
@@ -1345,6 +1544,15 @@ export const ChatArea: React.FC<{
       const { addMessage } = useStore.getState();
       addMessage(outgoingMessage);
     }
+  };
+
+  const handleLocationShare = (url: string) => {
+    updateAttachments(channelKey, (prev) => [
+      ...prev,
+      { id: uuidv4(), kind: "link", url, label: t`Location` },
+    ]);
+    setIsLocationModalOpen(false);
+    inputRef.current?.focus();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -1428,6 +1636,11 @@ export const ChatArea: React.FC<{
     if (e.key === "Escape" && navHighlightedMsgId !== null) {
       setNavHighlightedMsgId(null);
       setLocalReplyTo(null);
+      return;
+    }
+
+    if (e.key === "Escape" && attachments.length > 0) {
+      clearAttachments();
       return;
     }
 
@@ -2310,10 +2523,6 @@ export const ChatArea: React.FC<{
           {(selectedChannel || selectedPrivateChat) && (
             <div
               className={`${!isNarrowView && "px-4"} pb-4 relative chat-input-area`}
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
             >
               {selectedPrivateChat && selectedServerId && (
                 <E2EERequestBanner
@@ -2329,14 +2538,18 @@ export const ChatArea: React.FC<{
                   onClose={closeE2EEVerify}
                 />
               )}
-              {isDraggingFile && (
-                <div className="absolute inset-0 z-50 m-1 flex items-center justify-center rounded-lg border-2 border-dashed border-discord-blurple bg-discord-dark-100/90 pointer-events-none">
-                  <span className="text-discord-text-normal font-medium flex items-center">
-                    <FaPlus className="mr-2" />
-                    <Trans>Drop files to upload</Trans>
-                  </span>
-                </div>
-              )}
+              {isDraggingFile &&
+                createPortal(
+                  <div className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center bg-discord-dark-100/80 p-6">
+                    <div className="flex h-full w-full items-center justify-center rounded-2xl border-2 border-dashed border-discord-blurple">
+                      <span className="flex items-center text-lg font-medium text-discord-text-normal">
+                        <FaPlus className="mr-3" />
+                        <Trans>Drop files to attach</Trans>
+                      </span>
+                    </div>
+                  </div>,
+                  document.body,
+                )}
               {localReplyTo && (
                 <MessageReply
                   replyMessage={localReplyTo}
@@ -2352,124 +2565,159 @@ export const ChatArea: React.FC<{
                 channelId={selectedChannelId || selectedPrivateChatId || ""}
               />
               <div
-                className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"} flex items-center relative flex-nowrap`}
+                className={`bg-discord-dark-100 ${localReplyTo ? "rounded-b-lg" : "rounded-lg"}`}
               >
-                <button
-                  className="px-2 sm:px-4 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
-                  onClick={() => setShowPlusMenu((prev) => !prev)}
-                >
-                  <FaPlus />
-                </button>
+                <AttachmentTray
+                  attachments={attachments}
+                  onRemove={removeAttachment}
+                />
+                <div className="flex items-center relative flex-nowrap">
+                  <button
+                    ref={plusButtonRef}
+                    className="px-2 sm:px-4 text-discord-text-muted hover:text-discord-text-normal flex-shrink-0"
+                    onClick={() => setShowPlusMenu((prev) => !prev)}
+                  >
+                    <FaPlus />
+                  </button>
 
-                <TextArea
-                  ref={inputRef}
-                  defaultValue=""
-                  onChange={handleInputChange}
-                  onClick={handleInputClick}
-                  onKeyUp={handleInputKeyUp}
-                  onKeyDown={handleKeyDown}
-                  onPaste={handlePaste}
-                  onBeforeInput={onBeforeInputGuard}
-                  autoCorrect={isMobileInput ? "on" : "off"}
-                  autoCapitalize={isMobileInput ? "sentences" : "off"}
-                  spellCheck={isMobileInput}
-                  placeholder={
-                    selectedChannel
-                      ? globalSettings.enableMultilineInput &&
-                        !isNativeMobile &&
-                        !isCompactInput
-                        ? globalSettings.multilineOnShiftEnter
-                          ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
-                          : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
-                        : t`Message ${voiceDisplayName(selectedChannel.name)}`
-                      : selectedPrivateChat
+                  <TextArea
+                    ref={inputRef}
+                    defaultValue=""
+                    onChange={handleInputChange}
+                    onClick={handleInputClick}
+                    onKeyUp={handleInputKeyUp}
+                    onKeyDown={handleKeyDown}
+                    onPaste={handlePaste}
+                    onBeforeInput={onBeforeInputGuard}
+                    autoCorrect={isMobileInput ? "on" : "off"}
+                    autoCapitalize={isMobileInput ? "sentences" : "off"}
+                    spellCheck={isMobileInput}
+                    placeholder={
+                      selectedChannel
                         ? globalSettings.enableMultilineInput &&
-                          !isMobile &&
+                          !isNativeMobile &&
                           !isCompactInput
                           ? globalSettings.multilineOnShiftEnter
-                            ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
-                            : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
-                          : t`Message @${selectedPrivateChat.username}`
-                        : t`Type a message...`
-                  }
-                  enterKeyHint={
-                    isNativeMobile && globalSettings.enableMultilineInput
-                      ? "enter"
-                      : "send"
-                  }
-                  className="bg-transparent border-none outline-none py-3 flex-grow text-discord-text-normal resize-none min-h-[44px] overflow-y-auto placeholder:truncate"
-                  style={previewStyle}
-                  rows={1}
-                />
-                <InputToolbar
-                  selectedColor={selectedColor}
-                  onEmojiClick={() => {
-                    setIsEmojiSelectorOpen((prev) => !prev);
-                    setIsColorPickerOpen(false);
-                    setShowMembersDropdown(false);
-                  }}
-                  onColorPickerClick={() => {
-                    setIsColorPickerOpen((prev) => !prev);
-                    setIsEmojiSelectorOpen(false);
-                    setShowMembersDropdown(false);
-                  }}
-                  onAtClick={handleAtButtonClick}
-                  onSendClick={handleSendMessage}
-                  showSendButton={isNativeMobile}
-                  hideEmoji={isNativeMobile}
-                  hasText={hasText}
-                />
+                            ? t`Message ${voiceDisplayName(selectedChannel.name)} (Shift+Enter for new line)`
+                            : t`Message ${voiceDisplayName(selectedChannel.name)} (Enter for new line, Shift+Enter to send)`
+                          : t`Message ${voiceDisplayName(selectedChannel.name)}`
+                        : selectedPrivateChat
+                          ? globalSettings.enableMultilineInput &&
+                            !isMobile &&
+                            !isCompactInput
+                            ? globalSettings.multilineOnShiftEnter
+                              ? t`Message @${selectedPrivateChat.username} (Shift+Enter for new line)`
+                              : t`Message @${selectedPrivateChat.username} (Enter for new line, Shift+Enter to send)`
+                            : t`Message @${selectedPrivateChat.username}`
+                          : t`Type a message...`
+                    }
+                    enterKeyHint={
+                      isNativeMobile && globalSettings.enableMultilineInput
+                        ? "enter"
+                        : "send"
+                    }
+                    className="bg-transparent border-none outline-none py-3 flex-grow text-discord-text-normal resize-none min-h-[44px] overflow-y-auto placeholder:truncate"
+                    style={previewStyle}
+                    rows={1}
+                  />
+                  <InputToolbar
+                    selectedColor={selectedColor}
+                    onEmojiClick={() => {
+                      setIsEmojiSelectorOpen((prev) => !prev);
+                      setIsColorPickerOpen(false);
+                      setShowMembersDropdown(false);
+                    }}
+                    onColorPickerClick={() => {
+                      setIsColorPickerOpen((prev) => !prev);
+                      setIsEmojiSelectorOpen(false);
+                      setShowMembersDropdown(false);
+                    }}
+                    onAtClick={handleAtButtonClick}
+                    onSendClick={handleSendMessage}
+                    showSendButton={isNativeMobile}
+                    hideEmoji={isNativeMobile}
+                    hasText={hasText}
+                  />
+                </div>
               </div>
 
-              {/* Plus menu */}
-              {showPlusMenu && (
-                <div
-                  className="plus-menu absolute bg-discord-dark-200 rounded-lg shadow-lg border border-discord-dark-300 min-w-48 z-50"
-                  style={{
-                    bottom: "calc(100% + 8px)",
-                    left: "16px",
-                  }}
-                >
-                  {canUpload && (
-                    <button
-                      className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                      onClick={() => {
-                        // Multi-file picker: images, videos, audio.
-                        // The backend's allowlist is the source of
-                        // truth, but we hint accept= so the OS file
-                        // dialog filters sensibly.
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.multiple = true;
-                        input.accept = "image/*,video/*,audio/*";
-                        input.onchange = (e) => {
-                          handleSelectedFiles(
-                            Array.from(
-                              (e.target as HTMLInputElement).files ?? [],
-                            ),
-                          );
-                        };
-                        input.click();
-                        setShowPlusMenu(false);
-                      }}
-                    >
-                      <FaPlus className="mr-2" />
-                      <Trans>Upload Files</Trans>
-                    </button>
-                  )}
-                  <button
-                    className="w-full text-left px-4 py-2 text-discord-text-normal hover:bg-discord-dark-300 rounded-lg flex items-center"
-                    onClick={() => {
-                      setIsGifSelectorOpen(true);
-                      setShowPlusMenu(false);
-                    }}
-                  >
-                    <FaGift className="mr-2" />
-                    <Trans>Send a GIF</Trans>
-                  </button>
-                  {/* Add more menu items here if needed */}
-                </div>
-              )}
+              <HeaderOverflowMenu
+                isOpen={showPlusMenu}
+                onClose={() => setShowPlusMenu(false)}
+                anchorElement={plusButtonRef.current}
+                menuItems={[
+                  {
+                    id: "upload",
+                    show: canUpload,
+                    icon: <FaPlus />,
+                    label: <Trans>Upload Files</Trans>,
+                    onClick: () => {
+                      // Multi-file picker: images, videos, audio. The
+                      // backend's allowlist is the source of truth, but we
+                      // hint accept= so the OS file dialog filters sensibly.
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.multiple = true;
+                      input.accept = "image/*,video/*,audio/*";
+                      input.onchange = (e) => {
+                        handleSelectedFiles(
+                          Array.from(
+                            (e.target as HTMLInputElement).files ?? [],
+                          ),
+                        );
+                      };
+                      input.click();
+                    },
+                  },
+                  {
+                    id: "gif",
+                    show: true,
+                    icon: <FaGift />,
+                    label: <Trans>Send a GIF</Trans>,
+                    onClick: () => setIsGifSelectorOpen(true),
+                  },
+                  {
+                    id: "record-audio",
+                    show: canRecordAudio,
+                    divider: canRecordAudio,
+                    icon: <FaMicrophone />,
+                    label: <Trans>Record Audio</Trans>,
+                    onClick: () => setRecordingKind("audio"),
+                  },
+                  {
+                    id: "camera",
+                    show: canRecordVideo,
+                    divider: !canRecordAudio && canRecordVideo,
+                    icon: <FaCamera />,
+                    label: <Trans>Camera</Trans>,
+                    onClick: () => setIsCameraOpen(true),
+                  },
+                  {
+                    id: "record-region",
+                    show: canRecordRegion,
+                    icon: <FaVectorSquare />,
+                    label: <Trans>Record Screen Area</Trans>,
+                    onClick: () => void startRegionRecording(),
+                  },
+                  {
+                    id: "record-screen",
+                    show: canRecordScreen,
+                    divider:
+                      !canRecordAudio && !canRecordVideo && canRecordScreen,
+                    icon: <FaDesktop />,
+                    label: <Trans>Record Screen</Trans>,
+                    onClick: () => setRecordingKind("screen"),
+                  },
+                  {
+                    id: "location",
+                    show: canShareLocation,
+                    divider: true,
+                    icon: <FaMapMarkerAlt />,
+                    label: <Trans>Share Location</Trans>,
+                    onClick: () => setIsLocationModalOpen(true),
+                  },
+                ]}
+              />
 
               {isNarrowView && (
                 <EmojiPickerModal
@@ -2485,8 +2733,7 @@ export const ChatArea: React.FC<{
                 isOpen={isGifSelectorOpen}
                 onClose={() => setIsGifSelectorOpen(false)}
                 onSelectGif={(gifUrl) => {
-                  // Send the GIF URL directly to the channel
-                  handleGifSend(gifUrl);
+                  sendUrlMessage(gifUrl);
                   setIsGifSelectorOpen(false);
                 }}
               />
@@ -2888,16 +3135,39 @@ export const ChatArea: React.FC<{
           username={selectedProfileUsername}
         />
       )}
-      <UploadPreviewModal
-        isOpen={pendingUpload.isOpen}
-        files={pendingUpload.files}
-        previewUrl={pendingUpload.previewUrl}
+      <CameraCaptureModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCaptured={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
+      />
+      <RegionRecordingBar
+        selection={recordingRegion}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        onError={(failure) =>
+          useStore.getState().addGlobalNotification({
+            type: "fail",
+            command: "RECORD SCREEN",
+            code: "RECORDING_FAILED",
+            message: describeRecordingFailure(failure),
+            serverId: selectedServerId ?? "",
+          })
+        }
+        onFinished={() => setRecordingRegion(null)}
+      />
+      <RecordingPanel
+        kind={recordingKind ?? "audio"}
+        isOpen={recordingKind !== null}
+        anchor={plusButtonRef.current}
+        onClose={() => setRecordingKind(null)}
+        onRecorded={(file) => handleSelectedFiles([file])}
+        maxBytes={recordingMaxBytes}
+      />
+      <LocationShareModal
+        isOpen={isLocationModalOpen}
         target={selectedChannel?.name ?? selectedPrivateChat?.username ?? ""}
-        onCancel={() => closePendingUpload()}
-        onUpload={() => {
-          void handleFilesUpload(pendingUpload.files);
-          closePendingUpload();
-        }}
+        onCancel={() => setIsLocationModalOpen(false)}
+        onShare={handleLocationShare}
       />
       {/* Popped out server notices window */}
       {isServerNoticesPoppedOut &&
@@ -3000,9 +3270,9 @@ export const ChatArea: React.FC<{
           reason={pendingPlainUpload.reason}
           nick={pendingPlainUpload.nick}
           onConfirm={() => {
-            const { files, nick } = pendingPlainUpload;
+            const { files, caption, links, nick } = pendingPlainUpload;
             setPendingPlainUpload(null);
-            void handleFilesUpload(files, nick);
+            void handleFilesUpload(files, caption, links, nick);
           }}
           onCancel={() => setPendingPlainUpload(null)}
         />

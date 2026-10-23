@@ -53,6 +53,45 @@ export const showBrowserNotification = (
   }
 };
 
+/** What a nick may be made of, per RFC 2812 plus the dash. A name is only being
+ *  addressed when nothing on either side of it could be part of the name, which
+ *  is what lets "mattf:" and "@mattf" count while "mattfoo" does not. */
+const NICK_CHARACTER = /[A-Za-z0-9[\]\\`_^{}|-]/;
+
+function standsAlone(content: string, at: number, length: number): boolean {
+  const before = content[at - 1];
+  const after = content[at + length];
+  return (
+    (before === undefined || !NICK_CHARACTER.test(before)) &&
+    (after === undefined || !NICK_CHARACTER.test(after))
+  );
+}
+
+/** Where `name` is next addressed in `content` at or after `from`, or -1 when
+ *  it only appears inside longer words. */
+export const findAddressedName = (
+  content: string,
+  name: string,
+  from = 0,
+): number => {
+  const needle = name.trim().toLowerCase();
+  if (!needle) return -1;
+  const haystack = content.toLowerCase();
+  for (
+    let at = haystack.indexOf(needle, from);
+    at !== -1;
+    at = haystack.indexOf(needle, at + 1)
+  ) {
+    if (standsAlone(haystack, at, needle.length)) return at;
+  }
+  return -1;
+};
+
+/** Whether `name` is being addressed in `content` rather than sitting inside a
+ *  longer word. */
+export const addressesName = (content: string, name: string): boolean =>
+  findAddressedName(content, name) !== -1;
+
 /**
  * Check if a message contains a mention for the current user
  */
@@ -63,23 +102,14 @@ export const checkForMention = (
 ): boolean => {
   if (!currentUser) return false;
 
-  const content = messageContent.toLowerCase();
-
-  // Check for username mention
-  const usernameMention = content.includes(currentUser.username.toLowerCase());
-
-  // Check for custom mentions
-  const customMention = globalSettings.customMentions.some(
-    (mention: string) =>
-      mention.trim() && content.includes(mention.toLowerCase()),
+  return (
+    addressesName(messageContent, currentUser.username) ||
+    globalSettings.customMentions.some((mention: string) =>
+      addressesName(messageContent, mention),
+    )
   );
-
-  return usernameMention || customMention;
 };
 
-/**
- * Extract mentioned users from a message
- */
 export const extractMentions = (
   messageContent: string,
   currentUser: User | null,
@@ -89,16 +119,12 @@ export const extractMentions = (
 
   if (!currentUser) return mentions;
 
-  const content = messageContent.toLowerCase();
-
-  // Check for username mention
-  if (content.includes(currentUser.username.toLowerCase())) {
+  if (addressesName(messageContent, currentUser.username)) {
     mentions.push(currentUser.username);
   }
 
-  // Check for custom mentions
   for (const mention of globalSettings.customMentions) {
-    if (mention.trim() && content.includes(mention.toLowerCase())) {
+    if (addressesName(messageContent, mention)) {
       mentions.push(mention);
     }
   }

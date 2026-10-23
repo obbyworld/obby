@@ -48,3 +48,33 @@ Object.defineProperty(window, "localStorage", {
   value: localStorageMock,
   writable: true,
 });
+
+// jsdom implements no MediaStream, and every live preview goes through
+// VideoTrackView, which constructs one to hand a track to a video element.
+class MediaStreamStub {
+  private readonly tracks: MediaStreamTrack[];
+  constructor(tracks: MediaStreamTrack[] = []) {
+    this.tracks = tracks;
+  }
+  getTracks() {
+    return this.tracks;
+  }
+  getVideoTracks() {
+    return this.tracks.filter((t) => t.kind === "video");
+  }
+  getAudioTracks() {
+    return this.tracks.filter((t) => t.kind === "audio");
+  }
+}
+
+if (typeof globalThis.MediaStream === "undefined") {
+  vi.stubGlobal("MediaStream", MediaStreamStub);
+}
+
+// jsdom's HTMLMediaElement.play returns undefined where a browser returns a
+// promise, so every caller that awaits it would throw.
+Object.defineProperty(HTMLMediaElement.prototype, "play", {
+  configurable: true,
+  writable: true,
+  value: vi.fn(() => Promise.resolve()),
+});

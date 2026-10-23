@@ -1,4 +1,4 @@
-import { fireEvent, render } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { MediaPreview } from "../../src/components/message/MediaPreview";
 import type { MediaEntry } from "../../src/lib/mediaUtils";
@@ -129,6 +129,35 @@ describe("MediaPreview", () => {
     // Play button should be present
     expect(getByLabelText("Play")).toBeTruthy();
   });
+
+  test("a non-filehost image that fails to load reports onRenderFailed and renders nothing", async () => {
+    const onRenderFailed = vi.fn();
+    const url = "https://example.com/photo.jpg";
+    const { container } = render(
+      <MediaPreview
+        entry={makeEntry("image", url)}
+        onRenderFailed={onRenderFailed}
+      />,
+    );
+    const img = container.querySelector("img");
+    expect(img).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: asserted truthy above
+    fireEvent.error(img!);
+
+    await waitFor(() => expect(onRenderFailed).toHaveBeenCalledWith(url));
+    expect(container.querySelector("img")).toBeNull();
+  });
+
+  test("a working image never reports onRenderFailed", () => {
+    const onRenderFailed = vi.fn();
+    render(
+      <MediaPreview
+        entry={makeEntry("image", "https://example.com/photo.jpg")}
+        onRenderFailed={onRenderFailed}
+      />,
+    );
+    expect(onRenderFailed).not.toHaveBeenCalled();
+  });
 });
 
 describe("EmbedPreview — Now Playing Bar stop behaviour", () => {
@@ -147,6 +176,23 @@ describe("EmbedPreview — Now Playing Bar stop behaviour", () => {
     );
     expect(queryByTestId("react-player")).toBeNull();
     expect(getByLabelText("Play")).toBeTruthy();
+  });
+
+  test("pressing the thumbnail starts playback", async () => {
+    mockState.playMedia.mockClear();
+    const { findByTestId, getByLabelText } = render(
+      <MediaPreview entry={embedEntry()} />,
+    );
+    fireEvent.click(getByLabelText("Play"));
+    await findByTestId("react-player");
+    expect(mockState.playMedia).toHaveBeenCalledWith(
+      EMBED_URL,
+      "embed",
+      expect.anything(),
+      undefined,
+      undefined,
+      undefined,
+    );
   });
 
   // ReactPlayer is lazy-loaded; findByTestId waits for Suspense to resolve.

@@ -13,6 +13,7 @@ import {
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
 
 const ReactPlayer = lazy(() => import("react-player"));
 
@@ -493,25 +494,27 @@ export const MiniMediaPlayer: React.FC = () => {
               aria-hidden="true"
             >
               <Suspense fallback={null}>
-                <ReactPlayer
-                  src={url}
-                  playing={isPlaying}
-                  controls={false}
-                  width="1px"
-                  height="1px"
-                  onPlay={() =>
-                    playMedia(
-                      url,
-                      "embed",
-                      getEmbedThumbnailUrl(url) ?? undefined,
-                      activeMedia.msgid,
-                      activeMedia.serverId,
-                      activeMedia.channelId,
-                    )
-                  }
-                  onPause={() => pauseActiveMedia()}
-                  onEnded={() => stopActiveMedia()}
-                />
+                <MediaErrorBoundary onError={stopActiveMedia}>
+                  <ReactPlayer
+                    src={url}
+                    playing={isPlaying}
+                    controls={false}
+                    width="1px"
+                    height="1px"
+                    onPlay={() =>
+                      playMedia(
+                        url,
+                        "embed",
+                        getEmbedThumbnailUrl(url) ?? undefined,
+                        activeMedia.msgid,
+                        activeMedia.serverId,
+                        activeMedia.channelId,
+                      )
+                    }
+                    onPause={() => pauseActiveMedia()}
+                    onEnded={() => stopActiveMedia()}
+                  />
+                </MediaErrorBoundary>
               </Suspense>
             </div>
           )}

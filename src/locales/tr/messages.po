@@ -460,6 +460,8 @@ msgstr "Tümü"
 msgid "All Content"
 msgstr "Tüm İçerik"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Kamera erişimine izin ver"
@@ -468,6 +470,7 @@ msgstr "Kamera erişimine izin ver"
 msgid "Allow entering multiple lines of text"
 msgstr "Çok satırlı metin girişine izin ver"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Mikrofon erişimine izin ver"
@@ -514,6 +517,10 @@ msgstr "Uygulanıyor..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Onayla"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Yaklaşık"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -613,10 +620,14 @@ msgstr "Uzakta:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Geri"
+
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Arka"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -702,6 +713,10 @@ msgstr "Botlar ({botsLoadingCount} yükleniyor)"
 msgid "Bots on this network"
 msgstr "Bu ağdaki botlar"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Bu pencereyi öne getirip tekrar dene."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Sunucudaki tüm kanalları görüntüle"
@@ -714,6 +729,8 @@ msgstr "Tarayıcılar, mikrofon veya kameraya erişime izin verene kadar hoparl�
 msgid "Calls"
 msgstr "Aramalar"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -735,10 +752,11 @@ msgstr "Kamera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -763,6 +781,10 @@ msgstr "İş akışını iptal et"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "iptal edildi"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Konumuna ortala"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1178,6 +1200,14 @@ msgstr "URL'yi Kopyala"
 msgid "Could not access the device."
 msgstr "Cihaza erişilemedi."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Konum zamanında belirlenemedi. Gökyüzünün daha açık göründüğü bir yerde tekrar dene."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Konumun alınamadı."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} ile şifreleme kurulamadı."
@@ -1319,10 +1349,13 @@ msgstr "İzleyici yap"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Açıklama (isteğe bağlı, örn. \"Beta test ekibi Ç3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Kamera erişimine izin verene kadar cihaz adları gizlidir."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Mikrofon erişimine izin verene kadar cihaz adları gizlidir."
@@ -1330,6 +1363,11 @@ msgstr "Mikrofon erişimine izin verene kadar cihaz adları gizlidir."
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Bas-Konuş'u devre dışı bırak"
+
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Sil"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1414,9 +1452,13 @@ msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
 msgid "Download"
 msgstr "İndir"
 
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Kaydedilecek yeri seçmek için sürükle. İptal için Escape'e bas."
+
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Yüklemek için dosyaları buraya bırakın"
+msgid "Drop files to attach"
+msgstr "Eklemek için dosyaları buraya bırakın"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -1615,6 +1657,10 @@ msgstr "Neden girin (isteğe bağlı)"
 msgid "Enter username to invite"
 msgstr "Davet edilecek kullanıcı adını girin"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Tam"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "ÖrnekAĞ"
@@ -1695,6 +1741,10 @@ msgstr "Kanalları filtrele..."
 msgid "Filter members…"
 msgstr "Üyeleri filtrele…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Konum bulunuyor…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "Gönderilecek ilk mesaj"
@@ -1721,7 +1771,8 @@ msgstr "\"{searchQuery}\" ile eşleşen 1 mesaj bulundu"
 msgid "from"
 msgstr "kimden"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "Ön"
 
@@ -2140,6 +2191,14 @@ msgstr "WHOIS verisi yükleniyor..."
 msgid "Local Storage:"
 msgstr "Yerel Depolama:"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Konum"
+
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Konum erişimi reddedildi. Tarayıcı veya sistem ayarlarından konum erişimine izin ver, ardından tekrar dene."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2298,7 +2357,7 @@ msgstr "Mikrofon"
 msgid "Microphone {0}"
 msgstr "Mikrofon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Mikrofon seviyesi"
 
@@ -2723,6 +2782,10 @@ msgstr "Görüntüleyicide aç"
 msgid "Open Link"
 msgstr "Bağlantıyı Aç"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Haritayı aç"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper Adı"
@@ -2809,6 +2872,10 @@ msgstr "beklemede"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Kalıcı"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Fotoğraf"
 
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
@@ -2962,6 +3029,22 @@ msgstr "El kaldır"
 msgid "ran"
 msgstr "çalıştırdı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Maksimum kayıt süresine ulaşıldı, kayıt burada durdu."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Maksimum kayıt süresine ulaşıldı. Kayıt durduruldu: gönderebilirsin ya da silebilirsin."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Yükleme boyutu sınırına ulaşıldı, kayıt burada durdu."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Yükleme boyutu sınırına ulaşıldı. Kayıt durduruldu: gönderebilirsin ya da silebilirsin."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3011,6 +3094,30 @@ msgstr "Yeniden bağlanma başarısız oldu"
 msgid "Reconnect to server"
 msgstr "Sunucuya yeniden bağlan"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Ses kaydet"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Ekran kaydet"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Ekran kaydet"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Ekran alanını kaydet"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Görüntülü mesaj kaydet"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Sesli mesaj kaydet"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Mikrofonundaki arka plan gürültüsünü azalt"
@@ -3052,6 +3159,15 @@ msgstr "Kaldır"
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
 msgstr "{username} kullanıcısını kanaldan kaldır"
+
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "eki kaldır"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "tüm ekleri kaldır"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
@@ -3098,6 +3214,10 @@ msgstr "Sohbette yanıtladı"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Yanıt mesajı artık görünümde değil"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Yeniden çek"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -3267,6 +3387,11 @@ msgstr "Başlamak için bir kanal seçin veya ekleyin."
 msgid "self-registered"
 msgstr "kendi kaydı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Gönder"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3427,9 +3552,25 @@ msgstr "Ayar bulunamadı"
 msgid "Settings"
 msgstr "Ayarlar"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Paylaş"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Konum paylaş"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Ekranı paylaş"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Konumunu paylaş"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Konumunu {target} ile paylaş."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3562,6 +3703,10 @@ msgstr "{serverName} sunucusunda ses kanalı başlat"
 msgid "Start Private Message"
 msgstr "Özel Mesaj Başlat"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Kaydı başlat"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Videoyu başlat"
@@ -3588,8 +3733,14 @@ msgstr "Yayından çık"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Durdur"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Kaydı durdur"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3623,6 +3774,10 @@ msgstr "Askıya al"
 msgid "suspended"
 msgstr "askıya alındı"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Kamerayı değiştir"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Sistem"
@@ -3630,6 +3785,10 @@ msgstr "Sistem"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Sistem varsayılanı"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Fotoğraf çek"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3643,6 +3802,10 @@ msgstr "Metin Kanalları"
 msgid "That device is not available right now."
 msgstr "Bu cihaz şu anda kullanılamıyor."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "O ekran artık yok."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "<0>{serverName}</0> bağlantısında aşağıdaki güvenlik endişeleri bulunmaktadır:"
@@ -3651,6 +3814,10 @@ msgstr "<0>{serverName}</0> bağlantısında aşağıdaki güvenlik endişeleri 
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Dosya sunucusu dosyayı okunabilir biçimde saklar ve bağlantıyı ele geçiren herkes açabilir. Dosyaları şifreli göndermek için Obby şifrelemesine geçin."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Dosya sunucusu buna izin vermedi."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC sunucusu, sunucular arası bağlantılarının düşük güvenlik seviyesine sahip olduğunu bildirdi. Bu, mesajlarınız ağdaki IRC sunucuları arasında iletilirken düzgün şifrelenmeyebileceği veya SSL/TLS sertifikalarının doğru şekilde doğrulanmayabileceği anlamına gelir."
@@ -3658,6 +3825,14 @@ msgstr "IRC sunucusu, sunucular arası bağlantılarının düşük güvenlik se
 #: src/store/handlers/batches.ts
 msgid "The network split and rejoined. ✅"
 msgstr "Ağ bölündü ve yeniden birleşti. ✅"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Az önce çektiğin fotoğraf"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Kayıt yapılamadı."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -3675,6 +3850,15 @@ msgstr "Bu mesajı oluşturan iş akışı artık durumda değil"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Bu hesap {sessionCount} oturumdan bağlı. Oturum başına ayrıntılar yalnızca hesap sahibine veya IRC operatörlerine açıklanır."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Bu tarayıcı ses kaydedemiyor."
+
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Bu tarayıcı video kaydedemiyor."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Bu sohbet Obby'nin yerel şifreleme yöntemiyle şifrelenmiştir. Parmak izlerini farklı bir kanaldan karşılaştırın, ardından doğrulanmış olarak işaretleyin."
@@ -3686,6 +3870,10 @@ msgstr "Bu sohbet, diğer IRC istemcileriyle uyumlu olan OTR ile şifrelenmişti
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Bu komut parametre almıyor."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Bu cihaz şu anda konum belirleyemedi."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -3731,6 +3919,10 @@ msgstr "Bu sunucu genişletilmiş profil meta verilerini (IRCv3 METADATA uzantı
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Bu sunucu davet bağlantılarını desteklemiyor (<0>obby.world/invitation</0> yeteneği duyurulmuyor). Yine de normal şekilde sohbet edebilirsiniz; bu panel obbyircd tabanlı ağlar içindir."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Bu sunucunun dosya koyacak bir yeri yok."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -3876,10 +4068,6 @@ msgstr "Bu özel mesaj konuşmasının sabitlemesini kaldır"
 msgid "Unsuspend"
 msgstr "Askıdan al"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Yükle"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Bir görüntü yükleyin veya dinamik boyutlandırma için isteğe bağlı {size} değişkeni içeren bir URL sağlayın"
@@ -3889,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Avatar Yükle"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Dosyaları yükle"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Görüntü Yükle"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Dosya sunucusuna yükle ve {target} hedefine gönder."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
@@ -4029,6 +4208,7 @@ msgstr "Çok Katı"
 msgid "via @{0}"
 msgstr "@{0} üzerinden"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"

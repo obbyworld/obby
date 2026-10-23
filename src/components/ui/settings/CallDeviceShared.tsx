@@ -1,7 +1,8 @@
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import type { ReactNode } from "react";
 import { LoadingSpinner } from "../LoadingSpinner";
+import { SegmentedControl } from "../SegmentedControl";
 
 export const SELECT_CLASSES =
   "min-h-11 w-full rounded bg-discord-dark-400 px-3 py-2 text-discord-text-normal focus:outline-none focus:ring-2 focus:ring-discord-primary disabled:opacity-50";
@@ -76,3 +77,30 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
     </select>
   );
 };
+
+interface CameraFacingToggleProps {
+  facing: "user" | "environment";
+  onChange: (facing: "user" | "environment") => void;
+  disabled?: boolean;
+}
+
+/** Front/back camera switch for touch devices, shared by the camera
+ *  settings field and the video recorder. */
+export const CameraFacingToggle: React.FC<CameraFacingToggleProps> = ({
+  facing,
+  onChange,
+  disabled,
+}) => (
+  <SegmentedControl
+    value={facing}
+    onChange={onChange}
+    disabled={disabled}
+    segments={[
+      { value: "user", label: <Trans context="camera facing">Front</Trans> },
+      {
+        value: "environment",
+        label: <Trans context="camera facing">Back</Trans>,
+      },
+    ]}
+  />
+);

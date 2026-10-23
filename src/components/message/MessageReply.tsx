@@ -104,6 +104,9 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
 
   return (
     <div
+      // The quote sits on a translucent ground, so a tinted row would otherwise
+      // show straight through it. This lets the row paint an opaque one.
+      data-reply-quote={onClose ? undefined : ""}
       className={`flex min-w-0 w-full overflow-hidden transition-colors
         ${
           onClose

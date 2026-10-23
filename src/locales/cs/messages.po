@@ -460,6 +460,8 @@ msgstr "Vše"
 msgid "All Content"
 msgstr "Veškerý obsah"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "Povolit přístup ke kameře"
@@ -468,6 +470,7 @@ msgstr "Povolit přístup ke kameře"
 msgid "Allow entering multiple lines of text"
 msgstr "Povolit zadávání více řádků textu"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "Povolit přístup k mikrofonu"
@@ -514,6 +517,10 @@ msgstr "Používám..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "Schválit"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "Přibližná"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -613,10 +620,14 @@ msgstr "Nepřítomen:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Zpět"
+
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "Zadní"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -702,6 +713,10 @@ msgstr "Boti (načítání {botsLoadingCount})"
 msgid "Bots on this network"
 msgstr "Boti na této síti"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "Přepněte se do tohoto okna a zkuste to znovu."
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Procházet všechny kanály na serveru"
@@ -714,6 +729,8 @@ msgstr "Prohlížeče zobrazí vaše reproduktory, teprve až povolíte přístu
 msgid "Calls"
 msgstr "Hovory"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -735,10 +752,11 @@ msgstr "Kamera {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -763,6 +781,10 @@ msgstr "Zrušit pracovní postup"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "zrušeno"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "Vycentrovat na vaši polohu"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1178,6 +1200,14 @@ msgstr "Kopírovat URL"
 msgid "Could not access the device."
 msgstr "Nepodařilo se získat přístup k zařízení."
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "Nepodařilo se včas určit polohu. Zkuste to znovu na místě s volnějším výhledem na oblohu."
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "Nepodařilo se zjistit vaši polohu."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Nepodařilo se navázat šifrování s {nick}."
@@ -1319,10 +1349,13 @@ msgstr "Degradovat na diváka"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Popis (volitelné, např. \"Beta testeři Q3\")"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup ke kameře."
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup k mikrofonu."
@@ -1330,6 +1363,11 @@ msgstr "Názvy zařízení jsou skryté, dokud nepovolíte přístup k mikrofonu
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Vypnout funkci Stisknout a mluvit"
+
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "Zahodit"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1414,9 +1452,13 @@ msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
 msgid "Download"
 msgstr "Stáhnout"
 
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "Tažením vyberte, co nahrát. Zrušíte klávesou Escape."
+
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "Přetáhněte soubory k nahrání"
+msgid "Drop files to attach"
+msgstr "Přetažením sem soubor přiložíte"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -1615,6 +1657,10 @@ msgstr "Zadejte důvod (volitelné)"
 msgid "Enter username to invite"
 msgstr "Zadejte uživatelské jméno pro pozvání"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "Přesná"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "PříkladSÍŤ"
@@ -1695,6 +1741,10 @@ msgstr "Filtrovat kanály..."
 msgid "Filter members…"
 msgstr "Filtrovat členy…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "Zjišťuje se vaše poloha…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "První zpráva k odeslání"
@@ -1721,7 +1771,8 @@ msgstr "Nalezena 1 zpráva odpovídající \"{searchQuery}\""
 msgid "from"
 msgstr "od"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "Přední"
 
@@ -2140,6 +2191,14 @@ msgstr "Načítám data WHOIS..."
 msgid "Local Storage:"
 msgstr "Místní úložiště:"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "Poloha"
+
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "Přístup k poloze byl odepřen. Povolte přístup k poloze v nastavení prohlížeče nebo systému a zkuste to znovu."
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2298,7 +2357,7 @@ msgstr "Mikrofon"
 msgid "Microphone {0}"
 msgstr "Mikrofon {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "Úroveň mikrofonu"
 
@@ -2723,6 +2782,10 @@ msgstr "Otevřít v prohlížeči"
 msgid "Open Link"
 msgstr "Otevřít odkaz"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "Otevřít mapu"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Jméno operátora"
@@ -2809,6 +2872,10 @@ msgstr "čeká"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "Trvalý"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "Fotka"
 
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
@@ -2962,6 +3029,22 @@ msgstr "Zvednout ruku"
 msgid "ran"
 msgstr "spustil(a)"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "Byla dosažena maximální délka nahrávky, nahrávání se zde zastavilo."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "Bylo dosaženo maximální délky nahrávky. Nahrávání bylo zastaveno: odešlete ji, nebo ji zahoďte."
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "Byl dosažen limit velikosti nahrání, nahrávání se zde zastavilo."
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "Byl dosažen limit velikosti souboru. Nahrávání bylo zastaveno: odešlete ji, nebo ji zahoďte."
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3011,6 +3094,30 @@ msgstr "Opětovné připojení se nezdařilo"
 msgid "Reconnect to server"
 msgstr "Znovu připojit k serveru"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "Nahrát zvuk"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "Nahrát obrazovku"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "Nahrát obrazovku"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "Nahrát část obrazovky"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "Nahrát video zprávu"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "Nahrát hlasovou zprávu"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "Snížit šum pozadí na mikrofonu"
@@ -3052,6 +3159,15 @@ msgstr "Odebrat"
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
 msgstr "Odebrat {username} z kanálu"
+
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "odebrat přílohu"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "odebrat všechny přílohy"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
@@ -3098,6 +3214,10 @@ msgstr "Odpovězeno v chatu"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "Zpráva s odpovědí již není zobrazena"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "Nahrát znovu"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -3267,6 +3387,11 @@ msgstr "Vyberte nebo přidejte kanál pro začátek."
 msgid "self-registered"
 msgstr "samoregistrovaný"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "Odeslat"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3427,9 +3552,25 @@ msgstr "Nastavení nenalezeno"
 msgid "Settings"
 msgstr "Nastavení"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "Sdílet"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "Sdílet polohu"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "Sdílet obrazovku"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "Sdílet vaši polohu"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "Sdílet polohu s {target}."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3562,6 +3703,10 @@ msgstr "Spustit hlasový kanál na {serverName}"
 msgid "Start Private Message"
 msgstr "Začít soukromou zprávu"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "Spustit nahrávání"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "Zapnout video"
@@ -3588,8 +3733,14 @@ msgstr "Odstoupit z vysílání"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "Zastavit"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "Zastavit nahrávání"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3623,6 +3774,10 @@ msgstr "Pozastavit"
 msgid "suspended"
 msgstr "pozastaveno"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "Přepnout fotoaparát"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "Systém"
@@ -3630,6 +3785,10 @@ msgstr "Systém"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "Výchozí nastavení systému"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "Vyfotit"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3643,6 +3802,10 @@ msgstr "Textové kanály"
 msgid "That device is not available right now."
 msgstr "Toto zařízení není momentálně dostupné."
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "Tato obrazovka už tam není."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Připojení k <0>{serverName}</0> má následující bezpečnostní problémy:"
@@ -3651,6 +3814,10 @@ msgstr "Připojení k <0>{serverName}</0> má následující bezpečnostní prob
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "Souborový server jej uloží čitelný a kdokoli, kdo získá odkaz, jej může otevřít. Chcete-li soubory posílat zašifrované, přepněte na šifrování Obby."
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "Souborový server to nepropustil."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC server oznámil, že jeho meziservery mají nízkou úroveň zabezpečení. To znamená, že když jsou vaše zprávy přeposílány mezi IRC servery v síti, nemusí být správně šifrovány nebo SSL/TLS certifikáty nemusí být správně ověřovány."
@@ -3658,6 +3825,14 @@ msgstr "IRC server oznámil, že jeho meziservery mají nízkou úroveň zabezpe
 #: src/store/handlers/batches.ts
 msgid "The network split and rejoined. ✅"
 msgstr "Síť se rozdělila a znovu připojila. ✅"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "Fotka, kterou jste právě pořídili"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "Nahrávku se nepodařilo pořídit."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -3675,6 +3850,15 @@ msgstr "Pracovní postup, který vytvořil tuto zprávu, již není ve stavu"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "Tento účet je připojen z {sessionCount} relací. Podrobnosti o jednotlivých relacích jsou zpřístupněny pouze držiteli účtu nebo IRC operátorům."
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "Tento prohlížeč neumí nahrávat zvuk."
+
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "Tento prohlížeč neumí nahrávat video."
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "Tento chat je šifrován nativním schématem Obby. Porovnejte otisky jiným kanálem a poté jej označte jako ověřený."
@@ -3686,6 +3870,10 @@ msgstr "Tento chat je šifrován pomocí OTR, kompatibilního s jinými IRC klie
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "Tento příkaz nemá žádné parametry."
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "Tomuto zařízení se nyní nepodařilo určit polohu."
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -3731,6 +3919,10 @@ msgstr "Tento server nepodporuje rozšířená metadata profilu (rozšíření I
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Tento server nepodporuje pozvánkové odkazy (capability<0>obby.world/invitation</0>není inzerována). Můžete normálně chatovat; tento panel je určen pro sítě poháněné obbyircd."
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "Tento server nemá kam soubor uložit."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -3876,10 +4068,6 @@ msgstr "Odepnout tuto soukromou konverzaci"
 msgid "Unsuspend"
 msgstr "Zrušit pozastavení"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "Nahrát"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "Nahrajte obrázek nebo zadejte URL s volitelnou substitucí {size} pro dynamické velikosti"
@@ -3889,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "Nahrát avatar"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "Nahrát soubory"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "Nahrát obrázek"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "Nahrát na souborový server a odeslat do {target}."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
@@ -4029,6 +4208,7 @@ msgstr "Velmi přísný"
 msgid "via @{0}"
 msgstr "prostřednictvím @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "Video"

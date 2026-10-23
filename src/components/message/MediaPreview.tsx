@@ -23,13 +23,15 @@ import {
   type MediaEntry,
   type MediaType,
 } from "../../lib/mediaUtils";
+import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { useMediaController } from "../../lib/useMediaController";
 import {
   getVideoPosition,
   setVideoPosition,
 } from "../../lib/videoPositionCache";
 import useStore from "../../store";
-import { PDF_OPTIONS, PdfErrorBoundary } from "../PdfErrorBoundary";
+import { MediaErrorBoundary } from "../MediaErrorBoundary";
+import { MapPreview } from "./MapPreview";
 
 const ReactPlayer = lazy(() => import("react-player"));
 const LazyDocument = lazy(() =>
@@ -143,6 +145,7 @@ const ImagePreview: React.FC<{
   serverId?: string;
   channelId?: string;
   onOpenProfile?: (username: string) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -150,6 +153,7 @@ const ImagePreview: React.FC<{
   serverId,
   channelId,
   onOpenProfile,
+  onRenderFailed,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -263,12 +267,16 @@ const ImagePreview: React.FC<{
 
   const displayUrl = resolvedUrl || url;
 
+  // Filehost images embed a JWT in the URL — expiry is the likely cause, and
+  // that case renders its own "expired" card. Every other image has nothing
+  // to show on error, so the caller falls back to the message's URL text.
+  const showsNothing = imageError && !isFilehostImage;
+
+  useEffect(() => {
+    if (showsNothing) onRenderFailed?.(url);
+  }, [showsNothing, onRenderFailed, url]);
+
   if (imageError) {
-    // Filehost images embed a JWT in the URL — expiry is the likely cause.
-    // For all other images, return null and let the URL text in the message
-    // body serve as the fallback (the probe already confirmed it was an image,
-    // so the server likely returned the image but it failed to render — e.g.
-    // expired CDN token, corrupted file).
     if (!isFilehostImage) return null;
     return (
       <div className="max-w-md">
@@ -807,7 +815,8 @@ const SoundCloudEmbed: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [embedError, setEmbedError] = useState(false);
   // Same reasoning as the other embeds: no widget until playback is asked for.
@@ -872,6 +881,10 @@ const SoundCloudEmbed: React.FC<{
     return () => window.removeEventListener("message", handleMessage);
   }, [url, msgid, serverId, channelId]);
 
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
+
   if (embedError) return null;
 
   if (!activated) {
@@ -914,7 +927,8 @@ const EmbedPreview: React.FC<{
   msgid?: string;
   serverId?: string;
   channelId?: string;
-}> = ({ url, msgid, serverId, channelId }) => {
+  onRenderFailed?: (url: string) => void;
+}> = ({ url, msgid, serverId, channelId, onRenderFailed }) => {
   const mediaViewerOpen = useStore((state) => state.ui.openedMedia !== null);
   const [playerKey, setPlayerKey] = useState(0);
   const [embedError, setEmbedError] = useState(false);
@@ -922,7 +936,7 @@ const EmbedPreview: React.FC<{
   // stays unbuilt until someone asks for playback.
   const [activated, setActivated] = useState(false);
 
-  const { isActive, isPlaying } = useMediaController({
+  const { isActive, isPlaying, play } = useMediaController({
     url,
     type: "embed",
     thumbnailUrl: getEmbedThumbnailUrl(url) ?? undefined,
@@ -948,11 +962,15 @@ const EmbedPreview: React.FC<{
       : 380
     : null;
 
-  // Playback can start from elsewhere (the mini player, another tile handing
-  // over), which has to build the real player.
+  // Every way of starting playback goes through the store, including the mini
+  // player and another tile handing over.
   useEffect(() => {
     if (isActive) setActivated(true);
   }, [isActive]);
+
+  useEffect(() => {
+    if (embedError) onRenderFailed?.(url);
+  }, [embedError, onRenderFailed, url]);
 
   if (embedError) return null;
 
@@ -962,7 +980,10 @@ const EmbedPreview: React.FC<{
       <div className="max-w-md relative group">
         <button
           type="button"
-          onClick={() => setActivated(true)}
+          onClick={() => {
+            setActivated(true);
+            play();
+          }}
           aria-label={t`Play`}
           className={`relative w-full overflow-hidden rounded bg-discord-dark-400/50 ${spotifyHeight ? "" : "aspect-video"}`}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
@@ -999,42 +1020,44 @@ const EmbedPreview: React.FC<{
           className={spotifyHeight ? undefined : "aspect-video"}
           style={spotifyHeight ? { height: spotifyHeight } : undefined}
         >
-          <ReactPlayer
-            key={playerKey}
-            src={url}
-            width="100%"
-            height="100%"
-            controls
-            playing={playing}
-            config={{
-              youtube: { disablekb: 1 },
-              vimeo: { keyboard: false },
-            }}
-            style={{ borderRadius: "4px", overflow: "hidden" }}
-            onPlay={() => {
-              // Guard against spurious onPlay events fired by YouTube.
-              // If the user explicitly paused (isPlaying=false in store), ignore the event.
-              const current = useStore.getState().ui.activeMedia;
-              if (current?.url === url && current.isPlaying === false) return;
-              useStore
-                .getState()
-                .playMedia(
-                  url,
-                  "embed",
-                  getEmbedThumbnailUrl(url) ?? undefined,
-                  msgid,
-                  serverId,
-                  channelId,
-                );
-            }}
-            onPause={() => useStore.getState().pauseActiveMedia()}
-            onEnded={() => {
-              // Reset player to beginning and pause — prevents YouTube recommendations screen
-              setPlayerKey((k) => k + 1);
-              useStore.getState().pauseActiveMedia();
-            }}
-            onError={() => setEmbedError(true)}
-          />
+          <MediaErrorBoundary onError={() => setEmbedError(true)}>
+            <ReactPlayer
+              key={playerKey}
+              src={url}
+              width="100%"
+              height="100%"
+              controls
+              playing={playing}
+              config={{
+                youtube: { disablekb: 1 },
+                vimeo: { keyboard: false },
+              }}
+              style={{ borderRadius: "4px", overflow: "hidden" }}
+              onPlay={() => {
+                // Guard against spurious onPlay events fired by YouTube.
+                // If the user explicitly paused (isPlaying=false in store), ignore the event.
+                const current = useStore.getState().ui.activeMedia;
+                if (current?.url === url && current.isPlaying === false) return;
+                useStore
+                  .getState()
+                  .playMedia(
+                    url,
+                    "embed",
+                    getEmbedThumbnailUrl(url) ?? undefined,
+                    msgid,
+                    serverId,
+                    channelId,
+                  );
+              }}
+              onPause={() => useStore.getState().pauseActiveMedia()}
+              onEnded={() => {
+                // Reset player to beginning and pause — prevents YouTube recommendations screen
+                setPlayerKey((k) => k + 1);
+                useStore.getState().pauseActiveMedia();
+              }}
+              onError={() => setEmbedError(true)}
+            />
+          </MediaErrorBoundary>
         </div>
       </Suspense>
     </div>
@@ -1097,7 +1120,7 @@ const PdfPreview: React.FC<{
         />
       }
     >
-      <PdfErrorBoundary onError={() => setPdfError(true)}>
+      <MediaErrorBoundary onError={() => setPdfError(true)}>
         <LazyDocument
           file={url}
           options={PDF_OPTIONS}
@@ -1112,7 +1135,7 @@ const PdfPreview: React.FC<{
             renderAnnotationLayer={false}
           />
         </LazyDocument>
-      </PdfErrorBoundary>
+      </MediaErrorBoundary>
     </Suspense>,
   );
 };
@@ -1128,6 +1151,7 @@ const ProbeablePreview: React.FC<{
   channelId?: string;
   onOpenProfile?: (username: string) => void;
   onTypeResolved?: (url: string, type: MediaType) => void;
+  onRenderFailed?: (url: string) => void;
 }> = ({
   url,
   msgid,
@@ -1136,6 +1160,7 @@ const ProbeablePreview: React.FC<{
   channelId,
   onOpenProfile,
   onTypeResolved,
+  onRenderFailed,
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [resolvedType, setResolvedType] = useState<MediaType | null>(null);
@@ -1177,6 +1202,7 @@ const ProbeablePreview: React.FC<{
         serverId={serverId}
         channelId={channelId}
         onOpenProfile={onOpenProfile}
+        onRenderFailed={onRenderFailed}
       />
     );
   } else if (resolvedType === "video") {
@@ -1213,6 +1239,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     ) : (
       <EmbedPreview
@@ -1220,6 +1247,7 @@ const ProbeablePreview: React.FC<{
         msgid={msgid}
         serverId={serverId}
         channelId={channelId}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1242,6 +1270,7 @@ export const MediaPreview = memo(function MediaPreview({
   channelId,
   onOpenProfile,
   onTypeResolved,
+  onRenderFailed,
 }: {
   entry: MediaEntry;
   msgid?: string;
@@ -1250,6 +1279,8 @@ export const MediaPreview = memo(function MediaPreview({
   channelId?: string;
   onOpenProfile?: (username: string) => void;
   onTypeResolved?: (url: string, type: MediaType) => void;
+  /** Fires once the preview has nothing to show, so the caller can fall back to the URL text. */
+  onRenderFailed?: (url: string) => void;
 }) {
   if (entry.type === null) {
     return (
@@ -1261,6 +1292,7 @@ export const MediaPreview = memo(function MediaPreview({
         channelId={channelId}
         onOpenProfile={onOpenProfile}
         onTypeResolved={onTypeResolved}
+        onRenderFailed={onRenderFailed}
       />
     );
   }
@@ -1275,6 +1307,7 @@ export const MediaPreview = memo(function MediaPreview({
           serverId={serverId}
           channelId={channelId}
           onOpenProfile={onOpenProfile}
+          onRenderFailed={onRenderFailed}
         />
       );
     case "video":
@@ -1312,6 +1345,7 @@ export const MediaPreview = memo(function MediaPreview({
             msgid={msgid}
             serverId={serverId}
             channelId={channelId}
+            onRenderFailed={onRenderFailed}
           />
         );
       }
@@ -1321,6 +1355,20 @@ export const MediaPreview = memo(function MediaPreview({
           msgid={msgid}
           serverId={serverId}
           channelId={channelId}
+          onRenderFailed={onRenderFailed}
+        />
+      );
+    case "map":
+      // Keyed by url so a changed link remounts fresh instead of carrying over
+      // the previous link's failed-tile state.
+      return (
+        <MapPreview
+          key={entry.url}
+          url={entry.url}
+          msgid={msgid}
+          serverId={serverId}
+          channelId={channelId}
+          onRenderFailed={onRenderFailed}
         />
       );
   }

@@ -5,12 +5,18 @@ import { FaCamera } from "react-icons/fa";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import {
   describeMediaError,
+  mirrorsCamera,
   resolveDeviceId,
   videoConstraints,
 } from "../../../lib/mediaDevices";
 import type { SettingComponentProps } from "../../../lib/settings/types";
 import useStore from "../../../store";
-import { DeviceAccessGate, DeviceSelect } from "./CallDeviceShared";
+import { VideoTrackView } from "../../voice/VideoTrackView";
+import {
+  CameraFacingToggle,
+  DeviceAccessGate,
+  DeviceSelect,
+} from "./CallDeviceShared";
 import { useDeviceAccess } from "./useDeviceAccess";
 
 /** Live camera picker with a mirrored preview and, on touch devices, a
@@ -38,7 +44,9 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
   const mountedRef = useRef(true);
   const genRef = useRef(0);
   const streamRef = useRef<MediaStream | null>(null);
-  const videoElRef = useRef<HTMLVideoElement | null>(null);
+  const [previewTrack, setPreviewTrack] = useState<
+    MediaStreamTrack | undefined
+  >();
 
   const release = useCallback(() => {
     genRef.current++;
@@ -46,7 +54,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
       for (const track of streamRef.current.getTracks()) track.stop();
       streamRef.current = null;
     }
-    if (videoElRef.current) videoElRef.current.srcObject = null;
+    setPreviewTrack(undefined);
   }, []);
 
   const start = useCallback(
@@ -71,7 +79,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
       }
       streamRef.current = stream;
       if (mountedRef.current) setCamError(null);
-      if (videoElRef.current) videoElRef.current.srcObject = stream;
+      setPreviewTrack(stream.getVideoTracks()[0]);
     },
     [release, isTouch],
   );
@@ -122,9 +130,7 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
 
   const selectedId =
     resolveDeviceId(globalSettings.callVideoInput, devices) ?? "";
-  const mirrorCamera = isTouch
-    ? globalSettings.callCameraFacing === "user"
-    : true;
+  const mirrorCamera = mirrorsCamera(isTouch, globalSettings.callCameraFacing);
 
   return (
     <div className="space-y-3">
@@ -151,32 +157,11 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
               <Trans>Camera</Trans>
             </div>
             {isTouch ? (
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleFacingChange("user")}
-                  disabled={disabled}
-                  className={`min-h-11 flex-1 rounded px-3 py-2 text-sm disabled:opacity-50 ${
-                    globalSettings.callCameraFacing === "user"
-                      ? "bg-discord-primary text-white"
-                      : "bg-discord-dark-400 text-discord-text-normal"
-                  }`}
-                >
-                  <Trans>Front</Trans>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleFacingChange("environment")}
-                  disabled={disabled}
-                  className={`min-h-11 flex-1 rounded px-3 py-2 text-sm disabled:opacity-50 ${
-                    globalSettings.callCameraFacing === "environment"
-                      ? "bg-discord-primary text-white"
-                      : "bg-discord-dark-400 text-discord-text-normal"
-                  }`}
-                >
-                  <Trans>Back</Trans>
-                </button>
-              </div>
+              <CameraFacingToggle
+                facing={globalSettings.callCameraFacing}
+                onChange={handleFacingChange}
+                disabled={disabled}
+              />
             ) : (
               <DeviceSelect
                 devices={devices}
@@ -186,14 +171,13 @@ export const CallCameraField: React.FC<SettingComponentProps> = ({
                 labelFor={(d, i) => d.label || t`Camera ${i + 1}`}
               />
             )}
-            <video
-              ref={videoElRef}
-              autoPlay
-              playsInline
-              muted
-              className="aspect-video w-full max-w-xs rounded bg-discord-dark-400 object-cover"
-              style={mirrorCamera ? { transform: "scaleX(-1)" } : undefined}
-            />
+            <div className="aspect-video w-full max-w-xs overflow-hidden rounded bg-discord-dark-400">
+              <VideoTrackView
+                track={previewTrack}
+                muted
+                className={`h-full w-full ${mirrorCamera ? "scale-x-[-1]" : ""}`}
+              />
+            </div>
           </>
         ))}
       {camError && <p className="text-xs text-red-400">{camError}</p>}

@@ -460,6 +460,8 @@ msgstr "全部"
 msgid "All Content"
 msgstr "所有内容"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Allow camera access"
 msgstr "允许摄像头访问"
@@ -468,6 +470,7 @@ msgstr "允许摄像头访问"
 msgid "Allow entering multiple lines of text"
 msgstr "允许输入多行文本"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Allow microphone access"
 msgstr "允许麦克风访问"
@@ -514,6 +517,10 @@ msgstr "正在应用..."
 #: src/components/ui/BotToolsCard.tsx
 msgid "Approve"
 msgstr "批准"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Approximate"
+msgstr "大致位置"
 
 #: src/store/handlers/users.ts
 #: src/store/handlers/users.ts
@@ -613,10 +620,14 @@ msgstr "离开："
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "返回"
+
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
+msgid "Back"
+msgstr "后置"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Back to image"
@@ -702,6 +713,10 @@ msgstr "机器人（正在加载 {botsLoadingCount}）"
 msgid "Bots on this network"
 msgstr "此网络上的机器人"
 
+#: src/lib/mediaDevices.ts
+msgid "Bring this window to the front and try again."
+msgstr "把这个窗口切换到前台后再试一次。"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "浏览服务器上的所有频道"
@@ -714,6 +729,8 @@ msgstr "浏览器只有在您允许访问麦克风或摄像头后，才会显示
 msgid "Calls"
 msgstr "通话"
 
+#: src/components/layout/ChatArea.tsx
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Camera"
@@ -735,10 +752,11 @@ msgstr "摄像头 {0}"
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
+#: src/components/ui/LocationShareModal.tsx
 #: src/components/ui/ModerationModal.tsx
+#: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Cancel"
@@ -763,6 +781,10 @@ msgstr "取消工作流"
 #: src/components/ui/BotToolsHistoryButton.tsx
 msgid "cancelled"
 msgstr "已取消"
+
+#: src/components/ui/LocationPicker.tsx
+msgid "Centre on your location"
+msgstr "定位到你的位置"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Cert FP"
@@ -1178,6 +1200,14 @@ msgstr "复制链接"
 msgid "Could not access the device."
 msgstr "无法访问该设备。"
 
+#: src/lib/geolocation.ts
+msgid "Could not get a location fix in time. Try again somewhere with a clearer view of the sky."
+msgstr "无法及时获取定位。请在视野更开阔的地方重试。"
+
+#: src/lib/geolocation.ts
+msgid "Could not get your location."
+msgstr "无法获取您的位置。"
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "无法与 {nick} 建立加密。"
@@ -1319,10 +1349,13 @@ msgstr "降为观众"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "描述（可选，例如 \"第三季度 Beta 测试者\"）"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
 msgstr "在您允许摄像头访问之前，设备名称将被隐藏。"
 
+#: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "Device names are hidden until you allow microphone access."
 msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
@@ -1330,6 +1363,11 @@ msgstr "在您允许麦克风访问之前，设备名称将被隐藏。"
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "禁用按键说话"
+
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Discard"
+msgstr "丢弃"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1414,9 +1452,13 @@ msgstr "不再提醒我此服务器的低链路安全问题"
 msgid "Download"
 msgstr "下载"
 
+#: src/components/ui/RegionSelectOverlay.tsx
+msgid "Drag to choose what to record. Press Escape to cancel."
+msgstr "拖动选择要录制的范围。按 Escape 取消。"
+
 #: src/components/layout/ChatArea.tsx
-msgid "Drop files to upload"
-msgstr "拖放文件以上传"
+msgid "Drop files to attach"
+msgstr "拖放文件以添加附件"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "e.g. <0>wss://host:port/socket</0>"
@@ -1615,6 +1657,10 @@ msgstr "输入原因（可选）"
 msgid "Enter username to invite"
 msgstr "输入要邀请的用户名"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Exact"
+msgstr "精确位置"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "ExampleNET"
 msgstr "示例网络"
@@ -1695,6 +1741,10 @@ msgstr "筛选频道..."
 msgid "Filter members…"
 msgstr "筛选成员…"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Finding your location…"
+msgstr "正在获取您的位置…"
+
 #: src/lib/clientCommands.ts
 msgid "First message to send"
 msgstr "要发送的第一条消息"
@@ -1721,7 +1771,8 @@ msgstr "找到 1 条匹配\"{searchQuery}\"的消息"
 msgid "from"
 msgstr "来自"
 
-#: src/components/ui/settings/CallCameraField.tsx
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgctxt "camera facing"
 msgid "Front"
 msgstr "前置"
 
@@ -2140,6 +2191,14 @@ msgstr "正在加载 WHOIS 数据..."
 msgid "Local Storage:"
 msgstr "本地存储："
 
+#: src/components/layout/ChatArea.tsx
+msgid "Location"
+msgstr "位置"
+
+#: src/lib/geolocation.ts
+msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
+msgstr "位置访问被拒绝。请在浏览器或系统设置中允许位置访问，然后重试。"
+
 #. placeholder {0}: whoisData.account
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "logged in as {0}"
@@ -2298,7 +2357,7 @@ msgstr "麦克风"
 msgid "Microphone {0}"
 msgstr "麦克风 {0}"
 
-#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/components/ui/MicLevelMeter.tsx
 msgid "Microphone level"
 msgstr "麦克风音量"
 
@@ -2723,6 +2782,10 @@ msgstr "在查看器中打开"
 msgid "Open Link"
 msgstr "打开链接"
 
+#: src/components/message/MapPreview.tsx
+msgid "Open map"
+msgstr "打开地图"
+
 #: src/components/ui/UserSettings.tsx
 msgid "Oper Name"
 msgstr "Oper 用户名"
@@ -2809,6 +2872,10 @@ msgstr "待处理"
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Permanent"
 msgstr "永久"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Photo"
+msgstr "照片"
 
 #: src/components/voice/VoicePipOverlay.tsx
 msgid "Picture-in-picture"
@@ -2962,6 +3029,22 @@ msgstr "举手"
 msgid "ran"
 msgstr "执行了"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the maximum recording length, so the recording stopped here."
+msgstr "已达到最长录制时长，录制到此停止。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the maximum recording length. Recording stopped: send it, or discard it."
+msgstr "已达到最长录制时长，录制已停止：发送或丢弃。"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Reached the upload size limit, so the recording stopped here."
+msgstr "已达到上传大小上限，录制到此停止。"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Reached the upload size limit. Recording stopped: send it, or discard it."
+msgstr "已达到上传大小限制，录制已停止：发送或丢弃。"
+
 #: src/components/mobile/MessageBottomSheet.tsx
 #: src/components/voice/VoiceDock.tsx
 msgid "React"
@@ -3011,6 +3094,30 @@ msgstr "重新连接失败"
 msgid "Reconnect to server"
 msgstr "重新连接服务器"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Record Audio"
+msgstr "录音"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record screen"
+msgstr "录制屏幕"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen"
+msgstr "录屏"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Record Screen Area"
+msgstr "录制屏幕区域"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record video message"
+msgstr "录制视频消息"
+
+#: src/components/ui/RecordingPanel.tsx
+msgid "Record voice message"
+msgstr "录制语音消息"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Reduce background noise on your microphone"
 msgstr "降低麦克风的背景噪声"
@@ -3052,6 +3159,15 @@ msgstr "移除"
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
 msgstr "将 {username} 移出频道"
+
+#: src/components/ui/AttachmentTray.tsx
+msgid "Remove attachment"
+msgstr "移除附件"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "remove every attachment"
+msgstr "移除所有附件"
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Remove pattern"
@@ -3098,6 +3214,10 @@ msgstr "已在聊天中回复"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Response message is no longer in view"
 msgstr "回复消息已不在视图中"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Retake"
+msgstr "重拍"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -3267,6 +3387,11 @@ msgstr "选择或添加频道以开始使用。"
 msgid "self-registered"
 msgstr "自助注册"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Send"
+msgstr "发送"
+
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3427,9 +3552,25 @@ msgstr "未找到设置"
 msgid "Settings"
 msgstr "设置"
 
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share"
+msgstr "共享"
+
+#: src/components/layout/ChatArea.tsx
+msgid "Share Location"
+msgstr "共享位置"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Share screen"
 msgstr "共享屏幕"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share Your Location"
+msgstr "共享您的位置"
+
+#: src/components/ui/LocationShareModal.tsx
+msgid "Share your location with {target}."
+msgstr "与 {target} 共享您的位置。"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
@@ -3562,6 +3703,10 @@ msgstr "在 {serverName} 上开启语音频道"
 msgid "Start Private Message"
 msgstr "发起私信"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Start recording"
+msgstr "开始录制"
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Start video"
 msgstr "开启视频"
@@ -3588,8 +3733,14 @@ msgstr "退出直播"
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
+#: src/components/ui/RecordingControlsOverlay.tsx
+#: src/components/ui/RecordingPanel.tsx
 msgid "Stop"
 msgstr "停止"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Stop recording"
+msgstr "停止录制"
 
 #: src/components/voice/VoiceDock.tsx
 msgid "Stop sharing"
@@ -3623,6 +3774,10 @@ msgstr "停用"
 msgid "suspended"
 msgstr "已停用"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Switch camera"
+msgstr "切换摄像头"
+
 #: src/components/message/ActionMessage.tsx
 msgid "System"
 msgstr "系统"
@@ -3630,6 +3785,10 @@ msgstr "系统"
 #: src/components/ui/settings/CallDeviceShared.tsx
 msgid "System default"
 msgstr "系统默认"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Take photo"
+msgstr "拍照"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
@@ -3643,6 +3802,10 @@ msgstr "文字频道"
 msgid "That device is not available right now."
 msgstr "该设备当前不可用。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "That screen is no longer there."
+msgstr "该屏幕已不存在。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "与 <0>{serverName}</0> 的连接存在以下安全问题："
@@ -3651,6 +3814,10 @@ msgstr "与 <0>{serverName}</0> 的连接存在以下安全问题："
 msgid "The file host stores it readable, and anyone who obtains the link can open it. Switch to Obby encryption to send files encrypted."
 msgstr "文件主机以可读形式保存它，拿到链接的人都能打开。若要加密发送文件，请改用 Obby 加密。"
 
+#: src/components/layout/ChatArea.tsx
+msgid "The file host would not let this through."
+msgstr "文件服务器拒绝了它。"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The IRC server has reported that its server-to-server links have a low security level. This means that when your messages are relayed between IRC servers in the network, they may not be properly encrypted or the SSL/TLS certificates may not be validated correctly."
 msgstr "IRC 服务器报告其服务器间链路的安全级别较低。这意味着当您的消息在网络中的 IRC 服务器之间转发时，可能未经过妥善加密，或者 SSL/TLS 证书未被正确验证。"
@@ -3658,6 +3825,14 @@ msgstr "IRC 服务器报告其服务器间链路的安全级别较低。这意�
 #: src/store/handlers/batches.ts
 msgid "The network split and rejoined. ✅"
 msgstr "网络已分裂并重新连接。✅"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "The photo you just took"
+msgstr "你刚拍的照片"
+
+#: src/components/layout/ChatArea.tsx
+msgid "The recording could not be made."
+msgstr "无法完成录制。"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -3675,6 +3850,15 @@ msgstr "生成此消息的工作流已不在状态中"
 msgid "This account is connected from {sessionCount} sessions. Per-session details are only disclosed to the account holder or IRC operators."
 msgstr "此账户从 {sessionCount} 个会话连接。每个会话的详细信息仅向账户持有者或 IRC 运营商披露。"
 
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record audio."
+msgstr "此浏览器无法录音。"
+
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "This browser cannot record video."
+msgstr "此浏览器无法录像。"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "This chat is encrypted with Obby's native scheme. Compare the fingerprints out of band, then mark it verified."
 msgstr "此聊天使用 Obby 的原生方案加密。请通过其他渠道核对指纹，然后将其标记为已验证。"
@@ -3686,6 +3870,10 @@ msgstr "此聊天使用 OTR 加密，可与其他 IRC 客户端兼容。请通�
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "This command takes no parameters."
 msgstr "此命令不需要参数。"
+
+#: src/lib/geolocation.ts
+msgid "This device could not get a location fix right now."
+msgstr "此设备目前无法获取定位。"
 
 #: src/lib/settings/registry.ts
 msgid "This field is required"
@@ -3731,6 +3919,10 @@ msgstr "此服务器不支持扩展个人资料元数据（IRCv3 METADATA 扩展
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "此服务器不支持邀请链接（未声明 <0>obby.world/invitation</0> 能力）。您仍可正常聊天；此面板适用于由 obbyircd 提供支持的网络。"
+
+#: src/components/layout/ChatArea.tsx
+msgid "This server has nowhere to put a file."
+msgstr "此服务器没有地方存放文件。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "This server only supports one connection type"
@@ -3876,10 +4068,6 @@ msgstr "取消置顶此私信对话"
 msgid "Unsuspend"
 msgstr "取消停用"
 
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload"
-msgstr "上传"
-
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Upload an image or provide a URL with optional {size} substitution for dynamic sizing"
 msgstr "上传图片或提供带可选 {size} 替换的 URL"
@@ -3889,17 +4077,8 @@ msgid "Upload Avatar"
 msgstr "上传头像"
 
 #: src/components/layout/ChatArea.tsx
-#: src/components/ui/UploadPreviewModal.tsx
 msgid "Upload Files"
 msgstr "上传文件"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload Image"
-msgstr "上传图片"
-
-#: src/components/ui/UploadPreviewModal.tsx
-msgid "Upload to the file host and send to {target}."
-msgstr "上传到文件服务器并发送到 {target}。"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
@@ -4029,6 +4208,7 @@ msgstr "非常严格"
 msgid "via @{0}"
 msgstr "通过 @{0}"
 
+#: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Video"
 msgstr "视频"
