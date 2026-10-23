@@ -861,6 +861,10 @@ msgstr "Înapoi la lista de rețele"
 msgid "Back to Settings"
 msgstr "Înapoi la setări"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Fundal"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Banează {username} după hostmask (împiedică reconectarea de pe același IP/host)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Schimbă culoarea de accent"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Schimbă aplicația"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Restrângeți tot"
 msgid "Folder name"
 msgstr "Numele folderului"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Pentru mesaje private și mențiuni"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Pentru mesaje private și mențiuni. Se opresc când închizi Obby prin glisare."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Din motive de securitate, toate sesiunile existente ale acestui cont au fost deconectate, iar starea serverului asociată contului a fost ștearsă. Dacă autentificarea în doi pași era activată, rămâne activată, deci următoarea autentificare o va cere în continuare."
@@ -2736,6 +2752,10 @@ msgstr "Inserează emoji"
 msgid "Install"
 msgstr "Instalează"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Instalează mai întâi o aplicație UnifiedPush"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Format invalid"
@@ -2892,6 +2912,10 @@ msgstr "Păstrează istoricul conversațiilor pe acest dispozitiv"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Păstrați credențialele"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Ține Obby deschis pentru a primi notificări"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Sunet de notificare"
 msgid "Notifications"
 msgstr "Notificări"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Sursa notificărilor"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "Identitate OAuth"
@@ -4521,6 +4549,10 @@ msgstr "Cereți o invitație pentru a intra."
 msgid "required"
 msgstr "obligatoriu"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Repornește browserul pentru a primi notificări când Obby este închis"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "shortcode (de ex. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode-ul trebuie să se potrivească cu [A-Za-z0-9._-]+."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Afișează o notificare de sistem pentru mesaje private și mențiuni cât timp nu te uiți la acel chat"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

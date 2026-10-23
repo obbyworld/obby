@@ -8,8 +8,9 @@ use tokio::time::{timeout_at, Instant};
 use tokio_tungstenite::tungstenite::Message as WsMessage;
 use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
 
-use super::text::{iso_time, parse_iso_time, parse_line, Line};
 use super::ServerConfig;
+use crate::chat_notice::text::{iso_time, parse_iso_time, parse_line, Line};
+use crate::chat_notice::ChatMessage;
 use crate::socket::{connect_tcp, parse_address, tls_handshake, AsyncStream};
 
 const WANTED_CAPS: [&str; 7] = [
@@ -24,27 +25,10 @@ const WANTED_CAPS: [&str; 7] = [
 const TARGETS_LIMIT: usize = 50;
 const HISTORY_LIMIT: usize = 100;
 
-/// A PRIVMSG from history, with the chat it belongs to.
-#[derive(Debug, Clone, PartialEq)]
-pub struct HistoryMessage {
-    pub chat: String,
-    pub source: String,
-    pub text: String,
-    pub time: i64,
-    pub msgid: Option<String>,
-    pub is_private: bool,
-}
-
-impl HistoryMessage {
-    pub fn sender(&self) -> &str {
-        self.source.split('!').next().unwrap_or("")
-    }
-}
-
 /// What one session found: our nick there and the messages since the last check.
 pub struct History {
     pub nick: String,
-    pub messages: Vec<HistoryMessage>,
+    pub messages: Vec<ChatMessage>,
 }
 
 enum Conn {
@@ -299,8 +283,8 @@ impl Session {
         target: &str,
         since: i64,
         is_private: bool,
-    ) -> Result<Vec<HistoryMessage>, String> {
-        let mut messages: Vec<HistoryMessage> = Vec::new();
+    ) -> Result<Vec<ChatMessage>, String> {
+        let mut messages: Vec<ChatMessage> = Vec::new();
         let mut after = since;
         loop {
             let request = format!(
@@ -321,7 +305,7 @@ impl Session {
                 if line.command != "PRIVMSG" || is_repeat {
                     continue;
                 }
-                messages.push(HistoryMessage {
+                messages.push(ChatMessage {
                     chat: target.to_string(),
                     source: line.source.clone(),
                     text: line.param(1).to_string(),

@@ -861,6 +861,10 @@ msgstr "네트워크 목록으로 돌아가기"
 msgid "Back to Settings"
 msgstr "설정으로 돌아가기"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "백그라운드"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "호스트마스크로 {username} 차단 (동일 IP/호스트에서 재입장 방지)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "강조 색상 변경"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "앱 변경"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "모두 축소"
 msgid "Folder name"
 msgstr "폴더 이름"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "비공개 메시지와 멘션용"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "비공개 메시지와 멘션용. Obby를 스와이프해서 닫으면 중지됩니다."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "보안을 위해 이 계정의 모든 기존 세션이 로그아웃되었고 계정 범위의 서버 상태가 삭제되었습니다. 2단계 인증을 사용 중이었다면 계속 사용 상태이므로 다음 로그인에도 필요합니다."
@@ -2736,6 +2752,10 @@ msgstr "이모지 삽입"
 msgid "Install"
 msgstr "설치"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "먼저 UnifiedPush 앱을 설치하세요"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "잘못된 형식"
@@ -2892,6 +2912,10 @@ msgstr "이 기기에 채팅 기록 보관"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "인증 정보 유지"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "알림을 받으려면 Obby를 열어 두세요"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "알림 소리"
 msgid "Notifications"
 msgstr "알림"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "알림 소스"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth-identiteit"
@@ -4521,6 +4549,10 @@ msgstr "참여하려면 초대가 필요합니다."
 msgid "required"
 msgstr "필수"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Obby가 닫혀 있을 때도 알림을 받으려면 브라우저를 다시 시작하세요"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "숏코드 (예: partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "숏코드는 [A-Za-z0-9._-]+ 형식이어야 합니다."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "해당 채팅을 보고 있지 않을 때 비공개 메시지와 멘션에 대한 시스템 알림을 표시합니다"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

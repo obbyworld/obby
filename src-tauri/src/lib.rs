@@ -3,6 +3,8 @@ use tauri::{webview::PageLoadEvent, Manager};
 use tokio::sync::Mutex;
 
 #[cfg(any(mobile, test))]
+mod chat_notice;
+#[cfg(any(mobile, test))]
 mod history_poll;
 mod overlay;
 mod screen_record;

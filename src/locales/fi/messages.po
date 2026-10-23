@@ -861,6 +861,10 @@ msgstr "Takaisin verkkoluetteloon"
 msgid "Back to Settings"
 msgstr "Takaisin asetuksiin"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Tausta"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Estä {username} hostmaskin perusteella (estää liittymisen samasta IP-osoitteesta/hostista)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Vaihda korostusväri"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Vaihda sovellus"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Kutista kaikki"
 msgid "Folder name"
 msgstr "Kansion nimi"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Yksityisviesteille ja maininnoille"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Yksityisviesteille ja maininnoille. Ne loppuvat, kun pyyhkäiset Obbyn pois."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Turvallisuuden vuoksi kaikki tämän tilin istunnot kirjattiin ulos ja tilikohtainen palvelimen tila tyhjennettiin. Jos kaksivaiheinen tunnistus oli käytössä, se pysyy käytössä, joten seuraava kirjautuminen vaatii sen edelleen."
@@ -2736,6 +2752,10 @@ msgstr "Lisää emoji"
 msgid "Install"
 msgstr "Asenna"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Asenna ensin UnifiedPush-sovellus"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Virheellinen muoto"
@@ -2892,6 +2912,10 @@ msgstr "Säilytä keskusteluhistoria tällä laitteella"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Säilytä tunnistautumistiedot"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Pidä Obby auki saadaksesi ilmoituksia"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Ilmoitusääni"
 msgid "Notifications"
 msgstr "Ilmoitukset"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Ilmoitusten lähde"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth-identiteetti"
@@ -4521,6 +4549,10 @@ msgstr "Vaadi kutsu liittymiseen."
 msgid "required"
 msgstr "pakollinen"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Käynnistä selain uudelleen, jotta saat ilmoituksia Obbyn ollessa suljettuna"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "lyhytkoodi (esim. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Lyhytkoodin on vastattava muotoa [A-Za-z0-9._-]+."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Näytä järjestelmäilmoitus yksityisviesteistä ja maininnoista, kun et katso kyseistä keskustelua"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

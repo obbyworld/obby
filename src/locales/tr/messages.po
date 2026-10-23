@@ -861,6 +861,10 @@ msgstr "Ağ listesine dön"
 msgid "Back to Settings"
 msgstr "Ayarlara dön"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Arka plan"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "{username} kullanıcısını host maskesiyle yasakla (aynı IP/host'tan yeniden katılmasını engeller)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Vurgu rengini değiştir"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Uygulamayı değiştir"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Tümünü daralt"
 msgid "Folder name"
 msgstr "Klasör adı"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Özel mesajlar ve bahsetmeler için"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Özel mesajlar ve bahsetmeler için. Obby'yi kaydırıp kapattığınızda durur."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Güvenlik için bu hesabın tüm mevcut oturumları kapatıldı ve hesaba bağlı sunucu durumu temizlendi. İki adımlı doğrulama etkinse etkin kalır, bu yüzden bir sonraki oturum açmada yine istenecektir."
@@ -2736,6 +2752,10 @@ msgstr "Emoji ekle"
 msgid "Install"
 msgstr "Yükle"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Önce bir UnifiedPush uygulaması yükleyin"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Geçersiz biçim"
@@ -2892,6 +2912,10 @@ msgstr "Sohbet geçmişini bu cihazda tut"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Kimlik bilgilerini sakla"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Bildirim almak için Obby'yi açık tut"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Bildirim Sesi"
 msgid "Notifications"
 msgstr "Bildirimler"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Bildirim kaynağı"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth kimliği"
@@ -4521,6 +4549,10 @@ msgstr "Katılmak için davet gerekli."
 msgid "required"
 msgstr "gerekli"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Obby kapalıyken bildirim almak için tarayıcını yeniden başlat"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "kısa kod (örn. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kısa kod [A-Za-z0-9._-]+ ile eşleşmelidir."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "O sohbete bakmıyorken özel mesajlar ve anmalar için sistem bildirimi göster"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

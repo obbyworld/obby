@@ -861,6 +861,10 @@ msgstr "返回網路清單"
 msgid "Back to Settings"
 msgstr "返回設定"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "背景"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "通过 hostmask 封禁 {username}（阻止其从相同 IP/主机重新加入）"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "變更強調色"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "更換應用程式"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "全部摺疊"
 msgid "Folder name"
 msgstr "資料夾名稱"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "用於私訊和提及"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "用於私訊和提及。滑掉 Obby 後會停止。"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "基於安全考量，此帳號的所有現有工作階段已登出，帳號範圍的伺服器狀態已清除。如果已啟用雙重驗證，它仍保持啟用，下次登入仍需驗證。"
@@ -2736,6 +2752,10 @@ msgstr "插入表情"
 msgid "Install"
 msgstr "安裝"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "請先安裝 UnifiedPush 應用程式"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "格式無效"
@@ -2892,6 +2912,10 @@ msgstr "在此裝置上保留聊天歷史"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "保留憑證"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "保持 Obby 開啟以接收通知"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "通知聲音"
 msgid "Notifications"
 msgstr "通知"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "通知來源"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth 身分"
@@ -4521,6 +4549,10 @@ msgstr "需要邀請才能加入。"
 msgid "required"
 msgstr "必填"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "重新啟動瀏覽器，以便在 Obby 關閉時接收通知"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "短代碼（例如 partyparrot）"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "短代碼必須符合 [A-Za-z0-9._-]+。"
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "當你沒有在看該聊天時，為私訊和提及顯示系統通知"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

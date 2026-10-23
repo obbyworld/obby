@@ -16,6 +16,8 @@ export interface User {
   metadata?: Record<string, { value: string | undefined; visibility: string }>;
 }
 
+export type WebPushFailure = "failed" | "timed-out";
+
 export type ConnectionState =
   | "disconnected"
   | "connecting"
@@ -84,6 +86,10 @@ export interface Server {
   privateChats: PrivateChat[];
   icon?: string;
   isConnected: boolean;
+  // The server welcomed us (001), so it accepts commands that need registration.
+  isRegistered?: boolean;
+  // Why this browser could not subscribe to the server's web push.
+  webPushFailure?: WebPushFailure;
   connectionState?: ConnectionState;
   // The server refused our SASL credentials on this connection.
   saslFailed?: boolean;
@@ -134,6 +140,10 @@ export interface Server {
   namedModes?: NamedModes;
   // draft/EMOJI ISUPPORT: URL to the network-wide pack document.
   emojiPackUrl?: string;
+  // VAPID= ISUPPORT: the key browsers subscribe to web push with.
+  vapidKey?: string;
+  // The push endpoint the Android app registered with this server.
+  pushEndpoint?: string;
   // draft/persistence state (populated from PERSISTENCE STATUS replies).
   // `preference` is what the user has explicitly set on this account
   // (ON/OFF) or DEFAULT meaning "follow the server-wide default".

@@ -861,6 +861,10 @@ msgstr "Voltar à lista de redes"
 msgid "Back to Settings"
 msgstr "Voltar às configurações"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Segundo plano"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Banir {username} por hostmask (impede que entre novamente pelo mesmo IP/host)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Mudar cor de destaque"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Mudar de app"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Recolher tudo"
 msgid "Folder name"
 msgstr "Nome da pasta"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Para mensagens privadas e menções"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Para mensagens privadas e menções. Param quando você desliza o Obby para fechá-lo."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Por segurança, todas as sessões existentes desta conta foram terminadas e o estado do servidor associado à conta foi eliminado. Se a autenticação de dois fatores estava ativada, continua ativada, pelo que o próximo início de sessão ainda a exigirá."
@@ -2736,6 +2752,10 @@ msgstr "Inserir emoji"
 msgid "Install"
 msgstr "Instalar"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Instale primeiro um app UnifiedPush"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Formato inválido"
@@ -2892,6 +2912,10 @@ msgstr "Manter o histórico de conversas neste dispositivo"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Manter credenciais"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Mantenha o Obby aberto para receber notificações"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Som de notificação"
 msgid "Notifications"
 msgstr "Notificações"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Origem das notificações"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "Identidade OAuth"
@@ -4521,6 +4549,10 @@ msgstr "Exigir convite para entrar."
 msgid "required"
 msgstr "obrigatório"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Reinicie o navegador para receber notificações com o Obby fechado"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "shortcode (p. ex. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "O shortcode tem de corresponder a [A-Za-z0-9._-]+."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Mostrar uma notificação do sistema para mensagens privadas e menções enquanto você não está olhando aquele chat"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

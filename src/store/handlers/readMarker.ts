@@ -16,9 +16,6 @@ import { findConversation } from "./history";
 // busy channel costs one MARKREAD a second at most.
 const MARK_READ_DELAY_MS = 1000;
 
-// Channels whose marker we started at the JOIN because the server had none,
-// so the first time the user reads one we still tell the server.
-const joinedWithoutMarker = new Set<string>();
 // We learn which capabilities a server has only once it welcomes us, so we
 // start local markers from then on.
 const registeredAt = new Map<string, string>();
@@ -100,11 +97,7 @@ export function markChatRead(
   if (tracks && chat.readMarker === undefined) return;
   const newest = newestMessageTime(state, chatKey(serverId, chat));
   if (newest === undefined) return;
-  const key = chatKey(serverId, chat);
-  const isServerBehind = tracks && joinedWithoutMarker.has(key);
-  if (!isServerBehind && (readUpTo(chat) ?? Number.NEGATIVE_INFINITY) >= newest)
-    return;
-  joinedWithoutMarker.delete(key);
+  if ((readUpTo(chat) ?? Number.NEGATIVE_INFINITY) >= newest) return;
   const marker = new Date(newest).toISOString();
   setReadMarker(store, serverId, chatId, marker);
   closeChatNotification(serverId, targetOf(chat));
@@ -209,17 +202,17 @@ function startMissingMarkers(store: StoreApi<AppState>) {
 
 export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
   ircClient.on("MARKREAD", ({ serverId, target, timestamp }) => {
+    let startedMarker: string | undefined;
     store.setState((state) => ({
       servers: mapChats(state.servers, serverId, (chat, isPrivate) => {
         if (!eqIC(targetOf(chat), target)) return chat;
         if (!isPrivate) {
           // A channel the user never read has no marker on the server, so we
-          // count what arrives from now on and leave its backlog read.
-          const key = chatKey(serverId, chat);
-          if (timestamp === null) joinedWithoutMarker.add(key);
-          else joinedWithoutMarker.delete(key);
+          // count what arrives from now on, leave its backlog read and store
+          // that start on the server, so the next session counts from there.
           const readMarker =
             timestamp ?? chat.readMarker ?? new Date().toISOString();
+          if (timestamp === null) startedMarker = readMarker;
           return chat.readMarker === readMarker
             ? chat
             : { ...chat, readMarker };
@@ -231,12 +224,22 @@ export function registerReadMarkerHandlers(store: StoreApi<AppState>): void {
           : { ...chat, readMarker: timestamp, readMarkerFetched: true };
       }),
     }));
-    const server = store.getState().servers.find((s) => s.id === serverId);
+    const state = store.getState();
+    if (startedMarker && serverTracksReadMarker(state, serverId))
+      ircClient.markreadSet(serverId, target, startedMarker);
+    const server = state.servers.find((s) => s.id === serverId);
     const chat = [
       ...(server?.channels ?? []),
       ...(server?.privateChats ?? []),
     ].find((c) => eqIC(targetOf(c), target));
-    if (chat && chat.unreadCount === 0) closeChatNotification(serverId, target);
+    // Only a read marker clears a notification, and only once the messages it
+    // covers are here, since history after a launch arrives after the marker.
+    const isRead =
+      timestamp !== null &&
+      !!chat &&
+      chat.unreadCount === 0 &&
+      newestMessageTime(state, chatKey(serverId, chat)) !== undefined;
+    if (isRead) closeChatNotification(serverId, target);
   });
 
   const setRefused = (serverId: string, readMarkerRefused: boolean) =>

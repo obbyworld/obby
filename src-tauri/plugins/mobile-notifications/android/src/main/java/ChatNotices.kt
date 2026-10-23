@@ -1,5 +1,6 @@
 package world.obby.notifications
 
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -20,6 +21,13 @@ private const val TAP_ACTION = "tap"
 private const val CHANNEL_ID = "messages"
 
 object ChatNotices {
+  // The live connection covers an app on screen, and the process importance shows that before the plugins load.
+  fun isAppOnScreen(): Boolean {
+    val process = ActivityManager.RunningAppProcessInfo()
+    ActivityManager.getMyMemoryState(process)
+    return process.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+  }
+
   // A message can reach us twice while the app runs in the background, so we alert for each msgid once.
   private val postedMsgids = LinkedHashSet<String>()
 

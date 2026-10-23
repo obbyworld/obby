@@ -132,5 +132,18 @@ export function registerISupportHandler(
       });
       return;
     }
+
+    if (key === "VAPID") {
+      useStore.setState((state) => {
+        const updatedServers = state.servers.map((server: Server) => {
+          if (server.id === serverId) {
+            return { ...server, vapidKey: value };
+          }
+          return server;
+        });
+        return { servers: updatedServers };
+      });
+      return;
+    }
   });
 }

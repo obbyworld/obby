@@ -861,6 +861,10 @@ msgstr "Zpět na seznam sítí"
 msgid "Back to Settings"
 msgstr "Zpět na nastavení"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Na pozadí"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Zabanovat {username} podle masky hostitele (zabrání opětovnému připojení ze stejné IP/hostitele)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Změnit barvu zvýraznění"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Změnit aplikaci"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Sbalit vše"
 msgid "Folder name"
 msgstr "Název složky"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "Pro soukromé zprávy a zmínky"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "Pro soukromé zprávy a zmínky. Přestanou, když Obby smažete z přehledu aplikací."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Z bezpečnostních důvodů byly všechny stávající relace tohoto účtu odhlášeny a stav serveru vázaný na účet byl vymazán. Pokud bylo zapnuto dvoufázové ověření, zůstává zapnuté, takže ho bude vyžadovat i další přihlášení."
@@ -2736,6 +2752,10 @@ msgstr "Vložit emoji"
 msgid "Install"
 msgstr "Instalovat"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Nejprve nainstalujte aplikaci UnifiedPush"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Neplatný formát"
@@ -2892,6 +2912,10 @@ msgstr "Uchovávat historii chatu v tomto zařízení"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Ponechat údaje"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Nechte Obby otevřené, abyste dostávali oznámení"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Zvuk oznámení"
 msgid "Notifications"
 msgstr "Oznámení"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Zdroj oznámení"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "Identita OAuth"
@@ -4521,6 +4549,10 @@ msgstr "Pro připojení vyžadovat pozvánku."
 msgid "required"
 msgstr "povinné"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Restartujte prohlížeč, abyste dostávali oznámení i při zavřeném Obby"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "shortcode (např. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Shortcode musí odpovídat [A-Za-z0-9._-]+."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Zobrazit systémové oznámení pro soukromé zprávy a zmínky, když se nedíváte na daný chat"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"

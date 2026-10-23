@@ -5,7 +5,12 @@ import { CallSpeakerField } from "../../../components/ui/settings/CallSpeakerFie
 import { CustomMentionsField } from "../../../components/ui/settings/CustomMentionsField";
 import { HistoryUsageField } from "../../../components/ui/settings/HistoryUsageField";
 import { IgnoreListField } from "../../../components/ui/settings/IgnoreListField";
-import { isTauriDesktop } from "../../platformUtils";
+import { PushMethodField } from "../../../components/ui/settings/PushMethodField";
+import {
+  isTauriAndroid,
+  isTauriDesktop,
+  isTauriIOS,
+} from "../../platformUtils";
 import settingsRegistry from "../registry";
 import type { SettingDefinition } from "../types";
 
@@ -175,7 +180,9 @@ const notificationSettings: SettingDefinition[] = [
     category: "notifications",
     subcategory: "Alerts",
     title: msg`Show Notifications`,
-    description: msg`Show a system notification for private messages and mentions while you are not looking at that chat`,
+    description: isTauriIOS()
+      ? msg`For private messages and mentions. They stop when you swipe Obby away.`
+      : msg`For private messages and mentions`,
     type: "toggle",
     defaultValue: false,
     searchKeywords: ["notification", "alert", "desktop", "push", "banner"],
@@ -193,6 +200,34 @@ const notificationSettings: SettingDefinition[] = [
     hidden: !isTauriDesktop(),
     searchKeywords: ["tray", "background", "close", "minimize", "menu bar"],
     priority: 0,
+  },
+  {
+    id: "notifications.pushMethod",
+    key: "pushMethod",
+    category: "notifications",
+    subcategory: "Alerts",
+    title: msg`Notifications Source`,
+    type: "custom",
+    defaultValue: "fcm",
+    hidden: !isTauriAndroid(),
+    searchKeywords: [
+      "push",
+      "unifiedpush",
+      "ntfy",
+      "fcm",
+      "google",
+      "background",
+      "closed",
+      "distributor",
+    ],
+    priority: 4,
+    customComponent: PushMethodField,
+    dependencies: [
+      {
+        settingId: "notifications.enable",
+        condition: (value) => value === true,
+      },
+    ],
   },
   {
     id: "notifications.enableSounds",

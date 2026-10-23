@@ -861,6 +861,10 @@ msgstr "Tillbaka till nätverkslistan"
 msgid "Back to Settings"
 msgstr "Tillbaka till inställningar"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Background"
+msgstr "Bakgrund"
+
 #: src/components/ui/ModerationModal.tsx
 msgid "Ban {username} by hostmask (prevents them from rejoining from the same IP/host)"
 msgstr "Banna {username} via hostmask (förhindrar återanslutning från samma IP/host)"
@@ -1070,6 +1074,10 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Ändra accentfärg"
+
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Change app"
+msgstr "Byt app"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Change or reset the password for your account."
@@ -2483,6 +2491,14 @@ msgstr "Dölj alla"
 msgid "Folder name"
 msgstr "Mappnamn"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions"
+msgstr "För privata meddelanden och omnämnanden"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "For private messages and mentions. They stop when you swipe Obby away."
+msgstr "För privata meddelanden och omnämnanden. De slutar när du sveper bort Obby."
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
 msgstr "Av säkerhetsskäl har alla befintliga sessioner för det här kontot loggats ut och kontots serverstatus har rensats. Om tvåfaktorsautentisering var aktiverad är den fortfarande aktiverad, så nästa inloggning kräver den fortfarande."
@@ -2736,6 +2752,10 @@ msgstr "Infoga emoji"
 msgid "Install"
 msgstr "Installera"
 
+#: src/components/ui/settings/PushMethodField.tsx
+msgid "Install a UnifiedPush app first"
+msgstr "Installera en UnifiedPush-app först"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Ogiltigt format"
@@ -2892,6 +2912,10 @@ msgstr "Behåll chatthistorik på denna enhet"
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep credentials"
 msgstr "Behåll inloggningsuppgifter"
+
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Keep Obby open to get notifications"
+msgstr "Håll Obby öppet för att få aviseringar"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Keep passwords"
@@ -3739,6 +3763,10 @@ msgstr "Aviseringsljud"
 msgid "Notifications"
 msgstr "Aviseringar"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Notifications Source"
+msgstr "Aviseringskälla"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "OAuth identity"
 msgstr "OAuth-identitet"
@@ -4521,6 +4549,10 @@ msgstr "Kräv en inbjudan för att gå med."
 msgid "required"
 msgstr "obligatoriskt"
 
+#: src/components/ui/settings/WebPushFailureLine.tsx
+msgid "Restart your browser to get notifications while Obby is closed"
+msgstr "Starta om webbläsaren för att få aviseringar när Obby är stängt"
+
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
@@ -5057,10 +5089,6 @@ msgstr "kortkod (t.ex. partyparrot)"
 #: src/components/pages/EmojiPacksPage.tsx
 msgid "Shortcode must match [A-Za-z0-9._-]+."
 msgstr "Kortkoden måste matcha [A-Za-z0-9._-]+."
-
-#: src/lib/settings/definitions/allSettings.ts
-msgid "Show a system notification for private messages and mentions while you are not looking at that chat"
-msgstr "Visa en systemavisering för privata meddelanden och omnämnanden när du inte tittar på den chatten"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
