@@ -163,7 +163,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
         // ircClient I/O OUTSIDE setState: triggerEvent inside setState
         // causes a nested-setState race (see batches.ts:215-218).
         if (newChannelHadCap === true) {
-          ircClient.sendRaw(serverId, `CHATHISTORY LATEST ${channelName} * 50`);
+          ircClient.requestChathistoryLatest(serverId, channelName);
           ircClient.triggerEvent("CHATHISTORY_LOADING", {
             serverId,
             channelName,

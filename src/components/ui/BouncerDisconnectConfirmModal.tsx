@@ -1,18 +1,24 @@
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaCrown, FaPlug } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
 import BaseModal from "../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import useStore from "../../store";
 import type { Server } from "../../types";
+import { SavedHistoryChoice } from "./SavedHistoryChoice";
 
 export const BouncerDisconnectConfirmModal: React.FC = () => {
   const targetId = useStore((s) => s.ui.disconnectConfirmTarget);
   const servers = useStore((s) => s.servers);
   const cancelDeleteServer = useStore((s) => s.cancelDeleteServer);
-  const deleteServer = useStore((s) => s.deleteServer);
+  const confirmDisconnectBouncer = useStore((s) => s.confirmDisconnectBouncer);
+  const [shouldDeleteHistory, setShouldDeleteHistory] = useState(false);
+
+  useEffect(() => {
+    if (targetId) setShouldDeleteHistory(false);
+  }, [targetId]);
 
   const { parent, children } = useMemo(() => {
     if (!targetId) return { parent: null as Server | null, children: [] };
@@ -23,7 +29,7 @@ export const BouncerDisconnectConfirmModal: React.FC = () => {
 
   if (!targetId || !parent) return null;
 
-  const confirm = () => deleteServer(targetId);
+  const confirm = () => confirmDisconnectBouncer(shouldDeleteHistory);
 
   return (
     <BaseModal
@@ -64,6 +70,11 @@ export const BouncerDisconnectConfirmModal: React.FC = () => {
             </div>
           </>
         )}
+        <SavedHistoryChoice
+          serverIds={[parent.id, ...children.map((child) => child.id)]}
+          shouldDelete={shouldDeleteHistory}
+          onChange={setShouldDeleteHistory}
+        />
       </ModalBody>
 
       <ModalFooter>

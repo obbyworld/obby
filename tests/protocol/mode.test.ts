@@ -28,7 +28,7 @@ describe("MODE Protocol Handler", () => {
         perServerSelections: {},
         isNarrowView: false,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         isMemberListVisible: true,

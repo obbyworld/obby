@@ -1,4 +1,3 @@
-import { plural } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import type * as React from "react";
 import {
@@ -12,15 +11,24 @@ import {
   useRef,
   useState,
 } from "react";
+import { FaArrowDown } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import {
   SCROLL_TOLERANCE,
   useScrollToBottom,
 } from "../../hooks/useScrollToBottom";
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
-import ircClient from "../../lib/ircClient";
+import { flashMessageRow, reportJumpFailure } from "../../lib/jumpToMessage";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
 import useStore from "../../store";
+import {
+  loadNewerMessages,
+  loadOlderMessages,
+  showPresent,
+  showSavedHistory,
+} from "../../store/handlers/history";
+import { serverSupportsChathistory } from "../../store/helpers";
 import type { Message as MessageType } from "../../types";
 import { CollapsedEventMessage } from "../message/CollapsedEventMessage";
 import { MessageItem } from "../message/MessageItem";
@@ -28,6 +36,7 @@ import LoadingSpinner from "../ui/LoadingSpinner";
 import { ScrollToBottomButton } from "../ui/ScrollToBottomButton";
 
 export const DEFAULT_VISIBLE_MESSAGE_COUNT = 100;
+const JUMP_CONTEXT_MESSAGES = 20;
 
 // Stable empty array — prevents selector from returning a new [] on every render
 // when the channel has no messages yet (undefined ?? [] would create a new ref each time).
@@ -49,7 +58,6 @@ interface ChannelMessageListProps {
   channelId: string | null;
   privateChatId: string | null;
   isActive: boolean;
-  searchQuery: string;
   isMemberListVisible: boolean;
   onReply: (msg: MessageType | null) => void;
   onUsernameContextMenu: (
@@ -70,7 +78,6 @@ interface ChannelMessageListProps {
   onRedactMessage: (msg: MessageType) => void;
   onOpenProfile: (username: string) => void;
   joinChannel: (serverId: string, channelName: string) => void;
-  onClearSearch: () => void;
   highlightedMessageId?: string;
   // undefined = first visit; null = was at bottom; object = restore to saved position
   initialScrollState?: { scrollTop: number; visibleCount: number } | null;
@@ -87,7 +94,6 @@ export const ChannelMessageList = forwardRef<
       channelId,
       privateChatId,
       isActive,
-      searchQuery,
       isMemberListVisible,
       onReply,
       onUsernameContextMenu,
@@ -99,7 +105,6 @@ export const ChannelMessageList = forwardRef<
       onRedactMessage,
       onOpenProfile,
       joinChannel,
-      onClearSearch,
       highlightedMessageId,
       initialScrollState,
     },
@@ -155,6 +160,28 @@ export const ChannelMessageList = forwardRef<
           : null,
       [servers, serverId, channelId],
     );
+    const privateChat = useMemo(
+      () =>
+        privateChatId
+          ? (servers
+              .find((s) => s.id === serverId)
+              ?.privateChats?.find((pc) => pc.id === privateChatId) ?? null)
+          : null,
+      [servers, serverId, privateChatId],
+    );
+    const historyTarget = channel?.name ?? privateChat?.username;
+    const isDetached = useStore((state) => !!state.historyWindows[channelKey]);
+    const isDetachedRef = useRef(isDetached);
+    isDetachedRef.current = isDetached;
+    const wasDetachedRef = useRef(isDetached);
+    const windowJumpId = useStore(
+      (state) => state.historyWindows[channelKey]?.jumpId,
+    );
+    const isTouch = useIsTouchInput();
+
+    useEffect(() => {
+      if (historyTarget) showSavedHistory(useStore, serverId, historyTarget);
+    }, [serverId, historyTarget]);
 
     const { isScrolledUp, wasAtBottomRef, scrollToBottom } = useScrollToBottom(
       messagesContainerRef,
@@ -203,22 +230,12 @@ export const ChannelMessageList = forwardRef<
       }),
     }));
 
-    const filteredMessages = useMemo(() => {
-      if (!searchQuery.trim()) return channelMessages;
-      const query = searchQuery.toLowerCase();
-      return channelMessages.filter(
-        (msg) =>
-          msg.content.toLowerCase().includes(query) ||
-          msg.userId.toLowerCase().includes(query),
-      );
-    }, [channelMessages, searchQuery]);
-
     useEffect(() => {
       isScrolledUpRef.current = isScrolledUp;
       // When the user returns to the bottom, shrink the window back to the base so
       // slice(-N) resumes trimming old messages from the top (memory optimization).
       // Only shrink if we grew above the base — preserves a sub-default saved visibleCount.
-      if (!isScrolledUp) {
+      if (!isScrolledUp && !isDetachedRef.current) {
         setVisibleMessageCount((prev) =>
           prev > DEFAULT_VISIBLE_MESSAGE_COUNT
             ? DEFAULT_VISIBLE_MESSAGE_COUNT
@@ -240,21 +257,26 @@ export const ChannelMessageList = forwardRef<
       resizeObserverPrevSHRef.current = 0;
     }, [channelKey]);
 
-    const displayedMessages = useMemo(() => {
-      if (searchQuery.trim()) return filteredMessages;
-      return filteredMessages.slice(-visibleMessageCount);
-    }, [filteredMessages, visibleMessageCount, searchQuery]);
+    const displayedMessages = useMemo(
+      () => channelMessages.slice(-visibleMessageCount),
+      [channelMessages, visibleMessageCount],
+    );
 
-    const locallyHidden = filteredMessages.length > displayedMessages.length;
-    const serverHasMore = channel?.hasMoreHistory === true;
+    const locallyHidden = channelMessages.length > displayedMessages.length;
+    const serverHasMore =
+      (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
+    const isHistoryLocalOnly = useStore(
+      (state) => !serverSupportsChathistory(state, serverId),
+    );
 
     const eventGroups = useMemo(
       () => groupConsecutiveEvents(displayedMessages),
       [displayedMessages],
     );
 
-    const isLoadingHistory = channel?.isLoadingHistory ?? false;
+    const isLoadingHistory =
+      (channel?.isLoadingHistory ?? privateChat?.isLoadingHistory) === true;
 
     // Scroll to bottom on initial mount, unless a saved position was passed in.
     // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount only
@@ -274,6 +296,7 @@ export const ChannelMessageList = forwardRef<
 
     // Scroll to bottom after initial join history loads; clear fetch spinner at batch end.
     const wasLoadingHistoryRef = useRef(false);
+    const hasJumpedRef = useRef(false);
     // biome-ignore lint/correctness/useExhaustiveDependencies: scrollToBottom is stable via useCallback; refs and setters are stable
     useLayoutEffect(() => {
       if (wasLoadingHistoryRef.current && !isLoadingHistory) {
@@ -281,13 +304,39 @@ export const ChannelMessageList = forwardRef<
           // delta correction for scroll position is handled by useLayoutEffect([displayedMessages])
           isFetchingMoreRef.current = false;
           setIsFetchingMore(false);
-        } else {
+        } else if (!isDetachedRef.current && !hasJumpedRef.current) {
           scrollToBottom();
           wasAtBottomRef.current = true;
         }
       }
+      if (isLoadingHistory) hasJumpedRef.current = false;
       wasLoadingHistoryRef.current = isLoadingHistory;
     }, [isLoadingHistory]);
+
+    const resetWindowTracking = () => {
+      prevFilteredLengthRef.current = channelMessages.length;
+      prevFirstMsgIdRef.current = channelMessages[0]?.id ?? null;
+      pendingPrependRef.current = false;
+    };
+
+    // A jump swaps every message at once, so nothing in the swap is a prepend.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: runs when a jump replaces the window; refs are stable
+    useLayoutEffect(() => {
+      if (windowJumpId === undefined) return;
+      resetWindowTracking();
+      wasAtBottomRef.current = false;
+    }, [windowJumpId]);
+
+    // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the chat returns to the present; refs and setters are stable
+    useLayoutEffect(() => {
+      const wasDetached = wasDetachedRef.current;
+      wasDetachedRef.current = isDetached;
+      if (isDetached || !wasDetached) return;
+      resetWindowTracking();
+      setVisibleMessageCount(DEFAULT_VISIBLE_MESSAGE_COUNT);
+      wasAtBottomRef.current = true;
+      scrollToBottom();
+    }, [isDetached]);
 
     // When older messages are prepended, grow the window so they enter displayedMessages.
     // When new messages arrive at the bottom while the user is scrolled up, also grow the
@@ -296,8 +345,8 @@ export const ChannelMessageList = forwardRef<
     // incoming message. Only let the slice trim from the top when the user is at the bottom
     // (where auto-scroll handles keeping them current).
     useLayoutEffect(() => {
-      const newLength = filteredMessages.length;
-      const newFirstId = filteredMessages[0]?.id ?? null;
+      const newLength = channelMessages.length;
+      const newFirstId = channelMessages[0]?.id ?? null;
       const delta = newLength - prevFilteredLengthRef.current;
 
       if (prevFilteredLengthRef.current > 0 && delta > 0) {
@@ -305,7 +354,7 @@ export const ChannelMessageList = forwardRef<
           // Messages prepended (load-more): signal delta-correction to compensate scrollTop.
           pendingPrependRef.current = true;
           setVisibleMessageCount((prev) => prev + delta);
-        } else if (isScrolledUpRef.current) {
+        } else if (isScrolledUpRef.current || isDetachedRef.current) {
           // Messages appended at bottom while user is scrolled up reading history.
           // Expand the window to prevent top messages from dropping out of the slice.
           setVisibleMessageCount((prev) => prev + delta);
@@ -314,7 +363,7 @@ export const ChannelMessageList = forwardRef<
 
       prevFilteredLengthRef.current = newLength;
       prevFirstMsgIdRef.current = newFirstId;
-    }, [filteredMessages]);
+    }, [channelMessages]);
 
     // Compensate scrollTop when content is prepended above the viewport.
     // biome-ignore lint/correctness/useExhaustiveDependencies: runs on every displayedMessages render to capture the resulting scrollHeight; refs are stable
@@ -385,7 +434,7 @@ export const ChannelMessageList = forwardRef<
           container.scrollTop + container.clientHeight >=
           prevSH - SCROLL_TOLERANCE;
         resizeObserverPrevSHRef.current = container.scrollHeight;
-        if (wasAtPrevBottom) {
+        if (wasAtPrevBottom && !isDetachedRef.current) {
           scrollToBottom();
         } else if (widthChanged && prevSH > 0) {
           const ratio = container.scrollTop / prevSH;
@@ -396,10 +445,53 @@ export const ChannelMessageList = forwardRef<
       return () => observer.disconnect();
     }, [isLoadingHistory, channelId, privateChatId]);
 
+    const jumpMessageId = useStore((state) => state.ui.messageJump?.messageId);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: refs and setters are stable; displayedMessages reruns it once the window has grown
+    useLayoutEffect(() => {
+      if (!jumpMessageId || !isActive) return;
+      const index = channelMessages.findIndex((m) => m.id === jumpMessageId);
+      if (index < 0) return;
+      const needed = channelMessages.length - index + JUMP_CONTEXT_MESSAGES;
+      if (needed > visibleMessageCount) {
+        setVisibleMessageCount(needed);
+        return;
+      }
+      const container = messagesContainerRef.current;
+      const row = container?.querySelector(
+        `[data-message-id="${jumpMessageId}"]`,
+      );
+      useStore.getState().clearMessageJump();
+      if (!container || !row) {
+        reportJumpFailure(serverId, "not-found");
+        return;
+      }
+      // We leave the bottom, so new messages and resizes stop pulling us back down.
+      wasAtBottomRef.current = false;
+      hasJumpedRef.current = true;
+      resizeObserverPrevSHRef.current = container.scrollHeight;
+      flashMessageRow(
+        row,
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      );
+    }, [jumpMessageId, isActive, displayedMessages]);
+
+    const [isLoadingNewer, setIsLoadingNewer] = useState(false);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: channelMessages reruns it after each page in case the bottom is still in view
+    useEffect(() => {
+      if (!isDetached || isScrolledUp || !isActive || isLoadingNewer) return;
+      if (!historyTarget) return;
+      setIsLoadingNewer(true);
+      loadNewerMessages(useStore, serverId, historyTarget).finally(() =>
+        setIsLoadingNewer(false),
+      );
+    }, [isDetached, isScrolledUp, isActive, isLoadingNewer, channelMessages]);
+
     // Auto-scroll on new messages — skip when this channel is hidden (display:none).
     // biome-ignore lint/correctness/useExhaustiveDependencies: only scroll when messages change, not when isActive changes
     useEffect(() => {
-      if (!isActive) return;
+      if (!isActive || isDetachedRef.current) return;
       const isNarrowView = window.matchMedia("(max-width: 768px)").matches;
       const isChatVisible =
         !isNarrowView || mobileViewActiveColumn === "chatView";
@@ -428,7 +520,9 @@ export const ChannelMessageList = forwardRef<
             }
           }}
         >
-          {isLoadingHistory && !isFetchingMore ? (
+          {isLoadingHistory &&
+          !isFetchingMore &&
+          channelMessages.length === 0 ? (
             <div className="flex-grow flex items-center justify-center">
               <LoadingSpinner
                 size="lg"
@@ -438,7 +532,7 @@ export const ChannelMessageList = forwardRef<
             </div>
           ) : (
             <div ref={messagesInnerRef} className="flex flex-col">
-              {hasMoreMessages && !searchQuery && (
+              {hasMoreMessages && (
                 <div className="flex items-center gap-3 px-4 py-3">
                   <span className="hairline flex-1" />
                   <button
@@ -449,23 +543,34 @@ export const ChannelMessageList = forwardRef<
                         setVisibleMessageCount(
                           (prev) => prev + DEFAULT_VISIBLE_MESSAGE_COUNT,
                         );
-                      } else if (serverHasMore && channel && channelId) {
+                      } else if (serverHasMore && historyTarget) {
                         const oldest = channelMessages[0];
                         if (oldest?.timestamp) {
-                          const ts = new Date(oldest.timestamp).toISOString();
-                          // WebSocket responses are macrotasks; the click handler's React batch
-                          // always commits before the response arrives, so flushSync is unnecessary.
                           isFetchingMoreRef.current = true;
                           setIsFetchingMore(true);
-                          ircClient.requestChathistoryBefore(
+                          const stopFetching = () => {
+                            isFetchingMoreRef.current = false;
+                            setIsFetchingMore(false);
+                          };
+                          loadOlderMessages(
+                            useStore,
                             serverId,
-                            channel.name,
-                            ts,
-                          );
+                            historyTarget,
+                            new Date(oldest.timestamp).getTime(),
+                          )
+                            .then((isPageComing) => {
+                              if (!isPageComing) stopFetching();
+                            })
+                            .catch(stopFetching);
                         }
                       }
                     }}
                     disabled={isFetchingMore}
+                    title={
+                      isHistoryLocalOnly
+                        ? t`Load earlier messages saved on this device`
+                        : undefined
+                    }
                     className="chip-action"
                   >
                     {isFetchingMore ? (
@@ -492,28 +597,10 @@ export const ChannelMessageList = forwardRef<
                     {isFetchingMore
                       ? t`Getting more messages...`
                       : locallyHidden
-                        ? t`${filteredMessages.length - displayedMessages.length} older messages`
+                        ? t`${channelMessages.length - displayedMessages.length} older messages`
                         : t`Load older messages`}
                   </button>
                   <span className="hairline flex-1" />
-                </div>
-              )}
-              {searchQuery && (
-                <div className="flex justify-center items-center gap-2 py-2 bg-discord-dark-300 text-discord-text-muted text-sm">
-                  <span>
-                    {plural(filteredMessages.length, {
-                      one: t`Found 1 message matching "${searchQuery}"`,
-                      other: t`Found ${filteredMessages.length} messages matching "${searchQuery}"`,
-                    })}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={onClearSearch}
-                    className="text-red-400 hover:text-red-300"
-                    title={t`Clear search`}
-                  >
-                    ✕
-                  </button>
                 </div>
               )}
               {eventGroups.map((group) => {
@@ -574,9 +661,22 @@ export const ChannelMessageList = forwardRef<
           <div ref={messagesEndRef} className="h-px" />
         </div>
         <ScrollToBottomButton
-          isVisible={isScrolledUp}
+          isVisible={isScrolledUp && !isDetached}
           onClick={scrollToBottom}
         />
+        {isDetached && historyTarget && (
+          <div className="flex justify-center px-4 py-2 bg-discord-dark-200">
+            <button
+              type="button"
+              onClick={() => showPresent(useStore, serverId, historyTarget)}
+              onMouseDown={(e) => e.preventDefault()}
+              className={`chip-action ${isTouch ? "min-h-11 px-4 text-sm" : ""}`}
+            >
+              <FaArrowDown className="w-3 h-3" aria-hidden="true" />
+              {t`Jump to present`}
+            </button>
+          </div>
+        )}
       </>
     );
   },

@@ -57,7 +57,7 @@ describe("ChatHeader - Members Button", () => {
         isMemberListVisible: false,
         isChannelListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         linkSecurityWarnings: [],
@@ -104,10 +104,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={false}
           isNarrowView={false}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -142,10 +140,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={true}
           isNarrowView={false}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -183,10 +179,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={false}
           isNarrowView={true}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -222,10 +216,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={true}
           isNarrowView={true}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -261,10 +253,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={false}
           isNarrowView={true}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -290,10 +280,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={true}
           isNarrowView={true}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}
@@ -317,10 +305,8 @@ describe("ChatHeader - Members Button", () => {
           isMemberListVisible={false}
           isNarrowView={true}
           globalSettings={{ notificationVolume: 0.5 }}
-          searchQuery=""
           onToggleChanList={() => {}}
           onToggleMemberList={() => {}}
-          onSearchQueryChange={() => {}}
           onToggleNotificationVolume={() => {}}
           onOpenChannelSettings={() => {}}
           onOpenInviteUser={() => {}}

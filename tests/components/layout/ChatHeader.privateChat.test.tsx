@@ -8,6 +8,11 @@ vi.mock("@tauri-apps/plugin-os", () => ({
   platform: vi.fn().mockResolvedValue("linux"),
 }));
 
+let isTouch = false;
+vi.mock("../../../src/hooks/useIsTouchInput", () => ({
+  useIsTouchInput: () => isTouch,
+}));
+
 const me: User = { id: "u1", username: "me", isOnline: true };
 const pm: PrivateChat = {
   id: "pc1",
@@ -31,10 +36,8 @@ const renderHeader = () =>
       isMemberListVisible={false}
       isNarrowView={true}
       globalSettings={{ notificationVolume: 0.5 }}
-      searchQuery=""
       onToggleChanList={() => {}}
       onToggleMemberList={() => {}}
-      onSearchQueryChange={() => {}}
       onToggleNotificationVolume={() => {}}
       onOpenChannelSettings={() => {}}
       onOpenInviteUser={() => {}}
@@ -44,6 +47,7 @@ const renderHeader = () =>
 
 describe("ChatHeader private chat", () => {
   beforeEach(() => {
+    isTouch = false;
     useStore.setState({
       servers: [
         {
@@ -84,10 +88,28 @@ describe("ChatHeader private chat", () => {
     expect(pinPrivateChat).toHaveBeenCalledWith("server1", "pc1");
   });
 
+  it.each([
+    false,
+    true,
+  ])("opens the palette in Messages mode scoped to this chat (touch: %s)", (touch) => {
+    isTouch = touch;
+    useStore.setState((state) => ({ ui: { ...state.ui, quickActions: null } }));
+    renderHeader();
+    const button = screen.getByRole("button", { name: "Search messages" });
+    expect(button.textContent).toBe(touch ? "" : "Search");
+    expect(button.className).toContain(touch ? "w-11" : "chip-outline");
+    fireEvent.click(button);
+    expect(useStore.getState().ui.quickActions).toEqual({
+      mode: "messages",
+      scope: { kind: "chat", serverId: "server1", target: "alice" },
+    });
+  });
+
   it("opens the profile when the name is tapped", () => {
     renderHeader();
     fireEvent.click(screen.getByRole("button", { name: /^alice/ }));
-    expect(useStore.getState().ui.profilePane).toEqual({
+    expect(useStore.getState().ui.sidePane).toEqual({
+      kind: "profile",
       serverId: "server1",
       username: "alice",
     });

@@ -38,14 +38,6 @@ import WorkflowOutputViewer from "./WorkflowOutputViewer";
 import WorkflowStatusBadge from "./WorkflowStatusBadge";
 import WorkflowStepRow, { type WorkflowAction } from "./WorkflowStepRow";
 
-function flashMessage(internalId: string): void {
-  const el = document.querySelector(`[data-message-id="${internalId}"]`);
-  if (!el) return;
-  el.scrollIntoView({ behavior: "smooth", block: "center" });
-  el.classList.add("message-flash");
-  setTimeout(() => el.classList.remove("message-flash"), 2000);
-}
-
 interface BotToolsCardProps {
   workflow: AiWorkflow;
   // "sheet" docks the card to the bottom of a touch screen.
@@ -325,7 +317,8 @@ export const BotToolsCard: React.FC<BotToolsCardProps> = ({
                   : t`Load older messages to reach the reply`
               }
               onClick={() =>
-                finalMessageInternalId && flashMessage(finalMessageInternalId)
+                finalMessageInternalId &&
+                useStore.getState().revealMessage(finalMessageInternalId)
               }
             >
               <FaArrowRight className="text-[10px]" />

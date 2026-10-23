@@ -343,6 +343,8 @@ export interface PrivateChat {
   mentionCount?: number;
   isMentioned: boolean;
   lastActivity?: Date;
+  isLoadingHistory?: boolean;
+  hasMoreHistory?: boolean;
   isPinned?: boolean;
   order?: number;
   isOnline?: boolean; // Tracked via MONITOR

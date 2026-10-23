@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect } from "react";
@@ -9,10 +10,25 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 import { EXIT_HINT_COMMAND, EXIT_WINDOW_MS } from "../../hooks/useBackButton";
+import {
+  JUMP_FAILURE_COMMAND,
+  type JumpFailure,
+} from "../../lib/jumpToMessage";
 import useStore from "../../store";
 import { SERVER_NOTICES_ID } from "../../store/handlers/serverReplies";
 
 const TOAST_MS = 5000;
+
+function jumpFailureText(code: string): string {
+  switch (code as JumpFailure) {
+    case "left-channel":
+      return t`Join this channel to jump to the message`;
+    case "not-saved":
+      return t`This message is no longer saved`;
+    default:
+      return t`Could not find this message`;
+  }
+}
 
 const ICONS = {
   fail: <FaTimesCircle className="text-red-400" />,
@@ -42,6 +58,8 @@ export const GlobalNotifications: React.FC = () => {
   }, [latest?.id]);
 
   if (!latest) return null;
+  const isJumpFailure = latest.command === JUMP_FAILURE_COMMAND;
+  const opensNotices = hasServer && !isJumpFailure;
 
   const openNotices = () => {
     const { selectServer, selectChannel } = useStore.getState();
@@ -60,19 +78,21 @@ export const GlobalNotifications: React.FC = () => {
         <span className="shrink-0 text-sm">{ICONS[latest.type]}</span>
         <button
           type="button"
-          onClick={hasServer ? openNotices : clearGlobalNotifications}
+          onClick={opensNotices ? openNotices : clearGlobalNotifications}
           className="flex min-w-0 flex-1 items-center gap-2 text-left text-sm text-discord-text-normal"
-          title={hasServer ? t`See server notices` : undefined}
+          title={opensNotices ? t`See server notices` : undefined}
         >
           <span className="line-clamp-2 min-w-0 flex-1">
             {latest.command === EXIT_HINT_COMMAND
               ? t`Press back again to exit`
-              : latest.message}
+              : isJumpFailure
+                ? jumpFailureText(latest.code)
+                : latest.message}
             {otherCount > 0 && (
               <span className="row-meta ml-1.5">+{otherCount}</span>
             )}
           </span>
-          {hasServer && (
+          {opensNotices && (
             <FaChevronRight className="shrink-0 text-xs text-discord-text-muted" />
           )}
         </button>

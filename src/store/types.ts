@@ -1,7 +1,19 @@
 import type { SavedDevice } from "../lib/mediaDevices";
 import type { MediaVisibilityLevel } from "../lib/mediaUtils";
+import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
+import type { Message } from "../types";
 
 export type layoutColumn = "serverList" | "chatView" | "memberList";
+
+// A chat that shows an older stretch of its history. It shows nothing newer
+// than `until`, and we keep its newest messages in `present` to show again
+// when the user jumps back. `jumpId` changes each time a jump replaces it.
+export interface HistoryWindow {
+  until: number;
+  untilRowId?: number;
+  present: Message[];
+  jumpId?: number;
+}
 export type { MediaVisibilityLevel };
 
 export interface ConnectionDetails {
@@ -54,6 +66,8 @@ export interface GlobalSettings {
   showKicks: boolean;
   customMentions: string[];
   ignoreList: string[];
+  keepHistory: boolean;
+  historyLimitMb: number;
   nickname: string;
   accountName: string;
   accountPassword: string;
@@ -134,4 +148,22 @@ export type AppPage = (
 export interface ProfilePane {
   serverId: string;
   username: string;
+}
+
+// isChatShown hides the results behind the chat where both cannot fit;
+// hitChatId is the chat a result opened, so the way back shows only there.
+export type SidePane =
+  | ({ kind: "profile" } & ProfilePane)
+  | {
+      kind: "search";
+      query: SearchQuery;
+      isChatShown?: boolean;
+      hitChatId?: string;
+    };
+
+export type QuickActionsMode = "goto" | "messages";
+
+export interface QuickActionsState {
+  mode: QuickActionsMode;
+  scope?: SearchScope;
 }

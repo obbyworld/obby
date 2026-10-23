@@ -85,6 +85,7 @@ const subcategoryLabel = (name: string): string => {
     Events: t`Events`,
     Input: t`Input`,
     Privacy: t`Privacy`,
+    History: t`History`,
     Devices: t`Devices`,
     "Audio Processing": t`Audio Processing`,
   };
@@ -238,6 +239,10 @@ const SettingsPage: React.FC<PageProps<"settings">> = ({ page }) => {
             setting={setting}
             value={globalValue(setting)}
             onChange={(value) => setGlobal(setting.key, value)}
+            disabled={setting.dependencies?.some(({ settingId, condition }) => {
+              const dependency = settingsRegistry.get(settingId);
+              return dependency && !condition(globalValue(dependency));
+            })}
           />
         ))}
       </SettingGroup>

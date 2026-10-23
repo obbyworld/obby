@@ -41,7 +41,7 @@ const mockStoreState = {
     isNarrowView: false,
     isAddServerModalOpen: false,
     page: null as { kind: string } | null,
-    profilePane: null,
+    sidePane: null,
     isDarkMode: true,
     linkSecurityWarnings: [],
   },

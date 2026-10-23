@@ -16,6 +16,7 @@ import {
   isUnprotectedMessage,
 } from "../../lib/e2ee/messageFlags";
 import { highlightNames } from "../../lib/highlightNames";
+import { LOCAL_HISTORY_TAG } from "../../lib/history/historyLines";
 import { decodeHtmlEntities } from "../../lib/htmlEntities";
 import ircClient from "../../lib/ircClient";
 import {
@@ -755,27 +756,8 @@ export const MessageItem = memo((props: MessageItemProps) => {
   };
 
   const handleScrollToReply = () => {
-    if (!message.replyMessage?.id) return;
-
-    const targetElement = document.querySelector(
-      `[data-message-id="${message.replyMessage.id}"]`,
-    );
-
-    if (targetElement) {
-      // Scroll to the message
-      targetElement.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-
-      // Add flash animation
-      targetElement.classList.add("message-flash");
-
-      // Remove the class after animation completes
-      setTimeout(() => {
-        targetElement.classList.remove("message-flash");
-      }, 2000);
-    }
+    if (message.replyMessage?.id)
+      useStore.getState().revealMessage(message.replyMessage.id);
   };
 
   // Someone said our name, or answered something we said. Either way the row
@@ -853,6 +835,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
               isVerified={isVerified}
               isIrcOp={isIrcOp}
               unprotected={isUnprotected}
+              isSavedLocally={message.tags?.[LOCAL_HISTORY_TAG] !== undefined}
             />
           )}
 

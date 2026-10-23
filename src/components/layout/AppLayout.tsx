@@ -67,8 +67,9 @@ export const AppLayout: React.FC = () => {
     isChannelListVisible,
     mobileViewActiveColumn,
     page,
-    profilePane,
+    sidePane,
   } = ui;
+  const hasSidePane = !!sidePane;
 
   const isBouncerControlSelected = useStore(
     (s) =>
@@ -146,13 +147,11 @@ export const AppLayout: React.FC = () => {
   // Desktop narrow: member list shows as overlay in ChatArea instead of sidebar
   const showMemberListAsOverlay = !isNarrowView && isTooNarrowForMemberList;
   const shouldShowMemberListSidebar =
-    (shouldShowMemberList || !!profilePane) &&
-    !showMemberListAsOverlay &&
-    !page;
+    (shouldShowMemberList || hasSidePane) && !showMemberListAsOverlay && !page;
 
   // Member list page doesn't exist in DMs — only channels have a member list.
   const hasMemberPage =
-    (!!selectedServerId && !selectedPrivateChatId) || !!profilePane;
+    (!!selectedServerId && !selectedPrivateChatId) || hasSidePane;
 
   // Clamp the active column synchronously so currentPageIndex is never out of
   // range during the same render that totalPages drops from 3 to 2 (e.g. when
@@ -345,16 +344,25 @@ export const AppLayout: React.FC = () => {
       useStore.getState().closeMedia();
       return false;
     }
-    const { page: openedPage, profilePane: openedProfile } =
-      useStore.getState().ui;
+    const {
+      page: openedPage,
+      sidePane: openedPane,
+      mobileViewActiveColumn: activeColumn,
+    } = useStore.getState().ui;
     if (openedPage) {
       (document.activeElement as HTMLElement | null)?.blur();
       if (stepBackWithinPage()) return false;
       useStore.getState().closePage();
       return false;
     }
-    if (openedProfile) {
+    if (openedPane?.kind === "profile") {
       useStore.getState().closeProfile();
+      return false;
+    }
+    if (openedPane?.kind === "search") {
+      if (activeColumn === "chatView")
+        useStore.getState().setSearchChatShown(false);
+      else useStore.getState().closeSearchResults();
       return false;
     }
     if (!isNarrowView) return true;
@@ -422,7 +430,8 @@ export const AppLayout: React.FC = () => {
           <>
             {getLayoutColumn("serverList")}
             {getLayoutColumn("chatView")}
-            {selectedServerId && getLayoutColumn("memberList")}
+            {(selectedServerId || sidePane?.kind === "search") &&
+              getLayoutColumn("memberList")}
           </>
         )}
         <GlobalNotifications />

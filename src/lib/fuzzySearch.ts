@@ -107,3 +107,18 @@ export const fuzzyMatch = (query: string, target: string): FuzzyMatchResult => {
   }
   return NO_MATCH;
 };
+
+export function bestMatches<T>(
+  items: readonly T[],
+  query: string,
+  nameOf: (item: T) => string,
+  limit: number,
+): T[] {
+  if (!query.trim()) return items.slice(0, limit);
+  return items
+    .map((item) => ({ item, match: fuzzyMatch(query, nameOf(item)) }))
+    .filter(({ match }) => match.matches)
+    .sort((a, b) => b.match.score - a.match.score)
+    .slice(0, limit)
+    .map(({ item }) => item);
+}

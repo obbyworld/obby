@@ -30,7 +30,7 @@ describe("AppLayout - Resize Behavior", () => {
         isChannelListVisible: true,
         isMemberListVisible: true,
         isAddServerModalOpen: false,
-        isQuickActionsOpen: false,
+        quickActions: null,
         isDarkMode: true,
         isMobileMenuOpen: false,
         isServerMenuOpen: false,
