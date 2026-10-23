@@ -26,21 +26,23 @@ export const Switch: React.FC<{
   </button>
 );
 
-// One row of a settings card: text on the left, an inline control on the
-// right, and anything taller (inputs, lists) stacked under the text. A control
-// too wide to sit beside the text wraps under it on a phone.
+// One row of a settings card: text on the left, an inline control or a
+// one-line field on the right, and anything taller (lists, sliders) stacked
+// under the text. A control or field too wide to sit beside the text wraps
+// under it on a phone.
 export const SettingRow: React.FC<{
   id?: string;
   title: ReactNode;
   description?: ReactNode;
   control?: ReactNode;
+  field?: ReactNode;
   children?: ReactNode;
-}> = ({ id, title, description, control, children }) => {
+}> = ({ id, title, description, control, field, children }) => {
   const titleId = useId();
   return (
     <div
       id={id ? `setting-${id}` : undefined}
-      className="px-3 py-3 transition-colors duration-300"
+      className="setting-row px-3 py-3 transition-colors duration-300"
     >
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <div className="flex-[1_1_12rem] min-w-0 flex flex-col gap-0.5">
@@ -54,6 +56,11 @@ export const SettingRow: React.FC<{
           )}
         </div>
         {control}
+        {field && (
+          <fieldset aria-labelledby={titleId} className="setting-field">
+            {field}
+          </fieldset>
+        )}
       </div>
       {children && (
         <fieldset aria-labelledby={titleId} className="mt-3 min-w-0">

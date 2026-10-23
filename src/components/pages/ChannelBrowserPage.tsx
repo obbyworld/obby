@@ -425,12 +425,12 @@ const ChannelBrowserPage: React.FC<PageProps<"channelBrowser">> = ({
       <div
         ref={listRef}
         aria-busy={isLoading}
-        className="page-card overflow-hidden"
+        className="page-card grid grid-cols-[repeat(auto-fill,minmax(min(100%,22rem),1fr))]"
       >
         {isLoading ? (
           SKELETON_ROW_IDS.map((id) => <SkeletonRow key={id} />)
         ) : displayed.length === 0 ? (
-          <div className="h-14 flex items-center px-3 text-[13px] text-discord-text-muted">
+          <div className="col-span-full h-14 flex items-center px-3 text-[13px] text-discord-text-muted">
             <Trans>No channels found. Change the search or filters.</Trans>
           </div>
         ) : (
