@@ -1984,6 +1984,14 @@ msgstr "Fatto"
 msgid "Download"
 msgstr "Scarica"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading…"
+msgstr "Download in corso…"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Downloading… {percent}%"
+msgstr "Download in corso… {percent} %"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Drag a handle to move a channel or chat, or a channel into a folder"
 msgstr "Trascina una maniglia per spostare un canale o una chat, o un canale in una cartella"
@@ -2749,6 +2757,10 @@ msgstr "Installa"
 msgid "Install a UnifiedPush app first"
 msgstr "Installa prima un'app UnifiedPush"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Install and restart"
+msgstr "Installa e riavvia"
+
 #: src/lib/settings/registry.ts
 msgid "Invalid format"
 msgstr "Formato non valido"
@@ -2938,6 +2950,10 @@ msgstr "Espelli utente"
 #: src/components/pages/SettingsPage.tsx
 msgid "Language"
 msgstr "Lingua"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Later"
+msgstr "Più tardi"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Learn how we handle your data and protect your privacy."
@@ -4418,6 +4434,10 @@ msgstr "Rilassato"
 msgid "Relaxed - Less aggressive protection"
 msgstr "Rilassato – Protezione meno aggressiva"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Release notes"
+msgstr "Note di rilascio"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/ChannelSettingsPage.tsx
 #: src/components/pages/EmojiPacksPage.tsx
@@ -4529,6 +4549,10 @@ msgstr "Riavvia il browser per ricevere notifiche quando Obby è chiuso"
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Retake"
 msgstr "Rifai"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Retry"
+msgstr "Riprova"
 
 #: src/components/message/MessageStatusIndicator.tsx
 #: src/components/message/MessageStatusIndicator.tsx
@@ -5665,6 +5689,14 @@ msgstr "Rimuovi il fissaggio di questa conversazione privata"
 msgid "Unsuspend"
 msgstr "Riattiva"
 
+#: src/components/ui/UpdateModal.tsx
+msgid "Update available"
+msgstr "Aggiornamento disponibile"
+
+#: src/components/ui/UpdateModal.tsx
+msgid "Update failed. Please try again."
+msgstr "Aggiornamento non riuscito. Riprova."
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Upload an image or enter a URL. Use {sizeToken} in the URL for dynamic sizing."
 msgstr "Carica un'immagine o inserisci un URL. Usa {sizeToken} nell'URL per il ridimensionamento dinamico."
@@ -5813,6 +5845,12 @@ msgstr "Verifica…"
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Verifying…"
 msgstr "Verifica in corso…"
+
+#. placeholder {0}: update.version
+#. placeholder {1}: update.currentVersion
+#: src/components/ui/UpdateModal.tsx
+msgid "Version {0} is available — you have {1}."
+msgstr "La versione {0} è disponibile — hai la {1}."
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Very Relaxed"

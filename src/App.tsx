@@ -15,6 +15,7 @@ import QuickActions from "./components/ui/QuickActions";
 import { RemoveServerConfirmModal } from "./components/ui/RemoveServerConfirmModal";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
 import { TotpStepUpModal } from "./components/ui/TotpStepUpModal";
+import UpdateModal from "./components/ui/UpdateModal";
 import { useChannelTabSwitching } from "./hooks/useChannelTabSwitching";
 import { useConnectionResilience } from "./hooks/useConnectionResilience";
 import { useDesktopTray } from "./hooks/useDesktopTray";
@@ -422,6 +423,7 @@ const App: React.FC = () => {
               <TicTacToeModal />
               {quickActions && <QuickActions />}
               <LinkSecurityWarningModal />
+              <UpdateModal />
               {isServerNoticesPopupOpen && (
                 <ServerNoticesPopup
                   messages={serverNotices}
