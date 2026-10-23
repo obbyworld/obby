@@ -53,12 +53,6 @@ msgstr "{0, plural, one {{1}} other {{2}}}"
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, other {{1}개 더 보기}}"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} and {1} are typing..."
-msgstr "{0}님과 {1}님이 입력 중..."
-
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -68,11 +62,6 @@ msgstr "{0} 유휴"
 #: src/components/ui/SlashCommandParamModal.tsx
 msgid "{0} is required."
 msgstr "{0}은(는) 필수입니다."
-
-#. placeholder {0}: typingUsers[0].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0} is typing..."
-msgstr "{0}님이 입력 중..."
 
 #. placeholder {0}: o.name
 #: src/components/ui/SlashCommandParamModal.tsx
@@ -110,20 +99,11 @@ msgstr "{0}단계가 승인 대기 중"
 msgid "{0} workflow(s)"
 msgstr "워크플로우 {0}개"
 
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1} and {2} are typing..."
-msgstr "{0}님, {1}님, {2}님이 입력 중..."
-
-#. placeholder {0}: typingUsers[0].username
-#. placeholder {1}: typingUsers[1].username
-#. placeholder {2}: typingUsers[2].username
-#. placeholder {3}: typingUsers.length - 3
-#: src/components/layout/ChatArea.tsx
-msgid "{0}, {1}, {2} and {3} others are typing..."
-msgstr "{0}님, {1}님, {2}님 외 {3}명이 입력 중..."
+#. placeholder {0}: streamerMembers.length
+#. placeholder {1}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0}/{STREAM_MAX_STREAMERS} streaming · {1} watching"
+msgstr "{0}/{STREAM_MAX_STREAMERS}명 스트리밍 중 · {1}명 시청 중"
 
 #. placeholder {0}: Math.floor(secs / 86400)
 #: src/components/ui/InvitationsPanel.tsx
@@ -243,6 +223,18 @@ msgstr "{sender}님이 암호화를 다시 시작했습니다. 수락하기 전�
 msgid "{title} Client"
 msgstr "{title} 클라이언트"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} in call"
+msgstr "통화 중 {userCount}명"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} users"
+msgstr "사용자 {userCount}명"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "{userCount} watching"
+msgstr "시청 중 {userCount}명"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "*channel*"
 msgstr "*channel*"
@@ -271,6 +263,32 @@ msgstr "#overflow"
 #: src/components/ui/UserProfileModal.tsx
 msgid "← Back"
 msgstr "← 뒤로"
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> and <1>{1}</1> are typing..."
+msgstr "<0>{0}</0>님과 <1>{1}</1>님이 입력 중..."
+
+#. placeholder {0}: typingUsers[0].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0> is typing..."
+msgstr "<0>{0}</0>님이 입력 중..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
+msgstr "<0>{0}</0>님, <1>{1}</1>님, <2>{2}</2>님이 입력 중..."
+
+#. placeholder {0}: typingUsers[0].username
+#. placeholder {1}: typingUsers[1].username
+#. placeholder {2}: typingUsers[2].username
+#. placeholder {3}: typingUsers.length - 3
+#: src/components/ui/TypingIndicator.tsx
+msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
+msgstr "<0>{0}</0>님, <1>{1}</1>님, <2>{2}</2>님 외 {3}명이 입력 중..."
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -304,6 +322,10 @@ msgstr "암호화된 대화 수락"
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Accept new key"
 msgstr "새 키 수락"
+
+#: src/lib/mediaDevices.ts
+msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
+msgstr "액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 카메라와 마이크 액세스를 허용한 후 다시 시도하세요."
 
 #: src/components/ui/UserSettings.tsx
 msgid "Account"
@@ -438,9 +460,17 @@ msgstr "전체"
 msgid "All Content"
 msgstr "모든 콘텐츠"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Allow camera access"
+msgstr "카메라 액세스 허용"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "여러 줄 텍스트 입력 허용"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Allow microphone access"
+msgstr "마이크 액세스 허용"
 
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
@@ -526,9 +556,17 @@ msgstr "인증된 계정"
 msgid "Auto Fallback to Single Line"
 msgstr "자동으로 한 줄 모드로 전환"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Auto Gain Control"
+msgstr "자동 게인 조절"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Auto-dismiss in {secondsLeft}s"
 msgstr "{secondsLeft}초 후 자동으로 닫힘"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Automatically adjust your microphone volume"
+msgstr "마이크 볼륨 자동 조절"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Automatically authenticate as operator on connect"
@@ -575,6 +613,7 @@ msgstr "자리비움:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/settings/CallCameraField.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "뒤로"
@@ -666,6 +705,24 @@ msgstr "이 네트워크의 봇"
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "서버의 모든 채널 검색"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
+msgstr "브라우저는 마이크 또는 카메라 액세스를 허용해야 스피커를 표시합니다. 아무것도 녹음되지 않습니다."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Calls"
+msgstr "통화"
+
+#: src/components/ui/settings/CallCameraField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Camera"
+msgstr "카메라"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Camera {0}"
+msgstr "카메라 {0}"
 
 #: src/components/ui/AddPrivateChatModal.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -847,6 +904,26 @@ msgstr "안전한 비밀번호를 선택하세요"
 msgid "Choose file"
 msgstr "파일 선택"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Choose microphone and camera"
+msgstr "마이크와 카메라 선택"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Choose the microphone, camera, and speaker calls use"
+msgstr "통화에 사용할 마이크, 카메라, 스피커 선택"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose which speaker calls play through"
+msgstr "통화에 사용할 스피커 선택"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your camera and preview what it sees"
+msgstr "카메라 선택 및 화면 미리보기"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Choose your microphone and preview its input level"
+msgstr "마이크 선택 및 입력 레벨 미리보기"
+
 #: src/components/ui/AvatarUpload.tsx
 #: src/components/ui/RawLogViewer.tsx
 msgid "Clear"
@@ -940,6 +1017,11 @@ msgstr "팝업 서버 알림 닫기"
 msgid "Close viewer"
 msgstr "뷰어 닫기"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Collapse"
+msgstr "접기"
+
 #: src/components/layout/ChatHeader.tsx
 msgid "Collapse member list"
 msgstr "멤버 목록 접기"
@@ -1012,10 +1094,26 @@ msgstr "연결 중"
 msgid "Connecting..."
 msgstr "연결 중..."
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Connecting…"
+msgstr "연결 중…"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Connection"
 msgstr "연결"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: fair"
+msgstr "연결: 보통"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: good"
+msgstr "연결: 좋음"
+
+#: src/components/voice/ParticipantTile.tsx
+msgid "Connection: poor"
+msgstr "연결: 나쁨"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Contact"
@@ -1076,6 +1174,10 @@ msgstr "링크 복사"
 msgid "Copy URL"
 msgstr "URL 복사"
 
+#: src/lib/mediaDevices.ts
+msgid "Could not access the device."
+msgstr "장치에 액세스할 수 없습니다."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "{nick} 님과 암호화를 설정하지 못했습니다."
@@ -1127,6 +1229,10 @@ msgstr "IRC 클라이언트 환경을 맞춤 설정하세요"
 #: src/components/ui/UserSettings.tsx
 msgid "Data Collection"
 msgstr "데이터 수집"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Deafen"
+msgstr "헤드셋 음소거"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Decline"
@@ -1204,9 +1310,26 @@ msgstr "이 네트워크를 삭제할까요?"
 msgid "deleted"
 msgstr "삭제됨"
 
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Demote to viewer"
+msgstr "시청자로 전환"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "설명 (선택사항, 예: \"3분기 베타 테스터\")"
+
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Device names are hidden until you allow camera access."
+msgstr "카메라 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Device names are hidden until you allow microphone access."
+msgstr "마이크 액세스를 허용할 때까지 장치 이름이 숨겨집니다."
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Disable push-to-talk"
+msgstr "PTT 사용 안 함"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
@@ -1238,6 +1361,8 @@ msgstr "채널 탐색"
 msgid "Discover the world of IRC with Obby"
 msgstr "Obby와 함께 IRC의 세계를 탐험하세요"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Dismiss"
@@ -1301,6 +1426,10 @@ msgstr "예: <0>wss://host:port/socket</0>"
 msgid "e.g., 100:1440"
 msgstr "예: 100:1440"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Echo Cancellation"
+msgstr "에코 제거"
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Edit"
@@ -1351,6 +1480,10 @@ msgstr "알림 소리 활성화"
 #: src/components/layout/ChatHeader.tsx
 msgid "Enable notifications"
 msgstr "알림 활성화"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Enable push-to-talk"
+msgstr "PTT 사용"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1494,6 +1627,17 @@ msgstr "예외"
 msgid "Exclude Channel Name Mask"
 msgstr "채널 이름 마스크 제외"
 
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Exit spotlight"
+msgstr "스포트라이트 종료"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Expand"
+msgstr "펼치기"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1577,6 +1721,10 @@ msgstr "\"{searchQuery}\"와 일치하는 메시지 1개 발견"
 msgid "from"
 msgstr "보낸 사람"
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "Front"
+msgstr "전면"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "G-Line"
 msgstr "G-Line"
@@ -1652,6 +1800,7 @@ msgstr "홈"
 msgid "Homepage"
 msgstr "홈페이지"
 
+#: src/components/layout/VoiceChannelView.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Host"
@@ -1757,9 +1906,17 @@ msgstr "잘못된 값"
 msgid "Invitations"
 msgstr "초대"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite"
+msgstr "초대"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Invite a user to the current channel"
 msgstr "현재 채널에 사용자 초대"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Invite to stream"
+msgstr "스트리밍에 초대"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -1820,6 +1977,10 @@ msgstr "참여"
 msgid "Join {0}"
 msgstr "{0} 참가"
 
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join {channelName}"
+msgstr "{channelName} 참가"
+
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
 msgstr "{value} 참여"
@@ -1827,6 +1988,18 @@ msgstr "{value} 참여"
 #: src/lib/clientCommands.ts
 msgid "Join a channel"
 msgstr "채널 참여"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join channel on {serverName}"
+msgstr "{serverName}에서 채널 참가"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join stream {channelName}"
+msgstr "스트리밍 {channelName} 참가"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Join voice channel {channelName}"
+msgstr "음성 채널 {channelName} 참가"
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Joined"
@@ -1884,6 +2057,11 @@ msgstr "프로필에 대해 더 알아보기 →"
 msgid "Leave a channel"
 msgstr "채널 나가기"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Leave call"
+msgstr "통화 나가기"
+
 #: src/components/layout/ChannelList.tsx
 msgid "Leave channel"
 msgstr "채널 나가기"
@@ -1921,6 +2099,10 @@ msgstr "Libera Chat"
 #: src/components/message/LinkPreview.tsx
 msgid "Link preview"
 msgstr "링크 미리보기"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Live"
+msgstr "라이브"
 
 #: src/components/layout/ChannelMessageList.tsx
 msgid "Load older messages"
@@ -1974,6 +2156,11 @@ msgstr "로그"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Low Link Security (Level {securityLevel})"
 msgstr "낮은 링크 보안 (레벨 {securityLevel})"
+
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Lower hand"
+msgstr "손 내리기"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
@@ -2046,17 +2233,17 @@ msgstr "멤버 — {0}명"
 msgid "Message"
 msgstr "메시지"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0}"
 msgstr "{0}에 메시지 보내기"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Enter for new line, Shift+Enter to send)"
 msgstr "{0}에 메시지 보내기 (Enter로 줄바꿈, Shift+Enter로 전송)"
 
-#. placeholder {0}: selectedChannel.name
+#. placeholder {0}: voiceDisplayName(selectedChannel.name)
 #: src/components/layout/ChatArea.tsx
 msgid "Message {0} (Shift+Enter for new line)"
 msgstr "{0}에 메시지 보내기 (Shift+Enter로 줄바꿈)"
@@ -2101,6 +2288,20 @@ msgstr "서버 연결 종료 시 표시할 메시지"
 msgid "Messages with {nick} are now encrypted."
 msgstr "{nick}님과의 메시지가 이제 암호화되었습니다."
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Microphone"
+msgstr "마이크"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone {0}"
+msgstr "마이크 {0}"
+
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "Microphone level"
+msgstr "마이크 수준"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Min Users"
 msgstr "최소 사용자 수"
@@ -2144,6 +2345,7 @@ msgstr "모드:"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "More"
 msgstr "더 보기"
 
@@ -2157,8 +2359,15 @@ msgid "Multiline on Shift+Enter"
 msgstr "Shift+Enter로 여러 줄 입력"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Mute"
 msgstr "음소거"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Mute for me"
+msgstr "나에게만 음소거"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -2260,6 +2469,10 @@ msgstr "차단된 사용자가 없습니다"
 msgid "No bots registered on this network yet."
 msgstr "아직 이 네트워크에 등록된 봇이 없습니다."
 
+#: src/components/ui/settings/CallCameraField.tsx
+msgid "No camera detected."
+msgstr "카메라가 감지되지 않았습니다."
+
 #: src/components/ui/UserSettings.tsx
 msgid "No Central Server:"
 msgstr "중앙 서버 없음:"
@@ -2321,6 +2534,10 @@ msgstr "미디어 미리보기가 로드되지 않습니다."
 msgid "no message"
 msgstr "메시지 없음"
 
+#: src/components/ui/settings/CallMicrophoneField.tsx
+msgid "No microphone detected."
+msgstr "마이크가 감지되지 않았습니다."
+
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
 msgstr "아직 캡처된 원시 IRC 트래픽이 없습니다. 연결하거나 메시지를 보내 보세요."
@@ -2336,6 +2553,10 @@ msgstr "선택된 서버가 없습니다. 먼저 사이드바에서 서버를 �
 #: src/components/ui/HomeScreen.tsx
 msgid "No servers found."
 msgstr "서버를 찾을 수 없습니다."
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "No speaker detected."
+msgstr "스피커가 감지되지 않았습니다."
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "No topic"
@@ -2361,9 +2582,21 @@ msgstr "사용 가능한 사용자가 없습니다"
 msgid "No users found matching your search"
 msgstr "검색 결과와 일치하는 사용자가 없습니다"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "No viewers yet."
+msgstr "아직 시청자가 없습니다."
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "No WHOIS data available"
 msgstr "WHOIS 데이터를 사용할 수 없습니다"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Nobody's here. Ask someone to /join {channelName}."
+msgstr "아무도 없습니다. /join {channelName}을 입력하도록 요청하세요."
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Noise Suppression"
+msgstr "노이즈 억제"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "None"
@@ -2577,6 +2810,10 @@ msgstr "대기 중"
 msgid "Permanent"
 msgstr "영구"
 
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Picture-in-picture"
+msgstr "화면 속 화면"
+
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Pin"
@@ -2629,6 +2866,11 @@ msgstr "잠시만 기다려 주세요..."
 #: src/components/ui/UserProfileModal.tsx
 msgid "PM User"
 msgstr "사용자에게 PM"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Pop out video"
+msgstr "비디오 새 창으로 열기"
 
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworkForm.tsx
@@ -2711,11 +2953,17 @@ msgstr "QUIT 메시지"
 msgid "Quit the server"
 msgstr "서버에서 나갔습니다"
 
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoiceDock.tsx
+msgid "Raise hand"
+msgstr "손 들기"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "ran"
 msgstr "실행함"
 
 #: src/components/mobile/MessageBottomSheet.tsx
+#: src/components/voice/VoiceDock.tsx
 msgid "React"
 msgstr "반응"
 
@@ -2754,10 +3002,22 @@ msgstr "추론"
 msgid "Receiving command list…"
 msgstr "명령어 목록 수신 중…"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Reconnect failed"
+msgstr "재연결 실패"
+
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "서버에 재연결"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce background noise on your microphone"
+msgstr "마이크의 배경 소음 줄이기"
+
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Reduce echo from your speakers picked up by your microphone"
+msgstr "마이크에 감지되는 스피커 에코 줄이기"
 
 #: src/components/ui/InvitationsPanel.tsx
 #: src/components/ui/InvitationsPanel.tsx
@@ -2843,6 +3103,12 @@ msgstr "응답 메시지가 더 이상 표시되지 않습니다"
 #: src/components/message/MessageStatusIndicator.tsx
 msgid "Retry sending"
 msgstr "다시 보내기"
+
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+#: src/components/voice/VoicePipOverlay.tsx
+msgid "Return to channel"
+msgstr "채널로 돌아가기"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Review changed key…"
@@ -3161,6 +3427,10 @@ msgstr "설정을 찾을 수 없습니다"
 msgid "Settings"
 msgstr "설정"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Share screen"
+msgstr "화면 공유"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "그녀/그녀의"
@@ -3193,6 +3463,10 @@ msgstr "추방 표시"
 #: src/components/message/MessageItem.tsx
 msgid "Show less"
 msgstr "접기"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Show my speakers"
+msgstr "스피커 표시"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show Nick Changes"
@@ -3262,9 +3536,35 @@ msgstr "SoundCloud 플레이어"
 msgid "Source"
 msgstr "소스"
 
+#: src/components/ui/settings/CallSpeakerField.tsx
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Speaker"
+msgstr "스피커"
+
+#. placeholder {0}: i + 1
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker {0}"
+msgstr "스피커 {0}"
+
+#: src/components/ui/settings/CallSpeakerField.tsx
+msgid "Speaker selection isn't supported in this browser."
+msgstr "이 브라우저에서는 스피커 선택을 지원하지 않습니다."
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a stream on {serverName}"
+msgstr "{serverName}에서 스트리밍 시작"
+
+#: src/components/ui/QuickActions/joinChannelResults.ts
+msgid "Start a voice channel on {serverName}"
+msgstr "{serverName}에서 음성 채널 시작"
+
 #: src/components/ui/AddPrivateChatModal.tsx
 msgid "Start Private Message"
 msgstr "비공개 메시지 시작"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Start video"
+msgstr "비디오 시작"
 
 #: src/components/message/BotToolsPlaceholderBody.tsx
 msgid "Starting workflow…"
@@ -3281,11 +3581,27 @@ msgstr "상태"
 msgid "Status Messages"
 msgstr "상태 메시지"
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Step off stream"
+msgstr "스트리밍 그만하기"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Stop"
 msgstr "정지"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop sharing"
+msgstr "공유 중지"
+
+#: src/components/voice/VoiceDock.tsx
+msgid "Stop video"
+msgstr "비디오 중지"
+
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Streamer"
+msgstr "스트리머"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Strict"
@@ -3311,6 +3627,10 @@ msgstr "정지됨"
 msgid "System"
 msgstr "시스템"
 
+#: src/components/ui/settings/CallDeviceShared.tsx
+msgid "System default"
+msgstr "시스템 기본값"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Text"
 msgstr "텍스트"
@@ -3318,6 +3638,10 @@ msgstr "텍스트"
 #: src/components/layout/ChannelList.tsx
 msgid "Text Channels"
 msgstr "텍스트 채널"
+
+#: src/lib/mediaDevices.ts
+msgid "That device is not available right now."
+msgstr "이 장치는 현재 사용할 수 없습니다."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -3515,13 +3839,24 @@ msgstr "유형"
 msgid "Type a message..."
 msgstr "메시지를 입력하세요..."
 
+#: src/components/voice/VoiceDock.tsx
+msgid "Undeafen"
+msgstr "헤드셋 음소거 해제"
+
 #: src/components/ui/UserContextMenu.tsx
 msgid "Unignore User"
 msgstr "사용자 무시 해제"
 
 #: src/components/message/MediaPreview.tsx
+#: src/components/voice/VoiceDock.tsx
+#: src/components/voice/VoicePipOverlay.tsx
 msgid "Unmute"
 msgstr "음소거 해제"
+
+#: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/ParticipantTile.tsx
+msgid "Unmute for me"
+msgstr "나에게만 음소거 해제"
 
 #: src/components/layout/ChannelList.tsx
 #: src/components/layout/ChatHeader.tsx
@@ -3725,6 +4060,15 @@ msgstr "프로필 보기"
 msgid "View user profile information"
 msgstr "사용자 프로필 정보 보기"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewer"
+msgstr "시청자"
+
+#. placeholder {0}: viewers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Viewers ({0})"
+msgstr "시청자 ({0}명)"
+
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -3736,6 +4080,11 @@ msgstr "Voice 사용자"
 #: src/components/message/MediaPreview.tsx
 msgid "Volume"
 msgstr "볼륨"
+
+#. placeholder {0}: member.nick
+#: src/components/voice/ParticipantTile.tsx
+msgid "Volume for {0}"
+msgstr "{0}님의 볼륨"
 
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"

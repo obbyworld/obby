@@ -2,11 +2,18 @@ import { v4 as uuidv4, v5 as uuidv5 } from "uuid";
 import { create } from "zustand";
 import { BOT_TOOLS_TAG, encodeBotToolsValue } from "../lib/botTools";
 import { encodeBouncerAttrs } from "../lib/bouncerAttrs";
+import { getSelectionHistory, recordSelection } from "../lib/channelHistory";
+import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import {
+  releaseServerVoiceClients,
+  releaseVoiceClient,
+  setVoiceStore,
+} from "../lib/voice";
 import {
   clearServerConnectionTimeout,
   registerAllProtocolHandlers,
@@ -523,6 +530,7 @@ interface UIState {
       | "notifications"
       | "preferences"
       | "media"
+      | "calls"
       | "account";
     highlightedSettingId?: string;
   } | null;
@@ -1055,6 +1063,7 @@ export interface AppState {
       | "notifications"
       | "preferences"
       | "media"
+      | "calls"
       | "account";
     highlightedSettingId?: string;
   }) => void;
@@ -1222,6 +1231,33 @@ const getCurrentSelection = (state: AppState) => {
   return getServerSelection(state, state.ui.selectedServerId);
 };
 
+/** Where leaving a call on this server should land: the most recently
+ *  selected ordinary channel or private chat that still exists, otherwise
+ *  the first ordinary channel. Exported as a pure function so the fallback
+ *  is directly testable without going through a component. */
+export function resolveCallReturnTarget(
+  state: AppState,
+  serverId: string,
+): { type: "channel" | "privateChat"; id: string } | null {
+  const server = state.servers.find((s) => s.id === serverId);
+  if (!server) return null;
+
+  for (const id of getSelectionHistory(serverId)) {
+    const channel = server.channels.find((c) => c.id === id);
+    if (channel) {
+      if (classifyChannelName(channel.name) === "text") {
+        return { type: "channel", id: channel.id };
+      }
+      continue;
+    }
+    const privateChat = server.privateChats?.find((pc) => pc.id === id);
+    if (privateChat) return { type: "privateChat", id: privateChat.id };
+  }
+
+  const firstText = server.channels.find((c) => c.name.startsWith("#"));
+  return firstText ? { type: "channel", id: firstText.id } : null;
+}
+
 // Create store with Zustand
 const useStore = create<AppState>((set, get) => ({
   servers: [],
@@ -1366,6 +1402,14 @@ const useStore = create<AppState>((set, get) => ({
     // Status messages
     awayMessage: "",
     quitMessage: "",
+    // Call device settings -- null means the system default
+    callAudioInput: null,
+    callVideoInput: null,
+    callAudioOutput: null,
+    callCameraFacing: "user",
+    callEchoCancellation: true,
+    callNoiseSuppression: true,
+    callAutoGainControl: true,
     ...loadSavedGlobalSettings(), // Load saved settings from localStorage
   },
 
@@ -1596,6 +1640,7 @@ const useStore = create<AppState>((set, get) => ({
 
   disconnect: (serverId) => {
     clearServerConnectionTimeout(serverId);
+    releaseServerVoiceClients(serverId);
     const quitMessage = get().globalSettings.quitMessage;
     ircClient.disconnect(serverId, quitMessage);
 
@@ -1749,6 +1794,9 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   leaveChannel: (serverId, channelName) => {
+    // A voice call keeps running after its view unmounts, so leaving the
+    // channel is the only thing left that can end it.
+    releaseVoiceClient(serverId, channelName);
     ircClient.leaveChannel(serverId, channelName); // Send PART command to the IRC server
 
     set((state) => {
@@ -1801,11 +1849,18 @@ const useStore = create<AppState>((set, get) => ({
         leftChannel &&
         currentSelection?.selectedChannelId === leftChannel.id
       ) {
+        // Leaving a call on a narrow layout goes back to the channel list
+        // rather than opening whichever conversation happens to be first.
+        const backToList =
+          state.ui.isNarrowView && classifyChannelName(channelName) !== "text";
         const remainingChannels =
           updatedServers.find((s) => s.id === serverId)?.channels || [];
-        const nextChannel = remainingChannels[0] || null;
+        const nextChannel = backToList ? null : remainingChannels[0] || null;
         updatedUI = {
           ...state.ui,
+          mobileViewActiveColumn: backToList
+            ? "serverList"
+            : state.ui.mobileViewActiveColumn,
           perServerSelections: setServerSelection(state, serverId, {
             selectedChannelId: nextChannel?.id || null,
             selectedChannelName: nextChannel?.name || null,
@@ -2582,6 +2637,7 @@ const useStore = create<AppState>((set, get) => ({
     const channelObj = selectedServer?.channels.find(
       (c) => c.id === selection?.selectedChannelId,
     );
+
     patchUISelections({
       selectedServerId: newState.ui.selectedServerId,
       perServerSelections: newState.ui.perServerSelections,
@@ -2793,6 +2849,7 @@ const useStore = create<AppState>((set, get) => ({
     const pcObj = selectedServer?.privateChats?.find(
       (pc) => pc.id === selection?.selectedPrivateChatId,
     );
+
     patchUISelections({
       selectedServerId: newState.ui.selectedServerId,
       perServerSelections: newState.ui.perServerSelections,
@@ -3320,6 +3377,7 @@ const useStore = create<AppState>((set, get) => ({
 
     for (const id of toRemove) {
       clearServerConnectionTimeout(id);
+      releaseServerVoiceClients(id);
       ircClient.removeServer(id);
     }
 
@@ -4486,6 +4544,26 @@ const useStore = create<AppState>((set, get) => ({
   },
 }));
 
+// Seed the shared selection history from whatever localStorage restored at
+// startup, then keep it current for every later selection change however it
+// arrives (click, Ctrl+Tab, or another restore) -- this is what makes a
+// call's return target correct even when the active channel was never
+// chosen through selectChannel/selectPrivateChat.
+for (const [serverId, selection] of Object.entries(
+  useStore.getState().ui.perServerSelections,
+)) {
+  const itemId = selection.selectedChannelId ?? selection.selectedPrivateChatId;
+  if (itemId) recordSelection(serverId, itemId);
+}
+useStore.subscribe((state) => {
+  const serverId = state.ui.selectedServerId;
+  if (!serverId) return;
+  const selection = state.ui.perServerSelections[serverId];
+  const itemId =
+    selection?.selectedChannelId ?? selection?.selectedPrivateChatId;
+  if (itemId) recordSelection(serverId, itemId);
+});
+
 // Initialize protocol handlers
 registerAllProtocolHandlers(ircClient, useStore);
 
@@ -4528,3 +4606,4 @@ registerAllProtocolHandlers(ircClient, useStore);
 
 export default useStore;
 registerAllHandlers(useStore);
+setVoiceStore(useStore);

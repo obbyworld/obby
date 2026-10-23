@@ -34,6 +34,7 @@ export type {
 // Settings definitions
 export {
   accountSettings,
+  callSettings,
   mediaSettings,
   notificationSettings,
   preferenceSettings,

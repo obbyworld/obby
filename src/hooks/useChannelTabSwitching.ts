@@ -1,5 +1,11 @@
 import { useEffect, useRef } from "react";
 import { create } from "zustand";
+import {
+  getSelectionHistory,
+  recordSelection,
+  resumeRecording,
+  suspendRecording,
+} from "../lib/channelHistory";
 import { isTauri } from "../lib/platformUtils";
 import useStore from "../store";
 
@@ -89,8 +95,6 @@ function getCurrentId(state: StoreState): string | null {
 // so you always see where Ctrl+Tab will land before pressing it.
 
 export function useChannelTabSwitching() {
-  // Per-server MRU list: [current, prev, prev-prev, ...]
-  const mruRef = useRef<Map<string, string[]>>(new Map());
   // Tracks last known selected ID per server to detect changes
   const lastIdRef = useRef<Map<string, string | null>>(new Map());
 
@@ -98,22 +102,16 @@ export function useChannelTabSwitching() {
   const sessionIndexRef = useRef(-1);
 
   useEffect(() => {
-    if (!isTauri()) return;
-
     const { setPrevItemId } = useChannelMru.getState();
 
-    const updateMru = (serverId: string, currentId: string) => {
-      const mru = mruRef.current.get(serverId) ?? [];
-      const updated = [
-        currentId,
-        ...mru.filter((id) => id !== currentId),
-      ].slice(0, 30);
-      mruRef.current.set(serverId, updated);
-      setPrevItemId(updated[1] ?? null);
-      return updated;
+    const syncIndicator = (serverId: string) => {
+      setPrevItemId(getSelectionHistory(serverId)[1] ?? null);
     };
 
-    // Subscribe to store to keep MRU + indicator current
+    // History recording itself lives in the store (src/store/index.ts) so it
+    // covers every platform and every way a selection can arrive, including
+    // a restored startup selection. This subscription only keeps the amber
+    // "previous item" indicator current -- and, on Tauri, feeds Ctrl+Tab.
     const unsubscribe = useStore.subscribe((state: StoreState) => {
       if (sessionActiveRef.current) return;
 
@@ -125,9 +123,20 @@ export function useChannelTabSwitching() {
 
       if (currentId !== lastId) {
         lastIdRef.current.set(serverId, currentId);
-        if (currentId) updateMru(serverId, currentId);
+        if (currentId) syncIndicator(serverId);
       }
     });
+
+    const initialServerId = useStore.getState().ui.selectedServerId;
+    if (initialServerId) {
+      lastIdRef.current.set(initialServerId, getCurrentId(useStore.getState()));
+      syncIndicator(initialServerId);
+    }
+
+    // Browsers already own Ctrl+Tab, so only Tauri gets the shortcut itself.
+    if (!isTauri()) {
+      return unsubscribe;
+    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!e.ctrlKey || e.key !== "Tab") return;
@@ -145,8 +154,9 @@ export function useChannelTabSwitching() {
       if (!sessionActiveRef.current) {
         // ── First keypress: jump to last-used item ─────────────────────────
         sessionActiveRef.current = true;
+        suspendRecording();
 
-        const mru = mruRef.current.get(serverId) ?? [];
+        const mru = getSelectionHistory(serverId);
         const itemIds = items.map((i) => i.id);
 
         if (!e.shiftKey) {
@@ -187,6 +197,7 @@ export function useChannelTabSwitching() {
       if (e.key !== "Control" || !sessionActiveRef.current) return;
 
       sessionActiveRef.current = false;
+      resumeRecording();
 
       const state = useStore.getState();
       const serverId = state.ui.selectedServerId;
@@ -194,9 +205,9 @@ export function useChannelTabSwitching() {
 
       const currentId = getCurrentId(state);
       if (currentId) {
-        const updated = updateMru(serverId, currentId);
+        recordSelection(serverId, currentId);
         lastIdRef.current.set(serverId, currentId);
-        setPrevItemId(updated[1] ?? null);
+        syncIndicator(serverId);
       }
     };
 
