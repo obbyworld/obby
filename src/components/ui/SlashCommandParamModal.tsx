@@ -194,7 +194,7 @@ export const SlashCommandParamModal: React.FC<Props> = ({
           </button>
           <button
             type="submit"
-            className="px-3 py-2 rounded bg-discord-primary text-white text-sm font-medium"
+            className="button-primary px-3 py-2 rounded text-sm font-medium"
           >
             <Trans>Run</Trans>
           </button>

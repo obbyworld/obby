@@ -102,8 +102,8 @@ describe("useVoiceCall", () => {
 
   it("surfaces errors and clears them on demand", () => {
     const { result } = renderHook(() => useVoiceCall("s1", "^general"));
-    act(() => callbacks?.onError("boom"));
-    expect(result.current.error).toBe("boom");
+    act(() => callbacks?.onError("server"));
+    expect(result.current.error).toBe("server");
     act(() => result.current.clearError());
     expect(result.current.error).toBeNull();
   });

@@ -4,6 +4,7 @@
 // code -- the server accepts SETPASS on its own when the connection
 // holds a SASL session for the target account.
 
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import ircClient from "../../lib/ircClient";
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
+  const { t } = useLingui();
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [busy, setBusy] = useState(false);
@@ -55,11 +57,11 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
     e.preventDefault();
     setErr(null);
     if (newPass.length < 3) {
-      setErr("Pick a password (3 characters or more).");
+      setErr(t`Pick a password (3 characters or more).`);
       return;
     }
     if (newPass !== confirmPass) {
-      setErr("Passwords don't match.");
+      setErr(t`Passwords don't match.`);
       return;
     }
     setBusy(true);
@@ -74,7 +76,9 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
     >
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-white">Change password</h2>
+          <h2 className="text-lg font-semibold text-white">
+            <Trans>Change password</Trans>
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -87,15 +91,17 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
         {!done ? (
           <form onSubmit={submit} className="space-y-3">
             <p className="text-xs text-discord-text-muted">
-              Other open sessions for this account will be signed out as part of
-              the change. Two-factor authentication settings, if any, are left
-              unchanged.
+              <Trans>
+                Other open sessions for this account will be signed out as part
+                of the change. Two-factor authentication settings, if any, are
+                left unchanged.
+              </Trans>
             </p>
             <input
               type="password"
               value={newPass}
               onChange={(e) => setNewPass(e.target.value)}
-              placeholder="New password"
+              placeholder={t`New password`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
               autoFocus
             />
@@ -103,7 +109,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
               type="password"
               value={confirmPass}
               onChange={(e) => setConfirmPass(e.target.value)}
-              placeholder="Confirm new password"
+              placeholder={t`Confirm new password`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
             />
             <button
@@ -111,7 +117,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
               disabled={busy}
               className="w-full px-3 py-2 rounded bg-discord-green text-white text-sm font-medium disabled:opacity-50"
             >
-              {busy ? "Setting…" : "Change password"}
+              {busy ? t`Setting…` : t`Change password`}
             </button>
           </form>
         ) : (
@@ -120,9 +126,9 @@ export const ChangePasswordModal: React.FC<Props> = ({ serverId, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="w-full px-3 py-2 rounded bg-discord-blue text-white text-sm font-medium"
+              className="button-primary w-full px-3 py-2 rounded text-sm font-medium"
             >
-              Done
+              <Trans>Done</Trans>
             </button>
           </div>
         )}

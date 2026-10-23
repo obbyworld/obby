@@ -60,6 +60,11 @@ export interface EventMap {
     account?: string; // From extended-join
     realname?: string; // From extended-join
   };
+  JOIN_REFUSED: {
+    serverId: string;
+    channelName: string;
+    isThrottled: boolean;
+  };
   PART: BaseUserActionEvent & {
     channelName: string;
     reason?: string;
@@ -975,11 +980,6 @@ export class IRCClient implements IRCClientContext {
       };
 
       socket.onerror = (error) => {
-        // Mark server as disconnected but keep it in the map
-        server.isConnected = false;
-        server.connectionState = "disconnected";
-        this.sockets.delete(server.id);
-        this.pendingConnections.delete(connectionKey);
         const cause =
           error instanceof Error
             ? error.message
@@ -991,6 +991,12 @@ export class IRCClient implements IRCClientContext {
           direction: "info",
           line: `** socket error: ${cause || "(no detail)"}`,
         });
+        // A drop on a live link (the OS cuts sockets of a backgrounded app)
+        // also fires onclose, which reconnects, so we only report failed connects.
+        if (server.isConnected) return;
+        server.connectionState = "disconnected";
+        this.sockets.delete(server.id);
+        this.pendingConnections.delete(connectionKey);
         this.triggerEvent("serverError", {
           serverId: server.id,
           message: cause || `Failed to connect to ${actualHost}:${actualPort}`,

@@ -1,3 +1,4 @@
+import { useLingui } from "@lingui/react/macro";
 import EmojiPicker, {
   type EmojiClickData,
   EmojiStyle,
@@ -32,6 +33,7 @@ export function AppEmojiPicker({
   reactedEmojis,
   customEmojis,
 }: AppEmojiPickerProps) {
+  const { t } = useLingui();
   const isMobile = useMediaQuery();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +68,7 @@ export function AppEmojiPicker({
         emojiStyle={EmojiStyle.NATIVE}
         width="100%"
         height={isMobile ? 500 : 400}
-        searchPlaceholder="Search emojis..."
+        searchPlaceholder={t`Search emojis...`}
         previewConfig={{ showPreview: false }}
         skinTonesDisabled={false}
         lazyLoadEmojis={true}

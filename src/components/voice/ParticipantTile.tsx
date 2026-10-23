@@ -36,6 +36,9 @@ export interface ParticipantTileProps {
    *  as opposed to a small grid or filmstrip thumbnail -- letterboxes
    *  its video instead of cropping it. */
   mainTile?: boolean;
+  /** The phone band draws its own controls over the tile, so the tile shows
+   *  only the video. */
+  bare?: boolean;
 }
 
 const CONTROL_BUTTON =
@@ -57,6 +60,7 @@ export function ParticipantTile({
   theater,
   onToggleTheater,
   mainTile,
+  bare,
 }: ParticipantTileProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const nickColor = useUserColor(serverId, member.nick);
@@ -89,10 +93,14 @@ export function ParticipantTile({
 
   return (
     <div
-      className={`group relative w-full h-full bg-discord-dark-300 rounded-xl overflow-hidden ${
-        speaking
-          ? "ring-2 ring-discord-green ring-inset"
-          : "ring-1 ring-discord-dark-200"
+      className={`group relative w-full h-full overflow-hidden ${
+        bare
+          ? "bg-black"
+          : `bg-discord-dark-300 rounded-xl ${
+              speaking
+                ? "ring-2 ring-discord-green ring-inset"
+                : "ring-1 ring-discord-dark-200"
+            }`
       }`}
     >
       <button
@@ -132,7 +140,7 @@ export function ParticipantTile({
         ))}
       </div>
 
-      {member.quality !== "unknown" && !isSelf && (
+      {member.quality !== "unknown" && !isSelf && !bare && (
         <span
           className="pointer-events-none absolute top-1 right-1 z-10"
           title={qualityLabel}
@@ -150,88 +158,94 @@ export function ParticipantTile({
         </span>
       )}
 
-      <div className="absolute inset-x-0 bottom-0 z-10">
-        <div
-          className={`flex items-center gap-1 px-1.5 py-1.5 bg-gradient-to-t from-black/70 to-transparent transition-opacity ${barVisibilityClass}`}
-        >
-          <span className="flex-1" />
-          {!isSelf && (
-            <span className="group/vol flex items-center flex-shrink-0">
+      {!bare && (
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <div
+            className={`flex items-center gap-1 px-1.5 py-1.5 bg-gradient-to-t from-black/70 to-transparent transition-opacity ${barVisibilityClass}`}
+          >
+            <span className="flex-1" />
+            {!isSelf && (
+              <span className="group/vol flex items-center flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => onSetMuted(member.nick, !muted)}
+                  title={muted ? t`Unmute for me` : t`Mute for me`}
+                  aria-label={muted ? t`Unmute for me` : t`Mute for me`}
+                  className={CONTROL_BUTTON}
+                >
+                  {muted ? (
+                    <FaVolumeMute className="text-discord-red" />
+                  ) : (
+                    <FaVolumeUp />
+                  )}
+                </button>
+                {!compact && (
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={member.volume}
+                    onChange={(e) =>
+                      onSetVolume(member.nick, Number(e.target.value))
+                    }
+                    aria-label={t`Volume for ${member.nick}`}
+                    className={`h-1 rounded-full accent-white cursor-pointer overflow-hidden transition-[width] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${sliderWidthClass}`}
+                  />
+                )}
+              </span>
+            )}
+            {!isSelf && canDemote && onDemote && (
               <button
                 type="button"
-                onClick={() => onSetMuted(member.nick, !muted)}
-                title={muted ? t`Unmute for me` : t`Mute for me`}
-                aria-label={muted ? t`Unmute for me` : t`Mute for me`}
+                onClick={() => onDemote(member.nick)}
+                title={t`Demote to viewer`}
+                aria-label={t`Demote to viewer`}
+                className={`${CONTROL_BUTTON} text-discord-red`}
+              >
+                <FaUserMinus />
+              </button>
+            )}
+            {showPip && (
+              <button
+                type="button"
+                onClick={() => void onPipRequest(videoRef.current)}
+                title={t`Pop out video`}
+                aria-label={t`Pop out video`}
                 className={CONTROL_BUTTON}
               >
-                {muted ? <FaVolumeUp /> : <FaVolumeMute />}
+                <LuPictureInPicture2 />
               </button>
-              {!compact && (
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.01}
-                  value={member.volume}
-                  onChange={(e) =>
-                    onSetVolume(member.nick, Number(e.target.value))
-                  }
-                  aria-label={t`Volume for ${member.nick}`}
-                  className={`h-1 rounded-full accent-white cursor-pointer overflow-hidden transition-[width] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${sliderWidthClass}`}
-                />
-              )}
-            </span>
-          )}
-          {!isSelf && canDemote && onDemote && (
-            <button
-              type="button"
-              onClick={() => onDemote(member.nick)}
-              title={t`Demote to viewer`}
-              aria-label={t`Demote to viewer`}
-              className={`${CONTROL_BUTTON} text-discord-red`}
-            >
-              <FaUserMinus />
-            </button>
-          )}
-          {showPip && (
-            <button
-              type="button"
-              onClick={() => void onPipRequest(videoRef.current)}
-              title={t`Pop out video`}
-              aria-label={t`Pop out video`}
-              className={CONTROL_BUTTON}
-            >
-              <LuPictureInPicture2 />
-            </button>
-          )}
-          {onToggleTheater && (
-            <button
-              type="button"
-              onClick={onToggleTheater}
-              title={theater ? t`Collapse` : t`Expand`}
-              aria-label={theater ? t`Collapse` : t`Expand`}
-              className={CONTROL_BUTTON}
-            >
-              {theater ? <FaCompress /> : <FaExpand />}
-            </button>
-          )}
-        </div>
+            )}
+            {onToggleTheater && (
+              <button
+                type="button"
+                onClick={onToggleTheater}
+                title={theater ? t`Collapse` : t`Expand`}
+                aria-label={theater ? t`Collapse` : t`Expand`}
+                className={CONTROL_BUTTON}
+              >
+                {theater ? <FaCompress /> : <FaExpand />}
+              </button>
+            )}
+          </div>
 
-        <div className="absolute left-1.5 bottom-1.5 max-w-[75%] flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white text-xs">
-          <span
-            className="truncate min-w-0"
-            style={nickColor ? { color: nickColor } : undefined}
-          >
-            {member.nick}
-          </span>
-          {!member.micOn && (
-            <FaMicrophoneSlash className="text-discord-red flex-shrink-0" />
-          )}
-          {member.deafened && (
-            <FaVolumeMute className="text-discord-red flex-shrink-0" />
-          )}
+          <div className="absolute left-1.5 bottom-1.5 max-w-[75%] flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-sm text-white text-xs">
+            <span
+              className="truncate min-w-0"
+              style={nickColor ? { color: nickColor } : undefined}
+            >
+              {member.nick}
+            </span>
+            {!member.micOn && (
+              <FaMicrophoneSlash className="text-discord-red flex-shrink-0" />
+            )}
+            {member.deafened && (
+              <FaVolumeMute className="text-discord-red flex-shrink-0" />
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

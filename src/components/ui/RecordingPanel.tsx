@@ -79,7 +79,10 @@ export function RecordingPanel({
   const videoAccess = useDeviceAccess("videoinput");
   const deviceAccess =
     kind === "audio" ? audioAccess : kind === "video" ? videoAccess : null;
-  const needsPermission = deviceAccess?.needsPermission ?? false;
+  // Touch devices record from the default camera, so getUserMedia asks for
+  // camera access itself.
+  const needsPermission =
+    !(kind === "video" && isTouch) && (deviceAccess?.needsPermission ?? false);
 
   const [status, setStatus] = useState<Status>("starting");
   const [error, setError] = useState<string | null>(null);
@@ -377,12 +380,12 @@ export function RecordingPanel({
                 type="button"
                 onClick={handlePrimaryAction}
                 disabled={status === "starting"}
-                className="min-h-11 flex-1 rounded bg-discord-primary px-3 py-2 text-white hover:opacity-90 disabled:opacity-50"
+                className="button-primary min-h-11 flex-1 rounded px-3 py-2"
               >
                 {status === "stopped" ? (
                   <>
                     <FaCheck className="inline mr-2" />
-                    <Trans>Send</Trans>
+                    <Trans>Attach</Trans>
                   </>
                 ) : (
                   <>

@@ -40,7 +40,7 @@ const FileInputField: React.FC<{
         type="button"
         disabled={disabled}
         onClick={() => fileRef.current?.click()}
-        className="py-2 px-4 rounded border-0 bg-discord-primary text-white hover:bg-discord-primary-hover disabled:opacity-50 text-sm"
+        className="py-2 px-4 rounded border-0 button-primary text-sm"
       >
         <Trans>Choose file</Trans>
       </button>

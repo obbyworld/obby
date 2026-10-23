@@ -196,7 +196,7 @@ export const WorkflowStepRow: React.FC<WorkflowStepRowProps> = ({
                 <button
                   type="button"
                   onClick={() => onSendAction("approve", approvalSid)}
-                  className={`${actionButtonSize} rounded text-sm font-semibold bg-discord-primary text-white hover:bg-discord-primary/80`}
+                  className={`${actionButtonSize} rounded text-sm font-semibold button-primary`}
                 >
                   <Trans>Approve</Trans>
                 </button>

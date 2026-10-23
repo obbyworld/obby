@@ -1,3 +1,4 @@
+import { Trans, useLingui } from "@lingui/react/macro";
 import QRCode from "qrcode";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
@@ -13,13 +14,6 @@ import {
   webauthnRegister,
 } from "../../lib/sasl/webauthn";
 import useStore, { loadSavedServers } from "../../store";
-
-const TYPE_LABELS: Record<string, string> = {
-  totp: "Authenticator app (TOTP)",
-  webauthn: "Biometric / security key",
-  oauth: "OAuth identity",
-  external: "TLS certificate fingerprint",
-};
 
 function decodeChallenge(blob: string): unknown {
   try {
@@ -38,6 +32,13 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
   serverId,
   onClose,
 }) => {
+  const { t } = useLingui();
+  const typeLabels: Record<string, string> = {
+    totp: t`Authenticator app (TOTP)`,
+    webauthn: t`Biometric / security key`,
+    oauth: t`OAuth identity`,
+    external: t`TLS certificate fingerprint`,
+  };
   const status = useStore((s) => s.twofaStatus[serverId] ?? "unknown") as
     | "enabled"
     | "disabled"
@@ -162,7 +163,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
       const bearer = isOpaque
         ? result.accessToken
         : (result.idToken ?? result.accessToken);
-      if (!bearer) throw new Error("Provider returned no bearer token.");
+      if (!bearer) throw new Error(t`Provider returned no bearer token.`);
       const serverProvider =
         provider.serverProvider ||
         // Fall back to the preset id (e.g. "github") so the obbyircd
@@ -182,7 +183,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
 
   const onAddWebAuthn = async () => {
     if (!isWebAuthnAvailable()) {
-      setEnrollError("WebAuthn is not available in this environment.");
+      setEnrollError(t`WebAuthn is not available in this environment.`);
       return;
     }
     setEnrollError(null);
@@ -201,7 +202,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
       return;
     const decoded = decodeChallenge(challenge.blob);
     if (!decoded || typeof decoded !== "object") {
-      setEnrollError("Server returned an invalid WebAuthn challenge.");
+      setEnrollError(t`Server returned an invalid WebAuthn challenge.`);
       return;
     }
     const name = enrollName.trim() || `Device-${Date.now()}`;
@@ -225,11 +226,11 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
     setEnrollError(null);
     const name = enrollName.trim();
     if (!name || /\s/.test(name)) {
-      setEnrollError("Pick a single-word name (no spaces).");
+      setEnrollError(t`Pick a single-word name (no spaces).`);
       return;
     }
     if (!/^\d{6}$/.test(enrollCode.trim())) {
-      setEnrollError("Enter the 6-digit code from your authenticator app.");
+      setEnrollError(t`Enter the 6-digit code from your authenticator app.`);
       return;
     }
     twofaAdd(serverId, "totp", name, enrollCode.trim());
@@ -241,7 +242,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
     setEnrollError(null);
     if (!/^\d{6}$/.test(disableCode.trim())) {
       setEnrollError(
-        "Enter a 6-digit code from any of your authenticator apps to disable 2FA.",
+        t`Enter a 6-digit code from any of your authenticator apps to disable 2FA.`,
       );
       return;
     }
@@ -264,7 +265,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-lg p-5 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-white">
-            Two-factor authentication
+            <Trans>Two-factor authentication</Trans>
           </h2>
           <button
             type="button"
@@ -277,7 +278,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
 
         <div className="mb-4 p-3 rounded bg-discord-dark-300">
           <div className="text-sm text-white">
-            Status:{" "}
+            <Trans>Status:</Trans>{" "}
             <span
               className={
                 status === "enabled"
@@ -286,20 +287,20 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
               }
             >
               {status === "enabled"
-                ? "Enabled"
+                ? t`Enabled`
                 : status === "disabled"
-                  ? "Disabled"
-                  : "Loading…"}
+                  ? t`Disabled`
+                  : t`Loading…`}
             </span>
           </div>
         </div>
 
         <h3 className="text-sm font-semibold text-white mb-2">
-          Registered credentials
+          <Trans>Registered credentials</Trans>
         </h3>
         {credentials.length === 0 ? (
           <p className="text-sm text-discord-text-muted mb-4">
-            You have no 2FA credentials registered.
+            <Trans>You have no 2FA credentials registered.</Trans>
           </p>
         ) : (
           <ul className="mb-4 space-y-2">
@@ -322,8 +323,13 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                     <div className="text-sm">
                       <div className="text-white font-medium">{c.name}</div>
                       <div className="text-xs text-discord-text-muted">
-                        {TYPE_LABELS[c.type] ?? c.type}
-                        {c.createdAt ? ` · added ${c.createdAt}` : ""}
+                        {typeLabels[c.type] ?? c.type}
+                        {c.createdAt && (
+                          <>
+                            {" · "}
+                            <Trans>added {c.createdAt}</Trans>
+                          </>
+                        )}
                       </div>
                     </div>
                     {!isPendingRemoval && (
@@ -332,34 +338,39 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                         onClick={() => setRemovingId(c.id)}
                         className="text-xs text-discord-red hover:text-white"
                       >
-                        Remove
+                        <Trans>Remove</Trans>
                       </button>
                     )}
                   </div>
                   {isPendingRemoval && isLastWhileEnabled && (
                     <div className="text-xs bg-discord-dark-400 p-2 rounded">
                       <p className="text-discord-yellow font-medium mb-1">
-                        Can't remove your last 2FA credential
+                        <Trans>Can't remove your last 2FA credential</Trans>
                       </p>
                       <p className="text-discord-text-muted mb-2">
-                        2FA is currently enforced on this account. Removing the
-                        only registered credential would lock you out of login.
-                        Add another credential first, or disable 2FA below.
+                        <Trans>
+                          2FA is currently enforced on this account. Removing
+                          the only registered credential would lock you out of
+                          login. Add another credential first, or disable 2FA
+                          below.
+                        </Trans>
                       </p>
                       <button
                         type="button"
                         onClick={() => setRemovingId(null)}
                         className="px-2 py-1 rounded bg-discord-dark-100 text-white"
                       >
-                        OK
+                        <Trans>OK</Trans>
                       </button>
                     </div>
                   )}
                   {isPendingRemoval && !isLastWhileEnabled && (
                     <div className="text-xs bg-discord-dark-400 p-2 rounded">
                       <p className="text-white mb-2">
-                        Remove "{c.name}"? You will no longer be able to use it
-                        as a second factor.
+                        <Trans>
+                          Remove "{c.name}"? You will no longer be able to use
+                          it as a second factor.
+                        </Trans>
                       </p>
                       <div className="flex gap-2">
                         <button
@@ -370,14 +381,14 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                           }}
                           className="px-2 py-1 rounded bg-discord-red text-white"
                         >
-                          Confirm remove
+                          <Trans>Confirm remove</Trans>
                         </button>
                         <button
                           type="button"
                           onClick={() => setRemovingId(null)}
                           className="px-2 py-1 rounded bg-discord-dark-100 text-white"
                         >
-                          Cancel
+                          <Trans>Cancel</Trans>
                         </button>
                       </div>
                     </div>
@@ -392,9 +403,9 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
           <button
             type="button"
             onClick={onAddTotp}
-            className="px-3 py-2 rounded bg-discord-blue text-white text-sm font-medium hover:bg-discord-blue-hover"
+            className="px-3 py-2 rounded button-primary text-sm font-medium"
           >
-            Add authenticator app
+            <Trans>Add authenticator app</Trans>
           </button>
           <button
             type="button"
@@ -403,25 +414,27 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
             className="px-3 py-2 rounded bg-discord-dark-100 text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             title={
               !supportsWebAuthn
-                ? "Server does not advertise WebAuthn support"
+                ? t`Server does not advertise WebAuthn support`
                 : !isWebAuthnAvailable()
-                  ? "Browser does not expose WebAuthn"
+                  ? t`Browser does not expose WebAuthn`
                   : ""
             }
           >
-            Add biometric / security key
+            <Trans>Add biometric / security key</Trans>
           </button>
         </div>
 
         {oauthProviders.length > 0 && (
           <div className="mb-4 p-3 rounded bg-discord-dark-300 space-y-2">
             <div className="text-sm text-white font-medium">
-              Link an OAuth identity
+              <Trans>Link an OAuth identity</Trans>
             </div>
             <p className="text-xs text-discord-text-muted">
-              Sign in with the provider, then we'll bind the resulting identity
-              to your account so SASL OAUTHBEARER / IRCV3BEARER works on
-              subsequent connections.
+              <Trans>
+                Sign in with the provider, then we'll bind the resulting
+                identity to your account so SASL OAUTHBEARER / IRCV3BEARER works
+                on subsequent connections.
+              </Trans>
             </p>
             {oauthProviders.map((p) => {
               const tag = p.serverProvider || p.providerLabel;
@@ -439,8 +452,8 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                   }`}
                 >
                   {busy
-                    ? "Waiting for sign-in..."
-                    : `Link with ${p.providerLabel}`}
+                    ? t`Waiting for sign-in…`
+                    : t`Link with ${p.providerLabel}`}
                 </button>
               );
             })}
@@ -456,8 +469,10 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
             className="mb-4 p-3 rounded bg-discord-dark-300"
           >
             <p className="text-sm text-white mb-2">
-              Scan this QR code with your authenticator app, then confirm with
-              the 6-digit code it shows.
+              <Trans>
+                Scan this QR code with your authenticator app, then confirm with
+                the 6-digit code it shows.
+              </Trans>
             </p>
             <div
               className="bg-white p-2 rounded inline-block mb-2"
@@ -467,7 +482,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
             <div className="flex flex-col gap-2 mt-2">
               <input
                 type="text"
-                placeholder="Name (e.g. iPhone)"
+                placeholder={t`Name (e.g. iPhone)`}
                 value={enrollName}
                 onChange={(e) => setEnrollName(e.target.value)}
                 className="w-full px-3 py-2 rounded bg-discord-dark-200 text-white"
@@ -477,7 +492,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                 inputMode="numeric"
                 maxLength={6}
                 pattern="\d{6}"
-                placeholder="6-digit code"
+                placeholder={t`6-digit code`}
                 value={enrollCode}
                 onChange={(e) =>
                   setEnrollCode(e.target.value.replace(/\D/g, ""))
@@ -488,7 +503,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                 type="submit"
                 className="px-4 py-2 rounded bg-discord-green text-white text-sm font-medium"
               >
-                Confirm enrolment
+                <Trans>Confirm enrolment</Trans>
               </button>
             </div>
           </form>
@@ -499,7 +514,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
         )}
         {enrollBusy && (
           <p className="text-discord-text-muted text-xs mb-3">
-            Waiting for biometric prompt…
+            <Trans>Waiting for biometric prompt…</Trans>
           </p>
         )}
 
@@ -508,8 +523,10 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
         {status === "enabled" ? (
           <div className="p-3 rounded bg-discord-dark-300">
             <p className="text-sm text-white mb-2">
-              Disable 2FA. Enter a 6-digit code from any of your registered
-              authenticator apps to confirm.
+              <Trans>
+                Disable 2FA. Enter a 6-digit code from any of your registered
+                authenticator apps to confirm.
+              </Trans>
             </p>
             <div className="flex gap-2">
               <input
@@ -529,7 +546,7 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
                 onClick={onDisable}
                 className="px-3 py-2 rounded bg-discord-red text-white text-sm font-medium"
               >
-                Disable
+                <Trans>Disable</Trans>
               </button>
             </div>
           </div>
@@ -541,8 +558,8 @@ export const TwoFactorSettingsModal: React.FC<Props> = ({
             className="w-full px-3 py-2 rounded bg-discord-green text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {credentials.length === 0
-              ? "Add a credential to enable 2FA"
-              : "Enable 2FA"}
+              ? t`Add a credential to enable 2FA`
+              : t`Enable 2FA`}
           </button>
         )}
       </div>

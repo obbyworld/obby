@@ -34,6 +34,7 @@ pub struct ConnectionHandle {
 }
 
 /// Socket state to manage multiple connections
+#[derive(Clone)]
 pub struct SocketState(pub(crate) Arc<Mutex<HashMap<String, ConnectionHandle>>>);
 
 /// Payload we send back to TS whenever we receive data
@@ -390,6 +391,15 @@ pub async fn disconnect(client_id: String, state: State<'_, SocketState>) -> Res
         Ok(())
     } else {
         Err(format!("No connection found for client_id: {}", client_id))
+    }
+}
+
+/// Closes every connection, since a page that reloads loses the ids it would close them by.
+pub async fn disconnect_all(state: &SocketState) {
+    for (_, mut handle) in state.0.lock().await.drain() {
+        if let Some(shutdown_tx) = handle.shutdown_tx.take() {
+            let _ = shutdown_tx.send(());
+        }
     }
 }
 

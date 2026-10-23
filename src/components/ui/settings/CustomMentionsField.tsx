@@ -44,7 +44,7 @@ export const CustomMentionsField: React.FC<SettingComponentProps> = ({
           onKeyPress={handleKeyPress}
           disabled={disabled}
           placeholder={t`Add a word or phrase...`}
-          className="flex-1 rounded border border-discord-button-secondary-default bg-discord-input-bg px-3 py-2 text-discord-text-normal placeholder-discord-text-muted focus:border-discord-text-link focus:outline-none disabled:opacity-50"
+          className="flex-1 rounded border border-discord-button-secondary-default bg-discord-dark-400 px-3 py-2 text-discord-text-normal placeholder-discord-text-muted focus:border-discord-text-link focus:outline-none disabled:opacity-50"
         />
         <button
           type="button"
@@ -60,7 +60,7 @@ export const CustomMentionsField: React.FC<SettingComponentProps> = ({
           {mentions.map((mention) => (
             <span
               key={mention}
-              className="inline-flex items-center rounded-full bg-discord-mention-bg px-3 py-1 text-sm text-discord-mention-color"
+              className="inline-flex items-center rounded-full bg-discord-primary/20 px-3 py-1 text-sm text-discord-text-normal"
             >
               {mention}
               <button

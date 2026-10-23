@@ -91,12 +91,13 @@ const initializeEnvSettings = (
   joinChannel: (serverId: string, channelName: string) => void,
 ) => {
   if (loadSavedServers().length > 0) return;
-  const host = __DEFAULT_IRC_SERVER__
-    ? __DEFAULT_IRC_SERVER__.split(":")[1].replace(/^\/\//, "")
-    : undefined;
-  const port = __DEFAULT_IRC_SERVER__
-    ? __DEFAULT_IRC_SERVER__.split(":")[2]
-    : undefined;
+  const [, scheme, hostname, port] =
+    __DEFAULT_IRC_SERVER__?.match(/^(\w+):\/\/([^:/]+):(\d+)/) ?? [];
+  // The client reads TLS from an irc:// or ircs:// host, so we keep that scheme.
+  const host =
+    scheme === "irc" || scheme === "ircs"
+      ? `${scheme}://${hostname}:${port}`
+      : hostname;
   if (!host || !port) {
     return;
   }
@@ -379,7 +380,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-full overflow-hidden">
       <Routes>
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route

@@ -1,3 +1,4 @@
+import { isLiveChannel } from "../lib/channelFolders";
 import type { ServerConfig } from "../types";
 import type {
   ChannelFoldersMap,
@@ -139,6 +140,28 @@ export const pinnedChats = {
   },
 };
 
+// Opening a voice or stream channel joins its call, so we never restore one at
+// startup; the app opens on the server instead.
+function withoutLiveChannels(selections: UISelections): UISelections {
+  const perServerSelections = Object.fromEntries(
+    Object.entries(selections.perServerSelections ?? {}).map(
+      ([serverId, selection]) => [
+        serverId,
+        selection.selectedChannelName &&
+        isLiveChannel(selection.selectedChannelName)
+          ? { ...selection, selectedChannelId: null, selectedChannelName: null }
+          : selection,
+      ],
+    ),
+  );
+  const lastSelection =
+    selections.lastSelection?.channelName &&
+    isLiveChannel(selections.lastSelection.channelName)
+      ? { ...selections.lastSelection, channelName: null }
+      : selections.lastSelection;
+  return { ...selections, perServerSelections, lastSelection };
+}
+
 export const uiSelections = {
   load: (): UISelections => {
     try {
@@ -146,7 +169,7 @@ export const uiSelections = {
       if (!saved) {
         return { selectedServerId: null, perServerSelections: {} };
       }
-      return JSON.parse(saved);
+      return withoutLiveChannels(JSON.parse(saved));
     } catch {
       return { selectedServerId: null, perServerSelections: {} };
     }

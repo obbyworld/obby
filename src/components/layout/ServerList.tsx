@@ -21,6 +21,9 @@ import ServerBottomSheet from "../mobile/ServerBottomSheet";
 import { BouncerServerGroup } from "./BouncerServerGroup";
 import "./obby-readable-sidebar.css";
 
+const CONNECTION_BADGE_CLASS =
+  "absolute -bottom-1 -right-1 z-10 w-5 h-5 rounded-full bg-discord-dark-500 ring-2 ring-discord-dark-300 flex items-center justify-center";
+
 interface ServerIconProps {
   server: Server;
   isSelected: boolean;
@@ -119,18 +122,24 @@ const ServerIcon: React.FC<ServerIconProps> = ({
 
         {(server.connectionState === "connecting" ||
           server.connectionState === "reconnecting") && (
-          <FaRedo className="absolute inset-0 m-auto text-white animate-spin text-lg" />
+          <span className={CONNECTION_BADGE_CLASS}>
+            <FaRedo className="text-white text-[10px] animate-spin" />
+          </span>
         )}
 
         {server.connectionState === "disconnected" && (
-          <FaRedo
-            className="absolute inset-0 m-auto text-white text-lg cursor-pointer hover:text-gray-300 transition-colors"
+          <button
+            type="button"
+            className={`${CONNECTION_BADGE_CLASS} text-white hover:bg-discord-primary transition-colors after:absolute after:-inset-3 after:content-['']`}
             onClick={(e) => {
               e.stopPropagation();
               onReconnect();
             }}
             title={t`Reconnect to server`}
-          />
+            aria-label={t`Reconnect to server`}
+          >
+            <FaRedo className="text-[10px]" />
+          </button>
         )}
 
         <div
@@ -253,7 +262,7 @@ export const ServerList: React.FC = () => {
   }, []);
 
   return (
-    <div className="obby-server-rail pt-3 pb-3 flex flex-col items-center h-full relative">
+    <div className="obby-server-rail pt-3 pb-[max(1.5rem,var(--safe-area-inset-bottom))] md:pb-3 flex flex-col items-center h-full relative">
       {/* Home button */}
       <div
         className={`

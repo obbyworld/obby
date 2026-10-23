@@ -189,7 +189,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
           type="button"
           onClick={handleUploadClick}
           disabled={isUploading}
-          className="flex items-center gap-2 px-3 py-2 bg-discord-primary hover:bg-discord-primary-hover text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-3 py-2 button-primary rounded disabled:cursor-not-allowed"
         >
           {isUploading ? <FaSpinner className="animate-spin" /> : <FaUpload />}
           {isUploading ? t`Uploading...` : t`Upload Avatar`}

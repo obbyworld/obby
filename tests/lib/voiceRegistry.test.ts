@@ -1,3 +1,4 @@
+import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../src/lib/ircClient", () => ({
@@ -11,11 +12,13 @@ vi.mock("../../src/lib/ircClient", () => ({
 
 import {
   acquireVoiceClient,
+  attachLiveVoiceClient,
   getLiveVoiceCalls,
   releaseVoiceClient,
   shutdownAllVoiceClients,
   subscribeLiveVoiceCalls,
 } from "../../src/lib/voice";
+import { setTheater, useTheater } from "../../src/lib/voiceSpotlight";
 
 function noop() {}
 
@@ -34,6 +37,17 @@ describe("live voice call registry", () => {
     shutdownAllVoiceClients();
   });
 
+  it("forgets a call's theater layout once the call is released", () => {
+    acquire("s1", "$stage");
+    setTheater("s1", "$stage", true);
+    const { result } = renderHook(() => useTheater("s1", "$stage"));
+    expect(result.current[0]).toBe(true);
+
+    act(() => releaseVoiceClient("s1", "$stage"));
+
+    expect(result.current[0]).toBe(false);
+  });
+
   it("starts empty", () => {
     expect(getLiveVoiceCalls()).toEqual([]);
   });
@@ -45,6 +59,33 @@ describe("live voice call registry", () => {
     ]);
     releaseVoiceClient("s1", "^general");
     expect(getLiveVoiceCalls()).toEqual([]);
+  });
+
+  it("lets a pop-out attach to a running call without reviving an ended one", () => {
+    acquire("s1", "^general");
+    acquire("s1", "$stage");
+
+    const stale = attachLiveVoiceClient({
+      serverId: "s1",
+      channel: "^general",
+      selfNick: "me",
+      onState: noop,
+      onError: noop,
+    });
+
+    expect(stale).toBeNull();
+    expect(getLiveVoiceCalls()).toEqual([
+      { serverId: "s1", channel: "$stage" },
+    ]);
+    expect(
+      attachLiveVoiceClient({
+        serverId: "s1",
+        channel: "$stage",
+        selfNick: "me",
+        onState: noop,
+        onError: noop,
+      }),
+    ).not.toBeNull();
   });
 
   it("keeps only one call, ending whichever was already running", () => {

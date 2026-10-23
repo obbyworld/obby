@@ -8,6 +8,7 @@ import {
   FaPlus,
   FaVolumeUp,
 } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { type ChannelKind, getChannelKind } from "../../lib/channelFolders";
 import { isChannelTarget } from "../../lib/ircUtils";
 import Menu from "../ui/Menu";
@@ -43,6 +44,7 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
     null,
   );
   const inputRef = useRef<HTMLInputElement>(null);
+  const isTouch = useIsTouchInput();
 
   const close = () => {
     setIsOpen(false);
@@ -114,9 +116,12 @@ export const AddChannelRow: React.FC<AddChannelRowProps> = ({
             aria-haspopup="menu"
             aria-expanded={!!kindMenuAnchor}
             onMouseDown={(e) => e.preventDefault()}
-            onClick={(e) =>
-              setKindMenuAnchor(kindMenuAnchor ? null : e.currentTarget)
-            }
+            onClick={(e) => {
+              // On touch the kinds open in a bottom sheet, which the keyboard
+              // would cover, so we put the keyboard away until a kind is picked.
+              if (isTouch) inputRef.current?.blur();
+              setKindMenuAnchor(kindMenuAnchor ? null : e.currentTarget);
+            }}
             className="h-7 -ml-1 px-1 flex items-center gap-0.5 rounded hover:text-white hover:bg-discord-dark-300"
           >
             {prefixIcon}

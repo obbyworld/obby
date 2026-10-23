@@ -59,7 +59,7 @@ const KindIcon: React.FC<{
   if (kind === "stream")
     return (
       <FaDesktop
-        className={`${size} ${isInCall ? "text-discord-green" : isSelected ? "text-discord-blue" : ""}`}
+        className={`${size} ${isInCall ? "text-discord-green" : isSelected ? "text-discord-primary" : ""}`}
       />
     );
   return <FaHashtag className={size} />;
@@ -236,7 +236,7 @@ export const ChannelRow: React.FC<ChannelRowProps> = ({
             </span>
           )
         )}
-        {!leading && (!isTouch || isSelected) && (
+        {!leading && !isTouch && (
           <button
             type="button"
             className={`h-6 flex items-center justify-center overflow-hidden text-discord-text-muted hover:text-white [@container(max-width:200px)]:hidden ${

@@ -10,7 +10,9 @@ import {
 const handleMobileDone = (e: KeyboardEvent<HTMLInputElement>) => {
   if (e.key === "Enter") {
     e.preventDefault();
-    (e.target as HTMLInputElement).blur();
+    const input = e.target as HTMLInputElement;
+    input.blur();
+    input.form?.requestSubmit();
   }
 };
 

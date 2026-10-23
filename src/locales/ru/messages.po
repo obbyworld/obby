@@ -70,6 +70,16 @@ msgstr "{0, plural, one {# шаг} few {# шага} many {# шагов} other {#
 msgid "{0, plural, one {Show 1 more item} other {Show {1} more items}}"
 msgstr "{0, plural, one {Показать ещё 1 элемент} few {Показать ещё {1} элемента} many {Показать ещё {1} элементов} other {Показать ещё {1} элемента}}"
 
+#. placeholder {0}: pack.emoji_count
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "{0} emoji"
+msgstr "{0} эмодзи"
+
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "{0} has invited you to play."
+msgstr "{0} приглашает вас сыграть."
+
 #. placeholder {0}: formatIdle(s.idle)
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "{0} idle"
@@ -101,6 +111,11 @@ msgstr "{0} сеть{1} — выберите одну для подключен�
 msgid "{0} older messages"
 msgstr "{0} старых сообщений"
 
+#. placeholder {0}: viewerMembers.length
+#: src/components/layout/VoiceChannelView.tsx
+msgid "{0} watching"
+msgstr "Смотрят: {0}"
+
 #. placeholder {0}: streamerMembers.length
 #. placeholder {1}: viewerMembers.length
 #: src/components/layout/VoiceChannelView.tsx
@@ -125,6 +140,10 @@ msgstr "{0} ч. назад"
 msgid "{0}m ago"
 msgstr "{0} мин. назад"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{activeCount, plural, one {Uploading 1 file} other {Uploading # files}}"
+msgstr "{activeCount, plural, one {Загрузка # файла} few {Загрузка # файлов} many {Загрузка # файлов} other {Загрузка # файлов}}"
+
 #: src/lib/eventGrouping.ts
 msgid "{c, plural, one {1 time} other {{c} times}}"
 msgstr "{c, plural, one {1 раз} few {{c} раза} many {{c} раз} other {{c} раза}}"
@@ -132,6 +151,10 @@ msgstr "{c, plural, one {1 раз} few {{c} раза} many {{c} раз} other {{
 #: src/components/ui/UserProfileModal.tsx
 msgid "{days} days"
 msgstr "{days} дн."
+
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "{failedCount, plural, one {1 upload failed} other {# uploads failed}}"
+msgstr "{failedCount, plural, one {# загрузка не удалась} few {# загрузки не удались} many {# загрузок не удалось} other {# загрузок не удалось}}"
 
 #: src/components/message/CollapsibleMessage.tsx
 msgid "{hiddenLines, plural, one {# more line} other {# more lines}}"
@@ -324,11 +347,20 @@ msgstr "<0>💡 Рекомендация:</0> Продолжайте тольк�
 msgid "<0>Risk:</0> Sensitive information (messages, private conversations, authentication details) could be exposed to network administrators or attackers positioned between IRC servers."
 msgstr "<0>Риск:</0> Конфиденциальная информация (сообщения, личные переписки, данные аутентификации) может быть раскрыта сетевым администраторам или злоумышленникам, находящимся между IRC-серверами."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "2FA is currently enforced on this account. Removing the only registered credential would lock you out of login. Add another credential first, or disable 2FA below."
+msgstr "2FA сейчас обязательна для этой учётной записи. Если удалить единственные зарегистрированные учётные данные, вы не сможете войти. Сначала добавьте другие учётные данные или отключите 2FA ниже."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "6-digit code"
+msgstr "6-значный код"
+
 #: src/components/message/BotInvocationChip.tsx
 msgid "About this attribution"
 msgstr "Об этой атрибуции"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Accept"
 msgstr "Принять"
 
@@ -350,6 +382,7 @@ msgid "Account"
 msgstr "Аккаунт"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Account Name"
 msgstr "Имя аккаунта"
@@ -393,13 +426,29 @@ msgstr "Активность"
 msgid "Add"
 msgstr "Добавить"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add a credential to enable 2FA"
+msgstr "Добавьте учётные данные, чтобы включить 2FA"
+
 #: src/components/ui/settings/CustomMentionsField.tsx
 msgid "Add a word or phrase..."
 msgstr "Добавить слово или фразу..."
 
+#: src/components/ui/UserSettings.tsx
+msgid "Add an authenticator app or biometric / security key to require a second factor when logging in."
+msgstr "Добавьте приложение-аутентификатор или биометрический ключ / ключ безопасности, чтобы при входе требовался второй фактор."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add authenticator app"
+msgstr "Добавить приложение-аутентификатор"
+
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add ban mask (e.g., nick!*@*, *!*@host.com)"
 msgstr "Добавить маску бана (например: nick!*@*, *!*@host.com)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Add biometric / security key"
+msgstr "Добавить биометрический ключ / ключ безопасности"
 
 #: src/components/layout/AddChannelRow.tsx
 msgid "add channel"
@@ -408,6 +457,11 @@ msgstr "добавить канал"
 #: src/components/layout/AddChannelRow.tsx
 msgid "Add channel"
 msgstr "Добавить канал"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Add emoji"
+msgstr "Добавить эмодзи"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Add exception mask (e.g., nick!*@*, *!*@host.com)"
@@ -449,6 +503,11 @@ msgstr "Добавить сервер"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Add your first network"
 msgstr "Добавьте вашу первую сеть"
+
+#. placeholder {0}: c.createdAt
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "added {0}"
+msgstr "добавлено: {0}"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Additional Details"
@@ -492,6 +551,14 @@ msgstr "Весь контент"
 msgid "Allow camera access"
 msgstr "Разрешить доступ к камере"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow camera access in settings to share video"
+msgstr "Разрешите доступ к камере в настройках, чтобы показывать видео"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow camera access to take a photo or video."
+msgstr "Разрешите доступ к камере, чтобы сделать фото или видео."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Allow entering multiple lines of text"
 msgstr "Разрешить ввод нескольких строк текста"
@@ -501,6 +568,14 @@ msgstr "Разрешить ввод нескольких строк текста
 msgid "Allow microphone access"
 msgstr "Разрешить доступ к микрофону"
 
+#: src/lib/voiceErrors.ts
+msgid "Allow microphone access in settings to talk"
+msgstr "Разрешите доступ к микрофону в настройках, чтобы говорить"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Allow microphone access to record sound."
+msgstr "Разрешите доступ к микрофону, чтобы записывать звук."
+
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
 msgid "Already in {0}"
@@ -509,6 +584,10 @@ msgstr "Уже в {0}"
 #: src/components/ui/UserSettings.tsx
 msgid "Also shows previews from YouTube, Vimeo, SoundCloud, and similar known services."
 msgstr "Также показывает превью с YouTube, Vimeo, SoundCloud и других известных сервисов."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Alt text (optional)"
+msgstr "Альтернативный текст (необязательно)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Alternative name for display in the UI. May contain spaces, emoji, and special characters. The real channel name ({channelName}) will still be used for IRC commands."
@@ -565,6 +644,11 @@ msgstr "Вы уверены, что хотите удалить это сооб�
 msgid "ASN"
 msgstr "ASN"
 
+#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/RecordingPanel.tsx
+msgid "Attach"
+msgstr "Прикрепить"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Attachment options"
 msgstr "Параметры вложения"
@@ -581,6 +665,14 @@ msgstr "Позиция в аудио"
 msgid "Authenticate as an IRC Operator for administrative access"
 msgstr "Аутентифицироваться как IRC-оператор для административного доступа"
 
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate now"
+msgstr "Аутентифицироваться сейчас"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Authenticate on connect"
+msgstr "Аутентифицироваться при подключении"
+
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "Authenticated"
 msgstr "Аутентифицирован"
@@ -588,6 +680,10 @@ msgstr "Аутентифицирован"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Authenticated Account"
 msgstr "Аутентифицированный аккаунт"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Authenticator app (TOTP)"
+msgstr "Приложение-аутентификатор (TOTP)"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Auto Fallback to Single Line"
@@ -650,6 +746,8 @@ msgstr "Отсутствие:"
 
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "Back"
 msgstr "Назад"
@@ -699,6 +797,10 @@ msgstr "Забанить пользователя (по никнейму)"
 msgid "Bans"
 msgstr "Баны"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Biometric / security key"
+msgstr "Биометрический ключ / ключ безопасности"
+
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/PrivateChatRow.tsx
 #: src/components/ui/BotsModal.tsx
@@ -725,27 +827,32 @@ msgstr "Бот ещё не зарегистрировал ни одной слэ
 msgid "Bot in this channel"
 msgstr "Бот в этом канале"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/BotsModal.tsx
 msgid "Bots"
 msgstr "Боты"
-
-#: src/components/layout/ChatHeader.tsx
-msgid "Bots (loading {botsLoadingCount})"
-msgstr "Боты (загрузка {botsLoadingCount})"
 
 #: src/components/ui/BotsModal.tsx
 msgid "Bots on this network"
 msgstr "Боты в этой сети"
 
 #: src/lib/mediaDevices.ts
+#: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
 msgstr "Переключитесь на это окно и попробуйте снова."
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Browse all channels on the server"
 msgstr "Просмотреть все каналы на сервере"
+
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Browse Channels"
+msgstr "Обзор каналов"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Browser does not expose WebAuthn"
+msgstr "Браузер не поддерживает WebAuthn"
 
 #: src/components/ui/settings/CallSpeakerField.tsx
 msgid "Browsers only reveal your speakers once you have allowed access to a microphone or camera. Nothing is recorded."
@@ -755,7 +862,6 @@ msgstr "Браузеры показывают ваши динамики толь
 msgid "Calls"
 msgstr "Звонки"
 
-#: src/components/layout/ChatArea.tsx
 #: src/components/ui/CameraCaptureModal.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 #: src/lib/settings/definitions/allSettings.ts
@@ -767,6 +873,10 @@ msgstr "Камера"
 msgid "Camera {0}"
 msgstr "Камера {0}"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Can't remove your last 2FA credential"
+msgstr "Нельзя удалить последние учётные данные 2FA"
+
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 #: src/components/ui/BouncerNetworkDisconnectConfirmModal.tsx
@@ -774,6 +884,7 @@ msgstr "Камера {0}"
 #: src/components/ui/BouncerNetworkForm.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/ExternalLinkWarningModal.tsx
 #: src/components/ui/FloodSettingsModal.tsx
 #: src/components/ui/InviteUserModal.tsx
@@ -781,6 +892,8 @@ msgstr "Камера {0}"
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/RegionSelectOverlay.tsx
 #: src/components/ui/SlashCommandParamModal.tsx
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -799,6 +912,10 @@ msgstr "Отменить шифрование"
 msgid "Cancel reply"
 msgstr "Отменить ответ"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Cancel upload"
+msgstr "Отменить загрузку"
+
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "cancelled"
 msgstr "отменено"
@@ -815,6 +932,11 @@ msgstr "Cert FP"
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Change accent color"
 msgstr "Изменить акцентный цвет"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Change password"
+msgstr "Сменить пароль"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Change the channel name (operators only)"
@@ -898,9 +1020,7 @@ msgstr "Оператор канала"
 msgid "Channel Owner"
 msgstr "Владелец канала"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Channel Settings"
 msgstr "Настройки канала"
 
@@ -913,6 +1033,7 @@ msgid "Channel to leave (defaults to current)"
 msgstr "Канал, который покинуть (по умолчанию — текущий)"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/TopicModal.tsx
 msgid "Channel Topic"
 msgstr "Тема канала"
 
@@ -924,6 +1045,10 @@ msgstr "Канал не будет отображаться в командах 
 msgid "channel-name"
 msgstr "имя-канала"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Channel-scoped"
+msgstr "Для канала"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/UserProfileModal.tsx
@@ -934,6 +1059,22 @@ msgstr "Каналы"
 msgid "Channels on {networkName}"
 msgstr "Каналы на {networkName}"
 
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file type. The file host does not accept {ext} files."
+msgstr "Выберите другой тип файла. Файловый хост не принимает файлы {ext}."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a different file. The file host refused this one."
+msgstr "Выберите другой файл. Файловый хост отклонил этот."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file under {limit}, the most the file host accepts."
+msgstr "Выберите файл меньше {limit}, это максимум для файлового хоста."
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a file with an extension. The file host does not accept files without one."
+msgstr "Выберите файл с расширением. Файловый хост не принимает файлы без расширения."
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile. These profiles provide balanced protection settings for different use cases."
 msgstr "Выберите заранее заданный профиль защиты от флуда. Эти профили предоставляют сбалансированные настройки защиты для различных сценариев использования."
@@ -941,6 +1082,10 @@ msgstr "Выберите заранее заданный профиль защи
 #: src/components/ui/AddServerModal.tsx
 msgid "Choose a secure password"
 msgstr "Выберите надёжный пароль"
+
+#: src/lib/mediaUpload.ts
+msgid "Choose a smaller file. This one is too large for the file host."
+msgstr "Выберите файл меньшего размера. Этот слишком велик для файлового хоста."
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -1007,10 +1152,6 @@ msgstr "Нажмите, чтобы войти в {channel}"
 msgid "Click to jump to message"
 msgstr "Нажмите, чтобы перейти к сообщению"
 
-#: src/components/layout/ChatHeader.tsx
-msgid "Click to set topic"
-msgstr "Нажмите, чтобы задать тему"
-
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "client"
 msgstr "клиент"
@@ -1023,7 +1164,6 @@ msgstr "Клиент"
 msgid "Client Limit (+l)"
 msgstr "Лимит пользователей (+l)"
 
-#: src/components/layout/PrivateChatRow.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/message/ServerNoticesPopup.tsx
 #: src/components/ui/BotsModal.tsx
@@ -1034,11 +1174,18 @@ msgstr "Лимит пользователей (+l)"
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/ChannelSettingsModal.tsx
 #: src/components/ui/E2EEVerifyModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/GifSelector.tsx
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/ObbyWhoisModal.tsx
 #: src/components/ui/RawLogViewer.tsx
 #: src/components/ui/ReactionModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
+#: src/components/ui/TicTacToeModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
@@ -1048,6 +1195,10 @@ msgstr "Закрыть"
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
 msgstr "Закрыть комментарии"
+
+#: src/components/layout/ChannelList.tsx
+msgid "Close conversation"
+msgstr "Закрыть беседу"
 
 #: src/lib/modal/BaseModal.tsx
 msgid "Close modal"
@@ -1127,6 +1278,19 @@ msgstr "Настройте подробные правила защиты от �
 msgid "Configure notification sounds and highlights"
 msgstr "Настройка звуков уведомлений и выделений"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm enrolment"
+msgstr "Подтвердить регистрацию"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Confirm new password"
+msgstr "Подтвердите новый пароль"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Confirm remove"
+msgstr "Подтвердить удаление"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Confirm?"
 msgstr "Подтвердить?"
@@ -1135,6 +1299,18 @@ msgstr "Подтвердить?"
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
 msgstr "Подключиться"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a camera to share video"
+msgstr "Подключите камеру, чтобы показывать видео"
+
+#: src/lib/voiceErrors.ts
+msgid "Connect a microphone to talk"
+msgstr "Подключите микрофон, чтобы говорить"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Connect to a server to manage operator settings."
+msgstr "Подключитесь к серверу, чтобы управлять настройками оператора."
 
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "connected from {sessionCount} sessions"
@@ -1285,6 +1461,14 @@ msgstr "Не удалось определить местоположение в
 msgid "Could not get your location."
 msgstr "Не удалось определить ваше местоположение."
 
+#: src/components/ui/GifSelector.tsx
+msgid "Could not load GIFs. Search again to retry."
+msgstr "Не удалось загрузить GIF. Повторите поиск."
+
+#: src/lib/mediaUpload.ts
+msgid "Could not reach the file host. Check your connection and try again."
+msgstr "Не удалось связаться с файловым хостом. Проверьте подключение и повторите попытку."
+
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
 msgstr "Не удалось настроить шифрование с {nick}."
@@ -1310,6 +1494,11 @@ msgstr "Создание и управление вашими пригласит
 msgid "Create folder"
 msgstr "Создать папку"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Create pack"
+msgstr "Создать набор"
+
 #: src/components/ui/ChannelListModal.tsx
 msgid "Created After (min ago)"
 msgstr "Создан после (мин назад)"
@@ -1318,9 +1507,18 @@ msgstr "Создан после (мин назад)"
 msgid "Created Before (min ago)"
 msgstr "Создан до (мин назад)"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Creating…"
+msgstr "Создание…"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Current avatar"
 msgstr "Текущий аватар"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Custom emoji packs"
+msgstr "Наборы пользовательских эмодзи"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Custom Flood Rules (+f)"
@@ -1347,6 +1545,7 @@ msgid "Deafen"
 msgstr "Отключить звук"
 
 #: src/components/ui/E2EERequestBanner.tsx
+#: src/components/ui/TicTacToeModal.tsx
 msgid "Decline"
 msgstr "Отклонить"
 
@@ -1402,9 +1601,13 @@ msgstr "Удалить сообщение"
 msgid "Delete network"
 msgstr "Удалить сеть"
 
-#: src/components/layout/ChannelList.tsx
-msgid "Delete Private Chat"
-msgstr "Удалить личную переписку"
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack"
+msgstr "Удалить набор"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Delete pack \"{packId}\"? This also deletes every emoji in it."
+msgstr "Удалить набор «{packId}»? Это также удалит все эмодзи в нём."
 
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Delete this invite"
@@ -1431,7 +1634,10 @@ msgstr "Перевести в зрители"
 msgid "Description (optional, e.g. \"Beta testers Q3\")"
 msgstr "Описание (необязательно, например «Бета-тестеры Q3»)"
 
-#: src/components/ui/CameraCaptureModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Description (optional)"
+msgstr "Описание (необязательно)"
+
 #: src/components/ui/RecordingPanel.tsx
 #: src/components/ui/settings/CallCameraField.tsx
 msgid "Device names are hidden until you allow camera access."
@@ -1442,9 +1648,21 @@ msgstr "Названия устройств скрыты, пока вы не р�
 msgid "Device names are hidden until you allow microphone access."
 msgstr "Названия устройств скрыты, пока вы не разрешите доступ к микрофону."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable"
+msgstr "Отключить"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disable 2FA. Enter a 6-digit code from any of your registered authenticator apps to confirm."
+msgstr "Отключите 2FA. Для подтверждения введите 6-значный код из любого из ваших зарегистрированных приложений-аутентификаторов."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Disable push-to-talk"
 msgstr "Отключить push-to-talk"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Disabled"
+msgstr "Отключено"
 
 #: src/components/ui/RecordingControlsOverlay.tsx
 #: src/components/ui/RecordingPanel.tsx
@@ -1501,6 +1719,7 @@ msgstr "Отображение"
 msgid "Display all server events in chat"
 msgstr "Отображать все события сервера в чате"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
 #: src/components/ui/UserSettings.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display Name"
@@ -1530,7 +1749,13 @@ msgstr "Открыть эту ссылку в новой вкладке?"
 msgid "Don't warn me about low link security for this server"
 msgstr "Не предупреждать меня о низком уровне безопасности соединений для этого сервера"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "done"
+msgstr "готово"
+
 #: src/components/layout/ChannelList.tsx
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Done"
 msgstr "Готово"
 
@@ -1540,8 +1765,8 @@ msgid "Download"
 msgstr "Скачать"
 
 #: src/components/layout/ChannelList.tsx
-msgid "Drag a handle to move a channel, or into a folder"
-msgstr "Перетащите за ручку, чтобы переместить канал или поместить в папку"
+msgid "Drag a handle to move a channel or chat, or a channel into a folder"
+msgstr "Перетащите маркер, чтобы переместить канал или чат либо канал в папку"
 
 #: src/components/ui/RegionSelectOverlay.tsx
 msgid "Drag to choose what to record. Press Escape to cancel."
@@ -1578,6 +1803,11 @@ msgstr "Изменить"
 msgid "Edit {0}"
 msgstr "Изменить {0}"
 
+#: src/components/layout/ChatHeader.tsx
+#: src/components/ui/QuickActions/uiActionConfig.tsx
+msgid "Edit Channel"
+msgstr "Изменить канал"
+
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChatHeader.tsx
 msgid "Edit channel settings"
@@ -1611,6 +1841,14 @@ msgstr "Встроить"
 msgid "Emojis"
 msgstr "Эмодзи"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Empty pack. Add some emoji."
+msgstr "Набор пуст. Добавьте эмодзи."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enable 2FA"
+msgstr "Включить 2FA"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enable Highlights"
 msgstr "Включить выделения"
@@ -1638,6 +1876,10 @@ msgstr "Включить уведомления"
 #: src/components/voice/VoiceDock.tsx
 msgid "Enable push-to-talk"
 msgstr "Включить push-to-talk"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enabled"
+msgstr "Включено"
 
 #: src/components/ui/E2EELockControl.tsx
 msgid "Encrypt (Obby)"
@@ -1719,6 +1961,14 @@ msgstr "Шифрование с {nick} перестало работать, по
 msgid "End encryption"
 msgstr "Завершить шифрование"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter a 6-digit code from any of your authenticator apps to disable 2FA."
+msgstr "Введите 6-значный код из любого из ваших приложений-аутентификаторов, чтобы отключить 2FA."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Enter a channel name for channel-scoped packs."
+msgstr "Введите название канала для наборов, привязанных к каналу."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter account name..."
 msgstr "Введите имя аккаунта..."
@@ -1765,9 +2015,34 @@ msgstr "Введите настоящее имя"
 msgid "Enter reason (optional)"
 msgstr "Укажите причину (необязательно)"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in as {account}."
+msgstr "Введите 6-значный код из приложения-аутентификатора, чтобы завершить вход как {account}."
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Enter the 6-digit code from your authenticator app to finish signing in."
+msgstr "Введите 6-значный код из приложения-аутентификатора, чтобы завершить вход."
+
+#: src/components/ui/TotpStepUpModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Введите 6-значный код из приложения-аутентификатора."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the 6-digit code from your email."
+msgstr "Введите 6-значный код из письма."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter the account name you want to recover."
+msgstr "Введите имя учётной записи, которую нужно восстановить."
+
 #: src/components/ui/InviteUserModal.tsx
 msgid "Enter username to invite"
 msgstr "Введите имя пользователя для приглашения"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Enter your account name. We'll email a 6-digit recovery code to the verified address on file."
+msgstr "Введите имя учётной записи. Мы отправим 6-значный код восстановления на подтверждённый адрес электронной почты."
 
 #: src/components/ui/LocationShareModal.tsx
 msgid "Exact"
@@ -1784,6 +2059,11 @@ msgstr "Исключения"
 #: src/components/ui/ChannelListModal.tsx
 msgid "Exclude Channel Name Mask"
 msgstr "Исключить маску имени канала"
+
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Exit full screen"
+msgstr "Выйти из полноэкранного режима"
 
 #: src/components/layout/VoiceChannelView.tsx
 #: src/components/layout/VoiceChannelView.tsx
@@ -1824,6 +2104,7 @@ msgstr "Расширенный профиль"
 msgid "External Link Warning"
 msgstr "Предупреждение о внешней ссылке"
 
+#: src/components/ui/UploadProgressOverlay.tsx
 #: src/components/ui/WorkflowStatusBadge.tsx
 msgid "failed"
 msgstr "ошибка"
@@ -1889,6 +2170,18 @@ msgstr "Свернуть все"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Folder name"
 msgstr "Название папки"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "For security, all existing sessions for this account were signed out and account-scoped server state was purged. If two-factor authentication was enabled, it remains enabled, so the next login will still require it."
+msgstr "В целях безопасности все существующие сеансы этой учётной записи завершены, а связанное с ней состояние на сервере удалено. Если двухфакторная аутентификация была включена, она остаётся включённой, поэтому при следующем входе она по-прежнему потребуется."
+
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Forfeit"
+msgstr "Сдаться"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Forgot password"
+msgstr "Забыли пароль"
 
 #. placeholder {0}: filteredMessages.length
 #: src/components/layout/ChannelMessageList.tsx
@@ -2153,6 +2446,7 @@ msgstr "IRC Operator"
 msgid "IRC operator password"
 msgstr "Пароль IRC-оператора"
 
+#: src/components/ui/EditServerModal.tsx
 #: src/lib/settings/definitions/allSettings.ts
 msgid "IRC operator username"
 msgstr "Имя пользователя IRC-оператора"
@@ -2295,6 +2589,15 @@ msgstr "Сообщать другим, когда вы печатаете"
 msgid "Libera Chat"
 msgstr "Libera Chat"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link an OAuth identity"
+msgstr "Привязать удостоверение OAuth"
+
+#. placeholder {0}: p.providerLabel
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Link with {0}"
+msgstr "Привязать через {0}"
+
 #: src/components/layout/VoiceChannelView.tsx
 msgid "Live"
 msgstr "В эфире"
@@ -2334,6 +2637,11 @@ msgstr "Загрузка сетей с вашего bouncer…"
 #: src/components/ui/UserProfileModal.tsx
 msgid "Loading WHOIS data..."
 msgstr "Загрузка данных WHOIS..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Loading…"
+msgstr "Загрузка…"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Local Storage:"
@@ -2376,6 +2684,26 @@ msgstr "Опустить руку"
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Man-in-the-middle attacks on server links are possible"
 msgstr "Возможны атаки типа «человек посередине» на межсерверные соединения"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots"
+msgstr "Управлять ботами"
+
+#: src/components/layout/ChatHeader.tsx
+msgid "Manage Bots (loading {botsLoadingCount})"
+msgstr "Управлять ботами (загрузка: {botsLoadingCount})"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage packs"
+msgstr "Управлять наборами"
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage the network-wide and channel-scoped emoji packs that this server publishes via draft/EMOJI."
+msgstr "Управляйте наборами эмодзи для всей сети и для отдельных каналов, которые этот сервер публикует через draft/EMOJI."
+
+#: src/components/ui/UserSettings.tsx
+msgid "Manage two-factor authentication"
+msgstr "Управлять двухфакторной аутентификацией"
 
 #: src/components/ui/UserSettings.tsx
 msgid "Manage your account and authentication"
@@ -2619,6 +2947,10 @@ msgstr "Отключить уведомления"
 msgid "Mute or unmute notification sounds"
 msgstr "Включить или отключить звуки уведомлений"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Name (e.g. iPhone)"
+msgstr "Название (например, iPhone)"
+
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/message/JsonLogMessage.tsx
 msgid "Name:"
@@ -2659,6 +2991,11 @@ msgstr "новая папка"
 #: src/lib/clientCommands.ts
 msgid "New nickname"
 msgstr "Новый никнейм"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "New password"
+msgstr "Новый пароль"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Next image"
@@ -2758,6 +3095,10 @@ msgstr "Файл не выбран"
 msgid "No flood profile"
 msgstr "Без профиля флуда"
 
+#: src/components/ui/GifSelector.tsx
+msgid "No GIFs found. Try another search."
+msgstr "GIF не найдены. Попробуйте другой запрос."
+
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "no host set"
 msgstr "хост не задан"
@@ -2789,6 +3130,10 @@ msgstr "нет сообщения"
 #: src/components/ui/settings/CallMicrophoneField.tsx
 msgid "No microphone detected."
 msgstr "Микрофон не обнаружен."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "No packs configured yet."
+msgstr "Наборы ещё не настроены."
 
 #: src/components/ui/RawLogViewer.tsx
 msgid "No raw IRC traffic captured yet. Try connecting or sending a message."
@@ -2859,6 +3204,10 @@ msgstr "Обычный — стандартная защита"
 msgid "Not encrypted"
 msgstr "Не зашифровано"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Note: the server returns the same response whether or not the account has a verified email, so a typo will not be flagged here. If no code arrives within a couple of minutes, double-check the account name."
+msgstr "Примечание: сервер отвечает одинаково независимо от того, есть ли у учётной записи подтверждённая почта, поэтому опечатка здесь не будет замечена. Если код не пришёл в течение пары минут, проверьте имя учётной записи."
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Notification Sound"
 msgstr "Звук уведомления"
@@ -2866,6 +3215,10 @@ msgstr "Звук уведомления"
 #: src/components/ui/UserSettings.tsx
 msgid "Notifications"
 msgstr "Уведомления"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OAuth identity"
+msgstr "Удостоверение OAuth"
 
 #: src/components/PrivacyPolicy.tsx
 msgid "Obby"
@@ -2897,6 +3250,10 @@ msgstr "не в сети"
 msgid "Offline"
 msgstr "Не в сети"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "OK"
+msgstr "ОК"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "on"
 msgstr "вкл"
@@ -2920,6 +3277,7 @@ msgid "Only operators can change the channel topic"
 msgstr "Только операторы могут изменять тему канала"
 
 #: src/components/ui/AddServerModal.tsx
+#: src/components/ui/EditServerModal.tsx
 msgid "Only secure websockets are supported"
 msgstr "Поддерживаются только защищённые WebSocket-соединения"
 
@@ -2955,6 +3313,11 @@ msgstr "Открыть настройки конфигурации канала"
 #: src/components/layout/ChannelRow.tsx
 msgid "Open channel options"
 msgstr "Открыть параметры канала"
+
+#: src/components/layout/PrivateChatRow.tsx
+#: src/components/layout/PrivateChatRow.tsx
+msgid "Open chat options"
+msgstr "Открыть параметры чата"
 
 #: src/components/ui/MediaViewerModal.tsx
 #: src/components/ui/MediaViewerModal.tsx
@@ -3027,6 +3390,10 @@ msgstr "Действия оператора"
 msgid "Optional crash reports to improve the app"
 msgstr "Необязательные отчёты о сбоях для улучшения приложения"
 
+#: src/components/ui/ChangePasswordModal.tsx
+msgid "Other open sessions for this account will be signed out as part of the change. Two-factor authentication settings, if any, are left unchanged."
+msgstr "Остальные открытые сеансы этой учётной записи будут завершены в рамках изменения. Настройки двухфакторной аутентификации, если они есть, остаются прежними."
+
 #: src/components/ui/UploadProgressOverlay.tsx
 msgid "OTR does not encrypt files, sent as-is"
 msgstr "OTR не шифрует файлы, отправлено как есть"
@@ -3039,6 +3406,14 @@ msgstr "Вывод"
 msgid "Owner"
 msgstr "Владелец"
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id (e.g. team-mascots)"
+msgstr "pack_id (напр. team-mascots)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "pack_id and name are required."
+msgstr "pack_id и имя обязательны."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Password"
 msgstr "Пароль"
@@ -3046,6 +3421,15 @@ msgstr "Пароль"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Password required to join the channel. Leave empty to remove the key."
 msgstr "Пароль для входа в канал. Оставьте пустым, чтобы удалить ключ."
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Password reset complete"
+msgstr "Сброс пароля завершён"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Passwords don't match."
+msgstr "Пароли не совпадают."
 
 #: src/components/ui/settings/IgnoreListField.tsx
 msgid "Pattern already exists"
@@ -3088,6 +3472,15 @@ msgstr "Навсегда"
 msgid "Photo"
 msgstr "Фото"
 
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Pick a password (3 characters or more)."
+msgstr "Выберите пароль (3 символа или больше)."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Pick a single-word name (no spaces)."
+msgstr "Выберите имя из одного слова (без пробелов)."
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Pick channel kind"
 msgstr "Выберите тип канала"
@@ -3096,12 +3489,11 @@ msgstr "Выберите тип канала"
 msgid "Picture-in-picture"
 msgstr "Картинка в картинке"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Pin"
-msgstr "Закрепить"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Pin conversation"
+msgstr "Закрепить беседу"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Pin Private Chat"
 msgstr "Закрепить личный чат"
@@ -3132,8 +3524,6 @@ msgid "Play sounds for mentions and messages"
 msgstr "Воспроизводить звуки для упоминаний и сообщений"
 
 #: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/ChatHeader.tsx
 msgid "Play Tic-Tac-Toe"
 msgstr "Играть в крестики-нолики"
 
@@ -3151,6 +3541,8 @@ msgstr "Написать в личку"
 
 #: src/components/voice/ParticipantTile.tsx
 #: src/components/voice/ParticipantTile.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
 msgid "Pop out video"
 msgstr "Открыть видео в отдельном окне"
 
@@ -3213,6 +3605,10 @@ msgstr "Местоимения"
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Protected Topic (+t)"
 msgstr "Защищённая тема (+t)"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Provider returned no bearer token."
+msgstr "Провайдер не вернул токен доступа (bearer)."
 
 #: src/components/ui/UserSettings.tsx
 msgid "Questions about privacy? Contact us:"
@@ -3315,6 +3711,7 @@ msgstr "Не удалось переподключиться"
 
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
+#: src/components/layout/ServerList.tsx
 msgid "Reconnect to server"
 msgstr "Переподключиться к серверу"
 
@@ -3367,6 +3764,10 @@ msgstr "Обновить WHOIS"
 msgid "Register for an account"
 msgstr "Зарегистрировать аккаунт"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Registered credentials"
+msgstr "Зарегистрированные учётные данные"
+
 #: src/components/ui/WorkflowStepRow.tsx
 msgid "Reject"
 msgstr "Отклонить"
@@ -3380,8 +3781,15 @@ msgid "Relaxed - Less aggressive protection"
 msgstr "Мягкий — менее строгая защита"
 
 #: src/components/ui/ChannelSettingsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
+#: src/components/ui/TwoFactorSettingsModal.tsx
 msgid "Remove"
 msgstr "Удалить"
+
+#. placeholder {0}: c.name
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Remove \"{0}\"? You will no longer be able to use it as a second factor."
+msgstr "Удалить «{0}»? Вы больше не сможете использовать это как второй фактор."
 
 #: src/components/ui/ModerationModal.tsx
 msgid "Remove {username} from the channel"
@@ -3435,9 +3843,10 @@ msgstr "Отображать форматирование Markdown в сообщ
 
 #: src/components/layout/ChannelContextMenu.tsx
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/layout/NetworkMenu.tsx
-msgid "Reorder channels"
-msgstr "Изменить порядок каналов"
+msgid "Reorder list"
+msgstr "Изменить порядок списка"
 
 #: src/components/message/MessageActions.tsx
 #: src/components/mobile/MessageBottomSheet.tsx
@@ -3462,7 +3871,6 @@ msgstr "Повторить отправку"
 
 #: src/components/voice/VoicePipOverlay.tsx
 #: src/components/voice/VoicePipOverlay.tsx
-#: src/components/voice/VoicePipOverlay.tsx
 msgid "Return to channel"
 msgstr "Вернуться в канал"
 
@@ -3473,6 +3881,11 @@ msgstr "Проверить изменённый ключ…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Review key"
 msgstr "Проверить ключ"
+
+#: src/components/ui/MediaViewerModal.tsx
+#: src/components/ui/MediaViewerModal.tsx
+msgid "Rotate 90°"
+msgstr "Повернуть на 90°"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Rules"
@@ -3530,6 +3943,10 @@ msgstr "Сохранено"
 msgid "Saving..."
 msgstr "Сохранение..."
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Scan this QR code with your authenticator app, then confirm with the 6-digit code it shows."
+msgstr "Отсканируйте этот QR-код приложением-аутентификатором, затем подтвердите 6-значным кодом, который оно покажет."
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Scroll chat to this response"
 msgstr "Прокрутить чат к этому ответу"
@@ -3550,6 +3967,10 @@ msgstr "Поиск"
 #: src/components/ui/BotsModal.tsx
 msgid "Search bots"
 msgstr "Поиск ботов"
+
+#: src/components/ui/AppEmojiPicker.tsx
+msgid "Search emojis..."
+msgstr "Искать эмодзи..."
 
 #: src/components/ui/GifSelector.tsx
 msgid "Search for GIFs to get started"
@@ -3612,6 +4033,16 @@ msgstr "Показать ботов"
 msgid "See channel info"
 msgstr "Показать информацию о канале"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "See profile"
+msgstr "Открыть профиль"
+
+#: src/components/layout/VoiceChannelView.tsx
+#: src/components/layout/VoiceChannelView.tsx
+msgid "See viewers"
+msgstr "Посмотреть зрителей"
+
 #: src/components/message/MediaPreview.tsx
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Seek"
@@ -3641,11 +4072,6 @@ msgstr "Выберите или добавьте канал для начала.
 msgid "self-registered"
 msgstr "самостоятельно зарегистрирован"
 
-#: src/components/ui/CameraCaptureModal.tsx
-#: src/components/ui/RecordingPanel.tsx
-msgid "Send"
-msgstr "Отправить"
-
 #: src/components/layout/ChatArea.tsx
 #: src/components/ui/GifSelector.tsx
 msgid "Send a GIF"
@@ -3671,6 +4097,10 @@ msgstr "Отправить сообщение"
 msgid "Send private message"
 msgstr "Отправить личное сообщение"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Send recovery code"
+msgstr "Отправить код восстановления"
+
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Send this file unencrypted?"
 msgstr "Отправить этот файл без шифрования?"
@@ -3687,6 +4117,10 @@ msgstr "Отправить без шифрования"
 msgid "Sending"
 msgstr "Отправка"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Sending…"
+msgstr "Отправка…"
+
 #: src/components/ui/BotsModal.tsx
 #: src/components/ui/SlashCommandPopover.tsx
 msgid "server"
@@ -3696,12 +4130,14 @@ msgstr "сервер"
 msgid "Server"
 msgstr "Сервер"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/BlankPage.tsx
 #: src/components/ui/BlankPage.tsx
-#: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Server Channels"
 msgstr "Каналы сервера"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server does not advertise WebAuthn support"
+msgstr "Сервер не сообщает о поддержке WebAuthn"
 
 #: src/components/ui/ChannelListModal.tsx
 msgid "Server doesn't support advanced LIST filtering"
@@ -3745,11 +4181,16 @@ msgstr "Пароль сервера"
 msgid "Server Password (PASS)"
 msgstr "Пароль сервера (PASS)"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Server returned an invalid WebAuthn challenge."
+msgstr "Сервер вернул недопустимый запрос WebAuthn."
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Server-to-server communication may use unencrypted connections"
 msgstr "Межсерверное взаимодействие может использовать незашифрованные соединения"
 
 #: src/components/ui/BotsModal.tsx
+#: src/components/ui/EmojiPackAdminModal.tsx
 msgid "Server-wide"
 msgstr "По всему серверу"
 
@@ -3774,6 +4215,7 @@ msgstr "Сессия {0}"
 msgid "Sessions"
 msgstr "Сессии"
 
+#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/TopicModal.tsx
 msgid "Set a topic…"
 msgstr "Задать тему…"
@@ -3791,6 +4233,10 @@ msgstr "установил {0}"
 msgid "Set by:"
 msgstr "Установлено:"
 
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Set new password"
+msgstr "Задать новый пароль"
+
 #: src/components/layout/UserPanel.tsx
 msgid "Set yourself away"
 msgstr "Отметить себя отошедшим"
@@ -3807,6 +4253,11 @@ msgstr "Настройка"
 #: src/lib/settings/registry.ts
 msgid "Setting not found"
 msgstr "Настройка не найдена"
+
+#: src/components/ui/ChangePasswordModal.tsx
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Setting…"
+msgstr "Установка…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Settings"
@@ -3832,9 +4283,21 @@ msgstr "Поделиться вашим местоположением"
 msgid "Share your location with {target}."
 msgstr "Поделиться местоположением с {target}."
 
+#: src/lib/voiceErrors.ts
+msgid "Share your screen again to retry"
+msgstr "Снова поделитесь экраном, чтобы повторить"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "she/her"
 msgstr "она/её"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "shortcode (e.g. partyparrot)"
+msgstr "шорткод (напр. partyparrot)"
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "Shortcode must match [A-Za-z0-9._-]+."
+msgstr "Шорткод должен соответствовать [A-Za-z0-9._-]+."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Show All Events"
@@ -3897,6 +4360,10 @@ msgstr "Показывать выходы"
 msgid "Show the MOTD"
 msgstr "Показать MOTD"
 
+#: src/components/layout/VoiceChannelView.tsx
+msgid "Show video"
+msgstr "Показать видео"
+
 #. placeholder {0}: filteredChannels.length
 #: src/components/ui/ChannelListModal.tsx
 msgid "Showing {displayedChannelsCount} of {0} channels"
@@ -3909,6 +4376,10 @@ msgstr "Показывает весь внешний медиаконтент. �
 #: src/components/ui/UserSettings.tsx
 msgid "Shows media from your server's trusted file host. No requests are made to external services."
 msgstr "Показывает медиафайлы с доверенного файлового хоста вашего сервера. Запросы к внешним сервисам не выполняются."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Sign in with the provider, then we'll bind the resulting identity to your account so SASL OAUTHBEARER / IRCV3BEARER works on subsequent connections."
+msgstr "Войдите через провайдера, и мы привяжем полученное удостоверение к вашей учётной записи, чтобы SASL OAUTHBEARER / IRCV3BEARER работал при последующих подключениях."
 
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
@@ -3998,6 +4469,14 @@ msgstr "Статус"
 msgid "Status Messages"
 msgstr "Статусные сообщения"
 
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Status:"
+msgstr "Статус:"
+
+#: src/lib/voiceErrors.ts
+msgid "Stay here while we rejoin. The server limits how often you can rejoin."
+msgstr "Оставайтесь здесь, пока мы подключаемся снова. Сервер ограничивает частоту повторных входов."
+
 #: src/components/voice/VoiceDock.tsx
 msgid "Step off stream"
 msgstr "Прекратить трансляцию"
@@ -4023,6 +4502,7 @@ msgid "Stop video"
 msgstr "Отключить видео"
 
 #: src/components/layout/AddChannelRow.tsx
+#: src/components/ui/ChannelListModal.tsx
 msgid "Stream"
 msgstr "Трансляция"
 
@@ -4074,6 +4554,14 @@ msgstr "Вынуть из папки"
 msgid "Take photo"
 msgstr "Сделать фото"
 
+#: src/components/layout/ChatArea.tsx
+msgid "Take Photo or Video"
+msgstr "Сделать фото или видео"
+
+#: src/components/ui/ChannelListModal.tsx
+msgid "Text"
+msgstr "Текст"
+
 #: src/components/layout/AddChannelRow.tsx
 msgid "Text channel"
 msgstr "Текстовый канал"
@@ -4085,6 +4573,10 @@ msgstr "Это устройство сейчас недоступно."
 #: src/components/layout/ChatArea.tsx
 msgid "That screen is no longer there."
 msgstr "Этого экрана больше нет."
+
+#: src/lib/voiceErrors.ts
+msgid "The call server refused that. Try again in a moment."
+msgstr "Сервер звонков отклонил запрос. Повторите попытку чуть позже."
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -4113,6 +4605,10 @@ msgstr "Только что сделанное фото"
 #: src/components/layout/ChatArea.tsx
 msgid "The recording could not be made."
 msgstr "Не удалось сделать запись."
+
+#: src/lib/voiceErrors.ts
+msgid "The server refused your join. Check the channel modes and try again."
+msgstr "Сервер отклонил ваш вход. Проверьте режимы канала и попробуйте снова."
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "The topic that will be displayed for this channel. All users can see the topic."
@@ -4192,6 +4688,10 @@ msgstr "Это удалит сеть из вашего soju bouncer. Чтобы 
 msgid "This server does not support extended profile metadata (IRCv3 METADATA extension). Additional fields like avatar, display name, and status are not available."
 msgstr "Этот сервер не поддерживает расширенные метаданные профиля (расширение IRCv3 METADATA). Дополнительные поля, такие как аватар, отображаемое имя и статус, недоступны."
 
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "This server doesn't advertise a backend URL (draft/authtoken or obby.world/FILEHOST). The admin endpoints can't be reached."
+msgstr "Этот сервер не сообщает URL бэкенда (draft/authtoken или obby.world/FILEHOST). Административные эндпоинты недоступны."
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "This server doesn't support invite links (the<0>obby.world/invitation</0>capability isn't advertised). You can still chat normally; this panel is for obbyircd-powered networks."
 msgstr "Этот сервер не поддерживает пригласительные ссылки (возможность<0>obby.world/invitation</0>не объявлена). Вы по-прежнему можете общаться в чате как обычно; эта панель предназначена для сетей на базе obbyircd."
@@ -4213,6 +4713,11 @@ msgstr "Это также закроет {0} привязанных сетей �
 msgid "This will also close the bound network below."
 msgstr "Это также закроет привязанную сеть ниже."
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Tic-Tac-Toe vs {0}"
+msgstr "Крестики-нолики против {0}"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Time (min)"
 msgstr "Время (мин)"
@@ -4229,6 +4734,10 @@ msgstr "истекло время"
 #: src/components/ui/ObbyWhoisModal.tsx
 msgid "TLS"
 msgstr "TLS"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "TLS certificate fingerprint"
+msgstr "Отпечаток сертификата TLS"
 
 #: src/components/message/WhisperMessage.tsx
 #: src/components/message/WhisperMessage.tsx
@@ -4299,6 +4808,31 @@ msgstr "сокращено"
 msgid "Trusted Sources"
 msgstr "Доверенные источники"
 
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again."
+msgstr "Повторите загрузку."
+
+#: src/lib/mediaUpload.ts
+msgid "Try the upload again. The file host sent back an answer we could not read."
+msgstr "Повторите загрузку. Файловый хост прислал ответ, который мы не смогли прочитать."
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the camera on to try again"
+msgstr "Включите камеру, чтобы повторить"
+
+#: src/lib/voiceErrors.ts
+msgid "Turn the mic on to try again"
+msgstr "Включите микрофон, чтобы повторить"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+#: src/components/ui/UserSettings.tsx
+msgid "Two-factor authentication"
+msgstr "Двухфакторная аутентификация"
+
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Two-factor authentication required"
+msgstr "Требуется двухфакторная аутентификация"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Type"
 msgstr "Тип"
@@ -4326,12 +4860,11 @@ msgstr "Вкл. звук"
 msgid "Unmute for me"
 msgstr "Включить звук для меня"
 
-#: src/components/layout/ChatHeader.tsx
-#: src/components/layout/PrivateChatRow.tsx
-msgid "Unpin"
-msgstr "Открепить"
-
 #: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChatHeader.tsx
+msgid "Unpin conversation"
+msgstr "Открепить беседу"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Unpin Private Chat"
 msgstr "Открепить личный чат"
@@ -4352,13 +4885,25 @@ msgstr "Загрузите изображение или укажите URL с �
 msgid "Upload Avatar"
 msgstr "Загрузить аватар"
 
+#: src/lib/mediaUpload.ts
+msgid "Upload cancelled."
+msgstr "Загрузка отменена."
+
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
 msgstr "Загрузить файлы"
 
+#: src/components/ui/UploadProgressOverlay.tsx
+msgid "Uploaded"
+msgstr "Загружено"
+
 #: src/components/ui/AvatarUpload.tsx
 msgid "Uploading..."
 msgstr "Загрузка..."
+
+#: src/components/ui/EmojiPackAdminModal.tsx
+msgid "URL must be http(s):// or data:."
+msgstr "URL должен начинаться с http(s):// или data:."
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "URL to your avatar image"
@@ -4411,11 +4956,11 @@ msgstr "Пользователь отсутствует"
 msgid "User modes"
 msgstr "Пользовательские режимы"
 
-#: src/components/layout/ChatHeader.tsx
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "User Profile"
 msgstr "Профиль пользователя"
 
+#: src/components/ui/UserSettings.tsx
 #: src/components/ui/UserSettings.tsx
 msgid "User Settings"
 msgstr "Настройки пользователя"
@@ -4459,6 +5004,14 @@ msgstr "Необходимо указать корректный порт сер
 msgid "Verified account"
 msgstr "Верифицированный аккаунт"
 
+#: src/components/ui/TotpStepUpModal.tsx
+msgid "Verify"
+msgstr "Подтвердить"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verify code"
+msgstr "Проверить код"
+
 #: src/components/ui/E2EEVerifyModal.tsx
 msgid "Verify encryption"
 msgstr "Проверить шифрование"
@@ -4470,6 +5023,10 @@ msgstr "Проверить отпечаток…"
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Verify…"
 msgstr "Проверить…"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "Verifying…"
+msgstr "Проверка…"
 
 #: src/components/ui/ChannelSettingsModal.tsx
 msgid "Very Relaxed"
@@ -4532,6 +5089,7 @@ msgstr "Зритель"
 msgid "Viewers ({0})"
 msgstr "Зрители ({0})"
 
+#: src/components/ui/ChannelListModal.tsx
 #: src/components/ui/UserProfileModal.tsx
 msgid "Voice"
 msgstr "Voice"
@@ -4557,9 +5115,22 @@ msgstr "Громкость"
 msgid "Volume for {0}"
 msgstr "Громкость для {0}"
 
+#. placeholder {0}: open.opponent
+#: src/components/ui/TicTacToeModal.tsx
+msgid "Waiting for {0} to accept…"
+msgstr "Ожидание, пока {0} примет…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for biometric prompt…"
+msgstr "Ожидание биометрического запроса…"
+
 #: src/components/ui/BotToolsCard.tsx
 msgid "Waiting for first step…"
 msgstr "Ожидание первого шага…"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "Waiting for sign-in…"
+msgstr "Ожидание входа…"
 
 #: src/components/ui/ModerationModal.tsx
 #: src/components/ui/UserContextMenu.tsx
@@ -4578,6 +5149,11 @@ msgstr "был кикнут из {channelName} пользователем {usern
 msgid "Was kicked from the channel"
 msgstr "Был исключён из канала"
 
+#: src/components/voice/VoiceVideoBand.tsx
+#: src/components/voice/VoiceVideoBand.tsx
+msgid "Watch full screen"
+msgstr "Смотреть на весь экран"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Watch the raw IRC traffic for this server"
 msgstr "Просмотр необработанного трафика IRC этого сервера"
@@ -4585,6 +5161,10 @@ msgstr "Просмотр необработанного трафика IRC эт�
 #: src/components/ui/UserSettings.tsx
 msgid "We don't store your IRC communications on our servers"
 msgstr "Мы не храним ваши IRC-переписки на наших серверах"
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "WebAuthn is not available in this environment."
+msgstr "WebAuthn недоступен в этой среде."
 
 #: src/components/ui/BotsModal.tsx
 msgid "Webhook"
@@ -4676,6 +5256,14 @@ msgstr "Вы собираетесь открыть внешнюю ссылку:"
 #: src/store/handlers/channels.ts
 msgid "You are an IRC Operator"
 msgstr "Вы являетесь IRC-оператором"
+
+#: src/components/ui/PasswordRecoveryModal.tsx
+msgid "You have a few minutes to choose a new password."
+msgstr "У вас есть несколько минут, чтобы выбрать новый пароль."
+
+#: src/components/ui/TwoFactorSettingsModal.tsx
+msgid "You have no 2FA credentials registered."
+msgstr "У вас нет зарегистрированных учётных данных 2FA."
 
 #: src/components/ui/UserSettings.tsx
 msgid "You have unsaved changes. Are you sure you want to close without saving?"

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { settings } from "../../src/store/localStorage";
+import { settings, uiSelections } from "../../src/store/localStorage";
 
 describe("settings.load migration", () => {
   beforeEach(() => {
@@ -76,5 +76,42 @@ describe("settings.load migration", () => {
     vi.mocked(window.localStorage.getItem).mockReturnValue("not-json");
     const result = settings.load();
     expect(result).toEqual({});
+  });
+});
+
+describe("uiSelections.load", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  test("never restores a voice or stream channel, so a call does not rejoin at startup", () => {
+    vi.mocked(window.localStorage.getItem).mockReturnValue(
+      JSON.stringify({
+        selectedServerId: "s1",
+        perServerSelections: {
+          s1: {
+            selectedChannelId: "id-tv",
+            selectedChannelName: "$tv",
+            selectedPrivateChatId: null,
+          },
+          s2: {
+            selectedChannelId: "id-dev",
+            selectedChannelName: "#dev",
+            selectedPrivateChatId: null,
+          },
+        },
+        lastSelection: {
+          serverHost: "irc.example.com",
+          channelName: "^voice",
+          privateChatUsername: null,
+        },
+      }),
+    );
+
+    const loaded = uiSelections.load();
+
+    expect(loaded.perServerSelections.s1.selectedChannelId).toBeNull();
+    expect(loaded.perServerSelections.s2.selectedChannelId).toBe("id-dev");
+    expect(loaded.lastSelection?.channelName).toBeNull();
   });
 });

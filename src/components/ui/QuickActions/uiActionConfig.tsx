@@ -60,7 +60,7 @@ export function getUIActions(): UIActionConfig[] {
     {
       id: "open-channel-settings",
       type: "ui-modal",
-      title: t`Channel Settings`,
+      title: t`Edit Channel`,
       description: t`Open channel configuration settings`,
       keywords: ["channel", "settings", "config", "configure"],
       score: 85,
@@ -121,7 +121,7 @@ export function getUIActions(): UIActionConfig[] {
     {
       id: "open-server-channels",
       type: "ui-modal",
-      title: t`Server Channels`,
+      title: t`Browse Channels`,
       description: t`Browse all channels on the server`,
       keywords: ["server", "channels", "browse", "list"],
       score: 80,

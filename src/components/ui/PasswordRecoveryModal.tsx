@@ -11,6 +11,7 @@
 // that ambiguity in the UI so the user isn't surprised when an obvious
 // typo silently "works".
 
+import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import ircClient from "../../lib/ircClient";
@@ -28,6 +29,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
   initialAccount,
   onClose,
 }) => {
+  const { t } = useLingui();
   const [stage, setStage] = useState<Stage>("request");
   const [account, setAccount] = useState(initialAccount ?? "");
   const [code, setCode] = useState("");
@@ -110,7 +112,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
     setInfo(null);
     const acct = account.trim();
     if (!acct) {
-      setErr("Enter the account name you want to recover.");
+      setErr(t`Enter the account name you want to recover.`);
       return;
     }
     setBusy(true);
@@ -121,7 +123,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
     e.preventDefault();
     setErr(null);
     if (!/^\d{6}$/.test(code.trim())) {
-      setErr("Enter the 6-digit code from your email.");
+      setErr(t`Enter the 6-digit code from your email.`);
       return;
     }
     setBusy(true);
@@ -132,11 +134,11 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
     e.preventDefault();
     setErr(null);
     if (newPass.length < 3) {
-      setErr("Pick a password (3 characters or more).");
+      setErr(t`Pick a password (3 characters or more).`);
       return;
     }
     if (newPass !== confirmPass) {
-      setErr("Passwords don't match.");
+      setErr(t`Passwords don't match.`);
       return;
     }
     setBusy(true);
@@ -152,7 +154,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
       <div className="bg-discord-dark-200 rounded-lg w-full max-w-md p-5">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-white">
-            {stage === "done" ? "Password reset complete" : "Forgot password"}
+            {stage === "done" ? t`Password reset complete` : t`Forgot password`}
           </h2>
           <button
             type="button"
@@ -166,23 +168,25 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
         {stage === "request" && (
           <form onSubmit={submitRequest} className="space-y-3">
             <p className="text-sm text-discord-text-muted">
-              Enter your account name. We'll email a 6-digit recovery code to
-              the verified address on file.
+              <Trans>
+                Enter your account name. We'll email a 6-digit recovery code to
+                the verified address on file.
+              </Trans>
             </p>
             <input
               type="text"
               value={account}
               onChange={(e) => setAccount(e.target.value)}
-              placeholder="Account name"
+              placeholder={t`Account Name`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
               autoFocus
             />
             <button
               type="submit"
               disabled={busy}
-              className="w-full px-3 py-2 rounded bg-discord-blue text-white text-sm font-medium disabled:opacity-50"
+              className="button-primary w-full px-3 py-2 rounded text-sm font-medium"
             >
-              {busy ? "Sending…" : "Send recovery code"}
+              {busy ? t`Sending…` : t`Send recovery code`}
             </button>
           </form>
         )}
@@ -191,10 +195,12 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
           <form onSubmit={submitConfirm} className="space-y-3">
             <p className="text-sm text-white">{info}</p>
             <p className="text-xs text-discord-text-muted">
-              Note: the server returns the same response whether or not the
-              account has a verified email, so a typo will not be flagged here.
-              If no code arrives within a couple of minutes, double-check the
-              account name.
+              <Trans>
+                Note: the server returns the same response whether or not the
+                account has a verified email, so a typo will not be flagged
+                here. If no code arrives within a couple of minutes,
+                double-check the account name.
+              </Trans>
             </p>
             <input
               type="text"
@@ -216,14 +222,14 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
                 }}
                 className="px-3 py-2 rounded bg-discord-dark-100 text-white text-sm"
               >
-                Back
+                <Trans>Back</Trans>
               </button>
               <button
                 type="submit"
                 disabled={busy}
-                className="flex-1 px-3 py-2 rounded bg-discord-blue text-white text-sm font-medium disabled:opacity-50"
+                className="button-primary flex-1 px-3 py-2 rounded text-sm font-medium"
               >
-                {busy ? "Verifying…" : "Verify code"}
+                {busy ? t`Verifying…` : t`Verify code`}
               </button>
             </div>
           </form>
@@ -233,13 +239,13 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
           <form onSubmit={submitSetpass} className="space-y-3">
             <p className="text-sm text-white">{info}</p>
             <p className="text-xs text-discord-text-muted">
-              You have a few minutes to choose a new password.
+              <Trans>You have a few minutes to choose a new password.</Trans>
             </p>
             <input
               type="password"
               value={newPass}
               onChange={(e) => setNewPass(e.target.value)}
-              placeholder="New password"
+              placeholder={t`New password`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
               autoFocus
             />
@@ -247,7 +253,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
               type="password"
               value={confirmPass}
               onChange={(e) => setConfirmPass(e.target.value)}
-              placeholder="Confirm new password"
+              placeholder={t`Confirm new password`}
               className="w-full px-3 py-2 rounded bg-discord-dark-400 text-white"
             />
             <button
@@ -255,7 +261,7 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
               disabled={busy}
               className="w-full px-3 py-2 rounded bg-discord-green text-white text-sm font-medium disabled:opacity-50"
             >
-              {busy ? "Setting…" : "Set new password"}
+              {busy ? t`Setting…` : t`Set new password`}
             </button>
           </form>
         )}
@@ -264,17 +270,19 @@ export const PasswordRecoveryModal: React.FC<Props> = ({
           <div className="space-y-3">
             <p className="text-sm text-white">{info}</p>
             <p className="text-xs text-discord-text-muted">
-              For security, all existing sessions for this account were signed
-              out and account-scoped server state was purged. If two-factor
-              authentication was enabled, it remains enabled — the next login
-              will still require it.
+              <Trans>
+                For security, all existing sessions for this account were signed
+                out and account-scoped server state was purged. If two-factor
+                authentication was enabled, it remains enabled, so the next
+                login will still require it.
+              </Trans>
             </p>
             <button
               type="button"
               onClick={onClose}
-              className="w-full px-3 py-2 rounded bg-discord-blue text-white text-sm font-medium"
+              className="button-primary w-full px-3 py-2 rounded text-sm font-medium"
             >
-              Done
+              <Trans>Done</Trans>
             </button>
           </div>
         )}

@@ -10,12 +10,14 @@ import {
 } from "react";
 import {
   FaArrowDown,
+  FaArrowsAltV,
   FaArrowUp,
   FaChevronDown,
   FaChevronRight,
   FaCommentDots,
   FaCrown,
   FaGripVertical,
+  FaInfoCircle,
   FaPen,
   FaPlug,
   FaThumbtack,
@@ -70,6 +72,8 @@ export const ChannelList: React.FC = () => {
     toggleSettingsModal,
     setMobileViewActiveColumn,
     reorderChannels,
+    setProfileViewRequest,
+    toggleUserProfileModal,
   } = useStore();
 
   const joinAndSelectChannel = useJoinAndSelectChannel();
@@ -269,19 +273,11 @@ export const ChannelList: React.FC = () => {
     }
     const privateChats = Array.from(seen.values());
 
-    // Sort: pinned chats first (by order), then unpinned chats
-    return [...privateChats].sort((a, b) => {
-      // Both pinned: sort by order
-      if (a.isPinned && b.isPinned) {
-        return (a.order || 0) - (b.order || 0);
-      }
-      // Only a is pinned
-      if (a.isPinned) return -1;
-      // Only b is pinned
-      if (b.isPinned) return 1;
-      // Neither pinned: maintain order
-      return 0;
-    });
+    return [...privateChats].sort(
+      (a, b) =>
+        (a.order ?? Number.POSITIVE_INFINITY) -
+        (b.order ?? Number.POSITIVE_INFINITY),
+    );
   }, [selectedServer]);
 
   const isTouch = useIsTouchInput();
@@ -326,27 +322,30 @@ export const ChannelList: React.FC = () => {
     };
   };
 
-  const channelDragProps = (id: string): DragRowProps | undefined => {
+  const rowDragProps = (
+    drag: typeof channelDrag,
+    id: string,
+  ): DragRowProps | undefined => {
     if (isTouch && !isReordering) return undefined;
     const props = {
-      ...channelDrag.getItemProps(id),
-      onPointerMove: channelDrag.handlePointerMove,
-      onPointerUp: channelDrag.handlePointerUp,
+      ...drag.getItemProps(id),
+      onPointerMove: drag.handlePointerMove,
+      onPointerUp: drag.handlePointerUp,
     };
     if (!isReordering) return props;
     const { onPointerDown: _, ...handleOnly } = props;
     return handleOnly;
   };
 
-  const dragHandle = (id: string) =>
+  const dragHandle = (drag: typeof channelDrag, id: string) =>
     isReordering ? (
       <button
         type="button"
         className="mr-2 -ml-1 w-8 h-10 flex-shrink-0 flex items-center justify-center text-discord-text-muted touch-none"
         aria-label={t`Drag to move`}
-        onPointerDown={(e) => channelDrag.handlePointerDown(e, id)}
-        onPointerMove={channelDrag.handlePointerMove}
-        onPointerUp={channelDrag.handlePointerUp}
+        onPointerDown={(e) => drag.handlePointerDown(e, id)}
+        onPointerMove={drag.handlePointerMove}
+        onPointerUp={drag.handlePointerUp}
         onClick={(e) => e.stopPropagation()}
       >
         <FaGripVertical />
@@ -358,6 +357,8 @@ export const ChannelList: React.FC = () => {
     getItemId: (pm) => pm.id,
     onReorder: (ids) =>
       selectedServerId && reorderPrivateChats(selectedServerId, ids),
+    disabled: isTouch && !isReordering,
+    touchDelay: isReordering ? 0 : undefined,
   });
 
   const createFolderAndRename = () => {
@@ -379,17 +380,6 @@ export const ChannelList: React.FC = () => {
   const hoverSubtle = nativeMobile
     ? ""
     : "hover:bg-discord-dark-100 hover:text-discord-channels-active";
-
-  const pmDragProps = (
-    pc: (typeof sortedPrivateChats)[number],
-  ): DragRowProps | undefined =>
-    pc.isPinned
-      ? {
-          ...pmDrag.getItemProps(pc.id),
-          onPointerMove: pmDrag.handlePointerMove,
-          onPointerUp: pmDrag.handlePointerUp,
-        }
-      : undefined;
 
   const folderSummaries = summarizeFolders(channelEntries);
 
@@ -454,8 +444,8 @@ export const ChannelList: React.FC = () => {
             isInCall={isInCall(channel.name)}
             isTouch={isTouch}
             hoverClass={hoverPrimary}
-            drag={channelDragProps(entry.id)}
-            leading={dragHandle(entry.id)}
+            drag={rowDragProps(channelDrag, entry.id)}
+            leading={dragHandle(channelDrag, entry.id)}
             onSelect={() =>
               !isReordering && selectChannel(channel.id, { navigate: true })
             }
@@ -573,11 +563,12 @@ export const ChannelList: React.FC = () => {
               <div className="flex items-center gap-2 mb-2 px-1">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-white">
-                    <Trans>Reorder channels</Trans>
+                    <Trans>Reorder list</Trans>
                   </div>
                   <div className="text-xs">
                     <Trans>
-                      Drag a handle to move a channel, or into a folder
+                      Drag a handle to move a channel or chat, or a channel into
+                      a folder
                     </Trans>
                   </div>
                 </div>
@@ -627,47 +618,35 @@ export const ChannelList: React.FC = () => {
                     <StartPrivateChatRow serverId={selectedServerId} />
                   )}
                   {sortedPrivateChats.map((privateChat) => (
-                    <div
+                    <PrivateChatRow
                       key={privateChat.id}
-                      onContextMenu={(e) => {
-                        if (isTouch) return;
-                        e.preventDefault();
+                      privateChat={privateChat}
+                      server={selectedServer}
+                      mediaSettings={mediaSettings}
+                      isSelected={selectedPrivateChatId === privateChat.id}
+                      isPrevious={
+                        prevItemId === privateChat.id &&
+                        selectedPrivateChatId !== privateChat.id
+                      }
+                      isTouch={isTouch}
+                      hoverClass={hoverPrimary}
+                      drag={rowDragProps(pmDrag, privateChat.id)}
+                      leading={dragHandle(pmDrag, privateChat.id)}
+                      onSelect={() => {
+                        if (isReordering) return;
+                        if (lastSelectedPM.current === privateChat.id) return;
+                        lastSelectedPM.current = privateChat.id;
+                        selectPrivateChat(privateChat.id, { navigate: true });
+                      }}
+                      onOpenMenu={(anchor) =>
+                        !isReordering &&
                         setOpenMenu({
                           kind: "pm",
                           privateChatId: privateChat.id,
-                          anchor: e.currentTarget,
-                        });
-                      }}
-                    >
-                      <PrivateChatRow
-                        privateChat={privateChat}
-                        server={selectedServer}
-                        mediaSettings={mediaSettings}
-                        isSelected={selectedPrivateChatId === privateChat.id}
-                        isPrevious={
-                          prevItemId === privateChat.id &&
-                          selectedPrivateChatId !== privateChat.id
-                        }
-                        isTouch={isTouch}
-                        hoverClass={hoverPrimary}
-                        drag={pmDragProps(privateChat)}
-                        onSelect={() => {
-                          if (lastSelectedPM.current === privateChat.id) return;
-                          lastSelectedPM.current = privateChat.id;
-                          selectPrivateChat(privateChat.id, { navigate: true });
-                        }}
-                        onLongPressSelect={() =>
-                          selectPrivateChat(privateChat.id, {
-                            navigate: false,
-                          })
-                        }
-                        onPinToggle={() => togglePin(privateChat)}
-                        onDelete={() =>
-                          selectedServerId &&
-                          deletePrivateChat(selectedServerId, privateChat.id)
-                        }
-                      />
-                    </div>
+                          anchor,
+                        })
+                      }
+                    />
                   ))}
                 </div>
               )}
@@ -709,6 +688,10 @@ export const ChannelList: React.FC = () => {
         }
         status={userStatus}
         awayMessage={selectedServer?.awayMessage}
+        displayName={currentUser?.metadata?.["display-name"]?.value}
+        customStatus={currentUser?.metadata?.status?.value}
+        pronouns={currentUser?.metadata?.pronouns?.value}
+        networkName={selectedServer?.networkName ?? selectedServer?.name}
         isIrcOp={isIrcOp}
         onOpenSettings={() => toggleSettingsModal(true)}
       />
@@ -725,16 +708,37 @@ export const ChannelList: React.FC = () => {
                     {
                       id: "pin",
                       label: menuPrivateChat.isPinned
-                        ? t`Unpin Private Chat`
-                        : t`Pin Private Chat`,
+                        ? t`Unpin conversation`
+                        : t`Pin conversation`,
                       icon: <FaThumbtack />,
                       onClick: () => togglePin(menuPrivateChat),
                     },
                     {
+                      id: "profile",
+                      label: t`See profile`,
+                      icon: <FaInfoCircle />,
+                      onClick: () => {
+                        setProfileViewRequest(
+                          selectedServerId,
+                          menuPrivateChat.username,
+                        );
+                        toggleUserProfileModal(true);
+                      },
+                    },
+                    {
+                      id: "reorder",
+                      label: t`Reorder list`,
+                      icon: <FaArrowsAltV />,
+                      show: isTouch,
+                      onClick: () => setIsReordering(true),
+                    },
+                    {
                       id: "delete",
-                      label: t`Delete Private Chat`,
+                      label: t`Close conversation`,
                       icon: <FaTrash />,
+                      divider: true,
                       danger: true,
+                      show: !menuPrivateChat.isPinned,
                       onClick: () =>
                         deletePrivateChat(selectedServerId, menuPrivateChat.id),
                     },

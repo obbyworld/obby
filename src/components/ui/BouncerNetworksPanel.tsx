@@ -211,7 +211,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
           <button
             type="button"
             onClick={() => setMode({ kind: "add" })}
-            className="flex items-center gap-2 px-3 py-2 rounded bg-discord-primary hover:bg-discord-primary/90 text-white text-sm font-semibold transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded button-primary text-sm font-semibold transition-colors"
             data-testid="bouncer-add-network-button"
           >
             <FaPlus /> <Trans>Add Network</Trans>
@@ -241,7 +241,7 @@ export const BouncerNetworksPanel: React.FC<BouncerNetworksPanelProps> = ({
                 <button
                   type="button"
                   onClick={() => setMode({ kind: "add" })}
-                  className="mt-2 px-4 py-2 rounded bg-discord-primary hover:bg-discord-primary/90 text-white text-sm font-semibold flex items-center gap-2 transition-colors"
+                  className="mt-2 px-4 py-2 rounded button-primary text-sm font-semibold flex items-center gap-2 transition-colors"
                 >
                   <FaPlus /> <Trans>Add your first network</Trans>
                 </button>

@@ -59,7 +59,7 @@ export function RecordingControlsOverlay() {
       <button
         type="button"
         onClick={() => ask(requestRecordingStop)}
-        className="ml-auto flex min-h-9 items-center gap-2 rounded bg-discord-primary px-3 text-sm text-white hover:opacity-90"
+        className="ml-auto flex min-h-9 items-center gap-2 rounded button-primary px-3 text-sm"
       >
         <FaStop />
         <Trans>Stop</Trans>

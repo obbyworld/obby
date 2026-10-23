@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { VoiceMember } from "../../../src/lib/voice";
 import useStore from "../../../src/store";
@@ -264,5 +264,74 @@ describe("VoicePipOverlay", () => {
     const { container } = render(<VoicePipOverlay />);
 
     expect(container.querySelector("video")).toBeNull();
+  });
+  it("shows the pop-out on the channel list page while the call channel stays selected", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "^general" },
+    ]);
+    setSelection("chan1");
+    useStore.setState((state) => ({
+      ui: {
+        ...state.ui,
+        isNarrowView: true,
+        mobileViewActiveColumn: "serverList",
+      },
+    }));
+    render(<VoicePipOverlay />);
+    expect(screen.getByText("^general")).toBeInTheDocument();
+    useStore.setState((state) => ({
+      ui: { ...state.ui, isNarrowView: false },
+    }));
+  });
+
+  it("fills the OS picture-in-picture window with the call", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "^general" },
+    ]);
+    setSelection("chan1");
+    const { container } = render(<VoicePipOverlay />);
+    expect(container.firstChild).toBeNull();
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent("obby-native-pip", { detail: true }),
+      );
+    });
+    expect(container.querySelector(".inset-0")).not.toBeNull();
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent("obby-native-pip", { detail: false }),
+      );
+    });
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("hides the floating card while a video is in system picture-in-picture", () => {
+    mocks.useLiveVoiceCalls.mockReturnValue([
+      { serverId: "s1", channel: "^general" },
+    ]);
+    setSelection(null);
+    const { container } = render(<VoicePipOverlay />);
+    const card = container.querySelector(".voice-pip-card") as HTMLElement;
+    expect(card).not.toHaveClass("opacity-0");
+
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    Object.defineProperty(document, "pictureInPictureElement", {
+      configurable: true,
+      value: video,
+    });
+    act(() => {
+      video.dispatchEvent(new Event("enterpictureinpicture"));
+    });
+    expect(card).toHaveClass("opacity-0", "pointer-events-none");
+    expect(card).toHaveAttribute("inert");
+
+    Object.defineProperty(document, "pictureInPictureElement", {
+      configurable: true,
+      value: null,
+    });
+    video.remove();
   });
 });

@@ -520,20 +520,7 @@ export function MediaCommentsSidebar({
       </div>
       <ScrollToBottomButton isVisible={isScrolledUp} onClick={scrollToBottom} />
 
-      {/* Input — same structure as main ChatArea input.
-          keyboard-aware-layout: CSS rule zeroes padding-bottom when keyboard is visible
-          (using !important to beat the inline safe-area style below). */}
-      <div
-        className="px-3 pb-3 pt-1 relative keyboard-aware-layout"
-        style={
-          isMobile
-            ? {
-                paddingBottom:
-                  "calc(0.75rem + var(--safe-area-inset-bottom, 0px))",
-              }
-            : undefined
-        }
-      >
+      <div className="px-3 pt-1 relative chat-input-area">
         <TypingIndicator serverId={serverId} channelId={channelId} />
         <div className="bg-discord-dark-100 rounded-lg flex items-center relative flex-nowrap">
           <button

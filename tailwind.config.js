@@ -2,6 +2,11 @@
 module.exports = {
   darkMode: 'class',
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  // Touch screens keep :hover after a tap, which leaves tooltips and hover
+  // backgrounds stuck, so hover styles apply only where a pointer can hover.
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     extend: {
       borderRadius: {

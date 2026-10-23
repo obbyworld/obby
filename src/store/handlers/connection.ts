@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import type { StoreApi } from "zustand";
+import { isLiveChannel } from "../../lib/channelFolders";
 import ircClient from "../../lib/ircClient";
 import type { PrivateChat } from "../../types";
 import {
@@ -376,18 +377,22 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         const savedPrivateChatId = serverSelection?.selectedPrivateChatId;
         const server = currentState.servers.find((s) => s.id === serverId);
 
-        if (server && savedChannelId) {
-          const channelExists = server.channels.some(
-            (c) => c.id === savedChannelId,
-          );
+        const savedChannel = server?.channels.find(
+          (c) => c.id === savedChannelId,
+        );
+        if (savedChannel && isLiveChannel(savedChannel.name)) {
+          store.getState().selectChannel(null);
+        } else if (server && savedChannelId) {
+          const channelExists = !!savedChannel;
           if (!channelExists) {
             // ID mismatch - try to restore by name
             const savedName = serverSelection?.selectedChannelName;
-            const matchedByName = savedName
-              ? server.channels.find(
-                  (c) => c.name.toLowerCase() === savedName.toLowerCase(),
-                )
-              : null;
+            const matchedByName =
+              savedName && !isLiveChannel(savedName)
+                ? server.channels.find(
+                    (c) => c.name.toLowerCase() === savedName.toLowerCase(),
+                  )
+                : null;
 
             if (matchedByName) {
               console.log(
