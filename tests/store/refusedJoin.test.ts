@@ -198,19 +198,24 @@ describe("a join the server refuses", () => {
       expect(prompt()).toBeNull();
     });
 
-    it("stops loading history for a channel that needs a key", () => {
+    it("stops asking for history of a channel that needs a key", () => {
       rejoinSaved();
       useStore.setState((state) => ({
         servers: state.servers.map((s) => ({
           ...s,
-          channels: s.channels.map((c) => ({ ...c, isLoadingHistory: true })),
+          channels: s.channels.map((c) => ({
+            ...c,
+            isLoadingHistory: true,
+            hasMoreHistory: true,
+          })),
         })),
       }));
       refuseWithBadKey("#saved");
 
-      expect(useStore.getState().servers[0].channels[0].isLoadingHistory).toBe(
-        false,
-      );
+      expect(useStore.getState().servers[0].channels[0]).toMatchObject({
+        isLoadingHistory: false,
+        hasMoreHistory: false,
+      });
     });
 
     it("stays silent when the rejoin after connecting is refused", () => {
