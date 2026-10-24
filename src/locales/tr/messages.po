@@ -635,6 +635,10 @@ msgstr "YouTube, Vimeo, SoundCloud ve benzeri bilinen hizmetleri de önizleyin."
 msgid "Alt text (optional)"
 msgstr "Alternatif metin (isteğe bağlı)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Zaman damgalarını her zaman göster"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Miktar"

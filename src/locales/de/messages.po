@@ -635,6 +635,10 @@ msgstr "Zeige auch Vorschauen für YouTube, Vimeo, SoundCloud und ähnliche beka
 msgid "Alt text (optional)"
 msgstr "Alternativtext (optional)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Zeitstempel immer anzeigen"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Anzahl"

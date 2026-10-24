@@ -17,6 +17,7 @@ interface MessageAvatarProps {
   isClickable?: boolean;
   serverId?: string;
   showPresence?: boolean;
+  time?: string;
 }
 
 export const MessageAvatar: React.FC<MessageAvatarProps> = ({
@@ -31,12 +32,16 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
   isClickable = false,
   serverId,
   showPresence = true,
+  time,
 }) => {
   const [imageLoadFailed, setImageLoadFailed] = useState(false);
   const username = userId;
 
   const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
+  );
+  const alwaysShowTimestamps = useStore(
+    (state) => state.globalSettings.alwaysShowTimestamps,
   );
   const server = serverId
     ? useStore.getState().servers.find((s) => s.id === serverId)
@@ -51,7 +56,11 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
   if (!showHeader) {
     return (
       <div className="mr-4 select-none">
-        <div className="w-8" />
+        <div
+          className={`w-8 flex justify-center whitespace-nowrap text-[10px] leading-[1.375rem] text-discord-text-muted ${alwaysShowTimestamps ? "" : "opacity-0 group-hover:opacity-100"}`}
+        >
+          {time}
+        </div>
       </div>
     );
   }

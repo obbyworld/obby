@@ -635,6 +635,10 @@ msgstr "同時預覽 YouTube、Vimeo、SoundCloud 等類似的已知服務。"
 msgid "Alt text (optional)"
 msgstr "替代文字（選填）"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "始終顯示時間戳記"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "數量"

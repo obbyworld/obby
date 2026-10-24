@@ -82,6 +82,7 @@ export interface GlobalSettings {
   mediaVisibilityLevel: MediaVisibilityLevel;
   enableMarkdownRendering: boolean;
   showMotd: boolean;
+  alwaysShowTimestamps: boolean;
   awayMessage: string;
   quitMessage: string;
   callAudioInput: SavedDevice | null;
