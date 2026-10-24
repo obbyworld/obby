@@ -733,6 +733,10 @@ export function registerHistoryHandlers(store: StoreApi<AppState>): void {
   // next reply would be matched to it.
   ircClient.on("FAIL", ({ serverId, command, context }) => {
     if (command !== "CHATHISTORY") return;
+    const refused = context.find((part) =>
+      findConversation(store, serverId, part),
+    );
+    if (refused) void refreshHasMore(store, serverId, refused, false);
     const target = context.find(
       (part) => pendingRequests.get(conversationKey(serverId, part))?.length,
     );

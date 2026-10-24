@@ -727,12 +727,14 @@ describe("a refused chathistory request", () => {
     useStore.setState((state) => ({
       servers: state.servers.map((server) => ({
         ...server,
-        channels: [makeChannel({ isLoadingHistory: true })],
+        channels: [
+          makeChannel({ isLoadingHistory: true, hasMoreHistory: true }),
+        ],
       })),
     }));
   });
 
-  it("stops loading the channel it names", () => {
+  it("stops loading the channel it names and asks no further", async () => {
     const reason = "Messages could not be retrieved";
     IRC_DISPATCH.FAIL(
       ircClient as unknown as IRCClientContext,
@@ -743,7 +745,8 @@ describe("a refused chathistory request", () => {
       reason,
     );
 
-    const channel = useStore.getState().servers[0].channels[0];
-    expect(channel.isLoadingHistory).toBe(false);
+    const channel = () => useStore.getState().servers[0].channels[0];
+    expect(channel().isLoadingHistory).toBe(false);
+    await vi.waitFor(() => expect(channel().hasMoreHistory).toBe(false));
   });
 });
