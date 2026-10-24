@@ -2,6 +2,7 @@ import { fireEvent, render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { MediaPreview } from "../../src/components/message/MediaPreview";
 import type { MediaEntry } from "../../src/lib/mediaUtils";
+import { setVideoPosition } from "../../src/lib/videoPositionCache";
 
 type ActiveMedia = {
   url: string;
@@ -45,11 +46,20 @@ vi.mock("react-pdf", () => ({
 }));
 
 vi.mock("react-player", () => ({
-  default: ({ src, playing }: { src: string; playing?: boolean }) => (
+  default: ({
+    src,
+    playing,
+    config,
+  }: {
+    src: string;
+    playing?: boolean;
+    config?: { youtube?: { start?: number } };
+  }) => (
     <div
       data-testid="react-player"
       data-src={src}
       data-playing={String(playing)}
+      data-start={String(config?.youtube?.start)}
     />
   ),
 }));
@@ -296,5 +306,35 @@ describe("EmbedPreview — Now Playing Bar stop behaviour", () => {
 
     const player = await findByTestId("react-player");
     expect(player.dataset.playing).toBe("undefined");
+  });
+
+  // YouTube starts playing whenever it seeks an unstarted video, so a stopped
+  // embed that resumed mid-video would take playback back from the new one.
+  test("an embed another one takes over from restarts at the beginning", async () => {
+    mockState.ui.activeMedia = {
+      url: EMBED_URL,
+      type: "embed",
+      isPlaying: true,
+      isInlineVisible: true,
+    };
+    setVideoPosition(EMBED_URL, 16);
+    const { findByTestId, rerender } = render(
+      <MediaPreview entry={embedEntry()} />,
+    );
+    const playing = await findByTestId("react-player");
+    expect(playing.dataset.start).toBe("16");
+
+    mockState.ui.activeMedia = {
+      url: "https://www.youtube.com/watch?v=wmin5WkOuPw",
+      type: "embed",
+      isPlaying: true,
+      isInlineVisible: true,
+    };
+    rerender(<MediaPreview entry={embedEntry()} />);
+
+    await waitFor(async () =>
+      expect(await findByTestId("react-player")).not.toBe(playing),
+    );
+    expect((await findByTestId("react-player")).dataset.start).toBe("0");
   });
 });

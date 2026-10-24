@@ -26,6 +26,7 @@ import {
 import { PDF_OPTIONS } from "../../lib/pdfOptions";
 import { useMediaController } from "../../lib/useMediaController";
 import {
+  clearVideoPosition,
   getVideoPosition,
   setVideoPosition,
 } from "../../lib/videoPositionCache";
@@ -965,8 +966,10 @@ const EmbedPreview: React.FC<{
     serverId,
     channelId,
     // Remount the iframe when this embed goes from active → inactive so YouTube/Vimeo resets.
+    // We also drop its saved position, since YouTube plays as soon as it seeks.
     onExternalStop: () => {
       positionRef.current = 0;
+      clearVideoPosition(url);
       setPlayerKey((k) => k + 1);
     },
     inlineVisibility: {
@@ -1061,7 +1064,10 @@ const EmbedPreview: React.FC<{
               playing={playing}
               startAt={positionRef.current}
               onTime={(time) => {
-                positionRef.current = time;
+                // A player we just stopped can still report its time, and that
+                // would restart it mid-video on its next mount.
+                if (useStore.getState().ui.activeMedia?.url === url)
+                  positionRef.current = time;
               }}
               onPlay={() => {
                 // Guard against spurious onPlay events fired by YouTube.
