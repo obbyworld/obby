@@ -891,31 +891,33 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     }
   });
 
-  ircClient.on("FAIL", ({ serverId, command, code, target, message }) => {
-    reportServerReply(store, {
-      serverId,
-      type: "fail",
-      command,
-      code,
-      message,
-      target,
-    });
-    // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
-    // event that normally chains the WHO request will never fire on
-    // its own. Synthesise it here so the channel doesn't stay
-    // permanently flagged needsWhoRequest=true.
-    if (
-      command === "CHATHISTORY" &&
-      target &&
-      ircClient.isChannel(serverId, target)
-    ) {
-      ircClient.triggerEvent("CHATHISTORY_LOADING", {
+  ircClient.on(
+    "FAIL",
+    ({ serverId, command, code, target, context, message }) => {
+      reportServerReply(store, {
         serverId,
-        channelName: target,
-        isLoading: false,
+        type: "fail",
+        command,
+        code,
+        message,
+        target,
       });
-    }
-  });
+      // A CHATHISTORY FAIL never opens a batch, so the LOADING(false)
+      // event that normally chains the WHO request will never fire on
+      // its own. Synthesise it here so the channel doesn't stay
+      // permanently flagged needsWhoRequest=true.
+      if (command !== "CHATHISTORY") return;
+      const channelName = context.find((part) =>
+        ircClient.isChannel(serverId, part),
+      );
+      if (channelName)
+        ircClient.triggerEvent("CHATHISTORY_LOADING", {
+          serverId,
+          channelName,
+          isLoading: false,
+        });
+    },
+  );
 
   ircClient.on(
     "WARN",
