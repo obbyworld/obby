@@ -1126,6 +1126,11 @@ msgstr "История канала (+H)"
 msgid "Channel Information"
 msgstr "Информация о канале"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Ключ канала"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Ключ канала (+k)"
@@ -2846,6 +2851,7 @@ msgstr "теперь известен как **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Войти"
 
@@ -2860,6 +2866,7 @@ msgstr "Присоединиться к {0}"
 msgid "Join {channel}"
 msgstr "Войти в {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Присоединиться к {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Выбрать участника"
 msgid "Select or add a channel to get started."
 msgstr "Выберите или добавьте канал для начала."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Выберите, чтобы ввести ключ канала"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "самостоятельно зарегистрирован"
@@ -6058,6 +6070,10 @@ msgstr "История рабочих процессов ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Работает с другими IRC-клиентами"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Неверный ключ, попробуйте ещё раз"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

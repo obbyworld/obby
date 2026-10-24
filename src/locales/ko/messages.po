@@ -1126,6 +1126,11 @@ msgstr "채널 기록 (+H)"
 msgid "Channel Information"
 msgstr "채널 정보"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "채널 키"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "채널 키 (+k)"
@@ -2846,6 +2851,7 @@ msgstr "이제 **{newNick}**(으)로 알려져 있습니다"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "참여"
 
@@ -2860,6 +2866,7 @@ msgstr "{0} 참가"
 msgid "Join {channel}"
 msgstr "{channel} 참여"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "{channelName} 참가"
@@ -4799,6 +4806,11 @@ msgstr "멤버 선택"
 msgid "Select or add a channel to get started."
 msgstr "시작하려면 채널을 선택하거나 추가하세요."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "선택하여 채널 키 입력"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "자가 등록됨"
@@ -6058,6 +6070,10 @@ msgstr "워크플로 기록 ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "다른 IRC 클라이언트와 호환"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "잘못된 키입니다. 다시 시도하세요"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

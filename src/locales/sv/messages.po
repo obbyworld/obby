@@ -1126,6 +1126,11 @@ msgstr "Kanalhistorik (+H)"
 msgid "Channel Information"
 msgstr "Kanalinformation"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Kanalnyckel"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Kanalnyckel (+k)"
@@ -2846,6 +2851,7 @@ msgstr "är nu känd som **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Gå med"
 
@@ -2860,6 +2866,7 @@ msgstr "Gå med i {0}"
 msgid "Join {channel}"
 msgstr "Gå med i {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Gå med i {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Välj medlem"
 msgid "Select or add a channel to get started."
 msgstr "Välj eller lägg till en kanal för att komma igång."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Välj för att ange kanalnyckeln"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "självregistrerad"
@@ -6058,6 +6070,10 @@ msgstr "Arbetsflödeshistorik ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Fungerar med andra IRC-klienter"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Fel nyckel, försök igen"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"
