@@ -2,7 +2,12 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useState } from "react";
 import BaseModal from "../../lib/modal/BaseModal";
-import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
+import {
+  Button,
+  Input,
+  ModalBody,
+  ModalFooter,
+} from "../../lib/modal/components";
 import useStore from "../../store";
 
 export const ChannelKeyModal: React.FC = () => {
@@ -34,21 +39,16 @@ export const ChannelKeyModal: React.FC = () => {
       title={t`Join ${channelName}`}
     >
       <form onSubmit={onSubmit} className="flex flex-col min-h-0 flex-1">
-        <ModalBody className="gap-3">
-          <input
+        <ModalBody>
+          <Input
             type="password"
             autoComplete="off"
             aria-label={t`Channel key`}
             placeholder={t`Channel key`}
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            className="w-full px-3 py-2 rounded bg-discord-dark-300 text-white focus:outline-none focus:ring-2 focus:ring-discord-primary"
+            error={isWrongKey ? t`Wrong key, try again` : undefined}
           />
-          {isWrongKey && (
-            <p className="text-discord-red text-xs">
-              <Trans>Wrong key, try again</Trans>
-            </p>
-          )}
         </ModalBody>
         <ModalFooter>
           <Button type="submit" variant="primary" disabled={!key}>

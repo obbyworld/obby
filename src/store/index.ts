@@ -65,7 +65,11 @@ import {
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
-import { markKeyedJoin, markPendingJoin } from "./pendingJoins";
+import {
+  markKeyedJoin,
+  markPendingJoin,
+  setAutomaticJoin,
+} from "./pendingJoins";
 import type {
   AppPage,
   ChannelOrderMap,
@@ -794,7 +798,12 @@ export interface AppState {
     serverId?: string,
   ) => Promise<Server>;
   disconnect: (serverId: string) => void;
-  joinChannel: (serverId: string, channelName: string, key?: string) => void;
+  joinChannel: (
+    serverId: string,
+    channelName: string,
+    key?: string,
+    options?: { isAutomatic?: boolean },
+  ) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
   forgetChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
@@ -1714,10 +1723,11 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
   },
 
-  joinChannel: (serverId, channelName, key) => {
+  joinChannel: (serverId, channelName, key, options) => {
     const channel = ircClient.joinChannel(serverId, channelName, key);
     if (channel) {
       if (key) markKeyedJoin(serverId, channel.name);
+      setAutomaticJoin(serverId, channel.name, !!options?.isAutomatic);
       const isSameChannel = (name: string) =>
         name.toLowerCase() === channel.name.toLowerCase();
       set((state) => {

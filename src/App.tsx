@@ -75,7 +75,7 @@ const initializeEnvSettings = (
     isOpen?: boolean,
     prefillDetails?: ConnectionDetails | null,
   ) => void,
-  joinChannel: (serverId: string, channelName: string) => void,
+  joinChannel: AppState["joinChannel"],
 ) => {
   if (loadSavedServers().length > 0) return;
   const [, scheme, hostname, port] =
@@ -104,7 +104,7 @@ const initializeEnvSettings = (
   ircClient.on("ready", ({ serverId, serverName, nickname }) => {
     // Automatically join default channels
     for (const channel of __DEFAULT_IRC_CHANNELS__) {
-      joinChannel(serverId, channel);
+      joinChannel(serverId, channel, undefined, { isAutomatic: true });
     }
   });
 };

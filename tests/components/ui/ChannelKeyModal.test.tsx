@@ -54,4 +54,17 @@ describe("ChannelKeyModal", () => {
     expect(sendRaw).toHaveBeenCalledWith(SERVER, "JOIN #vault hunter2");
     expect(useStore.getState().channelKeyPrompt).toBeNull();
   });
+
+  it("tells the user when the last key was wrong", () => {
+    useStore.setState({
+      channelKeyPrompt: {
+        serverId: SERVER,
+        channelName: "#vault",
+        isWrongKey: true,
+      },
+    });
+    render(<ChannelKeyModal />);
+
+    expect(screen.getByText("Wrong key, try again")).toBeInTheDocument();
+  });
 });
