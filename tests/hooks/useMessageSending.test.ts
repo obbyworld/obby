@@ -127,3 +127,39 @@ describe("our own line on a server that echoes it", () => {
     expect(ownLines()).toEqual([]);
   });
 });
+
+describe("/join", () => {
+  beforeEach(() => {
+    useStore.setState({ servers: [server] });
+    (ircClient as unknown as { servers: Map<string, unknown> }).servers.set(
+      "s1",
+      { channels: [] },
+    );
+  });
+
+  afterEach(() => {
+    (ircClient as unknown as { servers: Map<string, unknown> }).servers.delete(
+      "s1",
+    );
+    vi.restoreAllMocks();
+  });
+
+  it("sends each channel's key", () => {
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    runCommand("/join #secret,#open,#vault hunter2,,swordfish");
+    const joins = sendRaw.mock.calls
+      .map(([, line]) => line)
+      .filter((line) => line.startsWith("JOIN"));
+    expect(joins).toEqual([
+      "JOIN #secret hunter2",
+      "JOIN #open",
+      "JOIN #vault swordfish",
+    ]);
+  });
+
+  it("reads the key after repeated spaces", () => {
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    runCommand("/join #secret   hunter2");
+    expect(sendRaw).toHaveBeenCalledWith("s1", "JOIN #secret hunter2");
+  });
+});

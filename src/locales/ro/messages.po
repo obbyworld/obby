@@ -1126,6 +1126,11 @@ msgstr "Istoric canal (+H)"
 msgid "Channel Information"
 msgstr "Informații canal"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Cheia canalului"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Cheia canalului (+k)"
@@ -2846,6 +2851,7 @@ msgstr "acum este cunoscut ca **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Alătură-te"
 
@@ -2860,6 +2866,7 @@ msgstr "Alătură-te la {0}"
 msgid "Join {channel}"
 msgstr "Alătură-te la {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Alătură-te la {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Selectează un membru"
 msgid "Select or add a channel to get started."
 msgstr "Selectează sau adaugă un canal pentru a începe."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Selectează pentru a introduce cheia canalului"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "autoînregistrat"
@@ -6058,6 +6070,10 @@ msgstr "Istoric fluxuri de lucru ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Funcționează cu alți clienți IRC"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Cheie greșită, încearcă din nou"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

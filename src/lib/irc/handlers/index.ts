@@ -199,11 +199,9 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     handleChghost(ctx, serverId, source, parv, mtags),
   JOIN: (ctx, serverId, source, parv, mtags) =>
     handleJoin(ctx, serverId, source, parv, mtags),
-  // UnrealIRCd answers a join over set::anti-flood::join-flood with 500.
-  "500": (ctx, serverId, _source, parv) =>
-    handleJoinRefused(ctx, serverId, parv, true),
   ...Object.fromEntries(
     [
+      "500",
       "403",
       "405",
       "471",
@@ -218,7 +216,7 @@ export const IRC_DISPATCH: Record<string, HandlerFn> = {
     ].map((code) => [
       code,
       ((ctx, serverId, _source, parv) =>
-        handleJoinRefused(ctx, serverId, parv, false)) satisfies HandlerFn,
+        handleJoinRefused(ctx, serverId, parv, code)) satisfies HandlerFn,
     ]),
   ),
   PART: (ctx, serverId, source, parv, mtags) =>

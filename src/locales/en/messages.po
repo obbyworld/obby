@@ -1125,6 +1125,11 @@ msgstr "Channel history (+H)"
 msgid "Channel Information"
 msgstr "Channel Information"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Channel key"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Channel key (+k)"
@@ -2845,6 +2850,7 @@ msgstr "is now known as **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Join"
 
@@ -2859,6 +2865,7 @@ msgstr "Join {0}"
 msgid "Join {channel}"
 msgstr "Join {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Join {channelName}"
@@ -4798,6 +4805,11 @@ msgstr "Select Member"
 msgid "Select or add a channel to get started."
 msgstr "Select or add a channel to get started."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Select to enter the channel key"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "self-registered"
@@ -6057,6 +6069,10 @@ msgstr "Workflow history ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Works with other IRC clients"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Wrong key, try again"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

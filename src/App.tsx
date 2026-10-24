@@ -9,6 +9,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
 import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
 import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
+import { ChannelKeyModal } from "./components/ui/ChannelKeyModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
 import LoadingOverlay from "./components/ui/LoadingOverlay";
 import QuickActions from "./components/ui/QuickActions";
@@ -74,7 +75,7 @@ const initializeEnvSettings = (
     isOpen?: boolean,
     prefillDetails?: ConnectionDetails | null,
   ) => void,
-  joinChannel: (serverId: string, channelName: string) => void,
+  joinChannel: AppState["joinChannel"],
 ) => {
   if (loadSavedServers().length > 0) return;
   const [, scheme, hostname, port] =
@@ -103,7 +104,7 @@ const initializeEnvSettings = (
   ircClient.on("ready", ({ serverId, serverName, nickname }) => {
     // Automatically join default channels
     for (const channel of __DEFAULT_IRC_CHANNELS__) {
-      joinChannel(serverId, channel);
+      joinChannel(serverId, channel, undefined, { isAutomatic: true });
     }
   });
 };
@@ -420,6 +421,7 @@ const App: React.FC = () => {
               <RemoveServerConfirmModal />
               <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
+              <ChannelKeyModal />
               <TicTacToeModal />
               {quickActions && <QuickActions />}
               <LinkSecurityWarningModal />

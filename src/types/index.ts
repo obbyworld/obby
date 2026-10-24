@@ -342,6 +342,7 @@ export interface Channel {
   // user has marked as read in this channel (mirrored across all of
   // the user's connected sessions).  null = no marker on file yet.
   readMarker?: string | null;
+  needsKey?: boolean;
 }
 
 export interface PrivateChat {

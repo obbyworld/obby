@@ -1126,6 +1126,11 @@ msgstr "Kanavan historia (+H)"
 msgid "Channel Information"
 msgstr "Kanavan tiedot"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Kanavan avain"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Kanavan avain (+k)"
@@ -2846,6 +2851,7 @@ msgstr "on nyt tunnettu nimellä **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Liity"
 
@@ -2860,6 +2866,7 @@ msgstr "Liity kanavalle {0}"
 msgid "Join {channel}"
 msgstr "Liity kanavalle {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Liity kanavaan {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Valitse jäsen"
 msgid "Select or add a channel to get started."
 msgstr "Valitse kanava tai lisää uusi päästäksesi alkuun."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Valitse syöttääksesi kanavan avaimen"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "itse rekisteröitynyt"
@@ -6058,6 +6070,10 @@ msgstr "Työnkulkuhistoria ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Toimii muiden IRC-asiakkaiden kanssa"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Väärä avain, yritä uudelleen"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

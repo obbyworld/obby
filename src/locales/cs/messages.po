@@ -1126,6 +1126,11 @@ msgstr "Historie kanálu (+H)"
 msgid "Channel Information"
 msgstr "Informace o kanálu"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Klíč kanálu"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Klíč kanálu (+k)"
@@ -2846,6 +2851,7 @@ msgstr "je nyní znám jako **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Připojit se"
 
@@ -2860,6 +2866,7 @@ msgstr "Připojit se k {0}"
 msgid "Join {channel}"
 msgstr "Připojit {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Připojit se k {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Vybrat člena"
 msgid "Select or add a channel to get started."
 msgstr "Vyberte nebo přidejte kanál pro začátek."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Vyberte pro zadání klíče kanálu"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "samoregistrovaný"
@@ -6058,6 +6070,10 @@ msgstr "Historie pracovních postupů ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Funguje s jinými IRC klienty"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Špatný klíč, zkuste to znovu"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"
