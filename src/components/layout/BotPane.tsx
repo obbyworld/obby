@@ -4,6 +4,7 @@ import type React from "react";
 import { useMemo } from "react";
 import { FaChevronLeft, FaCircle, FaTimes } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
+import { mircToHtml } from "../../lib/ircUtils";
 import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import useStore from "../../store";
 import type { BotPane as BotPaneTarget } from "../../store/types";
@@ -97,7 +98,9 @@ const BotDetail: React.FC<BotDetailProps> = ({
         </span>
       </div>
       {bot.realname && (
-        <div className="text-sm text-discord-text-muted">{bot.realname}</div>
+        <div className="text-sm text-discord-text-muted">
+          {mircToHtml(bot.realname)}
+        </div>
       )}
 
       <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-2 text-sm">
