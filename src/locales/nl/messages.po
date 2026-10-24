@@ -635,6 +635,10 @@ msgstr "Toon ook voorvertoningen van YouTube, Vimeo, SoundCloud en vergelijkbare
 msgid "Alt text (optional)"
 msgstr "Alternatieve tekst (optioneel)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Tijdstempels altijd tonen"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Aantal"

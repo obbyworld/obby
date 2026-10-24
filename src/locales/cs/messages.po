@@ -635,6 +635,10 @@ msgstr "Zobrazovat také náhledy z YouTube, Vimeo, SoundCloud a podobných zná
 msgid "Alt text (optional)"
 msgstr "Alternativní text (volitelné)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Vždy zobrazovat časy"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Množství"

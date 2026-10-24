@@ -635,6 +635,10 @@ msgstr "YouTube、Vimeo、SoundCloud などの既知のサービスもプレビ�
 msgid "Alt text (optional)"
 msgstr "代替テキスト (任意)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "常にタイムスタンプを表示"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "数量"

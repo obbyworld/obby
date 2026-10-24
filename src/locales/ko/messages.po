@@ -635,6 +635,10 @@ msgstr "YouTube, Vimeo, SoundCloud 등 알려진 서비스도 미리 보기합�
 msgid "Alt text (optional)"
 msgstr "대체 텍스트 (선택)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "항상 시간 표시"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "횟수"
