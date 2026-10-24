@@ -232,6 +232,32 @@ describe("a join the server refuses", () => {
       expect(prompt()).toBeNull();
     });
 
+    it("asks for no history of a channel refused before the reconnect requests it", () => {
+      vi.useFakeTimers();
+      (ircClient as unknown as { servers: Map<string, unknown> }).servers.set(
+        SERVER,
+        {
+          id: SERVER,
+          channels: [{ name: "#saved" }],
+          capabilities: ["draft/chathistory"],
+        },
+      );
+      ircClient.triggerEvent("ready", {
+        serverId: SERVER,
+        serverName: "irc.test",
+        nickname: "me",
+      });
+      refuseWithBadKey("#saved");
+      vi.mocked(ircClient.sendRaw).mockClear();
+      vi.advanceTimersByTime(100);
+      vi.useRealTimers();
+
+      const historyRequests = vi
+        .mocked(ircClient.sendRaw)
+        .mock.calls.filter(([, line]) => line.startsWith("CHATHISTORY"));
+      expect(historyRequests).toEqual([]);
+    });
+
     it("stays silent when an automatic join of a new channel is refused", () => {
       useStore
         .getState()
