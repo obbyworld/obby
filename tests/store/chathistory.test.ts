@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { IRC_DISPATCH } from "../../src/lib/irc/handlers";
+import type { IRCClientContext } from "../../src/lib/irc/IRCClientContext";
 import ircClient from "../../src/lib/ircClient";
 import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
@@ -716,5 +718,35 @@ describe("chathistory for a private chat", () => {
     });
 
     expect(privateChat()?.hasMoreHistory).toBe(expected);
+  });
+});
+
+describe("a refused chathistory request", () => {
+  beforeEach(() => {
+    setupServer();
+    useStore.setState((state) => ({
+      servers: state.servers.map((server) => ({
+        ...server,
+        channels: [
+          makeChannel({ isLoadingHistory: true, hasMoreHistory: true }),
+        ],
+      })),
+    }));
+  });
+
+  it("stops loading the channel it names and asks no further", async () => {
+    const reason = "Messages could not be retrieved";
+    IRC_DISPATCH.FAIL(
+      ircClient as unknown as IRCClientContext,
+      "srv-1",
+      "irc.example.com",
+      ["CHATHISTORY", "INVALID_TARGET", "LATEST", "#test", reason],
+      undefined,
+      reason,
+    );
+
+    const channel = () => useStore.getState().servers[0].channels[0];
+    expect(channel().isLoadingHistory).toBe(false);
+    await vi.waitFor(() => expect(channel().hasMoreHistory).toBe(false));
   });
 });
