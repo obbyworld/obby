@@ -9,6 +9,7 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import AddServerModal from "./components/ui/AddServerModal";
 import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnectConfirmModal";
 import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
+import { ChannelKeyModal } from "./components/ui/ChannelKeyModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
 import LoadingOverlay from "./components/ui/LoadingOverlay";
 import QuickActions from "./components/ui/QuickActions";
@@ -420,6 +421,7 @@ const App: React.FC = () => {
               <RemoveServerConfirmModal />
               <BouncerNetworkDisconnectConfirmModal />
               <TotpStepUpModal />
+              <ChannelKeyModal />
               <TicTacToeModal />
               {quickActions && <QuickActions />}
               <LinkSecurityWarningModal />

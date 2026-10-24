@@ -74,6 +74,7 @@ export interface EventMap {
     serverId: string;
     channelName: string;
     isThrottled: boolean;
+    numeric: string;
   };
   PART: BaseUserActionEvent & {
     channelName: string;

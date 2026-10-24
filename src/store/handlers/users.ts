@@ -13,8 +13,40 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
-import { takePendingJoin } from "../pendingJoins";
+import { takeKeyedJoin, takePendingJoin } from "../pendingJoins";
 import { reportServerReply } from "./serverReplies";
+
+const ERR_BADCHANNELKEY = "475";
+
+function setNeedsKey(
+  store: StoreApi<AppState>,
+  serverId: string,
+  channelName: string,
+  needsKey: boolean,
+): boolean {
+  const isTarget = (name: string) =>
+    name.toLowerCase() === channelName.toLowerCase();
+  let isChanged = false;
+  store.setState((state) => {
+    const server = state.servers.find((s) => s.id === serverId);
+    const channel = server?.channels.find((c) => isTarget(c.name));
+    if (!channel || !!channel.needsKey === needsKey) return {};
+    isChanged = true;
+    return {
+      servers: state.servers.map((s) =>
+        s.id !== serverId
+          ? s
+          : {
+              ...s,
+              channels: s.channels.map((c) =>
+                isTarget(c.name) ? { ...c, needsKey } : c,
+              ),
+            },
+      ),
+    };
+  });
+  return isChanged;
+}
 
 function appendMessage(
   store: StoreApi<AppState>,
@@ -53,10 +85,18 @@ function makeEventMessage(
 }
 
 export function registerUserHandlers(store: StoreApi<AppState>): void {
-  // The server refused a join the user just asked for, so we drop the entry we added for it.
-  ircClient.on("JOIN_REFUSED", ({ serverId, channelName }) => {
-    if (takePendingJoin(serverId, channelName))
-      store.getState().forgetChannel(serverId, channelName);
+  ircClient.on("JOIN_REFUSED", ({ serverId, channelName, numeric }) => {
+    // The server refused a join the user just asked for, so we drop the entry we added for it.
+    const isNewJoin = takePendingJoin(serverId, channelName);
+    const hadKey = takeKeyedJoin(serverId, channelName);
+    if (isNewJoin) store.getState().forgetChannel(serverId, channelName);
+    if (numeric !== ERR_BADCHANNELKEY) return;
+    if (!isNewJoin) setNeedsKey(store, serverId, channelName, true);
+    // We ask only after a join the user acted on, so rejoins at connect stay silent.
+    if (isNewJoin || hadKey)
+      store.setState({
+        channelKeyPrompt: { serverId, channelName, isWrongKey: hadKey },
+      });
   });
 
   ircClient.on(
@@ -122,6 +162,13 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
 
       if (isOurJoin) {
         takePendingJoin(serverId, channelName);
+        takeKeyedJoin(serverId, channelName);
+        // The history and member requests sent with the refused join failed, so we send them again now that we are in.
+        if (
+          setNeedsKey(store, serverId, channelName, false) &&
+          !ircClient.loadLatestHistory(serverId, channelName)
+        )
+          ircClient.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
         // Server-initiated JOIN (Unreal persistence, sajoin, perform list,
         // perform-on-connect): joinChannel() never ran, so the CHATHISTORY
         // + WHO chain that normally lives inside it was never kicked off.
