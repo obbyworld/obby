@@ -789,7 +789,7 @@ export interface AppState {
     serverId?: string,
   ) => Promise<Server>;
   disconnect: (serverId: string) => void;
-  joinChannel: (serverId: string, channelName: string) => void;
+  joinChannel: (serverId: string, channelName: string, key?: string) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
   forgetChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
@@ -1707,8 +1707,8 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
   },
 
-  joinChannel: (serverId, channelName) => {
-    const channel = ircClient.joinChannel(serverId, channelName);
+  joinChannel: (serverId, channelName, key) => {
+    const channel = ircClient.joinChannel(serverId, channelName, key);
     if (channel) {
       const isSameChannel = (name: string) =>
         name.toLowerCase() === channel.name.toLowerCase();
