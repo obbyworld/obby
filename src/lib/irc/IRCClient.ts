@@ -1761,11 +1761,7 @@ export class IRCClient implements IRCClientContext {
   }
 
   metadataSub(serverId: string, keys: string[]): void {
-    // Send individual SUB commands for each key to avoid parsing issues
-    keys.forEach((key) => {
-      const command = `METADATA * SUB ${key}`;
-      this.sendRaw(serverId, command);
-    });
+    this.sendRaw(serverId, `METADATA * SUB ${keys.join(" ")}`);
   }
 
   metadataUnsub(serverId: string, keys: string[]): void {
