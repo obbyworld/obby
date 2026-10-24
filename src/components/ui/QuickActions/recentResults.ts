@@ -1,4 +1,5 @@
 import { voiceDisplayName } from "../../../lib/channelMentions";
+import { stripIrcFormatting } from "../../../lib/messageFormatter";
 import type { RecentPlace } from "../../../lib/search/recents";
 import { serializeSearchQuery } from "../../../lib/search/searchQuery";
 import { isScopeOnServers, scopeLabel } from "../../../lib/search/searchScope";
@@ -71,7 +72,7 @@ export function buildUnreadResults(
         type: "channel",
         id: `channel-${server.id}-${channel.id}`,
         title: voiceDisplayName(channel.name),
-        description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
+        description: `${server.name}${channel.topic ? ` - ${stripIrcFormatting(channel.topic)}` : ""}`,
         serverId: server.id,
         score:
           (channel.isMentioned ? MENTION_SCORE : UNREAD_SCORE) +

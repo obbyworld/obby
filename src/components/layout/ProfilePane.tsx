@@ -27,7 +27,7 @@ import { getChannelKind } from "../../lib/channelFolders";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
 import { createIgnorePattern, isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
-import { serverFilehosts } from "../../lib/ircUtils";
+import { mircToHtml, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import { formatRelativeTime } from "../../lib/relativeTime";
@@ -673,7 +673,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
             {whoisData?.realname && (
               <DetailRow
                 label={<Trans>Real name</Trans>}
-                value={whoisData.realname}
+                value={mircToHtml(whoisData.realname)}
               />
             )}
             {whoisData?.account && (

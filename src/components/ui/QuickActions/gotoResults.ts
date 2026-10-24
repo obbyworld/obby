@@ -2,6 +2,7 @@ import type { MessageDescriptor } from "@lingui/core";
 import { t } from "@lingui/core/macro";
 import { voiceDisplayName } from "../../../lib/channelMentions";
 import { fuzzyMatch } from "../../../lib/fuzzySearch";
+import { stripIrcFormatting } from "../../../lib/messageFormatter";
 import { settingsRegistry } from "../../../lib/settings";
 import type { Server } from "../../../types";
 import {
@@ -128,7 +129,7 @@ export function buildGotoResults({
         type: "channel",
         id: `channel-${server.id}-${channel.id}`,
         title: voiceDisplayName(channel.name),
-        description: `${server.name}${channel.topic ? ` - ${channel.topic}` : ""}`,
+        description: `${server.name}${channel.topic ? ` - ${stripIrcFormatting(channel.topic)}` : ""}`,
         serverId: server.id,
         score: placeScore(
           match.score,
