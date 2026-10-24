@@ -635,6 +635,10 @@ msgstr "Esikatsele myös YouTube-, Vimeo-, SoundCloud- ja vastaavat tunnetut pal
 msgid "Alt text (optional)"
 msgstr "Vaihtoehtoinen teksti (valinnainen)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Näytä aikaleimat aina"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Määrä"

@@ -1365,6 +1365,7 @@ const useStore = create<AppState>((set, get) => ({
     // Markdown settings
     enableMarkdownRendering: false,
     showMotd: true,
+    alwaysShowTimestamps: false,
     // Status messages
     awayMessage: "",
     quitMessage: "",

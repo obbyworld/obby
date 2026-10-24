@@ -830,6 +830,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
           onClick={handleAvatarClick}
           isClickable={isClickable}
           serverId={message.serverId}
+          time={copyTime}
         />
 
         <div

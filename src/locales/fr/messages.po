@@ -635,6 +635,10 @@ msgstr "Prévisualiser aussi YouTube, Vimeo, SoundCloud et services connus simil
 msgid "Alt text (optional)"
 msgstr "Texte alternatif (facultatif)"
 
+#: src/lib/settings/definitions/allSettings.ts
+msgid "Always show timestamps"
+msgstr "Toujours afficher l'heure"
+
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Amount"
 msgstr "Quantité"

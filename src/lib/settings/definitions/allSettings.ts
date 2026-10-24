@@ -328,6 +328,17 @@ const preferenceSettings: SettingDefinition[] = [
     priority: 3,
   },
   {
+    id: "preferences.alwaysShowTimestamps",
+    key: "alwaysShowTimestamps",
+    category: "preferences",
+    subcategory: "Chat",
+    title: msg`Always show timestamps`,
+    type: "toggle",
+    defaultValue: false,
+    searchKeywords: ["timestamp", "time", "clock", "hour"],
+    priority: 4,
+  },
+  {
     id: "preferences.showEvents",
     key: "showEvents",
     category: "preferences",
