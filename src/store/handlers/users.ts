@@ -13,7 +13,12 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
-import { takeKeyedJoin, takePendingJoin } from "../pendingJoins";
+import {
+  isAutomaticJoin,
+  setAutomaticJoin,
+  takeKeyedJoin,
+  takePendingJoin,
+} from "../pendingJoins";
 import { reportServerReply } from "./serverReplies";
 
 const ERR_BADCHANNELKEY = "475";
@@ -39,7 +44,13 @@ function setNeedsKey(
           : {
               ...s,
               channels: s.channels.map((c) =>
-                isTarget(c.name) ? { ...c, needsKey } : c,
+                isTarget(c.name)
+                  ? {
+                      ...c,
+                      needsKey,
+                      ...(needsKey && { isLoadingHistory: false }),
+                    }
+                  : c,
               ),
             },
       ),
@@ -92,8 +103,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
     if (isNewJoin) store.getState().forgetChannel(serverId, channelName);
     if (numeric !== ERR_BADCHANNELKEY) return;
     if (!isNewJoin) setNeedsKey(store, serverId, channelName, true);
-    // We ask only after a join the user acted on, so rejoins at connect stay silent.
-    if (isNewJoin || hadKey)
+    if (!isAutomaticJoin(serverId, channelName))
       store.setState({
         channelKeyPrompt: { serverId, channelName, isWrongKey: hadKey },
       });
@@ -163,19 +173,17 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
       if (isOurJoin) {
         takePendingJoin(serverId, channelName);
         takeKeyedJoin(serverId, channelName);
+        setAutomaticJoin(serverId, channelName, false);
         // The history and member requests sent with the refused join failed, so we send them again now that we are in.
-        if (
-          setNeedsKey(store, serverId, channelName, false) &&
-          !ircClient.loadLatestHistory(serverId, channelName)
-        )
-          ircClient.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+        if (setNeedsKey(store, serverId, channelName, false))
+          ircClient.loadHistoryOrMembers(serverId, channelName);
         // Server-initiated JOIN (Unreal persistence, sajoin, perform list,
         // perform-on-connect): joinChannel() never ran, so the CHATHISTORY
         // + WHO chain that normally lives inside it was never kicked off.
         // Mirror joinChannel's tail here for the channel-doesn't-exist case
         // so the nicklist actually populates. Don't add ourselves to the
         // member list — NAMES populates it with proper modes.
-        let newChannelHadCap: boolean | null = null;
+        let isNewChannel = false;
         store.setState((state) => {
           const server = state.servers.find((s) => s.id === serverId);
           if (!server) return {};
@@ -189,7 +197,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
           const hasChathistory =
             !server.isBouncerControl &&
             !!server.capabilities?.includes("draft/chathistory");
-          newChannelHadCap = hasChathistory;
+          isNewChannel = true;
 
           return {
             servers: state.servers.map((s) => {
@@ -219,11 +227,7 @@ export function registerUserHandlers(store: StoreApi<AppState>): void {
         });
         // ircClient I/O OUTSIDE setState: triggerEvent inside setState
         // causes a nested-setState race (see batches.ts:215-218).
-        if (newChannelHadCap === true) {
-          ircClient.loadLatestHistory(serverId, channelName);
-        } else if (newChannelHadCap === false) {
-          ircClient.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
-        }
+        if (isNewChannel) ircClient.loadHistoryOrMembers(serverId, channelName);
         // Fall through to shared message creation below — same JOIN event, same path.
       } else {
         store.setState((state) => {

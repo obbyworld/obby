@@ -152,7 +152,19 @@ describe("a join the server refuses", () => {
         .getState()
         .servers[0].channels.find((c) => c.name === channelName)?.needsKey;
 
+    const rejoinSaved = () =>
+      useStore
+        .getState()
+        .joinChannel(SERVER, "#saved", undefined, { isAutomatic: true });
+    const dropConnection = () =>
+      ircClient.triggerEvent("connectionStateChange", {
+        serverId: SERVER,
+        connectionState: "disconnected",
+      });
+    const prompt = () => useStore.getState().channelKeyPrompt;
+
     afterEach(() => {
+      dropConnection();
       useStore.setState({ channelKeyPrompt: null });
     });
 
@@ -179,15 +191,80 @@ describe("a join the server refuses", () => {
     });
 
     it("marks a saved channel needing a key and opens no dialog", () => {
-      useStore.getState().joinChannel(SERVER, "#saved");
+      rejoinSaved();
       refuseWithBadKey("#saved");
 
       expect(needsKey("#saved")).toBe(true);
-      expect(useStore.getState().channelKeyPrompt).toBeNull();
+      expect(prompt()).toBeNull();
+    });
+
+    it("stops loading history for a channel that needs a key", () => {
+      rejoinSaved();
+      useStore.setState((state) => ({
+        servers: state.servers.map((s) => ({
+          ...s,
+          channels: s.channels.map((c) => ({ ...c, isLoadingHistory: true })),
+        })),
+      }));
+      refuseWithBadKey("#saved");
+
+      expect(useStore.getState().servers[0].channels[0].isLoadingHistory).toBe(
+        false,
+      );
+    });
+
+    it("stays silent when the rejoin after connecting is refused", () => {
+      ircClient.triggerEvent("ready", {
+        serverId: SERVER,
+        serverName: "irc.test",
+        nickname: "me",
+      });
+      expect(ircClient.sendRaw).toHaveBeenCalledWith(SERVER, "JOIN #saved");
+      refuseWithBadKey("#saved");
+      refuseWithBadKey("#saved");
+
+      expect(needsKey("#saved")).toBe(true);
+      expect(prompt()).toBeNull();
+    });
+
+    it("stays silent when an automatic join of a new channel is refused", () => {
+      useStore
+        .getState()
+        .joinChannel(SERVER, "#welcome", undefined, { isAutomatic: true });
+      refuseWithBadKey("#welcome");
+
+      expect(prompt()).toBeNull();
+    });
+
+    it("asks for the key when the user joins a saved channel that needs one", () => {
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+
+      useStore.getState().joinChannel(SERVER, "#saved");
+      refuseWithBadKey("#saved");
+
+      expect(prompt()).toEqual({
+        serverId: SERVER,
+        channelName: "#saved",
+        isWrongKey: false,
+      });
+    });
+
+    it("forgets a key sent before the connection dropped", () => {
+      useStore.getState().joinChannel(SERVER, "#saved", "old");
+      dropConnection();
+
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+      expect(prompt()).toBeNull();
+
+      useStore.getState().joinChannel(SERVER, "#saved");
+      refuseWithBadKey("#saved");
+      expect(prompt()?.isWrongKey).toBe(false);
     });
 
     it("asks for the key when the user selects a channel that needs one", () => {
-      useStore.getState().joinChannel(SERVER, "#saved");
+      rejoinSaved();
       refuseWithBadKey("#saved");
       const channel = useStore.getState().servers[0].channels[0];
 

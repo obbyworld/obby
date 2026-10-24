@@ -1365,13 +1365,8 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      if (!this.loadLatestHistory(serverId, channelName)) {
-        // No CHATHISTORY support (or it's the bouncer control session) --
-        // the LOADING(false) callback that normally fires WHO will never
-        // run. Send it now.
-        this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+      if (!this.loadHistoryOrMembers(serverId, channelName))
         channel.needsWhoRequest = false;
-      }
 
       return channel;
     }
@@ -1446,6 +1441,14 @@ export class IRCClient implements IRCClientContext {
       isLoading: true,
     });
     return true;
+  }
+
+  // The end of a history load sends WHO, so we send it ourselves only when
+  // the server keeps no history. Returns whether history was requested.
+  loadHistoryOrMembers(serverId: string, channelName: string): boolean {
+    if (this.loadLatestHistory(serverId, channelName)) return true;
+    this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+    return false;
   }
 
   // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means
