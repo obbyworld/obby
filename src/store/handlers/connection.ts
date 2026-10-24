@@ -349,7 +349,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         if (!reconnectedServer) return;
         if (reconnectedServer.isBouncerControl) return;
         for (const ch of reconnectedServer.channels) {
-          if (!ch.chathistoryRequested)
+          if (!ch.chathistoryRequested && !ch.needsKey)
             ircClient.loadLatestHistory(serverId, ch.name);
         }
       }, 50);

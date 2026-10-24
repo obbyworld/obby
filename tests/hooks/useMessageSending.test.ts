@@ -156,4 +156,10 @@ describe("/join", () => {
       "JOIN #vault swordfish",
     ]);
   });
+
+  it("reads the key after repeated spaces", () => {
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    runCommand("/join #secret   hunter2");
+    expect(sendRaw).toHaveBeenCalledWith("s1", "JOIN #secret hunter2");
+  });
 });
