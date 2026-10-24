@@ -30,6 +30,7 @@ import {
   serverFilehosts,
 } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { isTauriMobile } from "../../lib/platformUtils";
 import { currentChatScope } from "../../lib/search/searchScope";
 import type { SearchScope } from "../../lib/search/searchTypes";
@@ -549,9 +550,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                   }
                 }}
                 className="text-discord-text-muted text-xs hover:text-white truncate text-left"
-                title={selectedChannel.topic}
+                title={stripIrcFormatting(selectedChannel.topic)}
               >
-                {selectedChannel.topic}
+                {stripIrcFormatting(selectedChannel.topic)}
               </button>
             ) : isOperator ? (
               <button

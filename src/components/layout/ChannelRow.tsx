@@ -13,6 +13,7 @@ import { getChannelKind } from "../../lib/channelFolders";
 import {
   getChannelAvatarUrl,
   getChannelDisplayName,
+  mircToHtml,
   serverFilehosts,
 } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
@@ -110,7 +111,7 @@ const ChannelSubtitle: React.FC<{
       )}
       {channel.topic && (
         <span className="text-discord-text-muted truncate">
-          {channel.topic}
+          {mircToHtml(channel.topic)}
         </span>
       )}
     </div>
