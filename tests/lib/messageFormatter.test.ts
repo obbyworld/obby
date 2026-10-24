@@ -9,7 +9,19 @@ import {
   IRC_FORMATTING_CODES,
   isValidFormattingType,
   type MessageFormatting,
+  stripIrcFormatting,
 } from "../../src/lib/messageFormatter";
+
+describe("stripIrcFormatting", () => {
+  it.each([
+    ["\x0304Red\x03 text", "Red text"],
+    ["\x0304,12both\x03", "both"],
+    ["Red\x0304, blue", "Red, blue"],
+    ["\x03,ok", ",ok"],
+  ])("strips %j to %j", (input, expected) => {
+    expect(stripIrcFormatting(input)).toBe(expected);
+  });
+});
 
 describe("messageFormatter", () => {
   describe("getIrcColorCode", () => {
