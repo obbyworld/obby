@@ -48,7 +48,10 @@ function setNeedsKey(
                   ? {
                       ...c,
                       needsKey,
-                      ...(needsKey && { isLoadingHistory: false }),
+                      ...(needsKey && {
+                        isLoadingHistory: false,
+                        hasMoreHistory: false,
+                      }),
                     }
                   : c,
               ),
