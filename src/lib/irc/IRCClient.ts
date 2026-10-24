@@ -1326,8 +1326,9 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, typedName: string): Channel {
+  joinChannel(serverId: string, typedName: string, key?: string): Channel {
     const channelName = this.withChannelPrefix(serverId, typedName);
+    const joinLine = key ? `JOIN ${channelName} ${key}` : `JOIN ${channelName}`;
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1338,11 +1339,11 @@ export class IRCClient implements IRCClientContext {
         // memberships (e.g. cached `$test` from before a server restart)
         // self-heal. Without this, PRIVMSG/TAGMSG to the cached channel
         // returns 401 No such nick/channel because the server forgot.
-        this.sendRaw(serverId, `JOIN ${channelName}`);
+        this.sendRaw(serverId, joinLine);
         return existing;
       }
 
-      this.sendRaw(serverId, `JOIN ${channelName}`);
+      this.sendRaw(serverId, joinLine);
 
       const wantsChathistory = this.hasChathistory(serverId);
 
