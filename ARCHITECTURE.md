@@ -100,7 +100,7 @@ interface EventMap {
   JOIN;
   PART;
   QUIT;
-  NICK: { /* user events */ };
+  NICK: {/* user events */};
   // ... more IRC events
 }
 ```
