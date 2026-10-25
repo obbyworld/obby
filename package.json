@@ -54,7 +54,7 @@
     "@noble/curves": "^2.4.0",
     "@noble/hashes": "^2.2.0",
     "@tauri-apps/api": "^2.12.4",
-    "@tauri-apps/plugin-deep-link": "^2.6.2",
+    "@tauri-apps/plugin-deep-link": "2.6.1",
     "@tauri-apps/plugin-geolocation": "^2.5.0",
     "@tauri-apps/plugin-haptics": "^2.4.2",
     "@tauri-apps/plugin-notification": "^2.7.0",
