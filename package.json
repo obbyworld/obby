@@ -115,7 +115,7 @@
     "globals": "^15.14.0",
     "jsdom": "^26.1.0",
     "lefthook": "^1.11.10",
-    "markdownlint-cli2": "^0.23.3",
+    "markdownlint-cli2": "^0.24.0",
     "postcss": "^8.5.31",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
@@ -125,5 +125,9 @@
     "vite": "^6.4.4",
     "vitest": "^4.1.10",
     "werift": "^0.25.1"
+  },
+  "overrides": {
+    "katex": "^0.18.2",
+    "postcss-selector-parser": "^7.1.6"
   }
 }
