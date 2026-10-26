@@ -876,6 +876,7 @@ export const ChatArea: React.FC<{
     applyText(text);
     inputRef.current?.focus();
     inputRef.current?.setSelectionRange(text.length, text.length);
+    cursorPositionRef.current = text.length;
   };
 
   const completionUsers = useMemo<User[]>(
@@ -1158,12 +1159,13 @@ export const ChatArea: React.FC<{
   useEffect(() => {
     if (
       !pendingComposerMention ||
+      !channelKey ||
       pendingComposerMention.serverId !== selectedServerId
     )
       return;
     useStore.getState().clearComposerMentionRequest();
     insertMention(pendingComposerMention.nick);
-  }, [pendingComposerMention, selectedServerId]);
+  }, [pendingComposerMention, selectedServerId, channelKey]);
 
   // Keep-alive: maintain last 3 visited channels in an LRU list so their message list
   // DOMs are preserved with display:none (scroll position + media elements stay alive).
