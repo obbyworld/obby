@@ -9,11 +9,13 @@ import {
   argChoices,
   backspaceCancels,
   buildCommandPayload,
+  type CommandArgValues,
   type CommandInvocation,
   matchChoices,
   needsArguments,
 } from "../lib/commandInvocation";
 import type { BotCommand, Channel } from "../types";
+import type { BotCommandRun } from "./useMessageHistory";
 import { sendBotCommand } from "./useMessageSending";
 import { useSuggestionKeys } from "./useSuggestionKeys";
 
@@ -25,6 +27,7 @@ interface UseCommandInvocationOptions {
   inputRef: RefObject<HTMLTextAreaElement | null>;
   applyText: (text: string) => void;
   onBegin: () => void;
+  onRun: (run: BotCommandRun) => void;
 }
 
 const CHOICE_ACCEPT_KEYS = ["Tab", "Enter"];
@@ -38,6 +41,7 @@ export function useCommandInvocation({
   inputRef,
   applyText,
   onBegin,
+  onRun,
 }: UseCommandInvocationOptions) {
   const [invocation, setInvocation] = useState<CommandInvocation | null>(null);
   const [highlight, setHighlight] = useState(0);
@@ -67,7 +71,7 @@ export function useCommandInvocation({
   };
 
   const begin = useCallback(
-    (botNick: string, command: BotCommand) => {
+    (botNick: string, command: BotCommand, values: CommandArgValues = {}) => {
       if (!serverId) return;
       if (!needsArguments(command)) {
         sendBotCommand(serverId, channel, botNick, command, {});
@@ -77,10 +81,10 @@ export function useCommandInvocation({
         const typed = textRef.current;
         stashedDraft.current = typed.startsWith("/") ? "" : typed;
       }
-      applyText("");
+      applyText(values[command.options?.[0]?.name ?? ""] ?? "");
       onBegin();
       setHighlight(0);
-      setInvocation({ botNick, command, values: {}, active: 0 });
+      setInvocation({ botNick, command, values, active: 0 });
       inputRef.current?.focus();
     },
     [serverId, channel, textRef, inputRef, applyText, onBegin],
@@ -173,6 +177,11 @@ export function useCommandInvocation({
       invocation.command,
       result.payload,
     );
+    onRun({
+      botNick: invocation.botNick,
+      command: invocation.command,
+      values: invocation.values,
+    });
     finish();
   };
 

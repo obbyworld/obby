@@ -2,13 +2,14 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import {
   recordSentInput,
+  type SentInput,
   useMessageHistory,
 } from "../../src/hooks/useMessageHistory";
 
 function walk(bufferKey: string, keys: ("up" | "down")[]) {
   const { result } = renderHook(() => useMessageHistory(bufferKey));
   return keys.map((key) => {
-    let text: string | null = null;
+    let text: SentInput | null = null;
     act(() => {
       text =
         key === "up"
@@ -38,11 +39,27 @@ describe("useMessageHistory", () => {
   it("recalls input sent after the last render", () => {
     const { result } = renderHook(() => useMessageHistory("s-#late"));
     recordSentInput("s-#late", "/whois someone");
-    let recalled: string | null = null;
+    let recalled: SentInput | null = null;
     act(() => {
       recalled = result.current.navigateUp();
     });
     expect(recalled).toBe("/whois someone");
+  });
+
+  it("recalls bot command form runs between typed lines", () => {
+    const run = {
+      botNick: "bot",
+      command: { name: "translate", options: [{ name: "text" }] },
+      values: { text: "hi" },
+    };
+    recordSentInput("s-#bots", "hello");
+    recordSentInput("s-#bots", run);
+    recordSentInput("s-#bots", { ...run, values: { text: "hi" } });
+    expect(walk("s-#bots", ["up", "up", "up"])).toEqual([
+      run,
+      "hello",
+      "hello",
+    ]);
   });
 
   it("skips lines that can carry a password", () => {

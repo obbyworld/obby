@@ -5,6 +5,7 @@ import { useCommandInvocation } from "../../src/hooks/useCommandInvocation";
 import type { BotCommand, Channel } from "../../src/types";
 
 const sendBotCommand = vi.hoisted(() => vi.fn());
+const onRun = vi.fn();
 vi.mock("../../src/hooks/useMessageSending", () => ({ sendBotCommand }));
 
 const say: BotCommand = {
@@ -32,6 +33,7 @@ function setup() {
       inputRef: { current: input },
       applyText,
       onBegin: () => {},
+      onRun,
     }),
   );
   const type = (text: string) =>
@@ -60,7 +62,10 @@ function setup() {
 }
 
 describe("useCommandInvocation", () => {
-  beforeEach(() => sendBotCommand.mockClear());
+  beforeEach(() => {
+    sendBotCommand.mockClear();
+    onRun.mockClear();
+  });
 
   it("sends a command without options at once", () => {
     const { hook } = setup();
@@ -121,5 +126,23 @@ describe("useCommandInvocation", () => {
     expect(sendBotCommand).toHaveBeenCalledWith("srv", null, "bot", say, {
       message: "hello",
     });
+    expect(onRun).toHaveBeenCalledWith({
+      botNick: "bot",
+      command: say,
+      values: { message: "hello" },
+    });
+  });
+
+  it("reopens with the values of an earlier run", () => {
+    const { hook, input } = setup();
+    act(() =>
+      hook.result.current.begin("bot", say, {
+        channel: "#dev",
+        message: "hi",
+      }),
+    );
+    expect(input.value).toBe("#dev");
+    expect(hook.result.current.invocation?.values.message).toBe("hi");
+    expect(sendBotCommand).not.toHaveBeenCalled();
   });
 });

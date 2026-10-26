@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
+import type { CommandInvocation } from "../lib/commandInvocation";
 
 const HISTORY_LIMIT = 100;
+
+export type BotCommandRun = Pick<
+  CommandInvocation,
+  "botNick" | "command" | "values"
+>;
+export type SentInput = string | BotCommandRun;
 
 // We skip lines that can carry a password, so arrow up never puts one back on screen.
 const SECRET_INPUT =
@@ -9,19 +16,22 @@ const SERVICE_NICK = /serv$/i;
 
 // We keep only what the user typed in this session, since a bot or another
 // session could put text in the chat that recall would then send as ours.
-const sentByBuffer = new Map<string, string[]>();
+const sentByBuffer = new Map<string, SentInput[]>();
 
 export function recordSentInput(
   bufferKey: string,
-  text: string,
+  input: SentInput,
   privateChatNick?: string,
 ): void {
-  const line = text.trim();
-  if (!bufferKey || line === "" || SECRET_INPUT.test(line)) return;
+  if (!bufferKey) return;
+  if (typeof input === "string") {
+    const line = input.trim();
+    if (line === "" || SECRET_INPUT.test(line)) return;
+  }
   if (privateChatNick && SERVICE_NICK.test(privateChatNick)) return;
   const sent = sentByBuffer.get(bufferKey) ?? [];
-  if (sent[0] === text) return;
-  sentByBuffer.set(bufferKey, [text, ...sent].slice(0, HISTORY_LIMIT));
+  if (JSON.stringify(sent[0]) === JSON.stringify(input)) return;
+  sentByBuffer.set(bufferKey, [input, ...sent].slice(0, HISTORY_LIMIT));
 }
 
 export function useMessageHistory(bufferKey: string) {
@@ -31,10 +41,10 @@ export function useMessageHistory(bufferKey: string) {
     setMessageHistoryIndex(-1);
   }, [bufferKey]);
 
-  const sentAt = (index: number): string | null =>
+  const sentAt = (index: number): SentInput | null =>
     sentByBuffer.get(bufferKey)?.[index] ?? null;
 
-  const navigateUp = (): string | null => {
+  const navigateUp = (): SentInput | null => {
     const count = sentByBuffer.get(bufferKey)?.length ?? 0;
     if (count === 0) return null;
     const newIndex = Math.min(messageHistoryIndex + 1, count - 1);
@@ -43,7 +53,7 @@ export function useMessageHistory(bufferKey: string) {
   };
 
   // Recall starts only from an empty composer, so leaving history returns to an empty one.
-  const navigateDown = (): string | null => {
+  const navigateDown = (): SentInput | null => {
     if (messageHistoryIndex < 0) return null;
     const newIndex = messageHistoryIndex - 1;
     setMessageHistoryIndex(newIndex);
