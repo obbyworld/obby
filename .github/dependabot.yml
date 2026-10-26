@@ -25,6 +25,9 @@ updates:
       - dependency-name: "*"
         update-types:
           - version-update:semver-major
+      # Matches the deep-link crate, pinned in src-tauri/Cargo.toml.
+      - dependency-name: "@tauri-apps/plugin-deep-link"
+        versions: ["2.6.2"]
 
   - package-ecosystem: cargo
     directory: "/src-tauri"
@@ -63,6 +66,9 @@ updates:
         update-types:
           - version-update:semver-minor
           - version-update:semver-major
+      # 2.6.2 does not compile on Linux, see the pin in src-tauri/Cargo.toml.
+      - dependency-name: "tauri-plugin-deep-link"
+        versions: ["2.6.2"]
 
   - package-ecosystem: github-actions
     directory: "/"
