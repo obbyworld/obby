@@ -86,6 +86,20 @@ describe("emojiProvider", () => {
     expect(complete(provider, "hi :par")).toBe("hi :party:");
   });
 
+  it("matches digits and signs after the colon", () => {
+    expect(provider.match("ok :+1", 6)).toEqual({
+      query: "+1",
+      start: 3,
+      end: 6,
+    });
+    expect(provider.match(":+1", 3)).toEqual({ query: "+1", start: 0, end: 3 });
+  });
+
+  it("leaves a colon inside a word as text", () => {
+    expect(provider.match("at 12:30", 8)).toBeNull();
+    expect(provider.match("host:8080", 9)).toBeNull();
+  });
+
   it("claims a bare colon so Tab never falls through to nicks", () => {
     expect(provider.match("hi :", 4)).toEqual({ query: "", start: 3, end: 4 });
     expect(provider.getItems("")).toEqual([]);

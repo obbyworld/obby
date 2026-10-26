@@ -91,10 +91,7 @@ function deploymentDefines(): Record<string, string | undefined> {
   );
 }
 
-// emoji-datasource ships 22 fields per record (~1.4MB); the tab-completer only
-// needs 3 (unified, short_names, category). Slim it at build time via a virtual
-// module so the lazy emoji chunk is ~115KB instead of 1.4MB, and it stays in
-// sync with the installed dataset version (no committed copy to drift).
+// We slim emoji-datasource at build time so the lazy completion chunk ships only the fields we search.
 function emojiSlimPlugin(): Plugin {
   const virtualId = "virtual:emoji-slim";
   const resolvedId = `\0${virtualId}`;
@@ -111,11 +108,32 @@ function emojiSlimPlugin(): Plugin {
         short_names: string[];
         category: string;
       }>;
-      const slim = data.map((e) => ({
-        unified: e.unified,
-        short_names: e.short_names,
-        category: e.category,
-      }));
+      const picker = JSON.parse(
+        fs.readFileSync(
+          require.resolve("emoji-picker-react/dist/data/emojis.json"),
+          "utf8",
+        ),
+      ) as { emojis: Record<string, Array<{ u: string; n: string[] }>> };
+      const keywordsByUnified = new Map(
+        Object.values(picker.emojis)
+          .flat()
+          .map((e) => [
+            e.u.toLowerCase(),
+            e.n.map((k) => k.toLowerCase().replace(/\s+/g, "_")),
+          ]),
+      );
+      const slim = data.map((e) => {
+        const unified = e.unified.toLowerCase();
+        return {
+          unified: e.unified,
+          short_names: e.short_names,
+          category: e.category,
+          keywords:
+            keywordsByUnified.get(unified) ??
+            keywordsByUnified.get(unified.replace(/-fe0f/g, "")) ??
+            [],
+        };
+      });
       return `export default ${JSON.stringify(slim)};`;
     },
   };

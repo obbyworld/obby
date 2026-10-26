@@ -21,6 +21,11 @@ declare const __TRUSTED_MEDIA_URLS__: string[];
 
 // Build-time slimmed emoji-datasource (see emojiSlimPlugin in vite.config.ts).
 declare module "virtual:emoji-slim" {
-  const data: { unified: string; short_names: string[]; category: string }[];
+  const data: {
+    unified: string;
+    short_names: string[];
+    category: string;
+    keywords: string[];
+  }[];
   export default data;
 }
