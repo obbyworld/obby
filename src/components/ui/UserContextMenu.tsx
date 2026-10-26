@@ -2,6 +2,7 @@ import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useMemo } from "react";
 import {
+  FaAt,
   FaBan,
   FaCheckCircle,
   FaCommentDots,
@@ -34,6 +35,7 @@ interface UserContextMenuProps {
   currentUsername?: string;
   onOpenModerationModal?: (action: ModerationAction) => void;
   onPickBotCommand?: (botNick: string, command: BotCommand) => void;
+  onMention?: (username: string) => void;
 }
 
 export const UserContextMenu: React.FC<UserContextMenuProps> = ({
@@ -49,6 +51,7 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
   currentUsername,
   onOpenModerationModal,
   onPickBotCommand,
+  onMention,
 }) => {
   const { t } = useLingui();
   const anchorPoint = useMemo(() => ({ x, y }), [x, y]);
@@ -105,6 +108,13 @@ export const UserContextMenu: React.FC<UserContextMenuProps> = ({
       label: t`Send Message`,
       icon: <FaCommentDots />,
       onClick: () => onOpenPM(username),
+    },
+    {
+      id: "mention",
+      label: t`Mention`,
+      icon: <FaAt />,
+      show: !isOwnUser && !!onMention,
+      onClick: () => onMention?.(username),
     },
     {
       id: "profile",

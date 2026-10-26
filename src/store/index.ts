@@ -486,6 +486,7 @@ interface UIState {
     botNick: string;
     name: string;
   } | null;
+  pendingComposerMention: { serverId: string; nick: string } | null;
   inputAttachments: Attachment[];
   // Link security warning modal state - array to support multiple concurrent warnings
   linkSecurityWarnings: Array<{ serverId: string; timestamp: number }>;
@@ -1053,6 +1054,8 @@ export interface AppState {
     name: string,
   ) => void;
   clearComposerCommandRequest: () => void;
+  requestComposerMention: (serverId: string, nick: string) => void;
+  clearComposerMentionRequest: () => void;
   toggleServerMenu: (isOpen?: boolean) => void;
   // New modal actions for QuickActions
   toggleTopicModal: (
@@ -1316,6 +1319,7 @@ const useStore = create<AppState>((set, get) => ({
     prefillServerDetails: null,
     pendingBotCommandPick: null,
     pendingComposerCommand: null,
+    pendingComposerMention: null,
     inputAttachments: [],
     // Link security warning modal state
     linkSecurityWarnings: [],
@@ -3695,6 +3699,18 @@ const useStore = create<AppState>((set, get) => ({
   clearComposerCommandRequest: () => {
     set((state) => ({
       ui: { ...state.ui, pendingComposerCommand: null },
+    }));
+  },
+
+  requestComposerMention: (serverId, nick) => {
+    set((state) => ({
+      ui: { ...state.ui, pendingComposerMention: { serverId, nick } },
+    }));
+  },
+
+  clearComposerMentionRequest: () => {
+    set((state) => ({
+      ui: { ...state.ui, pendingComposerMention: null },
     }));
   },
 

@@ -100,7 +100,9 @@ import {
   type EmojiItem,
   emojiProvider,
   getActiveSlashQuery,
+  mentionText,
   nickProvider,
+  recentSpeakers,
   type SlashSuggestion,
   slashProvider,
   slashSuggestions,
@@ -869,6 +871,13 @@ export const ChatArea: React.FC<{
     beginTypedBotCommand(text, text.length);
   }, [pendingComposerCommand, selectedServerId]);
 
+  const insertMention = (nick: string) => {
+    const text = mentionText(messageTextRef.current, nick);
+    applyText(text);
+    inputRef.current?.focus();
+    inputRef.current?.setSelectionRange(text.length, text.length);
+  };
+
   const completionUsers = useMemo<User[]>(
     () =>
       selectedChannel?.users ??
@@ -884,9 +893,26 @@ export const ChatArea: React.FC<{
         : []),
     [selectedChannel?.users, selectedPrivateChat, currentUser],
   );
+  const channelKey = useMemo(
+    () =>
+      selectedServerId && (selectedChannelId || selectedPrivateChatId)
+        ? `${selectedServerId}-${selectedChannelId || selectedPrivateChatId}`
+        : "",
+    [selectedServerId, selectedChannelId, selectedPrivateChatId],
+  );
+
+  const channelMessages = useMemo(
+    () => (channelKey ? messages[channelKey] || [] : []),
+    [messages, channelKey],
+  );
+
+  const speakerRanks = useMemo(
+    () => recentSpeakers(channelMessages),
+    [channelMessages],
+  );
   const memberProvider = useMemo(
-    () => nickProvider(completionUsers),
-    [completionUsers],
+    () => nickProvider(completionUsers, speakerRanks, currentUser?.username),
+    [completionUsers, speakerRanks, currentUser?.username],
   );
   const slashCommandProvider = useMemo(
     () =>
@@ -1031,20 +1057,6 @@ export const ChatArea: React.FC<{
     [selectedColor, selectedFormatting],
   );
 
-  // Get messages for current channel or private chat - memoized
-  const channelKey = useMemo(
-    () =>
-      selectedServerId && (selectedChannelId || selectedPrivateChatId)
-        ? `${selectedServerId}-${selectedChannelId || selectedPrivateChatId}`
-        : "",
-    [selectedServerId, selectedChannelId, selectedPrivateChatId],
-  );
-
-  const channelMessages = useMemo(
-    () => (channelKey ? messages[channelKey] || [] : []),
-    [messages, channelKey],
-  );
-
   // Messages the user can navigate to with Cmd/Ctrl+↑↓ to set as reply target.
   // Capped to the visible window so navigation stays within what's on screen.
   const repliableMessages = useMemo(
@@ -1137,6 +1149,21 @@ export const ChatArea: React.FC<{
       applyText(draftMap.current.get(channelKey) ?? "");
     }
   }, [channelKey, applyText]);
+
+  const pendingComposerMention = useStore(
+    (state) => state.ui.pendingComposerMention,
+  );
+  // We run after the draft restore, since a phone mounts the composer with the mention already pending.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: insertMention is recreated every render and must not retrigger the effect
+  useEffect(() => {
+    if (
+      !pendingComposerMention ||
+      pendingComposerMention.serverId !== selectedServerId
+    )
+      return;
+    useStore.getState().clearComposerMentionRequest();
+    insertMention(pendingComposerMention.nick);
+  }, [pendingComposerMention, selectedServerId]);
 
   // Keep-alive: maintain last 3 visited channels in an LRU list so their message list
   // DOMs are preserved with display:none (scroll position + media elements stay alive).
@@ -2648,11 +2675,8 @@ export const ChatArea: React.FC<{
                 provider={memberProvider}
                 isOpen={showMembersDropdown}
                 onSelect={(username) => {
-                  const isAtMessageStart = messageTextRef.current.trim() === "";
-                  const suffix = isAtMessageStart ? ": " : " ";
-                  applyText(messageTextRef.current + username + suffix);
+                  insertMention(username);
                   setShowMembersDropdown(false);
-                  inputRef.current?.focus();
                 }}
                 onClose={() => {
                   setShowMembersDropdown(false);
@@ -2677,6 +2701,7 @@ export const ChatArea: React.FC<{
           ircClient.getCurrentUser(userContextMenu.serverId)?.username
         }
         onPickBotCommand={command.begin}
+        onMention={insertMention}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,

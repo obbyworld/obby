@@ -3225,6 +3225,10 @@ msgstr "Jäsenet"
 msgid "Members — {0}"
 msgstr "Jäsenet — {0}"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "Mention"
+msgstr "Mainitse"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "Mainitse joku"

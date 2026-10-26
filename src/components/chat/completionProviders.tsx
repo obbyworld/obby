@@ -5,7 +5,13 @@ import type { CompletionProvider } from "../../hooks/useCompletion";
 import { botPriority } from "../../lib/botPriority";
 import { getClientCommands } from "../../lib/clientCommands";
 import type { ResolvedShortcode } from "../../lib/customEmoji";
-import type { BotCommandOption, Channel, Server, User } from "../../types";
+import type {
+  BotCommandOption,
+  Channel,
+  Message,
+  Server,
+  User,
+} from "../../types";
 
 const MAX_EMOJIS = 10;
 const MAX_SLASH_COMMANDS = 10;
@@ -13,7 +19,39 @@ const CYCLE_KEYS = ["Tab"];
 const SLASH_ACCEPT_KEYS = ["Tab", "Enter"];
 const EMOJI_CLOSE_KEYS = ["Escape", " "];
 
-export function nickProvider(users: readonly User[]): CompletionProvider<User> {
+// IRC convention: "nick: " addresses someone at the start of a line.
+const addressSuffix = (textBefore: string) => (textBefore.trim() ? " " : ": ");
+
+export function mentionText(current: string, nick: string): string {
+  if (!current.trim()) return `${nick}${addressSuffix(current)}`;
+  const separator = current.endsWith(" ") ? "" : " ";
+  return `${current}${separator}${nick}${addressSuffix(current)}`;
+}
+
+export function recentSpeakers(
+  messages: readonly Pick<Message, "type" | "userId">[],
+): Map<string, number> {
+  const ranks = new Map<string, number>();
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const { type, userId } = messages[i];
+    if (type !== "message" && type !== "notice") continue;
+    const nick = userId.toLowerCase();
+    if (!ranks.has(nick)) ranks.set(nick, ranks.size);
+  }
+  return ranks;
+}
+
+const SILENT_RANK = Number.MAX_SAFE_INTEGER - 1;
+const SELF_RANK = Number.MAX_SAFE_INTEGER;
+
+export function nickProvider(
+  users: readonly User[],
+  speakerRanks: ReadonlyMap<string, number> = new Map(),
+  selfNick?: string,
+): CompletionProvider<User> {
+  const self = selfNick?.toLowerCase();
+  const rankOf = (name: string) =>
+    name === self ? SELF_RANK : (speakerRanks.get(name) ?? SILENT_RANK);
   return {
     title: <Trans>Members</Trans>,
     manual: true,
@@ -32,9 +70,11 @@ export function nickProvider(users: readonly User[]): CompletionProvider<User> {
           const name = user.username.toLowerCase();
           return name.startsWith(needle) && name !== needle;
         })
-        .sort((a, b) =>
-          a.username.toLowerCase().localeCompare(b.username.toLowerCase()),
-        );
+        .sort((a, b) => {
+          const nameA = a.username.toLowerCase();
+          const nameB = b.username.toLowerCase();
+          return rankOf(nameA) - rankOf(nameB) || nameA.localeCompare(nameB);
+        });
     },
     getKey: (user) => user.id,
     renderItem: (user) => (
@@ -48,9 +88,8 @@ export function nickProvider(users: readonly User[]): CompletionProvider<User> {
         )}
       </>
     ),
-    // IRC convention: "nick: " addresses someone at the start of a line.
     accept: (user, range, text) =>
-      `${user.username}${text.slice(0, range.start).trim() ? " " : ": "}`,
+      `${user.username}${addressSuffix(text.slice(0, range.start))}`,
   };
 }
 

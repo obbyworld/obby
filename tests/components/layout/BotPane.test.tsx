@@ -40,6 +40,7 @@ describe("BotPane", () => {
         sidePane: { kind: "bot", serverId: "server1", botNick: "greeter" },
         pendingBotCommandPick: null,
         pendingComposerCommand: null,
+        pendingComposerMention: null,
       },
     });
   });

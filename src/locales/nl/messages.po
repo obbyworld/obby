@@ -3225,6 +3225,10 @@ msgstr "Leden"
 msgid "Members — {0}"
 msgstr "Leden — {0}"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "Mention"
+msgstr "Vermelden"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "Iemand noemen"

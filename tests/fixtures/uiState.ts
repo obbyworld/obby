@@ -5,4 +5,5 @@ export const defaultUIExtensions = {
   inviteUserRequest: null,
   openedMedia: null,
   activeMedia: null,
+  pendingComposerMention: null,
 };

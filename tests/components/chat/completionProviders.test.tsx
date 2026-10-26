@@ -3,7 +3,9 @@ import {
   type EmojiItem,
   emojiProvider,
   getActiveSlashQuery,
+  mentionText,
   nickProvider,
+  recentSpeakers,
   type SlashSuggestion,
   slashProvider,
   slashSuggestions,
@@ -60,6 +62,54 @@ describe("nickProvider", () => {
   it("offers nothing on an empty word and every member for the picker", () => {
     expect(nicks.match("hello ", 6)).toBeNull();
     expect(nicks.getItems("")).toHaveLength(users.length);
+  });
+
+  it("puts recent speakers first, then the rest by name, then us", () => {
+    const ranks = recentSpeakers([
+      { type: "message", userId: "Bobby" },
+      { type: "join", userId: "admin" },
+      { type: "message", userId: "alice" },
+      { type: "notice", userId: "bob" },
+      { type: "message", userId: "alice" },
+    ]);
+    const ranked = nickProvider(users, ranks, "Admin");
+    expect(ranked.getItems("").map((u) => u.username)).toEqual([
+      "alice",
+      "bob",
+      "Bobby",
+      "admin",
+    ]);
+    expect(ranked.getItems("b").map((u) => u.username)).toEqual([
+      "bob",
+      "Bobby",
+    ]);
+  });
+});
+
+describe("recentSpeakers", () => {
+  it("ranks nicks case-insensitively by their latest message", () => {
+    const ranks = recentSpeakers([
+      { type: "message", userId: "Carol" },
+      { type: "message", userId: "carl" },
+      { type: "part", userId: "zed" },
+      { type: "message", userId: "carol" },
+    ]);
+    expect([...ranks]).toEqual([
+      ["carol", 0],
+      ["carl", 1],
+    ]);
+  });
+});
+
+describe("mentionText", () => {
+  it("addresses the nick in an empty composer", () => {
+    expect(mentionText("", "carol")).toBe("carol: ");
+    expect(mentionText("  ", "carol")).toBe("carol: ");
+  });
+
+  it("appends the nick after the text with one space", () => {
+    expect(mentionText("thanks", "carol")).toBe("thanks carol ");
+    expect(mentionText("thanks ", "carol")).toBe("thanks carol ");
   });
 });
 

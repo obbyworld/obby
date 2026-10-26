@@ -3225,6 +3225,10 @@ msgstr "Члени"
 msgid "Members — {0}"
 msgstr "Учасники — {0}"
 
+#: src/components/ui/UserContextMenu.tsx
+msgid "Mention"
+msgstr "Згадати"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "Згадати когось"

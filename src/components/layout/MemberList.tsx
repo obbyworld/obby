@@ -650,6 +650,12 @@ export const MemberList: React.FC = () => {
             .getState()
             .requestBotCommandPick(userContextMenu.serverId, botNick, command);
         }}
+        onMention={(username) => {
+          const { ui, setMobileViewActiveColumn, requestComposerMention } =
+            useStore.getState();
+          if (ui.isNarrowView) setMobileViewActiveColumn("chatView");
+          requestComposerMention(userContextMenu.serverId, username);
+        }}
         onOpenModerationModal={(action) => {
           setModerationModal({
             isOpen: true,
