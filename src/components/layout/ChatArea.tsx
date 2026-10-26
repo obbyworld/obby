@@ -23,7 +23,10 @@ import { useCompletion } from "../../hooks/useCompletion";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGuard";
-import { useMessageHistory } from "../../hooks/useMessageHistory";
+import {
+  recordSentInput,
+  useMessageHistory,
+} from "../../hooks/useMessageHistory";
 import { useMessageSending } from "../../hooks/useMessageSending";
 import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
@@ -1097,13 +1100,7 @@ export const ChatArea: React.FC<{
     }
   }, [localReplyTo]);
 
-  // Message history hook (must be after channelMessages is defined)
-  const messageHistory = useMessageHistory({
-    messages: channelMessages,
-    currentUsername: currentUser?.username || null,
-    selectedChannelId,
-    selectedPrivateChatId,
-  });
+  const messageHistory = useMessageHistory(channelKey);
 
   // Save outgoing channel's draft on cleanup; messageText read through ref so the
   // cleanup always sees the latest typed value, not the stale closure at effect-run time.
@@ -1240,6 +1237,7 @@ export const ChatArea: React.FC<{
       return;
     }
 
+    recordSentInput(channelKey, messageTextRef.current);
     applyText("");
     setCompletionInput(NO_COMPLETION_INPUT);
     draftMap.current.delete(channelKey);
@@ -1747,11 +1745,7 @@ export const ChatArea: React.FC<{
       ) {
         e.preventDefault();
 
-        if (messageHistory.userMessageHistory.length === 0) return;
-
-        const previousMessage = messageHistory.navigateUp(
-          messageTextRef.current,
-        );
+        const previousMessage = messageHistory.navigateUp();
         if (previousMessage !== null) {
           applyText(previousMessage);
 
@@ -1886,8 +1880,7 @@ export const ChatArea: React.FC<{
       setCompletionInput(NO_COMPLETION_INPUT);
     }
 
-    // Exit history mode if user starts typing
-    messageHistory.exitHistory();
+    messageHistory.resetHistory();
   };
 
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
