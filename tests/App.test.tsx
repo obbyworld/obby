@@ -207,26 +207,6 @@ describe("App", () => {
       // Check that toggleAddServerModal was called
       expect(mockStoreState.toggleAddServerModal).toHaveBeenCalledWith(true);
     });
-
-    it("Shows error message when server connection fails", async () => {
-      render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>,
-      );
-      const user = userEvent.setup();
-
-      // Mock failed connection
-      vi.mocked(ircClient.connect).mockRejectedValueOnce(
-        new Error("Connection failed"),
-      );
-
-      // Open modal by clicking add server button
-      await user.click(screen.getByTestId("server-list-add-button"));
-
-      // Check that toggleAddServerModal was called
-      expect(mockStoreState.toggleAddServerModal).toHaveBeenCalledWith(true);
-    });
   });
 
   describe("User Settings", () => {

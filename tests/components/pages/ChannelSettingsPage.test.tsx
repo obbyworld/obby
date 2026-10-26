@@ -125,7 +125,7 @@ describe("ChannelSettingsPage", () => {
     ...overrides,
   });
 
-  const useMockState = (state: ReturnType<typeof createMockState>) => {
+  const applyMockState = (state: ReturnType<typeof createMockState>) => {
     mockStore.mockImplementation((selector) => {
       if (typeof selector === "function") {
         // @ts-expect-error - Partial mock state for testing
@@ -151,7 +151,7 @@ describe("ChannelSettingsPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     const mockState = createMockState();
-    useMockState(mockState);
+    applyMockState(mockState);
     mockSetState.mockImplementation((updater) => {
       if (typeof updater === "function") {
         // @ts-expect-error - Partial mock state for testing
@@ -210,7 +210,7 @@ describe("ChannelSettingsPage", () => {
   });
 
   test("shows the add mask input in the bans section to an operator", () => {
-    useMockState(createMockState({ status: "@" }));
+    applyMockState(createMockState({ status: "@" }));
     renderPage({ section: "bans" });
 
     expect(
@@ -240,7 +240,7 @@ describe("ChannelSettingsPage", () => {
   });
 
   test("adds a new mask with MODE +b", () => {
-    useMockState(createMockState({ status: "@" }));
+    applyMockState(createMockState({ status: "@" }));
     renderPage({ section: "bans" });
 
     const input = screen.getByPlaceholderText(
@@ -257,7 +257,7 @@ describe("ChannelSettingsPage", () => {
 
   test("goes back to chat from the back button", () => {
     const state = createMockState();
-    useMockState(state);
+    applyMockState(state);
     renderPage();
 
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
@@ -276,7 +276,7 @@ describe("ChannelSettingsPage", () => {
 
   test("sends a flipped mode on its own as a single MODE command", async () => {
     vi.useFakeTimers();
-    useMockState(createMockState({ status: "@" }));
+    applyMockState(createMockState({ status: "@" }));
     renderPage({ section: "settings" });
 
     fireEvent.click(screen.getByRole("switch", { name: "Invite-only (+i)" }));
@@ -301,7 +301,7 @@ describe("ChannelSettingsPage", () => {
         modes: "+nt",
         metadata: { avatar: { value: "https://example.com/a.png" } },
       });
-      useMockState(state);
+      applyMockState(state);
       const { unmount } = renderPage({ section });
       vi.mocked(ircClient.sendRaw).mockClear();
 
@@ -330,7 +330,7 @@ describe("ChannelSettingsPage", () => {
 
   test("renames once focus leaves the name and reason fields", async () => {
     vi.useFakeTimers();
-    useMockState(createMockState({ status: "@" }));
+    applyMockState(createMockState({ status: "@" }));
     renderPage({ section: "general" });
 
     const name = screen.getByDisplayValue("#testchannel");
@@ -360,7 +360,7 @@ describe("ChannelSettingsPage", () => {
     vi.useFakeTimers();
     const state = createMockState({ status: "@" });
     Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
-    useMockState(state);
+    applyMockState(state);
     renderPage({ section: "general" });
 
     const name = screen.getByDisplayValue("#testchannel");
@@ -384,7 +384,7 @@ describe("ChannelSettingsPage", () => {
       topic: "Old topic",
       metadata: { avatar: { value: "https://example.com/a.png" } },
     });
-    useMockState(state);
+    applyMockState(state);
     renderPage({ section: "general" });
 
     const topic = screen.getByDisplayValue("Old topic");
@@ -404,7 +404,7 @@ describe("ChannelSettingsPage", () => {
   });
 
   test("shows the avatar size token in the avatar help", () => {
-    useMockState(createMockState({ status: "@" }));
+    applyMockState(createMockState({ status: "@" }));
     renderPage({ section: "general" });
 
     expect(
@@ -417,7 +417,7 @@ describe("ChannelSettingsPage", () => {
   test("keeps an unsent edit when the server updates the channel", async () => {
     const state = createMockState({ status: "@" });
     Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
-    useMockState(state);
+    applyMockState(state);
     const view = renderPage({ section: "general" });
 
     fireEvent.change(screen.getByDisplayValue("Old topic"), {
@@ -428,7 +428,7 @@ describe("ChannelSettingsPage", () => {
       topic: "Old topic",
       users: [...updated.servers[0].channels[0].users],
     });
-    useMockState(updated);
+    applyMockState(updated);
     view.rerender(
       <ChannelSettingsPage
         page={{
@@ -446,7 +446,7 @@ describe("ChannelSettingsPage", () => {
   test("sends a second edit made before the server echoes the first", async () => {
     const state = createMockState({ status: "@" });
     Object.assign(state.servers[0].channels[0], { topic: "Old topic" });
-    useMockState(state);
+    applyMockState(state);
     renderPage({ section: "general" });
 
     const topic = screen.getByDisplayValue("Old topic");
