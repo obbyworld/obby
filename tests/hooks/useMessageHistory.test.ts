@@ -54,6 +54,8 @@ describe("useMessageHistory", () => {
       "/quote PASS hunter2",
     ])
       recordSentInput("s-#secret", line);
+    recordSentInput("s-nickserv", "IDENTIFY hunter2", "NickServ");
+    expect(walk("s-nickserv", ["up"])).toEqual([null]);
     recordSentInput("s-#secret", "/msg friend hi");
     expect(walk("s-#secret", ["up", "up"])).toEqual([
       "/msg friend hi",

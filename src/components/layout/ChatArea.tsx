@@ -1237,7 +1237,11 @@ export const ChatArea: React.FC<{
       return;
     }
 
-    recordSentInput(channelKey, messageTextRef.current);
+    recordSentInput(
+      channelKey,
+      messageTextRef.current,
+      selectedPrivateChat?.username,
+    );
     applyText("");
     setCompletionInput(NO_COMPLETION_INPUT);
     draftMap.current.delete(channelKey);

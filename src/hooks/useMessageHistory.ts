@@ -5,14 +5,20 @@ const HISTORY_LIMIT = 100;
 // We skip lines that can carry a password, so arrow up never puts one back on screen.
 const SECRET_INPUT =
   /^\/(?:oper|pass|password|identify|register|ghost|recover|regain|setpass|sendpass|resetpass|login|auth|sasl|quote|raw|ns|nickserv)\b|^\/msg\s+\S*serv\b/i;
+const SERVICE_NICK = /serv$/i;
 
 // We keep only what the user typed in this session, since a bot or another
 // session could put text in the chat that recall would then send as ours.
 const sentByBuffer = new Map<string, string[]>();
 
-export function recordSentInput(bufferKey: string, text: string): void {
+export function recordSentInput(
+  bufferKey: string,
+  text: string,
+  privateChatNick?: string,
+): void {
   const line = text.trim();
   if (!bufferKey || line === "" || SECRET_INPUT.test(line)) return;
+  if (privateChatNick && SERVICE_NICK.test(privateChatNick)) return;
   const sent = sentByBuffer.get(bufferKey) ?? [];
   if (sent[0] === text) return;
   sentByBuffer.set(bufferKey, [text, ...sent].slice(0, HISTORY_LIMIT));
