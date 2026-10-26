@@ -41,10 +41,10 @@ const mockURL = {
 // that returns a prebuilt instance is the supported replacement for stubbing
 // the AudioContext/Audio constructors.
 function ctorReturning<T>(instance: T): () => T {
-  function Ctor() {
+  function construct() {
     return instance;
   }
-  return Ctor as unknown as () => T;
+  return construct as unknown as () => T;
 }
 
 describe("notificationSounds", () => {

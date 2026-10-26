@@ -67,10 +67,10 @@ class MockWebSocket extends EventTarget {
 // vitest 4 rejects `mockReturnValue` on a mock invoked with `new`; a plain
 // function that returns a prebuilt instance is the supported replacement.
 function returnsSocket(socket: MockWebSocket): () => WebSocket {
-  function Ctor() {
+  function construct() {
     return socket;
   }
-  return Ctor as unknown as () => WebSocket;
+  return construct as unknown as () => WebSocket;
 }
 
 // Mock WebSocket globally

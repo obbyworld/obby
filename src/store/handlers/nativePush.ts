@@ -36,7 +36,12 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
       ),
     }));
 
-  const useEndpoint = ({ serverId, endpoint, p256dh, auth }: PushEndpoint) => {
+  const registerEndpoint = ({
+    serverId,
+    endpoint,
+    p256dh,
+    auth,
+  }: PushEndpoint) => {
     const server = store.getState().servers.find((s) => s.id === serverId);
     if (!server?.isRegistered) return;
     if (server.pushEndpoint && server.pushEndpoint !== endpoint)
@@ -47,7 +52,7 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
     );
     setEndpoint(serverId, endpoint);
   };
-  void onPushEndpoint(useEndpoint).catch((error) =>
+  void onPushEndpoint(registerEndpoint).catch((error) =>
     console.warn("push endpoint listener failed", error),
   );
   // A distributor that dropped us will not push again, so we take the endpoint
@@ -134,7 +139,7 @@ export function registerNativePushHandlers(store: StoreApi<AppState>): void {
             .getState()
             .servers.find((s) => s.id === serverId);
           if (endpoint && current?.pushEndpoint !== endpoint.endpoint)
-            useEndpoint({ serverId, ...endpoint });
+            registerEndpoint({ serverId, ...endpoint });
         })
         .catch((error) => console.warn("push registration failed", error));
     }
