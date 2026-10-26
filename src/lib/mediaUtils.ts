@@ -256,10 +256,11 @@ function getYouTubeVideoId(url: string): string | null {
 
 // iOS and macOS load the app from the tauri: scheme, which sends YouTube no
 // referrer, so the app serves the player page from loopback and we embed that.
+// We name the host localhost because YouTube refuses an embed on an IP origin.
 let youtubePlayerOrigin: string | null = null;
 if (typeof window !== "undefined" && window.location.protocol === "tauri:") {
   invoke<number | null>("youtube_player_port").then((port) => {
-    if (port) youtubePlayerOrigin = `http://127.0.0.1:${port}`;
+    if (port) youtubePlayerOrigin = `http://localhost:${port}`;
   });
 }
 

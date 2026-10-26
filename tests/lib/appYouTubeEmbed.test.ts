@@ -23,7 +23,7 @@ describe("YouTube under the tauri: scheme", () => {
       "https://youtube.com/shorts/dQw4w9WgXcQ",
     ]) {
       expect(getAppYouTubeEmbedUrl(url)).toBe(
-        "http://127.0.0.1:51234/youtube-embed.html?v=dQw4w9WgXcQ",
+        "http://localhost:51234/youtube-embed.html?v=dQw4w9WgXcQ",
       );
     }
     expect(getAppYouTubeEmbedUrl("https://vimeo.com/1")).toBeNull();

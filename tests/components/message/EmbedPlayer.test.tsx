@@ -4,7 +4,7 @@ import { EmbedPlayer } from "../../../src/components/message/EmbedPlayer";
 
 vi.mock("../../../src/lib/mediaUtils", () => ({
   getAppYouTubeEmbedUrl: (url: string, startAt = 0) =>
-    `http://127.0.0.1:5000/youtube-embed.html?v=abcdefghijk${startAt ? `&start=${startAt}` : ""}`,
+    `http://localhost:5000/youtube-embed.html?v=abcdefghijk${startAt ? `&start=${startAt}` : ""}`,
 }));
 
 const fromPlayer = (iframe: HTMLIFrameElement, data: object) =>
