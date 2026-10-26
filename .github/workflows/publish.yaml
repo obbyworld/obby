@@ -468,13 +468,6 @@ jobs:
           echo "Fallback version code: $FALLBACK_VERSION (1,000,000 + run_number)"
           echo "version_code=$FALLBACK_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Initialize Android project
-        run: npm run tauri android init -- --ci
-        env:
-          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
-          ANDROID_NDK: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
-
       - name: Patch build.gradle.kts to use environment variables
         run: |
           BUILD_GRADLE="src-tauri/gen/android/app/build.gradle.kts"
