@@ -56,7 +56,7 @@ rustPlatform.buildRustPackage (
     npmDeps = fetchNpmDeps {
       name = "obby-npm-deps-${version}";
       inherit src;
-      hash = "sha256-PIkWWMNpZjG9JOdUpdwJmMRAfNTWtP3sC/Dc2Xa8Erg=";
+      hash = "sha256-wPz64O5pCoL1RlRgXmKd0EpAeFu6DU39q5VKAKAJLa0=";
     };
 
     nativeBuildInputs = [
