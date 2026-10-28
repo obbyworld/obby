@@ -42,7 +42,31 @@ async fn open_external_url(app: tauri::AppHandle, url: String) -> Result<(), Str
 
 #[tauri::command]
 async fn download_image(app: tauri::AppHandle, url: String) -> Result<String, String> {
-    download_image_impl(app, url).await
+    let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
+    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
+    save_bytes(app, extract_filename(&url), bytes.to_vec()).await?;
+    Ok(String::new())
+}
+
+/// Saves a file the webview holds, such as an attachment that has not been sent.
+/// We take the bytes as the raw request body because a recording can be hundreds
+/// of megabytes, and the name as base64 because a header carries only ASCII.
+#[tauri::command]
+async fn save_file(app: tauri::AppHandle, request: tauri::ipc::Request<'_>) -> Result<(), String> {
+    use base64::Engine;
+
+    let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else {
+        return Err("expected the file as raw bytes".into());
+    };
+    let filename = request
+        .headers()
+        .get("x-file-name")
+        .and_then(|value| value.to_str().ok())
+        .and_then(|value| base64::engine::general_purpose::STANDARD.decode(value).ok())
+        .and_then(|name| String::from_utf8(name).ok())
+        .filter(|name| !name.is_empty())
+        .unwrap_or_else(|| "file".into());
+    save_bytes(app, filename, bytes.clone()).await
 }
 
 fn extract_filename(url: &str) -> String {
@@ -55,11 +79,11 @@ fn extract_filename(url: &str) -> String {
 }
 
 #[cfg(desktop)]
-async fn download_image_impl(_app: tauri::AppHandle, url: String) -> Result<String, String> {
-    let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
-    let filename = extract_filename(&url);
-    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
-
+async fn save_bytes(
+    _app: tauri::AppHandle,
+    filename: String,
+    bytes: Vec<u8>,
+) -> Result<(), String> {
     if let Some(file) = rfd::AsyncFileDialog::new()
         .set_file_name(&filename)
         .save_file()
@@ -67,15 +91,15 @@ async fn download_image_impl(_app: tauri::AppHandle, url: String) -> Result<Stri
     {
         std::fs::write(file.path(), &bytes).map_err(|e| e.to_string())?;
     }
-    Ok(String::new())
+    Ok(())
 }
 
 #[cfg(target_os = "ios")]
-async fn download_image_impl(_app: tauri::AppHandle, url: String) -> Result<String, String> {
-    let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
-    let filename = extract_filename(&url);
-    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
-
+async fn save_bytes(
+    _app: tauri::AppHandle,
+    filename: String,
+    bytes: Vec<u8>,
+) -> Result<(), String> {
     // Write to the temp directory; iOS cleans this up automatically.
     let tmp_path = std::env::temp_dir().join(&filename);
     std::fs::write(&tmp_path, &bytes).map_err(|e| e.to_string())?;
@@ -84,16 +108,12 @@ async fn download_image_impl(_app: tauri::AppHandle, url: String) -> Result<Stri
         tauri_plugin_share_sheet::share_file(path_str);
     }
 
-    Ok(String::new())
+    Ok(())
 }
 
 #[cfg(target_os = "android")]
-async fn download_image_impl(app: tauri::AppHandle, url: String) -> Result<String, String> {
+async fn save_bytes(app: tauri::AppHandle, filename: String, bytes: Vec<u8>) -> Result<(), String> {
     use tauri_plugin_dialog::DialogExt;
-
-    let response = reqwest::get(&url).await.map_err(|e| e.to_string())?;
-    let filename = extract_filename(&url);
-    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
 
     if bytes.is_empty() {
         return Err("Downloaded file is empty".to_string());
@@ -109,13 +129,11 @@ async fn download_image_impl(app: tauri::AppHandle, url: String) -> Result<Strin
         });
 
     if let Ok(Some(dest)) = rx.await {
-        // Convert bytes::Bytes to Vec so it can be moved into spawn_blocking.
-        let bytes_vec = bytes.to_vec();
         match dest {
             tauri_plugin_dialog::FilePath::Path(path) => {
                 // Rare on Android but handle it — run on a blocking thread.
                 tokio::task::spawn_blocking(move || {
-                    std::fs::write(&path, &bytes_vec).map_err(|e| e.to_string())
+                    std::fs::write(&path, &bytes).map_err(|e| e.to_string())
                 })
                 .await
                 .map_err(|e| format!("Thread join error: {e}"))??;
@@ -127,15 +145,13 @@ async fn download_image_impl(app: tauri::AppHandle, url: String) -> Result<Strin
                 // because Tauri needs them to remain JVM-attached to route the result
                 // back to JavaScript via WebView.evaluateJavascript().
                 let uri_str = uri.to_string();
-                tokio::task::spawn_blocking(move || {
-                    write_bytes_to_content_uri(&bytes_vec, &uri_str)
-                })
-                .await
-                .map_err(|e| format!("Thread join error: {e}"))??;
+                tokio::task::spawn_blocking(move || write_bytes_to_content_uri(&bytes, &uri_str))
+                    .await
+                    .map_err(|e| format!("Thread join error: {e}"))??;
             }
         }
     }
-    Ok(String::new())
+    Ok(())
 }
 
 #[cfg(target_os = "android")]
@@ -311,6 +327,7 @@ pub fn run() {
             listen,
             send,
             download_image,
+            save_file,
             open_external_url,
             overlay::prepare_region_overlay,
             screen_record::region_recording_supported,

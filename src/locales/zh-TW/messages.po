@@ -4617,6 +4617,11 @@ msgstr "保存"
 msgid "Save failed: {msg}"
 msgstr "儲存失敗：{msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "儲存檔案"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "將訊息儲存在此裝置上，以便你捲動到比伺服器歷史記錄更早的內容。關閉後將不再儲存新訊息，已儲存的訊息會保留。加密的私人訊息永遠不會被儲存。"

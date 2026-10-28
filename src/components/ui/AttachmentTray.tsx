@@ -1,5 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import {
+  FaDownload,
   FaFile,
   FaMapMarkerAlt,
   FaTimes,
@@ -8,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { formatFileSize } from "../../lib/mediaUpload";
+import { saveFileToDevice } from "../../lib/saveFile";
 import HoverTooltip from "./HoverTooltip";
 
 /** Something waiting above the composer to go out with the next message. A
@@ -147,6 +149,21 @@ function AttachmentCard({
       {/* A pointer can ask for these by hovering; a finger has nothing to hover
           with, so there they stay out. */}
       <div className="absolute right-3 top-3 flex items-center overflow-hidden rounded-md bg-discord-dark-200 shadow-lg ring-1 ring-black/40 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
+        {attachment.kind === "file" && (
+          <button
+            type="button"
+            onClick={() =>
+              saveFileToDevice(attachment.file).catch((error) =>
+                console.error("Saving the attachment failed", error),
+              )
+            }
+            aria-label={t`Save file`}
+            title={t`Save file`}
+            className="flex h-8 w-8 items-center justify-center text-discord-text-muted hover:bg-discord-dark-400 hover:text-discord-text-normal"
+          >
+            <FaDownload className="h-3.5 w-3.5" />
+          </button>
+        )}
         <button
           type="button"
           onClick={() => onRemove(attachment.id)}

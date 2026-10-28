@@ -1392,6 +1392,11 @@ export const ChatArea: React.FC<{
         prev.map((j) => (j.id === id ? { ...j, ...patch } : j)),
       );
 
+    // A file that does not go out returns to the composer it came from, so the
+    // user can send it again or save it before it is lost.
+    const bufferKey = channelKey;
+    const failedFiles: File[] = [];
+
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
       initialJobs.map(async (job, jobIdx) => {
@@ -1433,6 +1438,7 @@ export const ChatArea: React.FC<{
           }
           if (validationError) {
             uploadAbortsRef.current.delete(job.id);
+            failedFiles.push(job.file);
             updateJob(job.id, {
               status: "failed",
               error: media
@@ -1464,6 +1470,7 @@ export const ChatArea: React.FC<{
           return media ? buildMediaDescriptor(url, media, job.file) : url;
         } catch (err) {
           uploadAbortsRef.current.delete(job.id);
+          if (!ac.signal.aborted) failedFiles.push(job.file);
           updateJob(job.id, {
             status: "failed",
             error: describeUploadFailure(err),
@@ -1485,6 +1492,7 @@ export const ChatArea: React.FC<{
         // row rather than reporting a delivery that never happened.
         if (!sendEncryptedMedia(selectedServerId, encryptTarget.nick, result)) {
           anyFailed = true;
+          failedFiles.push(initialJobs[index].file);
           updateJob(initialJobs[index].id, {
             status: "failed",
             error: t`Encryption ended before this file was sent. It was not delivered.`,
@@ -1525,6 +1533,8 @@ export const ChatArea: React.FC<{
       }
     }
 
+    if (failedFiles.length > 0) attachFiles(bufferKey, failedFiles);
+
     // Clear the strip after a pause so the user can see the outcome first. A
     // failure is worth reading, so it gets longer than a plain "done".
     setTimeout(
@@ -1546,9 +1556,8 @@ export const ChatArea: React.FC<{
 
   // Every path that picks a file lands here, and nothing leaves the device
   // until the message it belongs to is sent.
-  const handleSelectedFiles = (files: File[]) => {
-    if (files.length === 0) return;
-    updateAttachments(channelKey, (prev) => [
+  const attachFiles = (bufferKey: string, files: File[]) =>
+    updateAttachments(bufferKey, (prev) => [
       ...prev,
       ...files.map((file) => ({
         id: uuidv4(),
@@ -1557,6 +1566,10 @@ export const ChatArea: React.FC<{
         previewUrl: previewable(file) ? URL.createObjectURL(file) : null,
       })),
     ]);
+
+  const handleSelectedFiles = (files: File[]) => {
+    if (files.length === 0) return;
+    attachFiles(channelKey, files);
     inputRef.current?.focus();
   };
 
