@@ -1474,6 +1474,10 @@ msgstr "Branchez une caméra pour partager la vidéo"
 msgid "Connect a microphone to talk"
 msgstr "Branchez un micro pour parler"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "Se connecter à {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Connectez-vous à un serveur pour gérer les paramètres d'opérateur."
@@ -2845,6 +2849,7 @@ msgstr "Serveurs IRC :"
 msgid "is now known as **{newNick}**"
 msgstr "est maintenant connu sous le nom de **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "Rejoindre {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Rejoindre {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "Rejoindre {channels} sur {hostname}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Rejoindre {channels} sur {hostname} avec ta connexion enregistrée."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "Rejoindre {channels} ?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

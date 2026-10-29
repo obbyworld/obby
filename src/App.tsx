@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import type React from "react";
 import { useEffect, useRef } from "react";
@@ -26,6 +27,8 @@ import { useHistoryPoll } from "./lib/historyPoll/useHistoryPoll";
 import ircClient from "./lib/ircClient";
 import { parseIrcUrl } from "./lib/ircUrlParser";
 import { isChannelTarget } from "./lib/ircUtils";
+import { hostnameOf, type JoinLink, parseJoinLink } from "./lib/joinLink";
+import { confirmDestructive } from "./lib/modal/ConfirmDialog";
 import { handleNotificationTaps } from "./lib/notifications";
 import { openNotificationTarget } from "./lib/openNotificationTarget";
 import { isTauri } from "./lib/platformUtils";
@@ -33,6 +36,7 @@ import useStore, { type AppState, loadSavedServers } from "./store";
 import { offerNotificationsOnce } from "./store/handlers/chatNotifications";
 import { isAppInFront } from "./store/helpers";
 import type { ConnectionDetails } from "./store/types";
+import type { Server } from "./types";
 
 /* Channel auto-join from URL query string.
  *
@@ -44,7 +48,18 @@ import type { ConnectionDetails } from "./store/types";
  * from the visible address bar immediately so a refresh doesn't
  * silently re-fire the auto-join. */
 let pendingJoinChannel: string | null = null;
+/* Browsers keep the fragment on the client, so any static deploy
+ * serves links like `/#wss://irc.example.org#lobby`. */
+let pendingJoinLink: JoinLink | null = null;
 if (typeof window !== "undefined") {
+  pendingJoinLink = parseJoinLink(window.location.hash);
+  if (pendingJoinLink) {
+    window.history.replaceState(
+      {},
+      "",
+      window.location.pathname + window.location.search,
+    );
+  }
   try {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("channel");
@@ -106,6 +121,74 @@ const initializeEnvSettings = (
     for (const channel of __DEFAULT_IRC_CHANNELS__) {
       joinChannel(serverId, channel, undefined, { isAutomatic: true });
     }
+  });
+};
+
+const joinWhenReady = (host: string | null, channels: string[]) => {
+  const isTarget = (server: Server) =>
+    !host || hostnameOf(server.host) === hostnameOf(host);
+  const join = (serverId: string) => {
+    const { joinChannel } = useStore.getState();
+    for (const channel of channels) joinChannel(serverId, channel);
+    const [first] = channels;
+    if (!first) return;
+    const state = useStore.getState();
+    const channel = state.servers
+      .find((s) => s.id === serverId)
+      ?.channels.find((c) => c.name.toLowerCase() === first.toLowerCase());
+    if (channel) state.selectChannel(channel.id, { navigate: true });
+  };
+
+  const registered = useStore
+    .getState()
+    .servers.find((s) => s.isRegistered && isTarget(s));
+  if (registered) {
+    join(registered.id);
+    return;
+  }
+  const onReady = ({ serverId }: { serverId: string }) => {
+    const server = useStore.getState().servers.find((s) => s.id === serverId);
+    if (!server || !isTarget(server)) return;
+    ircClient.deleteHook("ready", onReady);
+    join(serverId);
+  };
+  ircClient.on("ready", onReady);
+};
+
+/* A link can name any server, so we ask before we connect or join. A
+ * build tied to one server takes only the link's channels. */
+const offerJoinLink = async (link: JoinLink) => {
+  const host = __DEFAULT_IRC_SERVER__ || link.host;
+  const hostname = hostnameOf(host);
+  const channels = link.channels.join(", ");
+  const isSaved = loadSavedServers().some(
+    (server) => hostnameOf(server.host) === hostname,
+  );
+  if (isSaved) {
+    if (!channels) return;
+    const confirmed = await confirmDestructive(
+      t`Join ${channels}?`,
+      t`Join ${channels} on ${hostname} with your saved login.`,
+      t`Join`,
+      "primary",
+    );
+    if (confirmed) joinWhenReady(host, link.channels);
+    return;
+  }
+  // The user's click on the connect dialog is the consent we need to join.
+  joinWhenReady(host, link.channels);
+  if (__DEFAULT_IRC_SERVER__) return;
+  useStore.getState().toggleAddServerModal(true, {
+    name: hostname,
+    host: link.host,
+    port: String(link.port),
+    nickname: link.nick ?? "",
+    useWebSocket: true,
+    ui: {
+      title: channels
+        ? t`Join ${channels} on ${hostname}`
+        : t`Connect to ${hostname}`,
+    },
   });
 };
 
@@ -216,32 +299,9 @@ const App: React.FC = () => {
     initializeEnvSettings(toggleAddServerModal, joinChannel);
     connectToSavedServers();
 
-    /* Auto-join the channel encoded in `?channel=` on the URL the
-     * user landed on.  Fires on the first server that finishes
-     * registration so persistence reconnects and fresh connects both
-     * get caught.  Channel pending state is module-scoped and
-     * consumed exactly once. */
-    if (pendingJoinChannel) {
-      const onReady = ({ serverId }: { serverId: string }) => {
-        if (!pendingJoinChannel) return;
-        const channel = pendingJoinChannel;
-        pendingJoinChannel = null;
-        joinChannel(serverId, channel);
-        // Wait a tick for the JOIN echo to register the channel in
-        // the store, then focus it.  Same pattern UserProfileModal
-        // uses for click-to-join.
-        setTimeout(() => {
-          const srv = useStore
-            .getState()
-            .servers.find((s) => s.id === serverId);
-          const ch = srv?.channels.find((c) => c.name === channel);
-          if (ch) selectChannel(ch.id, { navigate: true });
-        }, 200);
-        ircClient.deleteHook("ready", onReady);
-      };
-      ircClient.on("ready", onReady);
-    }
-  }, [connectToSavedServers, joinChannel, selectChannel, toggleAddServerModal]);
+    if (pendingJoinChannel) joinWhenReady(null, [pendingJoinChannel]);
+    if (pendingJoinLink) void offerJoinLink(pendingJoinLink);
+  }, [connectToSavedServers, joinChannel, toggleAddServerModal]);
 
   // When the server list is hidden and all saved-server connections fail, the user
   // has no other way to open the login modal, so we open it automatically.

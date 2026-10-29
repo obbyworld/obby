@@ -1474,6 +1474,10 @@ msgstr "ビデオを共有するにはカメラを接続してください"
 msgid "Connect a microphone to talk"
 msgstr "話すにはマイクを接続してください"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "{hostname} に接続"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "オペレーター設定を管理するにはサーバーに接続してください。"
@@ -2845,6 +2849,7 @@ msgstr "IRCサーバー："
 msgid "is now known as **{newNick}**"
 msgstr "は現在 **{newNick}** として知られています"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "{channel} に参加"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "{channelName} に参加"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "{hostname} の {channels} に参加"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "保存したログインで {hostname} の {channels} に参加します。"
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "{channels} に参加しますか？"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

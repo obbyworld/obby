@@ -1474,6 +1474,10 @@ msgstr "영상을 공유하려면 카메라를 연결하세요"
 msgid "Connect a microphone to talk"
 msgstr "말하려면 마이크를 연결하세요"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "{hostname}에 연결"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "운영자 설정을 관리하려면 서버에 연결하세요."
@@ -2845,6 +2849,7 @@ msgstr "IRC 서버:"
 msgid "is now known as **{newNick}**"
 msgstr "이제 **{newNick}**(으)로 알려져 있습니다"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "{channel} 참여"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "{channelName} 참가"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "{hostname}의 {channels}에 참여"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "저장된 로그인으로 {hostname}의 {channels}에 참여합니다."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "{channels}에 참여할까요?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"
