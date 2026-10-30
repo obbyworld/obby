@@ -381,6 +381,10 @@ msgstr "存取控制"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "存取遭拒。請在瀏覽器或系統設定中允許攝影機和麥克風存取，然後再試一次。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "帳戶"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "登入"
 msgid "Log in again"
 msgstr "重新登入"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "已登入為 {0}"
@@ -5785,6 +5789,10 @@ msgstr "使用安全的 WebSocket 連接埠。"
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "使用支援 IRCv3 METADATA 的伺服器設定大頭貼、顯示名稱與狀態。"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "密碼中只能使用拉丁字元"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

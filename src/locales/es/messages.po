@@ -381,6 +381,10 @@ msgstr "Control de acceso"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Acceso denegado. Permite el acceso a la cámara y al micrófono en la configuración de tu navegador o sistema, y vuelve a intentarlo."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "cuenta"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "Iniciar sesión"
 msgid "Log in again"
 msgstr "Iniciar sesión de nuevo"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "Sesión iniciada como {0}"
@@ -5785,6 +5789,10 @@ msgstr "Usa un puerto websocket seguro."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Usa un servidor con IRCv3 METADATA para definir tu avatar, nombre visible y estado."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Usa solo caracteres latinos en la contraseña"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

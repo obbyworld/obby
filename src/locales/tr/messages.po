@@ -381,6 +381,10 @@ msgstr "Erişim denetimi"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Erişim reddedildi. Tarayıcı veya sistem ayarlarından kamera ve mikrofon erişimine izin ver, ardından tekrar dene."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "hesap"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "Giriş yap"
 msgid "Log in again"
 msgstr "Tekrar giriş yap"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "{0} olarak giriş yapıldı"
@@ -5785,6 +5789,10 @@ msgstr "Güvenli bir websocket portu kullanın."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Avatarınızı, görünen adınızı ve durumunuzu ayarlamak için IRCv3 METADATA destekleyen bir sunucu kullanın."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Parolada yalnızca Latin karakterleri kullanın"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

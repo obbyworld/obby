@@ -19,11 +19,11 @@ interface NetworkMenuProps {
   onReorder: () => void;
 }
 
-export function editConnection(serverId: string) {
+export function editConnection(serverId: string, section?: "auth") {
   const store = useStore.getState();
   const server = store.servers.find((s) => s.id === serverId);
   if (server?.bouncerNetid) store.editBouncerNetwork(serverId);
-  else store.openPage({ kind: "serverSettings", serverId });
+  else store.openPage({ kind: "serverSettings", serverId, section });
 }
 
 export const NetworkMenu: React.FC<NetworkMenuProps> = ({

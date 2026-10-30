@@ -9,6 +9,7 @@ import {
   FaUnlink,
 } from "react-icons/fa";
 import useStore from "../../store";
+import { getLoginState } from "../../store/helpers";
 import type { Server } from "../../types";
 import { editConnection } from "./NetworkMenu";
 
@@ -17,7 +18,7 @@ type Trouble = "lost" | "retrying" | "auth";
 function getTrouble(server: Server): Trouble | null {
   if (server.connectionState === "disconnected") return "lost";
   if (server.connectionState === "reconnecting") return "retrying";
-  if (server.isConnected && server.saslFailed) return "auth";
+  if (getLoginState(server) === "failed") return "auth";
   return null;
 }
 
@@ -59,7 +60,6 @@ const actionClass =
 
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
-  const openPage = useStore((state) => state.openPage);
   const trouble = useSettledTrouble(getTrouble(server));
   if (!trouble) return null;
 
@@ -84,11 +84,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             type="button"
             className={`${actionClass} button-primary`}
             onClick={() =>
-              openPage({
-                kind: "serverSettings",
-                serverId: server.bouncerServerId ?? server.id,
-                section: "auth",
-              })
+              editConnection(server.bouncerServerId ?? server.id, "auth")
             }
           >
             <FaSignInAlt />

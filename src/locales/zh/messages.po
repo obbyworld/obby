@@ -381,6 +381,10 @@ msgstr "访问控制"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "访问被拒绝。请在浏览器或系统设置中允许摄像头和麦克风访问，然后重试。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "账户"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "登录"
 msgid "Log in again"
 msgstr "重新登录"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "已登录为 {0}"
@@ -5785,6 +5789,10 @@ msgstr "使用安全的 WebSocket 端口。"
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "使用支持 IRCv3 METADATA 的服务器设置头像、显示名称和状态。"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "密码中只能使用拉丁字符"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

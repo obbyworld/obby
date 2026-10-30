@@ -381,6 +381,10 @@ msgstr "Käyttöoikeudet"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Käyttöoikeus evättiin. Salli kameran ja mikrofonin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "tili"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "Kirjaudu sisään"
 msgid "Log in again"
 msgstr "Kirjaudu uudelleen"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "Kirjautunut tilillä {0}"
@@ -5785,6 +5789,10 @@ msgstr "Käytä suojattua websocket-porttia."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Käytä IRCv3 METADATA -tukea palvelinta asettaaksesi profiilikuvan, näyttönimen ja tilan."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Käytä salasanassa vain latinalaisia merkkejä"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

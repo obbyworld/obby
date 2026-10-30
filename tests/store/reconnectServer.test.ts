@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import ircClient from "../../src/lib/ircClient";
-import type { AppState } from "../../src/store";
 import useStore from "../../src/store";
+import type { Server } from "../../src/types";
 
 const serverId = "srv-relogin";
 
@@ -23,20 +23,17 @@ describe("reconnectServer", () => {
             },
           ]),
     );
-    useStore.setState({
-      servers: [
-        {
-          id: serverId,
-          name: "s",
-          host: "irc.example.com",
-          port: 443,
-          channels: [],
-          privateChats: [],
-          isConnected: true,
-          users: [],
-        },
-      ],
-    } as unknown as AppState);
+    const server: Server = {
+      id: serverId,
+      name: "s",
+      host: "irc.example.com",
+      port: 443,
+      channels: [],
+      privateChats: [],
+      isConnected: true,
+      users: [],
+    };
+    useStore.setState({ servers: [server] });
   });
 
   test("closes a live connection and logs in again with the saved credentials", async () => {

@@ -381,6 +381,10 @@ msgstr "Control al accesului"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Accesul a fost refuzat. Permiteți accesul la cameră și microfon din setările browserului sau ale sistemului, apoi încercați din nou."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "cont"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "Autentifică-te"
 msgid "Log in again"
 msgstr "Conectează-te din nou"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "Autentificat ca {0}"
@@ -5785,6 +5789,10 @@ msgstr "Folosiți un port websocket securizat."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Folosiți un server cu IRCv3 METADATA pentru a seta avatarul, numele afișat și starea."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Folosește doar caractere latine în parolă"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

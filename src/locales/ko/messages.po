@@ -381,6 +381,10 @@ msgstr "접근 제어"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 카메라와 마이크 액세스를 허용한 후 다시 시도하세요."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "계정"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "로그인"
 msgid "Log in again"
 msgstr "다시 로그인"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "{0}(으)로 로그인됨"
@@ -5785,6 +5789,10 @@ msgstr "보안 웹소켓 포트를 사용하세요."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "아바타, 표시 이름, 상태를 설정하려면 IRCv3 METADATA를 지원하는 서버를 사용하세요."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "비밀번호에는 라틴 문자만 사용하세요"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

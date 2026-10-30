@@ -1,10 +1,14 @@
 import { t } from "@lingui/core/macro";
 import type React from "react";
-import { type ReactNode, useEffect, useReducer, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
 import useStore, { loadSavedServers } from "../../store";
-import { normalizeHost } from "../../store/helpers";
+import {
+  getLoginState,
+  type LoginState,
+  normalizeHost,
+} from "../../store/helpers";
 import type { Server, ServerConfig, ServerOAuthConfig } from "../../types";
 import ChangePasswordModal from "../ui/ChangePasswordModal";
 import LoadingSpinner from "../ui/LoadingSpinner";
@@ -55,67 +59,66 @@ const forgottenPasswords: Partial<ServerConfig> = {
   saslEnabled: false,
 };
 
-// Credentials only take effect on a new login, so this section saves them with
-// its Log in button and reconnects, which shows the result right away.
+const loadServerConfig = (serverId: string): ServerConfig | undefined =>
+  loadSavedServers().find((s) => s.id === serverId);
+
+// Credentials only take effect on a new login, so we save them with Log in and reconnect.
 const LoginSection: React.FC<{
+  serverId: string;
   server: Server | undefined;
-  serverConfig: ServerConfig | undefined;
   onRecover: () => void;
   onChangePassword: () => void;
-}> = ({ server, serverConfig, onRecover, onChangePassword }) => {
+}> = ({ serverId, server, onRecover, onChangePassword }) => {
   const { updateServer, reconnectServer } = useStore();
+  const [serverConfig, setServerConfig] = useState(() =>
+    loadServerConfig(serverId),
+  );
   const [account, setAccount] = useState(serverConfig?.saslAccountName ?? "");
   const [saslPassword, setSaslPassword] = useState("");
   const [password, setPassword] = useState("");
-  const [, refresh] = useReducer((n: number) => n + 1, 0);
+  const [isPasswordUnencodable, setIsPasswordUnencodable] = useState(false);
   if (!serverConfig) return null;
 
-  const isLoggingIn =
-    server?.connectionState === "connecting" ||
-    (server?.isConnected && !server.isRegistered);
+  const loginState = getLoginState(server);
 
-  const logIn = () => {
-    updateServer(serverConfig.id, {
+  const saveConfig = (config: Partial<ServerConfig>): void => {
+    updateServer(serverId, config);
+    setServerConfig(loadServerConfig(serverId));
+    setSaslPassword("");
+    setPassword("");
+  };
+
+  const logIn = (): void => {
+    // We store SASL passwords with btoa, which takes only Latin-1 characters.
+    const isUnencodable = [...saslPassword].some(
+      (char) => char.charCodeAt(0) > 0xff,
+    );
+    setIsPasswordUnencodable(isUnencodable);
+    if (isUnencodable) return;
+    saveConfig({
       saslAccountName: account.trim() || serverConfig.nickname || undefined,
-      // The stored format expects SASL passwords base64-encoded, so we encode them here.
       ...(saslPassword
         ? { saslPassword: btoa(saslPassword), saslEnabled: true }
         : {}),
       ...(password ? { password } : {}),
     });
-    setSaslPassword("");
-    setPassword("");
-    reconnectServer(serverConfig.id);
+    reconnectServer(serverId);
   };
 
-  const forgetPasswords = () => {
-    updateServer(serverConfig.id, forgottenPasswords);
-    setSaslPassword("");
-    setPassword("");
-    refresh();
-  };
-
-  const status = (): ReactNode => {
-    if (isLoggingIn)
-      return (
-        <LoadingSpinner
-          size="sm"
-          text={t`Logging in`}
-          className="!flex-row !space-y-0 gap-2"
-        />
-      );
-    if (server?.saslFailed)
-      return (
-        <span className="text-discord-red">
-          {t`Sign-in failed. Check the account name and password`}
-        </span>
-      );
-    if (server?.account)
-      return (
-        <span className="text-discord-green">{t`Logged in as ${server.account}`}</span>
-      );
-    if (server?.isConnected) return t`Connected as a guest`;
-    return t`Not connected`;
+  const loginStatus: Record<LoginState, ReactNode> = {
+    connecting: t`Logging in`,
+    failed: (
+      <span className="text-discord-red">
+        {t`Sign-in failed. Check the account name and password`}
+      </span>
+    ),
+    loggedIn: (
+      <span className="text-discord-green">
+        {t`Logged in as ${server?.account ?? ""}`}
+      </span>
+    ),
+    guest: t`Connected as a guest`,
+    offline: t`Not connected`,
   };
 
   return (
@@ -135,7 +138,7 @@ const LoginSection: React.FC<{
             <TextInput
               value={account}
               onChange={(e) => setAccount(e.target.value)}
-              placeholder={serverConfig.nickname || "account"}
+              placeholder={serverConfig.nickname || t`account`}
               autoComplete="username"
               className="field-input"
             />
@@ -144,6 +147,13 @@ const LoginSection: React.FC<{
         <SettingRow
           id="server.saslPassword"
           title={t`Password`}
+          description={
+            isPasswordUnencodable && (
+              <span role="alert" className="text-discord-red">
+                {t`Use only Latin characters in the password`}
+              </span>
+            )
+          }
           field={
             <TextInput
               type="password"
@@ -179,11 +189,20 @@ const LoginSection: React.FC<{
           }
         />
         <SettingRow
-          title={status()}
+          title={
+            <span role="status" aria-live="polite">
+              {loginStatus[loginState]}
+            </span>
+          }
           control={
-            <Button type="submit" disabled={isLoggingIn}>
-              {t`Log in`}
-            </Button>
+            <div className="flex items-center gap-3">
+              {loginState === "connecting" && (
+                <LoadingSpinner size="sm" text="" />
+              )}
+              <Button type="submit" disabled={loginState === "connecting"}>
+                {t`Log in`}
+              </Button>
+            </div>
           }
         />
       </SettingGroup>
@@ -194,7 +213,10 @@ const LoginSection: React.FC<{
             title={t`Stored passwords`}
             description={t`Forget the stored SASL and server passwords to stop sending them on connect.`}
             control={
-              <Button variant="secondary" onClick={forgetPasswords}>
+              <Button
+                variant="secondary"
+                onClick={() => saveConfig(forgottenPasswords)}
+              >
                 {t`Forget passwords`}
               </Button>
             }
@@ -230,7 +252,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
 }) => {
   const { servers, updateServer, sendRaw, isConnecting } = useStore();
   const server = servers.find((s) => s.id === page.serverId);
-  const serverConfig = loadSavedServers().find((s) => s.id === page.serverId);
+  const serverConfig = loadServerConfig(page.serverId);
 
   const [baseline, setBaseline] = useState<Draft>(() =>
     savedDraft(server, serverConfig),
@@ -308,14 +330,12 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         oauth: draft.oauth,
       };
       updateServer(page.serverId, updatedConfig);
-      const saved: Draft = draft.forgetOperCredentials
-        ? {
-            ...draft,
-            operName: "",
-            operPassword: "",
-            forgetOperCredentials: false,
-          }
-        : draft;
+      const saved: Draft = {
+        ...draft,
+        operName: draft.forgetOperCredentials ? "" : draft.operName,
+        operPassword: "",
+        forgetOperCredentials: false,
+      };
       setDraft(saved);
       setBaseline(saved);
     } catch (err) {
@@ -340,11 +360,14 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
     [],
   );
 
-  const operPassword =
+  const effectiveOperPassword =
     draft.operPassword.trim() ||
     (serverConfig?.operPassword ? atob(serverConfig.operPassword) : "");
   const handleOperUp = () =>
-    sendRaw(page.serverId, `OPER ${draft.operName.trim()} ${operPassword}`);
+    sendRaw(
+      page.serverId,
+      `OPER ${draft.operName.trim()} ${effectiveOperPassword}`,
+    );
 
   const operStatus = (): ReactNode => {
     if (serverConfig?.operUsername)
@@ -485,7 +508,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
           description={t`Send OPER with the name and password above now.`}
           control={
             <Button
-              disabled={!draft.operName.trim() || !operPassword}
+              disabled={!draft.operName.trim() || !effectiveOperPassword}
               onClick={handleOperUp}
             >
               {t`Oper up`}
@@ -500,8 +523,8 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
     general: generalSection,
     auth: (
       <LoginSection
+        serverId={page.serverId}
         server={server}
-        serverConfig={serverConfig}
         onRecover={() => setShowRecovery(true)}
         onChangePassword={() => setShowChangePassword(true)}
       />

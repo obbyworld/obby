@@ -1067,7 +1067,7 @@ export class IRCClient implements IRCClientContext {
       const message =
         quitMessage || i18n._({ id: "Obby - Bringing IRC to the future" });
       socket.send(`QUIT :${message}`);
-      // We end this connection on purpose, so its close must not start the automatic reconnect.
+      // We end this connection on purpose, so we detach onclose to skip the automatic reconnect.
       socket.onclose = null;
       socket.close();
       this.sockets.delete(serverId);

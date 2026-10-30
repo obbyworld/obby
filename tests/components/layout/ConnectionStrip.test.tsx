@@ -4,17 +4,17 @@ import { ConnectionStrip } from "../../../src/components/layout/ConnectionStrip"
 import type { Server } from "../../../src/types";
 
 const reconnectServer = vi.fn();
-const openPage = vi.fn();
+const editConnection = vi.hoisted(() => vi.fn());
 
 vi.mock("../../../src/store", () => {
   const mockStore = vi.fn((selector: (state: unknown) => unknown) =>
-    selector({ reconnectServer, openPage }),
+    selector({ reconnectServer }),
   );
   return { default: mockStore };
 });
 
 vi.mock("../../../src/components/layout/NetworkMenu", () => ({
-  editConnection: vi.fn(),
+  editConnection,
 }));
 
 function renderSettled(server: Server) {
@@ -91,12 +91,8 @@ describe("ConnectionStrip", () => {
   });
 
   it("opens the login form from 'Log in again' when SASL failed", () => {
-    renderSettled({ ...baseServer, isConnected: true, saslFailed: true });
+    renderSettled({ ...baseServer, isRegistered: true, saslFailed: true });
     fireEvent.click(screen.getByRole("button", { name: /log in again/i }));
-    expect(openPage).toHaveBeenCalledWith({
-      kind: "serverSettings",
-      serverId: "server1",
-      section: "auth",
-    });
+    expect(editConnection).toHaveBeenCalledWith("server1", "auth");
   });
 });

@@ -381,6 +381,10 @@ msgstr "Řízení přístupu"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Přístup byl odepřen. Povolte přístup ke kameře a mikrofonu v nastavení prohlížeče nebo systému a zkuste to znovu."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "účet"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -3104,7 +3108,7 @@ msgstr "Přihlásit se"
 msgid "Log in again"
 msgstr "Přihlásit se znovu"
 
-#. placeholder {0}: server.account
+#. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Logged in as {0}"
 msgstr "Přihlášeno jako {0}"
@@ -5785,6 +5789,10 @@ msgstr "Použijte port zabezpečeného websocketu."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Použijte server s IRCv3 METADATA pro nastavení avataru, zobrazovaného jména a stavu."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "V hesle použijte jen latinková písmena"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"
