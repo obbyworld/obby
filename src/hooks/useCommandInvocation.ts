@@ -46,6 +46,8 @@ export function useCommandInvocation({
   const [invocation, setInvocation] = useState<CommandInvocation | null>(null);
   const [highlight, setHighlight] = useState(0);
   const stashedDraft = useRef<string | null>(null);
+  const onRunRef = useRef(onRun);
+  onRunRef.current = onRun;
 
   const params = invocation?.command.options ?? [];
   const activeParam = invocation ? params[invocation.active] : undefined;
@@ -75,6 +77,7 @@ export function useCommandInvocation({
       if (!serverId) return;
       if (!needsArguments(command)) {
         sendBotCommand(serverId, channel, botNick, command, {});
+        onRunRef.current({ botNick, command, values: {} });
         return;
       }
       if (stashedDraft.current === null) {

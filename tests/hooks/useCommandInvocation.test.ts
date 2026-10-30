@@ -79,6 +79,11 @@ describe("useCommandInvocation", () => {
       { name: "aimodels", options: [] },
       {},
     );
+    expect(onRun).toHaveBeenCalledWith({
+      botNick: "bot",
+      command: { name: "aimodels", options: [] },
+      values: {},
+    });
     expect(hook.result.current.invocation).toBeNull();
   });
 

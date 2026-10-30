@@ -1696,7 +1696,12 @@ export const ChatArea: React.FC<{
     const isModKey = isMac ? e.metaKey || e.ctrlKey : e.ctrlKey;
 
     const isHistoryKey = e.key === "ArrowUp" || e.key === "ArrowDown";
-    if (isHistoryKey && messageHistory.messageHistoryIndex >= 0)
+    if (
+      isHistoryKey &&
+      !isModKey &&
+      command.invocation &&
+      messageHistory.messageHistoryIndex >= 0
+    )
       command.cancel();
     else if (command.handleKey(e)) return;
 

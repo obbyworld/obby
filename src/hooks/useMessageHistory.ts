@@ -14,6 +14,10 @@ const SECRET_INPUT =
   /^\/(?:oper|pass|password|identify|register|ghost|recover|regain|setpass|sendpass|resetpass|login|auth|sasl|quote|raw|ns|nickserv)\b|^\/msg\s+\S*serv\b/i;
 const SERVICE_NICK = /serv$/i;
 
+const isSecretRun = (run: BotCommandRun): boolean =>
+  SECRET_INPUT.test(`/${run.command.name}`) ||
+  !!run.command.options?.some((option) => option.type === "password");
+
 // We keep only what the user typed in this session, since a bot or another
 // session could put text in the chat that recall would then send as ours.
 const sentByBuffer = new Map<string, SentInput[]>();
@@ -25,8 +29,11 @@ export function recordSentInput(
 ): void {
   if (!bufferKey) return;
   if (typeof input === "string") {
-    const line = input.trim();
-    if (line === "" || SECRET_INPUT.test(line)) return;
+    const lines = input.split("\n").map((line) => line.trim());
+    if (input.trim() === "" || lines.some((line) => SECRET_INPUT.test(line)))
+      return;
+  } else if (isSecretRun(input)) {
+    return;
   }
   if (privateChatNick && SERVICE_NICK.test(privateChatNick)) return;
   const sent = sentByBuffer.get(bufferKey) ?? [];

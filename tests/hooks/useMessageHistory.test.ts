@@ -69,9 +69,24 @@ describe("useMessageHistory", () => {
       "/msg NickServ IDENTIFY hunter2",
       "/PASS hunter2",
       "/quote PASS hunter2",
+      "hello\n/oper admin hunter2",
     ])
       recordSentInput("s-#secret", line);
     recordSentInput("s-nickserv", "IDENTIFY hunter2", "NickServ");
+    recordSentInput("s-#secret", {
+      botNick: "bot",
+      command: {
+        name: "connect",
+        options: [{ name: "key", type: "password" }],
+      },
+      values: { key: "hunter2" },
+    });
+    recordSentInput("s-#secret", {
+      botNick: "bot",
+      command: { name: "login" },
+      values: {},
+    });
+    expect(walk("s-#secret", ["up"])).toEqual([null]);
     expect(walk("s-nickserv", ["up"])).toEqual([null]);
     recordSentInput("s-#secret", "/msg friend hi");
     expect(walk("s-#secret", ["up", "up"])).toEqual([
