@@ -246,6 +246,7 @@ export const ChatArea: React.FC<{
   // PRIVMSG with the URLs joined.
   const [uploadJobs, setUploadJobs] = useState<UploadJob[]>([]);
   const uploadAbortsRef = useRef<Map<string, AbortController>>(new Map());
+  const cancelledUploadsRef = useRef<Set<string>>(new Set());
   // Files held back because sending them would break the lock this
   // conversation is showing. Released only by an explicit confirmation.
   const [pendingPlainUpload, setPendingPlainUpload] = useState<{
@@ -1392,6 +1393,11 @@ export const ChatArea: React.FC<{
         prev.map((j) => (j.id === id ? { ...j, ...patch } : j)),
       );
 
+    // A file that does not go out returns to the composer it came from, so the
+    // user can send it again or save it before it is lost.
+    const bufferKey = channelKey;
+    const failedJobs: UploadJob[] = [];
+
     // Run all uploads in parallel; collect URLs in original input order.
     const results = await Promise.all(
       initialJobs.map(async (job, jobIdx) => {
@@ -1433,6 +1439,7 @@ export const ChatArea: React.FC<{
           }
           if (validationError) {
             uploadAbortsRef.current.delete(job.id);
+            failedJobs.push(job);
             updateJob(job.id, {
               status: "failed",
               error: media
@@ -1464,6 +1471,7 @@ export const ChatArea: React.FC<{
           return media ? buildMediaDescriptor(url, media, job.file) : url;
         } catch (err) {
           uploadAbortsRef.current.delete(job.id);
+          failedJobs.push(job);
           updateJob(job.id, {
             status: "failed",
             error: describeUploadFailure(err),
@@ -1485,6 +1493,7 @@ export const ChatArea: React.FC<{
         // row rather than reporting a delivery that never happened.
         if (!sendEncryptedMedia(selectedServerId, encryptTarget.nick, result)) {
           anyFailed = true;
+          failedJobs.push(initialJobs[index]);
           updateJob(initialJobs[index].id, {
             status: "failed",
             error: t`Encryption ended before this file was sent. It was not delivered.`,
@@ -1525,6 +1534,13 @@ export const ChatArea: React.FC<{
       }
     }
 
+    // A job the user cancelled stays gone, even when it fails after the cancel.
+    const returnedFiles = failedJobs
+      .filter((job) => !cancelledUploadsRef.current.has(job.id))
+      .map((job) => job.file);
+    for (const job of initialJobs) cancelledUploadsRef.current.delete(job.id);
+    if (returnedFiles.length > 0) attachFiles(bufferKey, returnedFiles);
+
     // Clear the strip after a pause so the user can see the outcome first. A
     // failure is worth reading, so it gets longer than a plain "done".
     setTimeout(
@@ -1541,14 +1557,14 @@ export const ChatArea: React.FC<{
   const cancelUploadJob = (id: string) => {
     const ac = uploadAbortsRef.current.get(id);
     if (ac) ac.abort();
+    cancelledUploadsRef.current.add(id);
     setUploadJobs((prev) => prev.filter((j) => j.id !== id));
   };
 
   // Every path that picks a file lands here, and nothing leaves the device
   // until the message it belongs to is sent.
-  const handleSelectedFiles = (files: File[]) => {
-    if (files.length === 0) return;
-    updateAttachments(channelKey, (prev) => [
+  const attachFiles = (bufferKey: string, files: File[]) =>
+    updateAttachments(bufferKey, (prev) => [
       ...prev,
       ...files.map((file) => ({
         id: uuidv4(),
@@ -1557,6 +1573,10 @@ export const ChatArea: React.FC<{
         previewUrl: previewable(file) ? URL.createObjectURL(file) : null,
       })),
     ]);
+
+  const handleSelectedFiles = (files: File[]) => {
+    if (files.length === 0) return;
+    attachFiles(channelKey, files);
     inputRef.current?.focus();
   };
 

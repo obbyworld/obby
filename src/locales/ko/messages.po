@@ -4617,6 +4617,12 @@ msgstr "저장"
 msgid "Save failed: {msg}"
 msgstr "저장 실패: {msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "파일 저장"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "이 기기에 메시지를 저장하여 서버 기록보다 더 이전으로 스크롤하세요. 끄면 새 메시지 저장이 중지되고 이미 저장된 메시지는 유지됩니다. 암호화된 개인 메시지는 저장되지 않습니다."
@@ -4641,6 +4647,11 @@ msgstr "저장된 기록"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "이 기기에 저장됨"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "{caption} 저장에 실패했습니다"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

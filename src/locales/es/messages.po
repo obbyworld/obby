@@ -4617,6 +4617,12 @@ msgstr "Guardar"
 msgid "Save failed: {msg}"
 msgstr "Error al guardar: {msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "Guardar archivo"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "Guarda los mensajes en este dispositivo para poder desplazarte más atrás que el historial del servidor. Si lo desactivas, dejan de guardarse los mensajes nuevos y se conservan los ya guardados. Los mensajes privados cifrados nunca se guardan."
@@ -4641,6 +4647,11 @@ msgstr "Historial guardado"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Guardado en este dispositivo"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "No se pudo guardar {caption}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

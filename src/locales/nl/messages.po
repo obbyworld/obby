@@ -4617,6 +4617,12 @@ msgstr "Opslaan"
 msgid "Save failed: {msg}"
 msgstr "Opslaan mislukt: {msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "Bestand opslaan"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "Sla berichten op dit apparaat op zodat je verder kunt terugscrollen dan de geschiedenis van de server. Als je dit uitzet, worden nieuwe berichten niet meer opgeslagen en blijven de al opgeslagen berichten bewaard. Versleutelde privéberichten worden nooit opgeslagen."
@@ -4641,6 +4647,11 @@ msgstr "Opgeslagen geschiedenis"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Opgeslagen op dit apparaat"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Opslaan van {caption} mislukt"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

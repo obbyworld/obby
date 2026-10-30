@@ -5,6 +5,9 @@ import {
   type PendingAttachment,
 } from "../../src/components/ui/AttachmentTray";
 
+const saveFileToDevice = vi.hoisted(() => vi.fn(() => Promise.resolve()));
+vi.mock("../../src/lib/saveFile", () => ({ saveFileToDevice }));
+
 afterEach(cleanup);
 
 function file(name: string, type: string): PendingAttachment {
@@ -41,6 +44,19 @@ describe("AttachmentTray", () => {
 
     expect(onRemove).toHaveBeenCalledWith("a.png");
     expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it("saves a queued file without removing it", () => {
+    const onRemove = vi.fn();
+    const video = file("clip.mp4", "video/mp4");
+    render(<AttachmentTray attachments={[video]} onRemove={onRemove} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /save file/i }));
+
+    expect(saveFileToDevice).toHaveBeenCalledWith(
+      video.kind === "file" ? video.file : null,
+    );
+    expect(onRemove).not.toHaveBeenCalled();
   });
 
   it("drops everything at once", () => {

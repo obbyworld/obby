@@ -4617,6 +4617,12 @@ msgstr "Salva"
 msgid "Save failed: {msg}"
 msgstr "Salvataggio fallito: {msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "Salva file"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "Salva i messaggi su questo dispositivo per scorrere più indietro della cronologia del server. Disattivandolo si smette di salvare i nuovi messaggi, ma quelli già salvati restano. I messaggi privati cifrati non vengono mai salvati."
@@ -4641,6 +4647,11 @@ msgstr "Cronologia salvata"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Salvato su questo dispositivo"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Salvataggio di {caption} non riuscito"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

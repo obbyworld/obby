@@ -4617,6 +4617,12 @@ msgstr "Speichern"
 msgid "Save failed: {msg}"
 msgstr "Speichern fehlgeschlagen: {msg}"
 
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Save file"
+msgstr "Datei speichern"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Save messages on this device so you can scroll back further than the server's history. Turning this off stops saving new messages and keeps the ones already saved. Encrypted private messages are never saved."
 msgstr "Speichere Nachrichten auf diesem Gerät, damit du weiter zurückscrollen kannst als im Verlauf des Servers. Wenn du das ausschaltest, werden neue Nachrichten nicht mehr gespeichert, bereits gespeicherte bleiben erhalten. Verschlüsselte private Nachrichten werden nie gespeichert."
@@ -4641,6 +4647,11 @@ msgstr "Gespeicherter Verlauf"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Auf diesem Gerät gespeichert"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Speichern von {caption} fehlgeschlagen"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."
