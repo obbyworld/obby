@@ -133,8 +133,8 @@ export function emojiProvider(
     cycleKeys: CYCLE_KEYS,
     closeKeys: EMOJI_CLOSE_KEYS,
     match: (text, caret) => {
-      // We start a shortcode only after a space, so times like 12:30 stay text.
-      const found = /(?:^|\s):([\w+-]*)$/.exec(text.slice(0, caret));
+      // We start a shortcode only after a non-word character, so times like 12:30 stay text.
+      const found = /(?:^|[^\w:]):([\w+-]*)$/.exec(text.slice(0, caret));
       if (!found) return null;
       const start = caret - found[1].length - 1;
       return { query: found[1], start, end: caret };

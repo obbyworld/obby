@@ -98,6 +98,11 @@ describe("emojiProvider", () => {
   it("leaves a colon inside a word as text", () => {
     expect(provider.match("at 12:30", 8)).toBeNull();
     expect(provider.match("host:8080", 9)).toBeNull();
+    expect(provider.match("::", 2)).toBeNull();
+  });
+
+  it("starts a shortcode right after an emoji", () => {
+    expect(complete(provider, "👍:grin")).toBe("👍😀");
   });
 
   it("claims a bare colon so Tab never falls through to nicks", () => {
