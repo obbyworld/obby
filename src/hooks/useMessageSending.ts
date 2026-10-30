@@ -309,7 +309,7 @@ export function useMessageSending({
       const [commandName, ...args] = command.split(" ");
 
       if (commandName === "nick") {
-        ircClient.sendRaw(selectedServerId, `NICK ${args[0]}`);
+        if (args[0]) useStore.getState().changeNick(selectedServerId, args[0]);
       } else if (commandName === "join") {
         const [channels, keyList] = args.filter(Boolean);
         if (channels) {
