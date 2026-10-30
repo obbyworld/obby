@@ -70,6 +70,13 @@ export function normalizeHost(host: string): string {
   return host;
 }
 
+// We keep a bracketed IPv6 address whole, since its colons are not a port.
+export function hostnameOf(address: string): string {
+  return address
+    .replace(/^(https?|wss?|ircs?|irc):\/\//, "")
+    .replace(/^(\[[^\]]*\]|[^:/]*).*$/, "$1");
+}
+
 /**
  * Ensure host is in URL format
  */

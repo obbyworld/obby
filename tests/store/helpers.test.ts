@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveUserMetadata } from "../../src/store/helpers";
+import { hostnameOf, resolveUserMetadata } from "../../src/store/helpers";
 import type { Channel } from "../../src/types";
 
 function makeChannel(
@@ -84,5 +84,14 @@ describe("resolveUserMetadata", () => {
     ];
     const result = resolveUserMetadata("bob", { bob: localMeta }, channels);
     expect(result).toEqual(localMeta);
+  });
+});
+
+describe("hostnameOf", () => {
+  it("drops the scheme, port and path and keeps a bracketed IPv6 host whole", () => {
+    expect(hostnameOf("wss://irc.example.com:443/ws")).toBe("irc.example.com");
+    expect(hostnameOf("irc.example.com:6697")).toBe("irc.example.com");
+    expect(hostnameOf("[2001:db8::1]")).toBe("[2001:db8::1]");
+    expect(hostnameOf("ircs://[2001:db8::1]:6697")).toBe("[2001:db8::1]");
   });
 });
