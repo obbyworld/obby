@@ -168,7 +168,7 @@ nix build .#obby  # → result/bin/Obby
 
 - **direnv:** `direnv allow` activates [.envrc](.envrc) (`use flake`).
 - **Home Manager:** `programs.obby` module — see [nix/hm-module.nix](nix/hm-module.nix) for options and usage.
-- **Maintenance:** when `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally. On version tag releases, [`publish.yaml`](.github/workflows/publish.yaml) (`update-linux-nix`) builds the Nix package and commits any hash fix to `main`.
+- **Maintenance:** Nix reads the npm dependencies straight from `package-lock.json`, so a lockfile change needs no Nix edit.
 
 ### macOS
 

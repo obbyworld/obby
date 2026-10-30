@@ -41,7 +41,7 @@ CI does not run these, so run them yourself when the change touches them:
 ## Nix
 
 - **`nix develop`** — full dev environment (Node 22 + Tauri Linux deps + rustup). Linux only (`x86_64`/`aarch64`).
-- **`nix build .#obby`** — produces `result/bin/Obby`. When `package-lock.json` changes, run `nix run .#update-npm-deps-hash` if you have Nix locally; otherwise `update-linux-nix` in [`publish.yaml`](.github/workflows/publish.yaml) syncs the hash to `main` on version tags.
+- **`nix build .#obby`** — produces `result/bin/Obby`. Nix reads the npm dependencies straight from `package-lock.json`, so a lockfile change needs no Nix edit.
 - Details: [BUILD.md — Nix (flake)](BUILD.md#nix-flake)
 
 ---

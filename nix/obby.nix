@@ -2,8 +2,7 @@
   lib,
   stdenv,
   rustPlatform,
-  fetchNpmDeps,
-  npmHooks,
+  importNpmLock,
   cargo-tauri,
   wrapGAppsHook4,
   pkg-config,
@@ -52,18 +51,14 @@ rustPlatform.buildRustPackage (
       lockFile = ../src-tauri/Cargo.lock;
     };
 
-    # Fetched npm tarball hash — bump when package-lock.json changes (Nix will print the expected value on mismatch).
-    npmDeps = fetchNpmDeps {
-      name = "obby-npm-deps-${version}";
-      inherit src;
-      hash = "sha256-1QVTQwniX8FkMaOaJfaWAy8qsGuJn9FOVIN9GBTvMKY=";
-    };
+    # We fetch each npm package with the integrity hash package-lock.json already records, so no extra hash has to follow the lockfile.
+    npmDeps = importNpmLock { npmRoot = src; };
 
     nativeBuildInputs = [
       # Runs the Vite/npm frontend build inside the Rust drv instead of a separate manual step.
       cargo-tauri.hook
       nodejs_22
-      npmHooks.npmConfigHook
+      importNpmLock.npmConfigHook
       pkg-config
     ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [ wrapGAppsHook4 ];

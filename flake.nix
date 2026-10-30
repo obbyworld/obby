@@ -101,12 +101,10 @@
         pkgs:
         let
           pkg = pkgs.callPackage ./nix/obby.nix obbyPackageArgs;
-          update-npm-deps-hash = pkgs.callPackage ./nix/update-npm-deps-hash.nix { };
         in
         {
           obby = pkg;
           default = pkg;
-          inherit update-npm-deps-hash;
         }
       );
 
