@@ -3747,6 +3747,10 @@ msgstr "Normal – Protection standard"
 msgid "Not encrypted"
 msgstr "Non chiffré"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "Non envoyé. Reconnectez-vous ou utilisez une discussion où le bot propose cette commande"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "Remarque : la modification des métadonnées du canal nécessite le statut d'opérateur (@) ou supérieur. Les changements sont visibles par tous les utilisateurs qui prennent en charge la spécification METADATA."

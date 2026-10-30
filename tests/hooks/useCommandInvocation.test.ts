@@ -96,6 +96,18 @@ describe("useCommandInvocation", () => {
     expect(onRun).not.toHaveBeenCalled();
   });
 
+  it("keeps the form and its values when the command could not be sent", () => {
+    const { hook, type, key } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    key("Tab");
+    type("hello");
+    sendBotCommand.mockReturnValue(false);
+    key("Enter");
+    expect(onRun).not.toHaveBeenCalled();
+    expect(hook.result.current.invocation?.values.message).toBe("hello");
+    expect(hook.result.current.invocation?.error?.kind).toBe("unsent");
+  });
+
   it("opens a recalled command without options and sends it on Enter", () => {
     const { hook, key } = setup();
     const aimodels = { name: "aimodels", options: [] };

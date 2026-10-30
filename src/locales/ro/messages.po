@@ -3747,6 +3747,10 @@ msgstr "Normal – Protecție standard"
 msgid "Not encrypted"
 msgstr "Necriptat"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "Netrimis. Reconectează-te sau folosește un chat în care botul oferă această comandă"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "Notă: modificarea metadatelor canalului necesită permisiuni de operator (@) sau mai mari. Modificările vor fi vizibile pentru toți utilizatorii care suportă specificația METADATA."

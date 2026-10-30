@@ -185,12 +185,21 @@ export function useCommandInvocation({
       invocation.command,
       result.payload,
     );
-    if (isSent)
-      onRun({
-        botNick: invocation.botNick,
-        command: invocation.command,
-        values: invocation.values,
+    if (!isSent) {
+      setInvocation({
+        ...invocation,
+        error: {
+          kind: "unsent",
+          name: activeParam?.name ?? invocation.command.name,
+        },
       });
+      return;
+    }
+    onRun({
+      botNick: invocation.botNick,
+      command: invocation.command,
+      values: invocation.values,
+    });
     finish();
   };
 

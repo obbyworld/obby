@@ -9,7 +9,7 @@ const TRUTHY_WORDS = new Set(["true", "1", "yes", "on"]);
 const MAX_ARG_CHOICES = 20;
 
 export interface CommandArgError {
-  kind: "required" | "int" | "number";
+  kind: "required" | "int" | "number" | "unsent";
   name: string;
 }
 

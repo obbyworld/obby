@@ -155,6 +155,7 @@ export function sendBotCommand(
   cmd: BotCommand,
   options: Record<string, string | number | boolean>,
 ): boolean {
+  if (!ircClient.isSocketOpen(serverId)) return false;
   const contexts = resolveContexts(cmd);
   const canPublic = contexts.includes("public");
   const canPrivate = contexts.includes("private");
@@ -171,13 +172,15 @@ export function sendBotCommand(
       serverId,
       `@+draft/bot-cmd=${b64} TAGMSG ${channel.name}`,
     );
-  } else if (channel && canPrivate) {
+  }
+  if (channel && canPrivate) {
     // private: TAGMSG to the bot. The channel travels in the payload, since
     // +draft/channel-context is not valid on TAGMSG.
     const payload = { name: cmd.name, options, channel: channel.name };
     const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
-  } else if (canPm) {
+  }
+  if (canPm) {
     // pm: TAGMSG to the bot, no channel.
     const payload = { name: cmd.name, options };
     const b64 = base64EncodeUtf8(JSON.stringify(payload));

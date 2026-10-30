@@ -19,6 +19,8 @@ export const CommandArgHint: React.FC<{
   const errorText = (e: CommandArgError) => {
     if (e.kind === "required") return t`Fill in ${e.name}`;
     if (e.kind === "int") return t`Enter a whole number for ${e.name}`;
+    if (e.kind === "unsent")
+      return t`Not sent. Reconnect, or use a chat where the bot offers this command`;
     return t`Enter a number for ${e.name}`;
   };
   const detail = error ? errorText(error) : (param.description ?? fallback);

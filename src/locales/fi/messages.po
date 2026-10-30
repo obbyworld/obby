@@ -3747,6 +3747,10 @@ msgstr "Normaali – tavallinen suojaus"
 msgid "Not encrypted"
 msgstr "Ei salattu"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "Ei lähetetty. Yhdistä uudelleen tai käytä keskustelua, jossa botti tarjoaa tämän komennon"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "Huomio: kanavan metatietojen muokkaaminen vaatii operaattorin (@) tai korkeamman oikeuden. Muutokset näkyvät kaikille käyttäjille, jotka tukevat METADATA-määritystä."

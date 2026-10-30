@@ -67,6 +67,7 @@ describe("slash commands shared by the server and bots", () => {
   beforeEach(() => {
     useStore.setState({ servers: [server] });
     vi.restoreAllMocks();
+    vi.spyOn(ircClient, "isSocketOpen").mockReturnValue(true);
   });
 
   it("runs a bare name on the server", () => {
