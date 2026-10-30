@@ -1474,6 +1474,10 @@ msgstr "Conectează o cameră pentru a partaja video"
 msgid "Connect a microphone to talk"
 msgstr "Conectează un microfon pentru a vorbi"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "Conectează-te la {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
@@ -2845,6 +2849,7 @@ msgstr "Servere IRC:"
 msgid "is now known as **{newNick}**"
 msgstr "acum este cunoscut ca **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "Alătură-te la {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Alătură-te la {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "Intră în {channels} pe {hostname}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Intră în {channels} pe {hostname} cu autentificarea salvată."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "Intri în {channels}?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

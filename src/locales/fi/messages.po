@@ -1474,6 +1474,10 @@ msgstr "Liitä kamera jakaaksesi videota"
 msgid "Connect a microphone to talk"
 msgstr "Liitä mikrofoni puhuaksesi"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "Yhdistä palvelimeen {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Yhdistä palvelimeen hallitaksesi operaattoriasetuksia."
@@ -2845,6 +2849,7 @@ msgstr "IRC-palvelimet:"
 msgid "is now known as **{newNick}**"
 msgstr "on nyt tunnettu nimellä **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "Liity kanavalle {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Liity kanavaan {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "Liity kanaville {channels} palvelimella {hostname}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Liity kanaville {channels} palvelimella {hostname} tallennetulla kirjautumisella."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "Liitytäänkö kanaville {channels}?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

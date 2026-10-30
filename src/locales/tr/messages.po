@@ -1474,6 +1474,10 @@ msgstr "Video paylaşmak için bir kamera bağla"
 msgid "Connect a microphone to talk"
 msgstr "Konuşmak için bir mikrofon bağla"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "{hostname} sunucusuna bağlan"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
@@ -2845,6 +2849,7 @@ msgstr "IRC Sunucuları:"
 msgid "is now known as **{newNick}**"
 msgstr "artık **{newNick}** olarak bilinmektedir"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "{channel} kanalına katıl"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "{channelName} kanalına katıl"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "{hostname} üzerinde {channels} kanalına katıl"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Kayıtlı girişinle {hostname} üzerinde {channels} kanalına katıl."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "{channels} kanalına katılınsın mı?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

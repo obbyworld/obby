@@ -7,6 +7,7 @@ import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
 import { isTauri } from "../../lib/platformUtils";
 import useStore from "../../store";
+import { hostnameOf } from "../../store/helpers";
 import type { ServerOAuthConfig } from "../../types";
 import { OAuthSection } from "./OAuthSection";
 import { TextInput } from "./TextInput";
@@ -116,9 +117,7 @@ export const AddServerModal: React.FC = () => {
         const port = Number.parseInt(serverPort, 10);
         // Strip scheme AND any embedded :port / path so we don't end up
         // appending port twice (e.g. ircs://host:6697:6697).
-        const cleanHost = serverHost
-          .replace(/^(https?|wss?|ircs?|irc):\/\//, "")
-          .replace(/[:/].*$/, "");
+        const cleanHost = hostnameOf(serverHost);
         // We default to TLS and use plaintext only for a host typed as irc://.
         const tcpScheme = serverHost.startsWith("irc://") ? "irc" : "ircs";
         finalHost = useWebSocket

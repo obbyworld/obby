@@ -1474,6 +1474,10 @@ msgstr "Anslut en kamera för att dela video"
 msgid "Connect a microphone to talk"
 msgstr "Anslut en mikrofon för att prata"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "Anslut till {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Anslut till en server för att hantera operatörsinställningar."
@@ -2845,6 +2849,7 @@ msgstr "IRC-servrar:"
 msgid "is now known as **{newNick}**"
 msgstr "är nu känd som **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "Gå med i {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Gå med i {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "Gå med i {channels} på {hostname}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Gå med i {channels} på {hostname} med din sparade inloggning."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "Gå med i {channels}?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

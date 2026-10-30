@@ -1474,6 +1474,10 @@ msgstr "连接摄像头以共享视频"
 msgid "Connect a microphone to talk"
 msgstr "连接麦克风以讲话"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "连接到 {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "连接到服务器以管理操作员设置。"
@@ -2845,6 +2849,7 @@ msgstr "IRC 服务器："
 msgid "is now known as **{newNick}**"
 msgstr "现在称为 **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "加入 {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "加入 {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "加入 {hostname} 上的 {channels}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "使用已保存的登录加入 {hostname} 上的 {channels}。"
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "加入 {channels}？"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

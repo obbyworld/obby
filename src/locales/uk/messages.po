@@ -1474,6 +1474,10 @@ msgstr "Підключіть камеру, щоб показувати віде�
 msgid "Connect a microphone to talk"
 msgstr "Підключіть мікрофон, щоб говорити"
 
+#: src/App.tsx
+msgid "Connect to {hostname}"
+msgstr "Підключитися до {hostname}"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Підключіться до сервера, щоб керувати налаштуваннями оператора."
@@ -2845,6 +2849,7 @@ msgstr "IRC сервери:"
 msgid "is now known as **{newNick}**"
 msgstr "тепер відомий як **{newNick}**"
 
+#: src/App.tsx
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
 #: src/components/ui/ChannelKeyModal.tsx
@@ -2866,6 +2871,18 @@ msgstr "Приєднатися до {channel}"
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Приєднатися до {channelName}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname}"
+msgstr "Приєднатися до {channels} на {hostname}"
+
+#: src/App.tsx
+msgid "Join {channels} on {hostname} with your saved login."
+msgstr "Приєднатися до {channels} на {hostname} зі збереженим входом."
+
+#: src/App.tsx
+msgid "Join {channels}?"
+msgstr "Приєднатися до {channels}?"
 
 #: src/components/message/JsonLogMessage.tsx
 msgid "Join {value}"

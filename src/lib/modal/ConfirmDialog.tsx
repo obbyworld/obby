@@ -57,6 +57,7 @@ interface ConfirmRequest {
   title: string;
   message: string;
   confirmLabel: string;
+  confirmVariant: ConfirmVariant;
   resolve: (confirmed: boolean) => void;
 }
 
@@ -79,10 +80,11 @@ export function confirmDestructive(
   title: string,
   message: string,
   confirmLabel: string,
+  confirmVariant: ConfirmVariant = "danger",
 ): Promise<boolean> {
   pending?.resolve(false);
   return new Promise((resolve) =>
-    setPending({ title, message, confirmLabel, resolve }),
+    setPending({ title, message, confirmLabel, confirmVariant, resolve }),
   );
 }
 
@@ -99,7 +101,7 @@ export const ConfirmDialogHost: React.FC = () => {
       isOpen={request !== null}
       title={request?.title}
       confirmLabel={request?.confirmLabel}
-      confirmVariant="danger"
+      confirmVariant={request?.confirmVariant}
       onConfirm={() => settle(true)}
       onCancel={() => settle(false)}
     >
