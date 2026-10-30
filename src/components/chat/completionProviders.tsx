@@ -5,6 +5,7 @@ import type { CompletionProvider } from "../../hooks/useCompletion";
 import { botPriority } from "../../lib/botPriority";
 import { getClientCommands } from "../../lib/clientCommands";
 import type { ResolvedShortcode } from "../../lib/customEmoji";
+import { rankEmojis } from "../../lib/emojiSearch";
 import type { BotCommandOption, Channel, Server, User } from "../../types";
 
 const MAX_EMOJIS = 10;
@@ -57,6 +58,7 @@ export function nickProvider(users: readonly User[]): CompletionProvider<User> {
 export interface EmojiItem {
   unified: string;
   short_names: string[];
+  keywords?: string[];
   category: string;
   // A custom pack entry holds `:shortcode:` so the message renderer resolves
   // it through the pack's trusted image URL.
@@ -68,12 +70,14 @@ interface RawEmojiData {
   unified: string;
   short_names: string[];
   category: string;
+  keywords: string[];
 }
 
 function toEmojiItem(raw: RawEmojiData): EmojiItem {
   return {
     unified: raw.unified,
     short_names: raw.short_names,
+    keywords: raw.keywords,
     category: raw.category,
     emoji: String.fromCodePoint(
       ...raw.unified.split("-").map((hex) => Number.parseInt(hex, 16)),
@@ -129,18 +133,13 @@ export function emojiProvider(
     cycleKeys: CYCLE_KEYS,
     closeKeys: EMOJI_CLOSE_KEYS,
     match: (text, caret) => {
-      const found = /:([a-zA-Z_]*)$/.exec(text.slice(0, caret));
-      return found ? { query: found[1], start: found.index, end: caret } : null;
+      // We start a shortcode only after a non-word character, so times like 12:30 stay text.
+      const found = /(?:^|[^\w:]):([\w+-]*)$/.exec(text.slice(0, caret));
+      if (!found) return null;
+      const start = caret - found[1].length - 1;
+      return { query: found[1], start, end: caret };
     },
-    getItems: (query) => {
-      if (!query) return [];
-      const needle = query.toLowerCase();
-      return emojis
-        .filter((e) =>
-          e.short_names.some((name) => name.toLowerCase().includes(needle)),
-        )
-        .slice(0, MAX_EMOJIS);
-    },
+    getItems: (query) => rankEmojis(emojis, query, MAX_EMOJIS),
     getKey: (item) => item.unified,
     renderItem: (item) => (
       <>
