@@ -1478,6 +1478,10 @@ msgstr "連接麥克風以說話"
 msgid "Connect to a server to manage operator settings."
 msgstr "連線到伺服器以管理操作員設定。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "以訪客身分連線"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "已連線至"
@@ -2921,10 +2925,6 @@ msgstr "保留憑證"
 msgid "Keep Obby open to get notifications"
 msgstr "保持 Obby 開啟以接收通知"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "保留密碼"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "所有人離開後保留頻道。只有 IRCop 可以設定。"
@@ -3096,9 +3096,22 @@ msgstr "位置"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置存取遭拒。請在瀏覽器或系統設定中允許位置存取，然後再試一次。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "登入"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "重新登入"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "已登入為 {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "正在登入"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "普通"
 msgid "Normal - Standard protection"
 msgstr "普通 – 標準保護"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "未連線"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "OPER 名稱"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper 用户名"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper 用户名和密码为必填项"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "使用提供者登入，將其連結到你的帳號。之後你可以在
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "登入失敗，你目前以訪客身分聊天。請重新登入或修正密碼"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "登入失敗。請檢查帳戶名稱與密碼"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

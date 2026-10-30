@@ -43,6 +43,7 @@ const serverState = {
   ],
   isConnecting: false,
   updateServer: vi.fn(),
+  reconnectServer: vi.fn(),
   sendRaw: vi.fn(),
   closePage: vi.fn(),
   ui: { selectedServerId: null, perServerSelections: {}, isNarrowView: false },
@@ -151,5 +152,84 @@ describe("ServerSettingsPage", () => {
     const saved = serverState.updateServer.mock.calls[0][1];
     expect(saved).not.toHaveProperty("password");
     expect(saved).not.toHaveProperty("saslPassword");
+  });
+
+  test("keeps a typed password through a blur and logs in with it on Log in", () => {
+    serverState.updateServer.mockClear();
+    serverState.reconnectServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    const [password] = screen.getAllByPlaceholderText(
+      "(stored, leave blank to keep)",
+    );
+
+    fireEvent.change(password, { target: { value: "new-pass" } });
+    fireEvent.focusOut(password);
+    expect(password).toHaveValue("new-pass");
+    expect(serverState.updateServer).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }));
+    expect(serverState.updateServer).toHaveBeenCalledWith(
+      "server1",
+      expect.objectContaining({
+        saslPassword: btoa("new-pass"),
+        saslEnabled: true,
+      }),
+    );
+    expect(serverState.reconnectServer).toHaveBeenCalledWith("server1");
+  });
+
+  test("shows a refused sign-in next to the Log in button", () => {
+    const failed = {
+      ...serverState,
+      servers: [
+        {
+          ...serverState.servers[0],
+          isConnected: true,
+          isRegistered: true,
+          saslFailed: true,
+        },
+      ],
+    };
+    vi.mocked(useStore).mockImplementation(((
+      selector?: (s: unknown) => unknown,
+    ) => (selector ? selector(failed) : failed)) as never);
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    expect(
+      screen.getByText("Sign-in failed. Check the account name and password"),
+    ).toBeInTheDocument();
+  });
+
+  test("keeps the oper password after saving, so Oper up still sends it", () => {
+    serverState.sendRaw.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{
+          kind: "serverSettings",
+          serverId: "server1",
+          section: "operator",
+        }}
+      />,
+    );
+    const name = screen.getByPlaceholderText("IRC operator username");
+    const password = screen.getByPlaceholderText("Operator password");
+
+    fireEvent.change(name, { target: { value: "admin" } });
+    fireEvent.change(password, { target: { value: "operpass" } });
+    fireEvent.focusOut(password);
+
+    expect(password).toHaveValue("operpass");
+    fireEvent.click(screen.getByRole("button", { name: "Oper up" }));
+    expect(serverState.sendRaw).toHaveBeenCalledWith(
+      "server1",
+      "OPER admin operpass",
+    );
   });
 });

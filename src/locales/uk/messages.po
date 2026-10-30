@@ -1478,6 +1478,10 @@ msgstr "Підключіть мікрофон, щоб говорити"
 msgid "Connect to a server to manage operator settings."
 msgstr "Підключіться до сервера, щоб керувати налаштуваннями оператора."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Підключено як гість"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "Підключено до"
@@ -2921,10 +2925,6 @@ msgstr "Зберегти облікові дані"
 msgid "Keep Obby open to get notifications"
 msgstr "Тримайте Obby відкритим, щоб отримувати сповіщення"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Зберегти паролі"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Зберігайте канал, коли всі його покинуть. Це можуть встановити лише IRCop-и."
@@ -3096,9 +3096,22 @@ msgstr "Місцезнаходження"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "У доступі до місцезнаходження відмовлено. Дозвольте доступ до місцезнаходження в налаштуваннях браузера або системи, потім спробуйте ще раз."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Увійти"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Увійти знову"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Вхід виконано як {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Виконується вхід"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "Нормальний"
 msgid "Normal - Standard protection"
 msgstr "Нормальний - стандартний захист"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Не підключено"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "Ім'я оператора"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Ім'я оператора"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Ім'я та пароль оператора обов'язкові"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "Увійдіть через провайдера, щоб прив'яза
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Не вдалося увійти, ви спілкуєтеся як гість. Увійдіть знову або виправте пароль"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Не вдалося увійти. Перевірте ім’я облікового запису та пароль"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

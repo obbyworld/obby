@@ -1478,6 +1478,10 @@ msgstr "Anslut en mikrofon för att prata"
 msgid "Connect to a server to manage operator settings."
 msgstr "Anslut till en server för att hantera operatörsinställningar."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Ansluten som gäst"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "Ansluten till"
@@ -2921,10 +2925,6 @@ msgstr "Behåll inloggningsuppgifter"
 msgid "Keep Obby open to get notifications"
 msgstr "Håll Obby öppet för att få aviseringar"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Behåll lösenord"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Behåll kanalen när alla har lämnat. Bara IRCops kan ställa in detta."
@@ -3096,9 +3096,22 @@ msgstr "Plats"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Platsåtkomst nekades. Tillåt platsåtkomst i webbläsarens eller systemets inställningar och försök igen."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Logga in"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Logga in igen"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Inloggad som {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Loggar in"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "Normal"
 msgid "Normal - Standard protection"
 msgstr "Normal – standardskydd"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Inte ansluten"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "Operatörsnamn"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper-namn"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper-namn och lösenord krävs"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "Logga in hos leverantören för att länka den till ditt konto. Sedan ka
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Inloggningen misslyckades, du chattar som gäst. Logga in igen eller åtgärda ditt lösenord"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Inloggningen misslyckades. Kontrollera kontonamn och lösenord"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

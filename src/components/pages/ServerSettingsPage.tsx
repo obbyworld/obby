@@ -1,12 +1,13 @@
 import { t } from "@lingui/core/macro";
 import type React from "react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useReducer, useRef, useState } from "react";
 import { Button } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
 import useStore, { loadSavedServers } from "../../store";
 import { normalizeHost } from "../../store/helpers";
 import type { Server, ServerConfig, ServerOAuthConfig } from "../../types";
 import ChangePasswordModal from "../ui/ChangePasswordModal";
+import LoadingSpinner from "../ui/LoadingSpinner";
 import { OAuthSection } from "../ui/OAuthSection";
 import PasswordRecoveryModal from "../ui/PasswordRecoveryModal";
 import { PageShell } from "../ui/page/PageShell";
@@ -26,14 +27,10 @@ interface Draft {
   host: string;
   port: string;
   nickname: string;
-  password: string;
-  saslAccountName: string;
-  saslPassword: string;
   operName: string;
   operPassword: string;
   operOnConnect: boolean;
   forgetOperCredentials: boolean;
-  forgetPasswords: boolean;
   oauth: ServerOAuthConfig | undefined;
 }
 
@@ -45,16 +42,188 @@ const savedDraft = (
   host: serverConfig?.host || server?.host || "",
   port: serverConfig?.port?.toString() || server?.port?.toString() || "443",
   nickname: serverConfig?.nickname || "",
-  password: "",
-  saslAccountName: serverConfig?.saslAccountName || "",
-  saslPassword: "",
   operName: serverConfig?.operUsername || "",
   operPassword: "",
   operOnConnect: serverConfig?.operOnConnect || false,
   forgetOperCredentials: false,
-  forgetPasswords: false,
   oauth: serverConfig?.oauth,
 });
+
+const forgottenPasswords: Partial<ServerConfig> = {
+  password: undefined,
+  saslPassword: undefined,
+  saslEnabled: false,
+};
+
+// Credentials only take effect on a new login, so this section saves them with
+// its Log in button and reconnects, which shows the result right away.
+const LoginSection: React.FC<{
+  server: Server | undefined;
+  serverConfig: ServerConfig | undefined;
+  onRecover: () => void;
+  onChangePassword: () => void;
+}> = ({ server, serverConfig, onRecover, onChangePassword }) => {
+  const { updateServer, reconnectServer } = useStore();
+  const [account, setAccount] = useState(serverConfig?.saslAccountName ?? "");
+  const [saslPassword, setSaslPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [, refresh] = useReducer((n: number) => n + 1, 0);
+  if (!serverConfig) return null;
+
+  const isLoggingIn =
+    server?.connectionState === "connecting" ||
+    (server?.isConnected && !server.isRegistered);
+
+  const logIn = () => {
+    updateServer(serverConfig.id, {
+      saslAccountName: account.trim() || serverConfig.nickname || undefined,
+      // The stored format expects SASL passwords base64-encoded, so we encode them here.
+      ...(saslPassword
+        ? { saslPassword: btoa(saslPassword), saslEnabled: true }
+        : {}),
+      ...(password ? { password } : {}),
+    });
+    setSaslPassword("");
+    setPassword("");
+    reconnectServer(serverConfig.id);
+  };
+
+  const forgetPasswords = () => {
+    updateServer(serverConfig.id, forgottenPasswords);
+    setSaslPassword("");
+    setPassword("");
+    refresh();
+  };
+
+  const status = (): ReactNode => {
+    if (isLoggingIn)
+      return (
+        <LoadingSpinner
+          size="sm"
+          text={t`Logging in`}
+          className="!flex-row !space-y-0 gap-2"
+        />
+      );
+    if (server?.saslFailed)
+      return (
+        <span className="text-discord-red">
+          {t`Sign-in failed. Check the account name and password`}
+        </span>
+      );
+    if (server?.account)
+      return (
+        <span className="text-discord-green">{t`Logged in as ${server.account}`}</span>
+      );
+    if (server?.isConnected) return t`Connected as a guest`;
+    return t`Not connected`;
+  };
+
+  return (
+    <form
+      className="contents"
+      onSubmit={(e) => {
+        e.preventDefault();
+        logIn();
+      }}
+    >
+      <SettingGroup title={t`SASL PLAIN account`}>
+        <SettingRow
+          id="server.saslAccountName"
+          title={t`Account name`}
+          description={t`Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname.`}
+          field={
+            <TextInput
+              value={account}
+              onChange={(e) => setAccount(e.target.value)}
+              placeholder={serverConfig.nickname || "account"}
+              autoComplete="username"
+              className="field-input"
+            />
+          }
+        />
+        <SettingRow
+          id="server.saslPassword"
+          title={t`Password`}
+          field={
+            <TextInput
+              type="password"
+              value={saslPassword}
+              onChange={(e) => setSaslPassword(e.target.value)}
+              placeholder={
+                serverConfig.saslPassword
+                  ? t`(stored, leave blank to keep)`
+                  : t`Password`
+              }
+              autoComplete="current-password"
+              className="field-input"
+            />
+          }
+        />
+        <SettingRow
+          id="server.password"
+          title={t`Server password`}
+          description={t`Enter the server password only if your network requires one. It is separate from your account password.`}
+          field={
+            <TextInput
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={
+                serverConfig.password
+                  ? t`(stored, leave blank to keep)`
+                  : t`Server password`
+              }
+              autoComplete="off"
+              className="field-input"
+            />
+          }
+        />
+        <SettingRow
+          title={status()}
+          control={
+            <Button type="submit" disabled={isLoggingIn}>
+              {t`Log in`}
+            </Button>
+          }
+        />
+      </SettingGroup>
+
+      {(serverConfig.password || serverConfig.saslPassword) && (
+        <SettingGroup>
+          <SettingRow
+            title={t`Stored passwords`}
+            description={t`Forget the stored SASL and server passwords to stop sending them on connect.`}
+            control={
+              <Button variant="secondary" onClick={forgetPasswords}>
+                {t`Forget passwords`}
+              </Button>
+            }
+          />
+        </SettingGroup>
+      )}
+
+      {server?.capabilities?.includes("draft/account-recovery") && (
+        <SettingGroup>
+          <SettingRow
+            title={t`Account password`}
+            description={t`Change or reset the password for your account.`}
+          >
+            <div className="flex flex-wrap gap-2">
+              {server.isConnected && (
+                <Button variant="secondary" onClick={onChangePassword}>
+                  {t`Change password`}
+                </Button>
+              )}
+              <Button variant="secondary" onClick={onRecover}>
+                {t`Forgot password?`}
+              </Button>
+            </div>
+          </SettingRow>
+        </SettingGroup>
+      )}
+    </form>
+  );
+};
 
 const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
   page,
@@ -90,8 +259,6 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
     setError("");
 
     const finalServerName = draft.name.trim() || draft.host.trim();
-    const finalSaslAccountName =
-      draft.saslAccountName.trim() || draft.nickname.trim();
 
     if (!finalServerName) {
       setError(t`Server name is required`);
@@ -119,7 +286,6 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
       !!serverConfig &&
       normalizeHost(draft.host.trim()).toLowerCase() !==
         normalizeHost(serverConfig.host).toLowerCase();
-    const isForgettingPasswords = draft.forgetPasswords || isNewNetwork;
 
     try {
       const updatedConfig: Partial<ServerConfig> = {
@@ -127,16 +293,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         host: draft.host.trim(),
         port: Number.parseInt(draft.port, 10),
         nickname: draft.nickname.trim(),
-        ...(isForgettingPasswords
-          ? { password: undefined, saslPassword: undefined, saslEnabled: false }
-          : {}),
-        // We leave the password out while its field is blank, so we keep the stored one.
-        ...(draft.password.trim() ? { password: draft.password.trim() } : {}),
-        saslAccountName: finalSaslAccountName || undefined,
-        // The stored format expects SASL passwords base64-encoded, so we encode them here.
-        ...(draft.saslPassword.trim()
-          ? { saslPassword: btoa(draft.saslPassword.trim()), saslEnabled: true }
-          : {}),
+        ...(isNewNetwork ? forgottenPasswords : {}),
         ...(draft.forgetOperCredentials
           ? { operUsername: undefined, operPassword: undefined }
           : draft.operName.trim()
@@ -151,15 +308,14 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         oauth: draft.oauth,
       };
       updateServer(page.serverId, updatedConfig);
-      const saved: Draft = {
-        ...draft,
-        password: "",
-        saslPassword: "",
-        operPassword: "",
-        operName: draft.forgetOperCredentials ? "" : draft.operName,
-        forgetOperCredentials: false,
-        forgetPasswords: false,
-      };
+      const saved: Draft = draft.forgetOperCredentials
+        ? {
+            ...draft,
+            operName: "",
+            operPassword: "",
+            forgetOperCredentials: false,
+          }
+        : draft;
       setDraft(saved);
       setBaseline(saved);
     } catch (err) {
@@ -176,12 +332,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
   // biome-ignore lint/correctness/useExhaustiveDependencies: only these fields save without a blur
   useEffect(() => {
     if (isDirtyRef.current) saveRef.current();
-  }, [
-    draft.operOnConnect,
-    draft.oauth,
-    draft.forgetOperCredentials,
-    draft.forgetPasswords,
-  ]);
+  }, [draft.operOnConnect, draft.oauth, draft.forgetOperCredentials]);
   useEffect(
     () => () => {
       if (isDirtyRef.current) saveRef.current();
@@ -189,16 +340,11 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
     [],
   );
 
-  const handleOperUp = () => {
-    if (draft.operName.trim() && draft.operPassword.trim()) {
-      sendRaw(
-        page.serverId,
-        `OPER ${draft.operName.trim()} ${draft.operPassword.trim()}`,
-      );
-    } else {
-      setError(t`Oper name and password are required`);
-    }
-  };
+  const operPassword =
+    draft.operPassword.trim() ||
+    (serverConfig?.operPassword ? atob(serverConfig.operPassword) : "");
+  const handleOperUp = () =>
+    sendRaw(page.serverId, `OPER ${draft.operName.trim()} ${operPassword}`);
 
   const operStatus = (): ReactNode => {
     if (serverConfig?.operUsername)
@@ -258,103 +404,6 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
         }
       />
     </SettingGroup>
-  );
-
-  const authSection = (
-    <>
-      <SettingGroup title={t`SASL PLAIN account`}>
-        <SettingRow
-          id="server.saslAccountName"
-          title={t`Account name`}
-          description={t`Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname.`}
-          field={
-            <TextInput
-              value={draft.saslAccountName}
-              onChange={(e) => set("saslAccountName", e.target.value)}
-              placeholder={draft.nickname || "account"}
-              className="field-input"
-            />
-          }
-        />
-        <SettingRow
-          id="server.saslPassword"
-          title={t`Password`}
-          field={
-            <TextInput
-              type="password"
-              value={draft.saslPassword}
-              onChange={(e) => set("saslPassword", e.target.value)}
-              placeholder={
-                serverConfig?.saslPassword
-                  ? t`(stored, leave blank to keep)`
-                  : t`Password`
-              }
-              className="field-input"
-            />
-          }
-        />
-      </SettingGroup>
-
-      <SettingGroup>
-        <SettingRow
-          id="server.password"
-          title={t`Server password`}
-          description={t`Enter the server password only if your network requires one. It is separate from your account password.`}
-          field={
-            <TextInput
-              type="password"
-              value={draft.password}
-              onChange={(e) => set("password", e.target.value)}
-              placeholder={
-                serverConfig?.password
-                  ? t`(stored, leave blank to keep)`
-                  : t`Server password`
-              }
-              className="field-input"
-            />
-          }
-        />
-        {(serverConfig?.password || serverConfig?.saslPassword) && (
-          <SettingRow
-            title={t`Stored passwords`}
-            description={t`Forget the stored SASL and server passwords to stop sending them on connect.`}
-            control={
-              <Button
-                variant={draft.forgetPasswords ? "danger" : "secondary"}
-                onClick={() => set("forgetPasswords", !draft.forgetPasswords)}
-              >
-                {draft.forgetPasswords
-                  ? t`Keep passwords`
-                  : t`Forget passwords`}
-              </Button>
-            }
-          />
-        )}
-      </SettingGroup>
-
-      {server?.capabilities?.includes("draft/account-recovery") && (
-        <SettingGroup>
-          <SettingRow
-            title={t`Account password`}
-            description={t`Change or reset the password for your account.`}
-          >
-            <div className="flex flex-wrap gap-2">
-              {server.isConnected && (
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowChangePassword(true)}
-                >
-                  {t`Change password`}
-                </Button>
-              )}
-              <Button variant="secondary" onClick={() => setShowRecovery(true)}>
-                {t`Forgot password?`}
-              </Button>
-            </div>
-          </SettingRow>
-        </SettingGroup>
-      )}
-    </>
   );
 
   const oauthSection = (
@@ -436,7 +485,7 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
           description={t`Send OPER with the name and password above now.`}
           control={
             <Button
-              disabled={!draft.operName.trim() || !draft.operPassword.trim()}
+              disabled={!draft.operName.trim() || !operPassword}
               onClick={handleOperUp}
             >
               {t`Oper up`}
@@ -449,7 +498,14 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
 
   const sectionBodies: Record<SectionId, ReactNode> = {
     general: generalSection,
-    auth: authSection,
+    auth: (
+      <LoginSection
+        server={server}
+        serverConfig={serverConfig}
+        onRecover={() => setShowRecovery(true)}
+        onChangePassword={() => setShowChangePassword(true)}
+      />
+    ),
     oauth: oauthSection,
     operator: operatorSection,
   };
@@ -463,27 +519,31 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
       startOnSection={!!page.section}
       columns
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          save();
-        }}
-        onBlur={() => {
-          if (isDirty) save();
-        }}
-        className="contents"
-      >
-        {sectionBodies[section]}
-        {error && (
-          <p role="alert" className="page-span text-discord-red text-sm">
-            {error}
-          </p>
-        )}
-      </form>
+      {section === "auth" ? (
+        sectionBodies.auth
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            save();
+          }}
+          onBlur={() => {
+            if (isDirty) save();
+          }}
+          className="contents"
+        >
+          {sectionBodies[section]}
+          {error && (
+            <p role="alert" className="page-span text-discord-red text-sm">
+              {error}
+            </p>
+          )}
+        </form>
+      )}
       {showRecovery && (
         <PasswordRecoveryModal
           serverId={page.serverId}
-          initialAccount={draft.saslAccountName || draft.nickname}
+          initialAccount={serverConfig?.saslAccountName || draft.nickname}
           onClose={() => setShowRecovery(false)}
         />
       )}

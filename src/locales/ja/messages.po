@@ -1478,6 +1478,10 @@ msgstr "話すにはマイクを接続してください"
 msgid "Connect to a server to manage operator settings."
 msgstr "オペレーター設定を管理するにはサーバーに接続してください。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "ゲストとして接続中"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "接続先"
@@ -2921,10 +2925,6 @@ msgstr "認証情報を保持"
 msgid "Keep Obby open to get notifications"
 msgstr "通知を受け取るには Obby を開いたままにしてください"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "パスワードを保持"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "全員が退出した後もチャンネルを保持します。IRCop のみ設定できます。"
@@ -3096,9 +3096,22 @@ msgstr "位置情報"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置情報へのアクセスが拒否されました。ブラウザまたはシステムの設定で位置情報へのアクセスを許可してから、もう一度お試しください。"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "ログイン"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "再度ログイン"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "{0} としてログイン中"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "ログインしています"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "通常"
 msgid "Normal - Standard protection"
 msgstr "通常 — 標準的な保護"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "未接続"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "OPER 名"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper名"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper名とパスワードは必須です"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "プロバイダーでサインインして、アカウントにリンク
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "サインインに失敗したため、ゲストとしてチャットしています。再度ログインするかパスワードを修正してください"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "サインインに失敗しました。アカウント名とパスワードを確認してください"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

@@ -1478,6 +1478,10 @@ msgstr "Conectează un microfon pentru a vorbi"
 msgid "Connect to a server to manage operator settings."
 msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Conectat ca invitat"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "Conectat la"
@@ -2921,10 +2925,6 @@ msgstr "Păstrați credențialele"
 msgid "Keep Obby open to get notifications"
 msgstr "Ține Obby deschis pentru a primi notificări"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Păstrează parolele"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Păstrează canalul după ce pleacă toată lumea. Doar IRCops pot seta asta."
@@ -3096,9 +3096,22 @@ msgstr "Locație"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Accesul la locație a fost refuzat. Permiteți accesul la locație din setările browserului sau ale sistemului, apoi încercați din nou."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Autentifică-te"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Conectează-te din nou"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Autentificat ca {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Se autentifică"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "Normal"
 msgid "Normal - Standard protection"
 msgstr "Normal – Protecție standard"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Neconectat"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "Numele OPER"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Nume oper"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Numele oper și parola sunt obligatorii"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "Autentifică-te la furnizor pentru a-l lega de contul tău. Apoi te poț
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Autentificarea a eșuat, conversezi ca invitat. Conectează-te din nou sau corectează parola"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Autentificarea a eșuat. Verifică numele contului și parola"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

@@ -1477,6 +1477,10 @@ msgstr "Connect a microphone to talk"
 msgid "Connect to a server to manage operator settings."
 msgstr "Connect to a server to manage operator settings."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Connected as a guest"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "Connected to"
@@ -2920,10 +2924,6 @@ msgstr "Keep credentials"
 msgid "Keep Obby open to get notifications"
 msgstr "Keep Obby open to get notifications"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Keep passwords"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Keep the channel after everyone leaves. Only IRCops can set this."
@@ -3095,9 +3095,22 @@ msgstr "Location"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Location access was denied. Allow location access in your browser or system settings, then try again."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Log in"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Log in again"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Logged in as {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Logging in"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3741,6 +3754,10 @@ msgstr "Normal"
 msgid "Normal - Standard protection"
 msgstr "Normal - Standard protection"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Not connected"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3917,10 +3934,6 @@ msgstr "Oper name"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper Name"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper name and password are required"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5178,6 +5191,10 @@ msgstr "Sign in with the provider to link it to your account. Then you can log i
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Sign-in failed. Check the account name and password"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

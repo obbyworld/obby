@@ -165,3 +165,12 @@ describe("joining a channel typed without its prefix", () => {
     expect(client.joinChannel(SERVER, "lobby").name).toBe("&lobby");
   });
 });
+
+describe("disconnecting on purpose", () => {
+  it("detaches the close handler so the socket closing does not reconnect", () => {
+    const { client, socket } = connectedClient();
+    client.disconnect(SERVER);
+    expect(socket.close).toHaveBeenCalled();
+    expect(socket.onclose).toBeNull();
+  });
+});

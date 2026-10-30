@@ -1478,6 +1478,10 @@ msgstr "Konuşmak için bir mikrofon bağla"
 msgid "Connect to a server to manage operator settings."
 msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Misafir olarak bağlı"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
 msgstr "Bağlanılan"
@@ -2921,10 +2925,6 @@ msgstr "Kimlik bilgilerini sakla"
 msgid "Keep Obby open to get notifications"
 msgstr "Bildirim almak için Obby'yi açık tut"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Parolaları sakla"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Herkes ayrıldıktan sonra kanalı koru. Bunu yalnızca IRCops ayarlayabilir."
@@ -3096,9 +3096,22 @@ msgstr "Konum"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Konum erişimi reddedildi. Tarayıcı veya sistem ayarlarından konum erişimine izin ver, ardından tekrar dene."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Giriş yap"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Tekrar giriş yap"
+
+#. placeholder {0}: server.account
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "{0} olarak giriş yapıldı"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Giriş yapılıyor"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3755,10 @@ msgstr "Normal"
 msgid "Normal - Standard protection"
 msgstr "Normal - Standart koruma"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Bağlı değil"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3935,6 @@ msgstr "Operatör adı"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper Adı"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper adı ve şifresi gereklidir"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5179,6 +5192,10 @@ msgstr "Hesabınıza bağlamak için sağlayıcıyla oturum açın. Sonraki bağ
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Giriş başarısız oldu, misafir olarak sohbet ediyorsun. Tekrar giriş yap veya şifreni düzelt"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Giriş başarısız. Hesap adını ve parolayı kontrol edin"
 
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx

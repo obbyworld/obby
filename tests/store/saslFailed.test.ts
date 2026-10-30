@@ -39,7 +39,7 @@ describe("SASL rejection", () => {
 
     ircClient.triggerEvent("connectionStateChange", {
       serverId,
-      connectionState: "connecting",
+      connectionState: "disconnected",
     });
     expect(server()?.saslFailed).toBe(false);
   });

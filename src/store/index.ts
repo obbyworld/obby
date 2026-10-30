@@ -3128,6 +3128,10 @@ const useStore = create<AppState>((set, get) => ({
       return;
     }
 
+    // A live connection keeps its login, so we close it to log in again with the saved credentials.
+    if (server.isConnected)
+      ircClient.disconnect(serverId, state.globalSettings.quitMessage);
+
     // Update server state to connecting
     set((state) => ({
       servers: state.servers.map((s) =>
