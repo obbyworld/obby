@@ -84,7 +84,9 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             type="button"
             className={`${actionClass} button-primary`}
             onClick={() =>
-              editConnection(server.bouncerServerId ?? server.id, "auth")
+              server.bouncerServerId
+                ? reconnectServer(server.id)
+                : editConnection(server.id, "auth")
             }
           >
             <FaSignInAlt />

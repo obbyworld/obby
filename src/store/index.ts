@@ -3129,6 +3129,7 @@ const useStore = create<AppState>((set, get) => ({
     }
 
     // We close the live connection and any pending retry, so only the saved credentials log in.
+    releaseServerVoiceClients(serverId);
     ircClient.disconnect(serverId, state.globalSettings.quitMessage);
 
     // Update server state to connecting

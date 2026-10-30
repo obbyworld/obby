@@ -95,4 +95,16 @@ describe("ConnectionStrip", () => {
     fireEvent.click(screen.getByRole("button", { name: /log in again/i }));
     expect(editConnection).toHaveBeenCalledWith("server1", "auth");
   });
+
+  it("logs a bouncer network in again on its own connection", () => {
+    renderSettled({
+      ...baseServer,
+      bouncerServerId: "bouncer",
+      isRegistered: true,
+      saslFailed: true,
+    });
+    fireEvent.click(screen.getByRole("button", { name: /log in again/i }));
+    expect(reconnectServer).toHaveBeenCalledWith("server1");
+    expect(editConnection).not.toHaveBeenCalled();
+  });
 });
