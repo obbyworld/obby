@@ -4619,6 +4619,7 @@ msgstr "Échec de l'enregistrement : {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Enregistrer le fichier"
 
@@ -4646,6 +4647,11 @@ msgstr "Historique enregistré"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Enregistré sur cet appareil"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Échec de l'enregistrement de {caption}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

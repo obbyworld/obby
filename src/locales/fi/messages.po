@@ -4619,6 +4619,7 @@ msgstr "Tallennus epäonnistui: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Tallenna tiedosto"
 
@@ -4646,6 +4647,11 @@ msgstr "Tallennettu historia"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Tallennettu tälle laitteelle"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Tiedoston {caption} tallennus epäonnistui"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

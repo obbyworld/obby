@@ -4619,6 +4619,7 @@ msgstr "Kaydetme başarısız: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Dosyayı kaydet"
 
@@ -4646,6 +4647,11 @@ msgstr "Kayıtlı geçmiş"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Bu cihazda kayıtlı"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "{caption} kaydedilemedi"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

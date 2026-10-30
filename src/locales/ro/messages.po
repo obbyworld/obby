@@ -4619,6 +4619,7 @@ msgstr "Salvare eșuată: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Salvează fișierul"
 
@@ -4646,6 +4647,11 @@ msgstr "Istoric salvat"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Salvat pe acest dispozitiv"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Salvarea {caption} a eșuat"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

@@ -4619,6 +4619,7 @@ msgstr "Помилка збереження: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Зберегти файл"
 
@@ -4646,6 +4647,11 @@ msgstr "Збережена історія"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Збережено на цьому пристрої"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Не вдалося зберегти {caption}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

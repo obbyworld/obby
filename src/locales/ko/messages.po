@@ -4619,6 +4619,7 @@ msgstr "저장 실패: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "파일 저장"
 
@@ -4646,6 +4647,11 @@ msgstr "저장된 기록"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "이 기기에 저장됨"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "{caption} 저장에 실패했습니다"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

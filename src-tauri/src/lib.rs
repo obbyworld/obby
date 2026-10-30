@@ -55,8 +55,12 @@ async fn download_image(app: tauri::AppHandle, url: String) -> Result<String, St
 async fn save_file(app: tauri::AppHandle, request: tauri::ipc::Request<'_>) -> Result<(), String> {
     use base64::Engine;
 
-    let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else {
-        return Err("expected the file as raw bytes".into());
+    // Android has no custom protocol IPC, so there the bytes arrive as a JSON number array.
+    let bytes = match request.body() {
+        tauri::ipc::InvokeBody::Raw(bytes) => bytes.clone(),
+        tauri::ipc::InvokeBody::Json(value) => {
+            serde_json::from_value::<Vec<u8>>(value.clone()).map_err(|e| e.to_string())?
+        }
     };
     let filename = request
         .headers()
@@ -66,7 +70,7 @@ async fn save_file(app: tauri::AppHandle, request: tauri::ipc::Request<'_>) -> R
         .and_then(|name| String::from_utf8(name).ok())
         .filter(|name| !name.is_empty())
         .unwrap_or_else(|| "file".into());
-    save_bytes(app, filename, bytes.clone()).await
+    save_bytes(app, filename, bytes).await
 }
 
 fn extract_filename(url: &str) -> String {

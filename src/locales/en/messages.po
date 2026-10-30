@@ -4618,6 +4618,7 @@ msgstr "Save failed: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Save file"
 
@@ -4645,6 +4646,11 @@ msgstr "Saved history"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Saved on this device"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Saving {caption} failed"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

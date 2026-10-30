@@ -4619,6 +4619,7 @@ msgstr "Opslaan mislukt: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Bestand opslaan"
 
@@ -4646,6 +4647,11 @@ msgstr "Opgeslagen geschiedenis"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Opgeslagen op dit apparaat"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Opslaan van {caption} mislukt"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

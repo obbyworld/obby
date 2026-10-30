@@ -4619,6 +4619,7 @@ msgstr "Error al guardar: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Guardar archivo"
 
@@ -4646,6 +4647,11 @@ msgstr "Historial guardado"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Guardado en este dispositivo"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "No se pudo guardar {caption}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

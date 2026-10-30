@@ -10,6 +10,7 @@ import {
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { formatFileSize } from "../../lib/mediaUpload";
 import { saveFileToDevice } from "../../lib/saveFile";
+import useStore from "../../store";
 import HoverTooltip from "./HoverTooltip";
 
 /** Something waiting above the composer to go out with the next message. A
@@ -63,8 +64,22 @@ function Thumbnail({
   );
 }
 
+// We tell the user when a save fails, so nobody removes a file they think they kept.
+function saveAttachment(file: File, failedMessage: string) {
+  saveFileToDevice(file).catch((error) => {
+    console.error("Saving the attachment failed", error);
+    useStore.getState().addGlobalNotification({
+      type: "fail",
+      command: "SAVE",
+      code: "SAVE_FAILED",
+      message: failedMessage,
+      serverId: useStore.getState().ui.selectedServerId ?? "",
+    });
+  });
+}
+
 /** A phone keeps the composer small next to its keyboard, so each attachment
- *  is a thumbnail with its own remove badge. */
+ *  is a thumbnail with its own remove and save badges. */
 function AttachmentChip({
   attachment,
   onRemove,
@@ -106,6 +121,18 @@ function AttachmentChip({
       >
         <FaTimes className="h-3 w-3" />
       </button>
+      {attachment.kind === "file" && (
+        <button
+          type="button"
+          onClick={() =>
+            saveAttachment(attachment.file, t`Saving ${caption} failed`)
+          }
+          aria-label={t`Save file`}
+          className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white"
+        >
+          <FaDownload className="h-3 w-3" />
+        </button>
+      )}
     </div>
   );
 }
@@ -148,14 +175,12 @@ function AttachmentCard({
       </p>
       {/* A pointer can ask for these by hovering; a finger has nothing to hover
           with, so there they stay out. */}
-      <div className="absolute right-3 top-3 flex items-center overflow-hidden rounded-md bg-discord-dark-200 shadow-lg ring-1 ring-black/40 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
+      <div className="absolute right-3 top-3 flex items-center overflow-hidden rounded-md bg-discord-dark-200 shadow-lg ring-1 ring-black/40 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-focus-within:opacity-100">
         {attachment.kind === "file" && (
           <button
             type="button"
             onClick={() =>
-              saveFileToDevice(attachment.file).catch((error) =>
-                console.error("Saving the attachment failed", error),
-              )
+              saveAttachment(attachment.file, t`Saving ${caption} failed`)
             }
             aria-label={t`Save file`}
             title={t`Save file`}

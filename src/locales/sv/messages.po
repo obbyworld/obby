@@ -4619,6 +4619,7 @@ msgstr "Sparning misslyckades: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Spara fil"
 
@@ -4646,6 +4647,11 @@ msgstr "Sparad historik"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Sparat på denna enhet"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Det gick inte att spara {caption}"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."

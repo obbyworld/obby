@@ -4619,6 +4619,7 @@ msgstr "Speichern fehlgeschlagen: {msg}"
 
 #: src/components/ui/AttachmentTray.tsx
 #: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
 msgid "Save file"
 msgstr "Datei speichern"
 
@@ -4646,6 +4647,11 @@ msgstr "Gespeicherter Verlauf"
 #: src/components/message/MessageHeader.tsx
 msgid "Saved on this device"
 msgstr "Auf diesem Gerät gespeichert"
+
+#: src/components/ui/AttachmentTray.tsx
+#: src/components/ui/AttachmentTray.tsx
+msgid "Saving {caption} failed"
+msgstr "Speichern von {caption} fehlgeschlagen"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Saving..."
