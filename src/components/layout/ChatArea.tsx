@@ -1683,7 +1683,7 @@ export const ChatArea: React.FC<{
   const showRecalledInput = (input: SentInput) => {
     if (typeof input !== "string") {
       applyText("");
-      command.begin(input.botNick, input.command, input.values);
+      command.begin(input.botNick, input.command, input.values, true);
       return;
     }
     applyText(input);
@@ -1699,6 +1699,7 @@ export const ChatArea: React.FC<{
     if (
       isHistoryKey &&
       !isModKey &&
+      !e.shiftKey &&
       command.invocation &&
       messageHistory.messageHistoryIndex >= 0
     )

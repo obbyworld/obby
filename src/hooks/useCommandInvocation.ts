@@ -73,11 +73,16 @@ export function useCommandInvocation({
   };
 
   const begin = useCallback(
-    (botNick: string, command: BotCommand, values: CommandArgValues = {}) => {
+    (
+      botNick: string,
+      command: BotCommand,
+      values: CommandArgValues = {},
+      isRecalled = false,
+    ) => {
       if (!serverId) return;
-      if (!needsArguments(command)) {
-        sendBotCommand(serverId, channel, botNick, command, {});
-        onRunRef.current({ botNick, command, values: {} });
+      if (!needsArguments(command) && !isRecalled) {
+        if (sendBotCommand(serverId, channel, botNick, command, {}))
+          onRunRef.current({ botNick, command, values: {} });
         return;
       }
       if (stashedDraft.current === null) {
@@ -173,18 +178,19 @@ export function useCommandInvocation({
       moveTo(invocation, active, result.error);
       return;
     }
-    sendBotCommand(
+    const isSent = sendBotCommand(
       serverId,
       channel,
       invocation.botNick,
       invocation.command,
       result.payload,
     );
-    onRun({
-      botNick: invocation.botNick,
-      command: invocation.command,
-      values: invocation.values,
-    });
+    if (isSent)
+      onRun({
+        botNick: invocation.botNick,
+        command: invocation.command,
+        values: invocation.values,
+      });
     finish();
   };
 

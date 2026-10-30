@@ -154,7 +154,7 @@ export function sendBotCommand(
   bot: string,
   cmd: BotCommand,
   options: Record<string, string | number | boolean>,
-): void {
+): boolean {
   const contexts = resolveContexts(cmd);
   const canPublic = contexts.includes("public");
   const canPrivate = contexts.includes("private");
@@ -182,7 +182,10 @@ export function sendBotCommand(
     const payload = { name: cmd.name, options };
     const b64 = base64EncodeUtf8(JSON.stringify(payload));
     ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
+  } else {
+    return false;
   }
+  return true;
 }
 
 /** How long to wait before flipping a pending message to "failed". */

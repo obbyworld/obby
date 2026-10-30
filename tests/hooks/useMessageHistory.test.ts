@@ -67,6 +67,7 @@ describe("useMessageHistory", () => {
       "/oper admin hunter2",
       "/ns identify hunter2",
       "/msg NickServ IDENTIFY hunter2",
+      "/msg Q AUTH account hunter2",
       "/PASS hunter2",
       "/quote PASS hunter2",
       "hello\n/oper admin hunter2",

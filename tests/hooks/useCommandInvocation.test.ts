@@ -63,7 +63,7 @@ function setup() {
 
 describe("useCommandInvocation", () => {
   beforeEach(() => {
-    sendBotCommand.mockClear();
+    sendBotCommand.mockReset().mockReturnValue(true);
     onRun.mockClear();
   });
 
@@ -85,6 +85,31 @@ describe("useCommandInvocation", () => {
       values: {},
     });
     expect(hook.result.current.invocation).toBeNull();
+  });
+
+  it("leaves a command the bot cannot take here out of the history", () => {
+    sendBotCommand.mockReturnValue(false);
+    const { hook } = setup();
+    act(() =>
+      hook.result.current.begin("bot", { name: "aimodels", options: [] }),
+    );
+    expect(onRun).not.toHaveBeenCalled();
+  });
+
+  it("opens a recalled command without options and sends it on Enter", () => {
+    const { hook, key } = setup();
+    const aimodels = { name: "aimodels", options: [] };
+    act(() => hook.result.current.begin("bot", aimodels, {}, true));
+    expect(sendBotCommand).not.toHaveBeenCalled();
+    expect(hook.result.current.invocation?.command).toBe(aimodels);
+    key("Enter");
+    expect(sendBotCommand).toHaveBeenCalledWith(
+      "srv",
+      null,
+      "bot",
+      aimodels,
+      {},
+    );
   });
 
   it("moves to the next argument on Tab and back on Shift+Tab", () => {
