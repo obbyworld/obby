@@ -36,6 +36,14 @@ describe("parseJoinLink", () => {
       "#irc.example.org#caf%C3%A9",
       { host: "wss://irc.example.org", port: 443, channels: ["#café"] },
     ],
+    [
+      "#irc.example.org#room%3Fa,#room%23b,#100%25",
+      {
+        host: "wss://irc.example.org",
+        port: 443,
+        channels: ["#room?a", "#room#b", "#100%"],
+      },
+    ],
   ])("parses %s", (fragment, expected) => {
     expect(parseJoinLink(fragment)).toEqual({ nick: undefined, ...expected });
   });

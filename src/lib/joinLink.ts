@@ -16,14 +16,12 @@ const SCHEME = /^(wss?|ircs?):\/\//i;
  * URL draft. A link without a scheme means wss.
  */
 export function parseJoinLink(fragment: string): JoinLink | null {
-  let rest: string;
-  try {
-    rest = decodeURIComponent(fragment.replace(/^#/, "")).trim();
-  } catch {
-    return null;
-  }
+  let rest = fragment.replace(/^#/, "").trim();
+  // Some sites encode the second `#` that starts the channels, so we read a
+  // `%23` as that `#` when the link has none.
+  if (!rest.includes("#")) rest = rest.replace(/%23/i, "#");
   // We drop a link's display name so the user only ever sees the real hostname.
-  rest = rest.replace(/^[^|/]*\|/, "");
+  rest = rest.replace(/^[^|/]*?(\||%7C)/i, "");
   const scheme = rest.match(SCHEME)?.[1].toLowerCase() ?? "wss";
   rest = rest.replace(SCHEME, "");
   if (!rest) return null;
@@ -58,7 +56,6 @@ export function parseJoinLink(fragment: string): JoinLink | null {
   };
 }
 
-// The URL parser encodes non-ASCII channel names again, so we decode each one.
 function decodeChannel(name: string): string {
   try {
     return decodeURIComponent(name);

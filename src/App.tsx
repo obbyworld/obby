@@ -50,16 +50,20 @@ import type { Server } from "./types";
 let pendingJoinChannel: string | null = null;
 /* Browsers keep the fragment on the client, so any static deploy
  * serves links like `/#wss://irc.example.org#lobby`. */
-let pendingJoinLink: JoinLink | null = null;
-if (typeof window !== "undefined") {
-  pendingJoinLink = parseJoinLink(window.location.hash);
-  if (pendingJoinLink) {
+const takeJoinLink = (): JoinLink | null => {
+  const link = parseJoinLink(window.location.hash);
+  if (link) {
     window.history.replaceState(
       {},
       "",
       window.location.pathname + window.location.search,
     );
   }
+  return link;
+};
+let pendingJoinLink: JoinLink | null = null;
+if (typeof window !== "undefined") {
+  pendingJoinLink = takeJoinLink();
   try {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("channel");
@@ -144,7 +148,7 @@ const joinWhenReady = (host: string | null, channels: string[]) => {
     .servers.find((s) => s.isRegistered && isTarget(s));
   if (registered) {
     join(registered.id);
-    return;
+    return () => {};
   }
   const onReady = ({ serverId }: { serverId: string }) => {
     const server = useStore.getState().servers.find((s) => s.id === serverId);
@@ -153,6 +157,7 @@ const joinWhenReady = (host: string | null, channels: string[]) => {
     join(serverId);
   };
   ircClient.on("ready", onReady);
+  return () => ircClient.deleteHook("ready", onReady);
 };
 
 /* A link can name any server, so we ask before we connect or join. A
@@ -165,7 +170,12 @@ const offerJoinLink = async (link: JoinLink) => {
     (server) => hostnameOf(server.host) === hostname,
   );
   if (isSaved) {
-    if (!channels) return;
+    if (!channels) {
+      const state = useStore.getState();
+      const server = state.servers.find((s) => hostnameOf(s.host) === hostname);
+      if (server) state.selectServer(server.id);
+      return;
+    }
     const confirmed = await confirmDestructive(
       t`Join ${channels}?`,
       t`Join ${channels} on ${hostname} with your saved login.`,
@@ -176,19 +186,27 @@ const offerJoinLink = async (link: JoinLink) => {
     return;
   }
   // The user's click on the connect dialog is the consent we need to join.
-  joinWhenReady(host, link.channels);
-  if (__DEFAULT_IRC_SERVER__) return;
-  useStore.getState().toggleAddServerModal(true, {
-    name: hostname,
-    host: link.host,
-    port: String(link.port),
-    nickname: link.nick ?? "",
-    useWebSocket: true,
-    ui: {
-      title: channels
-        ? t`Join ${channels} on ${hostname}`
-        : t`Connect to ${hostname}`,
-    },
+  const cancelJoin = joinWhenReady(host, link.channels);
+  if (!__DEFAULT_IRC_SERVER__) {
+    useStore.getState().toggleAddServerModal(true, {
+      name: hostname,
+      host: link.host,
+      port: String(link.port),
+      nickname: link.nick ?? "",
+      useWebSocket: true,
+      ui: {
+        title: channels
+          ? t`Join ${channels} on ${hostname}`
+          : t`Connect to ${hostname}`,
+      },
+    });
+  }
+  const unsubscribe = useStore.subscribe((state) => {
+    if (state.ui.isAddServerModalOpen) return;
+    unsubscribe();
+    if (!state.servers.some((s) => hostnameOf(s.host) === hostname)) {
+      cancelJoin();
+    }
   });
 };
 
@@ -302,6 +320,15 @@ const App: React.FC = () => {
     if (pendingJoinChannel) joinWhenReady(null, [pendingJoinChannel]);
     if (pendingJoinLink) void offerJoinLink(pendingJoinLink);
   }, [connectToSavedServers, joinChannel, toggleAddServerModal]);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const link = takeJoinLink();
+      if (link) void offerJoinLink(link);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   // When the server list is hidden and all saved-server connections fail, the user
   // has no other way to open the login modal, so we open it automatically.
