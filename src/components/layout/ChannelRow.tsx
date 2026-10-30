@@ -5,6 +5,7 @@ import {
   FaDesktop,
   FaEllipsisH,
   FaHashtag,
+  FaLock,
   FaSpinner,
   FaVolumeUp,
 } from "react-icons/fa";
@@ -222,7 +223,15 @@ export const ChannelRow: React.FC<ChannelRowProps> = ({
         </div>
       </div>
       <div className="flex items-center gap-1 flex-shrink-0">
-        {channel.isLoadingHistory ? (
+        {channel.needsKey ? (
+          <span
+            role="img"
+            title={t`Select to enter the channel key`}
+            aria-label={t`Select to enter the channel key`}
+          >
+            <FaLock className="w-3 h-3 text-discord-yellow" />
+          </span>
+        ) : channel.isLoadingHistory ? (
           <FaSpinner className="w-3 h-3 text-gray-400 animate-spin" />
         ) : (
           !isSelected && (

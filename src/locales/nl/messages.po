@@ -1126,6 +1126,11 @@ msgstr "Kanaalgeschiedenis (+H)"
 msgid "Channel Information"
 msgstr "Kanaalinformatie"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Kanaalsleutel"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Kanaalsleutel (+k)"
@@ -2846,6 +2851,7 @@ msgstr "is nu bekend als **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Deelnemen"
 
@@ -2860,6 +2866,7 @@ msgstr "Deelnemen aan {0}"
 msgid "Join {channel}"
 msgstr "Join {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Deelnemen aan {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Lid selecteren"
 msgid "Select or add a channel to get started."
 msgstr "Selecteer of voeg een kanaal toe om te beginnen."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Selecteer om de kanaalsleutel in te voeren"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "zelf-geregistreerd"
@@ -6058,6 +6070,10 @@ msgstr "Workflowgeschiedenis ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Werkt met andere IRC-clients"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Verkeerde sleutel, probeer het opnieuw"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

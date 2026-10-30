@@ -1126,6 +1126,11 @@ msgstr "Kanalverlauf (+H)"
 msgid "Channel Information"
 msgstr "Kanalinformationen"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Kanalschlüssel"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Kanalschlüssel (+k)"
@@ -2846,6 +2851,7 @@ msgstr "ist jetzt bekannt als **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Beitreten"
 
@@ -2860,6 +2866,7 @@ msgstr "{0} beitreten"
 msgid "Join {channel}"
 msgstr "{channel} betreten"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "{channelName} beitreten"
@@ -4799,6 +4806,11 @@ msgstr "Mitglied auswählen"
 msgid "Select or add a channel to get started."
 msgstr "Kanal auswählen oder hinzufügen, um zu beginnen."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Auswählen, um den Kanalschlüssel einzugeben"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "selbst registriert"
@@ -6058,6 +6070,10 @@ msgstr "Workflow-Verlauf ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Funktioniert mit anderen IRC-Clients"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Falscher Schlüssel, versuche es erneut"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

@@ -1126,6 +1126,11 @@ msgstr "頻道歷史 (+H)"
 msgid "Channel Information"
 msgstr "頻道資訊"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "頻道金鑰"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "頻道金鑰 (+k)"
@@ -2846,6 +2851,7 @@ msgstr "現在稱為 **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "加入"
 
@@ -2860,6 +2866,7 @@ msgstr "加入 {0}"
 msgid "Join {channel}"
 msgstr "加入 {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "加入 {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "选择成员"
 msgid "Select or add a channel to get started."
 msgstr "选择或添加频道以开始使用。"
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "選擇以輸入頻道金鑰"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "自助註冊"
@@ -6058,6 +6070,10 @@ msgstr "工作流程歷史（{0}）"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "可與其他 IRC 客戶端搭配使用"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "金鑰錯誤，請再試一次"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

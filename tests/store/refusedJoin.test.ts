@@ -67,6 +67,7 @@ describe("a join the server refuses", () => {
       serverId: SERVER,
       channelName: "#closed",
       isThrottled: false,
+      numeric: "474",
     });
 
     expect(channelNames()).toEqual([]);
@@ -80,6 +81,7 @@ describe("a join the server refuses", () => {
       serverId: SERVER,
       channelName: "#saved",
       isThrottled: false,
+      numeric: "474",
     });
 
     expect(channelNames()).toEqual(["#saved"]);
@@ -99,6 +101,7 @@ describe("a join the server refuses", () => {
       serverId: SERVER,
       channelName: "#open",
       isThrottled: false,
+      numeric: "474",
     });
 
     expect(channelNames()).toEqual(["#open"]);
@@ -111,6 +114,7 @@ describe("a join the server refuses", () => {
       serverId: SERVER,
       channelName: "#closed",
       isThrottled: false,
+      numeric: "474",
     });
 
     expect(channelNames()).toEqual([]);
@@ -127,8 +131,213 @@ describe("a join the server refuses", () => {
       serverId: SERVER,
       channelName: "#banned",
       isThrottled: false,
+      numeric: "474",
     });
 
     expect(channelNames()).toEqual([]);
+  });
+
+  describe("a channel that needs a key", () => {
+    const refuseWithBadKey = (channelName: string) =>
+      (
+        ircClient as unknown as {
+          handleMessage(data: string, serverId: string): void;
+        }
+      ).handleMessage(
+        `:irc.test 475 me ${channelName} :Cannot join channel (+k)\r\n`,
+        SERVER,
+      );
+    const needsKey = (channelName: string) =>
+      useStore
+        .getState()
+        .servers[0].channels.find((c) => c.name === channelName)?.needsKey;
+
+    const rejoinSaved = () =>
+      useStore
+        .getState()
+        .joinChannel(SERVER, "#saved", undefined, { isAutomatic: true });
+    const dropConnection = () =>
+      ircClient.triggerEvent("connectionStateChange", {
+        serverId: SERVER,
+        connectionState: "disconnected",
+      });
+    const prompt = () => useStore.getState().channelKeyPrompt;
+
+    afterEach(() => {
+      dropConnection();
+      useStore.setState({ channelKeyPrompt: null });
+    });
+
+    it("asks for the key when a join the user started is refused", () => {
+      useStore.getState().joinChannel(SERVER, "#vault");
+      refuseWithBadKey("#vault");
+
+      expect(useStore.getState().channelKeyPrompt).toEqual({
+        serverId: SERVER,
+        channelName: "#vault",
+        isWrongKey: false,
+      });
+    });
+
+    it("tells the user the key was wrong when a keyed join is refused", () => {
+      useStore.getState().joinChannel(SERVER, "#vault", "nope");
+      refuseWithBadKey("#vault");
+
+      expect(useStore.getState().channelKeyPrompt).toEqual({
+        serverId: SERVER,
+        channelName: "#vault",
+        isWrongKey: true,
+      });
+    });
+
+    it("marks a saved channel needing a key and opens no dialog", () => {
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+
+      expect(needsKey("#saved")).toBe(true);
+      expect(prompt()).toBeNull();
+    });
+
+    it("stops asking for history of a channel that needs a key", () => {
+      rejoinSaved();
+      useStore.setState((state) => ({
+        servers: state.servers.map((s) => ({
+          ...s,
+          channels: s.channels.map((c) => ({
+            ...c,
+            isLoadingHistory: true,
+            hasMoreHistory: true,
+          })),
+        })),
+      }));
+      refuseWithBadKey("#saved");
+
+      expect(useStore.getState().servers[0].channels[0]).toMatchObject({
+        isLoadingHistory: false,
+        hasMoreHistory: false,
+      });
+    });
+
+    it("stays silent when the rejoin after connecting is refused", () => {
+      ircClient.triggerEvent("ready", {
+        serverId: SERVER,
+        serverName: "irc.test",
+        nickname: "me",
+      });
+      expect(ircClient.sendRaw).toHaveBeenCalledWith(SERVER, "JOIN #saved");
+      refuseWithBadKey("#saved");
+      refuseWithBadKey("#saved");
+
+      expect(needsKey("#saved")).toBe(true);
+      expect(prompt()).toBeNull();
+    });
+
+    it("asks for no history of a channel refused before the reconnect requests it", () => {
+      vi.useFakeTimers();
+      (ircClient as unknown as { servers: Map<string, unknown> }).servers.set(
+        SERVER,
+        {
+          id: SERVER,
+          channels: [{ name: "#saved" }],
+          capabilities: ["draft/chathistory"],
+        },
+      );
+      ircClient.triggerEvent("ready", {
+        serverId: SERVER,
+        serverName: "irc.test",
+        nickname: "me",
+      });
+      refuseWithBadKey("#saved");
+      vi.mocked(ircClient.sendRaw).mockClear();
+      vi.advanceTimersByTime(100);
+      vi.useRealTimers();
+
+      const historyRequests = vi
+        .mocked(ircClient.sendRaw)
+        .mock.calls.filter(([, line]) => line.startsWith("CHATHISTORY"));
+      expect(historyRequests).toEqual([]);
+    });
+
+    it("stays silent when an automatic join of a new channel is refused", () => {
+      useStore
+        .getState()
+        .joinChannel(SERVER, "#welcome", undefined, { isAutomatic: true });
+      refuseWithBadKey("#welcome");
+
+      expect(prompt()).toBeNull();
+    });
+
+    it("asks for the key when the user joins a saved channel that needs one", () => {
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+
+      useStore.getState().joinChannel(SERVER, "#saved");
+      refuseWithBadKey("#saved");
+
+      expect(prompt()).toEqual({
+        serverId: SERVER,
+        channelName: "#saved",
+        isWrongKey: false,
+      });
+    });
+
+    it("forgets a key sent before the connection dropped", () => {
+      useStore.getState().joinChannel(SERVER, "#saved", "old");
+      dropConnection();
+
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+      expect(prompt()).toBeNull();
+
+      useStore.getState().joinChannel(SERVER, "#saved");
+      refuseWithBadKey("#saved");
+      expect(prompt()?.isWrongKey).toBe(false);
+    });
+
+    it("asks for the key when the user selects a channel that needs one", () => {
+      rejoinSaved();
+      refuseWithBadKey("#saved");
+      const channel = useStore.getState().servers[0].channels[0];
+
+      useStore.getState().selectChannel(channel.id, { navigate: true });
+
+      expect(useStore.getState().channelKeyPrompt).toEqual({
+        serverId: SERVER,
+        channelName: "#saved",
+        isWrongKey: false,
+      });
+    });
+
+    it("clears the mark once the join goes through", () => {
+      vi.spyOn(ircClient, "getNick").mockReturnValue("me");
+      useStore.getState().joinChannel(SERVER, "#saved");
+      refuseWithBadKey("#saved");
+      expect(needsKey("#saved")).toBe(true);
+
+      ircClient.triggerEvent("JOIN", {
+        serverId: SERVER,
+        username: "me",
+        channelName: "#saved",
+      });
+
+      expect(needsKey("#saved")).toBeFalsy();
+      expect(ircClient.sendRaw).toHaveBeenCalledWith(
+        SERVER,
+        "WHO #saved %cuhnfaro",
+      );
+    });
+
+    it("leaves other refusals alone", () => {
+      useStore.getState().joinChannel(SERVER, "#saved");
+      ircClient.triggerEvent("JOIN_REFUSED", {
+        serverId: SERVER,
+        channelName: "#saved",
+        isThrottled: false,
+        numeric: "474",
+      });
+
+      expect(needsKey("#saved")).toBeFalsy();
+      expect(useStore.getState().channelKeyPrompt).toBeNull();
+    });
   });
 });

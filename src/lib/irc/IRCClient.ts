@@ -74,6 +74,7 @@ export interface EventMap {
     serverId: string;
     channelName: string;
     isThrottled: boolean;
+    numeric: string;
   };
   PART: BaseUserActionEvent & {
     channelName: string;
@@ -1326,8 +1327,9 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, typedName: string): Channel {
+  joinChannel(serverId: string, typedName: string, key?: string): Channel {
     const channelName = this.withChannelPrefix(serverId, typedName);
+    const joinLine = key ? `JOIN ${channelName} ${key}` : `JOIN ${channelName}`;
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1338,11 +1340,11 @@ export class IRCClient implements IRCClientContext {
         // memberships (e.g. cached `$test` from before a server restart)
         // self-heal. Without this, PRIVMSG/TAGMSG to the cached channel
         // returns 401 No such nick/channel because the server forgot.
-        this.sendRaw(serverId, `JOIN ${channelName}`);
+        this.sendRaw(serverId, joinLine);
         return existing;
       }
 
-      this.sendRaw(serverId, `JOIN ${channelName}`);
+      this.sendRaw(serverId, joinLine);
 
       const wantsChathistory = this.hasChathistory(serverId);
 
@@ -1363,13 +1365,8 @@ export class IRCClient implements IRCClientContext {
       };
       server.channels.push(channel);
 
-      if (!this.loadLatestHistory(serverId, channelName)) {
-        // No CHATHISTORY support (or it's the bouncer control session) --
-        // the LOADING(false) callback that normally fires WHO will never
-        // run. Send it now.
-        this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+      if (!this.loadHistoryOrMembers(serverId, channelName))
         channel.needsWhoRequest = false;
-      }
 
       return channel;
     }
@@ -1444,6 +1441,14 @@ export class IRCClient implements IRCClientContext {
       isLoading: true,
     });
     return true;
+  }
+
+  // The end of a history load sends WHO, so we send it ourselves only when
+  // the server keeps no history. Returns whether history was requested.
+  loadHistoryOrMembers(serverId: string, channelName: string): boolean {
+    if (this.loadLatestHistory(serverId, channelName)) return true;
+    this.sendRaw(serverId, `WHO ${channelName} %cuhnfaro`);
+    return false;
   }
 
   // Servers state their per-request maximum as CHATHISTORY=<n>, where 0 means

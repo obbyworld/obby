@@ -1126,6 +1126,11 @@ msgstr "Historial del canal (+H)"
 msgid "Channel Information"
 msgstr "Información del canal"
 
+#: src/components/ui/ChannelKeyModal.tsx
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Channel key"
+msgstr "Clave del canal"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Channel key (+k)"
 msgstr "Clave del canal (+k)"
@@ -2846,6 +2851,7 @@ msgstr "ahora se llama **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
 #: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Unirse"
 
@@ -2860,6 +2866,7 @@ msgstr "Unirse a {0}"
 msgid "Join {channel}"
 msgstr "Unirse a {channel}"
 
+#: src/components/ui/ChannelKeyModal.tsx
 #: src/components/ui/QuickActions/joinChannelResults.ts
 msgid "Join {channelName}"
 msgstr "Unirse a {channelName}"
@@ -4799,6 +4806,11 @@ msgstr "Seleccionar miembro"
 msgid "Select or add a channel to get started."
 msgstr "Selecciona o agrega un canal para comenzar."
 
+#: src/components/layout/ChannelRow.tsx
+#: src/components/layout/ChannelRow.tsx
+msgid "Select to enter the channel key"
+msgstr "Selecciona para introducir la clave del canal"
+
 #: src/components/layout/BotPane.tsx
 msgid "self-registered"
 msgstr "autorregistrado"
@@ -6058,6 +6070,10 @@ msgstr "Historial de flujos de trabajo ({0})"
 #: src/components/ui/E2EELockControl.tsx
 msgid "Works with other IRC clients"
 msgstr "Funciona con otros clientes de IRC"
+
+#: src/components/ui/ChannelKeyModal.tsx
+msgid "Wrong key, try again"
+msgstr "Clave incorrecta, inténtalo de nuevo"
 
 #: src/components/ui/BouncerNetworkForm.tsx
 msgid "Yes, delete"

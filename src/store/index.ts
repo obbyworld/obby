@@ -65,7 +65,11 @@ import {
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
-import { markPendingJoin } from "./pendingJoins";
+import {
+  markKeyedJoin,
+  markPendingJoin,
+  setAutomaticJoin,
+} from "./pendingJoins";
 import type {
   AppPage,
   ChannelOrderMap,
@@ -733,6 +737,11 @@ export interface AppState {
   // `AUTHENTICATE 2FA-REQUIRED`; the modal observes this and prompts the
   // user for a TOTP code.  Cleared on submit / cancel / SASL completion.
   pendingTotpStepUp: { serverId: string; account: string } | null;
+  channelKeyPrompt: {
+    serverId: string;
+    channelName: string;
+    isWrongKey: boolean;
+  } | null;
   // 2FA management state per server (populated by `2FA LIST` / `2FA STATUS`).
   twofaStatus: Record<string, "enabled" | "disabled" | "unknown">;
   twofaCredentials: Record<
@@ -789,7 +798,12 @@ export interface AppState {
     serverId?: string,
   ) => Promise<Server>;
   disconnect: (serverId: string) => void;
-  joinChannel: (serverId: string, channelName: string) => void;
+  joinChannel: (
+    serverId: string,
+    channelName: string,
+    key?: string,
+    options?: { isAutomatic?: boolean },
+  ) => void;
   leaveChannel: (serverId: string, channelName: string) => void;
   forgetChannel: (serverId: string, channelName: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
@@ -853,6 +867,7 @@ export interface AppState {
   twofaDisable: (serverId: string, type: string, data: string) => void;
   submitTotpStepUp: (serverId: string, code: string) => void;
   cancelTotpStepUp: (serverId: string) => void;
+  closeChannelKeyPrompt: () => void;
   // Tic-tac-toe actions
   tictactoeInvite: (serverId: string, opponent: string) => void;
   tictactoeAccept: (serverId: string, opponent: string) => void;
@@ -1259,6 +1274,7 @@ const useStore = create<AppState>((set, get) => ({
   inviteLinks: {},
   pendingRegistration: null,
   pendingTotpStepUp: null,
+  channelKeyPrompt: null,
   twofaStatus: {},
   twofaCredentials: {},
   pendingTwofaChallenge: null,
@@ -1707,9 +1723,11 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.sendRaw(serverId, `INVITELINK DELETE ${shareId}`);
   },
 
-  joinChannel: (serverId, channelName) => {
-    const channel = ircClient.joinChannel(serverId, channelName);
+  joinChannel: (serverId, channelName, key, options) => {
+    const channel = ircClient.joinChannel(serverId, channelName, key);
     if (channel) {
+      if (key) markKeyedJoin(serverId, channel.name);
+      setAutomaticJoin(serverId, channel.name, !!options?.isAutomatic);
       const isSameChannel = (name: string) =>
         name.toLowerCase() === channel.name.toLowerCase();
       set((state) => {
@@ -1996,6 +2014,7 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.sendRaw(serverId, "AUTHENTICATE *");
     set({ pendingTotpStepUp: null });
   },
+  closeChannelKeyPrompt: () => set({ channelKeyPrompt: null }),
 
   setAway: (serverId, message) => {
     const awayMsg = message || get().globalSettings.awayMessage || "Away";
@@ -2448,8 +2467,8 @@ const useStore = create<AppState>((set, get) => ({
 
       if (serverId && channelId) {
         const server = state.servers.find((s) => s.id === serverId);
-        const channelName =
-          server?.channels.find((c) => c.id === channelId)?.name || null;
+        const ch = server?.channels.find((c) => c.id === channelId);
+        const channelName = ch?.name || null;
 
         // Self-heal stale memberships: when the local cache says we're
         // in a real (non-private) channel but the user list is empty,
@@ -2461,8 +2480,7 @@ const useStore = create<AppState>((set, get) => ({
         // are commonly orphaned across restarts -- the cost of an
         // extra JOIN line is nothing compared to the 401 the user
         // sees today.
-        if (channelName && server) {
-          const ch = server.channels.find((c) => c.id === channelId);
+        if (channelName && server && !ch?.needsKey) {
           const isVoiceOrStream =
             channelName.startsWith("^") || channelName.startsWith("$");
           const lostMembership =
@@ -2478,6 +2496,14 @@ const useStore = create<AppState>((set, get) => ({
         }
 
         return {
+          ...(ch?.needsKey &&
+            options?.navigate && {
+              channelKeyPrompt: {
+                serverId,
+                channelName: ch.name,
+                isWrongKey: false,
+              },
+            }),
           ui: {
             ...state.ui,
             selectedServerId: serverId,

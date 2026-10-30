@@ -311,9 +311,13 @@ export function useMessageSending({
       if (commandName === "nick") {
         ircClient.sendRaw(selectedServerId, `NICK ${args[0]}`);
       } else if (commandName === "join") {
-        if (args[0]) {
-          for (const name of args[0].split(",").filter(Boolean))
-            useStore.getState().joinChannel(selectedServerId, name);
+        const [channels, keyList] = args.filter(Boolean);
+        if (channels) {
+          const keys = keyList?.split(",") ?? [];
+          channels.split(",").forEach((name, i) => {
+            if (name)
+              useStore.getState().joinChannel(selectedServerId, name, keys[i]);
+          });
         } else {
           console.error("No channel specified for /join command");
         }
