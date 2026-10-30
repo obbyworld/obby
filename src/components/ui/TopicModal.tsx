@@ -1,9 +1,9 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import ircClient from "../../lib/ircClient";
-import { hasOpPermission } from "../../lib/ircUtils";
+import { hasOpPermission, mircToHtml } from "../../lib/ircUtils";
 import BaseModal from "../../lib/modal/BaseModal";
 import { Button, ModalBody, ModalFooter } from "../../lib/modal/components";
 import type { Channel, User } from "../../types";
@@ -16,46 +16,6 @@ interface TopicModalProps {
   channel: Channel;
   serverId: string;
   currentUser: User | null;
-}
-
-// Render plain topic text with http/https/irc URLs as <a> tags carrying
-// the "external-link-security" / "irc-link" classes, so EnhancedLinkWrapper
-// intercepts the click and routes through ExternalLinkWarningModal /
-// onIrcLinkClick (matching the message-rendering flow).
-const URL_RX = /\b(?:https?|ircs?):\/\/[^\s<>"'`]+/gi;
-
-function renderTopicWithLinks(text: string): React.ReactNode[] {
-  const out: React.ReactNode[] = [];
-  let last = 0;
-  let i = 0;
-  for (const match of text.matchAll(URL_RX)) {
-    const idx = match.index ?? -1;
-    if (idx < 0) continue;
-    if (idx > last) {
-      out.push(<Fragment key={`t-${i}`}>{text.slice(last, idx)}</Fragment>);
-    }
-    const url = match[0];
-    const isIrc = url.startsWith("irc://") || url.startsWith("ircs://");
-    out.push(
-      <a
-        key={`u-${i++}`}
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`underline text-blue-400 hover:text-blue-300 break-all ${
-          isIrc ? "irc-link" : "external-link-security"
-        }`}
-      >
-        {url}
-      </a>,
-    );
-    last = idx + url.length;
-  }
-  if (last < text.length) {
-    out.push(<Fragment key="tail">{text.slice(last)}</Fragment>);
-  }
-  if (out.length === 0) return [text];
-  return out;
 }
 
 export const TopicModal: React.FC<TopicModalProps> = ({
@@ -104,7 +64,7 @@ export const TopicModal: React.FC<TopicModalProps> = ({
               aria-label={t`Channel Topic`}
             >
               {channel.topic ? (
-                renderTopicWithLinks(channel.topic)
+                mircToHtml(channel.topic)
               ) : (
                 <span className="italic">No topic set</span>
               )}

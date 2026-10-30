@@ -56,4 +56,19 @@ describe("BotPane", () => {
     });
     expect(useStore.getState().ui.sidePane).toBeNull();
   });
+
+  it("renders IRC colors in the real name", () => {
+    useStore.setState({
+      servers: useStore.getState().servers.map((server) => ({
+        ...server,
+        bots: { greeter: { ...greeter, realname: "\x0304Says\x03 hello" } },
+      })),
+    });
+
+    render(<BotPane target={{ serverId: "server1", botNick: "greeter" }} />);
+
+    const says = screen.getByText("Says");
+    expect(says.parentElement?.textContent).toBe("Says hello");
+    expect(says.style.color).not.toBe("");
+  });
 });
