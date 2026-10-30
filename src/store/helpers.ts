@@ -61,6 +61,24 @@ export function generateDeterministicId(
 /**
  * Normalize host for comparison (extract hostname from URL or return as-is)
  */
+export type LoginState =
+  | "connecting"
+  | "failed"
+  | "loggedIn"
+  | "guest"
+  | "offline";
+
+export function getLoginState(server: Server | undefined): LoginState {
+  if (
+    server?.connectionState === "connecting" ||
+    (server?.isConnected && !server.isRegistered)
+  )
+    return "connecting";
+  if (!server?.isConnected) return "offline";
+  if (server.saslFailed) return "failed";
+  return server.account ? "loggedIn" : "guest";
+}
+
 export function normalizeHost(host: string): string {
   if (host.includes("://")) {
     // Extract hostname from URL format

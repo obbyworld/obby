@@ -381,6 +381,10 @@ msgstr "Řízení přístupu"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Přístup byl odepřen. Povolte přístup ke kameře a mikrofonu v nastavení prohlížeče nebo systému a zkuste to znovu."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "účet"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -1477,6 +1481,10 @@ msgstr "Připojte mikrofon, abyste mohli mluvit"
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Připojte se k serveru a spravujte nastavení operátora."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Připojeno jako host"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
@@ -2921,10 +2929,6 @@ msgstr "Ponechat údaje"
 msgid "Keep Obby open to get notifications"
 msgstr "Nechte Obby otevřené, abyste dostávali oznámení"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Ponechat hesla"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Ponechat kanál, i když ho všichni opustí. Může to nastavit jen IRCop."
@@ -3096,9 +3100,22 @@ msgstr "Poloha"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Přístup k poloze byl odepřen. Povolte přístup k poloze v nastavení prohlížeče nebo systému a zkuste to znovu."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Přihlásit se"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Přihlásit se znovu"
+
+#. placeholder {0}: server?.account ?? ""
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Přihlášeno jako {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Přihlašování"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3759,10 @@ msgstr "Normální"
 msgid "Normal - Standard protection"
 msgstr "Normální - standardní ochrana"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Nepřipojeno"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3939,6 @@ msgstr "Jméno OPER"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Jméno operátora"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Jméno a heslo operátora jsou povinné"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5180,6 +5197,10 @@ msgstr "Přihlaste se u poskytovatele a propojte ho se svým účtem. Pak se jí
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Přihlášení se nezdařilo, chatujete jako host. Přihlaste se znovu nebo opravte heslo"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Přihlášení selhalo. Zkontrolujte název účtu a heslo"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 msgid "Signed on"
@@ -5768,6 +5789,10 @@ msgstr "Použijte port zabezpečeného websocketu."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Použijte server s IRCv3 METADATA pro nastavení avataru, zobrazovaného jména a stavu."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "V hesle použijte jen latinková písmena"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

@@ -381,6 +381,10 @@ msgstr "Käyttöoikeudet"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Käyttöoikeus evättiin. Salli kameran ja mikrofonin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "tili"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -1477,6 +1481,10 @@ msgstr "Liitä mikrofoni puhuaksesi"
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Yhdistä palvelimeen hallitaksesi operaattoriasetuksia."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Yhdistetty vieraana"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
@@ -2921,10 +2929,6 @@ msgstr "Säilytä tunnistautumistiedot"
 msgid "Keep Obby open to get notifications"
 msgstr "Pidä Obby auki saadaksesi ilmoituksia"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Säilytä salasanat"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Pidä kanava, kun kaikki ovat poistuneet. Vain IRCopit voivat asettaa tämän."
@@ -3096,9 +3100,22 @@ msgstr "Sijainti"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Sijainnin käyttöoikeus evättiin. Salli sijainnin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Kirjaudu sisään"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Kirjaudu uudelleen"
+
+#. placeholder {0}: server?.account ?? ""
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Kirjautunut tilillä {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Kirjaudutaan"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3759,10 @@ msgstr "Normaali"
 msgid "Normal - Standard protection"
 msgstr "Normaali – tavallinen suojaus"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Ei yhteyttä"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3939,6 @@ msgstr "Operaattorin nimi"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Oper-nimi"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Oper-nimi ja salasana ovat pakollisia"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5180,6 +5197,10 @@ msgstr "Kirjaudu palveluntarjoajalla yhdistääksesi sen tiliisi. Sen jälkeen v
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Kirjautuminen epäonnistui, joten keskustelet vieraana. Kirjaudu uudelleen tai korjaa salasanasi"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Kirjautuminen epäonnistui. Tarkista tilin nimi ja salasana"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 msgid "Signed on"
@@ -5768,6 +5789,10 @@ msgstr "Käytä suojattua websocket-porttia."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Käytä IRCv3 METADATA -tukea palvelinta asettaaksesi profiilikuvan, näyttönimen ja tilan."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Käytä salasanassa vain latinalaisia merkkejä"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"

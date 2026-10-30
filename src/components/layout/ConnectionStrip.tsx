@@ -9,6 +9,7 @@ import {
   FaUnlink,
 } from "react-icons/fa";
 import useStore from "../../store";
+import { getLoginState } from "../../store/helpers";
 import type { Server } from "../../types";
 import { editConnection } from "./NetworkMenu";
 
@@ -17,7 +18,7 @@ type Trouble = "lost" | "retrying" | "auth";
 function getTrouble(server: Server): Trouble | null {
   if (server.connectionState === "disconnected") return "lost";
   if (server.connectionState === "reconnecting") return "retrying";
-  if (server.isConnected && server.saslFailed) return "auth";
+  if (getLoginState(server) === "failed") return "auth";
   return null;
 }
 
@@ -78,26 +79,43 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
         <span>{messages[trouble]}</span>
       </div>
       <div className="flex flex-wrap gap-1.5">
-        {trouble !== "retrying" && (
+        {trouble === "auth" ? (
           <button
             type="button"
             className={`${actionClass} button-primary`}
-            onClick={() => reconnectServer(server.id)}
+            onClick={() =>
+              server.bouncerServerId
+                ? reconnectServer(server.id)
+                : editConnection(server.id, "auth")
+            }
           >
-            {trouble === "auth" ? <FaSignInAlt /> : <FaRedo />}
-            {trouble === "auth" ? t`Log in again` : t`Reconnect`}
+            <FaSignInAlt />
+            {t`Log in again`}
           </button>
+        ) : (
+          <>
+            {trouble === "lost" && (
+              <button
+                type="button"
+                className={`${actionClass} button-primary`}
+                onClick={() => reconnectServer(server.id)}
+              >
+                <FaRedo />
+                {t`Reconnect`}
+              </button>
+            )}
+            <button
+              type="button"
+              className={`${actionClass} bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white`}
+              onClick={() => editConnection(server.id)}
+              title={t`Edit connection`}
+              aria-label={t`Edit connection`}
+            >
+              <FaCog />
+              {t`Edit`}
+            </button>
+          </>
         )}
-        <button
-          type="button"
-          className={`${actionClass} bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white`}
-          onClick={() => editConnection(server.id)}
-          title={t`Edit connection`}
-          aria-label={t`Edit connection`}
-        >
-          <FaCog />
-          {t`Edit`}
-        </button>
       </div>
     </div>
   );

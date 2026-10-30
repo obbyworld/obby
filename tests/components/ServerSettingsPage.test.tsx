@@ -3,6 +3,18 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import ServerSettingsPage from "../../src/components/pages/ServerSettingsPage";
 import useStore from "../../src/store";
 
+const storedConfig = (): Record<string, unknown> => ({
+  id: "server1",
+  name: "Test Server",
+  host: "irc.example.com",
+  port: 6697,
+  nickname: "tester",
+  password: "stored-server-pass",
+  saslPassword: "c3RvcmVk",
+  saslEnabled: true,
+});
+const saved = vi.hoisted(() => ({ config: {} as Record<string, unknown> }));
+
 vi.mock("../../src/store", () => {
   const mockStore = vi.fn();
   return {
@@ -10,18 +22,7 @@ vi.mock("../../src/store", () => {
       setState: vi.fn(),
       getState: vi.fn(),
     }),
-    loadSavedServers: vi.fn(() => [
-      {
-        id: "server1",
-        name: "Test Server",
-        host: "irc.example.com",
-        port: 6697,
-        nickname: "tester",
-        password: "stored-server-pass",
-        saslPassword: "c3RvcmVk",
-        saslEnabled: true,
-      },
-    ]),
+    loadSavedServers: vi.fn(() => [saved.config]),
   };
 });
 
@@ -42,7 +43,10 @@ const serverState = {
     },
   ],
   isConnecting: false,
-  updateServer: vi.fn(),
+  updateServer: vi.fn((_id: string, config: Record<string, unknown>) => {
+    saved.config = { ...saved.config, ...config };
+  }),
+  reconnectServer: vi.fn(),
   sendRaw: vi.fn(),
   closePage: vi.fn(),
   ui: { selectedServerId: null, perServerSelections: {}, isNarrowView: false },
@@ -50,6 +54,7 @@ const serverState = {
 
 describe("ServerSettingsPage", () => {
   beforeEach(() => {
+    saved.config = storedConfig();
     vi.mocked(useStore).mockImplementation(((
       selector?: (s: unknown) => unknown,
     ) => (selector ? selector(serverState) : serverState)) as never);
@@ -151,5 +156,114 @@ describe("ServerSettingsPage", () => {
     const saved = serverState.updateServer.mock.calls[0][1];
     expect(saved).not.toHaveProperty("password");
     expect(saved).not.toHaveProperty("saslPassword");
+  });
+
+  test("keeps a typed password through a blur and logs in with it on Log in", () => {
+    serverState.updateServer.mockClear();
+    serverState.reconnectServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    const [password] = screen.getAllByPlaceholderText(
+      "(stored, leave blank to keep)",
+    );
+
+    fireEvent.change(password, { target: { value: "new-pass" } });
+    fireEvent.focusOut(password);
+    expect(password).toHaveValue("new-pass");
+    expect(serverState.updateServer).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }));
+    expect(serverState.updateServer).toHaveBeenCalledWith(
+      "server1",
+      expect.objectContaining({
+        saslPassword: btoa("new-pass"),
+        saslEnabled: true,
+      }),
+    );
+    expect(serverState.reconnectServer).toHaveBeenCalledWith("server1");
+  });
+
+  test("shows a refused sign-in next to the Log in button", () => {
+    const failed = {
+      ...serverState,
+      servers: [
+        {
+          ...serverState.servers[0],
+          isConnected: true,
+          isRegistered: true,
+          saslFailed: true,
+        },
+      ],
+    };
+    vi.mocked(useStore).mockImplementation(((
+      selector?: (s: unknown) => unknown,
+    ) => (selector ? selector(failed) : failed)) as never);
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    expect(
+      screen.getByText("Sign-in failed. Check the account name and password"),
+    ).toBeInTheDocument();
+  });
+
+  test("sends the stored oper password from Oper up once the field saved", () => {
+    serverState.sendRaw.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{
+          kind: "serverSettings",
+          serverId: "server1",
+          section: "operator",
+        }}
+      />,
+    );
+    const name = screen.getByPlaceholderText("IRC operator username");
+    const password = screen.getByPlaceholderText("Operator password");
+
+    fireEvent.change(name, { target: { value: "admin" } });
+    fireEvent.change(password, { target: { value: "operpass" } });
+    fireEvent.focusOut(password);
+
+    expect(password).toHaveValue("");
+    fireEvent.click(screen.getByRole("button", { name: "Oper up" }));
+    expect(serverState.sendRaw).toHaveBeenCalledWith(
+      "server1",
+      "OPER admin operpass",
+    );
+  });
+
+  test("hides the stored passwords row once the user forgets them", () => {
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Forget passwords" }));
+    expect(
+      screen.queryByRole("button", { name: "Forget passwords" }),
+    ).not.toBeInTheDocument();
+  });
+
+  test("asks for Latin characters when the password cannot be stored", () => {
+    serverState.reconnectServer.mockClear();
+    render(
+      <ServerSettingsPage
+        page={{ kind: "serverSettings", serverId: "server1", section: "auth" }}
+      />,
+    );
+    const [password] = screen.getAllByPlaceholderText(
+      "(stored, leave blank to keep)",
+    );
+    fireEvent.change(password, { target: { value: "пароль" } });
+    fireEvent.click(screen.getByRole("button", { name: "Log in" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Use only Latin characters in the password",
+    );
+    expect(serverState.reconnectServer).not.toHaveBeenCalled();
   });
 });

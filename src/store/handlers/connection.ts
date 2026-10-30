@@ -117,7 +117,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
           webPushFailure: undefined,
           account: connectionState === "connected" ? server.account : undefined,
           saslFailed:
-            connectionState === "connecting" ? false : server.saslFailed,
+            connectionState === "connected" ? server.saslFailed : false,
         };
       });
 

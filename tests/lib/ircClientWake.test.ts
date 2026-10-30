@@ -13,7 +13,7 @@ function connectedClient() {
     onclose: vi.fn() as (() => void) | null,
     onopen: null,
     onmessage: null,
-    onerror: null,
+    onerror: vi.fn() as (() => void) | null,
   };
   const internals = client as unknown as { sockets: Map<string, unknown> };
   internals.sockets.set(SERVER, socket);
@@ -163,5 +163,15 @@ describe("joining a channel typed without its prefix", () => {
 
     expect(client.joinChannel(SERVER, "&ops").name).toBe("&ops");
     expect(client.joinChannel(SERVER, "lobby").name).toBe("&lobby");
+  });
+});
+
+describe("disconnecting on purpose", () => {
+  it("detaches the socket handlers so a late close or error leaves the next session alone", () => {
+    const { client, socket } = connectedClient();
+    client.disconnect(SERVER);
+    expect(socket.close).toHaveBeenCalled();
+    expect(socket.onclose).toBeNull();
+    expect(socket.onerror).toBeNull();
   });
 });

@@ -381,6 +381,10 @@ msgstr "Kontrola dostępu"
 msgid "Access was denied. Allow camera and microphone access in your browser or system settings, then try again."
 msgstr "Odmówiono dostępu. Zezwól na dostęp do kamery i mikrofonu w ustawieniach przeglądarki lub systemu, a następnie spróbuj ponownie."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "account"
+msgstr "konto"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/pages/pageSections.tsx
 msgid "Account"
@@ -1477,6 +1481,10 @@ msgstr "Podłącz mikrofon, aby mówić"
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Połącz się z serwerem, aby zarządzać ustawieniami operatora."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Connected as a guest"
+msgstr "Połączono jako gość"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "Connected to"
@@ -2921,10 +2929,6 @@ msgstr "Zachowaj poświadczenia"
 msgid "Keep Obby open to get notifications"
 msgstr "Pozostaw Obby otwarte, aby otrzymywać powiadomienia"
 
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Keep passwords"
-msgstr "Zachowaj hasła"
-
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Keep the channel after everyone leaves. Only IRCops can set this."
 msgstr "Zachowaj kanał po wyjściu wszystkich. Może to ustawić tylko IRCop."
@@ -3096,9 +3100,22 @@ msgstr "Lokalizacja"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Odmówiono dostępu do lokalizacji. Zezwól na dostęp do lokalizacji w ustawieniach przeglądarki lub systemu i spróbuj ponownie."
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Log in"
+msgstr "Zaloguj się"
+
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Zaloguj się ponownie"
+
+#. placeholder {0}: server?.account ?? ""
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logged in as {0}"
+msgstr "Zalogowano jako {0}"
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Logging in"
+msgstr "Logowanie"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Login to an account"
@@ -3742,6 +3759,10 @@ msgstr "Normalny"
 msgid "Normal - Standard protection"
 msgstr "Normalny – standardowa ochrona"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Not connected"
+msgstr "Brak połączenia"
+
 #: src/components/message/E2EEUnprotectedBadge.tsx
 #: src/components/ui/UploadProgressBar.tsx
 msgid "Not encrypted"
@@ -3918,10 +3939,6 @@ msgstr "Nazwa OPER"
 #: src/components/pages/SettingsPage.tsx
 msgid "Oper Name"
 msgstr "Nazwa operatora"
-
-#: src/components/pages/ServerSettingsPage.tsx
-msgid "Oper name and password are required"
-msgstr "Nazwa operatora i hasło są wymagane"
 
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
@@ -5180,6 +5197,10 @@ msgstr "Zaloguj się u dostawcy, aby połączyć go ze swoim kontem. Potem może
 msgid "Sign-in failed, so you are chatting as a guest. Log in again or fix your password"
 msgstr "Logowanie nie powiodło się, czatujesz jako gość. Zaloguj się ponownie lub popraw hasło"
 
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Sign-in failed. Check the account name and password"
+msgstr "Logowanie nie powiodło się. Sprawdź nazwę konta i hasło"
+
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 msgid "Signed on"
@@ -5768,6 +5789,10 @@ msgstr "Użyj bezpiecznego portu websocket."
 #: src/components/pages/SettingsPage.tsx
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Użyj serwera z IRCv3 METADATA, aby ustawić awatar, wyświetlaną nazwę i status."
+
+#: src/components/pages/ServerSettingsPage.tsx
+msgid "Use only Latin characters in the password"
+msgstr "Używaj w haśle tylko znaków łacińskich"
 
 #: src/components/ui/CameraCaptureModal.tsx
 msgid "Use photo"
