@@ -3747,6 +3747,10 @@ msgstr "Normal – standardskydd"
 msgid "Not encrypted"
 msgstr "Inte krypterat"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "Inte skickat. Anslut igen eller använd en chatt där boten erbjuder kommandot"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "Obs: Ändring av kanalmetadata kräver operatörsbehörighet (@) eller högre. Ändringarna syns för alla användare som stöder METADATA-specifikationen."

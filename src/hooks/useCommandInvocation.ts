@@ -9,11 +9,13 @@ import {
   argChoices,
   backspaceCancels,
   buildCommandPayload,
+  type CommandArgValues,
   type CommandInvocation,
   matchChoices,
   needsArguments,
 } from "../lib/commandInvocation";
 import type { BotCommand, Channel } from "../types";
+import type { BotCommandRun } from "./useMessageHistory";
 import { sendBotCommand } from "./useMessageSending";
 import { useSuggestionKeys } from "./useSuggestionKeys";
 
@@ -25,6 +27,7 @@ interface UseCommandInvocationOptions {
   inputRef: RefObject<HTMLTextAreaElement | null>;
   applyText: (text: string) => void;
   onBegin: () => void;
+  onRun: (run: BotCommandRun) => void;
 }
 
 const CHOICE_ACCEPT_KEYS = ["Tab", "Enter"];
@@ -38,10 +41,13 @@ export function useCommandInvocation({
   inputRef,
   applyText,
   onBegin,
+  onRun,
 }: UseCommandInvocationOptions) {
   const [invocation, setInvocation] = useState<CommandInvocation | null>(null);
   const [highlight, setHighlight] = useState(0);
   const stashedDraft = useRef<string | null>(null);
+  const onRunRef = useRef(onRun);
+  onRunRef.current = onRun;
 
   const params = invocation?.command.options ?? [];
   const activeParam = invocation ? params[invocation.active] : undefined;
@@ -67,20 +73,26 @@ export function useCommandInvocation({
   };
 
   const begin = useCallback(
-    (botNick: string, command: BotCommand) => {
+    (
+      botNick: string,
+      command: BotCommand,
+      values: CommandArgValues = {},
+      isRecalled = false,
+    ) => {
       if (!serverId) return;
-      if (!needsArguments(command)) {
-        sendBotCommand(serverId, channel, botNick, command, {});
+      if (!needsArguments(command) && !isRecalled) {
+        if (sendBotCommand(serverId, channel, botNick, command, {}))
+          onRunRef.current({ botNick, command, values: {} });
         return;
       }
       if (stashedDraft.current === null) {
         const typed = textRef.current;
         stashedDraft.current = typed.startsWith("/") ? "" : typed;
       }
-      applyText("");
+      applyText(values[command.options?.[0]?.name ?? ""] ?? "");
       onBegin();
       setHighlight(0);
-      setInvocation({ botNick, command, values: {}, active: 0 });
+      setInvocation({ botNick, command, values, active: 0 });
       inputRef.current?.focus();
     },
     [serverId, channel, textRef, inputRef, applyText, onBegin],
@@ -166,13 +178,28 @@ export function useCommandInvocation({
       moveTo(invocation, active, result.error);
       return;
     }
-    sendBotCommand(
+    const isSent = sendBotCommand(
       serverId,
       channel,
       invocation.botNick,
       invocation.command,
       result.payload,
     );
+    if (!isSent) {
+      setInvocation({
+        ...invocation,
+        error: {
+          kind: "unsent",
+          name: activeParam?.name ?? invocation.command.name,
+        },
+      });
+      return;
+    }
+    onRun({
+      botNick: invocation.botNick,
+      command: invocation.command,
+      values: invocation.values,
+    });
     finish();
   };
 

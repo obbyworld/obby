@@ -23,7 +23,11 @@ import { useCompletion } from "../../hooks/useCompletion";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGuard";
-import { useMessageHistory } from "../../hooks/useMessageHistory";
+import {
+  recordSentInput,
+  type SentInput,
+  useMessageHistory,
+} from "../../hooks/useMessageHistory";
 import { useMessageSending } from "../../hooks/useMessageSending";
 import { useReactions } from "../../hooks/useReactions";
 import { isScrolledToBottom } from "../../hooks/useScrollToBottom";
@@ -808,6 +812,10 @@ export const ChatArea: React.FC<{
     inputRef,
     applyText,
     onBegin: clearCompletion,
+    onRun: (run) => {
+      recordSentInput(channelKey, run);
+      messageHistory.resetHistory();
+    },
   });
 
   const pendingBotCommandPick = useStore(
@@ -1097,13 +1105,7 @@ export const ChatArea: React.FC<{
     }
   }, [localReplyTo]);
 
-  // Message history hook (must be after channelMessages is defined)
-  const messageHistory = useMessageHistory({
-    messages: channelMessages,
-    currentUsername: currentUser?.username || null,
-    selectedChannelId,
-    selectedPrivateChatId,
-  });
+  const messageHistory = useMessageHistory(channelKey);
 
   // Save outgoing channel's draft on cleanup; messageText read through ref so the
   // cleanup always sees the latest typed value, not the stale closure at effect-run time.
@@ -1240,6 +1242,11 @@ export const ChatArea: React.FC<{
       return;
     }
 
+    recordSentInput(
+      channelKey,
+      messageTextRef.current,
+      selectedPrivateChat?.username,
+    );
     applyText("");
     setCompletionInput(NO_COMPLETION_INPUT);
     draftMap.current.delete(channelKey);
@@ -1673,10 +1680,31 @@ export const ChatArea: React.FC<{
     return t`Type a message...`;
   })();
 
+  const showRecalledInput = (input: SentInput) => {
+    if (typeof input !== "string") {
+      applyText("");
+      command.begin(input.botNick, input.command, input.values, true);
+      return;
+    }
+    applyText(input);
+    setTimeout(() => {
+      inputRef.current?.setSelectionRange(input.length, input.length);
+    }, 0);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const isModKey = isMac ? e.metaKey || e.ctrlKey : e.ctrlKey;
 
-    if (command.handleKey(e)) return;
+    const isHistoryKey = e.key === "ArrowUp" || e.key === "ArrowDown";
+    if (
+      isHistoryKey &&
+      !isModKey &&
+      !e.shiftKey &&
+      command.invocation &&
+      messageHistory.messageHistoryIndex >= 0
+    )
+      command.cancel();
+    else if (command.handleKey(e)) return;
 
     // Reply navigation: Cmd/Ctrl+↑ moves to older repliable message, ↓ moves newer / cancels
     if (isModKey && e.key === "ArrowUp") {
@@ -1747,24 +1775,8 @@ export const ChatArea: React.FC<{
       ) {
         e.preventDefault();
 
-        if (messageHistory.userMessageHistory.length === 0) return;
-
-        const previousMessage = messageHistory.navigateUp(
-          messageTextRef.current,
-        );
-        if (previousMessage !== null) {
-          applyText(previousMessage);
-
-          // Move cursor to end of text
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(
-                previousMessage.length,
-                previousMessage.length,
-              );
-            }
-          }, 0);
-        }
+        const previousMessage = messageHistory.navigateUp();
+        if (previousMessage !== null) showRecalledInput(previousMessage);
       }
       return;
     }
@@ -1775,19 +1787,7 @@ export const ChatArea: React.FC<{
         e.preventDefault();
 
         const nextMessage = messageHistory.navigateDown();
-        if (nextMessage !== null) {
-          applyText(nextMessage);
-
-          // Move cursor to end
-          setTimeout(() => {
-            if (inputRef.current) {
-              inputRef.current.setSelectionRange(
-                nextMessage.length,
-                nextMessage.length,
-              );
-            }
-          }, 0);
-        }
+        if (nextMessage !== null) showRecalledInput(nextMessage);
       }
       return;
     }
@@ -1886,8 +1886,7 @@ export const ChatArea: React.FC<{
       setCompletionInput(NO_COMPLETION_INPUT);
     }
 
-    // Exit history mode if user starts typing
-    messageHistory.exitHistory();
+    messageHistory.resetHistory();
   };
 
   const handleInputClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {

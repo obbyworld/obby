@@ -3747,6 +3747,10 @@ msgstr "기본 - 표준 보호"
 msgid "Not encrypted"
 msgstr "암호화되지 않음"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "전송되지 않았습니다. 다시 연결하거나 봇이 이 명령을 제공하는 채팅에서 사용하세요"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "참고: 채널 메타데이터를 수정하려면 운영자(@) 이상의 권한이 필요합니다. 변경 내용은 METADATA 사양을 지원하는 모든 사용자에게 표시됩니다."

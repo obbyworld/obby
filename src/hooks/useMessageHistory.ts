@@ -1,124 +1,80 @@
-/**
- * Hook for managing message history navigation with arrow keys
- */
-import { useEffect, useMemo, useState } from "react";
-import { stripIrcFormatting } from "../lib/messageFormatter";
-import type { Message } from "../types";
+import { useEffect, useState } from "react";
+import type { CommandInvocation } from "../lib/commandInvocation";
 
-interface UseMessageHistoryOptions {
-  messages: Message[];
-  currentUsername: string | null;
-  selectedChannelId: string | null;
-  selectedPrivateChatId: string | null;
+const HISTORY_LIMIT = 100;
+
+export type BotCommandRun = Pick<
+  CommandInvocation,
+  "botNick" | "command" | "values"
+>;
+export type SentInput = string | BotCommandRun;
+
+// We skip lines that can carry a password, so arrow up never puts one back on screen.
+const SECRET_INPUT =
+  /^\/(?:oper|pass|password|identify|register|ghost|recover|regain|setpass|sendpass|resetpass|login|auth|sasl|quote|raw|ns|nickserv)\b|^\/msg\s+\S*serv\b|^\/msg\s+\S+\s+(?:identify|register|ghost|recover|regain|setpass|login|auth|pass|password)\b/i;
+const SERVICE_NICK = /serv$/i;
+
+const isSecretRun = (run: BotCommandRun): boolean =>
+  SECRET_INPUT.test(`/${run.command.name}`) ||
+  !!run.command.options?.some((option) => option.type === "password");
+
+// We keep only what the user typed in this session, since a bot or another
+// session could put text in the chat that recall would then send as ours.
+const sentByBuffer = new Map<string, SentInput[]>();
+
+export function recordSentInput(
+  bufferKey: string,
+  input: SentInput,
+  privateChatNick?: string,
+): void {
+  if (!bufferKey) return;
+  if (typeof input === "string") {
+    const lines = input.split("\n").map((line) => line.trim());
+    if (input.trim() === "" || lines.some((line) => SECRET_INPUT.test(line)))
+      return;
+  } else if (isSecretRun(input)) {
+    return;
+  }
+  if (privateChatNick && SERVICE_NICK.test(privateChatNick)) return;
+  const sent = sentByBuffer.get(bufferKey) ?? [];
+  if (JSON.stringify(sent[0]) === JSON.stringify(input)) return;
+  sentByBuffer.set(bufferKey, [input, ...sent].slice(0, HISTORY_LIMIT));
 }
 
-interface UseMessageHistoryReturn {
-  messageHistoryIndex: number;
-  draftText: string;
-  navigateUp: (currentText: string) => string | null;
-  navigateDown: () => string | null;
-  resetHistory: () => void;
-  exitHistory: () => void;
-  userMessageHistory: Message[];
-}
-
-/**
- * Manages message history navigation for arrow key recall
- */
-export function useMessageHistory({
-  messages,
-  currentUsername,
-  selectedChannelId,
-  selectedPrivateChatId,
-}: UseMessageHistoryOptions): UseMessageHistoryReturn {
+export function useMessageHistory(bufferKey: string) {
   const [messageHistoryIndex, setMessageHistoryIndex] = useState(-1);
-  const [draftText, setDraftText] = useState("");
-
-  // Memoize user's message history (filtered and reversed)
-  const userMessageHistory = useMemo(() => {
-    if (!currentUsername) return [];
-    return messages
-      .filter((msg) => msg.type === "message" && msg.userId === currentUsername)
-      .reverse(); // Most recent first
-  }, [messages, currentUsername]);
-
-  // Reset history when channel/chat changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a buffer switch is the only trigger
   useEffect(() => {
     setMessageHistoryIndex(-1);
-    setDraftText("");
-  }, []);
+  }, [bufferKey]);
 
-  /**
-   * Navigate to previous (older) message
-   */
-  const navigateUp = (currentText: string): string | null => {
-    if (userMessageHistory.length === 0) return null;
+  const sentAt = (index: number): SentInput | null =>
+    sentByBuffer.get(bufferKey)?.[index] ?? null;
 
-    // Save draft text on first entry to history mode
-    if (messageHistoryIndex === -1 && currentText !== "") {
-      setDraftText(currentText);
-    }
-
-    // Navigate to previous message (or stay at oldest)
-    const newIndex = Math.min(
-      messageHistoryIndex + 1,
-      userMessageHistory.length - 1,
-    );
-
-    if (newIndex >= 0 && newIndex < userMessageHistory.length) {
-      setMessageHistoryIndex(newIndex);
-      return stripIrcFormatting(userMessageHistory[newIndex].content);
-    }
-
-    return null;
-  };
-
-  /**
-   * Navigate to next (newer) message or exit history mode
-   */
-  const navigateDown = (): string | null => {
-    if (messageHistoryIndex < 0) return null;
-
-    const newIndex = messageHistoryIndex - 1;
-
-    if (newIndex === -1) {
-      // Exit history mode, restore draft
-      setMessageHistoryIndex(-1);
-      const savedDraft = draftText;
-      setDraftText("");
-      return savedDraft;
-    }
-
-    // Navigate to next message
+  const navigateUp = (): SentInput | null => {
+    const count = sentByBuffer.get(bufferKey)?.length ?? 0;
+    if (count === 0) return null;
+    const newIndex = Math.min(messageHistoryIndex + 1, count - 1);
     setMessageHistoryIndex(newIndex);
-    return stripIrcFormatting(userMessageHistory[newIndex].content);
+    return sentAt(newIndex);
   };
 
-  /**
-   * Reset history state (called after sending message)
-   */
+  // Recall starts only from an empty composer, so leaving history returns to an empty one.
+  const navigateDown = (): SentInput | null => {
+    if (messageHistoryIndex < 0) return null;
+    const newIndex = messageHistoryIndex - 1;
+    setMessageHistoryIndex(newIndex);
+    return newIndex >= 0 ? sentAt(newIndex) : "";
+  };
+
   const resetHistory = (): void => {
-    setMessageHistoryIndex(-1);
-    setDraftText("");
-  };
-
-  /**
-   * Exit history mode (called when user starts typing)
-   */
-  const exitHistory = (): void => {
-    if (messageHistoryIndex >= 0) {
-      setMessageHistoryIndex(-1);
-      setDraftText("");
-    }
+    if (messageHistoryIndex >= 0) setMessageHistoryIndex(-1);
   };
 
   return {
     messageHistoryIndex,
-    draftText,
     navigateUp,
     navigateDown,
     resetHistory,
-    exitHistory,
-    userMessageHistory,
   };
 }

@@ -1232,6 +1232,10 @@ export class IRCClient implements IRCClientContext {
     }
   }
 
+  isSocketOpen(serverId: string): boolean {
+    return this.sockets.get(serverId)?.readyState === WebSocket.OPEN;
+  }
+
   sendRaw(serverId: string, command: string): void {
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {

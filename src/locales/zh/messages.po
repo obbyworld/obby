@@ -3747,6 +3747,10 @@ msgstr "普通 – 标准保护"
 msgid "Not encrypted"
 msgstr "未加密"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Not sent. Reconnect, or use a chat where the bot offers this command"
+msgstr "未发送。请重新连接，或在机器人提供此命令的聊天中使用"
+
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Note: Channel metadata requires operator (@) or higher permissions to modify. Changes will be visible to all users who support the METADATA specification."
 msgstr "注意：修改频道元数据需要管理员（@）或更高权限。更改对所有支持 METADATA 规范的用户可见。"
