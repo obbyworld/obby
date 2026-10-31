@@ -120,6 +120,13 @@ function loadCreds(
   return { user, pass: pass ?? "", mech };
 }
 
+// SASL PLAIN carries UTF-8, the same bytes REGISTER sent for the password.
+function sendPlain(serverId: string, user: string, password: string): void {
+  const payload = saslChunk.encodeUtf8(`${user}\x00${user}\x00${password}`);
+  for (const chunk of chunkSaslPayload(payload))
+    ircClient.sendRaw(serverId, `AUTHENTICATE ${chunk}`);
+}
+
 function clearSession(serverId: string) {
   sessions.delete(serverId);
 }
@@ -277,10 +284,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       if (param !== "+") return;
       const creds = loadCreds(serverId);
       if (creds?.mech !== "PLAIN") return;
-      ircClient.sendRaw(
-        serverId,
-        `AUTHENTICATE ${btoa(`${creds.user}\x00${creds.user}\x00${creds.pass}`)}`,
-      );
+      sendPlain(serverId, creds.user, creds.pass);
       return;
     }
 
@@ -329,10 +333,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       if (session.mech === "PLAIN") {
         if (param !== "+") return;
         if (!session.password) return;
-        ircClient.sendRaw(
-          serverId,
-          `AUTHENTICATE ${btoa(`${session.username}\x00${session.username}\x00${session.password}`)}`,
-        );
+        sendPlain(serverId, session.username, session.password);
         return;
       }
 
