@@ -166,6 +166,25 @@
   .status-badge {
     @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
   }
+  /* The account and connection strips above the channel list share one look. */
+  .strip-card {
+    @apply mb-2 p-2.5 rounded-md border flex flex-col gap-2;
+  }
+  .strip-header {
+    @apply flex items-start gap-2 text-[13px] text-discord-text-normal;
+  }
+  .strip-action {
+    @apply h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold;
+  }
+  .strip-field {
+    @apply field-input;
+  }
+  @media (pointer: coarse) {
+    .strip-action,
+    .strip-field {
+      @apply min-h-11;
+    }
+  }
 }
 
 /* A field sits beside its label once the row has room, and wraps under it on a phone. */

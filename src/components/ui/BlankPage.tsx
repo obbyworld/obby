@@ -1,7 +1,10 @@
 import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { mircToHtml } from "../../lib/ircUtils";
 import useStore from "../../store";
+import ConnectionStrip from "../layout/ConnectionStrip";
+import NickClaimStrip from "../layout/NickClaimStrip";
 import { CollapsibleMessage } from "../message/CollapsibleMessage";
 import ChannelBrowser from "../pages/ChannelBrowser";
 
@@ -15,6 +18,7 @@ const BlankPage: React.FC = () => {
     globalSettings: { showMotd },
   } = useStore();
   const server = servers.find((s) => s.id === selectedServerId);
+  const isNarrowView = useMediaQuery();
   const motd = showMotd ? server?.motd : undefined;
 
   return (
@@ -26,6 +30,14 @@ const BlankPage: React.FC = () => {
       <p className="text-sm mt-2">
         <Trans>Select or add a channel to get started.</Trans>
       </p>
+
+      {/* A phone shows the channel list on its own screen, so we repeat its account strips here. */}
+      {server && isNarrowView && (
+        <div className="mt-6 w-full max-w-md text-left">
+          <ConnectionStrip server={server} />
+          <NickClaimStrip server={server} />
+        </div>
+      )}
 
       {server?.isRegistered && (
         <ChannelBrowser serverId={server.id}>

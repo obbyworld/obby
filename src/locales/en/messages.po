@@ -322,6 +322,10 @@ msgstr "<0>{0}</0>, <1>{1}</1> and <2>{2}</2> are typing..."
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> is registered. Log in to use it"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
 msgstr "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -1076,6 +1080,10 @@ msgstr "Change password"
 msgid "Change the channel name (operators only)"
 msgstr "Change the channel name (operators only)"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Change your nick to register, this one is not allowed"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Change your nickname on this server"
@@ -1206,6 +1214,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chats and networks"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Check the code and try again"
+msgstr "Check the code and try again"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Choose a different file type. The file host does not accept {ext} files."
@@ -1221,6 +1233,10 @@ msgstr "Choose a file under {limit}, the most the file host accepts."
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Choose a file with an extension. The file host does not accept files without one."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Choose a longer password"
+msgstr "Choose a longer password"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1366,6 +1382,10 @@ msgstr "Close viewer"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Close workflow"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Code"
+msgstr "Code"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1644,6 +1664,10 @@ msgstr "Could not load GIFs. Search again to retry."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Could not reach the file host. Check your connection and try again."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not register. Try again"
+msgstr "Could not register. Try again"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1653,6 +1677,10 @@ msgstr "Could not set the new password: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Could not update password: {0}"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not verify. Try again"
+msgstr "Could not verify. Try again"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -2066,6 +2094,10 @@ msgstr "Edit profile"
 msgid "Edit Server"
 msgstr "Edit Server"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Email"
+msgstr "Email"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "Email:"
@@ -2224,6 +2256,10 @@ msgstr "Enter a number for {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter a valid email address"
+msgstr "Enter a valid email address"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2302,6 +2338,10 @@ msgstr "Enter the 6-digit code from your email."
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter the account name you want to recover."
 msgstr "Enter the account name you want to recover."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Enter the code sent to your email"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2616,6 +2656,11 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Has link"
+
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Hide"
+msgstr "Hide"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3100,6 +3145,7 @@ msgstr "Location"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Location access was denied. Allow location access in your browser or system settings, then try again."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Log in"
@@ -3133,6 +3179,10 @@ msgstr "Low Link Security (Level {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Lower hand"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Make <0>{nick}</0> yours. Set a password to register it"
+msgstr "Make <0>{nick}</0> yours. Set a password to register it"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4010,6 +4060,7 @@ msgstr "Packs"
 msgid "Pages"
 msgstr "Pages"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4429,6 +4480,10 @@ msgstr "Refresh"
 #: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "Refresh WHOIS"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Register"
+msgstr "Register"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5400,6 +5455,10 @@ msgstr "That screen is no longer available. Choose another screen."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "The call server refused the request. Try again in a moment."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "The code expired. Ask the server operators for help"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -5785,6 +5844,7 @@ msgstr "Use a secure websocket port."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Use only Latin characters in the password"
@@ -5864,6 +5924,7 @@ msgstr "Valid server port is required"
 msgid "Verified account"
 msgstr "Verified account"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verify"
@@ -6207,6 +6268,10 @@ msgstr "Your messages with {nick} are encrypted. {0} of {1} files are too large 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your nick"
+msgstr "Your nick"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

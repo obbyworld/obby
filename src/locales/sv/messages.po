@@ -323,6 +323,10 @@ msgstr "<0>{0}</0>, <1>{1}</1> och <2>{2}</2> skriver..."
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> och {3} andra skriver..."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> är registrerat. Logga in för att använda det"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
 msgstr "<0>⚠️ Var försiktig!</0> Öppna bara länkar från betrodda källor. Skadliga länkar kan äventyra din säkerhet eller integritet."
@@ -1077,6 +1081,10 @@ msgstr "Byt lösenord"
 msgid "Change the channel name (operators only)"
 msgstr "Ändra kanalnamnet (endast operatörer)"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Byt nick för att registrera, det här är inte tillåtet"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Byt ditt smeknamn på denna server"
@@ -1207,6 +1215,10 @@ msgstr "Chatt"
 msgid "Chats and networks"
 msgstr "Chattar och nätverk"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Check the code and try again"
+msgstr "Kontrollera koden och försök igen"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Välj en annan filtyp. Filvärden accepterar inte {ext}-filer."
@@ -1222,6 +1234,10 @@ msgstr "Välj en fil under {limit}, det mesta filvärden accepterar."
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Välj en fil med filändelse. Filvärden accepterar inte filer utan."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Choose a longer password"
+msgstr "Välj ett längre lösenord"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1367,6 +1383,10 @@ msgstr "Stäng visaren"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Stäng arbetsflöde"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Code"
+msgstr "Kod"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1645,6 +1665,10 @@ msgstr "Kunde inte ladda GIF:ar. Sök igen för att försöka på nytt."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Kunde inte nå filvärden. Kontrollera anslutningen och försök igen."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not register. Try again"
+msgstr "Det gick inte att registrera. Försök igen"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1654,6 +1678,10 @@ msgstr "Kunde inte ange det nya lösenordet: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Kunde inte uppdatera lösenordet: {0}"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not verify. Try again"
+msgstr "Det gick inte att verifiera. Försök igen"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -2067,6 +2095,10 @@ msgstr "Redigera profil"
 msgid "Edit Server"
 msgstr "Redigera server"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Email"
+msgstr "E-post"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "E-post:"
@@ -2225,6 +2257,10 @@ msgstr "Ange ett tal för {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Ange en URL. Använd {sizeToken} i URL:en för dynamisk storlek. Exempel: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter a valid email address"
+msgstr "Ange en giltig e-postadress"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2303,6 +2339,10 @@ msgstr "Ange den 6-siffriga koden från din e-post."
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter the account name you want to recover."
 msgstr "Ange namnet på kontot du vill återställa."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Ange koden som skickades till din e-post"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2617,6 +2657,11 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Har länk"
+
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Hide"
+msgstr "Dölj"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3101,6 +3146,7 @@ msgstr "Plats"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Platsåtkomst nekades. Tillåt platsåtkomst i webbläsarens eller systemets inställningar och försök igen."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Logga in"
@@ -3134,6 +3180,10 @@ msgstr "Låg länksäkerhet (nivå {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Sänk handen"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Make <0>{nick}</0> yours. Set a password to register it"
+msgstr "Gör <0>{nick}</0> till ditt. Ange ett lösenord för att registrera det"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4011,6 +4061,7 @@ msgstr "Paket"
 msgid "Pages"
 msgstr "Sidor"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4481,10 @@ msgstr "Uppdatera"
 #: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "Uppdatera WHOIS"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Register"
+msgstr "Registrera"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5401,6 +5456,10 @@ msgstr "Den skärmen är inte längre tillgänglig. Välj en annan skärm."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Samtalsservern avvisade begäran. Försök igen om en stund."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "Koden har gått ut. Be serveroperatörerna om hjälp"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "Anslutningen till <0>{serverName}</0> har följande säkerhetsproblem:"
@@ -5786,6 +5845,7 @@ msgstr "Använd en säker websocket-port."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Använd en server med IRCv3 METADATA för att ange din avatar, ditt visningsnamn och din status."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Använd bara latinska tecken i lösenordet"
@@ -5865,6 +5925,7 @@ msgstr "Giltig serverport krävs"
 msgid "Verified account"
 msgstr "Verifierat konto"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verifiera"
@@ -6208,6 +6269,10 @@ msgstr "Dina meddelanden med {nick} är krypterade. {0} av {1} filer är för st
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Dina meddelanden med {nick} är krypterade. Filerna är för stora för att krypteras och skickas okrypterade."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your nick"
+msgstr "Ditt nick"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

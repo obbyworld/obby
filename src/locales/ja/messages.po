@@ -323,6 +323,10 @@ msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> が入力中..."
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> と他 {3} 人が入力中..."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> は登録済みです。使用するにはログインしてください"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
 msgstr "<0>⚠️ 注意！</0> 信頼できる送信元のリンクのみ開いてください。悪意のあるリンクはセキュリティやプライバシーを侵害する恐れがあります。"
@@ -1077,6 +1081,10 @@ msgstr "パスワードを変更"
 msgid "Change the channel name (operators only)"
 msgstr "チャンネル名を変更する（オペレーターのみ）"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "登録するにはニックネームを変更してください。このニックネームは使用できません"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "このサーバーでのニックネームを変更する"
@@ -1207,6 +1215,10 @@ msgstr "チャット"
 msgid "Chats and networks"
 msgstr "チャットとネットワーク"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Check the code and try again"
+msgstr "コードを確認して、もう一度お試しください"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "別のファイル形式を選択してください。ファイルホストは {ext} ファイルを受け付けません。"
@@ -1222,6 +1234,10 @@ msgstr "{limit} 未満のファイルを選択してください。これがフ�
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "拡張子のあるファイルを選択してください。ファイルホストは拡張子のないファイルを受け付けません。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Choose a longer password"
+msgstr "もっと長いパスワードを選んでください"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1367,6 +1383,10 @@ msgstr "ビューアを閉じる"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "ワークフローを閉じる"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Code"
+msgstr "コード"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1645,6 +1665,10 @@ msgstr "GIF を読み込めませんでした。もう一度検索してくだ�
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "ファイルホストに接続できませんでした。接続を確認して、もう一度お試しください。"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not register. Try again"
+msgstr "登録できませんでした。もう一度お試しください"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1654,6 +1678,10 @@ msgstr "新しいパスワードを設定できませんでした: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "パスワードを更新できませんでした: {0}"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not verify. Try again"
+msgstr "確認できませんでした。もう一度お試しください"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -2067,6 +2095,10 @@ msgstr "プロフィールを編集"
 msgid "Edit Server"
 msgstr "サーバーを編集"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Email"
+msgstr "メール"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "メール："
@@ -2225,6 +2257,10 @@ msgstr "{0} に数値を入力してください"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "URL を入力してください。サイズを動的に指定するには URL に {sizeToken} を使います。例: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter a valid email address"
+msgstr "有効なメールアドレスを入力してください"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2303,6 +2339,10 @@ msgstr "メールに記載された 6 桁のコードを入力してください
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter the account name you want to recover."
 msgstr "復旧したいアカウント名を入力してください。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "メールに届いたコードを入力してください"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2617,6 +2657,11 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "リンクあり"
+
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Hide"
+msgstr "非表示"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3101,6 +3146,7 @@ msgstr "位置情報"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置情報へのアクセスが拒否されました。ブラウザまたはシステムの設定で位置情報へのアクセスを許可してから、もう一度お試しください。"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "ログイン"
@@ -3134,6 +3180,10 @@ msgstr "リンクセキュリティが低い（レベル {securityLevel}）"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "挙手を下げる"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Make <0>{nick}</0> yours. Set a password to register it"
+msgstr "<0>{nick}</0> を自分のものにしましょう。パスワードを設定して登録してください"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4011,6 +4061,7 @@ msgstr "パック"
 msgid "Pages"
 msgstr "ページ"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4481,10 @@ msgstr "更新"
 #: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "WHOIS を更新"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Register"
+msgstr "登録"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5401,6 +5456,10 @@ msgstr "その画面は利用できなくなりました。別の画面を選択
 msgid "The call server refused the request. Try again in a moment."
 msgstr "通話サーバーがリクエストを拒否しました。しばらくしてからもう一度お試しください。"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "コードの有効期限が切れました。サーバーのオペレーターに問い合わせてください"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "<0>{serverName}</0> への接続には次のセキュリティ上の懸念事項があります："
@@ -5786,6 +5845,7 @@ msgstr "安全な WebSocket ポートを使用してください。"
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "アバター、表示名、ステータスを設定するには、IRCv3 METADATA に対応したサーバーを使用してください。"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "パスワードにはラテン文字のみを使用してください"
@@ -5865,6 +5925,7 @@ msgstr "有効なサーバーポートが必要です"
 msgid "Verified account"
 msgstr "認証済みアカウント"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "確認"
@@ -6208,6 +6269,10 @@ msgstr "{nick} とのメッセージは暗号化されています。{1} 個中 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "{nick} とのメッセージは暗号化されています。これらのファイルは大きすぎて暗号化できないため、暗号化なしで送信されます。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your nick"
+msgstr "あなたのニックネーム"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

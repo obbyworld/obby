@@ -3,6 +3,7 @@ import type React from "react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Button } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
+import { encodeStoredSaslPassword } from "../../lib/sasl/storedPassword";
 import useStore, { loadSavedServers } from "../../store";
 import {
   getLoginState,
@@ -89,16 +90,13 @@ const LoginSection: React.FC<{
   };
 
   const logIn = (): void => {
-    // We store SASL passwords with btoa, which takes only Latin-1 characters.
-    const isUnencodable = [...saslPassword].some(
-      (char) => char.charCodeAt(0) > 0xff,
-    );
-    setIsPasswordUnencodable(isUnencodable);
-    if (isUnencodable) return;
+    const storedSaslPassword = encodeStoredSaslPassword(saslPassword);
+    setIsPasswordUnencodable(storedSaslPassword === null);
+    if (storedSaslPassword === null) return;
     saveConfig({
       saslAccountName: account.trim() || serverConfig.nickname || undefined,
       ...(saslPassword
-        ? { saslPassword: btoa(saslPassword), saslEnabled: true }
+        ? { saslPassword: storedSaslPassword, saslEnabled: true }
         : {}),
       ...(password ? { password } : {}),
     });

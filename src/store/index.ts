@@ -9,6 +9,7 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import { encodeStoredSaslPassword } from "../lib/sasl/storedPassword";
 import { recordPlace, recordSearch } from "../lib/search/recents";
 import { serializeSearchQuery } from "../lib/search/searchQuery";
 import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
@@ -836,6 +837,17 @@ export interface AppState {
     password: string,
   ) => void;
   verifyAccount: (serverId: string, account: string, code: string) => void;
+  // Registers the nick we use. Returns false when we cannot store the password.
+  claimNick: (
+    serverId: string,
+    account: string,
+    email: string,
+    password: string,
+  ) => boolean;
+  verifyNickClaim: (serverId: string, code: string) => void;
+  // Saves the login and reconnects. Returns false when we cannot store the password.
+  logInToNick: (serverId: string, account: string, password: string) => boolean;
+  hideNickPrompt: (serverId: string) => void;
   // 2FA actions
   twofaStatusQuery: (serverId: string) => void;
   twofaListQuery: (serverId: string) => void;
@@ -1947,6 +1959,58 @@ const useStore = create<AppState>((set, get) => ({
 
   verifyAccount: (serverId: string, account: string, code: string) => {
     ircClient.verifyAccount(serverId, account, code);
+  },
+
+  claimNick: (serverId, account, email, password) => {
+    const storedPassword = encodeStoredSaslPassword(password);
+    if (storedPassword === null) return false;
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? {
+              ...server,
+              nickClaim: { account, storedPassword, stage: "sending" },
+            }
+          : server,
+      ),
+    }));
+    ircClient.registerAccount(serverId, account, email, password);
+    return true;
+  },
+
+  verifyNickClaim: (serverId, code) => {
+    const claim = get().servers.find((s) => s.id === serverId)?.nickClaim;
+    if (!claim) return;
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? { ...server, nickClaim: { ...claim, stage: "sending" } }
+          : server,
+      ),
+    }));
+    ircClient.verifyAccount(serverId, claim.account, code);
+  },
+
+  logInToNick: (serverId, account, password) => {
+    const storedPassword = encodeStoredSaslPassword(password);
+    if (storedPassword === null) return false;
+    get().updateServer(serverId, {
+      saslAccountName: account,
+      saslPassword: storedPassword,
+      saslEnabled: true,
+    });
+    get().reconnectServer(serverId);
+    return true;
+  },
+
+  hideNickPrompt: (serverId) => {
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? { ...server, isNickPromptHidden: true }
+          : server,
+      ),
+    }));
   },
 
   twofaStatusQuery: (serverId) => {

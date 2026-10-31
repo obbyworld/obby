@@ -1645,7 +1645,7 @@ export class IRCClient implements IRCClientContext {
     email: string,
     password: string,
   ): void {
-    this.sendRaw(serverId, `REGISTER ${account} ${email} ${password}`);
+    this.sendRaw(serverId, `REGISTER ${account} ${email} :${password}`);
   }
 
   verifyAccount(serverId: string, account: string, code: string): void {

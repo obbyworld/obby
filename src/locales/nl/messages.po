@@ -323,6 +323,10 @@ msgstr "<0>{0}</0>, <1>{1}</1> en <2>{2}</2> zijn aan het typen..."
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> en {3} anderen typen..."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> is geregistreerd. Log in om deze te gebruiken"
+
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
 msgstr "<0>⚠️ Wees voorzichtig!</0> Open alleen links van vertrouwde bronnen. Kwaadaardige links kunnen je beveiliging of privacy in gevaar brengen."
@@ -1077,6 +1081,10 @@ msgstr "Wachtwoord wijzigen"
 msgid "Change the channel name (operators only)"
 msgstr "Kanaalnaam wijzigen (alleen operators)"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Wijzig je nickname om te registreren, deze is niet toegestaan"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Wijzig je bijnaam op deze server"
@@ -1207,6 +1215,10 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chats en netwerken"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Check the code and try again"
+msgstr "Controleer de code en probeer het opnieuw"
+
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
 msgstr "Kies een ander bestandstype. De bestandshost accepteert geen {ext}-bestanden."
@@ -1222,6 +1234,10 @@ msgstr "Kies een bestand kleiner dan {limit}, het maximum dat de bestandshost ac
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Kies een bestand met een extensie. De bestandshost accepteert geen bestanden zonder extensie."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Choose a longer password"
+msgstr "Kies een langer wachtwoord"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1367,6 +1383,10 @@ msgstr "Viewer sluiten"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Werkstroom sluiten"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Code"
+msgstr "Code"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1645,6 +1665,10 @@ msgstr "Kon GIF's niet laden. Zoek opnieuw om het nogmaals te proberen."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Kon de bestandshost niet bereiken. Controleer je verbinding en probeer het opnieuw."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not register. Try again"
+msgstr "Registreren mislukt. Probeer het opnieuw"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1654,6 +1678,10 @@ msgstr "Kan het nieuwe wachtwoord niet instellen: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Kan wachtwoord niet bijwerken: {0}"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Could not verify. Try again"
+msgstr "Verifiëren mislukt. Probeer het opnieuw"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -2067,6 +2095,10 @@ msgstr "Bewerk profiel"
 msgid "Edit Server"
 msgstr "Server bewerken"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Email"
+msgstr "E-mail"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
 msgstr "E-mail:"
@@ -2225,6 +2257,10 @@ msgstr "Voer een getal in voor {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Voer een URL in. Gebruik {sizeToken} in de URL voor dynamische grootte. Voorbeeld: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter a valid email address"
+msgstr "Voer een geldig e-mailadres in"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2303,6 +2339,10 @@ msgstr "Voer de 6-cijferige code uit je e-mail in."
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Enter the account name you want to recover."
 msgstr "Voer de accountnaam in die je wilt herstellen."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Voer de code in die naar je e-mail is gestuurd"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2617,6 +2657,11 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Bevat link"
+
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Hide"
+msgstr "Verbergen"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3101,6 +3146,7 @@ msgstr "Locatie"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Locatietoegang is geweigerd. Sta locatietoegang toe in je browser- of systeeminstellingen en probeer het opnieuw."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Inloggen"
@@ -3134,6 +3180,10 @@ msgstr "Lage verbindingsbeveiliging (niveau {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Hand laten zakken"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Make <0>{nick}</0> yours. Set a password to register it"
+msgstr "Maak <0>{nick}</0> van jou. Stel een wachtwoord in om deze te registreren"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4011,6 +4061,7 @@ msgstr "Packs"
 msgid "Pages"
 msgstr "Pagina's"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4481,10 @@ msgstr "Vernieuwen"
 #: src/components/layout/ProfilePane.tsx
 msgid "Refresh WHOIS"
 msgstr "WHOIS vernieuwen"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Register"
+msgstr "Registreren"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5401,6 +5456,10 @@ msgstr "Dat scherm is niet meer beschikbaar. Kies een ander scherm."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "De gespreksserver heeft het verzoek geweigerd. Probeer het zo meteen opnieuw."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "De code is verlopen. Vraag de serveroperators om hulp"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
 msgstr "De verbinding met <0>{serverName}</0> heeft de volgende beveiligingsproblemen:"
@@ -5786,6 +5845,7 @@ msgstr "Gebruik een beveiligde websocketpoort."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Gebruik een server met IRCv3 METADATA om je avatar, weergavenaam en status in te stellen."
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Gebruik alleen Latijnse tekens in het wachtwoord"
@@ -5865,6 +5925,7 @@ msgstr "Een geldige serverpoort is vereist"
 msgid "Verified account"
 msgstr "Geverifieerd account"
 
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verifiëren"
@@ -6208,6 +6269,10 @@ msgstr "Je berichten met {nick} zijn versleuteld. {0} van {1} bestanden zijn te 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Je berichten met {nick} zijn versleuteld. Deze bestanden zijn te groot om te versleutelen en worden onversleuteld verstuurd."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your nick"
+msgstr "Je nickname"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

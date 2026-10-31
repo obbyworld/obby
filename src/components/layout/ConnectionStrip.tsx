@@ -55,9 +55,6 @@ function useSettledTrouble(trouble: Trouble | null): Trouble | null {
   return settled === trouble ? trouble : null;
 }
 
-const actionClass =
-  "h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold";
-
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
   const trouble = useSettledTrouble(getTrouble(server));
@@ -70,11 +67,8 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   };
 
   return (
-    <div
-      role="status"
-      className={`mb-2 p-2.5 rounded-md border flex flex-col gap-2 ${TONES[trouble]}`}
-    >
-      <div className="flex items-start gap-2 text-[13px] text-discord-text-normal">
+    <div role="status" className={`strip-card ${TONES[trouble]}`}>
+      <div className="strip-header">
         <span className="mt-0.5">{ICONS[trouble]}</span>
         <span>{messages[trouble]}</span>
       </div>
@@ -82,7 +76,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
         {trouble === "auth" ? (
           <button
             type="button"
-            className={`${actionClass} button-primary`}
+            className="strip-action button-primary"
             onClick={() =>
               server.bouncerServerId
                 ? reconnectServer(server.id)
@@ -97,7 +91,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             {trouble === "lost" && (
               <button
                 type="button"
-                className={`${actionClass} button-primary`}
+                className="strip-action button-primary"
                 onClick={() => reconnectServer(server.id)}
               >
                 <FaRedo />
@@ -106,7 +100,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             )}
             <button
               type="button"
-              className={`${actionClass} bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white`}
+              className="strip-action bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white"
               onClick={() => editConnection(server.id)}
               title={t`Edit connection`}
               aria-label={t`Edit connection`}

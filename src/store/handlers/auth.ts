@@ -20,7 +20,12 @@ import {
   buildOauthBearerPayload,
   chunkSaslPayload,
 } from "../../lib/saslFrames";
-import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
+import type {
+  Message,
+  Server,
+  ServerConfig,
+  ServerOAuthConfig,
+} from "../../types";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
@@ -665,6 +670,66 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }
+  });
+
+  const patchServer = (
+    serverId: string,
+    patch: (server: Server) => Partial<Server>,
+  ) =>
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, ...patch(server) } : server,
+      ),
+    }));
+  const findClaim = (serverId: string) =>
+    store.getState().servers.find((s) => s.id === serverId)?.nickClaim;
+
+  ircClient.on("NOTE", ({ serverId, command, code, target }) => {
+    if (command === "NICK" && code === "REGISTERED" && target)
+      patchServer(serverId, () => ({ registeredNick: target }));
+  });
+  ircClient.on("FAIL", ({ serverId, command, code, target }) => {
+    if (command === "REGISTER" && code === "ACCOUNT_EXISTS" && target) {
+      patchServer(serverId, () => ({
+        registeredNick: target,
+        nickClaim: undefined,
+      }));
+      return;
+    }
+    if (command !== "REGISTER" && command !== "VERIFY") return;
+    const claim = findClaim(serverId);
+    if (claim?.stage !== "sending") return;
+    patchServer(serverId, () => ({
+      nickClaim: {
+        ...claim,
+        stage: command === "VERIFY" ? "verify" : "failed",
+        failure: { command, code },
+      },
+    }));
+  });
+  ircClient.on("REGISTER_VERIFICATION_REQUIRED", ({ serverId }) => {
+    const claim = findClaim(serverId);
+    if (!claim) return;
+    patchServer(serverId, () => ({
+      nickClaim: { ...claim, stage: "verify", failure: undefined },
+    }));
+  });
+  // The server logs us in after REGISTER or VERIFY succeeds, so we save the
+  // login only once it has accepted the account.
+  ircClient.on("LOGGED_IN", ({ serverId, account }) => {
+    const claim = findClaim(serverId);
+    if (
+      !claim ||
+      claim.stage === "failed" ||
+      claim.account.toLowerCase() !== account?.toLowerCase()
+    )
+      return;
+    store.getState().updateServer(serverId, {
+      saslAccountName: claim.account,
+      saslPassword: claim.storedPassword,
+      saslEnabled: true,
+    });
+    patchServer(serverId, () => ({ nickClaim: undefined }));
   });
 
   // Account registration event handlers
