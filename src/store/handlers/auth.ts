@@ -504,23 +504,11 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
   });
 
-  // Handle CAP LS to get informational capabilities like unrealircd.org/link-security
-  ircClient.on("CAP LS", ({ serverId, cliCaps }) => {
-    // Capture per-cap value strings. CAP ACK only echoes the names so
-    // anything that wants to know "is webauthn one of the 2FA factors
-    // this server supports" needs to consult what was advertised in
-    // CAP LS. Drop the special unrealircd.org/link-security entry --
-    // it has its own typed field below.
-    const advertised: Record<string, string> = {};
-    for (const tok of cliCaps.split(/\s+/)) {
-      if (!tok) continue;
-      const eq = tok.indexOf("=");
-      if (eq <= 0) continue;
-      const name = tok.slice(0, eq);
-      const value = tok.slice(eq + 1);
-      if (name === "unrealircd.org/link-security") continue;
-      advertised[name] = value;
-    }
+  // CAP ACK echoes only cap names, so we keep the values CAP LS advertised
+  // (2FA factors, account registration needs) on the server.
+  ircClient.on("CAP LS", ({ serverId, values }) => {
+    const { "unrealircd.org/link-security": linkSecurity, ...advertised } =
+      values;
     if (Object.keys(advertised).length) {
       store.setState((state) => ({
         servers: state.servers.map((server) =>
@@ -537,10 +525,9 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       }));
     }
 
-    if (cliCaps.includes("unrealircd.org/link-security=")) {
-      const match = cliCaps.match(/unrealircd\.org\/link-security=(\d+)/);
-      if (match) {
-        const linkSecurityValue = Number.parseInt(match[1], 10) || 0;
+    if (linkSecurity !== undefined) {
+      {
+        const linkSecurityValue = Number.parseInt(linkSecurity, 10) || 0;
         store.setState((state) => {
           const updatedServers = state.servers.map((server) =>
             server.id === serverId

@@ -121,7 +121,7 @@ export interface EventMap {
     sender: string;
   };
   NAMES: BaseIRCEvent & { channelName: string; users: User[] };
-  "CAP LS": BaseIRCEvent & { cliCaps: string };
+  "CAP LS": BaseIRCEvent & { values: Record<string, string> };
   "CAP ACK": BaseIRCEvent & { cliCaps: string };
   ISUPPORT: BaseIRCEvent & { key: string; value: string };
   CAP_ACKNOWLEDGED: BaseIRCEvent & { key: string; capabilities: string };
@@ -2168,33 +2168,24 @@ export class IRCClient implements IRCClientContext {
       this.capLsAccumulated.set(serverId, accumulated);
     }
 
-    const caps = cliCaps.split(" ");
-    for (const c of caps) {
+    const values: Record<string, string> = {};
+    for (const c of cliCaps.split(" ")) {
+      if (!c) continue;
       const { cap, value } = splitCapToken(c);
       accumulated.add(cap);
-      if (value) {
-        const server = this.servers.get(serverId);
-        if (server) {
-          server.capabilityValues = {
-            ...(server.capabilityValues ?? {}),
-            [cap]: value,
-          };
-        }
-      }
+      if (value) values[cap] = value;
       if (cap === "sasl" && value) {
         const mechanisms = value.split(",");
         this.saslMechanisms.set(serverId, mechanisms);
       }
-      // Handle informational unrealircd.org/link-security capability
-      if (cap === "unrealircd.org/link-security" && value) {
-        const linkSecurityValue = Number.parseInt(value, 10) || 0;
-        // Trigger event with the link security value so the store can handle it
-        this.triggerEvent("CAP LS", {
-          serverId,
-          cliCaps: `unrealircd.org/link-security=${linkSecurityValue}`,
-        });
-      }
     }
+    const server = this.servers.get(serverId);
+    if (server)
+      server.capabilityValues = {
+        ...(server.capabilityValues ?? {}),
+        ...values,
+      };
+    this.triggerEvent("CAP LS", { serverId, values });
 
     if (isFinal) {
       // Now request the caps we want from the accumulated list
