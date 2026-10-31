@@ -1,3 +1,5 @@
+import { render } from "@testing-library/react";
+import type { ReactElement } from "react";
 import { describe, expect, it } from "vitest";
 import { mircToHtml, renderMarkdown } from "../../src/lib/ircUtils";
 import {
@@ -456,6 +458,24 @@ console.log('test');
       expect(resultString).toContain("https://example.com");
       // Should have color styling
       expect(resultString).toContain("color");
+    });
+
+    it("renders links and channels as plain text when not interactive", () => {
+      const { container } = render(
+        mircToHtml(
+          "News at https://files.example.com/F8e.png in #lobby",
+          "",
+          undefined,
+          false,
+        ) as ReactElement,
+      );
+      expect(container.querySelector("a, button")).toBeNull();
+      expect(container.textContent).toBe(
+        "News at files.example.com/F8e.png in #lobby",
+      );
+      expect(container.querySelector(".link-compact")?.textContent).toBe(
+        "files.example.com/F8e.png",
+      );
     });
   });
 });
