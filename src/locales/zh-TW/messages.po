@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, other {# 個步驟}}"
 msgid "{title} Client"
 msgstr "{title} 客戶端"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, other {# 個頻道}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} 位使用者"
 msgid "{userCount} watching"
 msgstr "{userCount} 人觀看中"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "應用程式"
 msgid "Appearance"
 msgstr "外觀"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "套用並重新整理"
 
@@ -1147,7 +1147,7 @@ msgstr "頻道連結 (+L)"
 msgid "Channel name"
 msgstr "頻道名稱"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "頻道名稱遮罩"
 
@@ -1193,6 +1193,7 @@ msgstr "頻道範圍"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "選擇聊天中載入多少外部媒體。"
 msgid "Choose microphone and camera"
 msgstr "選擇麥克風和攝影機"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "選擇排序方式"
 
@@ -1684,11 +1685,11 @@ msgstr "建立資料夾"
 msgid "Create pack"
 msgstr "建立表情包"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "建立時間晚於（幾分鐘前）"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "建立時間早於（幾分鐘前）"
 
@@ -2348,7 +2349,7 @@ msgstr "範例網路"
 msgid "Exceptions"
 msgstr "例外"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "排除頻道名稱遮罩"
 
@@ -2449,11 +2450,11 @@ msgstr "過濾不當詞語 (+G)"
 msgid "Filter members…"
 msgstr "筛选成员…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "過濾器"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "此伺服器不支援過濾器"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "現在稱為 **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "加入"
@@ -2862,7 +2863,7 @@ msgstr "加入"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "加入 {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "加入語音頻道 {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "加入時間"
 
@@ -3202,7 +3203,7 @@ msgstr "將自己標記為回來"
 msgid "Mark yourself back"
 msgstr "標記為已回來"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "最多使用者數"
 
@@ -3349,7 +3350,7 @@ msgstr "麥克風 {0}"
 msgid "Microphone level"
 msgstr "麥克風音量"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "最少使用者數"
 
@@ -3587,7 +3588,7 @@ msgstr "未偵測到攝影機。"
 msgid "No Central Server:"
 msgstr "無中央伺服器："
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "找不到頻道。請變更搜尋或篩選條件。"
 
@@ -3719,7 +3720,7 @@ msgstr "尚無斜線指令"
 msgid "No speaker detected."
 msgstr "未偵測到喇叭。"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "無主題"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "開啟"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "開啟{0}"
 
@@ -4705,7 +4706,7 @@ msgstr "搜索"
 msgid "Search again"
 msgstr "重新搜尋"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "搜尋頻道..."
 
@@ -4912,11 +4913,6 @@ msgstr "未加密傳送，因為檔案太大無法加密"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "伺服器"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "服务器频道"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "軟體："
 msgid "soju bouncer (control)"
 msgstr "soju bouncer（控制）"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "依名稱排序"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "依使用者數排序"
 
@@ -5611,11 +5607,11 @@ msgstr "工具"
 msgid "Topic"
 msgstr "主題"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "主題設定時間晚於（幾分鐘前）"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "主題設定時間早於（幾分鐘前）"
 

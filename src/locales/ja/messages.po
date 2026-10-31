@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, other {# ステップ}}"
 msgid "{title} Client"
 msgstr "{title} クライアント"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# チャンネル} other {# チャンネル}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} 人のユーザー"
 msgid "{userCount} watching"
 msgstr "{userCount} 人が視聴中"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "アプリ"
 msgid "Appearance"
 msgstr "外観"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "適用して更新"
 
@@ -1147,7 +1147,7 @@ msgstr "チャンネルのリンク (+L)"
 msgid "Channel name"
 msgstr "チャンネル名"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "チャンネル名のマスク"
 
@@ -1193,6 +1193,7 @@ msgstr "チャンネル限定"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "チャットで読み込む外部メディアの範囲を選択してく
 msgid "Choose microphone and camera"
 msgstr "マイクとカメラを選択"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "並び順を選択"
 
@@ -1684,11 +1685,11 @@ msgstr "フォルダを作成"
 msgid "Create pack"
 msgstr "パックを作成"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "作成日時の後 (何分前)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "作成日時の前 (何分前)"
 
@@ -2348,7 +2349,7 @@ msgstr "サンプルNET"
 msgid "Exceptions"
 msgstr "例外"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "除外するチャンネル名のマスク"
 
@@ -2449,11 +2450,11 @@ msgstr "不適切な語をフィルター (+G)"
 msgid "Filter members…"
 msgstr "メンバーをフィルター…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "フィルター"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "このサーバーではフィルターは利用できません"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "は現在 **{newNick}** として知られています"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "参加"
@@ -2862,7 +2863,7 @@ msgstr "参加"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "{0} に参加"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "{channelName} のボイスチャンネルに参加"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "参加"
 
@@ -3202,7 +3203,7 @@ msgstr "自分を戻ったと設定する"
 msgid "Mark yourself back"
 msgstr "復帰にする"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "最大ユーザー数"
 
@@ -3349,7 +3350,7 @@ msgstr "マイク {0}"
 msgid "Microphone level"
 msgstr "マイクレベル"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "最小ユーザー数"
 
@@ -3587,7 +3588,7 @@ msgstr "カメラが検出されませんでした。"
 msgid "No Central Server:"
 msgstr "中央サーバーなし："
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "チャンネルが見つかりません。検索条件またはフィルターを変更してください。"
 
@@ -3719,7 +3720,7 @@ msgstr "スラッシュコマンドはまだありません"
 msgid "No speaker detected."
 msgstr "スピーカーが検出されませんでした。"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "トピックなし"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "開く"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "{0} を開く"
 
@@ -4705,7 +4706,7 @@ msgstr "検索"
 msgid "Search again"
 msgstr "もう一度検索"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "チャンネルを検索..."
 
@@ -4912,11 +4913,6 @@ msgstr "ファイルが大きすぎて暗号化できないため、暗号化な
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "サーバー"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "サーバーチャンネル"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "ソフトウェア："
 msgid "soju bouncer (control)"
 msgstr "soju bouncer（コントロール）"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "名前順"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "ユーザー数順"
 
@@ -5611,11 +5607,11 @@ msgstr "ツール"
 msgid "Topic"
 msgstr "トピック"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "トピック設定日時の後 (何分前)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "トピック設定日時の前 (何分前)"
 

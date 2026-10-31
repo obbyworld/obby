@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# шаг} few {# шага} many {# шагов} 
 msgid "{title} Client"
 msgstr "клиент {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# канал} few {# канала} many {# каналов} other {# канала}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} пользователей"
 msgid "{userCount} watching"
 msgstr "{userCount} смотрят"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "Приложение"
 msgid "Appearance"
 msgstr "Оформление"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Применить и обновить"
 
@@ -1147,7 +1147,7 @@ msgstr "Ссылка на канал (+L)"
 msgid "Channel name"
 msgstr "Название канала"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Маска названия канала"
 
@@ -1193,6 +1193,7 @@ msgstr "Для канала"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Выберите, сколько внешних медиа загруж�
 msgid "Choose microphone and camera"
 msgstr "Выбрать микрофон и камеру"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Выберите порядок сортировки"
 
@@ -1684,11 +1685,11 @@ msgstr "Создать папку"
 msgid "Create pack"
 msgstr "Создать набор"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Создан после (минут назад)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Создан до (минут назад)"
 
@@ -2348,7 +2349,7 @@ msgstr "ПримерНЕТ"
 msgid "Exceptions"
 msgstr "Исключения"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Исключить маску названия канала"
 
@@ -2449,11 +2450,11 @@ msgstr "Фильтровать плохие слова (+G)"
 msgid "Filter members…"
 msgstr "Фильтр участников…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Фильтры"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Фильтры недоступны на этом сервере"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "теперь известен как **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Войти"
@@ -2862,7 +2863,7 @@ msgstr "Войти"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Присоединиться к {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Присоединиться к голосовому каналу {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Присоединился"
 
@@ -3202,7 +3203,7 @@ msgstr "Отметить себя как вернувшегося"
 msgid "Mark yourself back"
 msgstr "Отметить себя вернувшимся"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Макс. пользователей"
 
@@ -3349,7 +3350,7 @@ msgstr "Микрофон {0}"
 msgid "Microphone level"
 msgstr "Уровень микрофона"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Мин. пользователей"
 
@@ -3587,7 +3588,7 @@ msgstr "Камера не обнаружена."
 msgid "No Central Server:"
 msgstr "Нет центрального сервера:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Каналы не найдены. Измените поиск или фильтры."
 
@@ -3719,7 +3720,7 @@ msgstr "Слеш-команд пока нет"
 msgid "No speaker detected."
 msgstr "Динамик не обнаружен."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Без темы"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Открыть"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Открыть {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Поиск"
 msgid "Search again"
 msgstr "Искать снова"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Поиск каналов..."
 
@@ -4912,11 +4913,6 @@ msgstr "Отправлено без шифрования, потому что ф
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "сервер"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Каналы сервера"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Программа:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (управление)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Сортировать по названию"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Сортировать по пользователям"
 
@@ -5611,11 +5607,11 @@ msgstr "инструмент"
 msgid "Topic"
 msgstr "Тема"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Тема задана после (минут назад)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Тема задана до (минут назад)"
 

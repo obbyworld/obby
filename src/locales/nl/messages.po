@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# stap} other {# stappen}}"
 msgid "{title} Client"
 msgstr "{title} client"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanaal} other {# kanalen}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} gebruikers"
 msgid "{userCount} watching"
 msgstr "{userCount} kijkers"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanaal*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "App"
 msgid "Appearance"
 msgstr "Weergave"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Toepassen en vernieuwen"
 
@@ -1147,7 +1147,7 @@ msgstr "Kanaallink (+L)"
 msgid "Channel name"
 msgstr "Kanaalnaam"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Kanaalnaammasker"
 
@@ -1193,6 +1193,7 @@ msgstr "Kanaalgebonden"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Kies hoeveel externe media in de chat worden geladen."
 msgid "Choose microphone and camera"
 msgstr "Microfoon en camera kiezen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Kies sorteervolgorde"
 
@@ -1684,11 +1685,11 @@ msgstr "Map maken"
 msgid "Create pack"
 msgstr "Pakket maken"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Aangemaakt na (min geleden)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Aangemaakt voor (min geleden)"
 
@@ -2348,7 +2349,7 @@ msgstr "VoorbeeldNET"
 msgid "Exceptions"
 msgstr "Uitzonderingen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Uitsluiten kanaalnaammasker"
 
@@ -2449,11 +2450,11 @@ msgstr "Filter scheldwoorden (+G)"
 msgid "Filter members…"
 msgstr "Leden filteren…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filters"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filters zijn niet beschikbaar op deze server"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "is nu bekend als **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Deelnemen"
@@ -2862,7 +2863,7 @@ msgstr "Deelnemen"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Deelnemen aan {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Deelnemen aan spraakkanaal {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Betreden"
 
@@ -3202,7 +3203,7 @@ msgstr "Markeer jezelf als terug"
 msgid "Mark yourself back"
 msgstr "Markeer jezelf als terug"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Max. gebruikers"
 
@@ -3349,7 +3350,7 @@ msgstr "Microfoon {0}"
 msgid "Microphone level"
 msgstr "Microfoonniveau"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Min. gebruikers"
 
@@ -3587,7 +3588,7 @@ msgstr "Geen camera gedetecteerd."
 msgid "No Central Server:"
 msgstr "Geen centrale server:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Geen kanalen gevonden. Wijzig de zoekopdracht of filters."
 
@@ -3719,7 +3720,7 @@ msgstr "Nog geen slashcommando's"
 msgid "No speaker detected."
 msgstr "Geen luidspreker gedetecteerd."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Geen onderwerp"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Openen"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Open {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Zoeken"
 msgid "Search again"
 msgstr "Opnieuw zoeken"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Zoek kanalen..."
 
@@ -4912,11 +4913,6 @@ msgstr "Onversleuteld verstuurd omdat het bestand te groot is om te versleutelen
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Serverkanalen"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (beheer)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Sorteer op naam"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Sorteer op gebruikers"
 
@@ -5611,11 +5607,11 @@ msgstr "tool"
 msgid "Topic"
 msgstr "Onderwerp"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Onderwerp ingesteld na (min geleden)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Onderwerp ingesteld voor (min geleden)"
 

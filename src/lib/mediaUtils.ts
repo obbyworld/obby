@@ -362,6 +362,12 @@ export function canShowAvatarUrl(
   return false;
 }
 
+/** The user chose to connect to the server, and the server chose its icon, so
+ *  we load the icon whatever the media setting is. */
+export function canShowServerIcon(url: string | undefined): url is string {
+  return !!url && isAbsoluteHttpUrl(url);
+}
+
 /** Returns false only for formats that definitively cannot have an alpha channel.
  *  JPEG and PDF are opaque — PDF pages have solid white backgrounds (WKWebView/Safari
  *  render cross-origin PDFs via <img>, which produces an opaque first-page image).

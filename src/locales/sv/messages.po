@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# steg} other {# steg}}"
 msgid "{title} Client"
 msgstr "{title} klient"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanal} other {# kanaler}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} användare"
 msgid "{userCount} watching"
 msgstr "{userCount} tittar"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanal*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*skräp*"
 
@@ -655,7 +655,7 @@ msgstr "App"
 msgid "Appearance"
 msgstr "Utseende"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Verkställ och uppdatera"
 
@@ -1147,7 +1147,7 @@ msgstr "Kanallänk (+L)"
 msgid "Channel name"
 msgstr "Kanalnamn"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Kanalnamnmask"
 
@@ -1193,6 +1193,7 @@ msgstr "Kanalspecifik"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Välj hur mycket extern media som laddas i chatten."
 msgid "Choose microphone and camera"
 msgstr "Välj mikrofon och kamera"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Välj sorteringsordning"
 
@@ -1684,11 +1685,11 @@ msgstr "Skapa mapp"
 msgid "Create pack"
 msgstr "Skapa paket"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Skapad efter (min sedan)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Skapad före (min sedan)"
 
@@ -2348,7 +2349,7 @@ msgstr "ExempelNÄT"
 msgid "Exceptions"
 msgstr "Undantag"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Undanta kanalnamnmask"
 
@@ -2449,11 +2450,11 @@ msgstr "Filtrera stötande ord (+G)"
 msgid "Filter members…"
 msgstr "Filtrera medlemmar…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filter"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filter är inte tillgängliga på den här servern"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "är nu känd som **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Gå med"
@@ -2862,7 +2863,7 @@ msgstr "Gå med"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Gå med i {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Gå med i röstkanalen {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Gick med"
 
@@ -3202,7 +3203,7 @@ msgstr "Markera dig själv som tillbaka"
 msgid "Mark yourself back"
 msgstr "Markera dig som tillbaka"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Max användare"
 
@@ -3349,7 +3350,7 @@ msgstr "Mikrofon {0}"
 msgid "Microphone level"
 msgstr "Mikrofonnivå"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Min användare"
 
@@ -3587,7 +3588,7 @@ msgstr "Ingen kamera hittades."
 msgid "No Central Server:"
 msgstr "Ingen central server:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Inga kanaler hittades. Ändra sökningen eller filtren."
 
@@ -3719,7 +3720,7 @@ msgstr "Inga snedstreckskommandon ännu"
 msgid "No speaker detected."
 msgstr "Ingen högtalare hittades."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Inget ämne"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Öppna"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Öppna {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Sök"
 msgid "Search again"
 msgstr "Sök igen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Sök kanaler..."
 
@@ -4912,11 +4913,6 @@ msgstr "Skickades okrypterat eftersom filen är för stor för att krypteras"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Serverkanaler"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Programvara:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (kontroll)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Sortera efter namn"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Sortera efter användare"
 
@@ -5611,11 +5607,11 @@ msgstr "verktyg"
 msgid "Topic"
 msgstr "Ämne"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Ämne satt efter (min sedan)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Ämne satt före (min sedan)"
 

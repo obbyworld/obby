@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# paso} other {# pasos}}"
 msgid "{title} Client"
 msgstr "cliente {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# canal} other {# canales}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} usuarios"
 msgid "{userCount} watching"
 msgstr "{userCount} viendo"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "App"
 msgid "Appearance"
 msgstr "Apariencia"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Aplicar y actualizar"
 
@@ -1147,7 +1147,7 @@ msgstr "Enlace del canal (+L)"
 msgid "Channel name"
 msgstr "Nombre del canal"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Máscara del nombre del canal"
 
@@ -1193,6 +1193,7 @@ msgstr "Limitado al canal"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Elige cuánto contenido multimedia externo se carga en el chat."
 msgid "Choose microphone and camera"
 msgstr "Elegir micrófono y cámara"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Elige el orden"
 
@@ -1684,11 +1685,11 @@ msgstr "Crear carpeta"
 msgid "Create pack"
 msgstr "Crear paquete"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Creado después de (hace min)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Creado antes de (hace min)"
 
@@ -2348,7 +2349,7 @@ msgstr "EjemploRED"
 msgid "Exceptions"
 msgstr "Excepciones"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Excluir máscara del nombre del canal"
 
@@ -2449,11 +2450,11 @@ msgstr "Filtrar palabras malsonantes (+G)"
 msgid "Filter members…"
 msgstr "Filtrar miembros…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filtros"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Los filtros no están disponibles en este servidor"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "ahora se llama **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Unirse"
@@ -2862,7 +2863,7 @@ msgstr "Unirse"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Unirse a {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Unirse al canal de voz {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Se unió"
 
@@ -3202,7 +3203,7 @@ msgstr "Marcarse como de vuelta"
 msgid "Mark yourself back"
 msgstr "Marcarte como de vuelta"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Máx. usuarios"
 
@@ -3349,7 +3350,7 @@ msgstr "Micrófono {0}"
 msgid "Microphone level"
 msgstr "Nivel del micrófono"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Mín. usuarios"
 
@@ -3587,7 +3588,7 @@ msgstr "No se detectó ninguna cámara."
 msgid "No Central Server:"
 msgstr "Sin servidor central:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "No se encontraron canales. Cambia la búsqueda o los filtros."
 
@@ -3719,7 +3720,7 @@ msgstr "Aún no hay comandos con barra"
 msgid "No speaker detected."
 msgstr "No se detectó ningún altavoz."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Sin tema"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Abrir"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Abrir {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Buscar"
 msgid "Search again"
 msgstr "Buscar de nuevo"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Buscar canales..."
 
@@ -4912,11 +4913,6 @@ msgstr "Enviado sin cifrar porque el archivo es demasiado grande para cifrarlo"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "servidor"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Canales del servidor"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (control)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Ordenar por nombre"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Ordenar por usuarios"
 
@@ -5611,11 +5607,11 @@ msgstr "herramienta"
 msgid "Topic"
 msgstr "Tema"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Tema definido después de (hace min)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Tema definido antes de (hace min)"
 

@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# adım} other {# adım}}"
 msgid "{title} Client"
 msgstr "{title} istemcisi"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanal} other {# kanal}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} kullanıcı"
 msgid "{userCount} watching"
 msgstr "{userCount} kişi izliyor"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanal*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "Uygulama"
 msgid "Appearance"
 msgstr "Görünüm"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Uygula ve yenile"
 
@@ -1147,7 +1147,7 @@ msgstr "Kanal bağlantısı (+L)"
 msgid "Channel name"
 msgstr "Kanal adı"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Kanal adı maskesi"
 
@@ -1193,6 +1193,7 @@ msgstr "Kanala özel"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Sohbette ne kadar dış medyanın yükleneceğini seçin."
 msgid "Choose microphone and camera"
 msgstr "Mikrofon ve kamera seç"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Sıralama düzenini seçin"
 
@@ -1684,11 +1685,11 @@ msgstr "Klasör oluştur"
 msgid "Create pack"
 msgstr "Paket oluştur"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Şu kadar dakika önce oluşturulan sonrası"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Şu kadar dakika önce oluşturulan öncesi"
 
@@ -2348,7 +2349,7 @@ msgstr "ÖrnekAĞ"
 msgid "Exceptions"
 msgstr "İstisnalar"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Kanal adı maskesini hariç tut"
 
@@ -2449,11 +2450,11 @@ msgstr "Kötü sözcükleri filtrele (+G)"
 msgid "Filter members…"
 msgstr "Üyeleri filtrele…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filtreler"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filtreler bu sunucuda kullanılamıyor"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "artık **{newNick}** olarak bilinmektedir"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Katıl"
@@ -2862,7 +2863,7 @@ msgstr "Katıl"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "{0} kanalına katıl"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "{channelName} ses kanalına katıl"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Katıldı"
 
@@ -3202,7 +3203,7 @@ msgstr "Kendinizi geri dönmüş olarak işaretleyin"
 msgid "Mark yourself back"
 msgstr "Döndüğünü işaretle"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "En fazla kullanıcı"
 
@@ -3349,7 +3350,7 @@ msgstr "Mikrofon {0}"
 msgid "Microphone level"
 msgstr "Mikrofon seviyesi"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "En az kullanıcı"
 
@@ -3587,7 +3588,7 @@ msgstr "Kamera bulunamadı."
 msgid "No Central Server:"
 msgstr "Merkezi Sunucu Yok:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Kanal bulunamadı. Aramayı veya filtreleri değiştirin."
 
@@ -3719,7 +3720,7 @@ msgstr "Henüz eğik çizgi komutu yok"
 msgid "No speaker detected."
 msgstr "Hoparlör bulunamadı."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Konu yok"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Aç"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "{0} aç"
 
@@ -4705,7 +4706,7 @@ msgstr "Ara"
 msgid "Search again"
 msgstr "Yeniden ara"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Kanal ara..."
 
@@ -4912,11 +4913,6 @@ msgstr "Şifresiz gönderildi çünkü dosya şifrelenemeyecek kadar büyük"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "sunucu"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Sunucu Kanalları"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Yazılım:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (kontrol)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Ada göre sırala"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Kullanıcıya göre sırala"
 
@@ -5611,11 +5607,11 @@ msgstr "araç"
 msgid "Topic"
 msgstr "Konu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Konu şu kadar dakika önce ayarlanan sonrası"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Konu şu kadar dakika önce ayarlanan öncesi"
 

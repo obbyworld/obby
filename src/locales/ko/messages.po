@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, other {# 단계}}"
 msgid "{title} Client"
 msgstr "{title} 클라이언트"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {채널 #개} other {채널 #개}}"
 
@@ -269,11 +269,11 @@ msgstr "사용자 {userCount}명"
 msgid "{userCount} watching"
 msgstr "시청 중 {userCount}명"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "앱"
 msgid "Appearance"
 msgstr "모양"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "적용하고 새로 고침"
 
@@ -1147,7 +1147,7 @@ msgstr "채널 링크 (+L)"
 msgid "Channel name"
 msgstr "채널 이름"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "채널 이름 마스크"
 
@@ -1193,6 +1193,7 @@ msgstr "채널 전용"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "채팅에서 외부 미디어를 얼마나 불러올지 선택하세요.
 msgid "Choose microphone and camera"
 msgstr "마이크와 카메라 선택"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "정렬 순서 선택"
 
@@ -1684,11 +1685,11 @@ msgstr "폴더 생성"
 msgid "Create pack"
 msgstr "팩 만들기"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "생성 시각 이후 (분 전)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "생성 시각 이전 (분 전)"
 
@@ -2348,7 +2349,7 @@ msgstr "예시네트워크"
 msgid "Exceptions"
 msgstr "예외"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "제외할 채널 이름 마스크"
 
@@ -2449,11 +2450,11 @@ msgstr "비속어 필터링 (+G)"
 msgid "Filter members…"
 msgstr "멤버 필터링…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "필터"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "이 서버에서는 필터를 사용할 수 없습니다"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "이제 **{newNick}**(으)로 알려져 있습니다"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "참여"
@@ -2862,7 +2863,7 @@ msgstr "참여"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "{0} 참가"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "음성 채널 {channelName} 참가"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "가입"
 
@@ -3202,7 +3203,7 @@ msgstr "돌아옴으로 표시"
 msgid "Mark yourself back"
 msgstr "복귀로 표시"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "최대 사용자 수"
 
@@ -3349,7 +3350,7 @@ msgstr "마이크 {0}"
 msgid "Microphone level"
 msgstr "마이크 수준"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "최소 사용자 수"
 
@@ -3587,7 +3588,7 @@ msgstr "카메라가 감지되지 않았습니다."
 msgid "No Central Server:"
 msgstr "중앙 서버 없음:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "채널을 찾을 수 없습니다. 검색어나 필터를 변경하세요."
 
@@ -3719,7 +3720,7 @@ msgstr "아직 슬래시 명령이 없습니다"
 msgid "No speaker detected."
 msgstr "스피커가 감지되지 않았습니다."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "주제 없음"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "열기"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "{0} 열기"
 
@@ -4705,7 +4706,7 @@ msgstr "검색"
 msgid "Search again"
 msgstr "다시 검색"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "채널 검색..."
 
@@ -4912,11 +4913,6 @@ msgstr "파일이 너무 커서 암호화할 수 없으므로 암호화 없이 �
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "서버"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "서버 채널"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "소프트웨어:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (제어)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "이름순 정렬"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "사용자순 정렬"
 
@@ -5611,11 +5607,11 @@ msgstr "도구"
 msgid "Topic"
 msgstr "주제"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "주제 설정 시각 이후 (분 전)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "주제 설정 시각 이전 (분 전)"
 

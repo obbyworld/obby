@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# vaihe} other {# vaihetta}}"
 msgid "{title} Client"
 msgstr "{title} asiakasohjelma"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanava} other {# kanavaa}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} käyttäjää"
 msgid "{userCount} watching"
 msgstr "{userCount} katsojaa"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanava*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "Sovellus"
 msgid "Appearance"
 msgstr "Ulkoasu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Käytä ja päivitä"
 
@@ -1147,7 +1147,7 @@ msgstr "Kanavalinkki (+L)"
 msgid "Channel name"
 msgstr "Kanavan nimi"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Kanavanimen maski"
 
@@ -1193,6 +1193,7 @@ msgstr "Kanavakohtainen"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Valitse, kuinka paljon ulkoista mediaa ladataan keskusteluun."
 msgid "Choose microphone and camera"
 msgstr "Valitse mikrofoni ja kamera"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Valitse lajittelujärjestys"
 
@@ -1684,11 +1685,11 @@ msgstr "Luo kansio"
 msgid "Create pack"
 msgstr "Luo paketti"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Luotu jälkeen (min sitten)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Luotu ennen (min sitten)"
 
@@ -2348,7 +2349,7 @@ msgstr "EsimerkKi"
 msgid "Exceptions"
 msgstr "Poikkeukset"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Ohita kanavanimen maski"
 
@@ -2449,11 +2450,11 @@ msgstr "Suodata kiroilu (+G)"
 msgid "Filter members…"
 msgstr "Suodata jäseniä…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Suodattimet"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Suodattimet eivät ole käytettävissä tällä palvelimella"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "on nyt tunnettu nimellä **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Liity"
@@ -2862,7 +2863,7 @@ msgstr "Liity"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Liity kanavalle {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Liity äänikanavaan {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Liittyi"
 
@@ -3202,7 +3203,7 @@ msgstr "Merkitse itsesi palanneeksi"
 msgid "Mark yourself back"
 msgstr "Merkitse itsesi takaisin"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Käyttäjiä enintään"
 
@@ -3349,7 +3350,7 @@ msgstr "Mikrofoni {0}"
 msgid "Microphone level"
 msgstr "Mikrofonin taso"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Käyttäjiä vähintään"
 
@@ -3587,7 +3588,7 @@ msgstr "Kameraa ei havaittu."
 msgid "No Central Server:"
 msgstr "Ei keskuspalvelinta:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Kanavia ei löytynyt. Muuta hakua tai suodattimia."
 
@@ -3719,7 +3720,7 @@ msgstr "Ei vielä kauttaviivakomentoja"
 msgid "No speaker detected."
 msgstr "Kaiutinta ei havaittu."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Ei aihetta"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Avaa"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Avaa {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Hae"
 msgid "Search again"
 msgstr "Hae uudelleen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Hae kanavia..."
 
@@ -4912,11 +4913,6 @@ msgstr "Lähetetty salaamattomana, koska tiedosto on liian suuri salattavaksi"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "palvelin"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Palvelimen kanavat"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Ohjelmisto:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (hallinta)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Lajittele nimen mukaan"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Lajittele käyttäjien mukaan"
 
@@ -5611,11 +5607,11 @@ msgstr "työkalu"
 msgid "Topic"
 msgstr "Aihe"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Aihe asetettu jälkeen (min sitten)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Aihe asetettu ennen (min sitten)"
 

@@ -1,26 +1,24 @@
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans } from "@lingui/react/macro";
 import type * as React from "react";
-import { FaList } from "react-icons/fa";
 import { mircToHtml } from "../../lib/ircUtils";
 import useStore from "../../store";
 import { CollapsibleMessage } from "../message/CollapsibleMessage";
+import ChannelBrowser from "../pages/ChannelBrowser";
 
 // The fade at the bottom of a folded MOTD has to end in the box's own colour.
 const MOTD_GROUND = { "--message-ground": "#202225" } as React.CSSProperties;
 
 const BlankPage: React.FC = () => {
-  const { t } = useLingui();
   const {
     servers,
     ui: { selectedServerId },
-    openPage,
     globalSettings: { showMotd },
   } = useStore();
   const server = servers.find((s) => s.id === selectedServerId);
   const motd = showMotd ? server?.motd : undefined;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 text-discord-text-muted">
+    <div className="flex flex-col items-center min-h-full px-4 py-8 text-discord-text-muted">
       <div className="text-6xl mb-4">👋</div>
       <h2 className="text-xl font-semibold">
         <Trans>Welcome to {server?.name || "the unknown"}!</Trans>
@@ -29,23 +27,25 @@ const BlankPage: React.FC = () => {
         <Trans>Select or add a channel to get started.</Trans>
       </p>
 
-      <button
-        onClick={() =>
-          selectedServerId &&
-          openPage({ kind: "channelBrowser", serverId: selectedServerId })
-        }
-        className="mt-6 flex items-center gap-2 px-4 py-2 bg-discord-dark-400 hover:bg-discord-dark-300 text-discord-text-normal hover:text-white rounded-lg transition-colors duration-200"
-        title={t`Server Channels`}
-      >
-        <FaList />
-        <span>
-          <Trans>Server Channels</Trans>
-        </span>
-      </button>
+      {server?.isRegistered && (
+        <ChannelBrowser serverId={server.id}>
+          {(count, body) => (
+            <section className="mt-8 w-full max-w-6xl flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="section-label">
+                  <Trans>Channels</Trans>
+                </span>
+                {count}
+              </div>
+              {body}
+            </section>
+          )}
+        </ChannelBrowser>
+      )}
 
       {motd && motd.length > 0 && (
         <section
-          className="mt-8 w-full max-w-4xl rounded-lg bg-discord-dark-300 pb-3"
+          className="mt-8 w-full max-w-6xl rounded-lg bg-discord-dark-300 pb-3"
           style={MOTD_GROUND}
         >
           <div className="section-label px-4 pt-3">

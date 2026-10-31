@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# krok} few {# kroky} many {# kroků} other {# 
 msgid "{title} Client"
 msgstr "klient {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanál} few {# kanály} other {# kanálů}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} uživatelů"
 msgid "{userCount} watching"
 msgstr "{userCount} diváků"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanál*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "Aplikace"
 msgid "Appearance"
 msgstr "Vzhled"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Použít a obnovit"
 
@@ -1147,7 +1147,7 @@ msgstr "Odkaz kanálu (+L)"
 msgid "Channel name"
 msgstr "Název kanálu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Maska názvu kanálu"
 
@@ -1193,6 +1193,7 @@ msgstr "Pouze pro kanál"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Vyberte, kolik externích médií se v chatu načte."
 msgid "Choose microphone and camera"
 msgstr "Vybrat mikrofon a kameru"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Vyberte pořadí řazení"
 
@@ -1684,11 +1685,11 @@ msgstr "Vytvořit složku"
 msgid "Create pack"
 msgstr "Vytvořit balíček"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Vytvořeno po (min. zpět)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Vytvořeno před (min. zpět)"
 
@@ -2348,7 +2349,7 @@ msgstr "PříkladSÍŤ"
 msgid "Exceptions"
 msgstr "Výjimky"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Vyloučit masku názvu kanálu"
 
@@ -2449,11 +2450,11 @@ msgstr "Filtrovat sprosté výrazy (+G)"
 msgid "Filter members…"
 msgstr "Filtrovat členy…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filtry"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filtry na tomto serveru nejsou dostupné"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "je nyní znám jako **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Připojit se"
@@ -2862,7 +2863,7 @@ msgstr "Připojit se"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Připojit se k {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Připojit se k hlasovému kanálu {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Připojeno"
 
@@ -3202,7 +3203,7 @@ msgstr "Označit se jako zpět"
 msgid "Mark yourself back"
 msgstr "Označit se jako zpět"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Max. počet uživatelů"
 
@@ -3349,7 +3350,7 @@ msgstr "Mikrofon {0}"
 msgid "Microphone level"
 msgstr "Úroveň mikrofonu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Min. počet uživatelů"
 
@@ -3587,7 +3588,7 @@ msgstr "Nebyla zjištěna žádná kamera."
 msgid "No Central Server:"
 msgstr "Bez centrálního serveru:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Žádné kanály nenalezeny. Změňte hledání nebo filtry."
 
@@ -3719,7 +3720,7 @@ msgstr "Zatím žádné příkazy s lomítkem"
 msgid "No speaker detected."
 msgstr "Nebyl zjištěn žádný reproduktor."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Bez tématu"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Otevřít"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Otevřít {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Hledat"
 msgid "Search again"
 msgstr "Hledat znovu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Hledat kanály..."
 
@@ -4912,11 +4913,6 @@ msgstr "Odesláno nešifrovaně, protože soubor je příliš velký na šifrov�
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Kanály serveru"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (řízení)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Řadit podle názvu"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Řadit podle uživatelů"
 
@@ -5611,11 +5607,11 @@ msgstr "nástroj"
 msgid "Topic"
 msgstr "Téma"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Téma nastaveno po (min. zpět)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Téma nastaveno před (min. zpět)"
 

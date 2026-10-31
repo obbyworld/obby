@@ -2068,9 +2068,10 @@ const useStore = create<AppState>((set, get) => ({
       // Already listing, ignore
       return;
     }
-    // Find the server to check for ELIST support
     const server = state.servers.find((s) => s.id === serverId);
-    const elist = server?.elist;
+    // A server ignores LIST before registration, so we would wait forever for its end.
+    if (!server?.isRegistered) return;
+    const elist = server.elist;
 
     // Use provided filters or get stored filters
     const filterSettings = filters || state.channelListFilters[serverId] || {};

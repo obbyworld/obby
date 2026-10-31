@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# pas} few {# pași} other {# de pași}}"
 msgid "{title} Client"
 msgstr "client {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# canal} few {# canale} other {# de canale}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} utilizatori"
 msgid "{userCount} watching"
 msgstr "{userCount} spectatori"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -655,7 +655,7 @@ msgstr "Aplicație"
 msgid "Appearance"
 msgstr "Aspect"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Aplicați și reîmprospătați"
 
@@ -1147,7 +1147,7 @@ msgstr "Legătura canalului (+L)"
 msgid "Channel name"
 msgstr "Numele canalului"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Masca numelui canalului"
 
@@ -1193,6 +1193,7 @@ msgstr "Specific canalului"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1246,7 +1247,7 @@ msgstr "Alegeți câte media externe se încarcă în chat."
 msgid "Choose microphone and camera"
 msgstr "Alegeți microfonul și camera"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Alegeți ordinea de sortare"
 
@@ -1684,11 +1685,11 @@ msgstr "Creaţi folder"
 msgid "Create pack"
 msgstr "Creează pachet"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Creat după (min în urmă)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Creat înainte de (min în urmă)"
 
@@ -2348,7 +2349,7 @@ msgstr "ExempluRET"
 msgid "Exceptions"
 msgstr "Excepții"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Exclude masca numelui canalului"
 
@@ -2449,11 +2450,11 @@ msgstr "Filtrează cuvintele nepotrivite (+G)"
 msgid "Filter members…"
 msgstr "Filtrează membri…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filtre"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filtrele nu sunt disponibile pe acest server"
 
@@ -2854,7 +2855,7 @@ msgid "is now known as **{newNick}**"
 msgstr "acum este cunoscut ca **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Alătură-te"
@@ -2862,7 +2863,7 @@ msgstr "Alătură-te"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Alătură-te la {0}"
 
@@ -2900,7 +2901,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Alătură-te canalului vocal {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Membru din"
 
@@ -3202,7 +3203,7 @@ msgstr "Marchează-te ca revenit"
 msgid "Mark yourself back"
 msgstr "Marchează-te ca revenit"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Nr. max. utilizatori"
 
@@ -3349,7 +3350,7 @@ msgstr "Microfon {0}"
 msgid "Microphone level"
 msgstr "Nivel microfon"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Nr. min. utilizatori"
 
@@ -3587,7 +3588,7 @@ msgstr "Nicio cameră detectată."
 msgid "No Central Server:"
 msgstr "Fără server central:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Niciun canal nu a fost găsit. Schimbați căutarea sau filtrele."
 
@@ -3719,7 +3720,7 @@ msgstr "Încă nu există comenzi slash"
 msgid "No speaker detected."
 msgstr "Niciun difuzor detectat."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Fără subiect"
 
@@ -3863,7 +3864,7 @@ msgid "Open"
 msgstr "Deschide"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Deschide {0}"
 
@@ -4705,7 +4706,7 @@ msgstr "Caută"
 msgid "Search again"
 msgstr "Caută din nou"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Căutați canale..."
 
@@ -4912,11 +4913,6 @@ msgstr "Trimis necriptat deoarece fișierul este prea mare pentru a fi criptat"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Canale server"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5221,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (control)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Sortează după nume"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Sortează după utilizatori"
 
@@ -5611,11 +5607,11 @@ msgstr "instrument"
 msgid "Topic"
 msgstr "Subiect"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Subiect setat după (min în urmă)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Subiect setat înainte de (min în urmă)"
 
