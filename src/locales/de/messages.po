@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> und {3} weitere tippen..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> ist nicht registriert. Registriere ihn, um ihn zu behalten"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0> ist registriert. Melde dich an, um ihn zu nutzen"
 
@@ -1081,7 +1085,7 @@ msgstr "Passwort ändern"
 msgid "Change the channel name (operators only)"
 msgstr "Kanalnamen ändern (nur Operatoren)"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "Ändere deinen Nickname, um dich zu registrieren. Dieser ist nicht erlaubt"
 
@@ -1215,7 +1219,7 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chats und Netzwerke"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "Prüfe den Code und versuche es erneut"
 
@@ -1235,7 +1239,7 @@ msgstr "Wähle eine Datei unter {limit}, dem Maximum, das der Dateihost akzeptie
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Wähle eine Datei mit Erweiterung. Der Dateihost akzeptiert keine Dateien ohne Erweiterung."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "Wähle ein längeres Passwort"
 
@@ -1384,7 +1388,8 @@ msgstr "Ansicht schließen"
 msgid "Close workflow"
 msgstr "Workflow schließen"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "Code"
 
@@ -1665,7 +1670,7 @@ msgstr "GIFs konnten nicht geladen werden. Suche erneut, um es noch einmal zu ve
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Der Dateihost ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "Registrierung fehlgeschlagen. Versuche es erneut"
 
@@ -1679,7 +1684,7 @@ msgstr "Das neue Passwort konnte nicht gesetzt werden: {0}"
 msgid "Could not update password: {0}"
 msgstr "Passwort konnte nicht aktualisiert werden: {0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "Verifizierung fehlgeschlagen. Versuche es erneut"
 
@@ -2003,6 +2008,11 @@ msgstr "Anzeigen, wenn Benutzer Kanäle betreten oder verlassen"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Möchtest du diesen Link in einem neuen Tab öffnen?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Für diesen Server nicht mehr anzeigen"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Nicht mehr vor geringer Verbindungssicherheit für diesen Server warnen"
@@ -2095,7 +2105,8 @@ msgstr "Profil bearbeiten"
 msgid "Edit Server"
 msgstr "Server bearbeiten"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "E-Mail"
 
@@ -2257,7 +2268,7 @@ msgstr "Gib eine Zahl für {0} ein"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Gib eine URL ein. Verwende {sizeToken} in der URL für eine dynamische Größe. Beispiel: https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "Gib eine gültige E-Mail-Adresse ein"
 
@@ -2273,6 +2284,10 @@ msgstr "Kontoname eingeben..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Gib einen Kontonamen ein, um dich vor dem Betreten von Kanälen mit SASL PLAIN anzumelden. Lass das Feld leer, um deinen Nicknamen zu verwenden."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Code eingeben"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "Gib den Kontonamen ein, den du wiederherstellen möchtest."
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "Gib den Code ein, der an deine E-Mail gesendet wurde"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Gib den Code ein, der an deine E-Mail gesendet wurde."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Hat Link"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "Ausblenden"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "Der Standortzugriff wurde verweigert. Erlauben Sie den Standortzugriff in den Browser- oder Systemeinstellungen und versuchen Sie es erneut."
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Anmelden"
@@ -3180,10 +3195,6 @@ msgstr "Geringe Verbindungssicherheit (Stufe {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Hand senken"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "Sichere dir <0>{nick}</0>. Lege ein Passwort fest, um ihn zu registrieren"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "Pakete"
 msgid "Pages"
 msgstr "Seiten"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "WHOIS aktualisieren"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "Registrieren"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Registriere {nick} als dein Konto auf diesem Server."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "Dieser Bildschirm ist nicht mehr verfügbar. Wähle einen anderen Bildsc
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Der Anrufserver hat die Anfrage abgelehnt. Versuche es gleich noch einmal."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "Der Code ist abgelaufen. Bitte die Serverbetreiber um Hilfe"
 
@@ -5845,7 +5863,7 @@ msgstr "Verwende einen sicheren WebSocket-Port."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Verwende einen Server mit IRCv3 METADATA, um deinen Avatar, Anzeigenamen und Status festzulegen."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Verwende im Passwort nur lateinische Zeichen"
@@ -5925,7 +5943,7 @@ msgstr "Ein gültiger Server-Port ist erforderlich"
 msgid "Verified account"
 msgstr "Verifiziertes Konto"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verifizieren"
@@ -6195,6 +6213,10 @@ msgstr "Du bist ein IRC Operator"
 msgid "You are no longer in this channel"
 msgstr "Du bist nicht mehr in diesem Kanal"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Du bist nicht angemeldet"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Du hast einige Minuten Zeit, ein neues Passwort zu wählen."
@@ -6215,6 +6237,10 @@ msgstr "Du hast diesen Kontakt verifiziert."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Du bist mit <0>{0}</0> verbunden."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Dein Konto"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "Deine Nachrichten mit {nick} sind verschlüsselt. {0} von {1} Dateien si
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Deine Nachrichten mit {nick} sind verschlüsselt. Diese Dateien sind zu groß zum Verschlüsseln und werden unverschlüsselt gesendet."
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "Dein Nickname"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

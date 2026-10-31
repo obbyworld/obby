@@ -845,8 +845,6 @@ export interface AppState {
     password: string,
   ) => boolean;
   verifyNickClaim: (serverId: string, code: string) => void;
-  // Saves the login and reconnects. Returns false when we cannot store the password.
-  logInToNick: (serverId: string, account: string, password: string) => boolean;
   hideNickPrompt: (serverId: string) => void;
   // 2FA actions
   twofaStatusQuery: (serverId: string) => void;
@@ -1528,6 +1526,7 @@ const useStore = create<AppState>((set, get) => ({
         operOnConnect: savedServer?.operOnConnect,
         skipLocalhostWarning: savedServer?.skipLocalhostWarning,
         skipLinkSecurityWarning: savedServer?.skipLinkSecurityWarning,
+        skipNickPrompt: savedServer?.skipNickPrompt,
         // Preserve existing addedAt timestamp or set current time for new servers
         addedAt: savedServer?.addedAt || Date.now(),
         oauth: mergedOauth ?? savedServer?.oauth,
@@ -1991,19 +1990,8 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.verifyAccount(serverId, claim.account, code);
   },
 
-  logInToNick: (serverId, account, password) => {
-    const storedPassword = encodeStoredSaslPassword(password);
-    if (storedPassword === null) return false;
-    get().updateServer(serverId, {
-      saslAccountName: account,
-      saslPassword: storedPassword,
-      saslEnabled: true,
-    });
-    get().reconnectServer(serverId);
-    return true;
-  },
-
   hideNickPrompt: (serverId) => {
+    get().updateServer(serverId, { skipNickPrompt: true });
     set((state) => ({
       servers: state.servers.map((server) =>
         server.id === serverId

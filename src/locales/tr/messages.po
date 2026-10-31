@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> ve {3} kişi daha yazıyor..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> kayıtlı değil. Korumak için kaydet"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0> kayıtlı. Kullanmak için giriş yap"
 
@@ -1081,7 +1085,7 @@ msgstr "Parolayı değiştir"
 msgid "Change the channel name (operators only)"
 msgstr "Kanal adını değiştir (yalnızca operatörler)"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "Kayıt olmak için takma adını değiştir, buna izin verilmiyor"
 
@@ -1215,7 +1219,7 @@ msgstr "Sohbet"
 msgid "Chats and networks"
 msgstr "Sohbetler ve ağlar"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "Kodu kontrol et ve tekrar dene"
 
@@ -1235,7 +1239,7 @@ msgstr "{limit} altında bir dosya seçin, dosya sunucusunun kabul ettiği en y�
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Uzantısı olan bir dosya seçin. Dosya sunucusu uzantısız dosyaları kabul etmiyor."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "Daha uzun bir şifre seç"
 
@@ -1384,7 +1388,8 @@ msgstr "Görüntüleyiciyi kapat"
 msgid "Close workflow"
 msgstr "İş akışını kapat"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "Kod"
 
@@ -1665,7 +1670,7 @@ msgstr "GIF'ler yüklenemedi. Yeniden denemek için tekrar arayın."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Dosya sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "Kayıt olunamadı. Tekrar dene"
 
@@ -1679,7 +1684,7 @@ msgstr "Yeni parola ayarlanamadı: {0}"
 msgid "Could not update password: {0}"
 msgstr "Parola güncellenemedi: {0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "Doğrulanamadı. Tekrar dene"
 
@@ -2003,6 +2008,11 @@ msgstr "Kullanıcılar kanala katıldığında veya ayrıldığında göster"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Bu bağlantıyı yeni sekmede açmak istiyor musunuz?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Bu sunucu için bir daha gösterme"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Bu sunucu için düşük bağlantı güvenliği konusunda uyarma"
@@ -2095,7 +2105,8 @@ msgstr "Profili düzenle"
 msgid "Edit Server"
 msgstr "Sunucuyu Düzenle"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "E-posta"
 
@@ -2257,7 +2268,7 @@ msgstr "{0} için bir sayı girin"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Bir URL girin. Dinamik boyut için URL'de {sizeToken} kullanın. Örnek: https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "Geçerli bir e-posta adresi gir"
 
@@ -2273,6 +2284,10 @@ msgstr "Hesap adını girin..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Kanallara katılmadan önce SASL PLAIN ile giriş yapmak için bir hesap adı girin. Takma adınızı kullanmak için boş bırakın."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Kodu gir"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "Kurtarmak istediğiniz hesap adını girin."
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "E-postana gönderilen kodu gir"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "E-postana gönderilen kodu gir."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Bağlantı içeren"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "Gizle"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "Konum erişimi reddedildi. Tarayıcı veya sistem ayarlarından konum erişimine izin ver, ardından tekrar dene."
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Giriş yap"
@@ -3180,10 +3195,6 @@ msgstr "Düşük Bağlantı Güvenliği (Seviye {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Eli indir"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "<0>{nick}</0> takma adını sahiplen. Kaydetmek için bir şifre belirle"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "Paketler"
 msgid "Pages"
 msgstr "Sayfalar"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "WHOIS'i yenile"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "Kaydol"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "{nick} adını bu sunucuda hesabın olarak kaydet."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "Bu ekran artık kullanılamıyor. Başka bir ekran seçin."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Arama sunucusu isteği reddetti. Biraz sonra yeniden deneyin."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "Kodun süresi doldu. Sunucu operatörlerinden yardım iste"
 
@@ -5845,7 +5863,7 @@ msgstr "Güvenli bir websocket portu kullanın."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Avatarınızı, görünen adınızı ve durumunuzu ayarlamak için IRCv3 METADATA destekleyen bir sunucu kullanın."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Parolada yalnızca Latin karakterleri kullanın"
@@ -5925,7 +5943,7 @@ msgstr "Geçerli bir sunucu portu gereklidir"
 msgid "Verified account"
 msgstr "Doğrulanmış hesap"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Doğrula"
@@ -6195,6 +6213,10 @@ msgstr "IRC Operatörüsünüz"
 msgid "You are no longer in this channel"
 msgstr "Artık bu kanalda değilsiniz"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Giriş yapmadın"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Yeni bir parola seçmek için birkaç dakikanız var."
@@ -6215,6 +6237,10 @@ msgstr "Bu kişiyi doğruladınız."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "<0>{0}</0> sunucusuna bağlısınız."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Hesabın"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "{nick} ile mesajlarınız şifreli. {1} dosyadan {0} tanesi şifreleneme
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "{nick} ile mesajlarınız şifreli. Bu dosyalar şifrelenemeyecek kadar büyük ve şifresiz gönderilecek."
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "Takma adın"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

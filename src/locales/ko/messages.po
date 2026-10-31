@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>님, <1>{1}</1>님, <2>{2}</2>님 외 {3}명이 입력 중..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0>은(는) 등록되지 않았습니다. 계속 쓰려면 등록하세요"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0>은(는) 등록된 닉네임입니다. 사용하려면 로그인하세요"
 
@@ -1081,7 +1085,7 @@ msgstr "비밀번호 변경"
 msgid "Change the channel name (operators only)"
 msgstr "채널 이름 변경 (운영자 전용)"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "등록하려면 닉네임을 변경하세요. 이 닉네임은 허용되지 않습니다"
 
@@ -1215,7 +1219,7 @@ msgstr "채팅"
 msgid "Chats and networks"
 msgstr "채팅 및 네트워크"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "코드를 확인하고 다시 시도하세요"
 
@@ -1235,7 +1239,7 @@ msgstr "{limit} 이하의 파일을 선택하세요. 파일 호스트가 허용�
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "확장자가 있는 파일을 선택하세요. 파일 호스트는 확장자가 없는 파일을 허용하지 않습니다."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "더 긴 비밀번호를 선택하세요"
 
@@ -1384,7 +1388,8 @@ msgstr "뷰어 닫기"
 msgid "Close workflow"
 msgstr "워크플로우 닫기"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "코드"
 
@@ -1665,7 +1670,7 @@ msgstr "GIF를 불러오지 못했습니다. 다시 검색하세요."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "파일 호스트에 연결할 수 없습니다. 연결을 확인하고 다시 시도하세요."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "등록하지 못했습니다. 다시 시도하세요"
 
@@ -1679,7 +1684,7 @@ msgstr "새 비밀번호를 설정하지 못했습니다: {0}"
 msgid "Could not update password: {0}"
 msgstr "비밀번호를 업데이트할 수 없습니다: {0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "확인하지 못했습니다. 다시 시도하세요"
 
@@ -2003,6 +2008,11 @@ msgstr "사용자가 채널에 입장하거나 퇴장할 때 표시"
 msgid "Do you want to open this link in a new tab?"
 msgstr "이 링크를 새 탭에서 여시겠습니까?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "이 서버에서 다시 표시하지 않기"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "이 서버의 낮은 링크 보안에 대해 다시 경고하지 않음"
@@ -2095,7 +2105,8 @@ msgstr "프로필 편집"
 msgid "Edit Server"
 msgstr "서버 편집"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "이메일"
 
@@ -2257,7 +2268,7 @@ msgstr "{0}에 숫자를 입력하세요"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "URL을 입력하세요. 크기를 동적으로 지정하려면 URL에 {sizeToken}를 사용하세요. 예: https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "올바른 이메일 주소를 입력하세요"
 
@@ -2273,6 +2284,10 @@ msgstr "계정 이름 입력..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "채널에 참여하기 전에 SASL PLAIN으로 로그인할 계정 이름을 입력하세요. 비워 두면 닉네임을 사용합니다."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "코드 입력"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "복구할 계정 이름을 입력하세요."
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "이메일로 받은 코드를 입력하세요"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "이메일로 받은 코드를 입력하세요."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "링크 포함"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "숨기기"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "위치 액세스가 거부되었습니다. 브라우저 또는 시스템 설정에서 위치 액세스를 허용한 후 다시 시도하세요."
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "로그인"
@@ -3180,10 +3195,6 @@ msgstr "낮은 링크 보안 (레벨 {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "손 내리기"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "<0>{nick}</0>을(를) 내 닉네임으로 만드세요. 비밀번호를 설정해 등록하세요"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "팩"
 msgid "Pages"
 msgstr "페이지"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "WHOIS 새로고침"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "등록"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "이 서버에서 {nick}을(를) 계정으로 등록하세요."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "해당 화면은 더 이상 사용할 수 없습니다. 다른 화면을
 msgid "The call server refused the request. Try again in a moment."
 msgstr "통화 서버가 요청을 거부했습니다. 잠시 후 다시 시도하세요."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "코드가 만료되었습니다. 서버 운영자에게 도움을 요청하세요"
 
@@ -5845,7 +5863,7 @@ msgstr "보안 웹소켓 포트를 사용하세요."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "아바타, 표시 이름, 상태를 설정하려면 IRCv3 METADATA를 지원하는 서버를 사용하세요."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "비밀번호에는 라틴 문자만 사용하세요"
@@ -5925,7 +5943,7 @@ msgstr "올바른 서버 포트가 필요합니다"
 msgid "Verified account"
 msgstr "인증된 계정"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "확인"
@@ -6195,6 +6213,10 @@ msgstr "당신은 IRC Operator입니다"
 msgid "You are no longer in this channel"
 msgstr "더 이상 이 채널에 있지 않습니다"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "로그인하지 않았습니다"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "새 비밀번호를 정할 수 있는 시간은 몇 분입니다."
@@ -6215,6 +6237,10 @@ msgstr "이 연락처를 확인했습니다."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "<0>{0}</0>에 연결되어 있습니다."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "내 계정"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "{nick} 님과의 메시지는 암호화되어 있습니다. 파일 {1}�
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "{nick} 님과의 메시지는 암호화되어 있습니다. 이 파일은 너무 커서 암호화할 수 없으므로 암호화 없이 전송됩니다."
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "내 닉네임"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> 以及另外 {3} 人正在輸入..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> 尚未註冊。註冊後即可保留它"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0> 已被註冊。請登入後使用"
 
@@ -1081,7 +1085,7 @@ msgstr "變更密碼"
 msgid "Change the channel name (operators only)"
 msgstr "更改频道名称（仅限管理员）"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "請更換暱稱後再註冊，此暱稱不允許使用"
 
@@ -1215,7 +1219,7 @@ msgstr "聊天"
 msgid "Chats and networks"
 msgstr "聊天和網路"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "請檢查驗證碼後重試"
 
@@ -1235,7 +1239,7 @@ msgstr "請選擇小於 {limit} 的檔案，這是檔案主機接受的上限。
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "請選擇有副檔名的檔案。檔案主機不接受沒有副檔名的檔案。"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "請選擇更長的密碼"
 
@@ -1384,7 +1388,8 @@ msgstr "关闭查看器"
 msgid "Close workflow"
 msgstr "關閉工作流程"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "驗證碼"
 
@@ -1665,7 +1670,7 @@ msgstr "無法載入 GIF。請重新搜尋。"
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "無法連線至檔案主機。請檢查網路連線後重試。"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "註冊失敗，請重試"
 
@@ -1679,7 +1684,7 @@ msgstr "無法設定新密碼：{0}"
 msgid "Could not update password: {0}"
 msgstr "無法更新密碼：{0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "驗證失敗，請重試"
 
@@ -2003,6 +2008,11 @@ msgstr "顯示使用者加入或離開頻道的事件"
 msgid "Do you want to open this link in a new tab?"
 msgstr "是否在新标签页中打开此链接？"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "此伺服器不再顯示"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "不再提醒我此服务器的低链路安全问题"
@@ -2095,7 +2105,8 @@ msgstr "編輯個人資料"
 msgid "Edit Server"
 msgstr "编辑服务器"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "電子郵件"
 
@@ -2257,7 +2268,7 @@ msgstr "請為 {0} 輸入數字"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "輸入 URL。在 URL 中使用 {sizeToken} 可動態調整大小。範例：https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "請輸入有效的電子郵件地址"
 
@@ -2273,6 +2284,10 @@ msgstr "輸入帳戶名稱..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "輸入帳號名稱，以便在加入頻道前透過 SASL PLAIN 登入。留空則使用你的暱稱。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "輸入驗證碼"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "輸入你要找回的帳號名稱。"
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "請輸入寄到你電子郵件的驗證碼"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "輸入寄到你電子郵件的驗證碼。"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "半管理员"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "包含連結"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "隱藏"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "位置存取遭拒。請在瀏覽器或系統設定中允許位置存取，然後再試一次。"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "登入"
@@ -3180,10 +3195,6 @@ msgstr "链路安全级别较低（级别 {securityLevel}）"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "放下手"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "讓 <0>{nick}</0> 成為你的暱稱。設定密碼以註冊"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "表情包"
 msgid "Pages"
 msgstr "頁面"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "重新整理 WHOIS"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "註冊"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "在此伺服器上將 {nick} 註冊為你的帳號。"
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "該螢幕已無法使用。請選擇其他螢幕。"
 msgid "The call server refused the request. Try again in a moment."
 msgstr "通話伺服器拒絕了請求。請稍後重試。"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "驗證碼已過期。請向伺服器管理員求助"
 
@@ -5845,7 +5863,7 @@ msgstr "使用安全的 WebSocket 連接埠。"
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "使用支援 IRCv3 METADATA 的伺服器設定大頭貼、顯示名稱與狀態。"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "密碼中只能使用拉丁字元"
@@ -5925,7 +5943,7 @@ msgstr "需要有效的服务器端口"
 msgid "Verified account"
 msgstr "已验证账户"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "驗證"
@@ -6195,6 +6213,10 @@ msgstr "您是 IRC Operator"
 msgid "You are no longer in this channel"
 msgstr "你已不在此頻道中"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "你尚未登入"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "你有幾分鐘時間設定新密碼。"
@@ -6215,6 +6237,10 @@ msgstr "您已驗證此聯絡人。"
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "您已連線至 <0>{0}</0>。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "你的帳號"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "你與 {nick} 的訊息已加密。{1} 個檔案中有 {0} 個太大無�
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "你與 {nick} 的訊息已加密。這些檔案太大無法加密，將不加密傳送。"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "你的暱稱"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

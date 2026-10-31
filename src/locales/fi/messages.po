@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> ja {3} muuta kirjoittavat..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> ei ole rekisteröity. Rekisteröi se pitääksesi sen"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0> on rekisteröity. Kirjaudu sisään käyttääksesi sitä"
 
@@ -1081,7 +1085,7 @@ msgstr "Vaihda salasana"
 msgid "Change the channel name (operators only)"
 msgstr "Muuta kanavan nimeä (vain operaattorit)"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "Vaihda nimimerkkiä rekisteröityäksesi, tämä ei ole sallittu"
 
@@ -1215,7 +1219,7 @@ msgstr "Keskustelu"
 msgid "Chats and networks"
 msgstr "Keskustelut ja verkot"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "Tarkista koodi ja yritä uudelleen"
 
@@ -1235,7 +1239,7 @@ msgstr "Valitse alle {limit} tiedosto, se on suurin tiedostopalvelimen hyväksym
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Valitse tiedosto, jossa on tiedostopääte. Tiedostopalvelin ei hyväksy tiedostoja ilman päätettä."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "Valitse pidempi salasana"
 
@@ -1384,7 +1388,8 @@ msgstr "Sulje katseluohjelma"
 msgid "Close workflow"
 msgstr "Sulje työnkulku"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "Koodi"
 
@@ -1665,7 +1670,7 @@ msgstr "GIF-kuvien lataus epäonnistui. Hae uudelleen yrittääksesi."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Tiedostopalvelimeen ei saatu yhteyttä. Tarkista yhteytesi ja yritä uudelleen."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "Rekisteröinti epäonnistui. Yritä uudelleen"
 
@@ -1679,7 +1684,7 @@ msgstr "Uuden salasanan asettaminen epäonnistui: {0}"
 msgid "Could not update password: {0}"
 msgstr "Salasanaa ei voitu päivittää: {0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "Vahvistus epäonnistui. Yritä uudelleen"
 
@@ -2003,6 +2008,11 @@ msgstr "Näytä kun käyttäjät liittyvät kanavalle tai poistuvat"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Haluatko avata tämän linkin uudessa välilehdessä?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Älä näytä enää tälle palvelimelle"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Älä varoita minua tämän palvelimen heikosta linkkiturvallisuudesta"
@@ -2095,7 +2105,8 @@ msgstr "Muokkaa profiilia"
 msgid "Edit Server"
 msgstr "Muokkaa palvelinta"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "Sähköposti"
 
@@ -2257,7 +2268,7 @@ msgstr "Anna luku kohteelle {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Kirjoita URL-osoite. Käytä {sizeToken}-paikkamerkkiä dynaamista kokoa varten. Esimerkki: https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "Anna kelvollinen sähköpostiosoite"
 
@@ -2273,6 +2284,10 @@ msgstr "Syötä tilin nimi..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Anna tilin nimi kirjautuaksesi SASL PLAINilla ennen kanaville liittymistä. Jätä tyhjäksi käyttääksesi nimimerkkiäsi."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Syötä koodi"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "Anna tilin nimi, jonka haluat palauttaa."
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "Anna sähköpostiisi lähetetty koodi"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Syötä sähköpostiisi lähetetty koodi."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "Halfop"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Sisältää linkin"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "Piilota"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "Sijainnin käyttöoikeus evättiin. Salli sijainnin käyttö selaimen tai järjestelmän asetuksista ja yritä uudelleen."
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Kirjaudu sisään"
@@ -3180,10 +3195,6 @@ msgstr "Heikko linkkiturvallisuus (taso {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Laske käsi"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "Tee nimimerkistä <0>{nick}</0> omasi. Aseta salasana rekisteröidäksesi sen"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "Paketit"
 msgid "Pages"
 msgstr "Sivut"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "Päivitä WHOIS"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "Rekisteröidy"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Rekisteröi {nick} tilisi nimeksi tällä palvelimella."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "Tämä näyttö ei ole enää saatavilla. Valitse toinen näyttö."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Puhelupalvelin hylkäsi pyynnön. Yritä hetken kuluttua uudelleen."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "Koodi vanheni. Pyydä apua palvelimen operaattoreilta"
 
@@ -5845,7 +5863,7 @@ msgstr "Käytä suojattua websocket-porttia."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Käytä IRCv3 METADATA -tukea palvelinta asettaaksesi profiilikuvan, näyttönimen ja tilan."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Käytä salasanassa vain latinalaisia merkkejä"
@@ -5925,7 +5943,7 @@ msgstr "Kelvollinen palvelinportti on pakollinen"
 msgid "Verified account"
 msgstr "Vahvistettu tili"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Vahvista"
@@ -6195,6 +6213,10 @@ msgstr "Olet IRC-operaattori"
 msgid "You are no longer in this channel"
 msgstr "Et ole enää tällä kanavalla"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Et ole kirjautunut sisään"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Sinulla on muutama minuutti aikaa valita uusi salasana."
@@ -6215,6 +6237,10 @@ msgstr "Vahvistit tämän yhteystiedon."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Olet yhteydessä kohteeseen <0>{0}</0>."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Tilisi"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "Viestisi käyttäjän {nick} kanssa on salattu. {0} / {1} tiedostoa on l
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Viestisi käyttäjän {nick} kanssa on salattu. Nämä tiedostot ovat liian suuria salattavaksi, ja ne lähetetään salaamattomina."
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "Nimimerkkisi"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"

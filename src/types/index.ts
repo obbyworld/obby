@@ -282,6 +282,7 @@ export interface ServerConfig {
     | "EXTERNAL";
   skipLinkSecurityWarning?: boolean;
   skipLocalhostWarning?: boolean;
+  skipNickPrompt?: boolean;
   operUsername?: string;
   operPassword?: string;
   operOnConnect?: boolean;

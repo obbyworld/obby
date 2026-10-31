@@ -324,6 +324,10 @@ msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> a {3} dalších píší..."
 
 #: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> není registrovaný. Zaregistrujte si ho, abyste si ho ponechali"
+
+#: src/components/layout/NickClaimStrip.tsx
 msgid "<0>{nick}</0> is registered. Log in to use it"
 msgstr "<0>{nick}</0> je registrovaná. Přihlaste se, abyste ji mohli použít"
 
@@ -1081,7 +1085,7 @@ msgstr "Změnit heslo"
 msgid "Change the channel name (operators only)"
 msgstr "Změnit název kanálu (pouze operátoři)"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Change your nick to register, this one is not allowed"
 msgstr "Pro registraci změňte přezdívku, tato není povolena"
 
@@ -1215,7 +1219,7 @@ msgstr "Chat"
 msgid "Chats and networks"
 msgstr "Chaty a sítě"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Check the code and try again"
 msgstr "Zkontrolujte kód a zkuste to znovu"
 
@@ -1235,7 +1239,7 @@ msgstr "Vyberte soubor do {limit}, což je maximum, které úložiště souborů
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Vyberte soubor s příponou. Úložiště souborů nepřijímá soubory bez přípony."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Choose a longer password"
 msgstr "Zvolte delší heslo"
 
@@ -1384,7 +1388,8 @@ msgstr "Zavřít prohlížeč"
 msgid "Close workflow"
 msgstr "Zavřít workflow"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Code"
 msgstr "Kód"
 
@@ -1665,7 +1670,7 @@ msgstr "Nepodařilo se načíst GIFy. Zkuste hledat znovu."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Nepodařilo se spojit se serverem pro soubory. Zkontrolujte připojení a zkuste to znovu."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not register. Try again"
 msgstr "Registrace se nezdařila. Zkuste to znovu"
 
@@ -1679,7 +1684,7 @@ msgstr "Nepodařilo se nastavit nové heslo: {0}"
 msgid "Could not update password: {0}"
 msgstr "Heslo se nepodařilo změnit: {0}"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Could not verify. Try again"
 msgstr "Ověření se nezdařilo. Zkuste to znovu"
 
@@ -2003,6 +2008,11 @@ msgstr "Zobrazovat, když uživatelé vstupují nebo opouštějí kanály"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Chcete otevřít tento odkaz v nové záložce?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Pro tento server už nezobrazovat"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Neupozorňovat mě na nízkou bezpečnost připojení pro tento server"
@@ -2095,7 +2105,8 @@ msgstr "Upravit profil"
 msgid "Edit Server"
 msgstr "Upravit server"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Email"
 msgstr "E-mail"
 
@@ -2257,7 +2268,7 @@ msgstr "Zadejte číslo pro {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Zadejte URL. Pro dynamickou velikost použijte v URL {sizeToken}. Příklad: https://example.com/avatar/{sizeToken}/channel.jpg"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Enter a valid email address"
 msgstr "Zadejte platnou e-mailovou adresu"
 
@@ -2273,6 +2284,10 @@ msgstr "Zadejte název účtu..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Zadejte název účtu pro přihlášení přes SASL PLAIN před připojením do kanálů. Ponechte prázdné, chcete-li použít svou přezdívku."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Zadat kód"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2343,6 +2358,10 @@ msgstr "Zadejte název účtu, který chcete obnovit."
 #: src/components/layout/NickClaimStrip.tsx
 msgid "Enter the code sent to your email"
 msgstr "Zadejte kód zaslaný na váš e-mail"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Zadejte kód zaslaný na váš e-mail."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
@@ -2657,11 +2676,6 @@ msgstr "Polooperátor"
 #: src/components/search/SearchQueryBar.tsx
 msgid "Has link"
 msgstr "Obsahuje odkaz"
-
-#: src/components/layout/NickClaimStrip.tsx
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Hide"
-msgstr "Skrýt"
 
 #: src/components/ui/MediaViewerModal.tsx
 msgid "Hide comments"
@@ -3147,6 +3161,7 @@ msgid "Location access was denied. Allow location access in your browser or syst
 msgstr "Přístup k poloze byl odepřen. Povolte přístup k poloze v nastavení prohlížeče nebo systému a zkuste to znovu."
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Přihlásit se"
@@ -3180,10 +3195,6 @@ msgstr "Nízká bezpečnost připojení (Úroveň {securityLevel})"
 #: src/components/voice/VoiceDock.tsx
 msgid "Lower hand"
 msgstr "Sundat ruku"
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Make <0>{nick}</0> yours. Set a password to register it"
-msgstr "Udělejte si <0>{nick}</0> svou. Nastavte heslo a zaregistrujte ji"
 
 #: src/components/ui/PluginsScreen.tsx
 msgid "Make simple bots that answer commands, with no code."
@@ -4061,7 +4072,8 @@ msgstr "Balíčky"
 msgid "Pages"
 msgstr "Stránky"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4483,8 +4495,14 @@ msgid "Refresh WHOIS"
 msgstr "Obnovit WHOIS"
 
 #: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "Register"
 msgstr "Zaregistrovat"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Zaregistrujte {nick} jako svůj účet na tomto serveru."
 
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
@@ -5456,7 +5474,7 @@ msgstr "Tato obrazovka už není dostupná. Vyberte jinou obrazovku."
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Server hovorů žádost odmítl. Zkuste to za chvíli znovu."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 msgid "The code expired. Ask the server operators for help"
 msgstr "Platnost kódu vypršela. Požádejte operátory serveru o pomoc"
 
@@ -5845,7 +5863,7 @@ msgstr "Použijte port zabezpečeného websocketu."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Použijte server s IRCv3 METADATA pro nastavení avataru, zobrazovaného jména a stavu."
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "V hesle použijte jen latinková písmena"
@@ -5925,7 +5943,7 @@ msgstr "Je vyžadován platný port serveru"
 msgid "Verified account"
 msgstr "Ověřený účet"
 
-#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Ověřit"
@@ -6195,6 +6213,10 @@ msgstr "Jste IRC operátor"
 msgid "You are no longer in this channel"
 msgstr "Už nejste v tomto kanálu"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Nejste přihlášeni"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Na zvolení nového hesla máte několik minut."
@@ -6215,6 +6237,10 @@ msgstr "Tento kontakt jste ověřili."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Jste připojeni k <0>{0}</0>."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Váš účet"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
@@ -6269,10 +6295,6 @@ msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. {0} z {1} souborů 
 #: src/components/ui/UnencryptedUploadConfirmModal.tsx
 msgid "Your messages with {nick} are encrypted. These files are too large to encrypt and will be sent unencrypted."
 msgstr "Vaše zprávy s uživatelem {nick} jsou šifrované. Tyto soubory jsou příliš velké na šifrování a budou odeslány nešifrovaně."
-
-#: src/components/layout/NickClaimStrip.tsx
-msgid "Your nick"
-msgstr "Vaše přezdívka"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your personal website"
