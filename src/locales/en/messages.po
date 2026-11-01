@@ -2500,6 +2500,10 @@ msgstr "Fold all"
 msgid "Folder name"
 msgstr "Folder name"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Folder options"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "For private messages and mentions"
@@ -4520,10 +4524,6 @@ msgstr "Rename folder"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Rename or delete {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Rename or delete folder"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

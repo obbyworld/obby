@@ -2501,6 +2501,10 @@ msgstr "모두 축소"
 msgid "Folder name"
 msgstr "폴더 이름"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "폴더 옵션"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "비공개 메시지와 멘션용"
@@ -4521,10 +4525,6 @@ msgstr "폴더 이름 변경"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} 이름 변경 또는 삭제"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "폴더 이름 변경 또는 삭제"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

@@ -2501,6 +2501,10 @@ msgstr "Sbalit vše"
 msgid "Folder name"
 msgstr "Název složky"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Možnosti složky"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Pro soukromé zprávy a zmínky"
@@ -4521,10 +4525,6 @@ msgstr "Přejmenovat složku"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Přejmenovat nebo smazat {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Přejmenovat nebo smazat složku"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

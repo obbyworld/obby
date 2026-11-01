@@ -2501,6 +2501,10 @@ msgstr "Dölj alla"
 msgid "Folder name"
 msgstr "Mappnamn"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Mappalternativ"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "För privata meddelanden och omnämnanden"
@@ -4521,10 +4525,6 @@ msgstr "Byt namn på mapp"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Byt namn på eller ta bort {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Byt namn på eller ta bort mapp"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

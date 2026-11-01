@@ -2501,6 +2501,10 @@ msgstr "Згорнути все"
 msgid "Folder name"
 msgstr "Назва папки"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Параметри теки"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Для приватних повідомлень і згадок"
@@ -4521,10 +4525,6 @@ msgstr "Перейменувати папку"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Перейменувати або видалити {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Перейменувати або видалити папку"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

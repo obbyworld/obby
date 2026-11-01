@@ -2501,6 +2501,10 @@ msgstr "Tümünü daralt"
 msgid "Folder name"
 msgstr "Klasör adı"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Klasör seçenekleri"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Özel mesajlar ve bahsetmeler için"
@@ -4521,10 +4525,6 @@ msgstr "Klasörü yeniden adlandır"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} öğesini yeniden adlandır veya sil"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Klasörü yeniden adlandır veya sil"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

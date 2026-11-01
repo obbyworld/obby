@@ -2501,6 +2501,10 @@ msgstr "Alles ausblenden"
 msgid "Folder name"
 msgstr "Ordnername"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Ordneroptionen"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Für private Nachrichten und Erwähnungen"
@@ -4521,10 +4525,6 @@ msgstr "Ordner umbenennen"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} umbenennen oder löschen"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Ordner umbenennen oder löschen"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

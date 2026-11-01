@@ -2501,6 +2501,10 @@ msgstr "Contraer todo"
 msgid "Folder name"
 msgstr "Nombre de la carpeta"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Opciones de carpeta"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Para mensajes privados y menciones"
@@ -4521,10 +4525,6 @@ msgstr "Renombrar carpeta"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Renombrar o eliminar {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Renombrar o eliminar carpeta"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

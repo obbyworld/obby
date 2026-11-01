@@ -2501,6 +2501,10 @@ msgstr "Alles samenvouwen"
 msgid "Folder name"
 msgstr "Mapnaam"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Mapopties"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Voor privéberichten en vermeldingen"
@@ -4521,10 +4525,6 @@ msgstr "Map hernoemen"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} hernoemen of verwijderen"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Map hernoemen of verwijderen"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."

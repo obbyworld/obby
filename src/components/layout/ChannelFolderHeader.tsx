@@ -140,7 +140,7 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
     )}
     <button
       type="button"
-      title={t`Rename or delete folder`}
+      title={t`Folder options`}
       aria-label={t`Rename or delete ${folder.name}`}
       onClick={(e) => onOpenMenu(e.currentTarget)}
       className="w-6 h-6 flex items-center justify-center rounded opacity-0 [@media(hover:none)]:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 hover:text-white hover:bg-discord-dark-500/40"

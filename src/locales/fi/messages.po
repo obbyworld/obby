@@ -2501,6 +2501,10 @@ msgstr "Kutista kaikki"
 msgid "Folder name"
 msgstr "Kansion nimi"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Kansion asetukset"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Yksityisviesteille ja maininnoille"
@@ -4521,10 +4525,6 @@ msgstr "Nimeä kansio uudelleen"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Nimeä uudelleen tai poista {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Nimeä kansio uudelleen tai poista se"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."
