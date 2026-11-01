@@ -4533,6 +4533,10 @@ msgstr "{emoji} 반응 제거"
 msgid "Remove Rule"
 msgstr "규칙 제거"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "명령을 실행하려면 첨부 파일을 제거하세요"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "채널 이름 변경"

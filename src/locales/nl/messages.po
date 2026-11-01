@@ -4533,6 +4533,10 @@ msgstr "Reactie {emoji} verwijderen"
 msgid "Remove Rule"
 msgstr "Regel verwijderen"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "Verwijder de bijgevoegde bestanden om een opdracht uit te voeren"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "Kanaal hernoemen"

@@ -4533,6 +4533,10 @@ msgstr "移除表情 {emoji}"
 msgid "Remove Rule"
 msgstr "删除规则"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "请移除附件后再运行命令"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "重命名频道"
