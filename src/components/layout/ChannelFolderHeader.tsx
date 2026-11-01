@@ -67,19 +67,23 @@ const FolderActivity: React.FC<{ summary?: FolderSummary }> = ({ summary }) => {
   return null;
 };
 
-const FolderIcons: React.FC<{ icons?: string[] }> = ({ icons }) => {
+// A folded folder shows its channels' icons inside the folder glyph, the way a
+// phone shows the apps inside a folder.
+const FolderGlyph: React.FC<{ icons?: string[] }> = ({ icons }) => {
   const [failedUrls, setFailedUrls] = useState<ReadonlySet<string>>(new Set());
   const shown = icons?.filter((url) => !failedUrls.has(url));
-  if (!shown?.length) return null;
+  if (!shown?.length) return <FaFolder className="flex-shrink-0 opacity-80" />;
   return (
-    <span className="flex flex-shrink-0 -space-x-1.5">
+    <span
+      className={`grid h-[18px] w-[18px] flex-shrink-0 gap-px rounded-[5px] bg-discord-dark-400 p-0.5 ring-1 ring-white/10 ${shown.length > 1 ? "grid-cols-2" : ""}`}
+    >
       {shown.map((url, index) => (
         <img
           // biome-ignore lint/suspicious/noArrayIndexKey: two channels can share one icon
           key={index}
           src={url}
           alt=""
-          className="w-4 h-4 rounded-full object-cover bg-discord-dark-400 ring-2 ring-discord-dark-100"
+          className="h-full w-full rounded-[2px] object-cover"
           onError={() => setFailedUrls((failed) => new Set(failed).add(url))}
         />
       ))}
@@ -123,14 +127,17 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
           folder.collapsed && summary?.hasUnread ? "text-white" : ""
         }`}
       >
-        <FaFolder className="flex-shrink-0 opacity-80" />
+        {folder.collapsed ? (
+          <FolderGlyph icons={summary?.icons} />
+        ) : (
+          <FaFolder className="flex-shrink-0 opacity-80" />
+        )}
         <span className="truncate">{folder.name}</span>
         <FaChevronRight
           className={`flex-shrink-0 text-[9px] opacity-70 transition-transform ${
             folder.collapsed ? "" : "rotate-90"
           }`}
         />
-        {folder.collapsed && <FolderIcons icons={summary?.icons} />}
         {folder.collapsed && (
           <span className="font-medium text-discord-text-muted">
             {summary?.channelCount ?? 0}

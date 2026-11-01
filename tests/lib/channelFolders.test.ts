@@ -156,8 +156,8 @@ describe("summarizeFolders", () => {
     });
   });
 
-  it("collects the first three channel icons of each folder", () => {
-    const names = ["#a", "#b", "#c", "#d", "#e"];
+  it("collects the first four channel icons of each folder", () => {
+    const names = ["#a", "#b", "#c", "#d", "#e", "#f"];
     const rows = names.map((name) => ({ ...ch(name), unreadCount: 0 }));
     const iconOf = (row: { name: string }) =>
       row.name === "#b" ? undefined : `icon-${row.name}`;
@@ -169,6 +169,7 @@ describe("summarizeFolders", () => {
       "icon-#a",
       "icon-#c",
       "icon-#d",
+      "icon-#e",
     ]);
   });
 });

@@ -155,7 +155,7 @@ export interface FolderSummary {
   icons: string[];
 }
 
-const MAX_FOLDER_ICONS = 3;
+const MAX_FOLDER_ICONS = 4;
 
 export function summarizeFolders<
   T extends {
