@@ -1,3 +1,4 @@
+import type { Message } from "../../types";
 import { classifyInbound } from "../e2ee/classify";
 import { E2EE_TAG } from "../e2ee/protocol";
 import type { ParsedLine } from "../irc/IRCClient";
@@ -9,6 +10,21 @@ export const LOCAL_BATCH_PREFIX = "obby-local-";
 export const LOCAL_HISTORY_TAG = "obby-local";
 export const HISTORY_GAP_CODE = "gap";
 export const HISTORY_PAGE_SIZE = 100;
+
+export const isHistoryGapMarker = (message: Message): boolean =>
+  message.tags?.[LOCAL_HISTORY_TAG] === HISTORY_GAP_CODE;
+
+// Markers with nothing between them describe one stretch the server no
+// longer has, so we show that stretch once.
+export function withoutRepeatedGapMarkers(messages: Message[]): Message[] {
+  const kept = messages.filter(
+    (message, i) =>
+      !isHistoryGapMarker(message) ||
+      i === 0 ||
+      !isHistoryGapMarker(messages[i - 1]),
+  );
+  return kept.length === messages.length ? messages : kept;
+}
 
 // Replayed rows may have scrolled out of memory while their msgid is still
 // remembered, so a replay skips the seen-msgid check and relies on the merge.

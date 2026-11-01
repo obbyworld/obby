@@ -21,6 +21,7 @@ import {
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import { findMessageRow } from "../../lib/highlightRow";
+import { withoutRepeatedGapMarkers } from "../../lib/history/historyLines";
 import ircClient from "../../lib/ircClient";
 import { isJumping } from "../../lib/jumpToMessage";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
@@ -306,7 +307,8 @@ export const ChannelMessageList = forwardRef<
       jumpId: windowJumpId,
     });
     const displayedMessages = useMemo(
-      () => channelMessages.slice(-visibleMessageCount),
+      () =>
+        withoutRepeatedGapMarkers(channelMessages.slice(-visibleMessageCount)),
       [channelMessages, visibleMessageCount],
     );
     const {
