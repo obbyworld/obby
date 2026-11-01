@@ -67,6 +67,25 @@ const FolderActivity: React.FC<{ summary?: FolderSummary }> = ({ summary }) => {
   return null;
 };
 
+const FolderIcons: React.FC<{ icons?: string[] }> = ({ icons }) => {
+  if (!icons?.length) return null;
+  return (
+    <span className="flex flex-shrink-0 -space-x-1.5">
+      {icons.map((url) => (
+        <img
+          key={url}
+          src={url}
+          alt=""
+          className="w-4 h-4 rounded-full object-cover bg-discord-dark-400 ring-2 ring-discord-dark-100"
+          onError={(e) => {
+            e.currentTarget.hidden = true;
+          }}
+        />
+      ))}
+    </span>
+  );
+};
+
 export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
   folder,
   summary,
@@ -110,6 +129,7 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
             folder.collapsed ? "" : "rotate-90"
           }`}
         />
+        {folder.collapsed && <FolderIcons icons={summary?.icons} />}
         {folder.collapsed && (
           <span className="font-medium text-discord-text-muted">
             {summary?.channelCount ?? 0}

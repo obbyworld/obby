@@ -152,7 +152,10 @@ export interface FolderSummary {
   channelCount: number;
   mentionCount: number;
   hasUnread: boolean;
+  icons: string[];
 }
+
+const MAX_FOLDER_ICONS = 3;
 
 export function summarizeFolders<
   T extends {
@@ -160,12 +163,20 @@ export function summarizeFolders<
     isMentioned?: boolean;
     mentionCount?: number;
   },
->(entries: ChannelListEntry<T>[]): Map<string, FolderSummary> {
+>(
+  entries: ChannelListEntry<T>[],
+  iconOf: (channel: T) => string | undefined = () => undefined,
+): Map<string, FolderSummary> {
   const summaries = new Map<string, FolderSummary>();
   let current: FolderSummary | null = null;
   for (const entry of entries) {
     if (entry.type === "folder") {
-      current = { channelCount: 0, mentionCount: 0, hasUnread: false };
+      current = {
+        channelCount: 0,
+        mentionCount: 0,
+        hasUnread: false,
+        icons: [],
+      };
       summaries.set(entry.folder.id, current);
       continue;
     }
@@ -174,6 +185,8 @@ export function summarizeFolders<
     current.channelCount += 1;
     if (channel.isMentioned) current.mentionCount += channel.mentionCount ?? 0;
     if (channel.unreadCount > 0) current.hasUnread = true;
+    const icon = current.icons.length < MAX_FOLDER_ICONS && iconOf(channel);
+    if (icon) current.icons.push(icon);
   }
   return summaries;
 }

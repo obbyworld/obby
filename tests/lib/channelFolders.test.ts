@@ -145,11 +145,29 @@ describe("summarizeFolders", () => {
       channelCount: 2,
       mentionCount: 2,
       hasUnread: true,
+      icons: [],
     });
     expect(summaries.get("g")).toEqual({
       channelCount: 1,
       mentionCount: 0,
       hasUnread: false,
+      icons: [],
     });
+  });
+
+  it("collects the first three channel icons of each folder", () => {
+    const names = ["#a", "#b", "#c", "#d", "#e"];
+    const rows = names.map((name) => ({ ...ch(name), unreadCount: 0 }));
+    const iconOf = (row: { name: string }) =>
+      row.name === "#b" ? undefined : `icon-${row.name}`;
+    const summaries = summarizeFolders(
+      flattenChannelGroups(arrangeChannels(rows, [], [folder("f", names)])),
+      iconOf,
+    );
+    expect(summaries.get("f")?.icons).toEqual([
+      "icon-#a",
+      "icon-#c",
+      "icon-#d",
+    ]);
   });
 });
