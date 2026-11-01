@@ -384,6 +384,45 @@ describe("ChannelMessageList late history", () => {
     expect(isAwayFromPresent()).toBe(true);
   });
 
+  it("starts the line after what another client read while we were offline", () => {
+    const { container } = render(<ChannelMessageList {...props} />);
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    const readElsewhere = server(true);
+    readElsewhere.privateChats = [
+      { ...readElsewhere.privateChats[0], readMarker: at(5) },
+    ];
+    act(() =>
+      useStore.setState({
+        servers: [readElsewhere],
+        messages: {
+          [KEY]: [
+            ...readRows(30),
+            message("night-1", 5),
+            message("night-2", 6),
+          ],
+        },
+      }),
+    );
+    act(() =>
+      useStore.setState({
+        servers: [
+          {
+            ...readElsewhere,
+            privateChats: readElsewhere.privateChats.map((pc) => ({
+              ...pc,
+              isLoadingHistory: false,
+            })),
+          },
+        ],
+      }),
+    );
+
+    const line = container.querySelector("[data-unread-line]");
+    expect(line?.nextElementSibling?.textContent).toContain("night-2");
+  });
+
   it("follows the end of a list that shrank", () => {
     const { container } = render(<ChannelMessageList {...props} />);
     const list = container.firstElementChild as HTMLElement;

@@ -71,6 +71,7 @@ type Opening =
       hasFetched: boolean;
       isOverdue?: boolean;
       hasGivenUp?: boolean;
+      isRejoin?: boolean;
       awaitsRejoinHistory?: boolean;
     };
 
@@ -508,20 +509,40 @@ export const ChannelMessageList = forwardRef<
     const [wasConnected, setWasConnected] = useState(isServerConnected);
     if (wasConnected !== isServerConnected) {
       setWasConnected(isServerConnected);
-      if (isServerConnected && isActive && readMarker !== undefined)
+      if (
+        isServerConnected &&
+        isActive &&
+        !isAwayFromPresent &&
+        readMarker !== undefined
+      )
         setOpening({
           step: "placing",
           after: readMarker ? Date.parse(readMarker) : Number.NEGATIVE_INFINITY,
           hasFetched: false,
+          isRejoin: true,
           awaitsRejoinHistory: true,
         });
     }
+    // The server sends its marker after we rejoin, and another client may
+    // have read further while we were offline, so we follow it until we place
+    // the line.
     if (
-      opening.step !== "marker" &&
-      opening.awaitsRejoinHistory &&
-      isLoadingHistory
-    )
-      setOpening({ ...opening, awaitsRejoinHistory: false });
+      (opening.step === "placing" || opening.step === "loading") &&
+      opening.isRejoin
+    ) {
+      const marker = readMarker ? Date.parse(readMarker) : null;
+      const after =
+        marker !== null && (opening.after == null || marker > opening.after)
+          ? marker
+          : opening.after;
+      const awaitsRejoinHistory =
+        opening.awaitsRejoinHistory === true && !isLoadingHistory;
+      if (
+        after !== opening.after ||
+        awaitsRejoinHistory !== opening.awaitsRejoinHistory
+      )
+        setOpening({ ...opening, after, awaitsRejoinHistory });
+    }
     useEffect(() => {
       if (!isActive) return;
       useStore.setState((state) =>
