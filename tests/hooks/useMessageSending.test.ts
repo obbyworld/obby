@@ -1,6 +1,9 @@
 import { renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useMessageSending } from "../../src/hooks/useMessageSending";
+import {
+  sendBotCommand,
+  useMessageSending,
+} from "../../src/hooks/useMessageSending";
 import { base64DecodeUtf8 } from "../../src/lib/base64";
 import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
@@ -177,5 +180,40 @@ describe("the /nick command", () => {
       .mockImplementation(() => {});
     runCommand("/nick Valware2");
     expect(changeNick).toHaveBeenCalledWith("s1", "Valware2");
+  });
+});
+
+describe("one bot command invocation", () => {
+  let sendRaw: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    vi.spyOn(ircClient, "isSocketOpen").mockReturnValue(true);
+    sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+  });
+
+  afterEach(() => vi.restoreAllMocks());
+
+  const send = (
+    contexts: ("public" | "private" | "pm")[],
+    where: Channel | null,
+  ) => sendBotCommand("s1", where, "_cloudbot", { name: "draw", contexts }, {});
+
+  it.each<[("public" | "private" | "pm")[], Channel | null, string]>([
+    [["public"], channel, "TAGMSG #lobby"],
+    [["public", "pm"], channel, "TAGMSG #lobby"],
+    [["private", "pm"], channel, "TAGMSG _cloudbot"],
+    [["public", "pm"], null, "TAGMSG _cloudbot"],
+  ])(
+    "with contexts %j goes out once and reports it",
+    (contexts, where, target) => {
+      expect(send(contexts, where)).toBe(true);
+      expect(sendRaw).toHaveBeenCalledTimes(1);
+      expect(sendRaw.mock.calls[0][1]).toContain(target);
+    },
+  );
+
+  it("reports a command it cannot address as not sent", () => {
+    expect(send(["public"], null)).toBe(false);
+    expect(sendRaw).not.toHaveBeenCalled();
   });
 });
