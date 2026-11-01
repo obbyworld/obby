@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { workflowIdFromTags } from "../../lib/botTools";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
@@ -27,7 +28,6 @@ import {
   type LinkLabels,
   makeLinkLabels,
   processMarkdownInText,
-  serverFilehosts,
 } from "../../lib/ircUtils";
 import {
   canShowMedia,
@@ -311,7 +311,6 @@ export const MessageItem = memo((props: MessageItemProps) => {
     serverId ? serverSupportsMetadata(state, serverId) : false,
   );
   // Authors of loaded history never speak live, so we fetch their profile when their message shows.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
   useEffect(() => {
     if (
       !serverId ||
@@ -322,7 +321,14 @@ export const MessageItem = memo((props: MessageItemProps) => {
     )
       return;
     useStore.getState().metadataList(serverId, message.userId);
-  }, [serverId, showHeader, supportsMetadata, userKey, message.userId]);
+  }, [
+    serverId,
+    showHeader,
+    supportsMetadata,
+    isCurrentUser,
+    userKey,
+    message.userId,
+  ]);
 
   // useMemo instead of useStore — safe to read localStorage without infinite loop via useSyncExternalStore
   // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
@@ -381,26 +387,20 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
   // Every row subscribes here, so we select plain values: a whole server
   // object changes on any channel update and would re-render every message.
-  // The filehost origins travel as one string so the shallow compare holds.
-  const { canServerRedact, fileHostsKey, channelEmojiUrl, serverEmojiPackUrl } =
-    useStore(
-      useShallow((state) => {
-        const server = state.servers.find((s) => s.id === message.serverId);
-        return {
-          canServerRedact: !!server?.capabilities?.includes(
-            "draft/message-redaction",
-          ),
-          fileHostsKey: serverFilehosts(server).join(" "),
-          channelEmojiUrl: server?.channels.find((c) => c.id === channelId)
-            ?.metadata?.["draft/emoji"]?.value,
-          serverEmojiPackUrl: server?.emojiPackUrl,
-        };
-      }),
-    );
-  const fileHosts = useMemo(
-    () => fileHostsKey.split(" ").filter(Boolean),
-    [fileHostsKey],
+  const { canServerRedact, channelEmojiUrl, serverEmojiPackUrl } = useStore(
+    useShallow((state) => {
+      const server = state.servers.find((s) => s.id === message.serverId);
+      return {
+        canServerRedact: !!server?.capabilities?.includes(
+          "draft/message-redaction",
+        ),
+        channelEmojiUrl: server?.channels.find((c) => c.id === channelId)
+          ?.metadata?.["draft/emoji"]?.value,
+        serverEmojiPackUrl: server?.emojiPackUrl,
+      };
+    }),
   );
+  const fileHosts = useServerFilehosts(message.serverId);
   const mediaVisibilityLevel = useStore(
     useCallback((state) => state.globalSettings.mediaVisibilityLevel, []),
   );
@@ -534,7 +534,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     [strippedContent],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the visibility flags derive from mediaVisibilityLevel, and fileHosts from fileHostsKey
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the visibility flags derive from mediaVisibilityLevel
   const mediaEntries = useMemo(() => {
     return allMediaEntries.filter((e) =>
       canShowMedia(
@@ -543,7 +543,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
         fileHosts,
       ),
     );
-  }, [allMediaEntries, mediaVisibilityLevel, fileHostsKey]);
+  }, [allMediaEntries, mediaVisibilityLevel, fileHosts]);
 
   const [showAllImages, setShowAllImages] = useState(false);
 
