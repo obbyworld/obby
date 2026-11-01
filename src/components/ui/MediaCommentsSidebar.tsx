@@ -16,10 +16,10 @@ import { useMentionAutocorrectGuard } from "../../hooks/useMentionAutocorrectGua
 import { useMessageSending } from "../../hooks/useMessageSending";
 import { useReactions } from "../../hooks/useReactions";
 import { useScrollToBottom } from "../../hooks/useScrollToBottom";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { useTypingNotification } from "../../hooks/useTypingNotification";
 import { canShowImageUrl } from "../../lib/imageUtils";
 import ircClient from "../../lib/ircClient";
-import { serverFilehosts } from "../../lib/ircUtils";
 import {
   detectMediaType,
   getEmbedThumbnailUrl,
@@ -120,9 +120,7 @@ export function MediaCommentsSidebar({
   const { mediaVisibilityLevel, sendTypingNotifications } = useStore(
     (state) => state.globalSettings,
   );
-  const filehost = serverFilehosts(
-    useStore.getState().servers.find((s) => s.id === serverId),
-  );
+  const filehost = useServerFilehosts(serverId);
 
   // Look up Channel object — useMessageSending needs channel.name for PRIVMSG target
   const selectedChannel = useStore((state) => {

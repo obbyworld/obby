@@ -24,8 +24,8 @@ const RiReplyFill = ({ className }: { className?: string }) => (
   </svg>
 );
 
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { canShowImageUrl } from "../../lib/imageUtils";
-import { serverFilehosts } from "../../lib/ircUtils";
 import { imageCanHaveTransparency } from "../../lib/mediaUtils";
 import {
   type AttachmentKind,
@@ -72,9 +72,7 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
   const mediaVisibilityLevel = useStore(
     (state) => state.globalSettings.mediaVisibilityLevel,
   );
-  const server = replyMessage.serverId
-    ? useStore.getState().servers.find((s) => s.id === replyMessage.serverId)
-    : null;
+  const fileHosts = useServerFilehosts(replyMessage.serverId);
 
   const handleUsernameClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -92,11 +90,7 @@ export const MessageReply: React.FC<MessageReplyProps> = ({
 
   const thumbnailUrl =
     attachment?.thumbnailUrl &&
-    canShowImageUrl(
-      attachment.thumbnailUrl,
-      mediaVisibilityLevel,
-      serverFilehosts(server),
-    )
+    canShowImageUrl(attachment.thumbnailUrl, mediaVisibilityLevel, fileHosts)
       ? attachment.thumbnailUrl
       : null;
 

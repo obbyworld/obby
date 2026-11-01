@@ -1,6 +1,6 @@
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
@@ -40,6 +40,7 @@ import {
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { isWhisper } from "../../lib/messageGrouping";
 import useStore, { loadSavedMetadata } from "../../store";
+import { serverSupportsMetadata } from "../../store/helpers";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
 import MessageReaderSheet from "../mobile/MessageReaderSheet";
@@ -305,6 +306,23 @@ export const MessageItem = memo((props: MessageItemProps) => {
   const metadataChangeCounter = useStore(
     (state) => state.metadataChangeCounter,
   );
+
+  const supportsMetadata = useStore((state) =>
+    serverId ? serverSupportsMetadata(state, serverId) : false,
+  );
+  // Authors of loaded history never speak live, so we fetch their profile when their message shows.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store actions have unstable refs
+  useEffect(() => {
+    if (
+      !serverId ||
+      !showHeader ||
+      !supportsMetadata ||
+      isCurrentUser ||
+      userKey === "none"
+    )
+      return;
+    useStore.getState().metadataList(serverId, message.userId);
+  }, [serverId, showHeader, supportsMetadata, userKey, message.userId]);
 
   // useMemo instead of useStore — safe to read localStorage without infinite loop via useSyncExternalStore
   // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
