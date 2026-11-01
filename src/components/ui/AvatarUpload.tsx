@@ -7,6 +7,43 @@ import ircClient from "../../lib/ircClient";
 import useStore from "../../store";
 import { TextInput } from "./TextInput";
 
+type UploadFailure =
+  | "notImage"
+  | "tooLarge"
+  | "forbidden"
+  | "unreachable"
+  | "failed";
+
+class AvatarUploadError extends Error {
+  constructor(readonly failure: UploadFailure) {
+    super(failure);
+    this.name = "AvatarUploadError";
+  }
+}
+
+function failureText(failure: UploadFailure, isChannel: boolean): string {
+  switch (failure) {
+    case "notImage":
+      return t`Choose an image file`;
+    case "tooLarge":
+      return t`Choose an image under 5 MB`;
+    case "forbidden":
+      return isChannel
+        ? t`Only channel ops can change this`
+        : t`Log in to upload an avatar`;
+    case "unreachable":
+      return t`Can't reach the upload server. Try again`;
+    case "failed":
+      return t`Upload failed. Try again`;
+  }
+}
+
+function failureFromStatus(status: number): UploadFailure {
+  if (status === 401 || status === 403) return "forbidden";
+  if (status === 413) return "tooLarge";
+  return "failed";
+}
+
 interface AvatarUploadProps {
   currentAvatarUrl?: string;
   onAvatarUrlChange: (url: string) => void;
@@ -24,7 +61,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<UploadFailure | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { servers } = useStore();
@@ -38,13 +75,13 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      setUploadError("Please select an image file");
+      setUploadError("notImage");
       return;
     }
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError("File size must be less than 5MB");
+      setUploadError("tooLarge");
       return;
     }
 
@@ -87,11 +124,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       const scope = channelName ? `channel:${channelName}` : undefined;
       ircClient.requestToken(serverId, "filehost", scope);
       const authToken = await waitForAuthToken(serverId, "filehost");
-      if (!authToken) {
-        throw new Error(
-          "draft/authtoken: server did not return a filehost token",
-        );
-      }
+      if (!authToken) throw new AvatarUploadError("failed");
       const refreshed = useStore
         .getState()
         .servers.find((s) => s.id === serverId);
@@ -112,45 +145,30 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
           Authorization: `Bearer ${authToken}`,
         },
         body: formData,
+      }).catch((error: unknown) => {
+        console.error("Avatar upload could not reach the server:", error);
+        throw new AvatarUploadError("unreachable");
       });
 
       if (!response.ok) {
-        // Handle 403 Forbidden specially - get the response body for the error message
-        if (response.status === 403) {
-          const reason = await response.text();
-          const errorMessage = `Failed to upload avatar: ${reason}`;
-
-          // Show custom notification
-          useStore.getState().addGlobalNotification({
-            type: "fail",
-            command: "UPLOAD",
-            code: "AVATAR_UPLOAD_FORBIDDEN",
-            message: errorMessage,
-            target: channelName || undefined,
-            serverId,
-          });
-
-          throw new Error(errorMessage);
-        }
-
-        throw new Error(
-          `Upload failed: ${response.status} ${response.statusText}`,
+        console.error(
+          "Avatar upload refused:",
+          response.status,
+          await response.text(),
         );
+        throw new AvatarUploadError(failureFromStatus(response.status));
       }
 
       const data = await response.json();
-      console.log("📡 Avatar upload response:", data);
-
-      if (data.saved_url) {
-        const fullUrl = `${baseUrl}${data.saved_url}`;
-        onAvatarUrlChange(fullUrl);
-        setPreviewUrl(null);
-      } else {
-        throw new Error("Invalid response: no saved_url");
-      }
+      if (!data.saved_url) throw new AvatarUploadError("failed");
+      onAvatarUrlChange(`${baseUrl}${data.saved_url}`);
+      setPreviewUrl(null);
     } catch (error) {
-      console.error("Avatar upload error:", error);
-      setUploadError(error instanceof Error ? error.message : "Upload failed");
+      if (!(error instanceof AvatarUploadError))
+        console.error("Avatar upload failed:", error);
+      setUploadError(
+        error instanceof AvatarUploadError ? error.failure : "failed",
+      );
     } finally {
       setIsUploading(false);
     }
@@ -215,7 +233,11 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
         className="hidden"
       />
 
-      {uploadError && <p className="text-red-400 text-sm">{uploadError}</p>}
+      {uploadError && (
+        <p role="alert" className="text-red-400 text-sm">
+          {failureText(uploadError, !!channelName)}
+        </p>
+      )}
 
       {(previewUrl || currentAvatarUrl) && (
         <div className="flex items-center gap-3">
