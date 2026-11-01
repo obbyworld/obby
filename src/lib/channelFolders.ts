@@ -165,7 +165,7 @@ export function summarizeFolders<
   },
 >(
   entries: ChannelListEntry<T>[],
-  iconOf: (channel: T) => string | undefined = () => undefined,
+  iconOf: (channel: T) => string | undefined,
 ): Map<string, FolderSummary> {
   const summaries = new Map<string, FolderSummary>();
   let current: FolderSummary | null = null;

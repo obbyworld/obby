@@ -140,6 +140,7 @@ describe("summarizeFolders", () => {
           folders,
         ),
       ),
+      () => undefined,
     );
     expect(summaries.get("f")).toEqual({
       channelCount: 2,

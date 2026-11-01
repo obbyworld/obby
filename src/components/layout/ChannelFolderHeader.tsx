@@ -68,18 +68,19 @@ const FolderActivity: React.FC<{ summary?: FolderSummary }> = ({ summary }) => {
 };
 
 const FolderIcons: React.FC<{ icons?: string[] }> = ({ icons }) => {
-  if (!icons?.length) return null;
+  const [failedUrls, setFailedUrls] = useState<ReadonlySet<string>>(new Set());
+  const shown = icons?.filter((url) => !failedUrls.has(url));
+  if (!shown?.length) return null;
   return (
     <span className="flex flex-shrink-0 -space-x-1.5">
-      {icons.map((url) => (
+      {shown.map((url, index) => (
         <img
-          key={url}
+          // biome-ignore lint/suspicious/noArrayIndexKey: two channels can share one icon
+          key={index}
           src={url}
           alt=""
           className="w-4 h-4 rounded-full object-cover bg-discord-dark-400 ring-2 ring-discord-dark-100"
-          onError={(e) => {
-            e.currentTarget.hidden = true;
-          }}
+          onError={() => setFailedUrls((failed) => new Set(failed).add(url))}
         />
       ))}
     </span>
