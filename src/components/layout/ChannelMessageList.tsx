@@ -71,6 +71,7 @@ type Opening =
       hasFetched: boolean;
       isOverdue?: boolean;
       hasGivenUp?: boolean;
+      awaitsRejoinHistory?: boolean;
     };
 
 // Stable empty array — prevents selector from returning a new [] on every render
@@ -502,6 +503,25 @@ export const ChannelMessageList = forwardRef<
           after: Math.max(opening.after, messageTime(newest)),
         });
     }
+    // A reconnect brings what was said while we were offline, so we place the
+    // line at the marker again and keep those messages unread.
+    const [wasConnected, setWasConnected] = useState(isServerConnected);
+    if (wasConnected !== isServerConnected) {
+      setWasConnected(isServerConnected);
+      if (isServerConnected && isActive && readMarker !== undefined)
+        setOpening({
+          step: "placing",
+          after: readMarker ? Date.parse(readMarker) : Number.NEGATIVE_INFINITY,
+          hasFetched: false,
+          awaitsRejoinHistory: true,
+        });
+    }
+    if (
+      opening.step !== "marker" &&
+      opening.awaitsRejoinHistory &&
+      isLoadingHistory
+    )
+      setOpening({ ...opening, awaitsRejoinHistory: false });
     useEffect(() => {
       if (!isActive) return;
       useStore.setState((state) =>
@@ -610,7 +630,9 @@ export const ChannelMessageList = forwardRef<
         setOpening({ ...opening, step: "open", hasGivenUp: false });
         return;
       }
-      const isWaitingForHistory = isLoadingHistory && !hasGivenUp;
+      const isWaitingForHistory =
+        (isLoadingHistory || opening.awaitsRejoinHistory === true) &&
+        !hasGivenUp;
       if ((isWaitingForHistory && !isOverdue) || needsMarkerPage) return;
       const container = messagesContainerRef.current;
       if (!container) return;

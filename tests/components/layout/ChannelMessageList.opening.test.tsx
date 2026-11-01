@@ -353,6 +353,37 @@ describe("ChannelMessageList late history", () => {
     expect(loadOlderMessages).toHaveBeenCalled();
   });
 
+  it("keeps the messages missed while disconnected unread after the reconnect", () => {
+    vi.useFakeTimers();
+    const { container } = render(<ChannelMessageList {...props} />);
+    expect(container.querySelector("[data-unread-line]")).toBeNull();
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    act(() =>
+      useStore.setState({
+        servers: [server(true)],
+        messages: {
+          [KEY]: [
+            ...readRows(30),
+            message("night-1", 5),
+            message("night-2", 6),
+          ],
+        },
+      }),
+    );
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 2400, 3000);
+    const line = list.querySelector("[data-unread-line]") as HTMLElement;
+    line.getBoundingClientRect = () => ({ top: -1400 }) as DOMRect;
+
+    act(() => useStore.setState({ servers: [server(false)] }));
+
+    expect(list.scrollTop).toBe(952);
+    act(() => vi.advanceTimersByTime(50));
+    expect(isAwayFromPresent()).toBe(true);
+  });
+
   it("follows the end of a list that shrank", () => {
     const { container } = render(<ChannelMessageList {...props} />);
     const list = container.firstElementChild as HTMLElement;
