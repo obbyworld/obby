@@ -996,7 +996,7 @@ msgstr "Cameră {0}"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Can't reach the upload server. Try again"
-msgstr "{'cs': 'Server pro nahrávání je nedostupný. Zkuste to znovu', 'de': 'Upload-Server nicht erreichbar. Versuche es erneut', 'es': 'No se puede conectar al servidor de subida. Inténtalo de nuevo', 'fi': 'Latauspalvelimeen ei saada yhteyttä. Yritä uudelleen', 'fr': \"Serveur d'envoi injoignable. Réessayez\", 'it': 'Server di caricamento non raggiungibile. Riprova', 'ja': 'アップロードサーバーに接続できません。もう一度お試しください', 'ko': '업로드 서버에 연결할 수 없습니다. 다시 시도하세요', 'nl': 'Uploadserver onbereikbaar. Probeer het opnieuw', 'pl': 'Brak połączenia z serwerem przesyłania. Spróbuj ponownie', 'pt': 'Não foi possível acessar o servidor de envio. Tente novamente', 'ro': 'Serverul de încărcare nu răspunde. Încearcă din nou', 'ru': 'Сервер загрузки недоступен. Попробуйте ещё раз', 'sv': 'Uppladdningsservern går inte att nå. Försök igen', 'tr': 'Yükleme sunucusuna ulaşılamıyor. Tekrar deneyin', 'uk': 'Сервер завантаження недоступний. Спробуйте ще раз', 'zh': '无法连接上传服务器。请重试', 'zh-TW': '無法連線到上傳伺服器。請再試一次'}"
+msgstr "Serverul de încărcare nu răspunde. Încearcă din nou"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
@@ -1240,11 +1240,11 @@ msgstr "Alege un fișier mai mic. Acesta este prea mare pentru gazda de fișiere
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Choose an image file"
-msgstr "{'cs': 'Vyberte obrázek', 'de': 'Wähle eine Bilddatei', 'es': 'Elige un archivo de imagen', 'fi': 'Valitse kuvatiedosto', 'fr': 'Choisissez une image', 'it': 'Scegli un file immagine', 'ja': '画像ファイルを選択してください', 'ko': '이미지 파일을 선택하세요', 'nl': 'Kies een afbeelding', 'pl': 'Wybierz plik obrazu', 'pt': 'Escolha um arquivo de imagem', 'ro': 'Alege un fișier imagine', 'ru': 'Выберите изображение', 'sv': 'Välj en bildfil', 'tr': 'Bir resim dosyası seçin', 'uk': 'Виберіть зображення', 'zh': '请选择图片文件', 'zh-TW': '請選擇圖片檔案'}"
+msgstr "Alege un fișier imagine"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Choose an image under 5 MB"
-msgstr "{'cs': 'Vyberte obrázek menší než 5 MB', 'de': 'Wähle ein Bild unter 5 MB', 'es': 'Elige una imagen de menos de 5 MB', 'fi': 'Valitse alle 5 Mt:n kuva', 'fr': 'Choisissez une image de moins de 5 Mo', 'it': \"Scegli un'immagine sotto i 5 MB\", 'ja': '5 MB 未満の画像を選択してください', 'ko': '5MB 미만의 이미지를 선택하세요', 'nl': 'Kies een afbeelding kleiner dan 5 MB', 'pl': 'Wybierz obraz mniejszy niż 5 MB', 'pt': 'Escolha uma imagem com menos de 5 MB', 'ro': 'Alege o imagine sub 5 MB', 'ru': 'Выберите изображение меньше 5 МБ', 'sv': 'Välj en bild under 5 MB', 'tr': \"5 MB'tan küçük bir resim seçin\", 'uk': 'Виберіть зображення менше 5 МБ', 'zh': '请选择小于 5 MB 的图片', 'zh-TW': '請選擇小於 5 MB 的圖片'}"
+msgstr "Alege o imagine sub 5 MB"
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
@@ -3126,7 +3126,7 @@ msgstr "Conectează-te din nou"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Log in to upload an avatar"
-msgstr "{'cs': 'Pro nahrání avataru se přihlaste', 'de': 'Melde dich an, um einen Avatar hochzuladen', 'es': 'Inicia sesión para subir un avatar', 'fi': 'Kirjaudu sisään ladataksesi avatarin', 'fr': 'Connectez-vous pour envoyer un avatar', 'it': 'Accedi per caricare un avatar', 'ja': 'アバターをアップロードするにはログインしてください', 'ko': '아바타를 업로드하려면 로그인하세요', 'nl': 'Log in om een avatar te uploaden', 'pl': 'Zaloguj się, aby przesłać awatar', 'pt': 'Entre para enviar um avatar', 'ro': 'Autentifică-te pentru a încărca un avatar', 'ru': 'Войдите, чтобы загрузить аватар', 'sv': 'Logga in för att ladda upp en avatar', 'tr': 'Avatar yüklemek için giriş yapın', 'uk': 'Увійдіть, щоб завантажити аватар', 'zh': '登录后才能上传头像', 'zh-TW': '登入後才能上傳頭像'}"
+msgstr "Autentifică-te pentru a încărca un avatar"
 
 #. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
@@ -3864,7 +3864,7 @@ msgstr "Conectat"
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Only channel ops can change this"
-msgstr "{'cs': 'Toto mohou změnit jen operátoři kanálu', 'de': 'Nur Kanal-Ops können das ändern', 'es': 'Solo los operadores del canal pueden cambiar esto', 'fi': 'Vain kanavan operaattorit voivat muuttaa tämän', 'fr': 'Seuls les opérateurs du salon peuvent modifier ceci', 'it': 'Solo gli operatori del canale possono cambiarlo', 'ja': 'これを変更できるのはチャンネルオペレーターだけです', 'ko': '채널 운영자만 변경할 수 있습니다', 'nl': 'Alleen kanaaloperators kunnen dit wijzigen', 'pl': 'Tylko operatorzy kanału mogą to zmienić', 'pt': 'Só operadores do canal podem alterar isto', 'ro': 'Doar operatorii canalului pot schimba asta', 'ru': 'Изменить это могут только операторы канала', 'sv': 'Bara kanaloperatörer kan ändra detta', 'tr': 'Bunu yalnızca kanal operatörleri değiştirebilir', 'uk': 'Змінити це можуть лише оператори каналу', 'zh': '只有频道管理员可以更改此项', 'zh-TW': '只有頻道管理員可以變更此項'}"
+msgstr "Doar operatorii canalului pot schimba asta"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
@@ -5779,7 +5779,7 @@ msgstr "Încărcare anulată."
 
 #: src/components/ui/AvatarUpload.tsx
 msgid "Upload failed. Try again"
-msgstr "{'cs': 'Nahrávání selhalo. Zkuste to znovu', 'de': 'Hochladen fehlgeschlagen. Versuche es erneut', 'es': 'Error al subir. Inténtalo de nuevo', 'fi': 'Lataus epäonnistui. Yritä uudelleen', 'fr': \"Échec de l'envoi. Réessayez\", 'it': 'Caricamento non riuscito. Riprova', 'ja': 'アップロードに失敗しました。もう一度お試しください', 'ko': '업로드에 실패했습니다. 다시 시도하세요', 'nl': 'Uploaden mislukt. Probeer het opnieuw', 'pl': 'Przesyłanie nie powiodło się. Spróbuj ponownie', 'pt': 'Falha no envio. Tente novamente', 'ro': 'Încărcarea a eșuat. Încearcă din nou', 'ru': 'Не удалось загрузить. Попробуйте ещё раз', 'sv': 'Uppladdningen misslyckades. Försök igen', 'tr': 'Yükleme başarısız. Tekrar deneyin', 'uk': 'Не вдалося завантажити. Спробуйте ще раз', 'zh': '上传失败。请重试', 'zh-TW': '上傳失敗。請再試一次'}"
+msgstr "Încărcarea a eșuat. Încearcă din nou"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"
