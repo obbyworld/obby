@@ -5,7 +5,10 @@
 
 declare global {
   interface Window {
-    ObbyNative?: { setInCall: (isActive: boolean) => void };
+    ObbyNative?: {
+      setInCall: (isActive: boolean) => void;
+      insets?: () => string;
+    };
     ObbyApp?: { didBecomeActive: () => void };
   }
 }
