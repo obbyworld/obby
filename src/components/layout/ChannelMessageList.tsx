@@ -368,7 +368,7 @@ export const ChannelMessageList = forwardRef<
     const isJumpTakingOver = () =>
       isJumping() || !!useStore.getState().ui.messageJump || isHoldingRow();
 
-    const locallyHidden = channelMessages.length > displayedMessages.length;
+    const locallyHidden = channelMessages.length > visibleMessageCount;
     const serverHasMore =
       (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
