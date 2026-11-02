@@ -93,12 +93,14 @@ jobs:
       - name: Point the pre-release at this build
         if: github.ref_type != 'tag'
         run: |
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" > /dev/null 2>&1; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG_NAME" \
+              -f sha="$GITHUB_SHA" -F force=true
+          fi
+
           if ! gh release view "$TAG_NAME" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             exit 0
           fi
-
-          gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG_NAME" \
-            -f sha="$GITHUB_SHA" -F force=true
 
           gh release view "$TAG_NAME" -R "$GITHUB_REPOSITORY" --json assets \
             --jq ".assets[].name | select(contains(\"$VERSION\") | not)" |
