@@ -1508,6 +1508,10 @@ msgstr "Conectează un microfon pentru a vorbi"
 msgid "Connect to a server to manage operator settings."
 msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Conectează-te la server pentru a-i lista canalele."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Conectat ca invitat"

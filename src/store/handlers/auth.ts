@@ -507,17 +507,17 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
 
   // CAP ACK echoes only cap names, so we keep the values CAP LS advertised
   // (2FA factors, account registration needs) on the server.
-  ircClient.on("CAP LS", ({ serverId, values }) => {
+  ircClient.on("CAP LS", ({ serverId, values, isFirstLine }) => {
     const { "unrealircd.org/link-security": linkSecurity, ...advertised } =
       values;
-    if (Object.keys(advertised).length) {
+    if (isFirstLine || Object.keys(advertised).length) {
       store.setState((state) => ({
         servers: state.servers.map((server) =>
           server.id === serverId
             ? {
                 ...server,
                 capabilityValues: {
-                  ...(server.capabilityValues ?? {}),
+                  ...(isFirstLine ? {} : server.capabilityValues),
                   ...advertised,
                 },
               }
@@ -678,9 +678,12 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
   });
   ircClient.on("FAIL", ({ serverId, command, code, target }) => {
     if (command === "REGISTER" && code === "ACCOUNT_EXISTS" && target) {
+      const claim = findClaim(serverId);
+      const isClaimForTarget =
+        claim?.account.toLowerCase() === target.toLowerCase();
       patchServer(serverId, () => ({
         registeredNick: target,
-        nickClaim: undefined,
+        ...(isClaimForTarget && { nickClaim: undefined }),
       }));
       return;
     }
@@ -717,6 +720,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       saslPassword: claim.storedPassword,
       saslEnabled: true,
     });
+    ircClient.setSaslLogin(serverId, claim.account, claim.storedPassword);
     patchServer(serverId, () => ({ nickClaim: undefined }));
   });
 

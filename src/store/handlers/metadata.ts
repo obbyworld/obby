@@ -512,7 +512,35 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  ircClient.on("METADATA_FAIL", ({ code, target, key, retryAfter }) => {
-    console.error(`METADATA failed: ${code}`, { target, key, retryAfter });
-  });
+  // A request that ends without a value leaves the queue too, so the channel
+  // browser can ask again later.
+  const dropFromFetchQueue = (serverId: string, target: string | undefined) => {
+    if (
+      !target ||
+      !store.getState().channelMetadataFetchQueue[serverId]?.has(target)
+    )
+      return;
+    store.setState((state) => {
+      const queue = new Set(state.channelMetadataFetchQueue[serverId]);
+      queue.delete(target);
+      return {
+        channelMetadataFetchQueue: {
+          ...state.channelMetadataFetchQueue,
+          [serverId]: queue,
+        },
+      };
+    });
+  };
+
+  ircClient.on("METADATA_KEYNOTSET", ({ serverId, target }) =>
+    dropFromFetchQueue(serverId, target),
+  );
+
+  ircClient.on(
+    "METADATA_FAIL",
+    ({ serverId, code, target, key, retryAfter }) => {
+      dropFromFetchQueue(serverId, target);
+      console.error(`METADATA failed: ${code}`, { target, key, retryAfter });
+    },
+  );
 }

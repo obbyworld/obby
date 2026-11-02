@@ -1963,6 +1963,7 @@ const useStore = create<AppState>((set, get) => ({
   claimNick: (serverId, account, email, password) => {
     const storedPassword = encodeStoredSaslPassword(password);
     if (storedPassword === null) return false;
+    if (!ircClient.isSocketOpen(serverId)) return true;
     set((state) => ({
       servers: state.servers.map((server) =>
         server.id === serverId
@@ -1979,11 +1980,14 @@ const useStore = create<AppState>((set, get) => ({
 
   verifyNickClaim: (serverId, code) => {
     const claim = get().servers.find((s) => s.id === serverId)?.nickClaim;
-    if (!claim) return;
+    if (!claim || !ircClient.isSocketOpen(serverId)) return;
     set((state) => ({
       servers: state.servers.map((server) =>
         server.id === serverId
-          ? { ...server, nickClaim: { ...claim, stage: "sending" } }
+          ? {
+              ...server,
+              nickClaim: { ...claim, stage: "sending", failure: undefined },
+            }
           : server,
       ),
     }));

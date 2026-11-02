@@ -72,6 +72,7 @@ describe("RegisterAccountSection", () => {
   beforeEach(() => {
     sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
     vi.spyOn(ircClient, "getNick").mockReturnValue("alice");
+    vi.spyOn(ircClient, "isSocketOpen").mockReturnValue(true);
     updateServer = vi.fn<AppState["updateServer"]>();
     useStore.setState({ updateServer });
   });
@@ -138,6 +139,53 @@ describe("RegisterAccountSection", () => {
       screen.queryByRole("button", { name: "Register" }),
     ).not.toBeInTheDocument();
     expect(useStore.getState().servers[0].registeredNick).toBe("alice");
+  });
+
+  test("keeps its claim when another account turns out taken", () => {
+    setServer();
+    render(<Section />);
+    typePassword("secret");
+    fireEvent.click(screen.getByRole("button", { name: "Register" }));
+
+    fail("REGISTER", "ACCOUNT_EXISTS", "bob");
+
+    expect(useStore.getState().servers[0].nickClaim?.account).toBe("alice");
+  });
+
+  test("keeps the code field once the server marks the nick as registered", () => {
+    setServer();
+    render(<Section />);
+    typePassword("secret");
+    fireEvent.click(screen.getByRole("button", { name: "Register" }));
+    emit("REGISTER_VERIFICATION_REQUIRED", {
+      serverId,
+      mtags: undefined,
+      account: "alice",
+      message: "",
+    });
+
+    emit("NOTE", {
+      serverId,
+      mtags: undefined,
+      command: "NICK",
+      code: "REGISTERED",
+      target: "alice",
+      context: ["alice"],
+      message: "",
+    });
+
+    expect(screen.getByPlaceholderText("Code")).toBeInTheDocument();
+  });
+
+  test("sends nothing while the connection is down", () => {
+    vi.spyOn(ircClient, "isSocketOpen").mockReturnValue(false);
+    setServer();
+    render(<Section />);
+    typePassword("secret");
+    fireEvent.click(screen.getByRole("button", { name: "Register" }));
+
+    expect(sendRaw).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Register" })).toBeEnabled();
   });
 
   test("explains a refused registration and never saves its password", () => {

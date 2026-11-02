@@ -76,12 +76,16 @@ describe("getNickPromptMode", () => {
     );
   });
 
-  test.each(["Guest42", "guest", "user123"])(
+  test.each(["Guest42", "guest7", "user123"])(
     "offers no registration for the placeholder nick %s",
     (nick) => {
       expect(getNickPromptMode(makeServer(), nick)).toBe("loggedOut");
     },
   );
+
+  test("offers registration to a chosen nick that starts with guest", () => {
+    expect(getNickPromptMode(makeServer(), "GuestHouse")).toBe("register");
+  });
 
   test.each<[string, Partial<Server>]>([
     ["logged in", { account: "alice" }],

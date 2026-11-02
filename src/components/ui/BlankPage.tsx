@@ -40,7 +40,7 @@ const BlankPage: React.FC = () => {
       )}
 
       {server?.isRegistered && (
-        <ChannelBrowser serverId={server.id}>
+        <ChannelBrowser key={server.id} serverId={server.id}>
           {(count, body) => (
             <section className="mt-8 w-full max-w-6xl flex flex-col gap-3">
               <div className="flex items-center justify-between">

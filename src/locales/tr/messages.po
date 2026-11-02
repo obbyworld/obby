@@ -1508,6 +1508,10 @@ msgstr "Konuşmak için bir mikrofon bağla"
 msgid "Connect to a server to manage operator settings."
 msgstr "Operatör ayarlarını yönetmek için bir sunucuya bağlanın."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Kanallarını listelemek için sunucuya bağlanın."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Misafir olarak bağlı"

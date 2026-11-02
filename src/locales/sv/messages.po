@@ -1508,6 +1508,10 @@ msgstr "Anslut en mikrofon för att prata"
 msgid "Connect to a server to manage operator settings."
 msgstr "Anslut till en server för att hantera operatörsinställningar."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Anslut till servern för att lista dess kanaler."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Ansluten som gäst"

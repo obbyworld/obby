@@ -1508,6 +1508,10 @@ msgstr "連接麥克風以說話"
 msgid "Connect to a server to manage operator settings."
 msgstr "連線到伺服器以管理操作員設定。"
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "連線到伺服器以列出其頻道。"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "以訪客身分連線"

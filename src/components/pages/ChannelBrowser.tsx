@@ -10,7 +10,6 @@ import {
   FaVolumeUp,
 } from "react-icons/fa";
 import { useJoinAndSelectChannel } from "../../hooks/useJoinAndSelectChannel";
-import ircClient from "../../lib/ircClient";
 import { getChannelAvatarUrl, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { Button } from "../../lib/modal/components";
@@ -228,8 +227,9 @@ const ChannelBrowser: React.FC<ChannelBrowserProps> = ({
           ]),
         },
       }));
+      const { metadataGet } = useStore.getState();
       for (const name of toFetch) {
-        ircClient.metadataGet(serverId, name, ["avatar", "display-name"]);
+        metadataGet(serverId, name, ["avatar", "display-name"]);
       }
     },
     [serverId],
@@ -417,7 +417,7 @@ const ChannelBrowser: React.FC<ChannelBrowserProps> = ({
             </p>
           )}
           <div className="flex justify-end">
-            <Button onClick={applyFilters}>
+            <Button onClick={applyFilters} disabled={isListing}>
               <Trans>Apply and refresh</Trans>
             </Button>
           </div>
@@ -429,7 +429,11 @@ const ChannelBrowser: React.FC<ChannelBrowserProps> = ({
         aria-busy={isLoading}
         className="page-card grid grid-cols-[repeat(auto-fill,minmax(min(100%,22rem),1fr))]"
       >
-        {isLoading ? (
+        {!isRegistered && listed === undefined ? (
+          <div className="col-span-full h-14 flex items-center px-3 text-[13px] text-discord-text-muted">
+            <Trans>Connect to the server to list its channels.</Trans>
+          </div>
+        ) : isLoading ? (
           SKELETON_ROW_IDS.map((id) => <SkeletonRow key={id} />)
         ) : displayed.length === 0 ? (
           <div className="col-span-full h-14 flex items-center px-3 text-[13px] text-discord-text-muted">

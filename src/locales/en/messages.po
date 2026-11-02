@@ -1507,6 +1507,10 @@ msgstr "Connect a microphone to talk"
 msgid "Connect to a server to manage operator settings."
 msgstr "Connect to a server to manage operator settings."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Connect to the server to list its channels."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Connected as a guest"

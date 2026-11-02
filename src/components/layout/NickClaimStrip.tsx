@@ -13,7 +13,7 @@ export type NickPromptMode = "login" | "register" | "verify" | "loggedOut";
 
 // Services refuse to register guest nicks, and our own default nick is a placeholder nobody chose.
 const isPlaceholderNick = (nick: string): boolean =>
-  /^guest/i.test(nick) || /^user\d+$/i.test(nick);
+  /^guest\d+$/i.test(nick) || /^user\d+$/i.test(nick);
 
 export function getNickPromptMode(
   server: Server,

@@ -48,15 +48,16 @@ export const RegisterAccountSection: React.FC<{ server: Server }> = ({
   const [isUnencodable, setIsUnencodable] = useState(false);
 
   const claim = server.nickClaim;
+  const isVerifying = claim?.stage === "verify";
   if (
     !nick ||
     !server.capabilities?.includes("draft/account-registration") ||
-    server.registeredNick?.toLowerCase() === nick.toLowerCase() ||
+    (!isVerifying &&
+      server.registeredNick?.toLowerCase() === nick.toLowerCase()) ||
     (getLoginState(server) !== "guest" && !claim)
   )
     return null;
 
-  const isVerifying = claim?.stage === "verify";
   const isSending = claim?.stage === "sending";
   const needsEmail = isEmailRequired(server);
   const failure = isUnencodable

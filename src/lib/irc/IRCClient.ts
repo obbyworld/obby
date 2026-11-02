@@ -121,7 +121,10 @@ export interface EventMap {
     sender: string;
   };
   NAMES: BaseIRCEvent & { channelName: string; users: User[] };
-  "CAP LS": BaseIRCEvent & { values: Record<string, string> };
+  "CAP LS": BaseIRCEvent & {
+    values: Record<string, string>;
+    isFirstLine: boolean;
+  };
   "CAP ACK": BaseIRCEvent & { cliCaps: string };
   ISUPPORT: BaseIRCEvent & { key: string; value: string };
   CAP_ACKNOWLEDGED: BaseIRCEvent & { key: string; capabilities: string };
@@ -1241,6 +1244,27 @@ export class IRCClient implements IRCClientContext {
     return this.sockets.get(serverId)?.readyState === WebSocket.OPEN;
   }
 
+  // A reconnect reuses what we connected with, so a login saved during the
+  // session has to reach these too or the next reconnect comes back as a guest.
+  setSaslLogin(
+    serverId: string,
+    account: string,
+    storedPassword: string,
+  ): void {
+    const params = this.serverConnectParams.get(serverId);
+    if (params)
+      this.serverConnectParams.set(serverId, {
+        ...params,
+        saslAccountName: account,
+        saslPassword: storedPassword,
+      });
+    this.saslEnabled.set(serverId, true);
+    this.saslCredentials.set(serverId, {
+      username: account,
+      password: storedPassword,
+    });
+  }
+
   sendRaw(serverId: string, command: string): void {
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -2163,6 +2187,7 @@ export class IRCClient implements IRCClientContext {
 
   onCapLs(serverId: string, cliCaps: string, isFinal: boolean): void {
     let accumulated = this.capLsAccumulated.get(serverId);
+    const isFirstLine = !accumulated;
     if (!accumulated) {
       accumulated = new Set();
       this.capLsAccumulated.set(serverId, accumulated);
@@ -2179,13 +2204,15 @@ export class IRCClient implements IRCClientContext {
         this.saslMechanisms.set(serverId, mechanisms);
       }
     }
+    // Each negotiation lists every cap again, so values from an earlier
+    // connection never outlive it.
     const server = this.servers.get(serverId);
     if (server)
       server.capabilityValues = {
-        ...(server.capabilityValues ?? {}),
+        ...(isFirstLine ? {} : server.capabilityValues),
         ...values,
       };
-    this.triggerEvent("CAP LS", { serverId, values });
+    this.triggerEvent("CAP LS", { serverId, values, isFirstLine });
 
     if (isFinal) {
       // Now request the caps we want from the accumulated list

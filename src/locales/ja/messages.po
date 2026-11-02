@@ -1508,6 +1508,10 @@ msgstr "話すにはマイクを接続してください"
 msgid "Connect to a server to manage operator settings."
 msgstr "オペレーター設定を管理するにはサーバーに接続してください。"
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "サーバーに接続してチャンネル一覧を表示してください。"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "ゲストとして接続中"

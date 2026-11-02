@@ -10,7 +10,11 @@ const ChannelBrowserPage: React.FC<PageProps<"channelBrowser">> = ({
 }) => {
   const closePage = useStore((s) => s.closePage);
   return (
-    <ChannelBrowser serverId={page.serverId} onLeave={closePage}>
+    <ChannelBrowser
+      key={page.serverId}
+      serverId={page.serverId}
+      onLeave={closePage}
+    >
       {(count, body) => (
         <PageShell title={t`Browse channels`} wide headerActions={count}>
           {body}

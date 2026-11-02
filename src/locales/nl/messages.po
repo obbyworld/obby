@@ -1508,6 +1508,10 @@ msgstr "Sluit een microfoon aan om te praten"
 msgid "Connect to a server to manage operator settings."
 msgstr "Maak verbinding met een server om operatorinstellingen te beheren."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Maak verbinding met de server om de kanalen te tonen."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Verbonden als gast"
