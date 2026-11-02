@@ -93,12 +93,14 @@ jobs:
       - name: Point the pre-release at this build
         if: github.ref_type != 'tag'
         run: |
-          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG_NAME" > /dev/null 2>&1; then
+          TAGS=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$TAG_NAME" --jq '.[].ref')
+          if grep -qxF "refs/tags/$TAG_NAME" <<< "$TAGS"; then
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG_NAME" \
               -f sha="$GITHUB_SHA" -F force=true
           fi
 
-          if ! gh release view "$TAG_NAME" -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+          RELEASES=$(gh release list -R "$GITHUB_REPOSITORY" --limit 100 --json tagName --jq '.[].tagName')
+          if ! grep -qxF "$TAG_NAME" <<< "$RELEASES"; then
             exit 0
           fi
 
