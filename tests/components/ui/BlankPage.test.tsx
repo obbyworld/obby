@@ -56,15 +56,24 @@ describe("BlankPage", () => {
     state.servers[0].isRegistered = true;
   });
 
-  test("lists the server's channels with the busiest first", () => {
+  test("shows a loaded list with the busiest first and sends no new LIST", () => {
     render(<BlankPage />);
 
-    expect(state.listChannels).toHaveBeenCalledWith("server1");
+    expect(state.listChannels).not.toHaveBeenCalled();
     const rows = screen.getAllByRole("button", { name: /^Join #/ });
     expect(rows.map((row) => row.getAttribute("data-channel"))).toEqual([
       "#busy",
       "#quiet",
     ]);
+  });
+
+  test("lists the channels of a server with no list yet", () => {
+    const loaded = state.channelList.server1;
+    delete (state.channelList as Record<string, unknown>).server1;
+    render(<BlankPage />);
+
+    expect(state.listChannels).toHaveBeenCalledWith("server1");
+    state.channelList.server1 = loaded;
   });
 
   test("joins a channel from the list without closing any page", () => {
