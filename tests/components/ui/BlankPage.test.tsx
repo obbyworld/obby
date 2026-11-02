@@ -85,6 +85,20 @@ describe("BlankPage", () => {
     expect(state.closePage).not.toHaveBeenCalled();
   });
 
+  test("opens the channel it joins", () => {
+    state.joinChannel.mockImplementationOnce((_serverId, name) => {
+      state.servers[0].channels.push({ id: "busy-id", name });
+    });
+    render(<BlankPage />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Join #busy" }));
+
+    expect(state.selectChannel).toHaveBeenCalledWith("busy-id", {
+      navigate: true,
+    });
+    state.servers[0].channels = [];
+  });
+
   test("skips the list until the server finishes registration", () => {
     state.servers[0].isRegistered = false;
     render(<BlankPage />);

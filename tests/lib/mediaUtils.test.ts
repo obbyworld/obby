@@ -723,6 +723,7 @@ describe("imageCanHaveTransparency", () => {
 describe("canShowServerIcon", () => {
   test("shows any absolute http(s) icon the server sends", () => {
     expect(canShowServerIcon("https://cdn.example.org/logo.png")).toBe(true);
+    expect(canShowServerIcon("http://cdn.example.org/logo.png")).toBe(true);
   });
 
   test("hides missing and relative icons", () => {
