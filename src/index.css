@@ -176,12 +176,8 @@
   .strip-action {
     @apply h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold;
   }
-  .strip-field {
-    @apply field-input;
-  }
   @media (pointer: coarse) {
-    .strip-action,
-    .strip-field {
+    .strip-action {
       @apply min-h-11;
     }
   }

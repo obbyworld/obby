@@ -178,9 +178,12 @@ const ChannelBrowser: React.FC<ChannelBrowserProps> = ({
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const isRegistered = !!server?.isRegistered;
+  // A full LIST is heavy on big networks, so we send one only for a server
+  // with no list yet; Apply and refresh fetches a new one.
   // biome-ignore lint/correctness/useExhaustiveDependencies: we list again once the server finishes registration
   useEffect(() => {
-    listChannels(serverId);
+    if (useStore.getState().channelList[serverId] === undefined)
+      listChannels(serverId);
   }, [serverId, isRegistered, listChannels]);
 
   const filehost = serverFilehosts(server);

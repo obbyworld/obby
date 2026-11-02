@@ -532,9 +532,25 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
     });
   };
 
-  ircClient.on("METADATA_KEYNOTSET", ({ serverId, target }) =>
-    dropFromFetchQueue(serverId, target),
-  );
+  // A channel without the key is an answer too, so it counts as fetched and
+  // waits out the same cache time as one with a value.
+  ircClient.on("METADATA_KEYNOTSET", ({ serverId, target }) => {
+    if (!store.getState().channelMetadataFetchQueue[serverId]?.has(target))
+      return;
+    dropFromFetchQueue(serverId, target);
+    store.setState((state) => {
+      const cache = state.channelMetadataCache[serverId] ?? {};
+      return {
+        channelMetadataCache: {
+          ...state.channelMetadataCache,
+          [serverId]: {
+            ...cache,
+            [target]: { ...cache[target], fetchedAt: Date.now() },
+          },
+        },
+      };
+    });
+  });
 
   ircClient.on(
     "METADATA_FAIL",

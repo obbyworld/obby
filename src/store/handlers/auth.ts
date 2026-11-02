@@ -527,46 +527,42 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
 
     if (linkSecurity !== undefined) {
-      {
-        const linkSecurityValue = Number.parseInt(linkSecurity, 10) || 0;
-        store.setState((state) => {
-          const updatedServers = state.servers.map((server) =>
-            server.id === serverId
-              ? { ...server, linkSecurity: linkSecurityValue }
-              : server,
-          );
-          return { servers: updatedServers };
-        });
-
-        const currentState = store.getState();
-        const currentServer = currentState.servers.find(
-          (s) => s.id === serverId,
+      const linkSecurityValue = Number.parseInt(linkSecurity, 10) || 0;
+      store.setState((state) => {
+        const updatedServers = state.servers.map((server) =>
+          server.id === serverId
+            ? { ...server, linkSecurity: linkSecurityValue }
+            : server,
         );
-        const hasLowLinkSecurity = linkSecurityValue < 2;
-        const savedServers = storage.servers.load();
-        const serverConfig = currentServer
-          ? savedServers.find((s) => s.id === serverId)
-          : undefined;
-        const shouldWarnLinkSecurity =
-          hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
+        return { servers: updatedServers };
+      });
 
-        if (shouldWarnLinkSecurity) {
-          store.setState((state) => {
-            const existingWarning = state.ui.linkSecurityWarnings.find(
-              (w) => w.serverId === serverId,
-            );
-            if (existingWarning) return state;
-            return {
-              ui: {
-                ...state.ui,
-                linkSecurityWarnings: [
-                  ...state.ui.linkSecurityWarnings,
-                  { serverId, timestamp: Date.now() },
-                ],
-              },
-            };
-          });
-        }
+      const currentState = store.getState();
+      const currentServer = currentState.servers.find((s) => s.id === serverId);
+      const hasLowLinkSecurity = linkSecurityValue < 2;
+      const savedServers = storage.servers.load();
+      const serverConfig = currentServer
+        ? savedServers.find((s) => s.id === serverId)
+        : undefined;
+      const shouldWarnLinkSecurity =
+        hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
+
+      if (shouldWarnLinkSecurity) {
+        store.setState((state) => {
+          const existingWarning = state.ui.linkSecurityWarnings.find(
+            (w) => w.serverId === serverId,
+          );
+          if (existingWarning) return state;
+          return {
+            ui: {
+              ...state.ui,
+              linkSecurityWarnings: [
+                ...state.ui.linkSecurityWarnings,
+                { serverId, timestamp: Date.now() },
+              ],
+            },
+          };
+        });
       }
     }
   });
