@@ -213,6 +213,18 @@ describe("gaps", () => {
     expect(kept).toEqual([copy(2, true)]);
     expect(duplicates.map((g) => g.id).sort()).toEqual([1, 3]);
   });
+
+  it("deletes the stored copies of a stretch when it reads them", async () => {
+    const gap = { server: "s1", target: "#a", from: 10, to: 20 };
+    await db.updateGap({ ...gap, id: 101, lost: false });
+    await db.updateGap({ ...gap, id: 102, lost: true });
+
+    expect(await db.gapsFor("s1", "#a")).toEqual([
+      { ...gap, id: 102, lost: true },
+    ]);
+    await db.deleteGap(102);
+    expect(await db.gapsFor("s1", "#a")).toEqual([]);
+  });
 });
 
 describe("pruneToLimit", () => {
