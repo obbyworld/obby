@@ -1370,6 +1370,10 @@ msgstr "Losgekoppelde serverberichten sluiten"
 msgid "Close search"
 msgstr "Zoeken sluiten"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Sluit de opdracht om bestanden toe te voegen"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Viewer sluiten"

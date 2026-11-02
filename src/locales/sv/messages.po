@@ -1370,6 +1370,10 @@ msgstr "Stäng utfällt servermeddelanden-fönster"
 msgid "Close search"
 msgstr "Stäng sökningen"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Stäng kommandot för att bifoga filer"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Stäng visaren"

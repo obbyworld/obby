@@ -1370,6 +1370,10 @@ msgstr "Server-Hinweise schließen"
 msgid "Close search"
 msgstr "Suche schließen"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Schließe den Befehl, um Dateien anzuhängen"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Ansicht schließen"

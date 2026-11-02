@@ -170,21 +170,19 @@ export function useCommandInvocation({
   });
 
   // Commands carry no files, so we keep an attachment from looking like part of one.
-  const refuseFiles = () => {
+  const refuseWith = (kind: "files" | "attach") => {
     if (!invocation) return;
     setInvocation({
       ...invocation,
-      error: {
-        kind: "files",
-        name: activeParam?.name ?? invocation.command.name,
-      },
+      error: { kind, name: activeParam?.name ?? invocation.command.name },
     });
   };
+  const refuseFiles = () => refuseWith("attach");
 
   const run = () => {
     if (!invocation || !serverId) return;
     if (hasAttachments()) {
-      refuseFiles();
+      refuseWith("files");
       return;
     }
     const result = buildCommandPayload(params, invocation.values);

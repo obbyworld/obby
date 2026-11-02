@@ -124,7 +124,7 @@ describe("useCommandInvocation", () => {
     const { hook } = setup();
     act(() => hook.result.current.begin("bot", say));
     act(() => hook.result.current.refuseFiles());
-    expect(hook.result.current.invocation?.error?.kind).toBe("files");
+    expect(hook.result.current.invocation?.error?.kind).toBe("attach");
   });
 
   it("opens a recalled command without options and sends it on Enter", () => {

@@ -1370,6 +1370,10 @@ msgstr "Zavřít vyskočená serverová oznámení"
 msgid "Close search"
 msgstr "Zavřít hledání"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Pro přiložení souborů zavřete příkaz"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Zavřít prohlížeč"

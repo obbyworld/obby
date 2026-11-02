@@ -1370,6 +1370,10 @@ msgstr "ポップアウトしたサーバー通知を閉じる"
 msgid "Close search"
 msgstr "検索を閉じる"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "ファイルを添付するにはコマンドを閉じてください"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "ビューアを閉じる"

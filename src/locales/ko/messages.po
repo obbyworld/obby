@@ -1370,6 +1370,10 @@ msgstr "팝업 서버 알림 닫기"
 msgid "Close search"
 msgstr "검색 닫기"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "파일을 첨부하려면 명령을 닫으세요"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "뷰어 닫기"

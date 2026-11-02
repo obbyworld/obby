@@ -1370,6 +1370,10 @@ msgstr "Закрыть всплывающие уведомления серве�
 msgid "Close search"
 msgstr "Закрыть поиск"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Закройте команду, чтобы прикрепить файлы"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Закрыть просмотрщик"

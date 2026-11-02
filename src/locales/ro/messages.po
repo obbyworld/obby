@@ -1370,6 +1370,10 @@ msgstr "Închide notificările server detașate"
 msgid "Close search"
 msgstr "Închide căutarea"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Închide comanda pentru a atașa fișiere"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Închide vizualizatorul"

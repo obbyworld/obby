@@ -1370,6 +1370,10 @@ msgstr "Zamknij wyskakujące powiadomienia serwera"
 msgid "Close search"
 msgstr "Zamknij wyszukiwanie"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Zamknij polecenie, aby dołączyć pliki"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Zamknij przeglądarkę"

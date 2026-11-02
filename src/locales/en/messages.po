@@ -1369,6 +1369,10 @@ msgstr "Close popped out server notices"
 msgid "Close search"
 msgstr "Close search"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Close the command to attach files"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Close viewer"

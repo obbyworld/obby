@@ -21,6 +21,7 @@ export const CommandArgHint: React.FC<{
     if (e.kind === "int") return t`Enter a whole number for ${e.name}`;
     if (e.kind === "files")
       return t`Remove the attached files to run a command`;
+    if (e.kind === "attach") return t`Close the command to attach files`;
     if (e.kind === "unsent")
       return t`Not sent. Reconnect, or use a chat where the bot offers this command`;
     return t`Enter a number for ${e.name}`;

@@ -1370,6 +1370,10 @@ msgstr "Açılır sunucu bildirimlerini kapat"
 msgid "Close search"
 msgstr "Aramayı kapat"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Dosya eklemek için komutu kapatın"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Görüntüleyiciyi kapat"

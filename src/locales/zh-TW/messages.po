@@ -1370,6 +1370,10 @@ msgstr "关闭弹出的服务器通知"
 msgid "Close search"
 msgstr "關閉搜尋"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "關閉指令後才能附加檔案"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "关闭查看器"

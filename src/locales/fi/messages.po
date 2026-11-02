@@ -1370,6 +1370,10 @@ msgstr "Sulje irrotettu palvelintiedotteet-näkymä"
 msgid "Close search"
 msgstr "Sulje haku"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Sulje komento liittääksesi tiedostoja"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Sulje katseluohjelma"

@@ -1370,6 +1370,10 @@ msgstr "Fermer les notifications serveur détachées"
 msgid "Close search"
 msgstr "Fermer la recherche"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Fermez la commande pour joindre des fichiers"
+
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
 msgstr "Fermer le visualiseur"
