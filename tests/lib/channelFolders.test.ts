@@ -156,13 +156,19 @@ describe("summarizeFolders", () => {
     });
   });
 
-  it("collects the first four channel icons of each folder", () => {
-    const names = ["#a", "#b", "#c", "#d", "#e", "#f"];
-    const rows = names.map((name) => ({ ...ch(name), unreadCount: 0 }));
+  it("collects the channel icons of each folder", () => {
+    const first = ["#a", "#b", "#c", "#d", "#e", "#f"];
+    const second = ["#g", "#h"];
+    const rows = [...first, ...second].map((name) => ({
+      ...ch(name),
+      unreadCount: 0,
+    }));
     const iconOf = (row: { name: string }) =>
       row.name === "#b" ? undefined : `icon-${row.name}`;
     const summaries = summarizeFolders(
-      flattenChannelGroups(arrangeChannels(rows, [], [folder("f", names)])),
+      flattenChannelGroups(
+        arrangeChannels(rows, [], [folder("f", first), folder("g", second)]),
+      ),
       iconOf,
     );
     expect(summaries.get("f")?.icons).toEqual([
@@ -170,6 +176,8 @@ describe("summarizeFolders", () => {
       "icon-#c",
       "icon-#d",
       "icon-#e",
+      "icon-#f",
     ]);
+    expect(summaries.get("g")?.icons).toEqual(["icon-#g", "icon-#h"]);
   });
 });

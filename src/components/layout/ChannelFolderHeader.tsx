@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import type * as React from "react";
 import { useRef, useState } from "react";
 import { FaChevronRight, FaEllipsisH, FaFolder } from "react-icons/fa";
-import type { FolderSummary } from "../../lib/channelFolders";
+import { type FolderSummary, MAX_FOLDER_ICONS } from "../../lib/channelFolders";
 import type { ChannelFolder } from "../../store/types";
 import { TextInput } from "../ui/TextInput";
 import type { DragRowProps } from "./ChannelRow";
@@ -71,7 +71,9 @@ const FolderActivity: React.FC<{ summary?: FolderSummary }> = ({ summary }) => {
 // phone shows the apps inside a folder.
 const FolderGlyph: React.FC<{ icons?: string[] }> = ({ icons }) => {
   const [failedUrls, setFailedUrls] = useState<ReadonlySet<string>>(new Set());
-  const shown = icons?.filter((url) => !failedUrls.has(url));
+  const shown = icons
+    ?.filter((url) => !failedUrls.has(url))
+    .slice(0, MAX_FOLDER_ICONS);
   if (!shown?.length) return <FaFolder className="flex-shrink-0 opacity-80" />;
   return (
     <span

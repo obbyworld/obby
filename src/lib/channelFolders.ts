@@ -155,7 +155,7 @@ export interface FolderSummary {
   icons: string[];
 }
 
-const MAX_FOLDER_ICONS = 4;
+export const MAX_FOLDER_ICONS = 4;
 
 export function summarizeFolders<
   T extends {
@@ -185,7 +185,7 @@ export function summarizeFolders<
     current.channelCount += 1;
     if (channel.isMentioned) current.mentionCount += channel.mentionCount ?? 0;
     if (channel.unreadCount > 0) current.hasUnread = true;
-    const icon = current.icons.length < MAX_FOLDER_ICONS && iconOf(channel);
+    const icon = iconOf(channel);
     if (icon) current.icons.push(icon);
   }
   return summaries;

@@ -312,23 +312,9 @@ export const MessageItem = memo((props: MessageItemProps) => {
   );
   // Authors of loaded history never speak live, so we fetch their profile when their message shows.
   useEffect(() => {
-    if (
-      !serverId ||
-      !showHeader ||
-      !supportsMetadata ||
-      isCurrentUser ||
-      userKey === "none"
-    )
-      return;
+    if (!serverId || !showHeader || !supportsMetadata || isCurrentUser) return;
     useStore.getState().metadataList(serverId, message.userId);
-  }, [
-    serverId,
-    showHeader,
-    supportsMetadata,
-    isCurrentUser,
-    userKey,
-    message.userId,
-  ]);
+  }, [serverId, showHeader, supportsMetadata, isCurrentUser, message.userId]);
 
   // useMemo instead of useStore — safe to read localStorage without infinite loop via useSyncExternalStore
   // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
@@ -339,8 +325,28 @@ export const MessageItem = memo((props: MessageItemProps) => {
     return getUserMetadata(pmUsername, serverId);
   }, [metadataChangeCounter, userKey, rawMessageUser, serverId]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
+  const absentAuthorMetadata = useMemo(() => {
+    if (userKey !== "none" || !serverId) return null;
+    return getUserMetadata(message.userId, serverId);
+  }, [metadataChangeCounter, userKey, message.userId, serverId]);
+
   const messageUser: User | undefined = useMemo(() => {
-    if (!rawMessageUser) return undefined;
+    if (!rawMessageUser) {
+      if (!absentAuthorMetadata) return undefined;
+      return {
+        id: message.userId,
+        username: message.userId,
+        realname: "",
+        account: "",
+        isOnline: false,
+        isAway: false,
+        status: "",
+        isBot: false,
+        isIrcOp: false,
+        metadata: absentAuthorMetadata,
+      };
+    }
 
     // For PM users, rawMessageUser is the privateChat object
     // We need to construct a proper User object
@@ -363,7 +369,13 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
     // For channel users, rawMessageUser is already a proper User object
     return rawMessageUser as User;
-  }, [rawMessageUser, pmUserMetadata, userKey]);
+  }, [
+    rawMessageUser,
+    pmUserMetadata,
+    absentAuthorMetadata,
+    message.userId,
+    userKey,
+  ]);
 
   const avatarUrl = messageUser?.metadata?.avatar?.value;
   const displayName = messageUser?.metadata?.["display-name"]?.value;

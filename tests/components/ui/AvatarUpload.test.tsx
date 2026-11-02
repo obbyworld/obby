@@ -83,7 +83,7 @@ describe("AvatarUpload errors", () => {
     renderUpload();
     pickImage(6 * 1024 * 1024);
     expect(screen.getByRole("alert")).toHaveTextContent(
-      "Choose an image under 5 MB",
+      "Choose a smaller image",
     );
     expect(fetch).not.toHaveBeenCalled();
   });

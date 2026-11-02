@@ -1,4 +1,4 @@
-import { act, cleanup, render } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import {
   afterEach,
   beforeEach,
@@ -10,6 +10,7 @@ import {
 } from "vitest";
 import { MessageItem } from "../../src/components/message/MessageItem";
 import useStore, { type AppState } from "../../src/store";
+import * as storage from "../../src/store/localStorage";
 import type { Channel, Message, Server, User } from "../../src/types";
 
 vi.mock("../../src/lib/ircClient", () => ({
@@ -108,6 +109,17 @@ describe("the author of a shown message", () => {
 
     act(() => useStore.setState({ servers: [makeServer()] }));
     expect(metadataList).toHaveBeenCalledWith("server1", "alice");
+  });
+
+  it("shows the saved profile of an author who left the channel", () => {
+    storage.metadata.save({
+      server1: { bob: { "display-name": { value: "Bobby", visibility: "*" } } },
+    });
+    useStore.setState({ servers: [makeServer()] });
+    render(<MessageItem {...props} message={{ ...message, userId: "bob" }} />);
+    expect(metadataList).toHaveBeenCalledWith("server1", "bob");
+    expect(screen.getByText("Bobby")).toBeInTheDocument();
+    storage.metadata.save({});
   });
 
   it("is left alone on a grouped follow-up line", () => {

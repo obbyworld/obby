@@ -7,7 +7,7 @@ import {
 import { base64DecodeUtf8 } from "../../src/lib/base64";
 import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
-import type { Channel, Server, User } from "../../src/types";
+import type { Channel, PrivateChat, Server, User } from "../../src/types";
 
 const bot = (username: string) => ({
   id: username,
@@ -95,6 +95,35 @@ describe("slash commands shared by the server and bots", () => {
       name: "pkg",
       bot: "netbot",
     });
+  });
+
+  it("runs a channel-only bot command on the server from a bot's DM", () => {
+    const dm = { id: "pm1", username: "_cloudbot" } as PrivateChat;
+    useStore.setState({
+      servers: [
+        {
+          ...server,
+          privateChats: [dm],
+          botCommands: { _cloudbot: [{ name: "draw", contexts: ["public"] }] },
+        } as unknown as Server,
+      ],
+    });
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    const { result } = renderHook(() =>
+      useMessageSending({
+        selectedServerId: "s1",
+        selectedChannelId: null,
+        selectedPrivateChatId: "pm1",
+        selectedChannel: null,
+        selectedPrivateChat: dm,
+        currentUser: null,
+        selectedColor: null,
+        selectedFormatting: [],
+        localReplyTo: null,
+      }),
+    );
+    result.current.sendMessage("/draw");
+    expect(sendRaw).toHaveBeenCalledWith("s1", "draw");
   });
 });
 

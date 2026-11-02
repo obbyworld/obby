@@ -1650,11 +1650,15 @@ export const ChatArea: React.FC<{
   };
 
   const handleLocationShare = (url: string) => {
+    setIsLocationModalOpen(false);
+    if (command.invocation) {
+      command.refuseFiles();
+      return;
+    }
     updateAttachments(channelKey, (prev) => [
       ...prev,
       { id: uuidv4(), kind: "link", url, label: t`Location` },
     ]);
-    setIsLocationModalOpen(false);
     inputRef.current?.focus();
   };
 

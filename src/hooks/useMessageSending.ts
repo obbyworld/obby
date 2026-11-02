@@ -130,8 +130,7 @@ function tryDispatchBotCommand(
     if (value !== undefined) options[o.name] = value;
   }
 
-  sendBotCommand(serverId, channel, bot, cmd, options);
-  return true;
+  return sendBotCommand(serverId, channel, bot, cmd, options);
 }
 
 // Where a command may be invoked. Prefer the spec `contexts`; fall back to the

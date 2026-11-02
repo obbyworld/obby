@@ -26,7 +26,7 @@ function failureText(failure: UploadFailure, isChannel: boolean): string {
     case "notImage":
       return t`Choose an image file`;
     case "tooLarge":
-      return t`Choose an image under 5 MB`;
+      return t`Choose a smaller image`;
     case "forbidden":
       return isChannel
         ? t`Only channel ops can change this`
@@ -38,8 +38,10 @@ function failureText(failure: UploadFailure, isChannel: boolean): string {
   }
 }
 
+const UPLOAD_TIMEOUT_MS = 120_000;
+
 function failureFromStatus(status: number): UploadFailure {
-  if (status === 401 || status === 403) return "forbidden";
+  if (status === 403) return "forbidden";
   if (status === 413) return "tooLarge";
   return "failed";
 }
@@ -124,7 +126,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       const scope = channelName ? `channel:${channelName}` : undefined;
       ircClient.requestToken(serverId, "filehost", scope);
       const authToken = await waitForAuthToken(serverId, "filehost");
-      if (!authToken) throw new AvatarUploadError("failed");
+      if (!authToken) {
+        console.error("Avatar upload got no file host token from the server");
+        throw new AvatarUploadError("failed");
+      }
       const refreshed = useStore
         .getState()
         .servers.find((s) => s.id === serverId);
@@ -145,6 +150,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
           Authorization: `Bearer ${authToken}`,
         },
         body: formData,
+        signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
       }).catch((error: unknown) => {
         console.error("Avatar upload could not reach the server:", error);
         throw new AvatarUploadError("unreachable");

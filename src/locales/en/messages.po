@@ -1238,12 +1238,12 @@ msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Choose a smaller file. This one is too large for the file host."
 
 #: src/components/ui/AvatarUpload.tsx
-msgid "Choose an image file"
-msgstr "Choose an image file"
+msgid "Choose a smaller image"
+msgstr "Choose a smaller image"
 
 #: src/components/ui/AvatarUpload.tsx
-msgid "Choose an image under 5 MB"
-msgstr "Choose an image under 5 MB"
+msgid "Choose an image file"
+msgstr "Choose an image file"
 
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
