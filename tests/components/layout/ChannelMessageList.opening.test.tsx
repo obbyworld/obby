@@ -423,6 +423,19 @@ describe("ChannelMessageList late history", () => {
     expect(line?.nextElementSibling?.textContent).toContain("night-2");
   });
 
+  it("stops waiting for a rejoin page that never comes", () => {
+    vi.useFakeTimers();
+    render(<ChannelMessageList {...props} />);
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    expect(isAwayFromPresent()).toBe(true);
+
+    act(() => vi.advanceTimersByTime(4100));
+
+    expect(isAwayFromPresent()).toBe(false);
+  });
+
   it("follows the end of a list that shrank", () => {
     const { container } = render(<ChannelMessageList {...props} />);
     const list = container.firstElementChild as HTMLElement;

@@ -537,8 +537,10 @@ export const ChannelMessageList = forwardRef<
         marker !== null && (opening.after == null || marker > opening.after)
           ? marker
           : opening.after;
+      // Private chats and servers without chathistory send no page after a
+      // rejoin, so we stop waiting for one once the opening is overdue.
       const awaitsRejoinHistory =
-        opening.awaitsRejoinHistory === true && !isLoadingHistory;
+        opening.awaitsRejoinHistory === true && !isLoadingHistory && !isOverdue;
       if (
         after !== opening.after ||
         awaitsRejoinHistory !== opening.awaitsRejoinHistory
