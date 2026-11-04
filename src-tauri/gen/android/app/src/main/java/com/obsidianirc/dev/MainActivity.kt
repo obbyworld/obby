@@ -19,6 +19,7 @@ class MainActivity : TauriActivity() {
   private lateinit var wv: WebView
   private var isKeyboardOpen = false
   @Volatile private var isInCall = false
+  @Volatile private var insetsJson = "{\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}"
 
   // Android restores a killed app with its first intent and hands a notification tap over
   // as a new intent, so we keep the tap as the intent the plugins read when they load.
@@ -36,6 +37,11 @@ class MainActivity : TauriActivity() {
   // The web app tells us when a call is live, so leaving the app keeps the call
   // visible in a picture-in-picture window.
   private inner class CallBridge {
+    // The page reads the insets once it loads, since an insets change reported
+    // before then is lost along with the page that missed it.
+    @JavascriptInterface
+    fun insets(): String = insetsJson
+
     @JavascriptInterface
     fun setInCall(active: Boolean) {
       isInCall = active
@@ -83,6 +89,28 @@ class MainActivity : TauriActivity() {
     }
   }
   
+  // Some Android WebView versions report env(safe-area-inset-*) as zero under
+  // edge-to-edge, so we hand the page the system bar and cutout insets in CSS
+  // pixels. The keyboard covers the navigation bar, so we report no bottom inset
+  // while it is open.
+  private fun reportSystemBarInsets(insets: WindowInsetsCompat, isImeOpen: Boolean) {
+    val bars = insets.getInsets(
+      WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+    )
+    val density = resources.displayMetrics.density
+    val bottom = if (isImeOpen) 0 else bars.bottom
+    val json = "{\"top\":${bars.top / density},\"right\":${bars.right / density}," +
+      "\"bottom\":${bottom / density},\"left\":${bars.left / density}}"
+    if (json == insetsJson) return
+    insetsJson = json
+    if (::wv.isInitialized) {
+      wv.evaluateJavascript(
+        "window.dispatchEvent(new CustomEvent('obby-native-insets', { detail: $json }));",
+        null,
+      )
+    }
+  }
+
   private fun setupKeyboardDetection() {
     val rootView = findViewById<View>(android.R.id.content)
     // Edge-to-edge (forced from Android 15) ignores adjustResize, so we shrink
@@ -90,6 +118,7 @@ class MainActivity : TauriActivity() {
     ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
       val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
       view.setPadding(0, 0, 0, imeBottom)
+      reportSystemBarInsets(insets, imeBottom > 0)
       insets
     }
     val globalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {

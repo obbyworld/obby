@@ -17,6 +17,7 @@ import { RecordingControlsOverlay } from "./components/ui/RecordingControlsOverl
 import { RegionMarkerOverlay } from "./components/ui/RegionMarkerOverlay";
 import { RegionSelectOverlay } from "./components/ui/RegionSelectOverlay";
 import { probeVideoSupport } from "./lib/mediaUtils";
+import { followNativeInsets } from "./lib/nativeInsets";
 import {
   markOverlayDocument,
   overlayKind,
@@ -30,6 +31,7 @@ if (overlay) {
   markOverlayDocument();
 } else {
   probeVideoSupport();
+  followNativeInsets();
   registerHostedServiceWorker();
   // A crash or a dev reload leaves the picker covering the desktop with no way
   // to dismiss it, so the main window clears any of them left behind.

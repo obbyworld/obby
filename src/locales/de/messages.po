@@ -994,6 +994,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Can't reach the upload server. Try again"
+msgstr "Upload-Server nicht erreichbar. Versuche es erneut"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
 msgstr "Die letzte 2FA-Anmeldeinformation kann nicht entfernt werden"
@@ -1234,6 +1238,14 @@ msgstr "Sicheres Passwort wählen"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Wähle eine kleinere Datei. Diese ist zu groß für den Dateihost."
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose a smaller image"
+msgstr "Wähle ein kleineres Bild"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose an image file"
+msgstr "Wähle eine Bilddatei"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Datei auswählen"
@@ -1357,6 +1369,10 @@ msgstr "Server-Hinweise schließen"
 #: src/components/layout/SearchPane.tsx
 msgid "Close search"
 msgstr "Suche schließen"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Schließe den Befehl, um Dateien anzuhängen"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
@@ -2501,6 +2517,10 @@ msgstr "Alles ausblenden"
 msgid "Folder name"
 msgstr "Ordnername"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Ordneroptionen"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Für private Nachrichten und Erwähnungen"
@@ -3107,6 +3127,10 @@ msgstr "Anmelden"
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Erneut anmelden"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Log in to upload an avatar"
+msgstr "Melde dich an, um einen Avatar hochzuladen"
 
 #. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
@@ -3842,6 +3866,10 @@ msgstr "an"
 msgid "Online"
 msgstr "Online"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Only channel ops can change this"
+msgstr "Nur Kanal-Ops können das ändern"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
 msgstr "Nur mit ausgewählten Servern verbinden"
@@ -4509,6 +4537,10 @@ msgstr "Reaktion {emoji} entfernen"
 msgid "Remove Rule"
 msgstr "Regel entfernen"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "Entferne die angehängten Dateien, um einen Befehl auszuführen"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "Kanal umbenennen"
@@ -4521,10 +4553,6 @@ msgstr "Ordner umbenennen"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} umbenennen oder löschen"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Ordner umbenennen oder löschen"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."
@@ -5752,6 +5780,10 @@ msgstr "Avatar hochladen"
 #: src/lib/mediaUpload.ts
 msgid "Upload cancelled."
 msgstr "Upload abgebrochen."
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Upload failed. Try again"
+msgstr "Hochladen fehlgeschlagen. Versuche es erneut"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"

@@ -994,6 +994,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Can't reach the upload server. Try again"
+msgstr "Latauspalvelimeen ei saada yhteyttä. Yritä uudelleen"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
 msgstr "Viimeistä 2FA-tunnistetta ei voi poistaa"
@@ -1234,6 +1238,14 @@ msgstr "Valitse turvallinen salasana"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Valitse pienempi tiedosto. Tämä on liian suuri tiedostopalvelimelle."
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose a smaller image"
+msgstr "Valitse pienempi kuva"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose an image file"
+msgstr "Valitse kuvatiedosto"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Valitse tiedosto"
@@ -1357,6 +1369,10 @@ msgstr "Sulje irrotettu palvelintiedotteet-näkymä"
 #: src/components/layout/SearchPane.tsx
 msgid "Close search"
 msgstr "Sulje haku"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Sulje komento liittääksesi tiedostoja"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
@@ -2501,6 +2517,10 @@ msgstr "Kutista kaikki"
 msgid "Folder name"
 msgstr "Kansion nimi"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Kansion asetukset"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Yksityisviesteille ja maininnoille"
@@ -3107,6 +3127,10 @@ msgstr "Kirjaudu sisään"
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Kirjaudu uudelleen"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Log in to upload an avatar"
+msgstr "Kirjaudu sisään ladataksesi avatarin"
 
 #. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
@@ -3842,6 +3866,10 @@ msgstr "päälle"
 msgid "Online"
 msgstr "Verkossa"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Only channel ops can change this"
+msgstr "Vain kanavan operaattorit voivat muuttaa tämän"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
 msgstr "Yhdistä vain valitsemiisi palvelimiin"
@@ -4509,6 +4537,10 @@ msgstr "Poista reaktio {emoji}"
 msgid "Remove Rule"
 msgstr "Poista sääntö"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "Poista liitetyt tiedostot suorittaaksesi komennon"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "Nimeä kanava uudelleen"
@@ -4521,10 +4553,6 @@ msgstr "Nimeä kansio uudelleen"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "Nimeä uudelleen tai poista {0}"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Nimeä kansio uudelleen tai poista se"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."
@@ -5752,6 +5780,10 @@ msgstr "Lataa avatar"
 #: src/lib/mediaUpload.ts
 msgid "Upload cancelled."
 msgstr "Lataus peruutettu."
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Upload failed. Try again"
+msgstr "Lataus epäonnistui. Yritä uudelleen"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"

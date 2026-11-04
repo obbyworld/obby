@@ -130,8 +130,7 @@ function tryDispatchBotCommand(
     if (value !== undefined) options[o.name] = value;
   }
 
-  sendBotCommand(serverId, channel, bot, cmd, options);
-  return true;
+  return sendBotCommand(serverId, channel, bot, cmd, options);
 }
 
 // Where a command may be invoked. Prefer the spec `contexts`; fall back to the
@@ -148,6 +147,20 @@ function resolveContexts(cmd: BotCommand): ("public" | "private" | "pm")[] {
   return out.length > 0 ? out : [priv ? "private" : "public"];
 }
 
+type BotCommandRoute = "public" | "private" | "pm";
+
+// One invocation goes out once: a channel uses its public or private form,
+// and anywhere else, or a command offered only in DMs, goes to the bot.
+export function botCommandRoute(
+  cmd: BotCommand,
+  isInChannel: boolean,
+): BotCommandRoute | null {
+  const contexts = resolveContexts(cmd);
+  if (isInChannel && contexts.includes("public")) return "public";
+  if (isInChannel && contexts.includes("private")) return "private";
+  return contexts.includes("pm") ? "pm" : null;
+}
+
 export function sendBotCommand(
   serverId: string,
   channel: Channel | null,
@@ -156,39 +169,37 @@ export function sendBotCommand(
   options: Record<string, string | number | boolean>,
 ): boolean {
   if (!ircClient.isSocketOpen(serverId)) return false;
-  const contexts = resolveContexts(cmd);
-  const canPublic = contexts.includes("public");
-  const canPrivate = contexts.includes("private");
-  const canPm = contexts.includes("pm");
-
   // Per spec §Invoking a command: the base64 of the compact JSON invocation
   // rides in +draft/bot-cmd. How it is addressed depends on the context.
-  if (channel && canPublic) {
-    // public: TAGMSG to the channel. Name the target bot so that when several
-    // bots in the channel share a command name, only the intended one acts.
-    const payload = { name: cmd.name, options, bot };
-    const b64 = base64EncodeUtf8(JSON.stringify(payload));
-    ircClient.sendRaw(
-      serverId,
-      `@+draft/bot-cmd=${b64} TAGMSG ${channel.name}`,
-    );
+  switch (botCommandRoute(cmd, channel !== null)) {
+    case "public": {
+      // Name the target bot so that when several bots in the channel share a
+      // command name, only the intended one acts.
+      const payload = { name: cmd.name, options, bot };
+      const b64 = base64EncodeUtf8(JSON.stringify(payload));
+      ircClient.sendRaw(
+        serverId,
+        `@+draft/bot-cmd=${b64} TAGMSG ${channel?.name}`,
+      );
+      return true;
+    }
+    case "private": {
+      // The channel travels in the payload, since +draft/channel-context is
+      // not valid on TAGMSG.
+      const payload = { name: cmd.name, options, channel: channel?.name };
+      const b64 = base64EncodeUtf8(JSON.stringify(payload));
+      ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
+      return true;
+    }
+    case "pm": {
+      const payload = { name: cmd.name, options };
+      const b64 = base64EncodeUtf8(JSON.stringify(payload));
+      ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
+      return true;
+    }
+    case null:
+      return false;
   }
-  if (channel && canPrivate) {
-    // private: TAGMSG to the bot. The channel travels in the payload, since
-    // +draft/channel-context is not valid on TAGMSG.
-    const payload = { name: cmd.name, options, channel: channel.name };
-    const b64 = base64EncodeUtf8(JSON.stringify(payload));
-    ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
-  }
-  if (canPm) {
-    // pm: TAGMSG to the bot, no channel.
-    const payload = { name: cmd.name, options };
-    const b64 = base64EncodeUtf8(JSON.stringify(payload));
-    ircClient.sendRaw(serverId, `@+draft/bot-cmd=${b64} TAGMSG ${bot}`);
-  } else {
-    return false;
-  }
-  return true;
 }
 
 /** How long to wait before flipping a pending message to "failed". */

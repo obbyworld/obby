@@ -39,7 +39,7 @@ import {
   summarizeFolders,
 } from "../../lib/channelFolders";
 import ircClient from "../../lib/ircClient";
-import { serverFilehosts } from "../../lib/ircUtils";
+import { getChannelAvatarUrl, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { isTauriDesktop, isTauriMobile } from "../../lib/platformUtils";
 import { getLiveVoiceCalls, subscribeLiveVoiceCalls } from "../../lib/voice";
@@ -380,7 +380,12 @@ export const ChannelList: React.FC = () => {
     ? ""
     : "hover:bg-discord-dark-100 hover:text-discord-channels-active";
 
-  const folderSummaries = summarizeFolders(channelEntries);
+  const folderSummaries = summarizeFolders(channelEntries, (channel) => {
+    const url = getChannelAvatarUrl(channel.metadata, 16);
+    return canShowAvatarUrl(url, serverFilehosts(selectedServer), mediaSettings)
+      ? url
+      : undefined;
+  });
 
   const renderChannelEntries = () => {
     let folder: ChannelFolder | null = null;

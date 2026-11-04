@@ -804,6 +804,7 @@ export const ChatArea: React.FC<{
     [selectedServer, selectedPrivateChatId],
   );
 
+  const hasAttachmentsRef = useRef(false);
   const command = useCommandInvocation({
     serverId: selectedServerId,
     channel: selectedChannel ?? null,
@@ -816,6 +817,7 @@ export const ChatArea: React.FC<{
       recordSentInput(channelKey, run);
       messageHistory.resetHistory();
     },
+    hasAttachments: () => hasAttachmentsRef.current,
   });
 
   const pendingBotCommandPick = useStore(
@@ -1168,6 +1170,7 @@ export const ChatArea: React.FC<{
   }, [channelKey]);
 
   const attachments = attachmentsByChannel[channelKey] ?? NO_ATTACHMENTS;
+  hasAttachmentsRef.current = attachments.length > 0;
 
   const reportUploadFailure = (message: string) =>
     useStore.getState().addGlobalNotification({
@@ -1583,6 +1586,10 @@ export const ChatArea: React.FC<{
 
   const handleSelectedFiles = (files: File[]) => {
     if (files.length === 0) return;
+    if (command.invocation) {
+      command.refuseFiles();
+      return;
+    }
     attachFiles(channelKey, files);
     inputRef.current?.focus();
   };
@@ -1643,11 +1650,15 @@ export const ChatArea: React.FC<{
   };
 
   const handleLocationShare = (url: string) => {
+    setIsLocationModalOpen(false);
+    if (command.invocation) {
+      command.refuseFiles();
+      return;
+    }
     updateAttachments(channelKey, (prev) => [
       ...prev,
       { id: uuidv4(), kind: "link", url, label: t`Location` },
     ]);
-    setIsLocationModalOpen(false);
     inputRef.current?.focus();
   };
 

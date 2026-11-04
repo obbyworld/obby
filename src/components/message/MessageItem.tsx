@@ -1,11 +1,12 @@
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import type * as React from "react";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { workflowIdFromTags } from "../../lib/botTools";
 import { formatCopyAuthor } from "../../lib/chatMarkdownCopy";
 import { renderWithCustomEmoji, useEmojiResolver } from "../../lib/customEmoji";
@@ -27,7 +28,6 @@ import {
   type LinkLabels,
   makeLinkLabels,
   processMarkdownInText,
-  serverFilehosts,
 } from "../../lib/ircUtils";
 import {
   canShowMedia,
@@ -40,6 +40,7 @@ import {
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { isWhisper } from "../../lib/messageGrouping";
 import useStore, { loadSavedMetadata } from "../../store";
+import { serverSupportsMetadata } from "../../store/helpers";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
 import MessageReaderSheet from "../mobile/MessageReaderSheet";
@@ -306,6 +307,15 @@ export const MessageItem = memo((props: MessageItemProps) => {
     (state) => state.metadataChangeCounter,
   );
 
+  const supportsMetadata = useStore((state) =>
+    serverId ? serverSupportsMetadata(state, serverId) : false,
+  );
+  // Authors of loaded history never speak live, so we fetch their profile when their message shows.
+  useEffect(() => {
+    if (!serverId || !showHeader || !supportsMetadata || isCurrentUser) return;
+    useStore.getState().metadataList(serverId, message.userId);
+  }, [serverId, showHeader, supportsMetadata, isCurrentUser, message.userId]);
+
   // useMemo instead of useStore — safe to read localStorage without infinite loop via useSyncExternalStore
   // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
   const pmUserMetadata = useMemo(() => {
@@ -315,8 +325,28 @@ export const MessageItem = memo((props: MessageItemProps) => {
     return getUserMetadata(pmUsername, serverId);
   }, [metadataChangeCounter, userKey, rawMessageUser, serverId]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: metadataChangeCounter is intentional reactive trigger
+  const absentAuthorMetadata = useMemo(() => {
+    if (userKey !== "none" || !serverId) return null;
+    return getUserMetadata(message.userId, serverId);
+  }, [metadataChangeCounter, userKey, message.userId, serverId]);
+
   const messageUser: User | undefined = useMemo(() => {
-    if (!rawMessageUser) return undefined;
+    if (!rawMessageUser) {
+      if (!absentAuthorMetadata) return undefined;
+      return {
+        id: message.userId,
+        username: message.userId,
+        realname: "",
+        account: "",
+        isOnline: false,
+        isAway: false,
+        status: "",
+        isBot: false,
+        isIrcOp: false,
+        metadata: absentAuthorMetadata,
+      };
+    }
 
     // For PM users, rawMessageUser is the privateChat object
     // We need to construct a proper User object
@@ -339,7 +369,13 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
     // For channel users, rawMessageUser is already a proper User object
     return rawMessageUser as User;
-  }, [rawMessageUser, pmUserMetadata, userKey]);
+  }, [
+    rawMessageUser,
+    pmUserMetadata,
+    absentAuthorMetadata,
+    message.userId,
+    userKey,
+  ]);
 
   const avatarUrl = messageUser?.metadata?.avatar?.value;
   const displayName = messageUser?.metadata?.["display-name"]?.value;
@@ -363,26 +399,20 @@ export const MessageItem = memo((props: MessageItemProps) => {
 
   // Every row subscribes here, so we select plain values: a whole server
   // object changes on any channel update and would re-render every message.
-  // The filehost origins travel as one string so the shallow compare holds.
-  const { canServerRedact, fileHostsKey, channelEmojiUrl, serverEmojiPackUrl } =
-    useStore(
-      useShallow((state) => {
-        const server = state.servers.find((s) => s.id === message.serverId);
-        return {
-          canServerRedact: !!server?.capabilities?.includes(
-            "draft/message-redaction",
-          ),
-          fileHostsKey: serverFilehosts(server).join(" "),
-          channelEmojiUrl: server?.channels.find((c) => c.id === channelId)
-            ?.metadata?.["draft/emoji"]?.value,
-          serverEmojiPackUrl: server?.emojiPackUrl,
-        };
-      }),
-    );
-  const fileHosts = useMemo(
-    () => fileHostsKey.split(" ").filter(Boolean),
-    [fileHostsKey],
+  const { canServerRedact, channelEmojiUrl, serverEmojiPackUrl } = useStore(
+    useShallow((state) => {
+      const server = state.servers.find((s) => s.id === message.serverId);
+      return {
+        canServerRedact: !!server?.capabilities?.includes(
+          "draft/message-redaction",
+        ),
+        channelEmojiUrl: server?.channels.find((c) => c.id === channelId)
+          ?.metadata?.["draft/emoji"]?.value,
+        serverEmojiPackUrl: server?.emojiPackUrl,
+      };
+    }),
   );
+  const fileHosts = useServerFilehosts(message.serverId);
   const mediaVisibilityLevel = useStore(
     useCallback((state) => state.globalSettings.mediaVisibilityLevel, []),
   );
@@ -516,7 +546,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
     [strippedContent],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the visibility flags derive from mediaVisibilityLevel, and fileHosts from fileHostsKey
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the visibility flags derive from mediaVisibilityLevel
   const mediaEntries = useMemo(() => {
     return allMediaEntries.filter((e) =>
       canShowMedia(
@@ -525,7 +555,7 @@ export const MessageItem = memo((props: MessageItemProps) => {
         fileHosts,
       ),
     );
-  }, [allMediaEntries, mediaVisibilityLevel, fileHostsKey]);
+  }, [allMediaEntries, mediaVisibilityLevel, fileHosts]);
 
   const [showAllImages, setShowAllImages] = useState(false);
 

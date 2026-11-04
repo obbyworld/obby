@@ -1,12 +1,9 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { decodeHtmlEntities } from "../../lib/htmlEntities";
-import {
-  findFirstUrl,
-  isUrlFromTrustedSource,
-  serverFilehosts,
-} from "../../lib/ircUtils";
+import { findFirstUrl, isUrlFromTrustedSource } from "../../lib/ircUtils";
 import { extractHostname, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { openExternalUrl } from "../../lib/openUrl";
@@ -34,9 +31,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   const { showSafeMedia, showExternalContent } = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
-  const server = serverId
-    ? useStore.getState().servers.find((s) => s.id === serverId)
-    : null;
+  const fileHosts = useServerFilehosts(serverId);
 
   // Don't render if there's no content to show
   if (!title && !snippet && !imageUrl) {
@@ -52,7 +47,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
   // Check if image is from a trusted source (server filehost or globally configured trusted URLs)
   const isTrustedImage =
-    imageUrl && isUrlFromTrustedSource(imageUrl, serverFilehosts(server));
+    imageUrl && isUrlFromTrustedSource(imageUrl, fileHosts);
   // Show image if it's from a trusted source and safe media is enabled, or if external content is allowed
   const shouldShowImage =
     imageUrl && ((isTrustedImage && showSafeMedia) || showExternalContent);
