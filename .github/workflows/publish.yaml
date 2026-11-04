@@ -44,14 +44,17 @@ jobs:
         id: package-version
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+          # A pre-release is the next patch, so we build every app and file
+          # name with that version too.
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
             echo "tag_name=v$VERSION" >> "$GITHUB_OUTPUT"
           else
             IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-            NEXT_PATCH=$((PATCH + 1))
-            echo "tag_name=v${MAJOR}.${MINOR}.${NEXT_PATCH}-pre" >> "$GITHUB_OUTPUT"
+            NEXT_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+            echo "version=$NEXT_VERSION" >> "$GITHUB_OUTPUT"
+            echo "tag_name=v${NEXT_VERSION}-pre" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Compute previous release tag and generate notes
@@ -84,6 +87,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.package-version.outputs.tag_name }}
+
+      # Every main push and dispatch reuses the pre-release, so we point its tag
+      # at the commit we build and drop files an earlier version left behind.
+      - name: Point the pre-release at this build
+        if: github.ref_type != 'tag'
+        run: |
+          TAGS=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$TAG_NAME" --jq '.[].ref')
+          if grep -qxF "refs/tags/$TAG_NAME" <<< "$TAGS"; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG_NAME" \
+              -f sha="$GITHUB_SHA" -F force=true
+          fi
+
+          RELEASES=$(gh release list -R "$GITHUB_REPOSITORY" --limit 100 --json tagName --jq '.[].tagName')
+          if ! grep -qxF "$TAG_NAME" <<< "$RELEASES"; then
+            exit 0
+          fi
+
+          gh release view "$TAG_NAME" -R "$GITHUB_REPOSITORY" --json assets \
+            --jq ".assets[].name | select(contains(\"$VERSION\") | not)" |
+            while read -r OLD_FILE; do
+              gh release delete-asset "$TAG_NAME" "$OLD_FILE" -R "$GITHUB_REPOSITORY" --yes
+            done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.package-version.outputs.tag_name }}
+          VERSION: ${{ steps.package-version.outputs.version }}
 
   publish-tauri:
     needs: collect-version
@@ -139,6 +168,11 @@ jobs:
 
       - name: install frontend dependencies
         run: npm install
+
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
 
       - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1.0.0
         env:
@@ -219,6 +253,11 @@ jobs:
 
       - name: install frontend dependencies
         run: npm install
+
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
 
       - name: Build app
         run: npm run tauri build -- --verbose
@@ -301,6 +340,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
 
       - name: Build app bundle
         run: npm run tauri android build
@@ -412,6 +456,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
 
       - name: Create internal version code
         id: playstore_version
@@ -539,6 +588,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@5b842231ba77f5c045dba54ac5560fed2db780e2 # nightly
         with:
@@ -641,6 +695,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Set the release version
+        run: npm pkg set version="$VERSION"
+        env:
+          VERSION: ${{ needs.collect-version.outputs.current_version }}
 
       - name: Build
         run: |
