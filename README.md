@@ -31,7 +31,9 @@ When Obby opens, pick a network from **Discover** or add your own server, then c
 
 ## What you get
 
-Obby speaks [IRCv3](https://ircv3.net), the modern IRC standard, plus a few [Obby extensions](https://github.com/obbyworld/extensions). It checks what each server supports and turns those features on, so it works with any IRC server. [ObbyIRCd](https://github.com/obbyworld/ObbyIRCd) supports all of them.
+Obby is an IRC client that supports [IRCv3](https://ircv3.net), the modern IRC standard, plus a few [Obby extensions](https://github.com/obbyworld/extensions). It works with any IRC server and turns on each feature that the server supports.
+
+Obby's own server is [ObbyIRCd](https://github.com/obbyworld/ObbyIRCd). It supports every feature in the list below, so run it if you want the full Obby experience for your community.
 
 <p align="center">
   <img src="screenshots/android-general.webp" width="240" alt="Android: a channel with replies, reactions and mentions">
