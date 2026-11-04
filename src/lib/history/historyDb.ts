@@ -489,32 +489,64 @@ async function deleteWithReactions(
   await deleteRows(tx, [...doomed.values()]);
 }
 
+// Copies of one gap describe the same stretch, so we keep one of them, the
+// lost one when the server already said it no longer has that stretch.
+export function splitDuplicateGaps(gaps: HistoryGap[]): {
+  kept: HistoryGap[];
+  duplicates: HistoryGap[];
+} {
+  const byRange = new Map<string, HistoryGap>();
+  const duplicates: HistoryGap[] = [];
+  for (const gap of gaps) {
+    const key = `${gap.server}\n${gap.target}\n${gap.from}\n${gap.to}`;
+    const seen = byRange.get(key);
+    if (!seen) byRange.set(key, gap);
+    else if (gap.lost && !seen.lost) {
+      duplicates.push(seen);
+      byRange.set(key, gap);
+    } else duplicates.push(gap);
+  }
+  return { kept: [...byRange.values()], duplicates };
+}
+
+async function readGapsWithoutDuplicates(
+  tx: IDBTransaction,
+  range?: IDBKeyRange,
+): Promise<HistoryGap[]> {
+  const store = tx.objectStore(GAPS);
+  const all = await awaitRequest<HistoryGap[]>(
+    range ? store.index("conv").getAll(range) : store.getAll(),
+  );
+  const { kept, duplicates } = splitDuplicateGaps(all);
+  for (const gap of duplicates) await awaitRequest(store.delete(gap.id));
+  return kept;
+}
+
 export function gapsFor(server: string, target: string): Promise<HistoryGap[]> {
   return enqueue([], (db) =>
-    inTx(db, [GAPS], "readonly", (tx) =>
-      awaitRequest<HistoryGap[]>(
-        tx
-          .objectStore(GAPS)
-          .index("conv")
-          .getAll(IDBKeyRange.only([server, target])),
-      ),
+    inTx(db, [GAPS], "readwrite", (tx) =>
+      readGapsWithoutDuplicates(tx, IDBKeyRange.only([server, target])),
     ),
   );
 }
 
 export async function fillableGaps(): Promise<HistoryGap[]> {
   const gaps = await enqueue<HistoryGap[]>([], (db) =>
-    inTx(db, [GAPS], "readonly", (tx) =>
-      awaitRequest<HistoryGap[]>(tx.objectStore(GAPS).getAll()),
-    ),
+    inTx(db, [GAPS], "readwrite", (tx) => readGapsWithoutDuplicates(tx)),
   );
   return gaps.filter((gap) => !gap.lost);
 }
 
+// A connection can compute the same gap again, so we store a stretch once.
 export function addGap(gap: Omit<HistoryGap, "id">): Promise<void> {
   return enqueue(undefined, (db) =>
     inTx(db, [GAPS], "readwrite", async (tx) => {
-      await awaitRequest(tx.objectStore(GAPS).add(gap));
+      const store = tx.objectStore(GAPS);
+      const existing = await awaitRequest<HistoryGap[]>(
+        store.index("conv").getAll(IDBKeyRange.only([gap.server, gap.target])),
+      );
+      if (existing.some((g) => g.from <= gap.from && g.to >= gap.to)) return;
+      await awaitRequest(store.add(gap));
     }),
   );
 }

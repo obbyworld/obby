@@ -187,6 +187,44 @@ describe("gaps", () => {
     expect(await db.gapsFor("s1", "#a")).toEqual([]);
     expect(await db.gapsFor("s1", "#b")).toHaveLength(1);
   });
+
+  it("stores a stretch once, however often a connection computes it", async () => {
+    const gap = { server: "s1", target: "#a", from: 10, to: 20, lost: false };
+    await db.addGap(gap);
+    await db.addGap(gap);
+    await db.addGap({ ...gap, from: 12, to: 18 });
+    expect(await db.gapsFor("s1", "#a")).toHaveLength(1);
+  });
+
+  it("keeps one lost copy of a stretch saved many times", () => {
+    const copy = (id: number, lost: boolean) => ({
+      id,
+      server: "s1",
+      target: "#a",
+      from: 10,
+      to: 20,
+      lost,
+    });
+    const { kept, duplicates } = db.splitDuplicateGaps([
+      copy(1, false),
+      copy(2, true),
+      copy(3, false),
+    ]);
+    expect(kept).toEqual([copy(2, true)]);
+    expect(duplicates.map((g) => g.id).sort()).toEqual([1, 3]);
+  });
+
+  it("deletes the stored copies of a stretch when it reads them", async () => {
+    const gap = { server: "s1", target: "#a", from: 10, to: 20 };
+    await db.updateGap({ ...gap, id: 101, lost: false });
+    await db.updateGap({ ...gap, id: 102, lost: true });
+
+    expect(await db.gapsFor("s1", "#a")).toEqual([
+      { ...gap, id: 102, lost: true },
+    ]);
+    await db.deleteGap(102);
+    expect(await db.gapsFor("s1", "#a")).toEqual([]);
+  });
 });
 
 describe("pruneToLimit", () => {
