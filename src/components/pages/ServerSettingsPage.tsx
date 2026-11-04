@@ -1,8 +1,10 @@
 import { t } from "@lingui/core/macro";
 import type React from "react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import ircClient from "../../lib/ircClient";
 import { Button } from "../../lib/modal/components";
 import { getBuiltinOAuthConfig } from "../../lib/oauth";
+import { encodeStoredSaslPassword } from "../../lib/sasl/storedPassword";
 import useStore, { loadSavedServers } from "../../store";
 import {
   getLoginState,
@@ -19,6 +21,7 @@ import { SettingGroup, SettingRow, Switch } from "../ui/page/SettingRow";
 import { TextInput } from "../ui/TextInput";
 import type { PageProps } from "./PageHost";
 import { getServerSettingsSections } from "./pageSections";
+import { RegisterAccountSection } from "./RegisterAccountSection";
 
 const sectionIds = ["general", "auth", "oauth", "operator"] as const;
 type SectionId = (typeof sectionIds)[number];
@@ -80,6 +83,8 @@ const LoginSection: React.FC<{
   if (!serverConfig) return null;
 
   const loginState = getLoginState(server);
+  const defaultAccount =
+    ircClient.getNick(serverId) || serverConfig.nickname || undefined;
 
   const saveConfig = (config: Partial<ServerConfig>): void => {
     updateServer(serverId, config);
@@ -89,16 +94,13 @@ const LoginSection: React.FC<{
   };
 
   const logIn = (): void => {
-    // We store SASL passwords with btoa, which takes only Latin-1 characters.
-    const isUnencodable = [...saslPassword].some(
-      (char) => char.charCodeAt(0) > 0xff,
-    );
-    setIsPasswordUnencodable(isUnencodable);
-    if (isUnencodable) return;
+    const storedSaslPassword = encodeStoredSaslPassword(saslPassword);
+    setIsPasswordUnencodable(storedSaslPassword === null);
+    if (storedSaslPassword === null) return;
     saveConfig({
-      saslAccountName: account.trim() || serverConfig.nickname || undefined,
+      saslAccountName: account.trim() || defaultAccount,
       ...(saslPassword
-        ? { saslPassword: btoa(saslPassword), saslEnabled: true }
+        ? { saslPassword: storedSaslPassword, saslEnabled: true }
         : {}),
       ...(password ? { password } : {}),
     });
@@ -138,7 +140,7 @@ const LoginSection: React.FC<{
             <TextInput
               value={account}
               onChange={(e) => setAccount(e.target.value)}
-              placeholder={serverConfig.nickname || t`account`}
+              placeholder={defaultAccount || t`account`}
               autoComplete="username"
               className="field-input"
             />
@@ -522,12 +524,15 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
   const sectionBodies: Record<SectionId, ReactNode> = {
     general: generalSection,
     auth: (
-      <LoginSection
-        serverId={page.serverId}
-        server={server}
-        onRecover={() => setShowRecovery(true)}
-        onChangePassword={() => setShowChangePassword(true)}
-      />
+      <>
+        <LoginSection
+          serverId={page.serverId}
+          server={server}
+          onRecover={() => setShowRecovery(true)}
+          onChangePassword={() => setShowChangePassword(true)}
+        />
+        {server && <RegisterAccountSection server={server} />}
+      </>
     ),
     oauth: oauthSection,
     operator: operatorSection,

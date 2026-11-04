@@ -14,8 +14,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useLongPress } from "../../hooks/useLongPress";
 import ircClient from "../../lib/ircClient";
-import { serverFilehosts } from "../../lib/ircUtils";
-import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import { canShowServerIcon } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
@@ -49,21 +48,13 @@ const ServerIcon: React.FC<ServerIconProps> = ({
   const { t } = useLingui();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const mediaSettings = mediaLevelToSettings(
-    useStore((state) => state.globalSettings.mediaVisibilityLevel),
-  );
-
   const hasMentions =
     server.channels.some((ch) => ch.isMentioned) ||
     server.privateChats?.some((pc) => pc.isMentioned);
   const hasAlerts = useStore((s) => (s.serverAlerts[server.id] ?? 0) > 0);
 
   const iconUrl = server.icon;
-  const showIcon = canShowAvatarUrl(
-    iconUrl,
-    serverFilehosts(server),
-    mediaSettings,
-  );
+  const showIcon = canShowServerIcon(iconUrl);
 
   const getServerInitial = (s: Server): string => {
     const displayName = s.networkName || s.name;

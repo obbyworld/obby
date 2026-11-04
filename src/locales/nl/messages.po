@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, one {# stap} other {# stappen}}"
 msgid "{title} Client"
 msgstr "{title} client"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# kanaal} other {# kanalen}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} gebruikers"
 msgid "{userCount} watching"
 msgstr "{userCount} kijkers"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*kanaal*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -322,6 +322,14 @@ msgstr "<0>{0}</0>, <1>{1}</1> en <2>{2}</2> zijn aan het typen..."
 #: src/components/ui/TypingIndicator.tsx
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> en {3} anderen typen..."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> is niet geregistreerd. Registreer hem om hem te houden"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> is geregistreerd. Log in om deze te gebruiken"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -655,7 +663,7 @@ msgstr "App"
 msgid "Appearance"
 msgstr "Weergave"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Toepassen en vernieuwen"
 
@@ -1077,6 +1085,10 @@ msgstr "Wachtwoord wijzigen"
 msgid "Change the channel name (operators only)"
 msgstr "Kanaalnaam wijzigen (alleen operators)"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Wijzig je nickname om te registreren, deze is niet toegestaan"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Wijzig je bijnaam op deze server"
@@ -1147,7 +1159,7 @@ msgstr "Kanaallink (+L)"
 msgid "Channel name"
 msgstr "Kanaalnaam"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Kanaalnaammasker"
 
@@ -1193,6 +1205,7 @@ msgstr "Kanaalgebonden"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1205,6 +1218,10 @@ msgstr "Chat"
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
 msgstr "Chats en netwerken"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Check the code and try again"
+msgstr "Controleer de code en probeer het opnieuw"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1221,6 +1238,10 @@ msgstr "Kies een bestand kleiner dan {limit}, het maximum dat de bestandshost ac
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Kies een bestand met een extensie. De bestandshost accepteert geen bestanden zonder extensie."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Choose a longer password"
+msgstr "Kies een langer wachtwoord"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1246,7 +1267,7 @@ msgstr "Kies hoeveel externe media in de chat worden geladen."
 msgid "Choose microphone and camera"
 msgstr "Microfoon en camera kiezen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Kies sorteervolgorde"
 
@@ -1367,6 +1388,11 @@ msgstr "Viewer sluiten"
 msgid "Close workflow"
 msgstr "Werkstroom sluiten"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Code"
+msgstr "Code"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "Code geaccepteerd."
@@ -1481,6 +1507,10 @@ msgstr "Sluit een microfoon aan om te praten"
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "Maak verbinding met een server om operatorinstellingen te beheren."
+
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Maak verbinding met de server om de kanalen te tonen."
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
@@ -1644,6 +1674,10 @@ msgstr "Kon GIF's niet laden. Zoek opnieuw om het nogmaals te proberen."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Kon de bestandshost niet bereiken. Controleer je verbinding en probeer het opnieuw."
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not register. Try again"
+msgstr "Registreren mislukt. Probeer het opnieuw"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1653,6 +1687,10 @@ msgstr "Kan het nieuwe wachtwoord niet instellen: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Kan wachtwoord niet bijwerken: {0}"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not verify. Try again"
+msgstr "Verifiëren mislukt. Probeer het opnieuw"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -1684,11 +1722,11 @@ msgstr "Map maken"
 msgid "Create pack"
 msgstr "Pakket maken"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Aangemaakt na (min geleden)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Aangemaakt voor (min geleden)"
 
@@ -1974,6 +2012,11 @@ msgstr "Weergeven wanneer gebruikers kanalen betreden of verlaten"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Wil je deze link in een nieuw tabblad openen?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Niet meer tonen voor deze server"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Niet meer waarschuwen over lage verbindingsbeveiliging voor deze server"
@@ -2065,6 +2108,11 @@ msgstr "Bewerk profiel"
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
 msgstr "Server bewerken"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Email"
+msgstr "E-mail"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
@@ -2224,6 +2272,10 @@ msgstr "Voer een getal in voor {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Voer een URL in. Gebruik {sizeToken} in de URL voor dynamische grootte. Voorbeeld: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter a valid email address"
+msgstr "Voer een geldig e-mailadres in"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2236,6 +2288,10 @@ msgstr "Voer accountnaam in..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Voer een accountnaam in om met SASL PLAIN in te loggen voordat je kanalen joint. Laat leeg om je bijnaam te gebruiken."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Code invoeren"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2303,6 +2359,14 @@ msgstr "Voer de 6-cijferige code uit je e-mail in."
 msgid "Enter the account name you want to recover."
 msgstr "Voer de accountnaam in die je wilt herstellen."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Voer de code in die naar je e-mail is gestuurd"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Voer de code in die naar je e-mail is gestuurd."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
 msgstr "Voer het serverwachtwoord alleen in als je netwerk dat vereist. Het staat los van je accountwachtwoord."
@@ -2348,7 +2412,7 @@ msgstr "VoorbeeldNET"
 msgid "Exceptions"
 msgstr "Uitzonderingen"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Uitsluiten kanaalnaammasker"
 
@@ -2449,11 +2513,11 @@ msgstr "Filter scheldwoorden (+G)"
 msgid "Filter members…"
 msgstr "Leden filteren…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filters"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filters zijn niet beschikbaar op deze server"
 
@@ -2854,7 +2918,7 @@ msgid "is now known as **{newNick}**"
 msgstr "is nu bekend als **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Deelnemen"
@@ -2862,7 +2926,7 @@ msgstr "Deelnemen"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Deelnemen aan {0}"
 
@@ -2900,7 +2964,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Deelnemen aan spraakkanaal {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Betreden"
 
@@ -3100,6 +3164,8 @@ msgstr "Locatie"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Locatietoegang is geweigerd. Sta locatietoegang toe in je browser- of systeeminstellingen en probeer het opnieuw."
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Inloggen"
@@ -3202,7 +3268,7 @@ msgstr "Markeer jezelf als terug"
 msgid "Mark yourself back"
 msgstr "Markeer jezelf als terug"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Max. gebruikers"
 
@@ -3349,7 +3415,7 @@ msgstr "Microfoon {0}"
 msgid "Microphone level"
 msgstr "Microfoonniveau"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Min. gebruikers"
 
@@ -3587,7 +3653,7 @@ msgstr "Geen camera gedetecteerd."
 msgid "No Central Server:"
 msgstr "Geen centrale server:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Geen kanalen gevonden. Wijzig de zoekopdracht of filters."
 
@@ -3719,7 +3785,7 @@ msgstr "Nog geen slashcommando's"
 msgid "No speaker detected."
 msgstr "Geen luidspreker gedetecteerd."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Geen onderwerp"
 
@@ -3863,7 +3929,7 @@ msgid "Open"
 msgstr "Openen"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Open {0}"
 
@@ -4010,6 +4076,8 @@ msgstr "Packs"
 msgid "Pages"
 msgstr "Pagina's"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4498,16 @@ msgstr "Vernieuwen"
 msgid "Refresh WHOIS"
 msgstr "WHOIS vernieuwen"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register"
+msgstr "Registreren"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Registreer {nick} als je account op deze server."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Registreren voor een account"
@@ -4705,7 +4783,7 @@ msgstr "Zoeken"
 msgid "Search again"
 msgstr "Opnieuw zoeken"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Zoek kanalen..."
 
@@ -4912,11 +4990,6 @@ msgstr "Onversleuteld verstuurd omdat het bestand te groot is om te versleutelen
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Serverkanalen"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5298,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (beheer)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Sorteer op naam"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Sorteer op gebruikers"
 
@@ -5404,6 +5477,10 @@ msgstr "Dat scherm is niet meer beschikbaar. Kies een ander scherm."
 #: src/lib/voiceErrors.ts
 msgid "The call server refused the request. Try again in a moment."
 msgstr "De gespreksserver heeft het verzoek geweigerd. Probeer het zo meteen opnieuw."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "De code is verlopen. Vraag de serveroperators om hulp"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -5611,11 +5688,11 @@ msgstr "tool"
 msgid "Topic"
 msgstr "Onderwerp"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Onderwerp ingesteld na (min geleden)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Onderwerp ingesteld voor (min geleden)"
 
@@ -5790,6 +5867,7 @@ msgstr "Gebruik een beveiligde websocketpoort."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Gebruik een server met IRCv3 METADATA om je avatar, weergavenaam en status in te stellen."
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Gebruik alleen Latijnse tekens in het wachtwoord"
@@ -5869,6 +5947,7 @@ msgstr "Een geldige serverpoort is vereist"
 msgid "Verified account"
 msgstr "Geverifieerd account"
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verifiëren"
@@ -6138,6 +6217,10 @@ msgstr "Je bent een IRC Operator"
 msgid "You are no longer in this channel"
 msgstr "Je bent niet meer in dit kanaal"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Je bent niet ingelogd"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Je hebt een paar minuten om een nieuw wachtwoord te kiezen."
@@ -6158,6 +6241,10 @@ msgstr "Je hebt dit contact geverifieerd."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Je bent verbonden met <0>{0}</0>."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Je account"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

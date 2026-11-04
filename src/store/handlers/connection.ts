@@ -92,6 +92,16 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
       // that no longer protects anything. Encryption resumes after reconnecting,
       // which is why this is not the same call the user's End encryption makes.
       store.getState().dropE2EESessionsForServer(serverId);
+      // A LIST or a REGISTER cut off by the drop never gets its reply, so we
+      // stop waiting for both.
+      store.setState((state) => ({
+        listingInProgress: { ...state.listingInProgress, [serverId]: false },
+        servers: state.servers.map((server) =>
+          server.id === serverId && server.nickClaim?.stage === "sending"
+            ? { ...server, nickClaim: undefined }
+            : server,
+        ),
+      }));
     }
 
     store.setState((state) => {

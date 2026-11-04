@@ -512,7 +512,51 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
     }));
   });
 
-  ircClient.on("METADATA_FAIL", ({ code, target, key, retryAfter }) => {
-    console.error(`METADATA failed: ${code}`, { target, key, retryAfter });
+  // A request that ends without a value leaves the queue too, so the channel
+  // browser can ask again later.
+  const dropFromFetchQueue = (serverId: string, target: string | undefined) => {
+    if (
+      !target ||
+      !store.getState().channelMetadataFetchQueue[serverId]?.has(target)
+    )
+      return;
+    store.setState((state) => {
+      const queue = new Set(state.channelMetadataFetchQueue[serverId]);
+      queue.delete(target);
+      return {
+        channelMetadataFetchQueue: {
+          ...state.channelMetadataFetchQueue,
+          [serverId]: queue,
+        },
+      };
+    });
+  };
+
+  // A channel without the key is an answer too, so it counts as fetched and
+  // waits out the same cache time as one with a value.
+  ircClient.on("METADATA_KEYNOTSET", ({ serverId, target }) => {
+    if (!store.getState().channelMetadataFetchQueue[serverId]?.has(target))
+      return;
+    dropFromFetchQueue(serverId, target);
+    store.setState((state) => {
+      const cache = state.channelMetadataCache[serverId] ?? {};
+      return {
+        channelMetadataCache: {
+          ...state.channelMetadataCache,
+          [serverId]: {
+            ...cache,
+            [target]: { ...cache[target], fetchedAt: Date.now() },
+          },
+        },
+      };
+    });
   });
+
+  ircClient.on(
+    "METADATA_FAIL",
+    ({ serverId, code, target, key, retryAfter }) => {
+      dropFromFetchQueue(serverId, target);
+      console.error(`METADATA failed: ${code}`, { target, key, retryAfter });
+    },
+  );
 }

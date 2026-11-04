@@ -4,8 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { FaPalette, FaPencilAlt, FaRedo, FaTrash } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
 import { useLongPress } from "../../hooks/useLongPress";
-import { serverFilehosts } from "../../lib/ircUtils";
-import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import { canShowServerIcon } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
@@ -170,16 +169,8 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
   const { t } = useLingui();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const mediaSettings = mediaLevelToSettings(
-    useStore((state) => state.globalSettings.mediaVisibilityLevel),
-  );
-
   const iconUrl = server.icon;
-  const showIcon = canShowAvatarUrl(
-    iconUrl,
-    serverFilehosts(server),
-    mediaSettings,
-  );
+  const showIcon = canShowServerIcon(iconUrl);
 
   const hasMentions =
     server.channels.some((ch) => ch.isMentioned) ||

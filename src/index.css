@@ -166,6 +166,21 @@
   .status-badge {
     @apply w-[22px] h-[22px] shrink-0 rounded-full flex items-center justify-center text-[11px];
   }
+  /* The account and connection strips above the channel list share one look. */
+  .strip-card {
+    @apply mb-2 p-2.5 rounded-md border flex flex-col gap-2;
+  }
+  .strip-header {
+    @apply flex items-start gap-2 text-[13px] text-discord-text-normal;
+  }
+  .strip-action {
+    @apply h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold;
+  }
+  @media (pointer: coarse) {
+    .strip-action {
+      @apply min-h-11;
+    }
+  }
 }
 
 /* A field sits beside its label once the row has room, and wraps under it on a phone. */
@@ -194,13 +209,19 @@
 }
 
 /* We draw the compact-link glyph from an inline SVG mask, which stays offline. */
+/* We place the icon in the link's own start padding so a line break never separates it from the link. */
+.link-compact {
+  position: relative;
+  padding-left: 1.1em;
+}
+
 .link-compact::before {
   content: "";
-  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0.2em;
   width: 0.8em;
   height: 0.8em;
-  margin-right: 0.3em;
-  vertical-align: -0.05em;
   background-color: currentColor;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center / contain no-repeat;

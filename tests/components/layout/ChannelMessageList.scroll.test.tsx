@@ -239,6 +239,46 @@ describe("ChannelMessageList jump to message", () => {
     height.mockRestore();
   });
 
+  it("grows the window to an older message when the jump mounts the list", () => {
+    act(() => useStore.getState().revealMessage("msg-5"));
+
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+
+    expect(
+      container.querySelector('[data-message-id="msg-5"]')?.classList,
+    ).toContain("jump-highlight");
+    expect(useStore.getState().ui.messageJump).toBeNull();
+  });
+
+  it("jumps to a loaded message when leaving an older window for the present", () => {
+    const older = Array.from({ length: 20 }, (_, i) => makeMsg(`old-${i}`));
+    useStore.setState({
+      messages: { "s1::pm:pm1": older },
+      historyWindows: { "s1::pm:pm1": { until: 0, present: many } },
+    });
+    const { container } = render(<ChannelMessageList {...defaultProps} />);
+    const setTop = vi.spyOn(Element.prototype, "scrollTop", "set");
+    const height = vi
+      .spyOn(Element.prototype, "scrollHeight", "get")
+      .mockReturnValue(5000);
+
+    act(() => {
+      useStore.setState({
+        messages: { "s1::pm:pm1": many },
+        historyWindows: {},
+      });
+      useStore.getState().revealMessage(`msg-${COUNT - 40}`);
+    });
+
+    expect(
+      container.querySelector(`[data-message-id="msg-${COUNT - 40}"]`)
+        ?.classList,
+    ).toContain("jump-highlight");
+    expect(setTop).not.toHaveBeenCalledWith(5000);
+    setTop.mockRestore();
+    height.mockRestore();
+  });
+
   it("centres the jumped row once a hidden list is shown", () => {
     const observed: { callback: ResizeObserverCallback; target?: Element }[] =
       [];

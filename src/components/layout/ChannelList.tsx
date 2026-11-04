@@ -55,6 +55,7 @@ import ChannelFolderHeader from "./ChannelFolderHeader";
 import ChannelRow, { type DragRowProps } from "./ChannelRow";
 import ConnectionStrip from "./ConnectionStrip";
 import NetworkMenu from "./NetworkMenu";
+import NickClaimStrip from "./NickClaimStrip";
 import PrivateChatRow from "./PrivateChatRow";
 import StartPrivateChatRow from "./StartPrivateChatRow";
 import UserPanel, { type PresenceStatus } from "./UserPanel";
@@ -570,6 +571,7 @@ export const ChannelList: React.FC = () => {
         {selectedServer && (
           <>
             <ConnectionStrip server={selectedServer} />
+            <NickClaimStrip server={selectedServer} />
             {isReordering ? (
               <div className="flex items-center gap-2 mb-2 px-1">
                 <div className="flex-1 min-w-0">

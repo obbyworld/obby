@@ -9,6 +9,7 @@ import { e2eeSessionKey } from "../lib/e2ee/session";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
+import { encodeStoredSaslPassword } from "../lib/sasl/storedPassword";
 import { recordPlace, recordSearch } from "../lib/search/recents";
 import { serializeSearchQuery } from "../lib/search/searchQuery";
 import type { SearchQuery, SearchScope } from "../lib/search/searchTypes";
@@ -836,6 +837,15 @@ export interface AppState {
     password: string,
   ) => void;
   verifyAccount: (serverId: string, account: string, code: string) => void;
+  // Registers the nick we use. Returns false when we cannot store the password.
+  claimNick: (
+    serverId: string,
+    account: string,
+    email: string,
+    password: string,
+  ) => boolean;
+  verifyNickClaim: (serverId: string, code: string) => void;
+  hideNickPrompt: (serverId: string) => void;
   // 2FA actions
   twofaStatusQuery: (serverId: string) => void;
   twofaListQuery: (serverId: string) => void;
@@ -1516,6 +1526,7 @@ const useStore = create<AppState>((set, get) => ({
         operOnConnect: savedServer?.operOnConnect,
         skipLocalhostWarning: savedServer?.skipLocalhostWarning,
         skipLinkSecurityWarning: savedServer?.skipLinkSecurityWarning,
+        skipNickPrompt: savedServer?.skipNickPrompt,
         // Preserve existing addedAt timestamp or set current time for new servers
         addedAt: savedServer?.addedAt || Date.now(),
         oauth: mergedOauth ?? savedServer?.oauth,
@@ -1949,6 +1960,51 @@ const useStore = create<AppState>((set, get) => ({
     ircClient.verifyAccount(serverId, account, code);
   },
 
+  claimNick: (serverId, account, email, password) => {
+    const storedPassword = encodeStoredSaslPassword(password);
+    if (storedPassword === null) return false;
+    if (!ircClient.isSocketOpen(serverId)) return true;
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? {
+              ...server,
+              nickClaim: { account, storedPassword, stage: "sending" },
+            }
+          : server,
+      ),
+    }));
+    ircClient.registerAccount(serverId, account, email, password);
+    return true;
+  },
+
+  verifyNickClaim: (serverId, code) => {
+    const claim = get().servers.find((s) => s.id === serverId)?.nickClaim;
+    if (!claim || !ircClient.isSocketOpen(serverId)) return;
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? {
+              ...server,
+              nickClaim: { ...claim, stage: "sending", failure: undefined },
+            }
+          : server,
+      ),
+    }));
+    ircClient.verifyAccount(serverId, claim.account, code);
+  },
+
+  hideNickPrompt: (serverId) => {
+    get().updateServer(serverId, { skipNickPrompt: true });
+    set((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId
+          ? { ...server, isNickPromptHidden: true }
+          : server,
+      ),
+    }));
+  },
+
   twofaStatusQuery: (serverId) => {
     ircClient.sendRaw(serverId, "2FA STATUS");
   },
@@ -2068,9 +2124,10 @@ const useStore = create<AppState>((set, get) => ({
       // Already listing, ignore
       return;
     }
-    // Find the server to check for ELIST support
     const server = state.servers.find((s) => s.id === serverId);
-    const elist = server?.elist;
+    // A server ignores LIST before registration, so we would wait forever for its end.
+    if (!server?.isRegistered) return;
+    const elist = server.elist;
 
     // Use provided filters or get stored filters
     const filterSettings = filters || state.channelListFilters[serverId] || {};

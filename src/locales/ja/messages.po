@@ -249,7 +249,7 @@ msgstr "{stepCount, plural, other {# ステップ}}"
 msgid "{title} Client"
 msgstr "{title} クライアント"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# チャンネル} other {# チャンネル}}"
 
@@ -269,11 +269,11 @@ msgstr "{userCount} 人のユーザー"
 msgid "{userCount} watching"
 msgstr "{userCount} 人が視聴中"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -322,6 +322,14 @@ msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> が入力中..."
 #: src/components/ui/TypingIndicator.tsx
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>、<1>{1}</1>、<2>{2}</2> と他 {3} 人が入力中..."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> は登録されていません。登録して自分のものにしましょう"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> は登録済みです。使用するにはログインしてください"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -655,7 +663,7 @@ msgstr "アプリ"
 msgid "Appearance"
 msgstr "外観"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "適用して更新"
 
@@ -1077,6 +1085,10 @@ msgstr "パスワードを変更"
 msgid "Change the channel name (operators only)"
 msgstr "チャンネル名を変更する（オペレーターのみ）"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "登録するにはニックネームを変更してください。このニックネームは使用できません"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "このサーバーでのニックネームを変更する"
@@ -1147,7 +1159,7 @@ msgstr "チャンネルのリンク (+L)"
 msgid "Channel name"
 msgstr "チャンネル名"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "チャンネル名のマスク"
 
@@ -1193,6 +1205,7 @@ msgstr "チャンネル限定"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1205,6 +1218,10 @@ msgstr "チャット"
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
 msgstr "チャットとネットワーク"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Check the code and try again"
+msgstr "コードを確認して、もう一度お試しください"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1221,6 +1238,10 @@ msgstr "{limit} 未満のファイルを選択してください。これがフ�
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "拡張子のあるファイルを選択してください。ファイルホストは拡張子のないファイルを受け付けません。"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Choose a longer password"
+msgstr "もっと長いパスワードを選んでください"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1246,7 +1267,7 @@ msgstr "チャットで読み込む外部メディアの範囲を選択してく
 msgid "Choose microphone and camera"
 msgstr "マイクとカメラを選択"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "並び順を選択"
 
@@ -1367,6 +1388,11 @@ msgstr "ビューアを閉じる"
 msgid "Close workflow"
 msgstr "ワークフローを閉じる"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Code"
+msgstr "コード"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
 msgstr "コードを確認しました。"
@@ -1481,6 +1507,10 @@ msgstr "話すにはマイクを接続してください"
 #: src/components/pages/SettingsPage.tsx
 msgid "Connect to a server to manage operator settings."
 msgstr "オペレーター設定を管理するにはサーバーに接続してください。"
+
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "サーバーに接続してチャンネル一覧を表示してください。"
 
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
@@ -1644,6 +1674,10 @@ msgstr "GIF を読み込めませんでした。もう一度検索してくだ�
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "ファイルホストに接続できませんでした。接続を確認して、もう一度お試しください。"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not register. Try again"
+msgstr "登録できませんでした。もう一度お試しください"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1653,6 +1687,10 @@ msgstr "新しいパスワードを設定できませんでした: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "パスワードを更新できませんでした: {0}"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not verify. Try again"
+msgstr "確認できませんでした。もう一度お試しください"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -1684,11 +1722,11 @@ msgstr "フォルダを作成"
 msgid "Create pack"
 msgstr "パックを作成"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "作成日時の後 (何分前)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "作成日時の前 (何分前)"
 
@@ -1974,6 +2012,11 @@ msgstr "ユーザーがチャンネルに参加・退出したときに表示す
 msgid "Do you want to open this link in a new tab?"
 msgstr "このリンクを新しいタブで開きますか？"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "このサーバーでは今後表示しない"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "このサーバーのリンクセキュリティが低い場合に警告しない"
@@ -2065,6 +2108,11 @@ msgstr "プロフィールを編集"
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
 msgstr "サーバーを編集"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Email"
+msgstr "メール"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
@@ -2224,6 +2272,10 @@ msgstr "{0} に数値を入力してください"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "URL を入力してください。サイズを動的に指定するには URL に {sizeToken} を使います。例: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter a valid email address"
+msgstr "有効なメールアドレスを入力してください"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2236,6 +2288,10 @@ msgstr "アカウント名を入力..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "チャンネルに参加する前に SASL PLAIN でログインするアカウント名を入力してください。空欄にするとニックネームを使います。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "コードを入力"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2303,6 +2359,14 @@ msgstr "メールに記載された 6 桁のコードを入力してください
 msgid "Enter the account name you want to recover."
 msgstr "復旧したいアカウント名を入力してください。"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "メールに届いたコードを入力してください"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "メールに送信されたコードを入力してください。"
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
 msgstr "ネットワークでサーバーパスワードが必要な場合のみ入力してください。アカウントのパスワードとは別のものです。"
@@ -2348,7 +2412,7 @@ msgstr "サンプルNET"
 msgid "Exceptions"
 msgstr "例外"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "除外するチャンネル名のマスク"
 
@@ -2449,11 +2513,11 @@ msgstr "不適切な語をフィルター (+G)"
 msgid "Filter members…"
 msgstr "メンバーをフィルター…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "フィルター"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "このサーバーではフィルターは利用できません"
 
@@ -2854,7 +2918,7 @@ msgid "is now known as **{newNick}**"
 msgstr "は現在 **{newNick}** として知られています"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "参加"
@@ -2862,7 +2926,7 @@ msgstr "参加"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "{0} に参加"
 
@@ -2900,7 +2964,7 @@ msgid "Join voice channel {channelName}"
 msgstr "{channelName} のボイスチャンネルに参加"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "参加"
 
@@ -3100,6 +3164,8 @@ msgstr "位置情報"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "位置情報へのアクセスが拒否されました。ブラウザまたはシステムの設定で位置情報へのアクセスを許可してから、もう一度お試しください。"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "ログイン"
@@ -3202,7 +3268,7 @@ msgstr "自分を戻ったと設定する"
 msgid "Mark yourself back"
 msgstr "復帰にする"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "最大ユーザー数"
 
@@ -3349,7 +3415,7 @@ msgstr "マイク {0}"
 msgid "Microphone level"
 msgstr "マイクレベル"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "最小ユーザー数"
 
@@ -3587,7 +3653,7 @@ msgstr "カメラが検出されませんでした。"
 msgid "No Central Server:"
 msgstr "中央サーバーなし："
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "チャンネルが見つかりません。検索条件またはフィルターを変更してください。"
 
@@ -3719,7 +3785,7 @@ msgstr "スラッシュコマンドはまだありません"
 msgid "No speaker detected."
 msgstr "スピーカーが検出されませんでした。"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "トピックなし"
 
@@ -3863,7 +3929,7 @@ msgid "Open"
 msgstr "開く"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "{0} を開く"
 
@@ -4010,6 +4076,8 @@ msgstr "パック"
 msgid "Pages"
 msgstr "ページ"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4498,16 @@ msgstr "更新"
 msgid "Refresh WHOIS"
 msgstr "WHOIS を更新"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register"
+msgstr "登録"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "このサーバーで {nick} をあなたのアカウントとして登録します。"
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "アカウントを登録する"
@@ -4705,7 +4783,7 @@ msgstr "検索"
 msgid "Search again"
 msgstr "もう一度検索"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "チャンネルを検索..."
 
@@ -4912,11 +4990,6 @@ msgstr "ファイルが大きすぎて暗号化できないため、暗号化な
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "サーバー"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "サーバーチャンネル"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5298,11 @@ msgstr "ソフトウェア："
 msgid "soju bouncer (control)"
 msgstr "soju bouncer（コントロール）"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "名前順"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "ユーザー数順"
 
@@ -5404,6 +5477,10 @@ msgstr "その画面は利用できなくなりました。別の画面を選択
 #: src/lib/voiceErrors.ts
 msgid "The call server refused the request. Try again in a moment."
 msgstr "通話サーバーがリクエストを拒否しました。しばらくしてからもう一度お試しください。"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "コードの有効期限が切れました。サーバーのオペレーターに問い合わせてください"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -5611,11 +5688,11 @@ msgstr "ツール"
 msgid "Topic"
 msgstr "トピック"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "トピック設定日時の後 (何分前)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "トピック設定日時の前 (何分前)"
 
@@ -5790,6 +5867,7 @@ msgstr "安全な WebSocket ポートを使用してください。"
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "アバター、表示名、ステータスを設定するには、IRCv3 METADATA に対応したサーバーを使用してください。"
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "パスワードにはラテン文字のみを使用してください"
@@ -5869,6 +5947,7 @@ msgstr "有効なサーバーポートが必要です"
 msgid "Verified account"
 msgstr "認証済みアカウント"
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "確認"
@@ -6138,6 +6217,10 @@ msgstr "あなたはIRC Operatorです"
 msgid "You are no longer in this channel"
 msgstr "このチャンネルには参加していません"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "ログインしていません"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "新しいパスワードを選択できる時間は数分間です。"
@@ -6158,6 +6241,10 @@ msgstr "この連絡先を確認しました。"
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "<0>{0}</0> に接続しています。"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "あなたのアカウント"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
