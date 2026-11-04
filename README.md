@@ -22,7 +22,7 @@
 | Android  | Install it from [Google Play](https://play.google.com/store/apps/details?id=com.obsidianirc.dev).                                                                                               |
 | macOS    | Download the `.dmg` from [Releases](https://github.com/obbyworld/obby/releases/latest). It runs on Apple Silicon and Intel.                                                                     |
 | Windows  | Download the `.exe` installer from [Releases](https://github.com/obbyworld/obby/releases/latest).                                                                                               |
-| Linux    | Run `yay -S obby` on Arch, or download the `.deb`, `.rpm` or AppImage from [Releases](https://github.com/obbyworld/obby/releases/latest).                                                       |
+| Linux    | Run `yay -S obby` on Arch or `nix run github:obbyworld/obby` on NixOS, or download the `.deb`, `.rpm` or AppImage from [Releases](https://github.com/obbyworld/obby/releases/latest).           |
 | iOS      | Install the `.ipa` from [Releases](https://github.com/obbyworld/obby/releases/latest) with [AltStore](https://altstore.io/) or [LiveContainer](https://github.com/LiveContainer/LiveContainer). |
 
 The desktop app can self-update. See [INSTALL.md](INSTALL.md) for more options.
