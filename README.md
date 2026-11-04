@@ -50,9 +50,12 @@ Obby speaks [IRCv3](https://ircv3.net), the modern IRC standard, plus a few [Obb
 - **Many networks:** several servers and accounts side by side, with channel folders.
 - **[19 languages](src/locales).**
 
-![Obby on the desktop: a YouTube preview, a shared video and a link preview](screenshots/desktop-media.webp)
-
-![Obby on the desktop: an end-to-end encrypted direct message](screenshots/desktop-encrypted.webp)
+<table>
+  <tr>
+    <td><img src="screenshots/desktop-media.webp" alt="Obby on the desktop: a YouTube preview, a shared video and a link preview"></td>
+    <td><img src="screenshots/desktop-encrypted.webp" alt="Obby on the desktop: an end-to-end encrypted direct message"></td>
+  </tr>
+</table>
 
 ## Host it for your community
 
