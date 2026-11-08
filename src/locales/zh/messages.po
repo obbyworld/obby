@@ -236,7 +236,7 @@ msgstr "{sender} 给你发了一条消息：{body}"
 #: src/components/layout/BouncerServerGroup.tsx
 #: src/components/layout/ServerList.tsx
 msgid "{serverName}, turned off"
-msgstr ""
+msgstr "{serverName}（已关闭）"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
@@ -966,7 +966,7 @@ msgstr "机器人"
 
 #: src/components/layout/BouncerServerGroup.tsx
 msgid "Bouncer: {networkName}"
-msgstr ""
+msgstr "Bouncer：{networkName}"
 
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
