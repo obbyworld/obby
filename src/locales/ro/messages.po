@@ -1533,6 +1533,8 @@ msgstr "Conectat ca invitat"
 msgid "Connected to"
 msgstr "Conectat la"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Se conectează"

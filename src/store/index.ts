@@ -6,6 +6,7 @@ import { getSelectionHistory, recordSelection } from "../lib/channelHistory";
 import { classifyChannelName } from "../lib/channelMentions";
 import type { E2EEScheme, E2EESessionState } from "../lib/e2ee/session";
 import { e2eeSessionKey } from "../lib/e2ee/session";
+import { ConnectionClosedError } from "../lib/irc/IRCClient";
 import ircClient from "../lib/ircClient";
 import { makeLabel } from "../lib/labeledResponse";
 import type { MediaType } from "../lib/mediaUtils";
@@ -1542,7 +1543,6 @@ const useStore = create<AppState>((set, get) => ({
         skipLocalhostWarning: savedServer?.skipLocalhostWarning,
         skipLinkSecurityWarning: savedServer?.skipLinkSecurityWarning,
         skipNickPrompt: savedServer?.skipNickPrompt,
-        enabled: savedServer?.enabled,
         // Preserve existing addedAt timestamp or set current time for new servers
         addedAt: savedServer?.addedAt || Date.now(),
         oauth: mergedOauth ?? savedServer?.oauth,
@@ -1560,6 +1560,7 @@ const useStore = create<AppState>((set, get) => ({
             ...existingServer,
             ...server,
             id: existingServer.id,
+            isDisabled: false,
           };
           return {
             servers: updatedServers,
@@ -1611,6 +1612,10 @@ const useStore = create<AppState>((set, get) => ({
 
       return server;
     } catch (error) {
+      if (error instanceof ConnectionClosedError) {
+        set({ isConnecting: false });
+        throw error;
+      }
       // Even if connection fails, add the server to the store as disconnected
       // so it appears in the UI and can be reconnected later
       const disconnectedServer: Server = {
@@ -2002,7 +2007,7 @@ const useStore = create<AppState>((set, get) => ({
         server.id === serverId
           ? {
               ...server,
-              nickClaim: { ...claim, stage: "sending", failure: undefined },
+              nickClaim: { ...claim, stage: "verifying", failure: undefined },
             }
           : server,
       ),
@@ -3260,9 +3265,13 @@ const useStore = create<AppState>((set, get) => ({
     // Cascade: when target is a bouncer control session, also drop every
     // bound child. Each child shares the parent's socket-side identity
     // with soju and has no useful life beyond the control session.
+    // A turned-off bouncer's networks live only in the saved list, so we look there too.
     const toRemove = new Set<string>([
       serverId,
       ...bouncerNetworkIds(get().servers, serverId),
+      ...loadSavedServers()
+        .filter((s) => s.bouncerServerId === serverId)
+        .map((s) => s.id),
     ]);
     closeServerConnections(toRemove);
 

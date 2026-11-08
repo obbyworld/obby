@@ -685,7 +685,8 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
     if (command !== "REGISTER" && command !== "VERIFY") return;
     const claim = findClaim(serverId);
-    if (claim?.stage !== "sending") return;
+    const awaited = command === "VERIFY" ? "verifying" : "sending";
+    if (claim?.stage !== awaited) return;
     patchServer(serverId, () => ({
       nickClaim: {
         ...claim,

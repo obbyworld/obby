@@ -20,6 +20,7 @@ import {
   FaInfoCircle,
   FaPen,
   FaPlug,
+  FaRedo,
   FaThumbtack,
   FaTrash,
 } from "react-icons/fa";
@@ -526,6 +527,17 @@ export const ChannelList: React.FC = () => {
               </span>
             )}
           </span>
+          {(selectedServer?.connectionState === "connecting" ||
+            selectedServer?.connectionState === "reconnecting") && (
+            <span
+              role="status"
+              title={t`Connecting`}
+              aria-label={t`Connecting`}
+              className="flex-shrink-0"
+            >
+              <FaRedo className="text-[10px] text-discord-text-muted animate-spin" />
+            </span>
+          )}
           {selectedServer && (
             <FaChevronDown
               className={`flex-shrink-0 text-xs text-discord-text-normal transition-transform ${

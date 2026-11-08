@@ -45,16 +45,56 @@ const SETTLE_MS: Record<Trouble, number> = {
   auth: 0,
 };
 
-// A closed strip stays closed in every view of the server until its problem
-// clears, so we keep the dismissals outside the component.
-const dismissed = new Map<string, Trouble>();
+// Losing the link and retrying it are one outage, so closing either strip hides both.
+type Outage = "connection" | "auth";
+const outageOf = (trouble: Trouble): Outage =>
+  trouble === "auth" ? "auth" : "connection";
+
+function isOutageOver(server: Server | undefined, outage: Outage): boolean {
+  if (!server || server.isDisabled) return true;
+  if (outage === "auth") return getLoginState(server) !== "failed";
+  return server.isConnected;
+}
+
+// A closed strip stays closed in every view of the server until its outage
+// ends, so we keep the dismissals outside the component and watch the store
+// for servers that recover while no strip shows them.
+const dismissed = new Map<string, Outage>();
 const listeners = new Set<() => void>();
-function setDismissed(serverId: string, trouble: Trouble | null) {
-  if (trouble) dismissed.set(serverId, trouble);
-  else if (!dismissed.delete(serverId)) return;
+let stopWatchingServers: (() => void) | undefined;
+
+function notifyDismissals() {
   for (const listener of listeners) listener();
 }
-function useDismissed(serverId: string): Trouble | undefined {
+
+function clearEndedDismissal(serverId: string, server: Server | undefined) {
+  const outage = dismissed.get(serverId);
+  if (!outage || !isOutageOver(server, outage)) return;
+  dismissed.delete(serverId);
+  notifyDismissals();
+}
+
+function clearEndedDismissals(servers: Server[]) {
+  for (const serverId of [...dismissed.keys()])
+    clearEndedDismissal(
+      serverId,
+      servers.find((s) => s.id === serverId),
+    );
+  if (dismissed.size === 0) {
+    stopWatchingServers?.();
+    stopWatchingServers = undefined;
+  }
+}
+
+function dismiss(serverId: string, trouble: Trouble) {
+  dismissed.set(serverId, outageOf(trouble));
+  stopWatchingServers ??= useStore.subscribe?.((state) =>
+    clearEndedDismissals(state.servers),
+  );
+  notifyDismissals();
+}
+
+function useDismissed(serverId: string): Outage | undefined {
   return useSyncExternalStore(
     (listener) => {
       listeners.add(listener);
@@ -80,14 +120,12 @@ function useSettledTrouble(trouble: Trouble | null): Trouble | null {
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
   const isTouch = useIsTouchInput();
-  const current = getTrouble(server);
-  const trouble = useSettledTrouble(current);
-  const dismissedTrouble = useDismissed(server.id);
+  const trouble = useSettledTrouble(getTrouble(server));
+  const dismissedOutage = useDismissed(server.id);
   useEffect(() => {
-    if (dismissedTrouble && dismissedTrouble !== current)
-      setDismissed(server.id, null);
-  }, [server.id, current, dismissedTrouble]);
-  if (!trouble || trouble === dismissedTrouble) return null;
+    if (dismissedOutage) clearEndedDismissal(server.id, server);
+  }, [server, dismissedOutage]);
+  if (!trouble || outageOf(trouble) === dismissedOutage) return null;
 
   const messages: Record<Trouble, string> = {
     lost: t`Connection lost. Reconnect to keep chatting`,
@@ -102,7 +140,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
         <span className="flex-1 min-w-0 break-words">{messages[trouble]}</span>
         <button
           type="button"
-          onClick={() => setDismissed(server.id, trouble)}
+          onClick={() => dismiss(server.id, trouble)}
           title={t`Close`}
           aria-label={t`Close`}
           className={`shrink-0 flex items-center justify-center rounded text-discord-text-muted hover:text-white ${isTouch ? "w-11 h-11 -m-2.5" : "w-5 h-5"}`}

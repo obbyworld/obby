@@ -1533,6 +1533,8 @@ msgstr "以访客身份连接"
 msgid "Connected to"
 msgstr "已连接到"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "连接中"

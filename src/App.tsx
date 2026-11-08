@@ -151,6 +151,7 @@ const App: React.FC = () => {
       !state.servers.some(
         (s) =>
           s.isConnected ||
+          s.isDisabled ||
           s.connectionState === "connecting" ||
           s.connectionState === "reconnecting",
       ),

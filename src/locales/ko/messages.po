@@ -1533,6 +1533,8 @@ msgstr "게스트로 연결됨"
 msgid "Connected to"
 msgstr "연결된 서버"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "연결 중"

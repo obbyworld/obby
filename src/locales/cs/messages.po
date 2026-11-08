@@ -1533,6 +1533,8 @@ msgstr "Připojeno jako host"
 msgid "Connected to"
 msgstr "Připojeno k"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Připojování"

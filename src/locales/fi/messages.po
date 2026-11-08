@@ -1533,6 +1533,8 @@ msgstr "Yhdistetty vieraana"
 msgid "Connected to"
 msgstr "Yhdistetty palvelimeen"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Yhdistetään"

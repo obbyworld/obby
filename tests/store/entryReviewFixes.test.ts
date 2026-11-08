@@ -35,6 +35,42 @@ describe("a dropped connection", () => {
 
     expect(useStore.getState().servers[0].nickClaim).toBeUndefined();
   });
+
+  it("returns a code still waiting for its reply to the verify form", () => {
+    useStore.setState({
+      servers: [
+        server({
+          nickClaim: {
+            account: "alice",
+            storedPassword: "",
+            stage: "verifying",
+          },
+        }),
+      ],
+    });
+
+    ircClient.triggerEvent("connectionStateChange", {
+      serverId,
+      connectionState: "disconnected",
+    });
+
+    expect(useStore.getState().servers[0].nickClaim?.stage).toBe("verify");
+  });
+
+  it("drops a channel list the drop cut short, so the browser lists again", () => {
+    useStore.setState({
+      servers: [server()],
+      channelList: { [serverId]: [] },
+      listingInProgress: { [serverId]: true },
+    });
+
+    ircClient.triggerEvent("connectionStateChange", {
+      serverId,
+      connectionState: "disconnected",
+    });
+
+    expect(useStore.getState().channelList[serverId]).toBeUndefined();
+  });
 });
 
 describe("a channel without metadata", () => {

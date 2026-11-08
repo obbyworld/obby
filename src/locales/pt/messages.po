@@ -1533,6 +1533,8 @@ msgstr "Conectado como convidado"
 msgid "Connected to"
 msgstr "Conectado a"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Conectando"

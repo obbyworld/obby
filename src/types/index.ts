@@ -71,7 +71,8 @@ export interface NickClaim {
   account: string;
   // We save this as the SASL login once the server logs us in to the account.
   storedPassword: string;
-  stage: "sending" | "verify" | "failed";
+  // "verifying" is a VERIFY in flight, so a dropped connection returns to "verify".
+  stage: "sending" | "verify" | "verifying" | "failed";
   failure?: { command: "REGISTER" | "VERIFY"; code: string };
 }
 

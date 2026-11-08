@@ -1533,6 +1533,8 @@ msgstr "ゲストとして接続中"
 msgid "Connected to"
 msgstr "接続先"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "接続中"

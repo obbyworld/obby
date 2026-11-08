@@ -48,7 +48,7 @@ export const RegisterAccountSection: React.FC<{ server: Server }> = ({
   const [isUnencodable, setIsUnencodable] = useState(false);
 
   const claim = server.nickClaim;
-  const isVerifying = claim?.stage === "verify";
+  const isVerifying = claim?.stage === "verify" || claim?.stage === "verifying";
   if (
     !nick ||
     !server.capabilities?.includes("draft/account-registration") ||
@@ -58,7 +58,7 @@ export const RegisterAccountSection: React.FC<{ server: Server }> = ({
   )
     return null;
 
-  const isSending = claim?.stage === "sending";
+  const isSending = claim?.stage === "sending" || claim?.stage === "verifying";
   const needsEmail = isEmailRequired(server);
   const failure = isUnencodable
     ? t`Use only Latin characters in the password`

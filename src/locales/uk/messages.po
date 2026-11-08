@@ -1533,6 +1533,8 @@ msgstr "Підключено як гість"
 msgid "Connected to"
 msgstr "Підключено до"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Підключення"

@@ -1533,6 +1533,8 @@ msgstr "Misafir olarak bağlı"
 msgid "Connected to"
 msgstr "Bağlanılan"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Bağlanıyor"

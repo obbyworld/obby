@@ -1532,6 +1532,8 @@ msgstr "Connected as a guest"
 msgid "Connected to"
 msgstr "Connected to"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Connecting"

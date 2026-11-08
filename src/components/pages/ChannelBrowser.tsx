@@ -14,7 +14,7 @@ import { getChannelAvatarUrl, serverFilehosts } from "../../lib/ircUtils";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { Button } from "../../lib/modal/components";
 import { buttonClassName } from "../../lib/modal/components/Button";
-import useStore, { type AppState } from "../../store";
+import useStore, { type AppState, serverSupportsMetadata } from "../../store";
 import { SkeletonRow } from "../ui/SkeletonRow";
 import { TextInput } from "../ui/TextInput";
 
@@ -211,6 +211,7 @@ const ChannelBrowser: React.FC<ChannelBrowserProps> = ({
 
   const fetchMetadataForChannels = useCallback(
     (names: string[]) => {
+      if (!serverSupportsMetadata(serverId)) return;
       const state = useStore.getState();
       const now = Date.now();
       const toFetch = names.filter((name) => {

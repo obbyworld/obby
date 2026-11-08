@@ -731,4 +731,8 @@ describe("canShowServerIcon", () => {
     expect(canShowServerIcon("/logo.png")).toBe(false);
     expect(canShowServerIcon("javascript:alert(1)")).toBe(false);
   });
+
+  test("hides an http(s) icon with no host", () => {
+    expect(canShowServerIcon("https://")).toBe(false);
+  });
 });

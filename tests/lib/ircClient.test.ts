@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { ConnectionClosedError } from "../../src/lib/irc/IRCClient";
 import { IRCClient } from "../../src/lib/ircClient";
 import type { Server } from "../../src/types";
 
@@ -223,19 +224,25 @@ describe("IRCClient", () => {
   });
 
   describe("disconnect", () => {
-    test("closes a socket that is still opening without sending QUIT", () => {
+    test("closes a socket that is still opening without sending QUIT", async () => {
+      Object.assign(MockWebSocketSpy, { CONNECTING: 0, OPEN: 1, CLOSED: 3 });
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
-      mockSocket.send = () => {
-        throw new DOMException("still connecting", "InvalidStateError");
-      };
       MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
-      Object.assign(MockWebSocketSpy, { OPEN: 1 });
-      void client.connect("Test Server", "irc.example.com", 443, "testuser");
+      const connecting = client.connect(
+        "Test Server",
+        "irc.example.com",
+        443,
+        "testuser",
+      );
       const [server] = client.getServers();
+      expect(mockSocket.readyState).toBe(WebSocket.CONNECTING);
 
-      expect(() => client.removeServer(server.id)).not.toThrow();
+      client.removeServer(server.id);
+
+      expect(mockSocket.sentMessages).toEqual([]);
       expect(mockSocket.readyState).toBe(WebSocket.CLOSED);
       expect(client.getServers()).toHaveLength(0);
+      await expect(connecting).rejects.toBeInstanceOf(ConnectionClosedError);
     });
   });
 

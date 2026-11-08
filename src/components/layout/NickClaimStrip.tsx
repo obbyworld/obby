@@ -20,7 +20,8 @@ export function getNickPromptMode(
   nick: string | undefined,
 ): NickPromptMode | null {
   if (!nick || server.bouncerServerId) return null;
-  if (server.nickClaim?.stage === "verify") return "verify";
+  const stage = server.nickClaim?.stage;
+  if (stage === "verify" || stage === "verifying") return "verify";
   if (getLoginState(server) !== "guest") return null;
   if (server.registeredNick?.toLowerCase() === nick.toLowerCase())
     return "login";

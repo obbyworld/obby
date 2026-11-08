@@ -1369,11 +1369,11 @@ msgstr "用戶端上限 (+l)"
 #: src/components/ui/TicTacToeModal.tsx
 #: src/lib/modal/BaseModal.tsx
 msgid "Close"
-msgstr "关闭"
+msgstr "關閉"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close comments"
-msgstr "关闭评论"
+msgstr "關閉評論"
 
 #: src/components/layout/ChannelList.tsx
 msgid "Close conversation"
@@ -1381,7 +1381,7 @@ msgstr "關閉對話"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Close popped out server notices"
-msgstr "关闭弹出的服务器通知"
+msgstr "關閉彈出的伺服器通知"
 
 #: src/components/layout/ChatArea.tsx
 #: src/components/layout/ChatArea.tsx
@@ -1392,7 +1392,7 @@ msgstr "關閉搜尋"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
-msgstr "关闭查看器"
+msgstr "關閉檢視器"
 
 #: src/components/ui/BotToolsCard.tsx
 #: src/components/ui/BotToolsCard.tsx
@@ -1533,6 +1533,8 @@ msgstr "以訪客身分連線"
 msgid "Connected to"
 msgstr "已連線至"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "连接中"
@@ -1990,7 +1992,7 @@ msgstr "關閉"
 
 #: src/components/ui/GlobalNotifications.tsx
 msgid "Dismiss notification"
-msgstr "关闭通知"
+msgstr "關閉通知"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Display all server events in chat"
@@ -3524,7 +3526,7 @@ msgstr "静音通知"
 
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Mute or unmute notification sounds"
-msgstr "开启或关闭通知声音"
+msgstr "開啟或關閉通知聲音"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Name (e.g. iPhone)"
@@ -3889,7 +3891,7 @@ msgstr "Obby - 将 IRC 带入未来"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Off"
-msgstr "关"
+msgstr "關"
 
 #: src/components/layout/BotPane.tsx
 msgid "offline"

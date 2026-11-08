@@ -1533,6 +1533,8 @@ msgstr "Połączono jako gość"
 msgid "Connected to"
 msgstr "Połączono z"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Łączenie"
