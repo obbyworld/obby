@@ -4,8 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { FaPalette, FaPencilAlt, FaRedo, FaTrash } from "react-icons/fa";
 import { GiGlassShot } from "react-icons/gi";
 import { useLongPress } from "../../hooks/useLongPress";
-import { serverFilehosts } from "../../lib/ircUtils";
-import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
+import { canShowServerIcon } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import type { Server } from "../../types";
 import ServerBottomSheet from "../mobile/ServerBottomSheet";
@@ -170,16 +169,8 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
   const { t } = useLingui();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
-  const mediaSettings = mediaLevelToSettings(
-    useStore((state) => state.globalSettings.mediaVisibilityLevel),
-  );
-
   const iconUrl = server.icon;
-  const showIcon = canShowAvatarUrl(
-    iconUrl,
-    serverFilehosts(server),
-    mediaSettings,
-  );
+  const showIcon = canShowServerIcon(iconUrl);
 
   const hasMentions =
     server.channels.some((ch) => ch.isMentioned) ||
@@ -205,6 +196,10 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
   const controlNoIcon = isControl && !showIcon;
   const sizeBox = controlNoIcon ? "w-6 h-6" : "w-9 h-9";
   const innerImg = controlNoIcon ? "w-6 h-6" : "w-9 h-9";
+  const dimmed = server.isDisabled ? "grayscale opacity-50" : "";
+  const networkName = server.networkName || server.name;
+  const serverName = isControl ? t`Bouncer: ${networkName}` : networkName;
+  const label = server.isDisabled ? t`${serverName}, turned off` : serverName;
 
   const selectedRingStyle: React.CSSProperties = isSelected
     ? {
@@ -224,18 +219,10 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
         `}
         style={selectedRingStyle}
         data-selected={isSelected}
-        title={
-          isControl
-            ? `Bouncer: ${server.networkName || server.name}`
-            : server.networkName || server.name
-        }
+        title={label}
         role="button"
         tabIndex={0}
-        aria-label={
-          isControl
-            ? `Bouncer: ${server.networkName || server.name}`
-            : server.networkName || server.name
-        }
+        aria-label={label}
         aria-pressed={isSelected}
         onKeyDown={(e) => {
           if (
@@ -252,18 +239,19 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
           ? { onTouchStart, onTouchMove, onTouchEnd, onTouchCancel }
           : {})}
       >
-        {(server.connectionState === "disconnected" ||
-          server.connectionState === "connecting" ||
-          server.connectionState === "reconnecting") && (
-          <div className="absolute inset-0 bg-black/40 rounded-full" />
-        )}
+        {!server.isDisabled &&
+          (server.connectionState === "disconnected" ||
+            server.connectionState === "connecting" ||
+            server.connectionState === "reconnecting") && (
+            <div className="absolute inset-0 bg-black/40 rounded-full" />
+          )}
 
         {(server.connectionState === "connecting" ||
           server.connectionState === "reconnecting") && (
           <FaRedo className="absolute inset-0 m-auto text-white animate-spin text-sm z-10" />
         )}
 
-        {server.connectionState === "disconnected" && (
+        {server.connectionState === "disconnected" && !server.isDisabled && (
           <FaRedo
             className="absolute inset-0 m-auto text-white text-sm cursor-pointer hover:text-gray-300 transition-colors z-10"
             onClick={(e) => {
@@ -278,12 +266,12 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
           <img
             src={iconUrl}
             alt={server.name}
-            className={`${innerImg} rounded-full pointer-events-none object-cover`}
+            className={`${innerImg} rounded-full pointer-events-none object-cover ${dimmed}`}
             draggable={false}
           />
         ) : controlNoIcon ? (
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center border"
+            className={`w-6 h-6 rounded-full flex items-center justify-center border ${dimmed}`}
             style={{
               background: `linear-gradient(to bottom right, ${hexWithAlpha(accent, 0.3)}, ${hexWithAlpha(accent, 0.05)})`,
               borderColor: hexWithAlpha(accent, 0.4),
@@ -296,7 +284,9 @@ const GroupedAvatar: React.FC<GroupedAvatarProps> = ({
             />
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full bg-discord-dark-400 flex items-center justify-center text-sm font-semibold text-white">
+          <div
+            className={`w-9 h-9 rounded-full bg-discord-dark-400 flex items-center justify-center text-sm font-semibold text-white ${dimmed}`}
+          >
             {initial}
           </div>
         )}

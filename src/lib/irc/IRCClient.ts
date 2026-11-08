@@ -121,7 +121,10 @@ export interface EventMap {
     sender: string;
   };
   NAMES: BaseIRCEvent & { channelName: string; users: User[] };
-  "CAP LS": BaseIRCEvent & { cliCaps: string };
+  "CAP LS": BaseIRCEvent & {
+    values: Record<string, string>;
+    isFirstLine: boolean;
+  };
   "CAP ACK": BaseIRCEvent & { cliCaps: string };
   ISUPPORT: BaseIRCEvent & { key: string; value: string };
   CAP_ACKNOWLEDGED: BaseIRCEvent & { key: string; capabilities: string };
@@ -625,6 +628,14 @@ function splitCapToken(token: string): { cap: string; value?: string } {
     : { cap: token.slice(0, eq), value: token.slice(eq + 1) };
 }
 
+/** A connect that we closed on purpose before its socket opened. */
+export class ConnectionClosedError extends Error {
+  constructor(address: string) {
+    super(`Connection to ${address} was closed`);
+    this.name = "ConnectionClosedError";
+  }
+}
+
 export class IRCClient implements IRCClientContext {
   private sockets: Map<string, ISocket> = new Map();
   servers: Map<string, Server> = new Map();
@@ -638,6 +649,7 @@ export class IRCClient implements IRCClientContext {
   private saslCredentials: Map<string, { username: string; password: string }> =
     new Map();
   private pendingConnections: Map<string, Promise<Server>> = new Map();
+  private cancelPendingConnection: Map<string, () => void> = new Map();
   // Requested capabilities still awaiting an ACK. A long CAP REQ is split
   // across batches and the server may ACK in arbitrary pieces, so completion
   // is tracked by name rather than by counting ACK lines.
@@ -813,6 +825,9 @@ export class IRCClient implements IRCClientContext {
 
     // Create a new connection promise and store it
     const connectionPromise = new Promise<Server>((resolve, reject) => {
+      this.cancelPendingConnection.set(connectionKey, () =>
+        reject(new ConnectionClosedError(`${host}:${port}`)),
+      );
       let protocol: "wss" | "ircs" | "irc" = "wss";
       let actualHost = host;
       let actualPort = port;
@@ -946,6 +961,7 @@ export class IRCClient implements IRCClientContext {
           direction: "info",
           line: `** connected to ${actualHost}:${actualPort}`,
         });
+        this.capLsAccumulated.delete(server.id);
         socket.send("CAP LS 302");
 
         // Send password if provided (before CAP negotiation completes)
@@ -1054,9 +1070,12 @@ export class IRCClient implements IRCClientContext {
     this.pendingConnections.set(connectionKey, connectionPromise);
 
     // Clean up the pending connection when it resolves or rejects
-    connectionPromise.finally(() => {
-      this.pendingConnections.delete(connectionKey);
-    });
+    connectionPromise
+      .finally(() => {
+        this.pendingConnections.delete(connectionKey);
+        this.cancelPendingConnection.delete(connectionKey);
+      })
+      .catch(() => {});
 
     return connectionPromise;
   }
@@ -1066,7 +1085,8 @@ export class IRCClient implements IRCClientContext {
     if (socket) {
       const message =
         quitMessage || i18n._({ id: "Obby - Bringing IRC to the future" });
-      socket.send(`QUIT :${message}`);
+      // A socket that is still opening throws on send, so we only say goodbye on an open one.
+      if (socket.readyState === WebSocket.OPEN) socket.send(`QUIT :${message}`);
       // We end this connection on purpose, so we detach its handlers to keep a late close or error from touching the next session.
       socket.onopen = null;
       socket.onmessage = null;
@@ -1083,11 +1103,12 @@ export class IRCClient implements IRCClientContext {
         serverId: server.id,
         connectionState: "disconnected",
       });
-      // connect() keys the pending promise by serverId when present and
-      // falls back to host:port, so clear both to avoid a stuck entry
-      // that would block a later reconnect for the same server.
-      this.pendingConnections.delete(serverId);
-      this.pendingConnections.delete(`${server.host}:${server.port}`);
+      // connect() keys the pending promise by serverId or host:port, and the
+      // socket's handlers are detached above, so we settle both entries here.
+      for (const key of [serverId, `${server.host}:${server.port}`]) {
+        this.pendingConnections.delete(key);
+        this.cancelPendingConnection.get(key)?.();
+      }
     }
     // Clear reconnection state
     this.reconnectionAttempts.delete(serverId);
@@ -1222,6 +1243,7 @@ export class IRCClient implements IRCClientContext {
       this.reconnectionAttempts.delete(serverId);
       this.reconnectionTimeouts.delete(serverId);
     } catch (error) {
+      if (error instanceof ConnectionClosedError) return;
       console.log(`Reconnection failed for server ${serverId}:`, error);
       // Failed - try again
       this.startReconnection(
@@ -1239,6 +1261,27 @@ export class IRCClient implements IRCClientContext {
 
   isSocketOpen(serverId: string): boolean {
     return this.sockets.get(serverId)?.readyState === WebSocket.OPEN;
+  }
+
+  // A reconnect reuses what we connected with, so a login saved during the
+  // session has to reach these too or the next reconnect comes back as a guest.
+  setSaslLogin(
+    serverId: string,
+    account: string,
+    storedPassword: string,
+  ): void {
+    const params = this.serverConnectParams.get(serverId);
+    if (params)
+      this.serverConnectParams.set(serverId, {
+        ...params,
+        saslAccountName: account,
+        saslPassword: storedPassword,
+      });
+    this.saslEnabled.set(serverId, true);
+    this.saslCredentials.set(serverId, {
+      username: account,
+      password: storedPassword,
+    });
   }
 
   sendRaw(serverId: string, command: string): void {
@@ -1645,7 +1688,7 @@ export class IRCClient implements IRCClientContext {
     email: string,
     password: string,
   ): void {
-    this.sendRaw(serverId, `REGISTER ${account} ${email} ${password}`);
+    this.sendRaw(serverId, `REGISTER ${account} ${email} :${password}`);
   }
 
   verifyAccount(serverId: string, account: string, code: string): void {
@@ -2163,38 +2206,32 @@ export class IRCClient implements IRCClientContext {
 
   onCapLs(serverId: string, cliCaps: string, isFinal: boolean): void {
     let accumulated = this.capLsAccumulated.get(serverId);
+    const isFirstLine = !accumulated;
     if (!accumulated) {
       accumulated = new Set();
       this.capLsAccumulated.set(serverId, accumulated);
     }
 
-    const caps = cliCaps.split(" ");
-    for (const c of caps) {
+    const values: Record<string, string> = {};
+    for (const c of cliCaps.split(" ")) {
+      if (!c) continue;
       const { cap, value } = splitCapToken(c);
       accumulated.add(cap);
-      if (value) {
-        const server = this.servers.get(serverId);
-        if (server) {
-          server.capabilityValues = {
-            ...(server.capabilityValues ?? {}),
-            [cap]: value,
-          };
-        }
-      }
+      if (value) values[cap] = value;
       if (cap === "sasl" && value) {
         const mechanisms = value.split(",");
         this.saslMechanisms.set(serverId, mechanisms);
       }
-      // Handle informational unrealircd.org/link-security capability
-      if (cap === "unrealircd.org/link-security" && value) {
-        const linkSecurityValue = Number.parseInt(value, 10) || 0;
-        // Trigger event with the link security value so the store can handle it
-        this.triggerEvent("CAP LS", {
-          serverId,
-          cliCaps: `unrealircd.org/link-security=${linkSecurityValue}`,
-        });
-      }
     }
+    // Each negotiation lists every cap again, so values from an earlier
+    // connection never outlive it.
+    const server = this.servers.get(serverId);
+    if (server)
+      server.capabilityValues = {
+        ...(isFirstLine ? {} : server.capabilityValues),
+        ...values,
+      };
+    this.triggerEvent("CAP LS", { serverId, values, isFirstLine });
 
     if (isFinal) {
       // Now request the caps we want from the accumulated list

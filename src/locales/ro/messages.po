@@ -233,6 +233,11 @@ msgstr "{sender} a repornit criptarea. Așteaptă puțin înainte de a trimite u
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} ți-a trimis un mesaj: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr "{serverName}, dezactivat"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} sesiuni conectate. Autentificați-vă cu acest cont sau cereți unui operator IRC să vadă detaliile."
@@ -249,7 +254,7 @@ msgstr "{stepCount, plural, one {# pas} few {# pași} other {# de pași}}"
 msgid "{title} Client"
 msgstr "client {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# canal} few {# canale} other {# de canale}}"
 
@@ -269,11 +274,11 @@ msgstr "{userCount} utilizatori"
 msgid "{userCount} watching"
 msgstr "{userCount} spectatori"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*channel*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*spam*"
 
@@ -322,6 +327,14 @@ msgstr "<0>{0}</0>, <1>{1}</1> și <2>{2}</2> scriu..."
 #: src/components/ui/TypingIndicator.tsx
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> și alți {3} scriu..."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> nu este înregistrat. Înregistrează-l ca să-l păstrezi"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> este înregistrată. Autentifică-te pentru a o folosi"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -655,7 +668,7 @@ msgstr "Aplicație"
 msgid "Appearance"
 msgstr "Aspect"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Aplicați și reîmprospătați"
 
@@ -951,6 +964,10 @@ msgstr "Bot în acest canal"
 msgid "Bots"
 msgstr "Boți"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr "Bouncer: {networkName}"
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1077,6 +1094,10 @@ msgstr "Schimbă parola"
 msgid "Change the channel name (operators only)"
 msgstr "Schimbă numele canalului (numai operatori)"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Schimbă-ți porecla pentru a te înregistra, aceasta nu este permisă"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Schimbă-ți pseudonimul pe acest server"
@@ -1147,7 +1168,7 @@ msgstr "Legătura canalului (+L)"
 msgid "Channel name"
 msgstr "Numele canalului"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Masca numelui canalului"
 
@@ -1193,6 +1214,7 @@ msgstr "Specific canalului"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1205,6 +1227,10 @@ msgstr "Chat"
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
 msgstr "Conversații și rețele"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Check the code and try again"
+msgstr "Verifică codul și încearcă din nou"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1221,6 +1247,10 @@ msgstr "Alege un fișier sub {limit}, maximul acceptat de gazda de fișiere."
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Alege un fișier cu extensie. Gazda de fișiere nu acceptă fișiere fără extensie."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Choose a longer password"
+msgstr "Alege o parolă mai lungă"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1246,7 +1276,7 @@ msgstr "Alegeți câte media externe se încarcă în chat."
 msgid "Choose microphone and camera"
 msgstr "Alegeți microfonul și camera"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Alegeți ordinea de sortare"
 
@@ -1325,6 +1355,8 @@ msgstr "Limită de clienți (+l)"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/BotPane.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1366,6 +1398,11 @@ msgstr "Închide vizualizatorul"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Închideți fluxul de lucru"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Code"
+msgstr "Cod"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1465,6 +1502,8 @@ msgstr "Confirmă eliminarea"
 msgid "Confirm?"
 msgstr "Confirmați?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -1482,6 +1521,10 @@ msgstr "Conectează un microfon pentru a vorbi"
 msgid "Connect to a server to manage operator settings."
 msgstr "Conectează-te la un server pentru a gestiona setările operatorului."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Conectează-te la server pentru a-i lista canalele."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Conectat ca invitat"
@@ -1490,6 +1533,8 @@ msgstr "Conectat ca invitat"
 msgid "Connected to"
 msgstr "Conectat la"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Se conectează"
@@ -1644,6 +1689,10 @@ msgstr "Nu s-au putut încărca GIF-urile. Caută din nou pentru a reîncerca."
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Nu s-a putut contacta gazda de fișiere. Verifică conexiunea și încearcă din nou."
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not register. Try again"
+msgstr "Înregistrarea a eșuat. Încearcă din nou"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1653,6 +1702,10 @@ msgstr "Nu s-a putut seta parola nouă: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Nu s-a putut actualiza parola: {0}"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not verify. Try again"
+msgstr "Verificarea a eșuat. Încearcă din nou"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -1684,11 +1737,11 @@ msgstr "Creaţi folder"
 msgid "Create pack"
 msgstr "Creează pachet"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Creat după (min în urmă)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Creat înainte de (min în urmă)"
 
@@ -1974,6 +2027,11 @@ msgstr "Afișează când utilizatorii intră sau ies din canale"
 msgid "Do you want to open this link in a new tab?"
 msgstr "Dorești să deschizi acest link într-o filă nouă?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Nu mai afișa pentru acest server"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Nu mă avertiza despre securitatea scăzută a legăturilor pentru acest server"
@@ -2065,6 +2123,11 @@ msgstr "Editați profilul"
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
 msgstr "Editează server"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Email"
+msgstr "Email"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
@@ -2224,6 +2287,10 @@ msgstr "Introdu un număr pentru {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Introduceți un URL. Folosiți {sizeToken} în URL pentru dimensionare dinamică. Exemplu: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter a valid email address"
+msgstr "Introdu o adresă de email validă"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2236,6 +2303,10 @@ msgstr "Introduceți numele contului..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Introdu un nume de cont pentru a te autentifica cu SASL PLAIN înainte de a intra pe canale. Lasă gol pentru a folosi porecla ta."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Introdu codul"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2303,6 +2374,14 @@ msgstr "Introdu codul din 6 cifre din e-mail."
 msgid "Enter the account name you want to recover."
 msgstr "Introdu numele contului pe care vrei să îl recuperezi."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Introdu codul trimis pe email"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Introdu codul trimis pe e-mailul tău."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
 msgstr "Introduceți parola serverului doar dacă rețeaua dvs. o cere. Este separată de parola contului."
@@ -2348,7 +2427,7 @@ msgstr "ExempluRET"
 msgid "Exceptions"
 msgstr "Excepții"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Exclude masca numelui canalului"
 
@@ -2449,11 +2528,11 @@ msgstr "Filtrează cuvintele nepotrivite (+G)"
 msgid "Filter members…"
 msgstr "Filtrează membri…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Filtre"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Filtrele nu sunt disponibile pe acest server"
 
@@ -2854,7 +2933,7 @@ msgid "is now known as **{newNick}**"
 msgstr "acum este cunoscut ca **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Alătură-te"
@@ -2862,7 +2941,7 @@ msgstr "Alătură-te"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Alătură-te la {0}"
 
@@ -2900,7 +2979,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Alătură-te canalului vocal {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Membru din"
 
@@ -3100,6 +3179,8 @@ msgstr "Locație"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "Accesul la locație a fost refuzat. Permiteți accesul la locație din setările browserului sau ale sistemului, apoi încercați din nou."
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Autentifică-te"
@@ -3202,7 +3283,7 @@ msgstr "Marchează-te ca revenit"
 msgid "Mark yourself back"
 msgstr "Marchează-te ca revenit"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Nr. max. utilizatori"
 
@@ -3349,7 +3430,7 @@ msgstr "Microfon {0}"
 msgid "Microphone level"
 msgstr "Nivel microfon"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Nr. min. utilizatori"
 
@@ -3587,7 +3668,7 @@ msgstr "Nicio cameră detectată."
 msgid "No Central Server:"
 msgstr "Fără server central:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Niciun canal nu a fost găsit. Schimbați căutarea sau filtrele."
 
@@ -3719,7 +3800,7 @@ msgstr "Încă nu există comenzi slash"
 msgid "No speaker detected."
 msgstr "Niciun difuzor detectat."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Fără subiect"
 
@@ -3863,7 +3944,7 @@ msgid "Open"
 msgstr "Deschide"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Deschide {0}"
 
@@ -4010,6 +4091,8 @@ msgstr "Pachete"
 msgid "Pages"
 msgstr "Pagini"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4513,16 @@ msgstr "Reîmprospătează"
 msgid "Refresh WHOIS"
 msgstr "Reîmprospătează WHOIS"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register"
+msgstr "Înregistrează"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Înregistrează {nick} drept contul tău pe acest server."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Înregistrează un cont"
@@ -4705,7 +4798,7 @@ msgstr "Caută"
 msgid "Search again"
 msgstr "Caută din nou"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Căutați canale..."
 
@@ -4912,11 +5005,6 @@ msgstr "Trimis necriptat deoarece fișierul este prea mare pentru a fi criptat"
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "server"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Canale server"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5313,11 @@ msgstr "Software:"
 msgid "soju bouncer (control)"
 msgstr "bouncer soju (control)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Sortează după nume"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Sortează după utilizatori"
 
@@ -5404,6 +5492,10 @@ msgstr "Acel ecran nu mai este disponibil. Alege alt ecran."
 #: src/lib/voiceErrors.ts
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Serverul de apeluri a refuzat cererea. Încearcă din nou într-un moment."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "Codul a expirat. Cere ajutor operatorilor serverului"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -5611,11 +5703,11 @@ msgstr "instrument"
 msgid "Topic"
 msgstr "Subiect"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Subiect setat după (min în urmă)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Subiect setat înainte de (min în urmă)"
 
@@ -5790,6 +5882,7 @@ msgstr "Folosiți un port websocket securizat."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Folosiți un server cu IRCv3 METADATA pentru a seta avatarul, numele afișat și starea."
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Folosește doar caractere latine în parolă"
@@ -5869,6 +5962,7 @@ msgstr "Este necesar un port de server valid"
 msgid "Verified account"
 msgstr "Cont verificat"
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Verifică"
@@ -6138,6 +6232,10 @@ msgstr "Ești un Operator IRC"
 msgid "You are no longer in this channel"
 msgstr "Nu mai sunteți în acest canal"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Nu ești autentificat"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "Ai câteva minute pentru a alege o parolă nouă."
@@ -6158,6 +6256,10 @@ msgstr "Ați verificat acest contact."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Ești conectat la <0>{0}</0>."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Contul tău"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"

@@ -128,10 +128,8 @@ const DetailRow: React.FC<{
     setTimeout(() => setCopied(false), 1200);
   };
   return (
-    <div className="flex gap-3 px-4 py-2.5 border-t border-white/[0.06] first:border-t-0">
-      <dt className="w-24 shrink-0 text-[13px] text-discord-text-muted pt-0.5">
-        {label}
-      </dt>
+    <div className="detail-row">
+      <dt className="detail-label">{label}</dt>
       <dd
         className={`flex-1 min-w-0 flex items-start gap-2 text-sm text-white ${mono ? "font-mono break-all" : "[overflow-wrap:anywhere]"}`}
       >
@@ -179,7 +177,7 @@ const SessionGroups: React.FC<{ session: WhoisSession; isYou: boolean }> = ({
       )}
       {hasConnection && (
         <SettingGroup title={<Trans>Connection</Trans>}>
-          <dl className="flex flex-col">
+          <dl className="detail-list">
             {session.ip && (
               <DetailRow
                 label={<Trans>IP</Trans>}
@@ -224,7 +222,7 @@ const SessionGroups: React.FC<{ session: WhoisSession; isYou: boolean }> = ({
       )}
       {(session.secureConnection || session.certFp) && (
         <SettingGroup title={<Trans>Security</Trans>}>
-          <dl className="flex flex-col">
+          <dl className="detail-list">
             {session.secureConnection && (
               <DetailRow
                 label={<Trans>TLS</Trans>}
@@ -254,7 +252,7 @@ const SessionGroups: React.FC<{ session: WhoisSession; isYou: boolean }> = ({
       )}
       {(session.idle !== undefined || since || signon) && (
         <SettingGroup title={<Trans>Activity</Trans>}>
-          <dl className="flex flex-col">
+          <dl className="detail-list">
             {session.idle !== undefined && (
               <DetailRow
                 label={<Trans>Idle</Trans>}
@@ -662,7 +660,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
               <Trans>Loading WHOIS data...</Trans>
             </div>
           )}
-          <dl className="flex flex-col">
+          <dl className="detail-list">
             {whoisData?.username && whoisData.host && (
               <DetailRow
                 label={<Trans>Host</Trans>}
@@ -693,11 +691,17 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
               <DetailRow
                 label={<Trans>Connected to</Trans>}
                 value={
-                  whoisData.serverInfo
-                    ? `${whoisData.server} (${whoisData.serverInfo})`
-                    : whoisData.server
+                  <>
+                    <span className="font-mono break-all">
+                      {whoisData.server}
+                    </span>
+                    {whoisData.serverInfo && (
+                      <span className="block text-xs text-discord-text-muted">
+                        {whoisData.serverInfo}
+                      </span>
+                    )}
+                  </>
                 }
-                mono
               />
             )}
             {sessions.length === 0 && whoisData?.idle !== undefined && (

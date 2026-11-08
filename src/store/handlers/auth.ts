@@ -20,7 +20,12 @@ import {
   buildOauthBearerPayload,
   chunkSaslPayload,
 } from "../../lib/saslFrames";
-import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
+import type {
+  Message,
+  Server,
+  ServerConfig,
+  ServerOAuthConfig,
+} from "../../types";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
@@ -113,6 +118,13 @@ function loadCreds(
   const available = ircClient.getSaslMechanisms(serverId);
   const mech = chooseMechanism(available, serv.saslMechanism);
   return { user, pass: pass ?? "", mech };
+}
+
+// SASL PLAIN carries UTF-8, the same bytes REGISTER sent for the password.
+function sendPlain(serverId: string, user: string, password: string): void {
+  const payload = saslChunk.encodeUtf8(`${user}\x00${user}\x00${password}`);
+  for (const chunk of chunkSaslPayload(payload))
+    ircClient.sendRaw(serverId, `AUTHENTICATE ${chunk}`);
 }
 
 function clearSession(serverId: string) {
@@ -272,10 +284,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       if (param !== "+") return;
       const creds = loadCreds(serverId);
       if (creds?.mech !== "PLAIN") return;
-      ircClient.sendRaw(
-        serverId,
-        `AUTHENTICATE ${btoa(`${creds.user}\x00${creds.user}\x00${creds.pass}`)}`,
-      );
+      sendPlain(serverId, creds.user, creds.pass);
       return;
     }
 
@@ -324,10 +333,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       if (session.mech === "PLAIN") {
         if (param !== "+") return;
         if (!session.password) return;
-        ircClient.sendRaw(
-          serverId,
-          `AUTHENTICATE ${btoa(`${session.username}\x00${session.username}\x00${session.password}`)}`,
-        );
+        sendPlain(serverId, session.username, session.password);
         return;
       }
 
@@ -499,31 +505,19 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
   });
 
-  // Handle CAP LS to get informational capabilities like unrealircd.org/link-security
-  ircClient.on("CAP LS", ({ serverId, cliCaps }) => {
-    // Capture per-cap value strings. CAP ACK only echoes the names so
-    // anything that wants to know "is webauthn one of the 2FA factors
-    // this server supports" needs to consult what was advertised in
-    // CAP LS. Drop the special unrealircd.org/link-security entry --
-    // it has its own typed field below.
-    const advertised: Record<string, string> = {};
-    for (const tok of cliCaps.split(/\s+/)) {
-      if (!tok) continue;
-      const eq = tok.indexOf("=");
-      if (eq <= 0) continue;
-      const name = tok.slice(0, eq);
-      const value = tok.slice(eq + 1);
-      if (name === "unrealircd.org/link-security") continue;
-      advertised[name] = value;
-    }
-    if (Object.keys(advertised).length) {
+  // CAP ACK echoes only cap names, so we keep the values CAP LS advertised
+  // (2FA factors, account registration needs) on the server.
+  ircClient.on("CAP LS", ({ serverId, values, isFirstLine }) => {
+    const { "unrealircd.org/link-security": linkSecurity, ...advertised } =
+      values;
+    if (isFirstLine || Object.keys(advertised).length) {
       store.setState((state) => ({
         servers: state.servers.map((server) =>
           server.id === serverId
             ? {
                 ...server,
                 capabilityValues: {
-                  ...(server.capabilityValues ?? {}),
+                  ...(isFirstLine ? {} : server.capabilityValues),
                   ...advertised,
                 },
               }
@@ -532,48 +526,43 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       }));
     }
 
-    if (cliCaps.includes("unrealircd.org/link-security=")) {
-      const match = cliCaps.match(/unrealircd\.org\/link-security=(\d+)/);
-      if (match) {
-        const linkSecurityValue = Number.parseInt(match[1], 10) || 0;
-        store.setState((state) => {
-          const updatedServers = state.servers.map((server) =>
-            server.id === serverId
-              ? { ...server, linkSecurity: linkSecurityValue }
-              : server,
-          );
-          return { servers: updatedServers };
-        });
-
-        const currentState = store.getState();
-        const currentServer = currentState.servers.find(
-          (s) => s.id === serverId,
+    if (linkSecurity !== undefined) {
+      const linkSecurityValue = Number.parseInt(linkSecurity, 10) || 0;
+      store.setState((state) => {
+        const updatedServers = state.servers.map((server) =>
+          server.id === serverId
+            ? { ...server, linkSecurity: linkSecurityValue }
+            : server,
         );
-        const hasLowLinkSecurity = linkSecurityValue < 2;
-        const savedServers = storage.servers.load();
-        const serverConfig = currentServer
-          ? savedServers.find((s) => s.id === serverId)
-          : undefined;
-        const shouldWarnLinkSecurity =
-          hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
+        return { servers: updatedServers };
+      });
 
-        if (shouldWarnLinkSecurity) {
-          store.setState((state) => {
-            const existingWarning = state.ui.linkSecurityWarnings.find(
-              (w) => w.serverId === serverId,
-            );
-            if (existingWarning) return state;
-            return {
-              ui: {
-                ...state.ui,
-                linkSecurityWarnings: [
-                  ...state.ui.linkSecurityWarnings,
-                  { serverId, timestamp: Date.now() },
-                ],
-              },
-            };
-          });
-        }
+      const currentState = store.getState();
+      const currentServer = currentState.servers.find((s) => s.id === serverId);
+      const hasLowLinkSecurity = linkSecurityValue < 2;
+      const savedServers = storage.servers.load();
+      const serverConfig = currentServer
+        ? savedServers.find((s) => s.id === serverId)
+        : undefined;
+      const shouldWarnLinkSecurity =
+        hasLowLinkSecurity && !serverConfig?.skipLinkSecurityWarning;
+
+      if (shouldWarnLinkSecurity) {
+        store.setState((state) => {
+          const existingWarning = state.ui.linkSecurityWarnings.find(
+            (w) => w.serverId === serverId,
+          );
+          if (existingWarning) return state;
+          return {
+            ui: {
+              ...state.ui,
+              linkSecurityWarnings: [
+                ...state.ui.linkSecurityWarnings,
+                { serverId, timestamp: Date.now() },
+              ],
+            },
+          };
+        });
       }
     }
   });
@@ -665,6 +654,71 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       ircClient.capNegotiationComplete.set(serverId, true);
       ircClient.userOnConnect(serverId);
     }
+  });
+
+  const patchServer = (
+    serverId: string,
+    patch: (server: Server) => Partial<Server>,
+  ) =>
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, ...patch(server) } : server,
+      ),
+    }));
+  const findClaim = (serverId: string) =>
+    store.getState().servers.find((s) => s.id === serverId)?.nickClaim;
+
+  ircClient.on("NOTE", ({ serverId, command, code, target }) => {
+    if (command === "NICK" && code === "REGISTERED" && target)
+      patchServer(serverId, () => ({ registeredNick: target }));
+  });
+  ircClient.on("FAIL", ({ serverId, command, code, target }) => {
+    if (command === "REGISTER" && code === "ACCOUNT_EXISTS" && target) {
+      const claim = findClaim(serverId);
+      const isClaimForTarget =
+        claim?.account.toLowerCase() === target.toLowerCase();
+      patchServer(serverId, () => ({
+        registeredNick: target,
+        ...(isClaimForTarget && { nickClaim: undefined }),
+      }));
+      return;
+    }
+    if (command !== "REGISTER" && command !== "VERIFY") return;
+    const claim = findClaim(serverId);
+    const awaited = command === "VERIFY" ? "verifying" : "sending";
+    if (claim?.stage !== awaited) return;
+    patchServer(serverId, () => ({
+      nickClaim: {
+        ...claim,
+        stage: command === "VERIFY" ? "verify" : "failed",
+        failure: { command, code },
+      },
+    }));
+  });
+  ircClient.on("REGISTER_VERIFICATION_REQUIRED", ({ serverId }) => {
+    const claim = findClaim(serverId);
+    if (!claim) return;
+    patchServer(serverId, () => ({
+      nickClaim: { ...claim, stage: "verify", failure: undefined },
+    }));
+  });
+  // The server logs us in after REGISTER or VERIFY succeeds, so we save the
+  // login only once it has accepted the account.
+  ircClient.on("LOGGED_IN", ({ serverId, account }) => {
+    const claim = findClaim(serverId);
+    if (
+      !claim ||
+      claim.stage === "failed" ||
+      claim.account.toLowerCase() !== account?.toLowerCase()
+    )
+      return;
+    store.getState().updateServer(serverId, {
+      saslAccountName: claim.account,
+      saslPassword: claim.storedPassword,
+      saslEnabled: true,
+    });
+    ircClient.setSaslLogin(serverId, claim.account, claim.storedPassword);
+    patchServer(serverId, () => ({ nickClaim: undefined }));
   });
 
   // Account registration event handlers

@@ -11,7 +11,6 @@ import { BouncerDisconnectConfirmModal } from "./components/ui/BouncerDisconnect
 import { BouncerNetworkDisconnectConfirmModal } from "./components/ui/BouncerNetworkDisconnectConfirmModal";
 import { ChannelKeyModal } from "./components/ui/ChannelKeyModal";
 import LinkSecurityWarningModal from "./components/ui/LinkSecurityWarningModal";
-import LoadingOverlay from "./components/ui/LoadingOverlay";
 import QuickActions from "./components/ui/QuickActions";
 import { RemoveServerConfirmModal } from "./components/ui/RemoveServerConfirmModal";
 import { TicTacToeModal } from "./components/ui/TicTacToeModal";
@@ -131,7 +130,6 @@ const App: React.FC = () => {
     selectChannel,
     connectToSavedServers,
     toggleServerNoticesPopup,
-    isConnecting,
     hasConnectedToSavedServers,
   } = useStore(
     useShallow((state) => ({
@@ -144,7 +142,6 @@ const App: React.FC = () => {
       selectChannel: state.selectChannel,
       connectToSavedServers: state.connectToSavedServers,
       toggleServerNoticesPopup: state.toggleServerNoticesPopup,
-      isConnecting: state.isConnecting,
       hasConnectedToSavedServers: state.hasConnectedToSavedServers,
     })),
   );
@@ -154,6 +151,7 @@ const App: React.FC = () => {
       !state.servers.some(
         (s) =>
           s.isConnected ||
+          s.isDisabled ||
           s.connectionState === "connecting" ||
           s.connectionState === "reconnecting",
       ),
@@ -435,7 +433,6 @@ const App: React.FC = () => {
                   joinChannel={joinChannel}
                 />
               )}
-              {isConnecting && <LoadingOverlay />}
             </>
           }
         />
