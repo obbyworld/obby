@@ -1345,6 +1345,8 @@ msgstr "Client limit (+l)"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/BotPane.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx

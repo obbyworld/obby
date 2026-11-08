@@ -1,13 +1,15 @@
 import { t } from "@lingui/core/macro";
 import type * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   FaCog,
   FaExclamationTriangle,
   FaRedo,
   FaSignInAlt,
+  FaTimes,
   FaUnlink,
 } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import useStore from "../../store";
 import { getLoginState } from "../../store/helpers";
 import type { Server } from "../../types";
@@ -42,6 +44,25 @@ const SETTLE_MS: Record<Trouble, number> = {
   auth: 0,
 };
 
+// A closed strip stays closed in every view of the server until its problem
+// clears, so we keep the dismissals outside the component.
+const dismissed = new Map<string, Trouble>();
+const listeners = new Set<() => void>();
+function setDismissed(serverId: string, trouble: Trouble | null) {
+  if (trouble) dismissed.set(serverId, trouble);
+  else if (!dismissed.delete(serverId)) return;
+  for (const listener of listeners) listener();
+}
+function useDismissed(serverId: string): Trouble | undefined {
+  return useSyncExternalStore(
+    (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    () => dismissed.get(serverId),
+  );
+}
+
 function useSettledTrouble(trouble: Trouble | null): Trouble | null {
   const [settled, setSettled] = useState<Trouble | null>(null);
   useEffect(() => {
@@ -57,8 +78,15 @@ function useSettledTrouble(trouble: Trouble | null): Trouble | null {
 
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
-  const trouble = useSettledTrouble(getTrouble(server));
-  if (!trouble) return null;
+  const isTouch = useIsTouchInput();
+  const current = getTrouble(server);
+  const trouble = useSettledTrouble(current);
+  const dismissedTrouble = useDismissed(server.id);
+  useEffect(() => {
+    if (dismissedTrouble && dismissedTrouble !== current)
+      setDismissed(server.id, null);
+  }, [server.id, current, dismissedTrouble]);
+  if (!trouble || trouble === dismissedTrouble) return null;
 
   const messages: Record<Trouble, string> = {
     lost: t`Connection lost. Reconnect to keep chatting`,
@@ -70,7 +98,16 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
     <div role="status" className={`strip-card ${TONES[trouble]}`}>
       <div className="strip-header">
         <span className="mt-0.5">{ICONS[trouble]}</span>
-        <span>{messages[trouble]}</span>
+        <span className="flex-1 min-w-0 break-words">{messages[trouble]}</span>
+        <button
+          type="button"
+          onClick={() => setDismissed(server.id, trouble)}
+          title={t`Close`}
+          aria-label={t`Close`}
+          className={`shrink-0 flex items-center justify-center rounded text-discord-text-muted hover:text-white ${isTouch ? "w-11 h-11 -m-2.5" : "w-5 h-5"}`}
+        >
+          <FaTimes />
+        </button>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {trouble === "auth" ? (

@@ -107,4 +107,28 @@ describe("ConnectionStrip", () => {
     expect(reconnectServer).toHaveBeenCalledWith("server1");
     expect(editConnection).not.toHaveBeenCalled();
   });
+
+  it("stays closed until the failed login clears, then shows the next failure", () => {
+    const failed = {
+      ...baseServer,
+      id: "closer",
+      isRegistered: true,
+      saslFailed: true,
+    };
+    const { container, rerender } = renderSettled(failed);
+    fireEvent.click(screen.getByRole("button", { name: /close/i }));
+    expect(container).toBeEmptyDOMElement();
+
+    rerender(<ConnectionStrip server={failed} />);
+    expect(container).toBeEmptyDOMElement();
+
+    rerender(<ConnectionStrip server={{ ...failed, saslFailed: false }} />);
+    rerender(<ConnectionStrip server={failed} />);
+    act(() => {
+      vi.advanceTimersByTime(10_000);
+    });
+    expect(
+      screen.getByRole("button", { name: /log in again/i }),
+    ).toBeInTheDocument();
+  });
 });
