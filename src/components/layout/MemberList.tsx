@@ -1,10 +1,17 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaCheckCircle, FaChevronLeft } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaChevronLeft,
+  FaSearch,
+  FaTimes,
+} from "react-icons/fa";
 import { useShallow } from "zustand/react/shallow";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getStatusPriority } from "../../lib/channelStatus";
+import { filterMembers } from "../../lib/filterMembers";
 import ircClient from "../../lib/ircClient";
 import {
   getColorStyle,
@@ -16,6 +23,7 @@ import useStore from "../../store";
 import type { User } from "../../types";
 import ModerationModal, { type ModerationAction } from "../ui/ModerationModal";
 import OperatorKey from "../ui/OperatorKey";
+import { TextInput } from "../ui/TextInput";
 import UserContextMenu from "../ui/UserContextMenu";
 
 const StatusIndicator: React.FC<{ status?: string }> = ({ status }) => {
@@ -457,11 +465,18 @@ export const MemberList: React.FC = () => {
     }
     return a.username.localeCompare(b.username);
   });
+  const [query, setQuery] = useState("");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: each channel starts with its full member list
+  useEffect(() => setQuery(""), [selectedChannelId]);
+  const shownUsers = sortedUsers && filterMembers(sortedUsers, query);
+  const isSearching = query.trim() !== "";
+  const isTouch = useIsTouchInput();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   // Keep an order ref so flushVisible (a stable useCallback) can find
   // each visible nick's on-screen position without going back into the
   // store. Updated synchronously during render -- read in callbacks
   // that fire after.
-  sortedOrderRef.current = sortedUsers?.map((u) => u.username) ?? [];
+  sortedOrderRef.current = shownUsers?.map((u) => u.username) ?? [];
 
   // memberlist sweep: re-arm flushVisible whenever (a) the channel
   // changes or (b) the user count changes -- in particular when it
@@ -472,7 +487,7 @@ export const MemberList: React.FC = () => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: scheduleFlush identity is stable
   useEffect(() => {
     scheduleFlush();
-  }, [selectedChannelId, sortedUsers?.length]);
+  }, [selectedChannelId, shownUsers?.length, query]);
 
   const handleUsernameClick = (
     e: React.MouseEvent,
@@ -611,10 +626,57 @@ export const MemberList: React.FC = () => {
           <FaChevronLeft />
         </button>
       )}
-      <h3 className="text-xs font-semibold text-discord-channels-default uppercase mb-2 px-2">
-        <Trans>Members — {sortedUsers?.length || 0}</Trans>
-      </h3>
-      {sortedUsers?.map((user, idx) => (
+      <div className="sticky -top-3 z-10 -mt-3 pt-3 pb-2 bg-discord-dark-100">
+        <h3 className="text-xs font-semibold text-discord-channels-default uppercase mb-2 px-2">
+          {isSearching ? (
+            <Trans>
+              Members — {shownUsers?.length ?? 0} of {sortedUsers?.length ?? 0}
+            </Trans>
+          ) : (
+            <Trans>Members — {sortedUsers?.length || 0}</Trans>
+          )}
+        </h3>
+        <div className="relative px-2">
+          <FaSearch
+            size={12}
+            className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-discord-text-muted"
+          />
+          <TextInput
+            ref={searchInputRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape" && query) {
+                e.stopPropagation();
+                setQuery("");
+              }
+            }}
+            placeholder={t`Search members`}
+            aria-label={t`Search members`}
+            className="field-input pl-8 pr-9"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                searchInputRef.current?.focus();
+              }}
+              title={t`Clear search`}
+              aria-label={t`Clear search`}
+              className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center rounded text-discord-text-muted hover:text-white ${isTouch ? "w-11 h-11" : "w-8 h-8"}`}
+            >
+              <FaTimes size={12} />
+            </button>
+          )}
+        </div>
+      </div>
+      {isSearching && shownUsers?.length === 0 && (
+        <p className="px-3 py-2 text-sm text-discord-text-muted">
+          <Trans>No members match. Clear the search to see everyone</Trans>
+        </p>
+      )}
+      {shownUsers?.map((user, idx) => (
         <UserItem
           key={user.id}
           user={user}

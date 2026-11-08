@@ -1286,6 +1286,11 @@ msgstr "저장된 기록을 모두 지우시겠습니까?"
 msgid "Clear history"
 msgstr "기록 지우기"
 
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Clear search"
+msgstr "검색 지우기"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
 msgstr "확인하려면 다시 클릭하세요"
@@ -3241,6 +3246,12 @@ msgstr "멤버"
 msgid "Members — {0}"
 msgstr "멤버 — {0}명"
 
+#. placeholder {0}: shownUsers?.length ?? 0
+#. placeholder {1}: sortedUsers?.length ?? 0
+#: src/components/layout/MemberList.tsx
+msgid "Members — {0} of {1}"
+msgstr "멤버 — {1}명 중 {0}명"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "다른 사람 멘션"
@@ -3662,6 +3673,10 @@ msgstr "제한 없음"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "No media in this channel"
 msgstr "이 채널에 미디어가 없습니다"
+
+#: src/components/layout/MemberList.tsx
+msgid "No members match. Clear the search to see everyone"
+msgstr "일치하는 멤버가 없습니다. 검색을 지우면 모두 표시됩니다"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
@@ -4725,6 +4740,11 @@ msgstr "GIF를 검색하여 시작하세요"
 #: src/components/ui/GifSelector.tsx
 msgid "Search GIFs..."
 msgstr "GIF 검색..."
+
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Search members"
+msgstr "멤버 검색"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/SearchPane.tsx
