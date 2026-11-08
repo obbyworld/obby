@@ -156,6 +156,17 @@
   .setting-row {
     container-type: inline-size;
   }
+  /* A profile detail puts its value under the label in a narrow pane, so the value keeps the full width. */
+  .detail-list {
+    @apply flex flex-col;
+    container-type: inline-size;
+  }
+  .detail-row {
+    @apply flex flex-col gap-0.5 px-4 py-2.5 border-t border-white/[0.06] first:border-t-0;
+  }
+  .detail-label {
+    @apply text-xs text-discord-text-muted;
+  }
   .setting-field {
     flex: 1 1 100%;
     min-width: 0;
@@ -180,6 +191,19 @@
     .strip-action {
       @apply min-h-11;
     }
+  }
+}
+
+@container (min-width: 20rem) {
+  .detail-row {
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+  .detail-label {
+    width: 6rem;
+    flex-shrink: 0;
+    padding-top: 0.125rem;
+    font-size: 13px;
   }
 }
 
