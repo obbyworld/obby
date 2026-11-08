@@ -233,6 +233,11 @@ msgstr "{sender} перезапустив(-ла) шифрування. Заче�
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} надіслав вам повідомлення: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "Підключено сесій: {sessionCount}. Увійдіть у цей обліковий запис або попросіть IRC-оператора переглянути їхні дані."
@@ -959,6 +964,10 @@ msgstr "Бот у цьому каналі"
 msgid "Bots"
 msgstr "Боти"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Підтвердити видалення"
 msgid "Confirm?"
 msgstr "Підтвердити?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

@@ -114,6 +114,7 @@ export interface Server {
   registeredNick?: string;
   // The user hid the offer to register or log in to their nick on this server.
   isNickPromptHidden?: boolean;
+  isDisabled?: boolean;
   nickClaim?: NickClaim;
   // The server answered MARKREAD with FAIL on this connection.
   readMarkerRefused?: boolean;
@@ -283,6 +284,8 @@ export interface ServerConfig {
   skipLinkSecurityWarning?: boolean;
   skipLocalhostWarning?: boolean;
   skipNickPrompt?: boolean;
+  // A saved server we leave unconnected until the user turns it back on. Unset means on.
+  enabled?: boolean;
   operUsername?: string;
   operPassword?: string;
   operOnConnect?: boolean;

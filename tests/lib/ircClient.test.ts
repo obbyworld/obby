@@ -222,6 +222,23 @@ describe("IRCClient", () => {
     });
   });
 
+  describe("disconnect", () => {
+    test("closes a socket that is still opening without sending QUIT", () => {
+      const mockSocket = new MockWebSocket("ws://irc.example.com:443");
+      mockSocket.send = () => {
+        throw new DOMException("still connecting", "InvalidStateError");
+      };
+      MockWebSocketSpy.mockImplementation(returnsSocket(mockSocket));
+      Object.assign(MockWebSocketSpy, { OPEN: 1 });
+      void client.connect("Test Server", "irc.example.com", 443, "testuser");
+      const [server] = client.getServers();
+
+      expect(() => client.removeServer(server.id)).not.toThrow();
+      expect(mockSocket.readyState).toBe(WebSocket.CLOSED);
+      expect(client.getServers()).toHaveLength(0);
+    });
+  });
+
   describe("message handling", () => {
     test("should handle PRIVMSG correctly", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");

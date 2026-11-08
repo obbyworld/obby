@@ -55,6 +55,9 @@ const ServerIcon: React.FC<ServerIconProps> = ({
 
   const iconUrl = server.icon;
   const showIcon = canShowServerIcon(iconUrl);
+  const serverName = server.networkName || server.name;
+  const label = server.isDisabled ? t`${serverName}, turned off` : serverName;
+  const dimmed = server.isDisabled ? "grayscale opacity-50" : "";
 
   const getServerInitial = (s: Server): string => {
     const displayName = s.networkName || s.name;
@@ -87,10 +90,10 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           ${isTouchDevice ? "no-touch-action no-select" : ""}
         `}
         data-selected={isSelected}
-        title={server.networkName || server.name}
+        title={label}
         role="button"
         tabIndex={0}
-        aria-label={server.networkName || server.name}
+        aria-label={label}
         aria-pressed={isSelected}
         onKeyDown={(e) => {
           if (
@@ -107,11 +110,12 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           ? { onTouchStart, onTouchMove, onTouchEnd, onTouchCancel }
           : {})}
       >
-        {(server.connectionState === "disconnected" ||
-          server.connectionState === "connecting" ||
-          server.connectionState === "reconnecting") && (
-          <div className="absolute inset-0 bg-gray-500 bg-opacity-50 rounded-lg" />
-        )}
+        {!server.isDisabled &&
+          (server.connectionState === "disconnected" ||
+            server.connectionState === "connecting" ||
+            server.connectionState === "reconnecting") && (
+            <div className="absolute inset-0 bg-gray-500 bg-opacity-50 rounded-lg" />
+          )}
 
         {(server.connectionState === "connecting" ||
           server.connectionState === "reconnecting") && (
@@ -120,7 +124,7 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           </span>
         )}
 
-        {server.connectionState === "disconnected" && (
+        {server.connectionState === "disconnected" && !server.isDisabled && (
           <button
             type="button"
             className={`${CONNECTION_BADGE_CLASS} text-white hover:bg-discord-primary transition-colors after:absolute after:-inset-3 after:content-['']`}
@@ -145,11 +149,11 @@ const ServerIcon: React.FC<ServerIconProps> = ({
           <img
             src={iconUrl}
             alt={server.name}
-            className="w-9 h-9 rounded-full pointer-events-none"
+            className={`w-9 h-9 rounded-full pointer-events-none ${dimmed}`}
             draggable={false}
           />
         ) : (
-          <div className="text-xl font-semibold text-white">
+          <div className={`text-xl font-semibold text-white ${dimmed}`}>
             {getServerInitial(server)}
           </div>
         )}

@@ -233,6 +233,11 @@ msgstr "{sender} reinició el cifrado. Espera un momento antes de enviar un mens
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} te envió un mensaje: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} sesiones conectadas. Inicia sesión con esta cuenta o pide a un operador de IRC que vea sus detalles."
@@ -959,6 +964,10 @@ msgstr "Bot en este canal"
 msgid "Bots"
 msgstr "Bots"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Confirmar eliminación"
 msgid "Confirm?"
 msgstr "¿Confirmar?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

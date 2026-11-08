@@ -18,6 +18,7 @@ import { editConnection } from "./NetworkMenu";
 type Trouble = "lost" | "retrying" | "auth";
 
 function getTrouble(server: Server): Trouble | null {
+  if (server.isDisabled) return null;
   if (server.connectionState === "disconnected") return "lost";
   if (server.connectionState === "reconnecting") return "retrying";
   if (getLoginState(server) === "failed") return "auth";

@@ -233,6 +233,11 @@ msgstr "{sender} şifrelemeyi yeniden başlattı. Mesaj göndermeden önce biraz
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} size bir mesaj gönderdi: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} oturum bağlı. Bu hesapla giriş yapın veya ayrıntıları görmek için bir IRC operatörüne sorun."
@@ -959,6 +964,10 @@ msgstr "Bu kanalda bot"
 msgid "Bots"
 msgstr "Botlar"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Kaldırmayı onayla"
 msgid "Confirm?"
 msgstr "Onaylıyor musunuz?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

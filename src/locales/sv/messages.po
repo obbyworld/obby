@@ -233,6 +233,11 @@ msgstr "{sender} startade om krypteringen. Vänta en stund innan du skickar ett 
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} skickade ett meddelande till dig: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} sessioner anslutna. Logga in med det här kontot eller be en IRC-operatör om att se detaljerna."
@@ -959,6 +964,10 @@ msgstr "Bot i den här kanalen"
 msgid "Bots"
 msgstr "Bottar"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Bekräfta borttagning"
 msgid "Confirm?"
 msgstr "Bekräfta?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

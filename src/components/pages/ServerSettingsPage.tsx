@@ -72,7 +72,7 @@ const LoginSection: React.FC<{
   onRecover: () => void;
   onChangePassword: () => void;
 }> = ({ serverId, server, onRecover, onChangePassword }) => {
-  const { updateServer, reconnectServer } = useStore();
+  const { updateServer, reconnectServer, setServerEnabled } = useStore();
   const [serverConfig, setServerConfig] = useState(() =>
     loadServerConfig(serverId),
   );
@@ -104,7 +104,8 @@ const LoginSection: React.FC<{
         : {}),
       ...(password ? { password } : {}),
     });
-    reconnectServer(serverId);
+    if (server?.isDisabled) setServerEnabled(serverId, true);
+    else reconnectServer(serverId);
   };
 
   const loginStatus: Record<LoginState, ReactNode> = {
@@ -252,7 +253,8 @@ const LoginSection: React.FC<{
 const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
   page,
 }) => {
-  const { servers, updateServer, sendRaw, isConnecting } = useStore();
+  const { servers, updateServer, sendRaw, isConnecting, setServerEnabled } =
+    useStore();
   const server = servers.find((s) => s.id === page.serverId);
   const serverConfig = loadServerConfig(page.serverId);
 
@@ -379,6 +381,19 @@ const ServerSettingsPage: React.FC<PageProps<"serverSettings">> = ({
 
   const generalSection = (
     <SettingGroup>
+      {!server?.bouncerNetid && (
+        <SettingRow
+          id="server.enabled"
+          title={t`Connect`}
+          control={
+            <Switch
+              checked={!server?.isDisabled}
+              onChange={(checked) => setServerEnabled(page.serverId, checked)}
+              label={t`Connect`}
+            />
+          }
+        />
+      )}
       <SettingRow
         id="server.name"
         title={t`Network name`}

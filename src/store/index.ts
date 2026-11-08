@@ -261,6 +261,20 @@ const resolveReplyMessage = (
 
 // Servers
 export const loadSavedServers = storage.servers.load;
+
+function bouncerNetworkIds(servers: Server[], serverId: string): string[] {
+  const isBouncer = servers.find((s) => s.id === serverId)?.isBouncerControl;
+  if (!isBouncer) return [];
+  return servers.filter((s) => s.bouncerServerId === serverId).map((s) => s.id);
+}
+
+function closeServerConnections(serverIds: Iterable<string>): void {
+  for (const id of serverIds) {
+    clearServerConnectionTimeout(id);
+    releaseServerVoiceClients(id);
+    ircClient.removeServer(id);
+  }
+}
 export const saveServersToLocalStorage = storage.servers.save;
 export const loadSavedMetadata = storage.metadata.load;
 const saveMetadataToLocalStorage = storage.metadata.save;
@@ -1015,6 +1029,7 @@ export interface AppState {
   reconnectServer: (serverId: string) => Promise<void>; // Reconnect to an existing server
   deleteServer: (serverId: string) => void; // New action to delete a server
   updateServer: (serverId: string, config: Partial<ServerConfig>) => void; // Update server configuration
+  setServerEnabled: (serverId: string, isEnabled: boolean) => void;
   capAck: (serverId: string, key: string, capabilities: string) => void; // Handle CAP ACK
   // UI actions
   toggleAddServerModal: (
@@ -1527,6 +1542,7 @@ const useStore = create<AppState>((set, get) => ({
         skipLocalhostWarning: savedServer?.skipLocalhostWarning,
         skipLinkSecurityWarning: savedServer?.skipLinkSecurityWarning,
         skipNickPrompt: savedServer?.skipNickPrompt,
+        enabled: savedServer?.enabled,
         // Preserve existing addedAt timestamp or set current time for new servers
         addedAt: savedServer?.addedAt || Date.now(),
         oauth: mergedOauth ?? savedServer?.oauth,
@@ -3130,6 +3146,7 @@ const useStore = create<AppState>((set, get) => ({
       const urlHost = ensureUrlFormat(host, port);
 
       const existingServer = get().servers.find((s) => s.id === id);
+      const isDisabled = savedServer.enabled === false;
 
       if (!existingServer) {
         const connectingServer: Server = {
@@ -3140,17 +3157,19 @@ const useStore = create<AppState>((set, get) => ({
           channels: [],
           privateChats: [],
           isConnected: false,
-          connectionState: "connecting",
+          connectionState: isDisabled ? "disconnected" : "connecting",
           users: [],
           bouncerServerId: savedServer.bouncerServerId,
           bouncerNetid: savedServer.bouncerNetid,
           isBouncerControl: savedServer.isBouncerControl,
+          isDisabled,
         };
 
         set((state) => ({
           servers: [...state.servers, connectingServer],
         }));
       }
+      if (isDisabled) continue;
 
       let connectionPromise: Promise<unknown> = connectSavedServer(
         get().connect,
@@ -3184,6 +3203,7 @@ const useStore = create<AppState>((set, get) => ({
       console.error(`Server ${serverId} not found`);
       return;
     }
+    if (server.isDisabled) return;
 
     // We close the live connection and any pending retry, so only the saved credentials log in.
     releaseServerVoiceClients(serverId);
@@ -3240,20 +3260,11 @@ const useStore = create<AppState>((set, get) => ({
     // Cascade: when target is a bouncer control session, also drop every
     // bound child. Each child shares the parent's socket-side identity
     // with soju and has no useful life beyond the control session.
-    const preState = get();
-    const target = preState.servers.find((s) => s.id === serverId);
-    const cascadeIds: string[] = target?.isBouncerControl
-      ? preState.servers
-          .filter((s) => s.bouncerServerId === serverId)
-          .map((s) => s.id)
-      : [];
-    const toRemove = new Set<string>([serverId, ...cascadeIds]);
-
-    for (const id of toRemove) {
-      clearServerConnectionTimeout(id);
-      releaseServerVoiceClients(id);
-      ircClient.removeServer(id);
-    }
+    const toRemove = new Set<string>([
+      serverId,
+      ...bouncerNetworkIds(get().servers, serverId),
+    ]);
+    closeServerConnections(toRemove);
 
     set((state) => {
       const savedServers = loadSavedServers();
@@ -3298,6 +3309,37 @@ const useStore = create<AppState>((set, get) => ({
       savedServers[serverIndex] = { ...savedServers[serverIndex], ...config };
       saveServersToLocalStorage(savedServers);
     }
+  },
+
+  setServerEnabled: (serverId, isEnabled) => {
+    get().updateServer(serverId, { enabled: isEnabled });
+    set((state) => ({
+      servers: state.servers.map((s) =>
+        s.id === serverId
+          ? {
+              ...s,
+              isDisabled: !isEnabled,
+              isConnected: false,
+              connectionState: "disconnected" as const,
+            }
+          : s,
+      ),
+    }));
+    if (isEnabled) {
+      void get().reconnectServer(serverId);
+      return;
+    }
+    // A bouncer's networks bind again on their own once the bouncer reconnects, so we drop them with it.
+    const networkIds = bouncerNetworkIds(get().servers, serverId);
+    // We drop the client's copy too, so waking from sleep has nothing to reconnect.
+    closeServerConnections([serverId, ...networkIds]);
+    const selectedServerId = get().ui.selectedServerId;
+    const isNetworkSelected =
+      !!selectedServerId && networkIds.includes(selectedServerId);
+    set((state) => ({
+      servers: state.servers.filter((s) => !networkIds.includes(s.id)),
+    }));
+    if (isNetworkSelected) get().selectServer(serverId);
   },
 
   // UI actions

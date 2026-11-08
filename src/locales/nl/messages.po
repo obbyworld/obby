@@ -233,6 +233,11 @@ msgstr "{sender} heeft de versleuteling opnieuw gestart. Wacht even voordat je e
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} stuurde je een bericht: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} sessies verbonden. Meld je aan met dit account of vraag een IRC-operator om je gegevens te bekijken."
@@ -959,6 +964,10 @@ msgstr "Bot in dit kanaal"
 msgid "Bots"
 msgstr "Bots"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Verwijderen bevestigen"
 msgid "Confirm?"
 msgstr "Bevestigen?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

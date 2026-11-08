@@ -233,6 +233,11 @@ msgstr "{sender} 已重新啟動加密。請稍候片刻再傳送訊息。"
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} 傳了一則訊息給你：{body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "已連線 {sessionCount} 個工作階段。請以此帳號登入，或請 IRC 管理員查看其詳細資訊。"
@@ -959,6 +964,10 @@ msgstr "此頻道中的機器人"
 msgid "Bots"
 msgstr "機器人"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "確認移除"
 msgid "Confirm?"
 msgstr "確認？"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

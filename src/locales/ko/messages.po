@@ -233,6 +233,11 @@ msgstr "{sender} 님이 암호화를 다시 시작했습니다. 잠시 기다린
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender}님이 메시지를 보냈습니다: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount}개의 세션이 연결되어 있습니다. 이 계정으로 로그인하거나 IRC 운영자에게 세부 정보를 요청하세요."
@@ -959,6 +964,10 @@ msgstr "이 채널의 봇"
 msgid "Bots"
 msgstr "봇"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "삭제 확인"
 msgid "Confirm?"
 msgstr "확인하시겠습니까?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"

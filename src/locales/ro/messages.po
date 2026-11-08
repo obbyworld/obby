@@ -233,6 +233,11 @@ msgstr "{sender} a repornit criptarea. Așteaptă puțin înainte de a trimite u
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} ți-a trimis un mesaj: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr ""
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "{sessionCount} sesiuni conectate. Autentificați-vă cu acest cont sau cereți unui operator IRC să vadă detaliile."
@@ -959,6 +964,10 @@ msgstr "Bot în acest canal"
 msgid "Bots"
 msgstr "Boți"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr ""
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1493,6 +1502,8 @@ msgstr "Confirmă eliminarea"
 msgid "Confirm?"
 msgstr "Confirmați?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
