@@ -477,9 +477,10 @@ export const MemberList: React.FC = () => {
   // store. Updated synchronously during render -- read in callbacks
   // that fire after.
   sortedOrderRef.current = shownUsers?.map((u) => u.username) ?? [];
+  const shownNicks = sortedOrderRef.current.join(" ");
 
   // memberlist sweep: re-arm flushVisible whenever (a) the channel
-  // changes or (b) the user count changes -- in particular when it
+  // changes or (b) the shown members change -- in particular when it
   // jumps from 0 to N as the batched WHO reply lands. Without this the
   // very first flushVisible runs while sortedOrderRef is still empty
   // (returns early, no fetch) and we then wait for a scroll event
@@ -487,7 +488,7 @@ export const MemberList: React.FC = () => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: scheduleFlush identity is stable
   useEffect(() => {
     scheduleFlush();
-  }, [selectedChannelId, shownUsers?.length, query]);
+  }, [selectedChannelId, shownNicks]);
 
   const handleUsernameClick = (
     e: React.MouseEvent,

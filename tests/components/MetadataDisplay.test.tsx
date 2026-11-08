@@ -234,6 +234,17 @@ describe("Metadata Display Features", () => {
       expect(search).toHaveFocus();
     });
 
+    it("clears the search with Escape", () => {
+      render(<MemberList />);
+      const search = screen.getByRole("textbox", { name: "Search members" });
+      fireEvent.change(search, { target: { value: "wonder" } });
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+
+      fireEvent.keyDown(search, { key: "Escape" });
+      expect(search).toHaveValue("");
+      expect(screen.getByText("bob")).toBeInTheDocument();
+    });
+
     it("should display user avatars", () => {
       render(<MemberList />);
 
