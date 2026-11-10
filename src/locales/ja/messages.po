@@ -5648,6 +5648,14 @@ msgstr "もう一度アップロードしてください。"
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "もう一度アップロードしてください。ファイルホストから読み取れない応答が返されました。"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "ライトをオフにする"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "ライトをオンにする"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "メディアのプレビューをオフにします。"

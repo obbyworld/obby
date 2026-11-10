@@ -5648,6 +5648,14 @@ msgstr "Încearcă din nou încărcarea."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Încearcă din nou încărcarea. Gazda de fișiere a trimis un răspuns pe care nu l-am putut citi."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Oprește lanterna"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Pornește lanterna"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Dezactivați previzualizările media."

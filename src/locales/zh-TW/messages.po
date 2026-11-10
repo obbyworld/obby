@@ -5648,6 +5648,14 @@ msgstr "請重新上傳。"
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "請重新上傳。檔案主機回傳了我們無法讀取的回應。"
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "關閉手電筒"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "開啟手電筒"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "關閉媒體預覽。"

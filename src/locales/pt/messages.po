@@ -5648,6 +5648,14 @@ msgstr "Tente enviar novamente."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Tente enviar novamente. O alojamento de ficheiros devolveu uma resposta que não conseguimos ler."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Desligar a lanterna"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Ligar a lanterna"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Desativar prévias de mídia."
