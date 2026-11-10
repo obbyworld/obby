@@ -1,10 +1,18 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaCamera, FaCheck, FaSyncAlt, FaTimes, FaTrash } from "react-icons/fa";
+import {
+  FaBolt,
+  FaCamera,
+  FaCheck,
+  FaSyncAlt,
+  FaTimes,
+  FaTrash,
+} from "react-icons/fa";
 import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import { useModalBehavior } from "../../hooks/useModalBehavior";
 import { pickVideoRecordingFormat } from "../../lib/audioRecording";
+import { usePhysicalAngle } from "../../lib/deviceRotation";
 import {
   type AutoStopReason,
   type LimitedRecording,
@@ -29,6 +37,21 @@ import { DeviceAccessGate } from "./settings/CallDeviceShared";
 import { useDeviceAccess } from "./settings/useDeviceAccess";
 
 const VIDEO_FILE_PREFIX = "video-message";
+
+// A photo is a single frame, so we ask a phone for more pixels than a recording or a call uses.
+const PHOTO_SIZE: MediaTrackConstraints = {
+  width: { ideal: 1920 },
+  height: { ideal: 1080 },
+};
+
+type TorchConstraints = MediaTrackConstraintSet & { torch?: boolean };
+
+function hasTorch(track: MediaStreamTrack): boolean {
+  const capabilities = track.getCapabilities?.() as
+    | (MediaTrackCapabilities & { torch?: boolean })
+    | undefined;
+  return capabilities?.torch === true;
+}
 
 type Mode = "photo" | "video";
 type Status =
@@ -110,6 +133,11 @@ export function CameraCaptureModal({
   const [stoppedBy, setStoppedBy] = useState<AutoStopReason | null>(null);
   const [isSilent, setIsSilent] = useState(false);
   const [capture, setCapture] = useState<Capture | null>(null);
+  const [isTorchAvailable, setIsTorchAvailable] = useState(false);
+  const [isTorchOn, setIsTorchOn] = useState(false);
+  // The light stays on across a switch between photo and video, which reopens the camera.
+  const isTorchWantedRef = useRef(false);
+  const physicalAngle = usePhysicalAngle(isOpen && isTouch);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -127,40 +155,70 @@ export function CameraCaptureModal({
       for (const track of streamRef.current.getTracks()) track.stop();
       streamRef.current = null;
     }
-    if (mountedRef.current) setPreviewTrack(undefined);
+    if (mountedRef.current) {
+      setPreviewTrack(undefined);
+      setIsTorchAvailable(false);
+      setIsTorchOn(false);
+    }
   }, []);
 
-  const openCamera = useCallback(async () => {
-    release();
-    const generation = genRef.current;
-    setStatus("starting");
-    setError(null);
-    const settings = useStore.getState().globalSettings;
-    const deviceId = isTouch
-      ? undefined
-      : resolveDeviceId(settings.callVideoInput, videoAccess.devices);
-    let stream: MediaStream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraints(settings, deviceId, isTouch),
-      });
-    } catch (err) {
-      if (generation === genRef.current && mountedRef.current) {
-        setStatus("error");
-        setError(describeMediaError(err));
+  const setTorch = useCallback(
+    async (track: MediaStreamTrack, isOn: boolean) => {
+      try {
+        await track.applyConstraints({
+          advanced: [{ torch: isOn } as TorchConstraints],
+        });
+        if (mountedRef.current) setIsTorchOn(isOn);
+      } catch (err) {
+        if (!(err instanceof DOMException)) throw err;
+        if (mountedRef.current) setIsTorchAvailable(false);
       }
-      return;
-    }
-    // A capture that lands after the camera was closed has nothing left to
-    // stop it, so it would hold the device until the app quits.
-    if (generation !== genRef.current || !mountedRef.current) {
-      for (const track of stream.getTracks()) track.stop();
-      return;
-    }
-    streamRef.current = stream;
-    setPreviewTrack(stream.getVideoTracks()[0]);
-    setStatus("ready");
-  }, [isTouch, release, videoAccess.devices]);
+    },
+    [],
+  );
+
+  const openCamera = useCallback(
+    async (forMode: Mode = "photo") => {
+      release();
+      const generation = genRef.current;
+      setStatus("starting");
+      setError(null);
+      const settings = useStore.getState().globalSettings;
+      const deviceId = isTouch
+        ? undefined
+        : resolveDeviceId(settings.callVideoInput, videoAccess.devices);
+      let stream: MediaStream;
+      try {
+        const constraints = videoConstraints(settings, deviceId, isTouch);
+        stream = await navigator.mediaDevices.getUserMedia({
+          video:
+            isTouch && forMode === "photo"
+              ? { ...constraints, ...PHOTO_SIZE }
+              : constraints,
+        });
+      } catch (err) {
+        if (generation === genRef.current && mountedRef.current) {
+          setStatus("error");
+          setError(describeMediaError(err));
+        }
+        return;
+      }
+      // A capture that lands after the camera was closed has nothing left to
+      // stop it, so it would hold the device until the app quits.
+      if (generation !== genRef.current || !mountedRef.current) {
+        for (const track of stream.getTracks()) track.stop();
+        return;
+      }
+      streamRef.current = stream;
+      const track = stream.getVideoTracks()[0];
+      setPreviewTrack(track);
+      const canTorch = !!track && hasTorch(track);
+      setIsTorchAvailable(canTorch);
+      if (canTorch && isTorchWantedRef.current) void setTorch(track, true);
+      setStatus("ready");
+    },
+    [isTouch, release, setTorch, videoAccess.devices],
+  );
 
   useEffect(() => {
     mountedRef.current = true;
@@ -193,7 +251,11 @@ export function CameraCaptureModal({
   const takePhoto = async () => {
     const video = videoRef.current;
     if (!video) return;
-    const file = await capturePhotoFile(video);
+    const isFrontCamera = mirrorsCamera(true, globalSettings.callCameraFacing);
+    const file = await capturePhotoFile(video, {
+      track: streamRef.current?.getVideoTracks()[0],
+      rotation: isTouch ? physicalAngle.rotationFor(isFrontCamera) : 0,
+    });
     if (!file || !mountedRef.current) return;
     keepCapture(file, false);
   };
@@ -250,7 +312,7 @@ export function CameraCaptureModal({
     setCapture(null);
     setStoppedBy(null);
     setStatus(streamRef.current ? "ready" : "starting");
-    if (!streamRef.current) void openCamera();
+    if (!streamRef.current) void openCamera(mode);
   };
 
   const handleAttach = () => {
@@ -261,6 +323,7 @@ export function CameraCaptureModal({
   };
 
   const handleClose = () => {
+    isTorchWantedRef.current = false;
     release();
     onCloseRef.current();
   };
@@ -283,7 +346,20 @@ export function CameraCaptureModal({
       callCameraFacing:
         globalSettings.callCameraFacing === "user" ? "environment" : "user",
     });
-    void openCamera();
+    void openCamera(mode);
+  };
+
+  const selectMode = (next: Mode) => {
+    if (next === mode) return;
+    setMode(next);
+    if (isTouch) void openCamera(next);
+  };
+
+  const toggleTorch = () => {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track) return;
+    isTorchWantedRef.current = !isTorchOn;
+    void setTorch(track, !isTorchOn);
   };
 
   const mirror = mirrorsCamera(isTouch, globalSettings.callCameraFacing);
@@ -340,7 +416,8 @@ export function CameraCaptureModal({
       />
     ));
 
-  // A phone gets the whole screen, laid out like the system camera.
+  // A phone gets the whole screen, laid out like the system camera: controls
+  // under the viewfinder in portrait and in a column beside it in landscape.
   if (isTouch) {
     if (!isOpen) return null;
     return createPortal(
@@ -348,13 +425,15 @@ export function CameraCaptureModal({
         role="dialog"
         aria-modal="true"
         aria-label={t`Camera`}
-        className="fixed inset-0 z-[10000] flex flex-col bg-black text-white"
+        className="fixed inset-0 z-[10000] flex flex-col landscape:flex-row bg-black text-white"
         style={{
           paddingTop: "var(--safe-area-inset-top, 0px)",
           paddingBottom: "var(--safe-area-inset-bottom, 0px)",
+          paddingLeft: "var(--safe-area-inset-left, 0px)",
+          paddingRight: "var(--safe-area-inset-right, 0px)",
         }}
       >
-        <div className="relative min-h-0 flex-1 overflow-hidden">
+        <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
           {status === "error" ? (
             <p className="p-6 pt-20 text-center text-sm text-red-400">
               {error}
@@ -380,24 +459,39 @@ export function CameraCaptureModal({
               <FaTimes />
             </button>
             {recordingBadge}
-            {!capture && !recording && status !== "error" ? (
-              <button
-                type="button"
-                onClick={flipCamera}
-                aria-label={t`Switch camera`}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
-              >
-                <FaSyncAlt />
-              </button>
-            ) : (
-              <span className="w-11" />
-            )}
+            <div className="flex gap-3">
+              {!capture && isTorchAvailable && (
+                <button
+                  type="button"
+                  onClick={toggleTorch}
+                  aria-label={
+                    isTorchOn ? t`Turn flashlight off` : t`Turn flashlight on`
+                  }
+                  aria-pressed={isTorchOn}
+                  className={`flex h-11 w-11 items-center justify-center rounded-full ${isTorchOn ? "bg-yellow-300 text-black" : "bg-black/50"}`}
+                >
+                  <FaBolt />
+                </button>
+              )}
+              {!capture && !recording && status !== "error" ? (
+                <button
+                  type="button"
+                  onClick={flipCamera}
+                  aria-label={t`Switch camera`}
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
+                >
+                  <FaSyncAlt />
+                </button>
+              ) : (
+                <span className="w-11" />
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-4 px-6 pb-4 pt-4">
+        <div className="flex flex-col items-center gap-4 px-6 pb-4 pt-4 landscape:w-36 landscape:shrink-0 landscape:justify-center landscape:px-3 landscape:py-3">
           {notes}
           {capture ? (
-            <div className="flex w-full items-center justify-between">
+            <div className="flex w-full items-center justify-between landscape:flex-col-reverse landscape:gap-6">
               <button
                 type="button"
                 onClick={handleRetake}
@@ -420,12 +514,12 @@ export function CameraCaptureModal({
           ) : (
             <>
               {!recording && (
-                <div className="flex gap-8 text-sm font-semibold uppercase tracking-wider">
+                <div className="flex gap-8 text-sm font-semibold uppercase tracking-wider landscape:order-last landscape:flex-col landscape:items-center landscape:gap-4">
                   {(["photo", "video"] as const).map((option) => (
                     <button
                       key={option}
                       type="button"
-                      onClick={() => setMode(option)}
+                      onClick={() => selectMode(option)}
                       aria-pressed={mode === option}
                       className={
                         mode === option ? "text-yellow-300" : "text-white/60"

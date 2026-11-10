@@ -5648,6 +5648,14 @@ msgstr "Yüklemeyi tekrar deneyin."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Yüklemeyi tekrar deneyin. Dosya sunucusu okuyamadığımız bir yanıt gönderdi."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "El fenerini kapat"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "El fenerini aç"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Medya önizlemelerini kapatın."

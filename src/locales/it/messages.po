@@ -5648,6 +5648,14 @@ msgstr "Riprova il caricamento."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Riprova il caricamento. L'host dei file ha risposto in modo illeggibile."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Spegni la torcia"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Accendi la torcia"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Disattiva le anteprime dei contenuti."

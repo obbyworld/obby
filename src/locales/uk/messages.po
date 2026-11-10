@@ -5648,6 +5648,14 @@ msgstr "Спробуйте завантажити ще раз."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Спробуйте завантажити ще раз. Файлосховище надіслало відповідь, яку ми не змогли прочитати."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Вимкнути ліхтарик"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Увімкнути ліхтарик"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Вимкнути попередній перегляд медіа."

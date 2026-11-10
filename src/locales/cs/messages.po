@@ -5648,6 +5648,14 @@ msgstr "Zkuste nahrání znovu."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Zkuste nahrání znovu. Úložiště souborů vrátilo odpověď, které jsme nerozuměli."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Vypnout svítilnu"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Zapnout svítilnu"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Vypněte náhledy médií."

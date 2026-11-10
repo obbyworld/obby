@@ -5648,6 +5648,14 @@ msgstr "Probeer de upload opnieuw."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Probeer de upload opnieuw. De bestandshost stuurde een antwoord terug dat we niet konden lezen."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Zaklamp uitzetten"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Zaklamp aanzetten"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Schakel mediavoorvertoningen uit."

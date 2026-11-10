@@ -5648,6 +5648,14 @@ msgstr "Réessayez l'envoi."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Réessayez l'envoi. L'hébergeur de fichiers a renvoyé une réponse illisible."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Éteindre la lampe torche"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Allumer la lampe torche"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Désactiver les aperçus de médias."
