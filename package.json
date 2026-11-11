@@ -91,7 +91,7 @@
     "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.4",
+    "@biomejs/biome": "^2.6.5",
     "@lingui/babel-plugin-lingui-macro": "^5.9.5",
     "@lingui/cli": "^5.9.5",
     "@lingui/format-po": "^5.9.5",
@@ -124,7 +124,7 @@
     "typescript-eslint": "^8.72.1",
     "vite": "^6.4.5",
     "vitest": "^4.1.10",
-    "werift": "^0.25.2"
+    "werift": "^0.26.0"
   },
   "overrides": {
     "katex": "^0.18.2",
