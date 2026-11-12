@@ -88,10 +88,10 @@
     "react-swipeable": "^7.0.2",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "zustand": "^5.0.16"
+    "zustand": "^5.1.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.5",
+    "@biomejs/biome": "^2.6.6",
     "@lingui/babel-plugin-lingui-macro": "^5.9.5",
     "@lingui/cli": "^5.9.5",
     "@lingui/format-po": "^5.9.5",
@@ -110,7 +110,7 @@
     "@vitest/coverage-v8": "^4.1.12",
     "@vitest/ui": "^4.1.10",
     "autoprefixer": "^10.6.2",
-    "fake-indexeddb": "^6.2.7",
+    "fake-indexeddb": "^6.2.8",
     "globals": "^15.14.0",
     "jsdom": "^26.1.0",
     "lefthook": "^1.11.10",
