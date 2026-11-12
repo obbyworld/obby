@@ -57,7 +57,7 @@
     "@tauri-apps/plugin-deep-link": "2.6.3",
     "@tauri-apps/plugin-geolocation": "^2.5.0",
     "@tauri-apps/plugin-haptics": "^2.4.2",
-    "@tauri-apps/plugin-notification": "^2.8.0",
+    "@tauri-apps/plugin-notification": "~2.7.0",
     "@tauri-apps/plugin-opener": "^2.7.2",
     "@tauri-apps/plugin-os": "^2.4.0",
     "@tauri-apps/plugin-process": "^2.4.0",
@@ -106,7 +106,6 @@
     "@types/react": "^19.3.0",
     "@types/react-color": "^3.0.13",
     "@types/react-dom": "^19.3.0",
-    "@typescript-eslint/parser": "^8.72.1",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^4.1.12",
     "@vitest/ui": "^4.1.10",
@@ -121,12 +120,14 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^3.4.19",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.72.1",
     "vite": "^6.4.5",
     "vitest": "^4.1.10",
     "werift": "^0.26.0"
   },
   "overrides": {
+    "@lingui/cli": {
+      "glob": "^14.0.2"
+    },
     "katex": "^0.18.2",
     "postcss-selector-parser": "^7.1.6"
   }

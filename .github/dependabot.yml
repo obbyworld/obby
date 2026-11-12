@@ -28,6 +28,10 @@ updates:
       # Matches the deep-link crate, pinned in src-tauri/Cargo.toml.
       - dependency-name: "@tauri-apps/plugin-deep-link"
         versions: ["2.6.2"]
+      # Matches the notification crate, pinned in src-tauri/Cargo.toml.
+      - dependency-name: "@tauri-apps/plugin-notification"
+        update-types:
+          - version-update:semver-minor
 
   - package-ecosystem: cargo
     directory: "/src-tauri"
