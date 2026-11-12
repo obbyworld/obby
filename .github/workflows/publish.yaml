@@ -170,6 +170,7 @@ jobs:
         run: npm install
 
       - name: Set the release version
+        shell: bash
         run: npm pkg set version="$VERSION"
         env:
           VERSION: ${{ needs.collect-version.outputs.current_version }}
@@ -255,6 +256,7 @@ jobs:
         run: npm install
 
       - name: Set the release version
+        shell: bash
         run: npm pkg set version="$VERSION"
         env:
           VERSION: ${{ needs.collect-version.outputs.current_version }}
