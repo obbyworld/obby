@@ -76,8 +76,8 @@ updates:
 
   - package-ecosystem: github-actions
     directory: "/"
-    # Monthly, grouped into one PR. Actions are SHA-pinned with a `# vX.Y.Z`
-    # comment, so Dependabot bumps both the SHA and the comment in place.
+    # Monthly, grouped into one PR. Dependabot bumps the tag and regenerates
+    # its entry in .github/workflows/actions.lock.
     schedule:
       interval: monthly
       time: "06:00"
