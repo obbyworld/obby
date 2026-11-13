@@ -1286,6 +1286,11 @@ msgstr "Cancellare tutta la cronologia salvata?"
 msgid "Clear history"
 msgstr "Cancella cronologia"
 
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Clear search"
+msgstr "Cancella ricerca"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
 msgstr "Clicca di nuovo per confermare"
@@ -3241,6 +3246,12 @@ msgstr "Membri"
 msgid "Members — {0}"
 msgstr "Membri — {0}"
 
+#. placeholder {0}: shownUsers?.length ?? 0
+#. placeholder {1}: sortedUsers?.length ?? 0
+#: src/components/layout/MemberList.tsx
+msgid "Members — {0} of {1}"
+msgstr "Membri — {0} di {1}"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "Menziona qualcuno"
@@ -3662,6 +3673,10 @@ msgstr "Nessun limite"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "No media in this channel"
 msgstr "Nessun media in questo canale"
+
+#: src/components/layout/MemberList.tsx
+msgid "No members match. Clear the search to see everyone"
+msgstr "Nessun membro corrisponde. Cancella la ricerca per vedere tutti"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
@@ -4725,6 +4740,11 @@ msgstr "Cerca GIF per iniziare"
 #: src/components/ui/GifSelector.tsx
 msgid "Search GIFs..."
 msgstr "Cerca GIF..."
+
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Search members"
+msgstr "Cerca membri"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/SearchPane.tsx

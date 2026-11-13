@@ -220,6 +220,31 @@ describe("Metadata Display Features", () => {
       expect(bobElement).toHaveStyle({ color: "rgb(0, 0, 255)" });
     });
 
+    it("filters members as you type and shows everyone again after clearing", () => {
+      render(<MemberList />);
+      const search = screen.getByRole("textbox", { name: "Search members" });
+
+      fireEvent.change(search, { target: { value: "wonder" } });
+      expect(screen.getByText("Alice Wonderland")).toBeInTheDocument();
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: "Clear search" }));
+      expect(screen.getByText("bob")).toBeInTheDocument();
+      expect(search).toHaveValue("");
+      expect(search).toHaveFocus();
+    });
+
+    it("clears the search with Escape", () => {
+      render(<MemberList />);
+      const search = screen.getByRole("textbox", { name: "Search members" });
+      fireEvent.change(search, { target: { value: "wonder" } });
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+
+      fireEvent.keyDown(search, { key: "Escape" });
+      expect(search).toHaveValue("");
+      expect(screen.getByText("bob")).toBeInTheDocument();
+    });
+
     it("should display user avatars", () => {
       render(<MemberList />);
 
