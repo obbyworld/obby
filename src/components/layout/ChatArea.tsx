@@ -757,6 +757,8 @@ export const ChatArea: React.FC<{
   // browser's own screen capture is gated on.
   const canRecordRegion =
     canUpload && regionRecordingReady && extensionAllowed("mp4");
+  const hasAttachActions =
+    canUpload || gifProviders.length > 0 || canShareLocation;
 
   useEffect(() => {
     void regionRecordingSupported().then(setRegionRecordingReady);
@@ -2414,18 +2416,20 @@ export const ChatArea: React.FC<{
                 {/* We align to the bottom so the buttons stay beside the last line while the box grows. */}
                 <div
                   data-composer
-                  className="relative flex flex-nowrap items-end pr-2"
+                  className={`relative flex flex-nowrap items-end pr-2 ${hasAttachActions ? "" : "pl-3"}`}
                 >
-                  <button
-                    ref={plusButtonRef}
-                    aria-label={t`Attach`}
-                    aria-haspopup="menu"
-                    aria-expanded={showPlusMenu}
-                    className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
-                    onClick={() => setShowPlusMenu((prev) => !prev)}
-                  >
-                    <FaPlus />
-                  </button>
+                  {hasAttachActions && (
+                    <button
+                      ref={plusButtonRef}
+                      aria-label={t`Attach`}
+                      aria-haspopup="menu"
+                      aria-expanded={showPlusMenu}
+                      className="flex h-[52px] w-11 shrink-0 items-center justify-center text-discord-text-muted hover:text-discord-text-normal"
+                      onClick={() => setShowPlusMenu((prev) => !prev)}
+                    >
+                      <FaPlus />
+                    </button>
+                  )}
 
                   <div className="flex min-w-0 flex-1 flex-wrap items-center">
                     {invocation && (
