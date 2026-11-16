@@ -35,22 +35,28 @@ export function parseMultilineLimits(
   return limits;
 }
 
-function fenceMarker(text: string): string | undefined {
-  return /^\s*(`{3,}|~{3,})/.exec(text)?.[1];
+const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})(.*)$/;
+const FENCE_CLOSE = /^ {0,3}(`{3,}|~{3,})[ \t]*$/;
+
+function closingFence(open: string): string {
+  return /^(`+|~+)/.exec(open)?.[1] ?? "```";
 }
 
 // Returns the fence still open after `text`, given the one open before it.
+// A backtick fence has no backtick in its info string, so ```code``` stays
+// inline code.
 function fenceAfter(text: string, open: string | null): string | null {
-  const marker = fenceMarker(text);
-  if (!marker) return open;
-  if (!open) return text.trim();
-  const opener = fenceMarker(open) ?? "";
-  const closes = marker[0] === opener[0] && marker.length >= opener.length;
+  if (!open) {
+    const opener = FENCE_OPEN.exec(text);
+    const isFence =
+      opener && (opener[1][0] === "~" || !opener[2].includes("`"));
+    return isFence ? text.trim() : null;
+  }
+  const marker = FENCE_CLOSE.exec(text)?.[1];
+  const closer = closingFence(open);
+  const closes =
+    marker && marker[0] === closer[0] && marker.length >= closer.length;
   return closes ? null : open;
-}
-
-function closingFence(open: string): string {
-  return fenceMarker(open) ?? "```";
 }
 
 // `lines` holds one entry per logical line, already split into the parts that
@@ -92,7 +98,21 @@ export function chunkForMultiline(
       next && carriesFences
         ? { lines: 1, bytes: closingFence(next).length }
         : null;
-    for (const part of splitToFit(line, limits)) {
+    const openFence = fence ?? next;
+    // A reopened fence and its closer share the batch with each piece.
+    const pieceLimits =
+      openFence && carriesFences
+        ? {
+            maxLines: limits.maxLines - 2,
+            maxBytes: Math.max(
+              1,
+              limits.maxBytes -
+                byteLength(openFence) -
+                byteLength(closingFence(openFence)),
+            ),
+          }
+        : limits;
+    for (const part of splitToFit(line, pieceLimits)) {
       const parts = part.length;
       const bytes = part.reduce((n, p) => n + byteLength(p), 0);
       if (

@@ -49,6 +49,39 @@ describe("chunkForMultiline", () => {
     );
   });
 
+  test("inline ```code``` opens no fence", () => {
+    const batches = chunkForMultiline([["```inline```"], ["a"], ["b"]], {
+      maxLines: 3,
+      maxBytes: 5250,
+    });
+    expect(batches.map(text)).toEqual([["```inline```", "a", "b"]]);
+  });
+
+  test("a fence marker with text after it stays inside the code block", () => {
+    const paste = [["```js"], ["```text"], ...lines(4), ["```"]];
+    const batches = chunkForMultiline(paste, { maxLines: 4, maxBytes: 5250 });
+    for (const batch of batches.slice(1)) {
+      expect(text(batch)[0]).toBe("```js");
+    }
+  });
+
+  test("a long line inside a fence still fits next to the reopened fence", () => {
+    const paste = [["```js"], ["a", "b"], ["```"]];
+    for (const batch of chunkForMultiline(paste, {
+      maxLines: 3,
+      maxBytes: 5250,
+    })) {
+      expect(batch.flat().length).toBeLessThanOrEqual(3);
+    }
+    const longLine = ["aaaa", "bbbb", "cccc", "dddd"];
+    for (const batch of chunkForMultiline([["```js"], longLine, ["```"]], {
+      maxLines: 15,
+      maxBytes: 16,
+    })) {
+      expect(batch.flat().join("").length).toBeLessThanOrEqual(16);
+    }
+  });
+
   test("a paste without fences is chunked as before", () => {
     const batches = chunkForMultiline(lines(20), {
       maxLines: 15,
