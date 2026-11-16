@@ -35,9 +35,30 @@ export function parseMultilineLimits(
   return limits;
 }
 
+function fenceMarker(text: string): string | undefined {
+  return /^\s*(`{3,}|~{3,})/.exec(text)?.[1];
+}
+
+// Returns the fence still open after `text`, given the one open before it.
+function fenceAfter(text: string, open: string | null): string | null {
+  const marker = fenceMarker(text);
+  if (!marker) return open;
+  if (!open) return text.trim();
+  const opener = fenceMarker(open) ?? "";
+  const closes = marker[0] === opener[0] && marker.length >= opener.length;
+  return closes ? null : open;
+}
+
+function closingFence(open: string): string {
+  return fenceMarker(open) ?? "```";
+}
+
 // `lines` holds one entry per logical line, already split into the parts that
 // fit a single PRIVMSG. A logical line's parts stay in one batch: the receiver
 // concatenates them, so a batch break between them lands mid-word.
+// Each batch arrives as its own message, so a batch that ends inside a code
+// fence closes it and the next one reopens it, which keeps every message
+// valid markdown on its own.
 export function chunkForMultiline(
   lines: readonly (readonly string[])[],
   limits: MultilineLimits,
@@ -46,31 +67,46 @@ export function chunkForMultiline(
   let batch: string[][] = [];
   let lineCount = 0;
   let byteCount = 0;
+  let fence: string | null = null;
+  const carriesFences = limits.maxLines > 2;
+
+  const add = (part: readonly string[]) => {
+    batch.push([...part]);
+    lineCount += part.length;
+    byteCount += part.reduce((n, p) => n + byteLength(p), 0);
+  };
 
   const flush = () => {
     if (batch.length === 0) return;
+    if (fence && carriesFences) batch.push([closingFence(fence)]);
     batches.push(batch);
     batch = [];
     lineCount = 0;
     byteCount = 0;
+    if (fence && carriesFences) add([fence]);
   };
 
   for (const line of lines) {
+    const next = fenceAfter(line.join(""), fence);
+    const reserve =
+      next && carriesFences
+        ? { lines: 1, bytes: closingFence(next).length }
+        : null;
     for (const part of splitToFit(line, limits)) {
       const parts = part.length;
       const bytes = part.reduce((n, p) => n + byteLength(p), 0);
       if (
         batch.length > 0 &&
-        (lineCount + parts > limits.maxLines ||
-          byteCount + bytes > limits.maxBytes)
+        (lineCount + parts + (reserve?.lines ?? 0) > limits.maxLines ||
+          byteCount + bytes + (reserve?.bytes ?? 0) > limits.maxBytes)
       ) {
         flush();
       }
-      batch.push([...part]);
-      lineCount += parts;
-      byteCount += bytes;
+      add(part);
     }
+    fence = next;
   }
+  fence = null;
   flush();
   return batches;
 }
