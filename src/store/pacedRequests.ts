@@ -23,10 +23,17 @@ const isRequestFor = (key: string) => (request: PacedRequest) =>
 function sendNextPacedRequests(serverId: string, count: number): void {
   const queue = queues.get(serverId);
   if (!queue) return;
-  for (const request of queue.requests.splice(0, count)) request.send();
-  if (queue.requests.length)
-    queue.timer = setTimeout(() => sendNextPacedRequests(serverId, 1), PACE_MS);
-  else queues.delete(serverId);
+  try {
+    for (let sent = 0; sent < count && queue.requests.length; sent++)
+      queue.requests.shift()?.send();
+  } finally {
+    if (queue.requests.length)
+      queue.timer = setTimeout(
+        () => sendNextPacedRequests(serverId, 1),
+        PACE_MS,
+      );
+    else queues.delete(serverId);
+  }
 }
 
 export function sendPaced(
