@@ -653,6 +653,7 @@ export class IRCClient implements IRCClientContext {
   rateLimitedServers: Map<string, number> = new Map(); // Track rate-limited servers (serverId -> timestamp)
   private pingTimers: Map<string, NodeJS.Timeout> = new Map(); // Track ping timers per server
   pongTimeouts: Map<string, NodeJS.Timeout> = new Map(); // Track pong timeouts per server
+  joinsDuringReady: Map<string, Set<string>> = new Map();
   private serverConnectParams: Map<
     string,
     {
@@ -1032,21 +1033,7 @@ export class IRCClient implements IRCClientContext {
         const serverId = Array.from(this.servers.keys()).find(
           (id) => this.sockets.get(id) === socket,
         );
-        if (serverId) {
-          const data =
-            typeof event.data === "string"
-              ? event.data
-              : String(event.data ?? "");
-          for (const line of data.split(/\r?\n/)) {
-            if (line.length === 0) continue;
-            this.triggerEvent("rawLine", {
-              serverId,
-              direction: "rx",
-              line,
-            });
-          }
-          this.handleMessage(event.data, serverId);
-        }
+        if (serverId) this.receiveFromSocket(serverId, event.data);
       };
     });
 
@@ -1317,11 +1304,12 @@ export class IRCClient implements IRCClientContext {
       this.pingTimers.delete(serverId);
     }
 
-    const pongTimeout = this.pongTimeouts.get(serverId);
-    if (pongTimeout) {
-      clearTimeout(pongTimeout);
-      this.pongTimeouts.delete(serverId);
-    }
+    this.clearPongTimeout(serverId);
+  }
+
+  clearPongTimeout(serverId: string): void {
+    clearTimeout(this.pongTimeouts.get(serverId));
+    this.pongTimeouts.delete(serverId);
   }
 
   isRateLimitError(message: string): boolean {
@@ -1336,9 +1324,15 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, typedName: string, key?: string): Channel {
+  joinChannel(
+    serverId: string,
+    typedName: string,
+    key?: string,
+    { deferHistory = false }: { deferHistory?: boolean } = {},
+  ): Channel {
     const channelName = this.withChannelPrefix(serverId, typedName);
     const joinLine = key ? `JOIN ${channelName} ${key}` : `JOIN ${channelName}`;
+    this.joinsDuringReady.get(serverId)?.add(channelName.toLowerCase());
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1356,6 +1350,7 @@ export class IRCClient implements IRCClientContext {
       this.sendRaw(serverId, joinLine);
 
       const wantsChathistory = this.hasChathistory(serverId);
+      const historyDeferred = wantsChathistory && deferHistory;
 
       const channel: Channel = {
         id: generateDeterministicId(serverId, channelName),
@@ -1370,11 +1365,11 @@ export class IRCClient implements IRCClientContext {
         isLoadingHistory: wantsChathistory,
         hasMoreHistory: wantsChathistory,
         needsWhoRequest: true,
-        chathistoryRequested: wantsChathistory,
+        chathistoryRequested: wantsChathistory && !historyDeferred,
       };
       server.channels.push(channel);
 
-      if (!this.loadHistoryOrMembers(serverId, channelName))
+      if (!historyDeferred && !this.loadHistoryOrMembers(serverId, channelName))
         channel.needsWhoRequest = false;
 
       return channel;
@@ -2157,6 +2152,18 @@ export class IRCClient implements IRCClientContext {
 
   // Lines from local history go through the same parser and handlers as
   // lines from the socket.
+  receiveFromSocket(serverId: string, received: unknown): void {
+    const data =
+      typeof received === "string" ? received : String(received ?? "");
+    for (const line of data.split(/\r?\n/)) {
+      if (line.length === 0) continue;
+      this.triggerEvent("rawLine", { serverId, direction: "rx", line });
+    }
+    // A server that paces our commands answers a PING late, so we take any line it sends as proof the link is alive.
+    this.clearPongTimeout(serverId);
+    this.handleMessage(data, serverId);
+  }
+
   replayLines(serverId: string, lines: string[]): void {
     this.handleMessage(lines.join("\r\n"), serverId);
   }

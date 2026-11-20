@@ -50,6 +50,29 @@ describe("checking a connection after the machine wakes", () => {
     expect(socket.close).not.toHaveBeenCalled();
     expect(internals.sockets.get(SERVER)).toBe(socket);
   });
+
+  it("keeps the socket when the server is still answering earlier commands", () => {
+    vi.useFakeTimers();
+    const { client, socket, internals } = connectedClient();
+    client.checkAlive(SERVER, 5000);
+    vi.advanceTimersByTime(4000);
+    client.receiveFromSocket(
+      SERVER,
+      ":irc.test BATCH +abc chathistory #chan\r\n:irc.test BATCH -abc\r\n",
+    );
+    vi.advanceTimersByTime(10_000);
+    expect(socket.close).not.toHaveBeenCalled();
+    expect(internals.sockets.get(SERVER)).toBe(socket);
+  });
+
+  it("still drops a dead socket while local history replays", () => {
+    vi.useFakeTimers();
+    const { client, socket } = connectedClient();
+    client.checkAlive(SERVER, 5000);
+    client.replayLines(SERVER, [":a!a@h PRIVMSG #chan :old line"]);
+    vi.advanceTimersByTime(5000);
+    expect(socket.close).toHaveBeenCalled();
+  });
 });
 
 describe("the account we are logged in to", () => {
@@ -163,6 +186,58 @@ describe("joining a channel typed without its prefix", () => {
 
     expect(client.joinChannel(SERVER, "&ops").name).toBe("&ops");
     expect(client.joinChannel(SERVER, "lobby").name).toBe("&lobby");
+  });
+});
+
+describe("joining saved channels at startup", () => {
+  function chathistoryClient() {
+    const conn = connectedClient();
+    (conn.client as unknown as { servers: Map<string, unknown> }).servers.set(
+      SERVER,
+      { id: SERVER, channels: [], capabilities: ["draft/chathistory"] },
+    );
+    return conn;
+  }
+
+  it("leaves the history request to the caller when asked", () => {
+    const { client, sent } = chathistoryClient();
+    const channel = client.joinChannel(SERVER, "#later", undefined, {
+      deferHistory: true,
+    });
+    expect(sent).toEqual(["JOIN #later"]);
+    expect(channel.chathistoryRequested).toBe(false);
+  });
+
+  it("requests history with the join otherwise", () => {
+    const { client, sent } = chathistoryClient();
+    client.joinChannel(SERVER, "#now");
+    expect(sent).toEqual(["JOIN #now", "CHATHISTORY LATEST #now * 50"]);
+  });
+
+  it("sends one JOIN per channel when the ready handlers join them", () => {
+    const { client, sent } = chathistoryClient();
+    client.on("ready", ({ serverId }) => {
+      client.joinChannel(serverId, "#saved", undefined, {
+        deferHistory: true,
+      });
+    });
+    client.receiveFromSocket(SERVER, ":irc.test 001 me :Welcome\r\n");
+    expect(sent.filter((line) => line === "JOIN #saved")).toHaveLength(1);
+  });
+
+  it("sends one JOIN per channel on a reconnect", () => {
+    const { client, sent } = chathistoryClient();
+    client.joinChannel(SERVER, "#saved");
+    client.joinChannel(SERVER, "#unsaved");
+    sent.length = 0;
+    client.on("ready", ({ serverId }) => {
+      client.joinChannel(serverId, "#saved", undefined, {
+        deferHistory: true,
+      });
+    });
+    client.receiveFromSocket(SERVER, ":irc.test 001 me :Welcome\r\n");
+    const joins = sent.filter((line) => line.startsWith("JOIN "));
+    expect(joins.sort()).toEqual(["JOIN #saved", "JOIN #unsaved"]);
   });
 });
 
