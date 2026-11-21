@@ -21,6 +21,7 @@ import {
 import { buildMarkdownFromSelection } from "../../lib/chatMarkdownCopy";
 import { groupConsecutiveEvents } from "../../lib/eventGrouping";
 import { findMessageRow } from "../../lib/highlightRow";
+import { withoutRepeatedGapMarkers } from "../../lib/history/historyLines";
 import ircClient from "../../lib/ircClient";
 import { isJumping } from "../../lib/jumpToMessage";
 import { shouldShowMessageHeader } from "../../lib/messageGrouping";
@@ -71,6 +72,8 @@ type Opening =
       hasFetched: boolean;
       isOverdue?: boolean;
       hasGivenUp?: boolean;
+      isRejoin?: boolean;
+      awaitsRejoinHistory?: boolean;
     };
 
 // Stable empty array — prevents selector from returning a new [] on every render
@@ -304,7 +307,8 @@ export const ChannelMessageList = forwardRef<
       jumpId: windowJumpId,
     });
     const displayedMessages = useMemo(
-      () => channelMessages.slice(-visibleMessageCount),
+      () =>
+        withoutRepeatedGapMarkers(channelMessages.slice(-visibleMessageCount)),
       [channelMessages, visibleMessageCount],
     );
     const {
@@ -364,7 +368,7 @@ export const ChannelMessageList = forwardRef<
     const isJumpTakingOver = () =>
       isJumping() || !!useStore.getState().ui.messageJump || isHoldingRow();
 
-    const locallyHidden = channelMessages.length > displayedMessages.length;
+    const locallyHidden = channelMessages.length > visibleMessageCount;
     const serverHasMore =
       (channel?.hasMoreHistory ?? privateChat?.hasMoreHistory) === true;
     const hasMoreMessages = locallyHidden || serverHasMore;
@@ -502,6 +506,47 @@ export const ChannelMessageList = forwardRef<
           after: Math.max(opening.after, messageTime(newest)),
         });
     }
+    // A reconnect brings what was said while we were offline, so we place the
+    // line at the marker again and keep those messages unread.
+    const [wasConnected, setWasConnected] = useState(isServerConnected);
+    if (wasConnected !== isServerConnected) {
+      setWasConnected(isServerConnected);
+      if (
+        isServerConnected &&
+        isActive &&
+        !isAwayFromPresent &&
+        readMarker !== undefined
+      )
+        setOpening({
+          step: "placing",
+          after: readMarker ? Date.parse(readMarker) : Number.NEGATIVE_INFINITY,
+          hasFetched: false,
+          isRejoin: true,
+          awaitsRejoinHistory: true,
+        });
+    }
+    // The server sends its marker after we rejoin, and another client may
+    // have read further while we were offline, so we follow it until we place
+    // the line.
+    if (
+      (opening.step === "placing" || opening.step === "loading") &&
+      opening.isRejoin
+    ) {
+      const marker = readMarker ? Date.parse(readMarker) : null;
+      const after =
+        marker !== null && (opening.after == null || marker > opening.after)
+          ? marker
+          : opening.after;
+      // Private chats and servers without chathistory send no page after a
+      // rejoin, so we stop waiting for one once the opening is overdue.
+      const awaitsRejoinHistory =
+        opening.awaitsRejoinHistory === true && !isLoadingHistory && !isOverdue;
+      if (
+        after !== opening.after ||
+        awaitsRejoinHistory !== opening.awaitsRejoinHistory
+      )
+        setOpening({ ...opening, after, awaitsRejoinHistory });
+    }
     useEffect(() => {
       if (!isActive) return;
       useStore.setState((state) =>
@@ -610,7 +655,9 @@ export const ChannelMessageList = forwardRef<
         setOpening({ ...opening, step: "open", hasGivenUp: false });
         return;
       }
-      const isWaitingForHistory = isLoadingHistory && !hasGivenUp;
+      const isWaitingForHistory =
+        (isLoadingHistory || opening.awaitsRejoinHistory === true) &&
+        !hasGivenUp;
       if ((isWaitingForHistory && !isOverdue) || needsMarkerPage) return;
       const container = messagesContainerRef.current;
       if (!container) return;

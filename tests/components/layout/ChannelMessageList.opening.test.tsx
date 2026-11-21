@@ -353,6 +353,89 @@ describe("ChannelMessageList late history", () => {
     expect(loadOlderMessages).toHaveBeenCalled();
   });
 
+  it("keeps the messages missed while disconnected unread after the reconnect", () => {
+    vi.useFakeTimers();
+    const { container } = render(<ChannelMessageList {...props} />);
+    expect(container.querySelector("[data-unread-line]")).toBeNull();
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    act(() =>
+      useStore.setState({
+        servers: [server(true)],
+        messages: {
+          [KEY]: [
+            ...readRows(30),
+            message("night-1", 5),
+            message("night-2", 6),
+          ],
+        },
+      }),
+    );
+    const list = container.firstElementChild as HTMLElement;
+    setGeometry(list, 2400, 3000);
+    const line = list.querySelector("[data-unread-line]") as HTMLElement;
+    line.getBoundingClientRect = () => ({ top: -1400 }) as DOMRect;
+
+    act(() => useStore.setState({ servers: [server(false)] }));
+
+    expect(list.scrollTop).toBe(952);
+    act(() => vi.advanceTimersByTime(50));
+    expect(isAwayFromPresent()).toBe(true);
+  });
+
+  it("starts the line after what another client read while we were offline", () => {
+    const { container } = render(<ChannelMessageList {...props} />);
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    const readElsewhere = server(true);
+    readElsewhere.privateChats = [
+      { ...readElsewhere.privateChats[0], readMarker: at(5) },
+    ];
+    act(() =>
+      useStore.setState({
+        servers: [readElsewhere],
+        messages: {
+          [KEY]: [
+            ...readRows(30),
+            message("night-1", 5),
+            message("night-2", 6),
+          ],
+        },
+      }),
+    );
+    act(() =>
+      useStore.setState({
+        servers: [
+          {
+            ...readElsewhere,
+            privateChats: readElsewhere.privateChats.map((pc) => ({
+              ...pc,
+              isLoadingHistory: false,
+            })),
+          },
+        ],
+      }),
+    );
+
+    const line = container.querySelector("[data-unread-line]");
+    expect(line?.nextElementSibling?.textContent).toContain("night-2");
+  });
+
+  it("stops waiting for a rejoin page that never comes", () => {
+    vi.useFakeTimers();
+    render(<ChannelMessageList {...props} />);
+    const offline = { ...server(false), isConnected: false };
+    act(() => useStore.setState({ servers: [offline] }));
+    act(() => useStore.setState({ servers: [server(false)] }));
+    expect(isAwayFromPresent()).toBe(true);
+
+    act(() => vi.advanceTimersByTime(4100));
+
+    expect(isAwayFromPresent()).toBe(false);
+  });
+
   it("follows the end of a list that shrank", () => {
     const { container } = render(<ChannelMessageList {...props} />);
     const list = container.firstElementChild as HTMLElement;

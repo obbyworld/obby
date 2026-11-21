@@ -5,16 +5,20 @@ import {
   buildReplayLines,
   decideAfterGapFill,
   decideAfterLatest,
+  HISTORY_GAP_CODE,
   HistoryRecorder,
   isLocalReplay,
   LOCAL_BATCH_PREFIX,
+  LOCAL_HISTORY_TAG,
   normalizeLine,
   type ParsedLine,
   planLoadMore,
   type RecorderEnv,
+  withoutRepeatedGapMarkers,
   withReplayTags,
 } from "../../../src/lib/history/historyLines";
 import { KNOWN_CHANTYPES, parseMessageTags } from "../../../src/lib/ircUtils";
+import type { Message } from "../../../src/types";
 
 const NOW = Date.parse("2024-05-01T12:00:00.000Z");
 const NOW_ISO = new Date(NOW).toISOString();
@@ -1247,5 +1251,34 @@ describe("planLoadMore gap edges", () => {
         hasChathistory: true,
       }),
     ).toEqual({ kind: "server", gap, before: 500 });
+  });
+});
+
+describe("withoutRepeatedGapMarkers", () => {
+  const row = (id: string, isGap = false) =>
+    ({
+      id,
+      type: isGap ? "system" : "message",
+      tags: isGap ? { [LOCAL_HISTORY_TAG]: HISTORY_GAP_CODE } : undefined,
+    }) as unknown as Message;
+
+  it("shows a run of markers with nothing between them once", () => {
+    const rows = [
+      row("a"),
+      row("g1", true),
+      row("g2", true),
+      row("g3", true),
+      row("b"),
+    ];
+    expect(withoutRepeatedGapMarkers(rows).map((m) => m.id)).toEqual([
+      "a",
+      "g1",
+      "b",
+    ]);
+  });
+
+  it("keeps markers that messages separate", () => {
+    const rows = [row("g1", true), row("a"), row("g2", true)];
+    expect(withoutRepeatedGapMarkers(rows)).toBe(rows);
   });
 });
