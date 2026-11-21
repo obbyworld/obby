@@ -464,18 +464,6 @@ export function serverSupportsChathistory(
     ?.capabilities?.includes("draft/chathistory");
 }
 
-/**
- * Check if a server supports multiline capability
- */
-export function serverSupportsMultiline(
-  state: AppState,
-  serverId: string,
-): boolean {
-  const server = state.servers.find((s) => s.id === serverId);
-  const supports = server?.capabilities?.includes("draft/multiline") ?? false;
-  return supports;
-}
-
 // ============================================================================
 // User Metadata Resolution
 // ============================================================================

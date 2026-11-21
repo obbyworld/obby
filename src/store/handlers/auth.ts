@@ -131,27 +131,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
   );
   ircClient.on("LOGGED_OUT", ({ serverId }) => setAccount(serverId, undefined));
 
-  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
-    if (capabilities?.startsWith("draft/metadata")) {
-      const currentSubs =
-        store.getState().metadataSubscriptions[serverId] || [];
-      if (currentSubs.length === 0) {
-        const defaultKeys = [
-          "url",
-          "website",
-          "status",
-          "location",
-          "avatar",
-          "color",
-          "display-name",
-          "bot",
-          // draft/custom-emoji: channel-scoped pack URL.  Subscribing
-          // here so we get notified when a channel ops sets a new pack.
-          "draft/emoji",
-        ];
-        store.getState().metadataSub(serverId, defaultKeys);
-      }
-    }
+  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
     if (key !== "sasl") return;
 
     // Pick mechanism up-front so the AUTHENTICATE event handler knows what
