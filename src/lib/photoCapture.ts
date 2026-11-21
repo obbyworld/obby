@@ -28,6 +28,27 @@ async function takeStill(
   }
 }
 
+function drawUpright(
+  source: ImageBitmap | HTMLVideoElement,
+  rotation: QuarterTurn,
+): HTMLCanvasElement | null {
+  const [width, height] =
+    "videoWidth" in source
+      ? [source.videoWidth, source.videoHeight]
+      : [source.width, source.height];
+  if (!width || !height) return null;
+  const isSideways = rotation === 90 || rotation === 270;
+  const canvas = document.createElement("canvas");
+  canvas.width = isSideways ? height : width;
+  canvas.height = isSideways ? width : height;
+  const context = canvas.getContext("2d");
+  if (!context) return null;
+  context.translate(canvas.width / 2, canvas.height / 2);
+  context.rotate((rotation * Math.PI) / 180);
+  context.drawImage(source, -width / 2, -height / 2, width, height);
+  return canvas;
+}
+
 /** Saves a photo from the camera as a JPEG, turned clockwise by `rotation`
  *  degrees so it comes out upright however the phone was held. Mirrored
  *  previews are drawn unmirrored, since the flip only makes a front camera
@@ -38,22 +59,13 @@ export async function capturePhotoFile(
   options: { track?: MediaStreamTrack; rotation?: QuarterTurn } = {},
 ): Promise<File | null> {
   const still = await takeStill(options.track);
-  const source: CanvasImageSource = still ?? video;
-  const width = still?.width ?? video.videoWidth;
-  const height = still?.height ?? video.videoHeight;
-  if (!width || !height) return null;
-
-  const rotation = options.rotation ?? 0;
-  const isSideways = rotation === 90 || rotation === 270;
-  const canvas = document.createElement("canvas");
-  canvas.width = isSideways ? height : width;
-  canvas.height = isSideways ? width : height;
-  const context = canvas.getContext("2d");
-  if (!context) return null;
-  context.translate(canvas.width / 2, canvas.height / 2);
-  context.rotate((rotation * Math.PI) / 180);
-  context.drawImage(source, -width / 2, -height / 2, width, height);
-  still?.close();
+  let canvas: HTMLCanvasElement | null;
+  try {
+    canvas = drawUpright(still ?? video, options.rotation ?? 0);
+  } finally {
+    still?.close();
+  }
+  if (!canvas) return null;
 
   const blob = await new Promise<Blob | null>((resolve) => {
     canvas.toBlob((result) => resolve(result), "image/jpeg", PHOTO_QUALITY);

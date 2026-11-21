@@ -164,14 +164,17 @@ export function CameraCaptureModal({
 
   const setTorch = useCallback(
     async (track: MediaStreamTrack, isOn: boolean) => {
+      const generation = genRef.current;
+      const isSameCamera = () =>
+        mountedRef.current && generation === genRef.current;
       try {
         await track.applyConstraints({
           advanced: [{ torch: isOn } as TorchConstraints],
         });
-        if (mountedRef.current) setIsTorchOn(isOn);
+        if (isSameCamera()) setIsTorchOn(isOn);
       } catch (err) {
         if (!(err instanceof DOMException)) throw err;
-        if (mountedRef.current) setIsTorchAvailable(false);
+        if (isSameCamera()) setIsTorchAvailable(false);
       }
     },
     [],

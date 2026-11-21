@@ -67,4 +67,23 @@ describe("capturePhotoFile", () => {
 
     expect(await capturePhotoFile(fakeVideo(640, 480))).toBeNull();
   });
+
+  test("frees the camera still even when nothing can be drawn", async () => {
+    const close = vi.fn();
+    vi.stubGlobal(
+      "ImageCapture",
+      class {
+        takePhoto = async () => new Blob(["x"]);
+      },
+    );
+    vi.stubGlobal("createImageBitmap", async () => ({
+      width: 0,
+      height: 0,
+      close,
+    }));
+    const track = {} as MediaStreamTrack;
+    expect(await capturePhotoFile(fakeVideo(0, 0), { track })).toBeNull();
+    expect(close).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
+  });
 });
