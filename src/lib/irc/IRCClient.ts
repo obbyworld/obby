@@ -892,6 +892,8 @@ export class IRCClient implements IRCClientContext {
       }
       this.closeReplacedSocket(server.id);
       this.sockets.set(server.id, socket);
+      // A reconnect reuses this server object, so we ignore late events from a socket we already replaced.
+      const isCurrentSocket = () => this.sockets.get(server.id) === socket;
       this.serverConnectParams.set(server.id, {
         name,
         host,
@@ -965,7 +967,7 @@ export class IRCClient implements IRCClientContext {
         // to ensure connection is fully established before sending PINGs
 
         socket.onclose = () => {
-          if (!this.servers.has(server.id)) {
+          if (!this.servers.has(server.id) || !isCurrentSocket()) {
             return;
           }
 
@@ -1000,6 +1002,7 @@ export class IRCClient implements IRCClientContext {
       };
 
       socket.onerror = (error) => {
+        if (!isCurrentSocket()) return;
         const cause =
           error instanceof Error
             ? error.message
