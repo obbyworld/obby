@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import ircClient from "../../lib/ircClient";
 import { hasOpPermission } from "../../lib/ircUtils";
-import { serverSupportsMetadata } from "../../store";
+import useStore, { serverSupportsMetadata } from "../../store";
 import type { SettingsSection } from "../../store/types";
 import type { Channel, Server } from "../../types";
 import type { PageSection } from "../ui/page/PageShell";
@@ -119,7 +119,8 @@ export function getChannelSettingsAccess(server: Server, channel: Channel) {
     channel.users.find((u) => u.username === nick)?.status,
   );
   return {
-    canEditMetadata: isOp && serverSupportsMetadata(server.id),
+    canEditMetadata:
+      isOp && serverSupportsMetadata(useStore.getState(), server.id),
     canEditAdvanced:
       isOp && !!(server.namedModes?.supported || server.isUnrealIRCd),
   };

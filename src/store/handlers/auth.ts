@@ -578,6 +578,14 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
   });
 
+  ircClient.on("CAPABILITIES_CHANGED", ({ serverId, capabilities }) => {
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, capabilities } : server,
+      ),
+    }));
+  });
+
   ircClient.on("CAP ACK", ({ serverId, cliCaps }) => {
     const caps = cliCaps.split(" ");
 
@@ -587,24 +595,6 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       const capValue = tok[1];
       ircClient.capAck(serverId, capName, capValue ?? null);
     }
-
-    // Names only -- values live in capabilityValues and every consumer of
-    // `capabilities` matches on the bare name.
-    const ackedNames = caps.filter(Boolean).map((cap) => cap.split("=", 1)[0]);
-
-    store.setState((state) => {
-      const updatedServers = state.servers.map((server) => {
-        if (server.id === serverId) {
-          const merged = [...(server.capabilities ?? [])];
-          for (const cap of ackedNames) {
-            if (!merged.includes(cap)) merged.push(cap);
-          }
-          return { ...server, capabilities: merged };
-        }
-        return server;
-      });
-      return { servers: updatedServers };
-    });
 
     const state = store.getState();
     const server = state.servers.find((s) => s.id === serverId);

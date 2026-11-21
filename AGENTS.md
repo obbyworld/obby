@@ -182,6 +182,11 @@ Write the code for what they actually send:
 - One account can hold several sessions at once. A second login to the same network is a server
   entry of its own, and anything keyed by address also needs the login.
 - Settings pages send only the fields the user edited, so values set from another session survive.
+- Send a command or client tag only once the server has ACKed its capability. Servers count lines they
+  did not offer, and messages to many new targets in a short time, as flood and disconnect the user.
+  `IRCClient.sendRaw` drops every line whose capability is missing, so add each new gated command or
+  tag to [`capGate.ts`](src/lib/irc/capGate.ts). Pace bursts of requests through a queue like
+  `metadataLazyQueue`, and never send one message per member of a channel.
 
 When you say something works on IRC, name the server you checked it against. "The spec says X" is a separate
 claim.

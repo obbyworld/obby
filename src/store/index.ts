@@ -61,6 +61,7 @@ import {
   isAppInFront,
   MAX_MESSAGES_PER_CHANNEL,
   normalizeHost,
+  serverSupportsMetadata,
 } from "./helpers";
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
@@ -276,17 +277,6 @@ const saveUISelections = storage.uiSelections.save;
 // break unrelated call sites.
 const patchUISelections = (patch: Partial<UISelections>) =>
   saveUISelections({ ...loadUISelections(), ...patch });
-
-function serverSupportsMetadata(serverId: string): boolean;
-function serverSupportsMetadata(serverId: string): boolean {
-  const state = useStore.getState();
-  const server = state.servers.find((s) => s.id === serverId);
-  const supports =
-    server?.capabilities?.some(
-      (cap) => cap === "draft/metadata-2" || cap.startsWith("draft/metadata"),
-    ) ?? false;
-  return supports;
-}
 
 // Check if a server supports multiline
 function serverSupportsMultiline(serverId: string): boolean {
@@ -4135,13 +4125,13 @@ const useStore = create<AppState>((set, get) => ({
 
   // Metadata actions
   metadataGet: (serverId, target, keys) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataGet(serverId, target, keys);
     }
   },
 
   metadataList: (serverId, target) => {
-    if (!serverSupportsMetadata(serverId)) {
+    if (!serverSupportsMetadata(get(), serverId)) {
       return;
     }
 
@@ -4213,38 +4203,38 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   metadataSet: (serverId, target, key, value, visibility) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataSet(serverId, target, key, value, visibility);
     }
   },
 
   metadataClear: (serverId, target) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataClear(serverId, target);
     }
   },
 
   metadataSub: (serverId, keys) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataSub(serverId, keys);
     } else {
     }
   },
 
   metadataUnsub: (serverId, keys) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataUnsub(serverId, keys);
     }
   },
 
   metadataSubs: (serverId) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataSubs(serverId);
     }
   },
 
   metadataSync: (serverId, target) => {
-    if (serverSupportsMetadata(serverId)) {
+    if (serverSupportsMetadata(get(), serverId)) {
       ircClient.metadataSync(serverId, target);
     }
   },

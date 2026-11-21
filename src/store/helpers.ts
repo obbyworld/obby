@@ -446,19 +446,13 @@ export function getViewedSelection(state: AppState) {
 // Server Capability Helpers (pure versions)
 // ============================================================================
 
-/**
- * Check if a server supports metadata capability
- */
 export function serverSupportsMetadata(
   state: AppState,
   serverId: string,
 ): boolean {
-  const server = state.servers.find((s) => s.id === serverId);
-  const supports =
-    server?.capabilities?.some(
-      (cap) => cap === "draft/metadata-2" || cap.startsWith("draft/metadata"),
-    ) ?? false;
-  return supports;
+  return !!state.servers
+    .find((s) => s.id === serverId)
+    ?.capabilities?.includes("draft/metadata-2");
 }
 
 export function serverSupportsChathistory(
