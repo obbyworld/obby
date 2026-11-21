@@ -5648,6 +5648,14 @@ msgstr "Vuelve a intentar la subida."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Vuelve a intentar la subida. El servidor de archivos devolvió una respuesta que no pudimos leer."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Apagar la linterna"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Encender la linterna"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Desactiva las vistas previas de contenido multimedia."

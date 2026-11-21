@@ -5648,6 +5648,14 @@ msgstr "Försök ladda upp igen."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Försök ladda upp igen. Filvärden skickade tillbaka ett svar vi inte kunde läsa."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Stäng av ficklampan"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Slå på ficklampan"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Stäng av förhandsvisningar av media."

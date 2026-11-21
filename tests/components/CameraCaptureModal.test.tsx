@@ -15,6 +15,11 @@ vi.mock("../../src/store", () => {
   };
 });
 
+const touch = vi.hoisted(() => ({ isTouch: false }));
+vi.mock("../../src/hooks/useIsTouchInput", () => ({
+  useIsTouchInput: () => touch.isTouch,
+}));
+
 import { CameraCaptureModal } from "../../src/components/ui/CameraCaptureModal";
 import useStore from "../../src/store";
 
@@ -57,7 +62,12 @@ let tracks: { stop: ReturnType<typeof vi.fn> }[];
 
 function makeStream(constraints?: MediaStreamConstraints) {
   const kind = constraints?.video ? "video" : "audio";
-  const track = { stop: vi.fn(), kind } as unknown as MediaStreamTrack;
+  const track = {
+    stop: vi.fn(),
+    kind,
+    getCapabilities: () => ({ torch: true }),
+    applyConstraints: vi.fn(() => Promise.resolve()),
+  } as unknown as MediaStreamTrack;
   tracks.push(track as unknown as { stop: ReturnType<typeof vi.fn> });
   const streamTracks = [track];
   return {
@@ -130,6 +140,8 @@ beforeEach(() => {
   });
   HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
     drawImage: vi.fn(),
+    rotate: vi.fn(),
+    translate: vi.fn(),
   })) as unknown as HTMLCanvasElement["getContext"];
   HTMLCanvasElement.prototype.toBlob = function toBlob(callback: BlobCallback) {
     callback(new Blob(["image"]));
@@ -137,6 +149,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  touch.isTouch = false;
   cleanup();
   vi.clearAllMocks();
   document.body.innerHTML = "";
@@ -269,5 +282,27 @@ describe("CameraCaptureModal", () => {
 
     expect(onClose).toHaveBeenCalled();
     for (const track of tracks) expect(track.stop).toHaveBeenCalled();
+  });
+
+  it("turns the phone's flashlight on and keeps it on when switching to video", async () => {
+    touch.isTouch = true;
+    renderModal({});
+    const flashlight = await screen.findByRole("button", {
+      name: /turn flashlight on/i,
+    });
+    fireEvent.click(flashlight);
+    await screen.findByRole("button", { name: /turn flashlight off/i });
+
+    fireEvent.click(screen.getByRole("button", { name: "Video" }));
+
+    await waitFor(() => {
+      const reopened = tracks.at(-1) as unknown as MediaStreamTrack;
+      expect(reopened.applyConstraints).toHaveBeenCalledWith({
+        advanced: [{ torch: true }],
+      });
+    });
+    expect(
+      screen.getByRole("button", { name: /turn flashlight off/i }),
+    ).toBeInTheDocument();
   });
 });

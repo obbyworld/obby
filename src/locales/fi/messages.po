@@ -5648,6 +5648,14 @@ msgstr "Yritä lähetystä uudelleen."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Yritä lähetystä uudelleen. Tiedostopalvelimen vastausta ei voitu lukea."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Sammuta taskulamppu"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Sytytä taskulamppu"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Poista mediaesikatselut käytöstä."

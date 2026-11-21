@@ -5648,6 +5648,14 @@ msgstr "Versuche den Upload erneut."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "Versuche den Upload erneut. Der Dateihost hat eine Antwort gesendet, die wir nicht lesen konnten."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "Taschenlampe ausschalten"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "Taschenlampe einschalten"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "Schalte Medienvorschauen aus."
