@@ -1286,6 +1286,11 @@ msgstr "清除所有已儲存的歷史？"
 msgid "Clear history"
 msgstr "清除歷史"
 
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Clear search"
+msgstr "清除搜尋"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
 msgstr "再按一次以確認"
@@ -3241,6 +3246,12 @@ msgstr "成員"
 msgid "Members — {0}"
 msgstr "成员 — {0}"
 
+#. placeholder {0}: shownUsers?.length ?? 0
+#. placeholder {1}: sortedUsers?.length ?? 0
+#: src/components/layout/MemberList.tsx
+msgid "Members — {0} of {1}"
+msgstr "成員 — {0} / {1}"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "提及某人"
@@ -3662,6 +3673,10 @@ msgstr "无限制"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "No media in this channel"
 msgstr "此頻道沒有媒體"
+
+#: src/components/layout/MemberList.tsx
+msgid "No members match. Clear the search to see everyone"
+msgstr "沒有符合的成員。清除搜尋以查看所有人"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
@@ -4725,6 +4740,11 @@ msgstr "搜尋 GIF 以開始"
 #: src/components/ui/GifSelector.tsx
 msgid "Search GIFs..."
 msgstr "搜索 GIF..."
+
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Search members"
+msgstr "搜尋成員"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/SearchPane.tsx

@@ -1286,6 +1286,11 @@ msgstr "保存されたすべての履歴を消去しますか？"
 msgid "Clear history"
 msgstr "履歴を消去"
 
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Clear search"
+msgstr "検索をクリア"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
 msgstr "もう一度クリックして確認"
@@ -3241,6 +3246,12 @@ msgstr "メンバー"
 msgid "Members — {0}"
 msgstr "メンバー — {0}"
 
+#. placeholder {0}: shownUsers?.length ?? 0
+#. placeholder {1}: sortedUsers?.length ?? 0
+#: src/components/layout/MemberList.tsx
+msgid "Members — {0} of {1}"
+msgstr "メンバー — {1} 人中 {0} 人"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "誰かをメンション"
@@ -3662,6 +3673,10 @@ msgstr "制限なし"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "No media in this channel"
 msgstr "このチャンネルにはメディアがありません"
+
+#: src/components/layout/MemberList.tsx
+msgid "No members match. Clear the search to see everyone"
+msgstr "一致するメンバーはいません。検索をクリアするとすべて表示されます"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
@@ -4725,6 +4740,11 @@ msgstr "GIFを検索して始めましょう"
 #: src/components/ui/GifSelector.tsx
 msgid "Search GIFs..."
 msgstr "GIFを検索..."
+
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Search members"
+msgstr "メンバーを検索"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/SearchPane.tsx
