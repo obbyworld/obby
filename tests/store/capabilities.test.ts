@@ -49,6 +49,14 @@ describe("store mirrors the client's capability list", () => {
     expect(storeCaps()).toEqual(["echo-message"]);
     expect(serverSupportsMetadata(useStore.getState(), serverId)).toBe(false);
   });
+
+  test("forgets requested profiles once the metadata cap is gone", () => {
+    useStore.setState({
+      userMetadataRequested: { [serverId]: new Set(["alice"]) },
+    });
+    ircClient.onCapDel(serverId, "draft/metadata-2");
+    expect(useStore.getState().userMetadataRequested[serverId].size).toBe(0);
+  });
 });
 
 describe("serverSupportsMetadata", () => {

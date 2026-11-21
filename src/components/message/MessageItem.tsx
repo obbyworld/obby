@@ -39,7 +39,7 @@ import {
 } from "../../lib/mediaUtils";
 import { stripIrcFormatting } from "../../lib/messageFormatter";
 import { isWhisper } from "../../lib/messageGrouping";
-import useStore, { loadSavedMetadata } from "../../store";
+import useStore, { findSavedMetadata } from "../../store";
 import { serverSupportsMetadata } from "../../store/helpers";
 import type { MessageType, PrivateChat, User } from "../../types";
 import MessageBottomSheet from "../mobile/MessageBottomSheet";
@@ -102,12 +102,8 @@ interface MessageItemProps {
 
 // Helper function to get user metadata
 const getUserMetadata = (username: string, serverId: string) => {
-  // First check localStorage for saved metadata
-  const savedMetadata = loadSavedMetadata();
-  const serverMetadata = savedMetadata[serverId];
-  if (serverMetadata?.[username]) {
-    return serverMetadata[username];
-  }
+  const saved = findSavedMetadata(serverId, username);
+  if (saved) return saved;
 
   // If not in localStorage, check if user is in any shared channels
   const state = useStore.getState();

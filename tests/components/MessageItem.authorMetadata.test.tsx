@@ -122,6 +122,16 @@ describe("the author of a shown message", () => {
     storage.metadata.save({});
   });
 
+  it("shows a saved profile whose nick differs in case", () => {
+    storage.metadata.save({
+      server1: { Bob: { "display-name": { value: "Bobby", visibility: "*" } } },
+    });
+    useStore.setState({ servers: [makeServer()] });
+    render(<MessageItem {...props} message={{ ...message, userId: "bob" }} />);
+    expect(screen.getByText("Bobby")).toBeInTheDocument();
+    storage.metadata.save({});
+  });
+
   it("is left alone on a grouped follow-up line", () => {
     useStore.setState({ servers: [makeServer()] });
     render(<MessageItem {...props} showHeader={false} />);

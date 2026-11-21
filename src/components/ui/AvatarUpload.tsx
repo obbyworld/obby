@@ -144,28 +144,39 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 
       const uploadUrl = `${baseUrl}${endpoint}`;
 
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: formData,
-        signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS),
-      }).catch((error: unknown) => {
-        console.error("Avatar upload could not reach the server:", error);
-        throw new AvatarUploadError("unreachable");
-      });
+      // Older macOS WebKit lacks AbortSignal.timeout, so we abort through our own timer.
+      const controller = new AbortController();
+      const uploadTimer = setTimeout(
+        () => controller.abort(),
+        UPLOAD_TIMEOUT_MS,
+      );
+      let data: { saved_url?: string };
+      try {
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: formData,
+          signal: controller.signal,
+        }).catch((error: unknown) => {
+          console.error("Avatar upload could not reach the server:", error);
+          throw new AvatarUploadError("unreachable");
+        });
 
-      if (!response.ok) {
-        console.error(
-          "Avatar upload refused:",
-          response.status,
-          await response.text(),
-        );
-        throw new AvatarUploadError(failureFromStatus(response.status));
+        if (!response.ok) {
+          console.error(
+            "Avatar upload refused:",
+            response.status,
+            await response.text(),
+          );
+          throw new AvatarUploadError(failureFromStatus(response.status));
+        }
+
+        data = await response.json();
+      } finally {
+        clearTimeout(uploadTimer);
       }
-
-      const data = await response.json();
       if (!data.saved_url) throw new AvatarUploadError("failed");
       onAvatarUrlChange(`${baseUrl}${data.saved_url}`);
       setPreviewUrl(null);

@@ -263,6 +263,17 @@ const resolveReplyMessage = (
 export const loadSavedServers = storage.servers.load;
 export const saveServersToLocalStorage = storage.servers.save;
 export const loadSavedMetadata = storage.metadata.load;
+
+export function findSavedMetadata(serverId: string, nick: string) {
+  const serverMetadata = loadSavedMetadata()[serverId];
+  if (!serverMetadata) return undefined;
+  const nickLc = nick.toLowerCase();
+  const key =
+    nick in serverMetadata
+      ? nick
+      : Object.keys(serverMetadata).find((k) => k.toLowerCase() === nickLc);
+  return key ? serverMetadata[key] : undefined;
+}
 const saveMetadataToLocalStorage = storage.metadata.save;
 const loadSavedGlobalSettings = storage.settings.load;
 const saveGlobalSettingsToLocalStorage = storage.settings.save;
@@ -4142,13 +4153,8 @@ const useStore = create<AppState>((set, get) => ({
     }
 
     // Check if we already have metadata for this user (case-insensitive)
-    const savedMetadata = loadSavedMetadata();
-    const serverMetadata = savedMetadata[serverId];
-    const targetLc = target.toLowerCase();
-    const savedKey = serverMetadata
-      ? Object.keys(serverMetadata).find((k) => k.toLowerCase() === targetLc)
-      : undefined;
-    if (savedKey && Object.keys(serverMetadata[savedKey]).length > 0) {
+    const saved = findSavedMetadata(serverId, target);
+    if (saved && Object.keys(saved).length > 0) {
       // We already have metadata, mark as requested to avoid future requests
       set((state) => ({
         userMetadataRequested: {

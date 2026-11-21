@@ -559,10 +559,15 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("CAPABILITIES_CHANGED", ({ serverId, capabilities }) => {
+    // Requests queued while the server had no metadata cap were dropped, so we forget them to ask again later.
+    const lostMetadata = !capabilities.includes("draft/metadata-2");
     store.setState((state) => ({
       servers: state.servers.map((server) =>
         server.id === serverId ? { ...server, capabilities } : server,
       ),
+      userMetadataRequested: lostMetadata
+        ? { ...state.userMetadataRequested, [serverId]: new Set<string>() }
+        : state.userMetadataRequested,
     }));
   });
 
