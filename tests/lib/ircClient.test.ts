@@ -86,6 +86,100 @@ describe("IRCClient", () => {
     MockWebSocketSpy.mockClear();
   });
 
+  describe("capabilities of the current connection", () => {
+    async function connectSocket(serverId?: string) {
+      const socket = new MockWebSocket("wss://irc.example.com:443");
+      MockWebSocketSpy.mockImplementation(returnsSocket(socket));
+      const pending = client.connect(
+        "Test Server",
+        "irc.example.com",
+        443,
+        "testuser",
+        undefined,
+        undefined,
+        undefined,
+        serverId,
+      );
+      socket.simulateOpen();
+      const server = await pending;
+      socket.simulateMessage(":irc.example.com CAP * LS :draft/metadata-2\r\n");
+      return { server, socket };
+    }
+
+    const metadataSent = (socket: MockWebSocket) =>
+      socket.sentMessages.filter((line) => line.startsWith("METADATA"));
+
+    test("sends METADATA only after the server ACKs draft/metadata-2", async () => {
+      const { server, socket } = await connectSocket();
+      expect(socket.sentMessages).toContain("CAP REQ :draft/metadata-2");
+
+      client.metadataGet(server.id, "alice", ["avatar"]);
+      expect(metadataSent(socket)).toEqual([]);
+
+      socket.simulateMessage(
+        ":irc.example.com CAP * ACK :draft/metadata-2\r\n",
+      );
+      client.metadataGet(server.id, "alice", ["avatar"]);
+      expect(metadataSent(socket)).toEqual(["METADATA alice GET avatar"]);
+    });
+
+    test("a reconnect forgets the previous connection's ACKs", async () => {
+      const first = await connectSocket();
+      first.socket.simulateMessage(
+        ":irc.example.com CAP * ACK :draft/metadata-2\r\n",
+      );
+      const second = await connectSocket(first.server.id);
+
+      client.metadataGet(first.server.id, "alice", ["avatar"]);
+      expect(metadataSent(second.socket)).toEqual([]);
+
+      second.socket.simulateMessage(
+        ":irc.example.com CAP * ACK :draft/metadata-2\r\n",
+      );
+      client.metadataGet(first.server.id, "alice", ["avatar"]);
+      expect(metadataSent(second.socket)).toEqual([
+        "METADATA alice GET avatar",
+      ]);
+    });
+
+    test("CAP DEL withdraws the cap and CAP NEW alone does not restore it", async () => {
+      const { server, socket } = await connectSocket();
+      socket.simulateMessage(
+        ":irc.example.com CAP * ACK :draft/metadata-2\r\n",
+      );
+      socket.simulateMessage(
+        ":irc.example.com CAP * DEL :draft/metadata-2\r\n",
+      );
+      client.metadataGet(server.id, "alice", ["avatar"]);
+      socket.simulateMessage(
+        ":irc.example.com CAP * NEW :draft/metadata-2\r\n",
+      );
+      client.metadataGet(server.id, "alice", ["avatar"]);
+      expect(metadataSent(socket)).toEqual([]);
+    });
+
+    test("emits the full list on every change", async () => {
+      const lists: string[][] = [];
+      client.on("CAPABILITIES_CHANGED", ({ capabilities }) =>
+        lists.push(capabilities),
+      );
+      const { server, socket } = await connectSocket();
+      socket.simulateMessage(
+        ":irc.example.com CAP * ACK :draft/metadata-2 sasl=PLAIN\r\n",
+      );
+      socket.simulateMessage(":irc.example.com CAP * ACK :setname\r\n");
+      socket.simulateMessage(":irc.example.com CAP * DEL :sasl\r\n");
+      await connectSocket(server.id);
+      expect(lists).toEqual([
+        [],
+        ["draft/metadata-2", "sasl"],
+        ["draft/metadata-2", "sasl", "setname"],
+        ["draft/metadata-2", "setname"],
+        [],
+      ]);
+    });
+  });
+
   describe("connect", () => {
     test("should connect to IRC server successfully", async () => {
       const mockSocket = new MockWebSocket("ws://irc.example.com:443");
@@ -465,9 +559,39 @@ describe("IRCClient", () => {
       return renamePromise;
     });
 
-    test("should send SETNAME command", () => {
+    test("should send SETNAME command once setname is acked", () => {
+      client.onCapAck(server.id, "setname");
       client.setName(server.id, "New Real Name");
       expect(mockSocket.sentMessages).toContain("SETNAME :New Real Name");
+    });
+
+    test("drops cap-gated commands the server did not ack", () => {
+      client.onCapAck(server.id, "message-tags");
+      client.setName(server.id, "New Real Name");
+      client.metadataGet(server.id, "#chan", ["avatar"]);
+      client.sendRaw(server.id, "@+draft/bot-cmds-query TAGMSG somebody");
+      client.sendTyping(server.id, "somebody", true);
+      expect(mockSocket.sentMessages).not.toContain("SETNAME :New Real Name");
+      expect(mockSocket.sentMessages).not.toContain(
+        "METADATA #chan GET avatar",
+      );
+      expect(mockSocket.sentMessages).not.toContain(
+        "@+draft/bot-cmds-query TAGMSG somebody",
+      );
+      expect(mockSocket.sentMessages).toContain(
+        "@+typing=active TAGMSG somebody",
+      );
+    });
+
+    test("stops sending a command after CAP DEL", () => {
+      client.onCapAck(server.id, "draft/metadata-2");
+      client.metadataGet(server.id, "#chan", ["avatar"]);
+      client.onCapDel(server.id, "draft/metadata-2");
+      client.metadataGet(server.id, "#other", ["avatar"]);
+      expect(mockSocket.sentMessages).toContain("METADATA #chan GET avatar");
+      expect(mockSocket.sentMessages).not.toContain(
+        "METADATA #other GET avatar",
+      );
     });
 
     test("should handle SETNAME response", () => {

@@ -131,27 +131,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
   );
   ircClient.on("LOGGED_OUT", ({ serverId }) => setAccount(serverId, undefined));
 
-  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key, capabilities }) => {
-    if (capabilities?.startsWith("draft/metadata")) {
-      const currentSubs =
-        store.getState().metadataSubscriptions[serverId] || [];
-      if (currentSubs.length === 0) {
-        const defaultKeys = [
-          "url",
-          "website",
-          "status",
-          "location",
-          "avatar",
-          "color",
-          "display-name",
-          "bot",
-          // draft/custom-emoji: channel-scoped pack URL.  Subscribing
-          // here so we get notified when a channel ops sets a new pack.
-          "draft/emoji",
-        ];
-        store.getState().metadataSub(serverId, defaultKeys);
-      }
-    }
+  ircClient.on("CAP_ACKNOWLEDGED", ({ serverId, key }) => {
     if (key !== "sasl") return;
 
     // Pick mechanism up-front so the AUTHENTICATE event handler knows what
@@ -578,6 +558,19 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
     }
   });
 
+  ircClient.on("CAPABILITIES_CHANGED", ({ serverId, capabilities }) => {
+    // Requests queued while the server had no metadata cap were dropped, so we forget them to ask again later.
+    const lostMetadata = !capabilities.includes("draft/metadata-2");
+    store.setState((state) => ({
+      servers: state.servers.map((server) =>
+        server.id === serverId ? { ...server, capabilities } : server,
+      ),
+      userMetadataRequested: lostMetadata
+        ? { ...state.userMetadataRequested, [serverId]: new Set<string>() }
+        : state.userMetadataRequested,
+    }));
+  });
+
   ircClient.on("CAP ACK", ({ serverId, cliCaps }) => {
     const caps = cliCaps.split(" ");
 
@@ -587,24 +580,6 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       const capValue = tok[1];
       ircClient.capAck(serverId, capName, capValue ?? null);
     }
-
-    // Names only -- values live in capabilityValues and every consumer of
-    // `capabilities` matches on the bare name.
-    const ackedNames = caps.filter(Boolean).map((cap) => cap.split("=", 1)[0]);
-
-    store.setState((state) => {
-      const updatedServers = state.servers.map((server) => {
-        if (server.id === serverId) {
-          const merged = [...(server.capabilities ?? [])];
-          for (const cap of ackedNames) {
-            if (!merged.includes(cap)) merged.push(cap);
-          }
-          return { ...server, capabilities: merged };
-        }
-        return server;
-      });
-      return { servers: updatedServers };
-    });
 
     const state = store.getState();
     const server = state.servers.find((s) => s.id === serverId);

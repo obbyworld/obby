@@ -140,16 +140,44 @@ describe("summarizeFolders", () => {
           folders,
         ),
       ),
+      () => undefined,
     );
     expect(summaries.get("f")).toEqual({
       channelCount: 2,
       mentionCount: 2,
       hasUnread: true,
+      icons: [],
     });
     expect(summaries.get("g")).toEqual({
       channelCount: 1,
       mentionCount: 0,
       hasUnread: false,
+      icons: [],
     });
+  });
+
+  it("collects the channel icons of each folder", () => {
+    const first = ["#a", "#b", "#c", "#d", "#e", "#f"];
+    const second = ["#g", "#h"];
+    const rows = [...first, ...second].map((name) => ({
+      ...ch(name),
+      unreadCount: 0,
+    }));
+    const iconOf = (row: { name: string }) =>
+      row.name === "#b" ? undefined : `icon-${row.name}`;
+    const summaries = summarizeFolders(
+      flattenChannelGroups(
+        arrangeChannels(rows, [], [folder("f", first), folder("g", second)]),
+      ),
+      iconOf,
+    );
+    expect(summaries.get("f")?.icons).toEqual([
+      "icon-#a",
+      "icon-#c",
+      "icon-#d",
+      "icon-#e",
+      "icon-#f",
+    ]);
+    expect(summaries.get("g")?.icons).toEqual(["icon-#g", "icon-#h"]);
   });
 });

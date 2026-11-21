@@ -1,6 +1,7 @@
 import { useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { type EventGroup, getEventGroupTooltip } from "../../lib/eventGrouping";
 import ircClient from "../../lib/ircClient";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
@@ -32,7 +33,7 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
   const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
-  const server = useStore.getState().servers.find((s) => s.id === serverId);
+  const fileHosts = useServerFilehosts(serverId);
 
   if (eventGroup.type !== "eventGroup") return null;
 
@@ -63,7 +64,7 @@ export const CollapsedEventMessage: React.FC<CollapsedEventMessageProps> = ({
       >
         {canShowAvatarUrl(
           user?.metadata?.avatar?.value,
-          server?.filehost,
+          fileHosts,
           mediaSettings,
         ) && !failedAvatars.has(username) ? (
           <img

@@ -188,9 +188,9 @@ const SettingsContent: React.FC<
           ? storeCurrentUser
           : ircCurrentUser))
       : null;
-  const supportsMetadata = currentServer
-    ? serverSupportsMetadata(currentServer.id)
-    : false;
+  const supportsMetadata = useStore((state) =>
+    currentServer ? serverSupportsMetadata(state, currentServer.id) : false,
+  );
 
   const globalValues: Record<string, SettingValue | undefined> = {
     ...globalSettings,

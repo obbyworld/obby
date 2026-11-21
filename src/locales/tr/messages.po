@@ -994,6 +994,10 @@ msgstr "Kamera"
 msgid "Camera {0}"
 msgstr "Kamera {0}"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Can't reach the upload server. Try again"
+msgstr "Yükleme sunucusuna ulaşılamıyor. Tekrar deneyin"
+
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Can't remove your last 2FA credential"
 msgstr "Son 2FA kimlik bilgisi kaldırılamaz"
@@ -1234,6 +1238,14 @@ msgstr "Güvenli bir şifre seçin"
 msgid "Choose a smaller file. This one is too large for the file host."
 msgstr "Daha küçük bir dosya seçin. Bu dosya, dosya sunucusu için çok büyük."
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose a smaller image"
+msgstr "Daha küçük bir görsel seçin"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Choose an image file"
+msgstr "Bir resim dosyası seçin"
+
 #: src/components/ui/settings/SettingRenderer.tsx
 msgid "Choose file"
 msgstr "Dosya seç"
@@ -1357,6 +1369,10 @@ msgstr "Açılır sunucu bildirimlerini kapat"
 #: src/components/layout/SearchPane.tsx
 msgid "Close search"
 msgstr "Aramayı kapat"
+
+#: src/components/chat/CommandArgHint.tsx
+msgid "Close the command to attach files"
+msgstr "Dosya eklemek için komutu kapatın"
 
 #: src/components/ui/MediaCommentsSidebar.tsx
 msgid "Close viewer"
@@ -2501,6 +2517,10 @@ msgstr "Tümünü daralt"
 msgid "Folder name"
 msgstr "Klasör adı"
 
+#: src/components/layout/ChannelFolderHeader.tsx
+msgid "Folder options"
+msgstr "Klasör seçenekleri"
+
 #: src/lib/settings/definitions/allSettings.ts
 msgid "For private messages and mentions"
 msgstr "Özel mesajlar ve bahsetmeler için"
@@ -3107,6 +3127,10 @@ msgstr "Giriş yap"
 #: src/components/layout/ConnectionStrip.tsx
 msgid "Log in again"
 msgstr "Tekrar giriş yap"
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Log in to upload an avatar"
+msgstr "Avatar yüklemek için giriş yapın"
 
 #. placeholder {0}: server?.account ?? ""
 #: src/components/pages/ServerSettingsPage.tsx
@@ -3842,6 +3866,10 @@ msgstr "açık"
 msgid "Online"
 msgstr "Çevrimiçi"
 
+#: src/components/ui/AvatarUpload.tsx
+msgid "Only channel ops can change this"
+msgstr "Bunu yalnızca kanal operatörleri değiştirebilir"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Only connect to servers you choose"
 msgstr "Yalnızca seçtiğiniz sunuculara bağlanın"
@@ -4509,6 +4537,10 @@ msgstr "{emoji} tepkisini kaldır"
 msgid "Remove Rule"
 msgstr "Kuralı Kaldır"
 
+#: src/components/chat/CommandArgHint.tsx
+msgid "Remove the attached files to run a command"
+msgstr "Komut çalıştırmak için ekli dosyaları kaldırın"
+
 #: src/components/ui/QuickActions/uiActionConfig.tsx
 msgid "Rename Channel"
 msgstr "Kanalı Yeniden Adlandır"
@@ -4521,10 +4553,6 @@ msgstr "Klasörü yeniden adlandır"
 #: src/components/layout/ChannelFolderHeader.tsx
 msgid "Rename or delete {0}"
 msgstr "{0} öğesini yeniden adlandır veya sil"
-
-#: src/components/layout/ChannelFolderHeader.tsx
-msgid "Rename or delete folder"
-msgstr "Klasörü yeniden adlandır veya sil"
 
 #: src/components/pages/ChannelSettingsPage.tsx
 msgid "Rename this channel. Everyone sees the new name."
@@ -5752,6 +5780,10 @@ msgstr "Avatar Yükle"
 #: src/lib/mediaUpload.ts
 msgid "Upload cancelled."
 msgstr "Yükleme iptal edildi."
+
+#: src/components/ui/AvatarUpload.tsx
+msgid "Upload failed. Try again"
+msgstr "Yükleme başarısız. Tekrar deneyin"
 
 #: src/components/layout/ChatArea.tsx
 msgid "Upload Files"

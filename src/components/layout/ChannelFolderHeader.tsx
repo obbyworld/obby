@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import type * as React from "react";
 import { useRef, useState } from "react";
 import { FaChevronRight, FaEllipsisH, FaFolder } from "react-icons/fa";
-import type { FolderSummary } from "../../lib/channelFolders";
+import { type FolderSummary, MAX_FOLDER_ICONS } from "../../lib/channelFolders";
 import type { ChannelFolder } from "../../store/types";
 import { TextInput } from "../ui/TextInput";
 import type { DragRowProps } from "./ChannelRow";
@@ -67,6 +67,32 @@ const FolderActivity: React.FC<{ summary?: FolderSummary }> = ({ summary }) => {
   return null;
 };
 
+// A folded folder shows its channels' icons inside the folder glyph, the way a
+// phone shows the apps inside a folder.
+const FolderGlyph: React.FC<{ icons?: string[] }> = ({ icons }) => {
+  const [failedUrls, setFailedUrls] = useState<ReadonlySet<string>>(new Set());
+  const shown = icons
+    ?.filter((url) => !failedUrls.has(url))
+    .slice(0, MAX_FOLDER_ICONS);
+  if (!shown?.length) return <FaFolder className="flex-shrink-0 opacity-80" />;
+  return (
+    <span
+      className={`grid h-[18px] w-[18px] flex-shrink-0 gap-px rounded-[5px] bg-discord-dark-400 p-0.5 ring-1 ring-white/10 ${shown.length > 1 ? "grid-cols-2" : ""}`}
+    >
+      {shown.map((url, index) => (
+        <img
+          // biome-ignore lint/suspicious/noArrayIndexKey: two channels can share one icon
+          key={index}
+          src={url}
+          alt=""
+          className="h-full w-full rounded-[2px] object-cover"
+          onError={() => setFailedUrls((failed) => new Set(failed).add(url))}
+        />
+      ))}
+    </span>
+  );
+};
+
 export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
   folder,
   summary,
@@ -103,7 +129,11 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
           folder.collapsed && summary?.hasUnread ? "text-white" : ""
         }`}
       >
-        <FaFolder className="flex-shrink-0 opacity-80" />
+        {folder.collapsed ? (
+          <FolderGlyph icons={summary?.icons} />
+        ) : (
+          <FaFolder className="flex-shrink-0 opacity-80" />
+        )}
         <span className="truncate">{folder.name}</span>
         <FaChevronRight
           className={`flex-shrink-0 text-[9px] opacity-70 transition-transform ${
@@ -120,7 +150,7 @@ export const ChannelFolderHeader: React.FC<ChannelFolderHeaderProps> = ({
     )}
     <button
       type="button"
-      title={t`Rename or delete folder`}
+      title={t`Folder options`}
       aria-label={t`Rename or delete ${folder.name}`}
       onClick={(e) => onOpenMenu(e.currentTarget)}
       className="w-6 h-6 flex items-center justify-center rounded opacity-0 [@media(hover:none)]:opacity-100 group-hover:opacity-100 focus-visible:opacity-100 hover:text-white hover:bg-discord-dark-500/40"

@@ -17,6 +17,7 @@ import { parseIrcUrl } from "../ircUrlParser";
 import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
 import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
+import { capsRequiredFor } from "./capGate";
 import { IRC_DISPATCH } from "./handlers";
 import type { IRCClientContext } from "./IRCClientContext";
 import {
@@ -125,6 +126,7 @@ export interface EventMap {
   "CAP ACK": BaseIRCEvent & { cliCaps: string };
   ISUPPORT: BaseIRCEvent & { key: string; value: string };
   CAP_ACKNOWLEDGED: BaseIRCEvent & { key: string; capabilities: string };
+  CAPABILITIES_CHANGED: BaseIRCEvent & { capabilities: string[] };
   CAP_END: BaseIRCEvent;
   AUTHENTICATE: BaseIRCEvent & { param: string };
   METADATA: MetadataValueEvent;
@@ -625,6 +627,13 @@ function splitCapToken(token: string): { cap: string; value?: string } {
     : { cap: token.slice(0, eq), value: token.slice(eq + 1) };
 }
 
+function capNames(cliCaps: string): string[] {
+  return cliCaps
+    .split(" ")
+    .filter(Boolean)
+    .map((token) => splitCapToken(token).cap);
+}
+
 export class IRCClient implements IRCClientContext {
   private sockets: Map<string, ISocket> = new Map();
   servers: Map<string, Server> = new Map();
@@ -870,7 +879,6 @@ export class IRCClient implements IRCClientContext {
           // Update connection state
           server.connectionState = "connecting";
           server.isConnected = false;
-          // Reset CAP negotiation state for reconnection
           this.capNegotiationComplete.delete(serverId);
         } else {
           throw new Error(`Server ${serverId} not found despite has() check`);
@@ -890,6 +898,7 @@ export class IRCClient implements IRCClientContext {
         };
         this.servers.set(server.id, server);
       }
+      this.setCapabilities(server.id, []);
       this.closeReplacedSocket(server.id);
       this.sockets.set(server.id, socket);
       this.serverConnectParams.set(server.id, {
@@ -1242,6 +1251,18 @@ export class IRCClient implements IRCClientContext {
   }
 
   sendRaw(serverId: string, command: string): void {
+    // Servers count a command they did not offer as flood, so we drop it here for every caller.
+    const missing = capsRequiredFor(command).find(
+      (cap) => !this.hasCapability(serverId, cap),
+    );
+    if (missing) {
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "info",
+        line: `** dropped TX (no ${missing} cap): ${command}`,
+      });
+      return;
+    }
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(command);
@@ -1389,8 +1410,8 @@ export class IRCClient implements IRCClientContext {
     { showLoading = true }: { showLoading?: boolean } = {},
   ): boolean {
     const server = this.servers.get(serverId);
-    if (!server?.capabilities?.includes("draft/chathistory")) return false;
-    if (server.isBouncerControl) return false;
+    if (!this.hasCapability(serverId, "draft/chathistory")) return false;
+    if (server?.isBouncerControl) return false;
     // Fire isLoading:true so the store sets isLoadingHistory=true for the whole batch.
     // The React component uses isLoadingMore to keep messages in DOM (no full-screen spinner)
     // and restores scroll position once isLoadingHistory goes false (batch end).
@@ -1414,8 +1435,8 @@ export class IRCClient implements IRCClientContext {
     timestamp: string,
   ): boolean {
     const server = this.servers.get(serverId);
-    if (!server?.capabilities?.includes("draft/chathistory")) return false;
-    if (server.isBouncerControl) return false;
+    if (!this.hasCapability(serverId, "draft/chathistory")) return false;
+    if (server?.isBouncerControl) return false;
     this.sendRaw(
       serverId,
       `CHATHISTORY ${subcommand} ${target} timestamp=${timestamp} ${this.chathistoryPageSize(serverId)}`,
@@ -1429,7 +1450,7 @@ export class IRCClient implements IRCClientContext {
     return (
       !!server &&
       !server.isBouncerControl &&
-      !!server.capabilities?.includes("draft/chathistory")
+      this.hasCapability(serverId, "draft/chathistory")
     );
   }
 
@@ -2201,10 +2222,7 @@ export class IRCClient implements IRCClientContext {
       const capsToRequest: string[] = [];
       const saslEnabled = this.saslEnabled.get(serverId) ?? false;
       for (const cap of accumulated) {
-        if (
-          (this.ourCaps.includes(cap) || cap.startsWith("draft/metadata")) &&
-          (cap !== "sasl" || saslEnabled)
-        ) {
+        if (this.ourCaps.includes(cap) && (cap !== "sasl" || saslEnabled)) {
           capsToRequest.push(cap);
         }
       }
@@ -2246,9 +2264,7 @@ export class IRCClient implements IRCClientContext {
 
             // Check if SASL is in progress before timing out
             const saslEnabled = this.saslEnabled.get(serverId) ?? false;
-            const server = this.servers.get(serverId);
-            const saslAcknowledged =
-              server?.capabilities?.includes("sasl") ?? false;
+            const saslAcknowledged = this.hasCapability(serverId, "sasl");
 
             if (saslEnabled && saslAcknowledged) {
               console.log(
@@ -2302,37 +2318,22 @@ export class IRCClient implements IRCClientContext {
   }
 
   onCapDel(serverId: string, cliCaps: string): void {
-    const caps = cliCaps.split(" ");
-    for (const c of caps) {
-      const [cap] = c.split("=", 2);
-      if (cap === "sasl") {
-        this.saslMechanisms.delete(serverId);
-      }
-    }
+    const removed = capNames(cliCaps);
+    if (removed.includes("sasl")) this.saslMechanisms.delete(serverId);
+    this.setCapabilities(
+      serverId,
+      this.capabilities(serverId).filter((cap) => !removed.includes(cap)),
+    );
   }
 
   onCapAck(serverId: string, cliCaps: string): void {
-    // Trigger the original event for compatibility
+    const ackedNames = capNames(cliCaps);
+    const current = this.capabilities(serverId);
+    this.setCapabilities(serverId, [
+      ...current,
+      ...ackedNames.filter((cap) => !current.includes(cap)),
+    ]);
     this.triggerEvent("CAP ACK", { serverId, cliCaps });
-
-    // Values are tracked separately (capabilityValues); every consumer of
-    // `capabilities` matches on the bare name, so store names only.
-    const ackedNames = cliCaps
-      .split(" ")
-      .filter(Boolean)
-      .map((cap) => cap.split("=", 1)[0]);
-
-    const server = this.servers.get(serverId);
-    if (server) {
-      if (!server.capabilities) {
-        server.capabilities = [];
-      }
-      for (const cap of ackedNames) {
-        if (!server.capabilities.includes(cap)) {
-          server.capabilities.push(cap);
-        }
-      }
-    }
 
     const pending = this.pendingCapReqs.get(serverId);
     if (!pending) return;
@@ -2346,7 +2347,7 @@ export class IRCClient implements IRCClientContext {
     this.pendingCapReqs.delete(serverId);
 
     const saslEnabled = this.saslEnabled.get(serverId) ?? false;
-    const saslAcknowledged = server?.capabilities?.includes("sasl") ?? false;
+    const saslAcknowledged = this.hasCapability(serverId, "sasl");
 
     // SASL owns the rest of the handshake: its result (903 / 904-907) sends
     // CAP END, so ending it here would strand the AUTHENTICATE exchange.
@@ -2409,7 +2410,19 @@ export class IRCClient implements IRCClientContext {
   }
 
   hasCapability(serverId: string, cap: string): boolean {
-    return this.servers.get(serverId)?.capabilities?.includes(cap) ?? false;
+    return this.capabilities(serverId).includes(cap);
+  }
+
+  // The capabilities the server ACKed on the current connection.
+  private capabilities(serverId: string): string[] {
+    return this.servers.get(serverId)?.capabilities ?? [];
+  }
+
+  private setCapabilities(serverId: string, capabilities: string[]): void {
+    const server = this.servers.get(serverId);
+    if (!server) return;
+    server.capabilities = capabilities;
+    this.triggerEvent("CAPABILITIES_CHANGED", { serverId, capabilities });
   }
 
   getBatchType(serverId: string, batchId: string): string | undefined {

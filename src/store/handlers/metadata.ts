@@ -3,6 +3,11 @@ import ircClient from "../../lib/ircClient";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
 
+// Channel names can hold "!", so we cut only a user mask down to its nick.
+function nickOrChannel(serverId: string, target: string): string {
+  return ircClient.isChannel(serverId, target) ? target : target.split("!")[0];
+}
+
 export function registerMetadataHandlers(store: StoreApi<AppState>): void {
   ircClient.on("METADATA", ({ serverId, target, key, visibility, value }) => {
     store.setState((state) => {
@@ -11,7 +16,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
       const resolvedTarget =
         target === "*"
           ? ircClient.getNick(serverId) || serverCurrentUser?.username || target
-          : target.split("!")[0]; // Extract nickname from mask
+          : nickOrChannel(serverId, target);
 
       const updatedServers = state.servers.map((server) => {
         if (server.id === serverId) {
@@ -177,7 +182,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
             ? ircClient.getNick(serverId) ||
               state.currentUser?.username ||
               target
-            : target.split("!")[0]; // Extract nickname from mask
+            : nickOrChannel(serverId, target);
 
         let hasChanges = false;
 
@@ -392,7 +397,7 @@ export function registerMetadataHandlers(store: StoreApi<AppState>): void {
     const resolvedTarget =
       target === "*"
         ? ircClient.getNick(serverId) || state.currentUser?.username || target
-        : target.split("!")[0]; // Extract nickname from mask
+        : nickOrChannel(serverId, target);
 
     const savedMetadata = storage.metadata.load();
     if (savedMetadata[serverId]?.[resolvedTarget]?.[key]) {

@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import type React from "react";
 import { useState } from "react";
-import { serverFilehosts } from "../../lib/ircUtils";
+import { useServerFilehosts } from "../../hooks/useServerFilehosts";
 import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 
@@ -32,19 +32,17 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
   serverId,
   showPresence = true,
 }) => {
-  const [imageLoadFailed, setImageLoadFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string>();
   const username = userId;
 
   const mediaSettings = mediaLevelToSettings(
     useStore((state) => state.globalSettings.mediaVisibilityLevel),
   );
-  const server = serverId
-    ? useStore.getState().servers.find((s) => s.id === serverId)
-    : null;
+  const fileHosts = useServerFilehosts(serverId);
 
   const shouldShowAvatar = canShowAvatarUrl(
     avatarUrl,
-    serverFilehosts(server),
+    fileHosts,
     mediaSettings,
   );
 
@@ -62,14 +60,12 @@ export const MessageAvatar: React.FC<MessageAvatarProps> = ({
       onClick={onClick}
     >
       <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white relative group/avatar">
-        {shouldShowAvatar && !imageLoadFailed ? (
+        {shouldShowAvatar && failedUrl !== avatarUrl ? (
           <img
             src={avatarUrl}
             alt={username}
             className="w-8 h-8 rounded-full object-cover"
-            onError={() => {
-              setImageLoadFailed(true);
-            }}
+            onError={() => setFailedUrl(avatarUrl)}
           />
         ) : (
           username.charAt(0).toUpperCase()

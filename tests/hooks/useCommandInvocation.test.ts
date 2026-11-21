@@ -17,7 +17,7 @@ const say: BotCommand = {
 };
 const channels = [{ name: "#dev" }, { name: "#ops" }] as Channel[];
 
-function setup() {
+function setup(hasAttachments = false) {
   const input = document.createElement("textarea");
   const textRef = { current: "" };
   const applyText = (text: string) => {
@@ -34,6 +34,7 @@ function setup() {
       applyText,
       onBegin: () => {},
       onRun,
+      hasAttachments: () => hasAttachments,
     }),
   );
   const type = (text: string) =>
@@ -106,6 +107,24 @@ describe("useCommandInvocation", () => {
     expect(onRun).not.toHaveBeenCalled();
     expect(hook.result.current.invocation?.values.message).toBe("hello");
     expect(hook.result.current.invocation?.error?.kind).toBe("unsent");
+  });
+
+  it("refuses to run while files wait to be sent", () => {
+    const { hook, type, key } = setup(true);
+    act(() => hook.result.current.begin("bot", say));
+    key("Tab");
+    type("hello");
+    key("Enter");
+    expect(sendBotCommand).not.toHaveBeenCalled();
+    expect(hook.result.current.invocation?.error?.kind).toBe("files");
+    expect(hook.result.current.invocation?.values.message).toBe("hello");
+  });
+
+  it("tells the user a file cannot join a command", () => {
+    const { hook } = setup();
+    act(() => hook.result.current.begin("bot", say));
+    act(() => hook.result.current.refuseFiles());
+    expect(hook.result.current.invocation?.error?.kind).toBe("attach");
   });
 
   it("opens a recalled command without options and sends it on Enter", () => {

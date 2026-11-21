@@ -16,7 +16,12 @@ describe("ChannelFolderHeader", () => {
     render(
       <ChannelFolderHeader
         folder={folder}
-        summary={{ channelCount: 2, mentionCount: 0, hasUnread: false }}
+        summary={{
+          channelCount: 2,
+          mentionCount: 0,
+          hasUnread: false,
+          icons: [],
+        }}
         isRenaming={false}
         onToggle={onToggle}
         onOpenMenu={vi.fn()}
@@ -32,7 +37,12 @@ describe("ChannelFolderHeader", () => {
     render(
       <ChannelFolderHeader
         folder={{ ...folder, collapsed: true }}
-        summary={{ channelCount: 2, mentionCount: 0, hasUnread: false }}
+        summary={{
+          channelCount: 2,
+          mentionCount: 0,
+          hasUnread: false,
+          icons: [],
+        }}
         isRenaming={false}
         onToggle={vi.fn()}
         onOpenMenu={vi.fn()}
@@ -43,9 +53,41 @@ describe("ChannelFolderHeader", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
   });
 
+  it("fills a failed icon's place with the next channel icon", () => {
+    const { container } = render(
+      <ChannelFolderHeader
+        folder={{ ...folder, collapsed: true }}
+        summary={{
+          channelCount: 5,
+          mentionCount: 0,
+          hasUnread: false,
+          icons: ["a.png", "b.png", "c.png", "d.png", "e.png"],
+        }}
+        isRenaming={false}
+        onToggle={vi.fn()}
+        onOpenMenu={vi.fn()}
+        onRename={vi.fn()}
+        onRenameEnd={vi.fn()}
+      />,
+    );
+    const sources = () =>
+      Array.from(container.querySelectorAll("img")).map((img) =>
+        img.getAttribute("src"),
+      );
+    expect(sources()).toEqual(["a.png", "b.png", "c.png", "d.png"]);
+
+    fireEvent.error(container.querySelector('img[src="a.png"]') as Element);
+    expect(sources()).toEqual(["b.png", "c.png", "d.png", "e.png"]);
+  });
+
   it("shows the folder's mentions only while it is folded", () => {
     const props = {
-      summary: { channelCount: 3, mentionCount: 5, hasUnread: true },
+      summary: {
+        channelCount: 3,
+        mentionCount: 5,
+        hasUnread: true,
+        icons: [],
+      },
       isRenaming: false,
       onToggle: vi.fn(),
       onOpenMenu: vi.fn(),
@@ -63,13 +105,46 @@ describe("ChannelFolderHeader", () => {
     expect(screen.queryByText("5")).not.toBeInTheDocument();
   });
 
+  it("shows its channels' icons only while it is folded", () => {
+    const props = {
+      summary: {
+        channelCount: 3,
+        mentionCount: 0,
+        hasUnread: false,
+        icons: ["https://files.example.com/a.png"],
+      },
+      isRenaming: false,
+      onToggle: vi.fn(),
+      onOpenMenu: vi.fn(),
+      onRename: vi.fn(),
+      onRenameEnd: vi.fn(),
+    };
+    const { container, rerender } = render(
+      <ChannelFolderHeader
+        folder={{ ...folder, collapsed: true }}
+        {...props}
+      />,
+    );
+    expect(container.querySelector("img")).toHaveAttribute(
+      "src",
+      "https://files.example.com/a.png",
+    );
+    rerender(<ChannelFolderHeader folder={folder} {...props} />);
+    expect(container.querySelector("img")).toBeNull();
+  });
+
   it("shows an input while renaming and commits the trimmed value on Enter", () => {
     const onRename = vi.fn();
     const onRenameEnd = vi.fn();
     render(
       <ChannelFolderHeader
         folder={folder}
-        summary={{ channelCount: 2, mentionCount: 0, hasUnread: false }}
+        summary={{
+          channelCount: 2,
+          mentionCount: 0,
+          hasUnread: false,
+          icons: [],
+        }}
         isRenaming={true}
         onToggle={vi.fn()}
         onOpenMenu={vi.fn()}
@@ -91,7 +166,12 @@ describe("ChannelFolderHeader", () => {
     render(
       <ChannelFolderHeader
         folder={folder}
-        summary={{ channelCount: 2, mentionCount: 0, hasUnread: false }}
+        summary={{
+          channelCount: 2,
+          mentionCount: 0,
+          hasUnread: false,
+          icons: [],
+        }}
         isRenaming={true}
         onToggle={vi.fn()}
         onOpenMenu={vi.fn()}

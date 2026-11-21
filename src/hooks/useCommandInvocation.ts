@@ -28,6 +28,7 @@ interface UseCommandInvocationOptions {
   applyText: (text: string) => void;
   onBegin: () => void;
   onRun: (run: BotCommandRun) => void;
+  hasAttachments: () => boolean;
 }
 
 const CHOICE_ACCEPT_KEYS = ["Tab", "Enter"];
@@ -42,6 +43,7 @@ export function useCommandInvocation({
   applyText,
   onBegin,
   onRun,
+  hasAttachments,
 }: UseCommandInvocationOptions) {
   const [invocation, setInvocation] = useState<CommandInvocation | null>(null);
   const [highlight, setHighlight] = useState(0);
@@ -167,8 +169,22 @@ export function useCommandInvocation({
     closeKeys: NO_KEYS,
   });
 
+  // Commands carry no files, so we keep an attachment from looking like part of one.
+  const refuseWith = (kind: "files" | "attach") => {
+    if (!invocation) return;
+    setInvocation({
+      ...invocation,
+      error: { kind, name: activeParam?.name ?? invocation.command.name },
+    });
+  };
+  const refuseFiles = () => refuseWith("attach");
+
   const run = () => {
     if (!invocation || !serverId) return;
+    if (hasAttachments()) {
+      refuseWith("files");
+      return;
+    }
     const result = buildCommandPayload(params, invocation.values);
     if ("error" in result) {
       const active = Math.max(
@@ -241,6 +257,7 @@ export function useCommandInvocation({
     onInput,
     select,
     run,
+    refuseFiles,
     cancel: finish,
     handleKey,
   };
