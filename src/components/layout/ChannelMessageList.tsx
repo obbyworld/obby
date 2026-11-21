@@ -266,11 +266,13 @@ export const ChannelMessageList = forwardRef<
       }),
     }));
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the reader returns to the bottom; isJumpTakingOver reads refs and the store
     useEffect(() => {
       // When the user returns to the bottom, shrink the window back to the base so
       // slice(-N) resumes trimming old messages from the top (memory optimization).
       // Only shrink if we grew above the base — preserves a sub-default saved visibleCount.
-      if (!isScrolledUp && !isDetachedRef.current) {
+      // A pending or held jump has grown the window to reach its row, so we keep it.
+      if (!isScrolledUp && !isDetachedRef.current && !isJumpTakingOver()) {
         setVisibleMessageCount((prev) =>
           prev > DEFAULT_VISIBLE_MESSAGE_COUNT
             ? DEFAULT_VISIBLE_MESSAGE_COUNT
@@ -720,7 +722,9 @@ export const ChannelMessageList = forwardRef<
       const hasJoinedPresent =
         channelMessages[0]?.id === prevFirstMsgIdRef.current;
       resetWindowTracking();
-      if (hasJoinedPresent && isHoldingRef.current) return;
+      // The reader scrolled forward into the present, or a jump is taking them to
+      // a row in it, so we keep the view where they are.
+      if (hasJoinedPresent || isJumpTakingOver()) return;
       releaseJump();
       setVisibleMessageCount(DEFAULT_VISIBLE_MESSAGE_COUNT);
       wasAtBottomRef.current = true;

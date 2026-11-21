@@ -233,6 +233,11 @@ msgstr "{sender} перезапустив(-ла) шифрування. Заче�
 msgid "{sender} sent you a message: {body}"
 msgstr "{sender} надіслав вам повідомлення: {body}"
 
+#: src/components/layout/BouncerServerGroup.tsx
+#: src/components/layout/ServerList.tsx
+msgid "{serverName}, turned off"
+msgstr "{serverName}, вимкнено"
+
 #: src/components/layout/ProfilePane.tsx
 msgid "{sessionCount} sessions connected. Sign in as this account or ask an IRC operator to see their details."
 msgstr "Підключено сесій: {sessionCount}. Увійдіть у цей обліковий запис або попросіть IRC-оператора переглянути їхні дані."
@@ -249,7 +254,7 @@ msgstr "{stepCount, plural, one {# крок} few {# кроки} many {# крок
 msgid "{title} Client"
 msgstr "клієнт {title}"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "{total, plural, one {# channel} other {# channels}}"
 msgstr "{total, plural, one {# канал} few {# канали} many {# каналів} other {# каналів}}"
 
@@ -269,11 +274,11 @@ msgstr "{userCount} користувачів"
 msgid "{userCount} watching"
 msgstr "{userCount} дивляться"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*channel*"
 msgstr "*канал*"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "*spam*"
 msgstr "*спам*"
 
@@ -322,6 +327,14 @@ msgstr "<0>{0}</0>, <1>{1}</1> та <2>{2}</2> пишуть..."
 #: src/components/ui/TypingIndicator.tsx
 msgid "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> and {3} others are typing..."
 msgstr "<0>{0}</0>, <1>{1}</1>, <2>{2}</2> та ще {3} пишуть..."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is not registered. Register it to keep it"
+msgstr "<0>{nick}</0> не зареєстровано. Зареєструйте його, щоб залишити за собою"
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "<0>{nick}</0> is registered. Log in to use it"
+msgstr "<0>{nick}</0> зареєстровано. Увійдіть, щоб використовувати його"
 
 #: src/components/ui/ExternalLinkWarningModal.tsx
 msgid "<0>⚠️ Be careful!</0> Only open links from trusted sources. Malicious links can compromise your security or privacy."
@@ -655,7 +668,7 @@ msgstr "Застосунок"
 msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Apply and refresh"
 msgstr "Застосувати та оновити"
 
@@ -951,6 +964,10 @@ msgstr "Бот у цьому каналі"
 msgid "Bots"
 msgstr "Боти"
 
+#: src/components/layout/BouncerServerGroup.tsx
+msgid "Bouncer: {networkName}"
+msgstr "Bouncer: {networkName}"
+
 #: src/lib/mediaDevices.ts
 #: src/lib/voiceErrors.ts
 msgid "Bring this window to the front and try again."
@@ -1077,6 +1094,10 @@ msgstr "Змінити пароль"
 msgid "Change the channel name (operators only)"
 msgstr "Змінити назву каналу (лише оператори)"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Change your nick to register, this one is not allowed"
+msgstr "Змініть псевдонім, щоб зареєструватися, цей не дозволено"
+
 #: src/lib/clientCommands.ts
 msgid "Change your nickname on this server"
 msgstr "Змінити свій нікнейм на цьому сервері"
@@ -1147,7 +1168,7 @@ msgstr "Посилання на канал (+L)"
 msgid "Channel name"
 msgstr "Назва каналу"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Channel name mask"
 msgstr "Маска назви каналу"
 
@@ -1193,6 +1214,7 @@ msgstr "Для каналу"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/ProfilePane.tsx
+#: src/components/ui/BlankPage.tsx
 #: src/components/ui/HomeScreen.tsx
 #: src/components/ui/QuickActions/resultMeta.tsx
 msgid "Channels"
@@ -1205,6 +1227,10 @@ msgstr "Чат"
 #: src/components/search/messageSearchProviders.tsx
 msgid "Chats and networks"
 msgstr "Чати й мережі"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Check the code and try again"
+msgstr "Перевірте код і спробуйте ще раз"
 
 #: src/lib/mediaUpload.ts
 msgid "Choose a different file type. The file host does not accept {ext} files."
@@ -1221,6 +1247,10 @@ msgstr "Виберіть файл менший за {limit}, це максиму
 #: src/lib/mediaUpload.ts
 msgid "Choose a file with an extension. The file host does not accept files without one."
 msgstr "Виберіть файл із розширенням. Файлосховище не приймає файли без нього."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Choose a longer password"
+msgstr "Виберіть довший пароль"
 
 #: src/components/ui/FloodSettingsModal.tsx
 msgid "Choose a predefined flood protection profile for common use cases."
@@ -1246,7 +1276,7 @@ msgstr "Оберіть, скільки зовнішніх медіа заван�
 msgid "Choose microphone and camera"
 msgstr "Вибрати мікрофон і камеру"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Choose sort order"
 msgstr "Оберіть порядок сортування"
 
@@ -1325,6 +1355,8 @@ msgstr "Ліміт клієнтів (+l)"
 
 #: src/components/layout/BotPane.tsx
 #: src/components/layout/BotPane.tsx
+#: src/components/layout/ConnectionStrip.tsx
+#: src/components/layout/ConnectionStrip.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/layout/ProfilePane.tsx
 #: src/components/message/ServerNoticesPopup.tsx
@@ -1366,6 +1398,11 @@ msgstr "Закрити переглядач"
 #: src/components/ui/BotToolsCard.tsx
 msgid "Close workflow"
 msgstr "Закрити робочий процес"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Code"
+msgstr "Код"
 
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Code accepted."
@@ -1465,6 +1502,8 @@ msgstr "Підтвердити видалення"
 msgid "Confirm?"
 msgstr "Підтвердити?"
 
+#: src/components/pages/ServerSettingsPage.tsx
+#: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
 #: src/components/ui/BouncerNetworksPanel.tsx
 msgid "Connect"
@@ -1482,6 +1521,10 @@ msgstr "Підключіть мікрофон, щоб говорити"
 msgid "Connect to a server to manage operator settings."
 msgstr "Підключіться до сервера, щоб керувати налаштуваннями оператора."
 
+#: src/components/pages/ChannelBrowser.tsx
+msgid "Connect to the server to list its channels."
+msgstr "Підключіться до сервера, щоб побачити його канали."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Connected as a guest"
 msgstr "Підключено як гість"
@@ -1490,6 +1533,8 @@ msgstr "Підключено як гість"
 msgid "Connected to"
 msgstr "Підключено до"
 
+#: src/components/layout/ChannelList.tsx
+#: src/components/layout/ChannelList.tsx
 #: src/components/ui/MiniMediaPlayer.tsx
 msgid "Connecting"
 msgstr "Підключення"
@@ -1644,6 +1689,10 @@ msgstr "Не вдалося завантажити GIF. Повторіть по�
 msgid "Could not reach the file host. Check your connection and try again."
 msgstr "Не вдалося зв'язатися з файловим хостом. Перевірте з'єднання та спробуйте ще раз."
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not register. Try again"
+msgstr "Не вдалося зареєструватися. Спробуйте ще раз"
+
 #. placeholder {0}: p.code
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "Could not set the new password: {0}"
@@ -1653,6 +1702,10 @@ msgstr "Не вдалося встановити новий пароль: {0}"
 #: src/components/ui/ChangePasswordModal.tsx
 msgid "Could not update password: {0}"
 msgstr "Не вдалося оновити пароль: {0}"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Could not verify. Try again"
+msgstr "Не вдалося підтвердити. Спробуйте ще раз"
 
 #: src/components/ui/E2EERequestBanner.tsx
 msgid "Couldn't set up encryption with {nick}."
@@ -1684,11 +1737,11 @@ msgstr "Створити папку"
 msgid "Create pack"
 msgstr "Створити пак"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created after (min ago)"
 msgstr "Створено після (хв тому)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Created before (min ago)"
 msgstr "Створено раніше (хв тому)"
 
@@ -1974,6 +2027,11 @@ msgstr "Відображати, коли користувачі входять �
 msgid "Do you want to open this link in a new tab?"
 msgstr "Бажаєте відкрити це посилання в новій вкладці?"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Don't show again for this server"
+msgstr "Більше не показувати для цього сервера"
+
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "Don't warn me about low link security for this server"
 msgstr "Не попереджати мене про низький рівень безпеки для цього сервера"
@@ -2065,6 +2123,11 @@ msgstr "Редагувати профіль"
 #: src/components/mobile/ServerBottomSheet.tsx
 msgid "Edit Server"
 msgstr "Редагувати сервер"
+
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Email"
+msgstr "Електронна пошта"
 
 #: src/components/pages/SettingsPage.tsx
 msgid "Email:"
@@ -2224,6 +2287,10 @@ msgstr "Введіть число для {0}"
 msgid "Enter a URL. Use {sizeToken} in the URL for dynamic sizing. Example: https://example.com/avatar/{sizeToken}/channel.jpg"
 msgstr "Введіть URL. Використовуйте {sizeToken} в URL для динамічного розміру. Приклад: https://example.com/avatar/{sizeToken}/channel.jpg"
 
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter a valid email address"
+msgstr "Введіть дійсну адресу електронної пошти"
+
 #. placeholder {0}: e.name
 #: src/components/chat/CommandArgHint.tsx
 msgid "Enter a whole number for {0}"
@@ -2236,6 +2303,10 @@ msgstr "Введіть ім'я акаунту..."
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter an account name to log in with SASL PLAIN before joining channels. Leave blank to use your nickname."
 msgstr "Введіть ім'я облікового запису, щоб увійти через SASL PLAIN перед входом у канали. Залиште порожнім, щоб використати свій нік."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter code"
+msgstr "Ввести код"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Enter default nickname..."
@@ -2303,6 +2374,14 @@ msgstr "Введіть 6-значний код зі свого листа."
 msgid "Enter the account name you want to recover."
 msgstr "Введіть назву акаунта, який потрібно відновити."
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Enter the code sent to your email"
+msgstr "Введіть код, надісланий на вашу електронну пошту"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Enter the code sent to your email."
+msgstr "Введіть код, надісланий на вашу пошту."
+
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Enter the server password only if your network requires one. It is separate from your account password."
 msgstr "Вводьте пароль сервера, лише якщо його вимагає ваша мережа. Він відрізняється від пароля облікового запису."
@@ -2348,7 +2427,7 @@ msgstr "ПрикладМЕРЕЖА"
 msgid "Exceptions"
 msgstr "Винятки"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Exclude channel name mask"
 msgstr "Виключити маску назви каналу"
 
@@ -2449,11 +2528,11 @@ msgstr "Фільтрувати лайку (+G)"
 msgid "Filter members…"
 msgstr "Фільтрувати учасників…"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters"
 msgstr "Фільтри"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Filters are unavailable on this server"
 msgstr "Фільтри недоступні на цьому сервері"
 
@@ -2854,7 +2933,7 @@ msgid "is now known as **{newNick}**"
 msgstr "тепер відомий як **{newNick}**"
 
 #: src/components/message/JsonLogMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 #: src/components/ui/ChannelKeyModal.tsx
 msgid "Join"
 msgstr "Приєднатися"
@@ -2862,7 +2941,7 @@ msgstr "Приєднатися"
 #. placeholder {0}: channel.channel
 #. placeholder {0}: message.inviteChannel
 #: src/components/message/InviteMessage.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Join {0}"
 msgstr "Приєднатися до {0}"
 
@@ -2900,7 +2979,7 @@ msgid "Join voice channel {channelName}"
 msgstr "Приєднатися до голосового каналу {channelName}"
 
 #: src/components/layout/ProfilePane.tsx
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Joined"
 msgstr "Приєднано"
 
@@ -3100,6 +3179,8 @@ msgstr "Місцезнаходження"
 msgid "Location access was denied. Allow location access in your browser or system settings, then try again."
 msgstr "У доступі до місцезнаходження відмовлено. Дозвольте доступ до місцезнаходження в налаштуваннях браузера або системи, потім спробуйте ще раз."
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/layout/NickClaimStrip.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Log in"
 msgstr "Увійти"
@@ -3202,7 +3283,7 @@ msgstr "Позначити себе як повернувся"
 msgid "Mark yourself back"
 msgstr "Позначити себе як повернувся"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Max users"
 msgstr "Макс. користувачів"
 
@@ -3349,7 +3430,7 @@ msgstr "Мікрофон {0}"
 msgid "Microphone level"
 msgstr "Рівень мікрофона"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Min users"
 msgstr "Мін. користувачів"
 
@@ -3587,7 +3668,7 @@ msgstr "Камеру не виявлено."
 msgid "No Central Server:"
 msgstr "Без центрального сервера:"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No channels found. Change the search or filters."
 msgstr "Каналів не знайдено. Змініть пошук або фільтри."
 
@@ -3719,7 +3800,7 @@ msgstr "Слеш-команд ще немає"
 msgid "No speaker detected."
 msgstr "Динамік не виявлено."
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "No topic"
 msgstr "Без теми"
 
@@ -3863,7 +3944,7 @@ msgid "Open"
 msgstr "Відкрити"
 
 #. placeholder {0}: channel.channel
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Open {0}"
 msgstr "Відкрити {0}"
 
@@ -4010,6 +4091,8 @@ msgstr "Пакети"
 msgid "Pages"
 msgstr "Сторінки"
 
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 #: src/components/ui/AddServerModal.tsx
@@ -4430,6 +4513,16 @@ msgstr "Оновити"
 msgid "Refresh WHOIS"
 msgstr "Оновити WHOIS"
 
+#: src/components/layout/NickClaimStrip.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register"
+msgstr "Зареєструвати"
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "Register {nick} as your account on this server."
+msgstr "Зареєструйте {nick} як свій обліковий запис на цьому сервері."
+
 #: src/components/ui/AddServerModal.tsx
 msgid "Register for an account"
 msgstr "Зареєструвати акаунт"
@@ -4705,7 +4798,7 @@ msgstr "Пошук"
 msgid "Search again"
 msgstr "Шукати знову"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Search channels..."
 msgstr "Пошук каналів..."
 
@@ -4912,11 +5005,6 @@ msgstr "Надіслано без шифрування, бо файл завел
 #: src/components/layout/BotPane.tsx
 msgid "server"
 msgstr "сервер"
-
-#: src/components/ui/BlankPage.tsx
-#: src/components/ui/BlankPage.tsx
-msgid "Server Channels"
-msgstr "Канали сервера"
 
 #: src/components/pages/TwoFactorPage.tsx
 msgid "Server does not advertise WebAuthn support"
@@ -5225,11 +5313,11 @@ msgstr "Програма:"
 msgid "soju bouncer (control)"
 msgstr "soju bouncer (керування)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by name"
 msgstr "Сортувати за назвою"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Sort by users"
 msgstr "Сортувати за користувачами"
 
@@ -5404,6 +5492,10 @@ msgstr "Цей екран більше недоступний. Виберіть 
 #: src/lib/voiceErrors.ts
 msgid "The call server refused the request. Try again in a moment."
 msgstr "Сервер дзвінків відхилив запит. Спробуйте ще раз за мить."
+
+#: src/components/pages/RegisterAccountSection.tsx
+msgid "The code expired. Ask the server operators for help"
+msgstr "Термін дії коду минув. Зверніться по допомогу до операторів сервера"
 
 #: src/components/ui/LinkSecurityWarningModal.tsx
 msgid "The connection to <0>{serverName}</0> has the following security concerns:"
@@ -5611,11 +5703,11 @@ msgstr "інструмент"
 msgid "Topic"
 msgstr "Тема"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set after (min ago)"
 msgstr "Тему встановлено після (хв тому)"
 
-#: src/components/pages/ChannelBrowserPage.tsx
+#: src/components/pages/ChannelBrowser.tsx
 msgid "Topic set before (min ago)"
 msgstr "Тему встановлено раніше (хв тому)"
 
@@ -5790,6 +5882,7 @@ msgstr "Використовувати безпечний порт WebSocket."
 msgid "Use a server with IRCv3 METADATA to set your avatar, display name, and status."
 msgstr "Використовуйте сервер із підтримкою IRCv3 METADATA, щоб встановити аватар, відображуване ім'я та статус."
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/pages/ServerSettingsPage.tsx
 msgid "Use only Latin characters in the password"
 msgstr "Використовуйте в паролі лише латинські символи"
@@ -5869,6 +5962,7 @@ msgstr "Потрібен дійсний порт сервера"
 msgid "Verified account"
 msgstr "Підтверджений акаунт"
 
+#: src/components/pages/RegisterAccountSection.tsx
 #: src/components/ui/TotpStepUpModal.tsx
 msgid "Verify"
 msgstr "Підтвердити"
@@ -6138,6 +6232,10 @@ msgstr "Ви є IRC-оператором"
 msgid "You are no longer in this channel"
 msgstr "Ви більше не в цьому каналі"
 
+#: src/components/layout/NickClaimStrip.tsx
+msgid "You are not logged in"
+msgstr "Ви не ввійшли"
+
 #: src/components/ui/PasswordRecoveryModal.tsx
 msgid "You have a few minutes to choose a new password."
 msgstr "У вас є кілька хвилин, щоб вибрати новий пароль."
@@ -6158,6 +6256,10 @@ msgstr "Ви перевірили цей контакт."
 #: src/components/ui/BouncerDisconnectConfirmModal.tsx
 msgid "You're connected to <0>{0}</0>."
 msgstr "Ви підключені до <0>{0}</0>."
+
+#: src/components/layout/NickClaimStrip.tsx
+msgid "Your account"
+msgstr "Ваш обліковий запис"
 
 #: src/lib/settings/definitions/allSettings.ts
 msgid "Your account password for authentication"
