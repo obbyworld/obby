@@ -1316,6 +1316,11 @@ msgstr "Alle opgeslagen geschiedenis wissen?"
 msgid "Clear history"
 msgstr "Geschiedenis wissen"
 
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Clear search"
+msgstr "Zoekopdracht wissen"
+
 #: src/components/ui/InvitationsPanel.tsx
 msgid "Click again to confirm"
 msgstr "Klik nogmaals om te bevestigen"
@@ -3322,6 +3327,12 @@ msgstr "Leden"
 msgid "Members — {0}"
 msgstr "Leden — {0}"
 
+#. placeholder {0}: shownUsers?.length ?? 0
+#. placeholder {1}: sortedUsers?.length ?? 0
+#: src/components/layout/MemberList.tsx
+msgid "Members — {0} of {1}"
+msgstr "Leden — {0} van {1}"
+
 #: src/components/ui/InputToolbar.tsx
 msgid "Mention someone"
 msgstr "Iemand noemen"
@@ -3743,6 +3754,10 @@ msgstr "Geen limiet"
 #: src/components/ui/MediaViewerModal.tsx
 msgid "No media in this channel"
 msgstr "Geen media in dit kanaal"
+
+#: src/components/layout/MemberList.tsx
+msgid "No members match. Clear the search to see everyone"
+msgstr "Geen leden gevonden. Wis de zoekopdracht om iedereen te zien"
 
 #: src/components/layout/ProfilePane.tsx
 msgid "no message"
@@ -4818,6 +4833,11 @@ msgstr "Zoek naar GIF's om te beginnen"
 #: src/components/ui/GifSelector.tsx
 msgid "Search GIFs..."
 msgstr "GIF's zoeken..."
+
+#: src/components/layout/MemberList.tsx
+#: src/components/layout/MemberList.tsx
+msgid "Search members"
+msgstr "Leden zoeken"
 
 #: src/components/layout/ChatHeader.tsx
 #: src/components/layout/SearchPane.tsx
