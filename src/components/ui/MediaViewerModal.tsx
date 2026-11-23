@@ -34,6 +34,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { getDecryptedObjectUrl } from "../../lib/e2ee/decryptedMediaCache";
 import type { MediaDescriptor } from "../../lib/e2ee/media";
 import { parseLocationShareUrl } from "../../lib/geolocation";
+import { revealHiddenChars } from "../../lib/hiddenChars";
 import { isUrlFromFilehost, serverFilehosts } from "../../lib/ircUtils";
 import {
   clampMapZoom,
@@ -50,6 +51,7 @@ import {
   detectMediaType,
   extractMediaFromMessage,
   extractMediaFromText,
+  filenameFromUrl,
   getEmbedThumbnailUrl,
   imageCanHaveTransparency,
   type MediaEntry,
@@ -159,15 +161,7 @@ const AudioViewerPlayer: React.FC<{ url: string }> = ({ url }) => {
   // NaN means "not yet known" (before durationchange fires) — not the same as live.
   const isLive = duration === Number.POSITIVE_INFINITY;
 
-  const filename = (() => {
-    try {
-      return (
-        decodeURIComponent(new URL(url).pathname.split("/").pop() ?? "") || url
-      );
-    } catch {
-      return url;
-    }
-  })();
+  const filename = filenameFromUrl(url) || revealHiddenChars(url);
 
   return (
     <div

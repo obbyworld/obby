@@ -141,6 +141,23 @@ describe("MediaPreview", () => {
     await waitFor(() => expect(container.querySelector("video")).toBeNull());
   });
 
+  test("a video that fails to load reveals bidi controls in its file name", async () => {
+    const { container, findByText } = render(
+      <MediaPreview
+        entry={makeEntry(
+          "video",
+          "https://example.com/files/\u{202e}4pm.exe?x=1",
+        )}
+      />,
+    );
+    fireEvent(
+      container.querySelector("video") as HTMLVideoElement,
+      new Event("error"),
+    );
+
+    expect(await findByText("%E2%80%AE4pm.exe")).toBeTruthy();
+  });
+
   test("audio entry renders play button, not audio element", () => {
     const { container, getByLabelText } = render(
       <MediaPreview

@@ -37,6 +37,26 @@ describe("ExternalLinkGuard", () => {
     expect(openExternalUrl).not.toHaveBeenCalled();
   });
 
+  it("reveals a bidi control in the warning and opens the exact URL", () => {
+    const url = "http://host/files/\u{202e}gpj.exe";
+    render(
+      <>
+        <ExternalLinkGuard />
+        <a href={url} className="external-link-security">
+          spoof
+        </a>
+      </>,
+    );
+    fireEvent.click(screen.getByText("spoof"));
+
+    const shown = screen.getByText(/gpj\.exe/).textContent ?? "";
+    expect(shown).toBe("http://host/files/%E2%80%AEgpj.exe");
+    expect(shown).not.toMatch(/[\u{202a}-\u{202e}]/u);
+
+    fireEvent.click(screen.getByText("Open Link"));
+    expect(openExternalUrl).toHaveBeenCalledWith(url);
+  });
+
   it("leaves links inside a link wrapper to the wrapper", () => {
     render(
       <>

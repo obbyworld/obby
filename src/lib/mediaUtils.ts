@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { Message } from "../types/index";
 import { parseLocationShareUrl } from "./geolocation";
+import { revealHiddenChars } from "./hiddenChars";
 import {
   isAbsoluteHttpUrl,
   isUrlFromFilehost,
@@ -308,7 +309,9 @@ export function getEmbedFallbackLabel(url: string, short = false): string {
 
 export function filenameFromUrl(url: string): string {
   try {
-    return decodeURIComponent(new URL(url).pathname.split("/").pop() ?? "");
+    return revealHiddenChars(
+      decodeURIComponent(new URL(url).pathname.split("/").pop() ?? ""),
+    );
   } catch {
     return "";
   }

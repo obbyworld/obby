@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { revealHiddenChars } from "../../lib/hiddenChars";
 import { compactUrl, makeUrlRegex } from "../../lib/ircUtils";
 import { openExternalUrl } from "../../lib/openUrl";
 import ExternalLinkWarningModal from "./ExternalLinkWarningModal";
@@ -96,7 +97,7 @@ export const EnhancedLinkWrapper: React.FC<EnhancedLinkWrapperProps> = ({
                 isWebLink ? "external-link-security link-compact" : "irc-link"
               }`}
             >
-              {isWebLink ? compactUrl(url) : url}
+              {isWebLink ? compactUrl(url) : revealHiddenChars(url)}
             </a>
           </Fragment>
         );

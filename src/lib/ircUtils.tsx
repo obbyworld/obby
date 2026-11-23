@@ -5,6 +5,7 @@ import { ChannelLink } from "../components/message/ChannelLink";
 /* eslint-disable no-control-regex */
 import type { Server, User } from "../types";
 import { findChannelMentions } from "./channelMentions";
+import { revealHiddenChars } from "./hiddenChars";
 import { decodeHtmlEntities, escapeHtml } from "./htmlEntities";
 import { isTauri } from "./platformUtils";
 
@@ -531,7 +532,7 @@ export function renderMarkdown(
       const linkClass = isExternalLink
         ? "text-blue-500 hover:text-blue-700 underline external-link-security"
         : "text-blue-500 hover:text-blue-700 underline";
-      return `<a href="${sanitizedHref}" target="_blank" rel="noopener noreferrer" class="${linkClass}">[Image: ${text || sanitizedHref}]</a>`;
+      return `<a href="${sanitizedHref}" target="_blank" rel="noopener noreferrer" class="${linkClass}">[Image: ${text || revealHiddenChars(sanitizedHref)}]</a>`;
     }
     // Allow the image to render normally, but make it clickable
     const titleAttr = title ? ` title="${title.replace(/"/g, "&quot;")}"` : "";
@@ -1005,10 +1006,12 @@ export const makeUrlRegex = () =>
 
 /** A web address as people read it: no scheme, no "www." and no trailing slash. */
 export function compactUrl(url: string): string {
-  return url
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "")
-    .replace(/\/$/, "");
+  return revealHiddenChars(
+    url
+      .replace(/^https?:\/\//i, "")
+      .replace(/^www\./i, "")
+      .replace(/\/$/, ""),
+  );
 }
 
 /** The first web link in `text`, exactly as chat would linkify it. */
@@ -1054,6 +1057,7 @@ function processUrlsInText(
 
     // Ensure URL has protocol
     const fullUrl = url.startsWith("http") ? url : `https://${url}`;
+    const shownUrl = revealHiddenChars(url);
 
     // IRC links: only make clickable on Tauri, otherwise show as plain text
     if (isIrcLink && !isTauriEnv) {
@@ -1063,7 +1067,7 @@ function processUrlsInText(
           style={style}
           className="text-discord-text-muted"
         >
-          {url}
+          {shownUrl}
         </span>,
       );
     } else {
@@ -1084,11 +1088,11 @@ function processUrlsInText(
           rel="noopener noreferrer"
           className={`${linkClass} inline-block max-w-[min(40ch,100%)] truncate align-bottom`}
           style={style}
-          title={isExternalLink ? undefined : url}
+          title={isExternalLink ? undefined : shownUrl}
         >
           {isExternalLink
             ? (labelFor(linkLabels, url) ?? compactUrl(url))
-            : url}
+            : shownUrl}
         </a>,
       );
     }

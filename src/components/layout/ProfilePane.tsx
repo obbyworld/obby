@@ -25,6 +25,7 @@ import {
 } from "react-icons/fa";
 import { getChannelKind } from "../../lib/channelFolders";
 import { e2eeSessionKey } from "../../lib/e2ee/session";
+import { revealHiddenChars } from "../../lib/hiddenChars";
 import { createIgnorePattern, isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
 import { mircToHtml, serverFilehosts } from "../../lib/ircUtils";
@@ -735,7 +736,7 @@ const ProfilePane: React.FC<{ target: ProfilePaneTarget }> = ({
                     className="flex items-center gap-2 text-blue-400 hover:underline text-left break-all"
                   >
                     <FaGlobe className="shrink-0" size={12} />
-                    {sanitizedHomepage}
+                    {revealHiddenChars(sanitizedHomepage)}
                   </button>
                 }
               />
