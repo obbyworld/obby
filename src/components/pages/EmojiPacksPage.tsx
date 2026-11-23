@@ -14,6 +14,8 @@ import {
   fetchPackJson,
   listPacks,
 } from "../../lib/emojiAdminApi";
+import { canLoadEmojiUrl } from "../../lib/imageUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { confirmDestructive } from "../../lib/modal/ConfirmDialog";
 import { Button } from "../../lib/modal/components";
 import useStore from "../../store";
@@ -33,6 +35,7 @@ const EmojiPacksPage: React.FC<PageProps<"emojiPacks">> = ({ page }) => {
   const openPage = useStore((s) => s.openPage);
   const server = useStore((s) => s.servers.find((srv) => srv.id === serverId));
   const baseUrl = server?.authTokenUrl || server?.filehost || "";
+  const mediaLevel = useStore((s) => s.globalSettings.mediaVisibilityLevel);
 
   const [packs, setPacks] = useState<AdminPack[]>([]);
   const [loading, setLoading] = useState(false);
@@ -246,12 +249,18 @@ const EmojiPacksPage: React.FC<PageProps<"emojiPacks">> = ({ page }) => {
                 key={entry.shortcode}
                 className="flex items-center gap-2 p-2 rounded-lg bg-discord-dark-400"
               >
-                <img
-                  src={entry.url}
-                  alt={entry.alt ?? entry.shortcode}
-                  className="w-6 h-6 object-contain shrink-0"
-                  loading="lazy"
-                />
+                {canLoadEmojiUrl(
+                  entry.url,
+                  serverFilehosts(server),
+                  mediaLevel,
+                ) && (
+                  <img
+                    src={entry.url}
+                    alt={entry.alt ?? entry.shortcode}
+                    className="w-6 h-6 object-contain shrink-0"
+                    loading="lazy"
+                  />
+                )}
                 <span className="text-xs text-white truncate flex-1">
                   :{entry.shortcode}:
                 </span>

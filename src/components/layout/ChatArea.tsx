@@ -61,6 +61,7 @@ import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
 import { replyTags } from "../../lib/ircUtils";
+import { serverFilehosts } from "../../lib/ircUtils";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   describeUploadFailure,
@@ -575,10 +576,11 @@ export const ChatArea: React.FC<{
       "draft/emoji"
     ]?.value;
   }, [servers, selectedServerId, selectedChannelId]);
-  const { shortcodes: customEmojiShortcodes } = useEmojiResolver([
-    channelEmojiPackUrl,
-    networkEmojiPackUrl,
-  ]);
+  const { shortcodes: customEmojiShortcodes } = useEmojiResolver(
+    [channelEmojiPackUrl, networkEmojiPackUrl],
+    serverFilehosts(servers.find((s) => s.id === selectedServerId)),
+    globalSettings.mediaVisibilityLevel,
+  );
   const pickerCustomEmojis = useMemo(
     () => packEntriesForPicker(customEmojiShortcodes),
     [customEmojiShortcodes],
