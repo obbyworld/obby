@@ -112,7 +112,7 @@ const ChannelSubtitle: React.FC<{
       )}
       {channel.topic && (
         <span className="text-discord-text-muted truncate">
-          {mircToHtml(channel.topic)}
+          {mircToHtml(channel.topic, "", undefined, false)}
         </span>
       )}
     </div>

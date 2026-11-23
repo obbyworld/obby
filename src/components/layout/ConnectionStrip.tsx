@@ -1,13 +1,15 @@
 import { t } from "@lingui/core/macro";
 import type * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   FaCog,
   FaExclamationTriangle,
   FaRedo,
   FaSignInAlt,
+  FaTimes,
   FaUnlink,
 } from "react-icons/fa";
+import { useIsTouchInput } from "../../hooks/useIsTouchInput";
 import useStore from "../../store";
 import { getLoginState } from "../../store/helpers";
 import type { Server } from "../../types";
@@ -16,6 +18,7 @@ import { editConnection } from "./NetworkMenu";
 type Trouble = "lost" | "retrying" | "auth";
 
 function getTrouble(server: Server): Trouble | null {
+  if (server.isDisabled) return null;
   if (server.connectionState === "disconnected") return "lost";
   if (server.connectionState === "reconnecting") return "retrying";
   if (getLoginState(server) === "failed") return "auth";
@@ -42,6 +45,65 @@ const SETTLE_MS: Record<Trouble, number> = {
   auth: 0,
 };
 
+// Losing the link and retrying it are one outage, so closing either strip hides both.
+type Outage = "connection" | "auth";
+const outageOf = (trouble: Trouble): Outage =>
+  trouble === "auth" ? "auth" : "connection";
+
+function isOutageOver(server: Server | undefined, outage: Outage): boolean {
+  if (!server || server.isDisabled) return true;
+  if (outage === "auth") return getLoginState(server) !== "failed";
+  return server.isConnected;
+}
+
+// A closed strip stays closed in every view of the server until its outage
+// ends, so we keep the dismissals outside the component and watch the store
+// for servers that recover while no strip shows them.
+const dismissed = new Map<string, Outage>();
+const listeners = new Set<() => void>();
+let stopWatchingServers: (() => void) | undefined;
+
+function notifyDismissals() {
+  for (const listener of listeners) listener();
+}
+
+function clearEndedDismissal(serverId: string, server: Server | undefined) {
+  const outage = dismissed.get(serverId);
+  if (!outage || !isOutageOver(server, outage)) return;
+  dismissed.delete(serverId);
+  notifyDismissals();
+}
+
+function clearEndedDismissals(servers: Server[]) {
+  for (const serverId of [...dismissed.keys()])
+    clearEndedDismissal(
+      serverId,
+      servers.find((s) => s.id === serverId),
+    );
+  if (dismissed.size === 0) {
+    stopWatchingServers?.();
+    stopWatchingServers = undefined;
+  }
+}
+
+function dismiss(serverId: string, trouble: Trouble) {
+  dismissed.set(serverId, outageOf(trouble));
+  stopWatchingServers ??= useStore.subscribe?.((state) =>
+    clearEndedDismissals(state.servers),
+  );
+  notifyDismissals();
+}
+
+function useDismissed(serverId: string): Outage | undefined {
+  return useSyncExternalStore(
+    (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    () => dismissed.get(serverId),
+  );
+}
+
 function useSettledTrouble(trouble: Trouble | null): Trouble | null {
   const [settled, setSettled] = useState<Trouble | null>(null);
   useEffect(() => {
@@ -55,13 +117,15 @@ function useSettledTrouble(trouble: Trouble | null): Trouble | null {
   return settled === trouble ? trouble : null;
 }
 
-const actionClass =
-  "h-7 px-2.5 rounded flex items-center gap-1.5 text-xs font-semibold";
-
 export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   const reconnectServer = useStore((state) => state.reconnectServer);
+  const isTouch = useIsTouchInput();
   const trouble = useSettledTrouble(getTrouble(server));
-  if (!trouble) return null;
+  const dismissedOutage = useDismissed(server.id);
+  useEffect(() => {
+    if (dismissedOutage) clearEndedDismissal(server.id, server);
+  }, [server, dismissedOutage]);
+  if (!trouble || outageOf(trouble) === dismissedOutage) return null;
 
   const messages: Record<Trouble, string> = {
     lost: t`Connection lost. Reconnect to keep chatting`,
@@ -70,19 +134,25 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
   };
 
   return (
-    <div
-      role="status"
-      className={`mb-2 p-2.5 rounded-md border flex flex-col gap-2 ${TONES[trouble]}`}
-    >
-      <div className="flex items-start gap-2 text-[13px] text-discord-text-normal">
+    <div role="status" className={`strip-card ${TONES[trouble]}`}>
+      <div className="strip-header">
         <span className="mt-0.5">{ICONS[trouble]}</span>
-        <span>{messages[trouble]}</span>
+        <span className="flex-1 min-w-0 break-words">{messages[trouble]}</span>
+        <button
+          type="button"
+          onClick={() => dismiss(server.id, trouble)}
+          title={t`Close`}
+          aria-label={t`Close`}
+          className={`shrink-0 flex items-center justify-center rounded text-discord-text-muted hover:text-white ${isTouch ? "w-11 h-11 -m-2.5" : "w-5 h-5"}`}
+        >
+          <FaTimes />
+        </button>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {trouble === "auth" ? (
           <button
             type="button"
-            className={`${actionClass} button-primary`}
+            className="strip-action button-primary"
             onClick={() =>
               server.bouncerServerId
                 ? reconnectServer(server.id)
@@ -97,7 +167,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             {trouble === "lost" && (
               <button
                 type="button"
-                className={`${actionClass} button-primary`}
+                className="strip-action button-primary"
                 onClick={() => reconnectServer(server.id)}
               >
                 <FaRedo />
@@ -106,7 +176,7 @@ export const ConnectionStrip: React.FC<{ server: Server }> = ({ server }) => {
             )}
             <button
               type="button"
-              className={`${actionClass} bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white`}
+              className="strip-action bg-discord-dark-500/40 text-discord-text-normal hover:bg-discord-dark-500/70 hover:text-white"
               onClick={() => editConnection(server.id)}
               title={t`Edit connection`}
               aria-label={t`Edit connection`}
