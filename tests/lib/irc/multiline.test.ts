@@ -28,6 +28,67 @@ describe("parseMultilineLimits", () => {
 
 describe("chunkForMultiline", () => {
   const lines = (n: number) => Array.from({ length: n }, (_, i) => [`l${i}`]);
+  const text = (batch: string[][]) => batch.map((parts) => parts.join(""));
+
+  test("a code fence cut by a batch break is closed and reopened", () => {
+    const paste = [["```csharp"], ...lines(15), ["};"], ["```"], ["after"]];
+    const batches = chunkForMultiline(paste, {
+      maxLines: 15,
+      maxBytes: 5250,
+    });
+    for (const batch of batches) {
+      expect(batch.length).toBeLessThanOrEqual(15);
+      const fences = text(batch).filter((l) => l.trim().startsWith("```"));
+      expect(fences.length % 2).toBe(0);
+    }
+    expect(text(batches[0])[0]).toBe("```csharp");
+    expect(text(batches[0]).at(-1)).toBe("```");
+    expect(text(batches[1])[0]).toBe("```csharp");
+    expect(batches.flatMap(text).filter((l) => !l.startsWith("```"))).toEqual(
+      paste.map((p) => p[0]).filter((l) => !l.startsWith("```")),
+    );
+  });
+
+  test("inline ```code``` opens no fence", () => {
+    const batches = chunkForMultiline([["```inline```"], ["a"], ["b"]], {
+      maxLines: 3,
+      maxBytes: 5250,
+    });
+    expect(batches.map(text)).toEqual([["```inline```", "a", "b"]]);
+  });
+
+  test("a fence marker with text after it stays inside the code block", () => {
+    const paste = [["```js"], ["```text"], ...lines(4), ["```"]];
+    const batches = chunkForMultiline(paste, { maxLines: 4, maxBytes: 5250 });
+    for (const batch of batches.slice(1)) {
+      expect(text(batch)[0]).toBe("```js");
+    }
+  });
+
+  test("a long line inside a fence still fits next to the reopened fence", () => {
+    const paste = [["```js"], ["a", "b"], ["```"]];
+    for (const batch of chunkForMultiline(paste, {
+      maxLines: 3,
+      maxBytes: 5250,
+    })) {
+      expect(batch.flat().length).toBeLessThanOrEqual(3);
+    }
+    const longLine = ["aaaa", "bbbb", "cccc", "dddd"];
+    for (const batch of chunkForMultiline([["```js"], longLine, ["```"]], {
+      maxLines: 15,
+      maxBytes: 16,
+    })) {
+      expect(batch.flat().join("").length).toBeLessThanOrEqual(16);
+    }
+  });
+
+  test("a paste without fences is chunked as before", () => {
+    const batches = chunkForMultiline(lines(20), {
+      maxLines: 15,
+      maxBytes: 5250,
+    });
+    expect(batches.map((b) => b.length)).toEqual([15, 5]);
+  });
 
   test("a paste past the line cap goes out as several batches", () => {
     const batches = chunkForMultiline(lines(20), {
