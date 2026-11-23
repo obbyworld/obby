@@ -5,6 +5,7 @@ import { ChannelLink } from "../components/message/ChannelLink";
 /* eslint-disable no-control-regex */
 import type { Server, User } from "../types";
 import { findChannelMentions } from "./channelMentions";
+import { revealHiddenChars } from "./hiddenChars";
 import { decodeHtmlEntities, escapeHtml } from "./htmlEntities";
 import { isTauri } from "./platformUtils";
 
@@ -117,7 +118,7 @@ function parseStatus(
 // A trailing lone backslash is dropped; a backslash followed by any
 // other char is collapsed to that char (per spec, "drop the preceding
 // backslash").
-function unescapeTagValue(s: string): string {
+export function unescapeTagValue(s: string): string {
   let out = "";
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
@@ -149,6 +150,30 @@ function unescapeTagValue(s: string): string {
     }
   }
   return out;
+}
+
+const TAG_VALUE_ESCAPES: Record<string, string> = {
+  "\\": "\\\\",
+  ";": "\\:",
+  " ": "\\s",
+  "\r": "\\r",
+  "\n": "\\n",
+};
+
+export function escapeTagValue(s: string): string {
+  return s.replace(/[\\; \r\n]/g, (c) => TAG_VALUE_ESCAPES[c]);
+}
+
+// We escape every value since a server- or peer-supplied one could otherwise start a command of its own.
+export function formatTags(tags: Record<string, string>): string {
+  const pairs = Object.entries(tags).map(
+    ([key, value]) => `${key}=${escapeTagValue(value)}`,
+  );
+  return pairs.length > 0 ? `@${pairs.join(";")} ` : "";
+}
+
+export function replyTags(msgid: string | undefined): string {
+  return msgid ? formatTags({ "+reply": msgid, "+draft/reply": msgid }) : "";
 }
 
 export function parseMessageTags(tags: string): Record<string, string> {
@@ -507,7 +532,7 @@ export function renderMarkdown(
       const linkClass = isExternalLink
         ? "text-blue-500 hover:text-blue-700 underline external-link-security"
         : "text-blue-500 hover:text-blue-700 underline";
-      return `<a href="${sanitizedHref}" target="_blank" rel="noopener noreferrer" class="${linkClass}">[Image: ${text || sanitizedHref}]</a>`;
+      return `<a href="${sanitizedHref}" target="_blank" rel="noopener noreferrer" class="${linkClass}">[Image: ${text || revealHiddenChars(sanitizedHref)}]</a>`;
     }
     // Allow the image to render normally, but make it clickable
     const titleAttr = title ? ` title="${title.replace(/"/g, "&quot;")}"` : "";
@@ -981,10 +1006,12 @@ export const makeUrlRegex = () =>
 
 /** A web address as people read it: no scheme, no "www." and no trailing slash. */
 export function compactUrl(url: string): string {
-  return url
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "")
-    .replace(/\/$/, "");
+  return revealHiddenChars(
+    url
+      .replace(/^https?:\/\//i, "")
+      .replace(/^www\./i, "")
+      .replace(/\/$/, ""),
+  );
 }
 
 /** The first web link in `text`, exactly as chat would linkify it. */
@@ -1030,6 +1057,7 @@ function processUrlsInText(
 
     // Ensure URL has protocol
     const fullUrl = url.startsWith("http") ? url : `https://${url}`;
+    const shownUrl = revealHiddenChars(url);
 
     // IRC links: only make clickable on Tauri, otherwise show as plain text
     if (isIrcLink && !isTauriEnv) {
@@ -1039,7 +1067,7 @@ function processUrlsInText(
           style={style}
           className="text-discord-text-muted"
         >
-          {url}
+          {shownUrl}
         </span>,
       );
     } else {
@@ -1060,11 +1088,11 @@ function processUrlsInText(
           rel="noopener noreferrer"
           className={`${linkClass} inline-block max-w-[min(40ch,100%)] truncate align-bottom`}
           style={style}
-          title={isExternalLink ? undefined : url}
+          title={isExternalLink ? undefined : shownUrl}
         >
           {isExternalLink
             ? (labelFor(linkLabels, url) ?? compactUrl(url))
-            : url}
+            : shownUrl}
         </a>,
       );
     }

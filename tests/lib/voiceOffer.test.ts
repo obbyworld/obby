@@ -204,7 +204,7 @@ async function joinAs(
     sender: "sfu",
     channelName: "$stage",
     mtags: {
-      "+obsidianirc/rtc": JSON.stringify({
+      "obsidianirc/rtc": JSON.stringify({
         type: "joined",
         mode: "stream",
         role,
@@ -305,7 +305,7 @@ describe("VoiceClient microphone release", () => {
       sender: "sfu",
       channelName: "^room",
       mtags: {
-        "+obsidianirc/rtc": JSON.stringify({
+        "obsidianirc/rtc": JSON.stringify({
           type: "joined",
           members: ["me"],
         }),
@@ -420,7 +420,7 @@ describe("VoiceClient.setAudioInput", () => {
       sender: "sfu",
       channelName: "$stage",
       mtags: {
-        "+obsidianirc/rtc": JSON.stringify({
+        "obsidianirc/rtc": JSON.stringify({
           type: "joined",
           mode: "stream",
           role: "streamer",

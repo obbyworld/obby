@@ -60,6 +60,7 @@ import { locationSharingSupported } from "../../lib/geolocation";
 import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
+import { replyTags, serverFilehosts } from "../../lib/ircUtils";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   describeUploadFailure,
@@ -574,10 +575,11 @@ export const ChatArea: React.FC<{
       "draft/emoji"
     ]?.value;
   }, [servers, selectedServerId, selectedChannelId]);
-  const { shortcodes: customEmojiShortcodes } = useEmojiResolver([
-    channelEmojiPackUrl,
-    networkEmojiPackUrl,
-  ]);
+  const { shortcodes: customEmojiShortcodes } = useEmojiResolver(
+    [channelEmojiPackUrl, networkEmojiPackUrl],
+    serverFilehosts(servers.find((s) => s.id === selectedServerId)),
+    globalSettings.mediaVisibilityLevel,
+  );
   const pickerCustomEmojis = useMemo(
     () => packEntriesForPicker(customEmojiShortcodes),
     [customEmojiShortcodes],
@@ -1522,12 +1524,11 @@ export const ChatArea: React.FC<{
           line,
         ) !== "none";
       if (!encrypted) {
-        const replyTags = replyTo?.msgid
-          ? `@+reply=${replyTo.msgid};+draft/reply=${replyTo.msgid} `
-          : "";
-        ircClient.sendRaw(
+        ircClient.sendPrivmsgLines(
           selectedServerId,
-          `${replyTags}PRIVMSG ${target} :${line}`,
+          target,
+          line,
+          replyTags(replyTo?.msgid),
         );
         if (selectedPrivateChat && currentUser) {
           showOwnPrivateMessage(

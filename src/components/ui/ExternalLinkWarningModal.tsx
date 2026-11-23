@@ -2,6 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import type React from "react";
 import { useState } from "react";
 import { FaCheck, FaCopy, FaExternalLinkAlt } from "react-icons/fa";
+import { revealHiddenChars } from "../../lib/hiddenChars";
 import { ConfirmDialog } from "../../lib/modal/ConfirmDialog";
 
 interface ExternalLinkWarningModalProps {
@@ -27,8 +28,9 @@ const ExternalLinkWarningModal: React.FC<ExternalLinkWarningModalProps> = ({
     });
   };
 
-  // Truncate very long URLs for display
-  const displayUrl = url.length > 80 ? `${url.substring(0, 80)}...` : url;
+  const shownUrl = revealHiddenChars(url);
+  const displayUrl =
+    shownUrl.length > 80 ? `${shownUrl.substring(0, 80)}...` : shownUrl;
 
   return (
     <ConfirmDialog

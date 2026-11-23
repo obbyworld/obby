@@ -58,8 +58,7 @@ async function getAdminToken(serverId: string): Promise<string> {
   return token;
 }
 
-function backendBase(authTokenUrl?: string, filehost?: string): string {
-  const base = authTokenUrl || filehost;
+function backendBase(base: string): string {
   if (!base) {
     throw new Error(
       "No backend URL is configured for this server.  Configure draft/authtoken " +

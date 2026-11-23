@@ -326,6 +326,32 @@ describe("compactUrl", () => {
     expect(compactUrl("https://www.example.org/a/b/")).toBe("example.org/a/b");
     expect(compactUrl("http://example.org/?q=1")).toBe("example.org/?q=1");
   });
+
+  it("percent-encodes a right-to-left override", () => {
+    expect(compactUrl("http://host/files/\u{202e}gpj.exe")).toBe(
+      "host/files/%E2%80%AEgpj.exe",
+    );
+  });
+});
+
+describe("links with bidi controls", () => {
+  const url = "http://host/files/\u{202e}gpj.exe";
+
+  it.each([
+    ["plain", false],
+    ["markdown", true],
+  ])("reveals the control in a %s link label", (_, markdown) => {
+    const out = html(
+      processMarkdownInText(`**see** ${url}`, true, markdown, "", undefined),
+    );
+    const label = out.match(/>([^<]*gpj\.exe)<\/a>/)?.[1];
+    expect(label).toBe("host/files/%E2%80%AEgpj.exe");
+  });
+
+  it("keeps the real URL in the href", () => {
+    const out = html(processMarkdownInText(`see ${url}`, true, false));
+    expect(out).toContain(`href="${url}"`);
+  });
 });
 
 describe("findFirstUrl", () => {

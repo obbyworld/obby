@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { FaSpinner, FaTimes, FaUpload } from "react-icons/fa";
 import { waitForAuthToken } from "../../lib/authToken";
 import ircClient from "../../lib/ircClient";
+import { serverFilehosts } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import useStore from "../../store";
 import { TextInput } from "./TextInput";
 
@@ -31,6 +33,16 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 
   const server = servers.find((s) => s.id === serverId);
   const filehostUrl = server?.filehost;
+  const mediaLevel = useStore((s) => s.globalSettings.mediaVisibilityLevel);
+  const shownUrl =
+    previewUrl ||
+    (canShowAvatarUrl(
+      currentAvatarUrl,
+      serverFilehosts(server),
+      mediaLevelToSettings(mediaLevel),
+    )
+      ? currentAvatarUrl
+      : null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -217,10 +229,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
 
       {uploadError && <p className="text-red-400 text-sm">{uploadError}</p>}
 
-      {(previewUrl || currentAvatarUrl) && (
+      {shownUrl && (
         <div className="flex items-center gap-3">
           <img
-            src={previewUrl || currentAvatarUrl}
+            src={shownUrl}
             alt={t`Avatar preview`}
             className="w-16 h-16 rounded-full object-cover border-2 border-discord-dark-300"
             onError={(e) => {

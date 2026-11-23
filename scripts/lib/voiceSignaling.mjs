@@ -1,10 +1,10 @@
-// Wire format for the +obsidianirc/rtc TAGMSG envelope, ported from
+// Wire format for the obsidianirc/rtc TAGMSG envelope, ported from
 // src/lib/voice.ts (the browser client). Kept as plain, dependency-free
 // functions so both the browser client's rules and this Node test peer
 // stay provably identical without either side importing the other's
 // browser- or Node-only runtime.
 
-export const RTC_TAG = "+obsidianirc/rtc";
+export const RTC_TAG = "obsidianirc/rtc";
 
 // Matches voice.ts's VoiceClient.WIRE_BUDGET: headroom under the ircd's
 // 8192-byte MAXTAGSIZE for the ` TAGMSG <channel>\r\n` suffix and slop.

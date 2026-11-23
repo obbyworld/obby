@@ -1,8 +1,13 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ProfilePane from "../../../src/components/layout/ProfilePane";
 import ircClient from "../../../src/lib/ircClient";
 import useStore from "../../../src/store";
+
+const openExternalUrl = vi.fn();
+vi.mock("../../../src/lib/openUrl", () => ({
+  openExternalUrl: (url: string) => openExternalUrl(url),
+}));
 
 const target = { serverId: "server1", username: "alice" };
 
@@ -113,5 +118,39 @@ describe("ProfilePane", () => {
     expect(screen.getByText("192.0.2.1")).toBeTruthy();
     fireEvent.click(screen.getByText("Session 2"));
     expect(screen.getByText("198.51.100.7")).toBeTruthy();
+  });
+
+  it("reveals bidi controls in the homepage and opens the exact URL", async () => {
+    vi.spyOn(ircClient, "whois").mockImplementation(() => {});
+    setupStore({ isNarrowView: false });
+    const homepage = "https://host/\u{202e}gpj.exe";
+    const server = useStore.getState().servers[0];
+    useStore.setState({
+      servers: [
+        {
+          ...server,
+          channels: [
+            {
+              id: "c1",
+              name: "#test",
+              users: [
+                {
+                  id: "u1",
+                  username: "alice",
+                  isOnline: true,
+                  metadata: { homepage: { value: homepage } },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    } as never);
+
+    render(<ProfilePane target={target} />);
+    fireEvent.click(screen.getByText("https://host/%E2%80%AEgpj.exe"));
+    fireEvent.click(screen.getByText("Open Link"));
+
+    await waitFor(() => expect(openExternalUrl).toHaveBeenCalledWith(homepage));
   });
 });

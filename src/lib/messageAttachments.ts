@@ -5,6 +5,7 @@ import {
   sanitizeFileName,
 } from "./e2ee/media";
 import { E2EE_MEDIA_TAG } from "./e2ee/messageFlags";
+import { revealHiddenChars } from "./hiddenChars";
 import {
   detectMediaType,
   extractMediaFromMessage,
@@ -121,7 +122,7 @@ export function describeAttachment(message: Message): AttachmentSummary | null {
   if (!first) return null;
   return {
     kind: first.kind,
-    name: filenameFromUrl(first.url) || first.url,
+    name: filenameFromUrl(first.url) || revealHiddenChars(first.url),
     encrypted: false,
     thumbnailUrl: first.kind === "image" ? first.url : undefined,
   };

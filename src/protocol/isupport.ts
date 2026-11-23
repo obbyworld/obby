@@ -1,4 +1,5 @@
 import type { IRCClient } from "../lib/ircClient";
+import { isSafeServiceUrl } from "../lib/serviceUrl";
 import type AppState from "../store/";
 import type { Server } from "../types/";
 
@@ -78,10 +79,11 @@ export function registerISupportHandler(
     // account, so it can't use the tokenless standard draft/FILEHOST; it
     // advertises this vendor token instead, paired with draft/authtoken.
     if (key === "obby.world/FILEHOST") {
+      const filehost = value.split(/\s+/).find(isSafeServiceUrl);
       useStore.setState((state) => {
         const updatedServers = state.servers.map((server: Server) => {
           if (server.id === serverId) {
-            return { ...server, filehost: value };
+            return { ...server, filehost };
           }
           return server;
         });
@@ -94,7 +96,7 @@ export function registerISupportHandler(
     // upload endpoints the client POSTs to directly (no auth). The ISUPPORT
     // tokenizer has already turned \x20 back into spaces, so just split.
     if (key === "draft/FILEHOST") {
-      const hosts = value.split(/\s+/).filter((u) => /^https?:\/\//i.test(u));
+      const hosts = value.split(/\s+/).filter(isSafeServiceUrl);
       useStore.setState((state) => {
         const updatedServers = state.servers.map((server: Server) =>
           server.id === serverId ? { ...server, fileHosts: hosts } : server,

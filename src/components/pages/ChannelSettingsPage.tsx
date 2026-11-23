@@ -14,8 +14,9 @@ import ircClient from "../../lib/ircClient";
 import {
   hasOpPermission,
   humanizeNamedMode,
-  isAbsoluteHttpUrl,
+  serverFilehosts,
 } from "../../lib/ircUtils";
+import { canShowAvatarUrl, mediaLevelToSettings } from "../../lib/mediaUtils";
 import { Button } from "../../lib/modal/components";
 import {
   lookupNamedModeMeta,
@@ -243,6 +244,9 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
   const servers = useStore((state) => state.servers);
   const metadataSet = useStore((state) => state.metadataSet);
   const server = servers.find((s) => s.id === serverId);
+  const mediaLevel = useStore(
+    (state) => state.globalSettings.mediaVisibilityLevel,
+  );
   const channel = server?.channels.find(
     (c) => c.name.toLowerCase() === page.channelName.toLowerCase(),
   );
@@ -703,7 +707,11 @@ const ChannelSettingsPage: React.FC<PageProps<"channelSettings">> = ({
                 placeholder={t`https://example.com/avatar/${sizeToken}/channel.jpg`}
                 className="field-input w-full"
               />
-              {isAbsoluteHttpUrl(text("avatar")) && (
+              {canShowAvatarUrl(
+                text("avatar"),
+                serverFilehosts(server),
+                mediaLevelToSettings(mediaLevel),
+              ) && (
                 <img
                   src={text("avatar").replace("{size}", "64")}
                   alt={t`Channel avatar preview`}

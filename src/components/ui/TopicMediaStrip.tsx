@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { FaFileAlt, FaPlay } from "react-icons/fa";
+import { revealHiddenChars } from "../../lib/hiddenChars";
 import { serverFilehosts } from "../../lib/ircUtils";
 import { getCachedProbeResult, probeMediaUrl } from "../../lib/mediaProbe";
 import type { MediaEntry, MediaType } from "../../lib/mediaUtils";
@@ -125,7 +126,7 @@ export const TopicMediaStrip: React.FC = () => {
               key={entry.url}
               type="button"
               onClick={() => handleClick(entry)}
-              title={entry.url}
+              title={revealHiddenChars(entry.url)}
               className="flex-shrink-0 w-6 h-6 rounded-sm overflow-hidden focus:outline-none opacity-60 hover:opacity-100 transition-opacity"
             >
               <Tile type={type} url={entry.url} />
