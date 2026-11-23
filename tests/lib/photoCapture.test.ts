@@ -7,16 +7,17 @@ function fakeVideo(width: number, height: number): HTMLVideoElement {
 
 function stubCanvas(blob: Blob | null) {
   const drawImage = vi.fn();
+  const rotate = vi.fn();
   const canvas = {
     width: 0,
     height: 0,
-    getContext: () => ({ drawImage }),
+    getContext: () => ({ drawImage, rotate, translate: vi.fn() }),
     toBlob: (cb: (b: Blob | null) => void) => cb(blob),
   } as unknown as HTMLCanvasElement;
   const create = vi
     .spyOn(document, "createElement")
     .mockReturnValue(canvas as unknown as HTMLElement);
-  return { canvas, drawImage, create };
+  return { canvas, drawImage, rotate, create };
 }
 
 afterEach(() => {
@@ -31,7 +32,13 @@ describe("capturePhotoFile", () => {
 
     expect(canvas.width).toBe(1280);
     expect(canvas.height).toBe(720);
-    expect(drawImage).toHaveBeenCalledWith(expect.anything(), 0, 0, 1280, 720);
+    expect(drawImage).toHaveBeenCalledWith(
+      expect.anything(),
+      -640,
+      -360,
+      1280,
+      720,
+    );
     expect(file?.type).toBe("image/jpeg");
     expect(file?.name).toMatch(/^photo-\d{4}-\d{2}-\d{2}-\d{6}\.jpg$/);
   });
@@ -45,9 +52,38 @@ describe("capturePhotoFile", () => {
     expect(drawImage).not.toHaveBeenCalled();
   });
 
+  test("turns a sideways photo upright and swaps its size", async () => {
+    const { canvas, rotate } = stubCanvas(new Blob(["x"]));
+
+    await capturePhotoFile(fakeVideo(1280, 720), { rotation: 90 });
+
+    expect(canvas.width).toBe(720);
+    expect(canvas.height).toBe(1280);
+    expect(rotate).toHaveBeenCalledWith(Math.PI / 2);
+  });
+
   test("gives nothing back when the encode fails", async () => {
     stubCanvas(null);
 
     expect(await capturePhotoFile(fakeVideo(640, 480))).toBeNull();
+  });
+
+  test("frees the camera still even when nothing can be drawn", async () => {
+    const close = vi.fn();
+    vi.stubGlobal(
+      "ImageCapture",
+      class {
+        takePhoto = async () => new Blob(["x"]);
+      },
+    );
+    vi.stubGlobal("createImageBitmap", async () => ({
+      width: 0,
+      height: 0,
+      close,
+    }));
+    const track = {} as MediaStreamTrack;
+    expect(await capturePhotoFile(fakeVideo(0, 0), { track })).toBeNull();
+    expect(close).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
   });
 });

@@ -5648,6 +5648,14 @@ msgstr "업로드를 다시 시도하세요."
 msgid "Try the upload again. The file host sent back an answer we could not read."
 msgstr "업로드를 다시 시도하세요. 파일 호스트가 읽을 수 없는 응답을 보냈습니다."
 
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight off"
+msgstr "손전등 끄기"
+
+#: src/components/ui/CameraCaptureModal.tsx
+msgid "Turn flashlight on"
+msgstr "손전등 켜기"
+
 #: src/components/pages/SettingsPage.tsx
 msgid "Turn off media previews."
 msgstr "미디어 미리 보기를 끄세요."

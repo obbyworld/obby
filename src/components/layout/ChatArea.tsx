@@ -45,6 +45,7 @@ import {
   emojiClickValue,
   packEntriesForPicker,
 } from "../../lib/customEmojiPicker";
+import { requestTiltAccess } from "../../lib/deviceRotation";
 import {
   buildMediaDescriptor,
   CIPHERTEXT_EXTENSION,
@@ -2560,7 +2561,10 @@ export const ChatArea: React.FC<{
                     divider: !canRecordAudio && canRecordVideo,
                     icon: <FaCamera />,
                     label: <Trans>Take Photo or Video</Trans>,
-                    onClick: () => setIsCameraOpen(true),
+                    onClick: () => {
+                      requestTiltAccess();
+                      setIsCameraOpen(true);
+                    },
                   },
                   {
                     id: "record-region",
