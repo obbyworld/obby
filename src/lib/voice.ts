@@ -1,6 +1,6 @@
 // WebRTC voice/video client for `^` voice channels.
 //
-// Signaling rides over IRC TAGMSGs with the +obsidianirc/rtc tag,
+// Signaling rides over IRC TAGMSGs with the obsidianirc/rtc tag,
 // brokered by obbyircd's voice-channels module to the hosted-backend
 // SFU.  We never peer with other users directly -- every track flows
 // through the SFU and is ICE/DTLS-SRTP encrypted end-to-end with the
@@ -9,7 +9,7 @@
 // Lifecycle:
 //   1. join(serverId, channel)
 //      -> JOIN ^channel (so we appear in NAMES)
-//      -> TAGMSG ^channel @+obsidianirc/rtc={"type":"join",…}
+//      -> TAGMSG ^channel @obsidianirc/rtc={"type":"join",…}
 //   2. SFU replies with {"type":"joined", members, turn}
 //      -> we build an RTCPeerConnection with the supplied TURN creds
 //      -> getUserMedia + addTrack
@@ -186,7 +186,7 @@ interface TrackHint {
   kind: string;
 }
 
-const RTC_TAG = "+obsidianirc/rtc";
+const RTC_TAG = "obsidianirc/rtc";
 // How long a dropped media path may try to recover by itself before we rejoin.
 const RECONNECT_GRACE_MS = 5000;
 const JOIN_RETRY_MS = 6000;
