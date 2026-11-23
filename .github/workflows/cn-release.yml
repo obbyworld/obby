@@ -37,9 +37,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # Arm-based macs (M1+)
+          - platform: "macos-15" # Arm-based macs (M1+)
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # Intel macs
+          - platform: "macos-15" # Intel macs
             args: "--target x86_64-apple-darwin"
           - platform: "ubuntu-22.04" # 22.04 for glibc 2.35 compatibility
             args: ""
@@ -67,7 +67,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.platform == 'macos-15' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2.9.3
