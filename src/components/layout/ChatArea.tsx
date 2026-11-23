@@ -60,8 +60,7 @@ import { locationSharingSupported } from "../../lib/geolocation";
 import { findMessageRow } from "../../lib/highlightRow";
 import ircClient from "../../lib/ircClient";
 import { parseIrcUrl } from "../../lib/ircUrlParser";
-import { replyTags } from "../../lib/ircUtils";
-import { serverFilehosts } from "../../lib/ircUtils";
+import { replyTags, serverFilehosts } from "../../lib/ircUtils";
 import { listDevices, screenCaptureSupported } from "../../lib/mediaDevices";
 import {
   describeUploadFailure,
