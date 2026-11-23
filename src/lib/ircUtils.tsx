@@ -808,6 +808,7 @@ export function mircToHtml(
   text: string,
   keyPrefix = "",
   linkLabels?: LinkLabels,
+  isInteractive = true,
 ): React.ReactNode {
   const state = {
     bold: false,
@@ -936,6 +937,7 @@ export function mircToHtml(
           keyPrefix,
           elementIndexRef,
           linkLabels,
+          isInteractive,
         );
         processedResult.push(...urlProcessed);
       } else {
@@ -1028,9 +1030,18 @@ function processUrlsInText(
   keyPrefix = "",
   elementIndexRef?: { current: number },
   linkLabels?: LinkLabels,
+  isInteractive = true,
 ): React.ReactNode[] {
   // Check if running in Tauri native environment
   const isTauriEnv = isTauri();
+  const renderPlainText = (plainText: string) =>
+    isInteractive
+      ? processChannelsInText(plainText, style, keyPrefix, () => elementIndex++)
+      : [
+          <span key={`${keyPrefix}text-${elementIndex++}`} style={style}>
+            {plainText}
+          </span>,
+        ];
 
   const urlRegex = makeUrlRegex();
 
@@ -1042,14 +1053,7 @@ function processUrlsInText(
   while (match !== null) {
     // Add text before the URL
     if (match.index > lastIndex) {
-      parts.push(
-        ...processChannelsInText(
-          text.slice(lastIndex, match.index),
-          style,
-          keyPrefix,
-          () => elementIndex++,
-        ),
-      );
+      parts.push(...renderPlainText(text.slice(lastIndex, match.index)));
     }
 
     const url = match[0];
@@ -1068,6 +1072,16 @@ function processUrlsInText(
           className="text-discord-text-muted"
         >
           {shownUrl}
+        </span>,
+      );
+    } else if (!isInteractive) {
+      parts.push(
+        <span
+          key={`${keyPrefix}url-${elementIndex++}`}
+          className={`text-blue-500 underline inline-block max-w-[min(40ch,100%)] truncate align-bottom${isIrcLink ? "" : " link-compact"}`}
+          style={style}
+        >
+          {isIrcLink ? url : (labelFor(linkLabels, url) ?? compactUrl(url))}
         </span>,
       );
     } else {
@@ -1103,14 +1117,7 @@ function processUrlsInText(
 
   // Add remaining text
   if (lastIndex < text.length) {
-    parts.push(
-      ...processChannelsInText(
-        text.slice(lastIndex),
-        style,
-        keyPrefix,
-        () => elementIndex++,
-      ),
-    );
+    parts.push(...renderPlainText(text.slice(lastIndex)));
   }
 
   // Update the shared elementIndex if provided
