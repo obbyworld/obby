@@ -378,7 +378,10 @@ export interface BatchInfo {
 /**
  * Get the selected channel and private chat for a specific server
  */
-export function getServerSelection(state: AppState, serverId: string) {
+export function getServerSelection(
+  state: Pick<AppState, "ui">,
+  serverId: string,
+) {
   return (
     state.ui.perServerSelections[serverId] || {
       selectedChannelId: null,
