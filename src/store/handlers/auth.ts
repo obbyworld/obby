@@ -20,6 +20,7 @@ import {
   buildOauthBearerPayload,
   chunkSaslPayload,
 } from "../../lib/saslFrames";
+import { isSafeServiceUrl } from "../../lib/serviceUrl";
 import type { Message, ServerConfig, ServerOAuthConfig } from "../../types";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
@@ -762,7 +763,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
           ? {
               ...server,
               authToken: token,
-              authTokenUrl: url,
+              authTokenUrl: isSafeServiceUrl(url) ? url : undefined,
               authTokenService: service,
             }
           : server,
