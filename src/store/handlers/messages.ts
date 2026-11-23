@@ -1719,32 +1719,14 @@ export function registerMessageHandlers(store: StoreApi<AppState>): void {
 
       const channelKey = `${server.id}-${channel.id}`;
 
-      // Helper function to unescape IRC tag values
-      const unescapeTagValue = (
-        value: string | undefined,
-      ): string | undefined => {
-        if (!value) return undefined;
-        // IRC tag escaping: \: = ; \s = space \\ = \ \r = CR \n = LF
-        return value
-          .replace(/\\s/g, " ")
-          .replace(/\\:/g, ";")
-          .replace(/\\r/g, "\r")
-          .replace(/\\n/g, "\n")
-          .replace(/\\\\/g, "\\");
-      };
-
       store.setState((state) =>
         updateMessageByMsgid(state, channelKey, replyMessageId, (message) => ({
           ...message,
-          linkPreviewTitle: unescapeTagValue(
-            mtags["obsidianirc/link-preview-title"],
-          ),
-          linkPreviewSnippet: unescapeTagValue(
-            mtags["obsidianirc/link-preview-snippet"],
-          ),
-          linkPreviewMeta: unescapeTagValue(
-            mtags["obsidianirc/link-preview-meta"],
-          ),
+          linkPreviewTitle:
+            mtags["obsidianirc/link-preview-title"] || undefined,
+          linkPreviewSnippet:
+            mtags["obsidianirc/link-preview-snippet"] || undefined,
+          linkPreviewMeta: mtags["obsidianirc/link-preview-meta"] || undefined,
         })),
       );
     }
