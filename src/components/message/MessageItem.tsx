@@ -421,10 +421,11 @@ export const MessageItem = memo((props: MessageItemProps) => {
   // draft/custom-emoji: gather pack URLs for this message's channel +
   // network in priority order so a channel pack can shadow a network
   // shortcode of the same name.
-  const { resolve: resolveEmoji } = useEmojiResolver([
-    channelEmojiUrl,
-    serverEmojiPackUrl,
-  ]);
+  const { resolve: resolveEmoji } = useEmojiResolver(
+    [channelEmojiUrl, serverEmojiPackUrl],
+    fileHosts,
+    mediaVisibilityLevel,
+  );
 
   // We label only plaintext messages, and lead with the real host because the linked page supplies the title.
   const isEncrypted = isFromEncryptedSession(message) || !!encryptedMedia;

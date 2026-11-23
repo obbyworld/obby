@@ -33,6 +33,7 @@ import { expectsProtection } from "../../lib/e2ee/session";
 import { FragmentReassembler, frameValues } from "../../lib/e2ee/transport";
 import { isUserIgnored } from "../../lib/ignoreUtils";
 import ircClient from "../../lib/ircClient";
+import { escapeTagValue } from "../../lib/ircUtils";
 import { makeLabel, shouldUseLabeledResponse } from "../../lib/labeledResponse";
 import { isHistoryEvent } from "../helpers";
 import type { AppState } from "../index";
@@ -103,10 +104,8 @@ function send(
     // one would leave the two sides replying to different msgids.
     if (index === values.length - 1) {
       if (carrier.replyTo) {
-        tags.push(
-          `+reply=${carrier.replyTo}`,
-          `+draft/reply=${carrier.replyTo}`,
-        );
+        const replyTo = escapeTagValue(carrier.replyTo);
+        tags.push(`+reply=${replyTo}`, `+draft/reply=${replyTo}`);
       }
       if (carrier.label) tags.push(`label=${carrier.label}`);
     }

@@ -3,6 +3,7 @@ import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
 import { readyProcessedServers } from "../../src/store/handlers/connection";
 import * as storage from "../../src/store/localStorage";
+import { clearPacedRequests } from "../../src/store/pacedRequests";
 import type { Channel, Server } from "../../src/types";
 
 function makeChannel(overrides: Partial<Channel> = {}): Channel {
@@ -174,6 +175,7 @@ describe("live JOIN — metadata restoration", () => {
 describe("readyProcessedServers — reconnect guard", () => {
   beforeEach(() => {
     readyProcessedServers.clear();
+    clearPacedRequests("srv-1");
     setupServer();
   });
 
@@ -218,7 +220,7 @@ describe("readyProcessedServers — reconnect guard", () => {
       serverName: "TestServer",
       nickname: "me",
     });
-    vi.advanceTimersByTime(50);
+    vi.advanceTimersByTime(51);
 
     expect(sendRaw).toHaveBeenCalledWith(
       "srv-1",

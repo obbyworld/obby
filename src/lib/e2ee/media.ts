@@ -9,6 +9,7 @@
 import { xchacha20poly1305 } from "@noble/ciphers/chacha.js";
 import { randomBytes } from "@noble/hashes/utils.js";
 import { base64ToBytes, bytesToBase64 } from "../base64";
+import { stripHiddenChars } from "../hiddenChars";
 
 const KEY_BYTES = 32;
 const NONCE_BYTES = 24;
@@ -184,14 +185,8 @@ export function decodeMediaDescriptor(text: string): MediaDescriptor | null {
 }
 
 // A peer chooses the name, and it reaches the UI as label and download target.
-// Control and bidi characters are dropped because they can make a displayed
-// extension read as something other than what is saved.
-const UNSAFE_NAME_CHARS =
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: stripping them is the point
-  /[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069/\\]/g;
-
 export function sanitizeFileName(name: string): string {
-  const cleaned = name.replace(UNSAFE_NAME_CHARS, "");
+  const cleaned = stripHiddenChars(name).replace(/[/\\]/g, "");
   return cleaned.trim().slice(0, 120) || "attachment";
 }
 

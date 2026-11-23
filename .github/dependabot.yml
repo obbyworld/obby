@@ -28,6 +28,10 @@ updates:
       # Matches the deep-link crate, pinned in src-tauri/Cargo.toml.
       - dependency-name: "@tauri-apps/plugin-deep-link"
         versions: ["2.6.2"]
+      # Matches the notification crate, pinned in src-tauri/Cargo.toml.
+      - dependency-name: "@tauri-apps/plugin-notification"
+        update-types:
+          - version-update:semver-minor
 
   - package-ecosystem: cargo
     directory: "/src-tauri"
@@ -72,8 +76,8 @@ updates:
 
   - package-ecosystem: github-actions
     directory: "/"
-    # Monthly, grouped into one PR. Actions are SHA-pinned with a `# vX.Y.Z`
-    # comment, so Dependabot bumps both the SHA and the comment in place.
+    # Monthly, grouped into one PR. Dependabot bumps the tag and regenerates
+    # its entry in .github/workflows/actions.lock.
     schedule:
       interval: monthly
       time: "06:00"
@@ -87,8 +91,8 @@ updates:
         patterns:
           - "*"
     ignore:
-      # Pinned to the stable/nightly branch tip on purpose — the channel resolves
-      # at runtime, so there's no version for Dependabot to track.
+      # We pin it to a master commit in actions.lock and pick the channel with the
+      # toolchain input, since its stable and nightly branches are force-pushed.
       - dependency-name: "dtolnay/rust-toolchain"
 
   - package-ecosystem: docker

@@ -414,6 +414,56 @@ describe("ChannelSettingsPage", () => {
     ).toBeInTheDocument();
   });
 
+  const renderAvatar = (
+    avatar: string,
+    { level, filehost }: { level: number; filehost?: string },
+  ) => {
+    const state = createMockState({ status: "@" });
+    Object.assign(state.servers[0], { filehost });
+    Object.assign(state.servers[0].channels[0], {
+      metadata: { avatar: { value: avatar } },
+    });
+    Object.assign(state.globalSettings, { mediaVisibilityLevel: level });
+    applyMockState(state);
+    renderPage({ section: "general" });
+  };
+
+  test("hides a channel avatar from an untrusted origin", () => {
+    renderAvatar("https://evil.example/a.png", { level: 1 });
+
+    expect(screen.queryByAltText("Channel avatar preview")).toBeNull();
+  });
+
+  test("shows a channel avatar once the reader shows all external content", () => {
+    renderAvatar("https://evil.example/a.png", { level: 3 });
+
+    expect(screen.getByAltText("Channel avatar preview")).toHaveAttribute(
+      "src",
+      "https://evil.example/a.png",
+    );
+  });
+
+  test("hides an untrusted avatar next to the upload button", () => {
+    renderAvatar("https://evil.example/a.png", {
+      level: 1,
+      filehost: "https://files.example.com",
+    });
+
+    expect(screen.queryByAltText("Avatar preview")).toBeNull();
+  });
+
+  test("shows an avatar stored on the server filehost", () => {
+    renderAvatar("https://files.example.com/a.png", {
+      level: 1,
+      filehost: "https://files.example.com",
+    });
+
+    expect(screen.getByAltText("Avatar preview")).toHaveAttribute(
+      "src",
+      "https://files.example.com/a.png",
+    );
+  });
+
   test("keeps an unsent edit when the server updates the channel", async () => {
     const state = createMockState({ status: "@" });
     Object.assign(state.servers[0].channels[0], { topic: "Old topic" });

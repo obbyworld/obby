@@ -6,7 +6,7 @@
 // participant it echoes that video back a few seconds later so latency
 // and quality are visible without a second device.
 //
-// Speaks the same +obsidianirc/rtc TAGMSG signaling as src/lib/voice.ts
+// Speaks the same obsidianirc/rtc TAGMSG signaling as src/lib/voice.ts
 // (the browser client) -- see that file for the protocol writeup this
 // mirrors.
 

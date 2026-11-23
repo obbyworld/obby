@@ -67,6 +67,7 @@ import {
 import * as storage from "./localStorage";
 import { enqueueMetadataList } from "./metadataLazyQueue";
 import { runPendingMigrations } from "./migrations";
+import { dropPacedRequest, sendNowIfQueued } from "./pacedRequests";
 import {
   markKeyedJoin,
   markPendingJoin,
@@ -1754,7 +1755,9 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   joinChannel: (serverId, channelName, key, options) => {
-    const channel = ircClient.joinChannel(serverId, channelName, key);
+    const channel = ircClient.joinChannel(serverId, channelName, key, {
+      deferHistory: options?.isAutomatic,
+    });
     if (channel) {
       if (key) markKeyedJoin(serverId, channel.name);
       setAutomaticJoin(serverId, channel.name, !!options?.isAutomatic);
@@ -1911,6 +1914,12 @@ const useStore = create<AppState>((set, get) => ({
       selectedServerId: get().ui.selectedServerId,
       perServerSelections: get().ui.perServerSelections,
     });
+    dropPacedRequest(serverId, channelName);
+    const nextChannelName = getServerSelection(
+      get(),
+      serverId,
+    ).selectedChannelName;
+    if (nextChannelName) sendNowIfQueued(serverId, nextChannelName);
   },
 
   sendMessage: (serverId, channelId, content) => {
@@ -2338,9 +2347,11 @@ const useStore = create<AppState>((set, get) => ({
       };
     });
 
-    ircClient.sendRaw(
+    ircClient.sendPrivmsgLines(
       msg.serverId,
-      `@label=${label} PRIVMSG ${wireTarget} :${msg.content}`,
+      wireTarget,
+      msg.content,
+      `@label=${label} `,
     );
     setTimeout(() => {
       get().failPendingMessage(msg.serverId, msg.channelId, label);
@@ -2640,6 +2651,8 @@ const useStore = create<AppState>((set, get) => ({
         privateChatUsername: null,
       },
     });
+    if (selectedServer && channelObj)
+      sendNowIfQueued(selectedServer.id, channelObj.name);
   },
 
   markChannelAsRead: (serverId, channelId) => {
@@ -2775,6 +2788,8 @@ const useStore = create<AppState>((set, get) => ({
         privateChatUsername: pcObj?.username || null,
       },
     });
+    if (selectedServer && pcObj)
+      sendNowIfQueued(selectedServer.id, pcObj.username);
   },
 
   openPrivateChat: (serverId, username) => {
@@ -2801,7 +2816,8 @@ const useStore = create<AppState>((set, get) => ({
         // Request chathistory for this PM (if server supports it)
         if (server.capabilities?.includes("draft/chathistory")) {
           setTimeout(() => {
-            ircClient.requestChathistoryLatest(serverId, username);
+            if (!sendNowIfQueued(serverId, username))
+              ircClient.requestChathistoryLatest(serverId, username);
           }, 50);
         }
 

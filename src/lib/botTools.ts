@@ -296,33 +296,3 @@ export function countableSteps(steps: readonly AiStep[]): number {
     (group) => !(group.kind === "single" && group.step.type === "reasoning"),
   ).length;
 }
-
-// IRC tag-value escape — applied just before putting the value on the
-// wire. Mirrors the unescape in src/lib/ircUtils.tsx.
-export function escapeIrcTagValue(s: string): string {
-  let out = "";
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i];
-    switch (c) {
-      case "\\":
-        out += "\\\\";
-        break;
-      case ";":
-        out += "\\:";
-        break;
-      case " ":
-        out += "\\s";
-        break;
-      case "\r":
-        out += "\\r";
-        break;
-      case "\n":
-        out += "\\n";
-        break;
-      default:
-        out += c;
-        break;
-    }
-  }
-  return out;
-}

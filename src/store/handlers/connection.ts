@@ -11,6 +11,7 @@ import {
 } from "../helpers";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { clearPacedRequests, sendOpenChatFirst } from "../pacedRequests";
 import { forgetJoins } from "../pendingJoins";
 import { reportServerReply } from "./serverReplies";
 
@@ -83,6 +84,7 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
   });
 
   ircClient.on("connectionStateChange", ({ serverId, connectionState }) => {
+    clearPacedRequests(serverId);
     // Allow the ready handler to re-run metadata restoration after reconnect
     if (connectionState === "disconnected") {
       readyProcessedServers.delete(serverId);
@@ -360,21 +362,6 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
         }
       }
 
-      // Re-fetch CHATHISTORY for already-joined channels: ircClient.joinChannel
-      // early-returns for them, so the normal join path doesn't send it.
-      // soju bouncer control sessions have no real channels — skip.
-      setTimeout(() => {
-        const reconnectedServer = store
-          .getState()
-          .servers.find((s) => s.id === serverId);
-        if (!reconnectedServer) return;
-        if (reconnectedServer.isBouncerControl) return;
-        for (const ch of reconnectedServer.channels) {
-          if (!ch.chathistoryRequested && !ch.needsKey)
-            ircClient.loadLatestHistory(serverId, ch.name);
-        }
-      }, 50);
-
       // Only auto-select welcome page for NEW servers (no saved channels)
       // Existing servers with channels should not auto-select (preserves user's view)
       const isNewServer = savedServer.channels.length === 0;
@@ -522,6 +509,20 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
     } else {
     }
 
+    // Automatic joins and rejoined channels leave their history to us, so we fetch the open chat first and pace the rest.
+    setTimeout(() => {
+      const state = store.getState();
+      const reconnectedServer = state.servers.find((s) => s.id === serverId);
+      if (!reconnectedServer) return;
+      if (reconnectedServer.isBouncerControl) return;
+      for (const ch of reconnectedServer.channels) {
+        if (!ch.chathistoryRequested && !ch.needsKey)
+          sendOpenChatFirst(state, serverId, ch.name, () =>
+            ircClient.loadLatestHistory(serverId, ch.name),
+          );
+      }
+    }, 50);
+
     // Restore pinned private chats for this server
     const pinnedChats = storage.pinnedChats.load();
     const serverPinnedChats = pinnedChats[serverId] || [];
@@ -594,8 +595,11 @@ export function registerConnectionHandlers(store: StoreApi<AppState>): void {
 
       // Request chathistory for each pinned PM
       setTimeout(() => {
+        const state = store.getState();
         for (const { username } of sortedPinnedChats) {
-          ircClient.requestChathistoryLatest(serverId, username);
+          sendOpenChatFirst(state, serverId, username, () =>
+            ircClient.requestChathistoryLatest(serverId, username),
+          );
         }
       }, 50);
 

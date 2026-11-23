@@ -1,99 +1,84 @@
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-obbyworld%2Fobby-blue?logo=docker&style=flat-square)](https://hub.docker.com/r/obbyworld/obby)
-[![Cloudflare Pages](https://img.shields.io/endpoint?url=https://cloudflare-pages-badges.mattf.workers.dev//?projectName=obby)](https://obsidianirc.pages.dev/)
-[![pages-build-deployment](https://github.com/Obby/obby.github.io/actions/workflows/pages/pages-build-deployment/badge.svg)](https://hello.obby.world/)
-[![Google Play](https://img.shields.io/badge/Google_Play-Download-414141?logo=google-play)](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)
+<div align="center">
+  <img src="public/images/obby.png" width="96" alt="Obby logo">
+  <h1>Obby</h1>
+  <p>Obby is an IRC client for the web, desktop and phones. It gives any IRC network avatars, replies, reactions, encrypted DMs and searchable history.</p>
 
-## <img src="https://cdn-icons-png.freepik.com/512/8999/8999462.png" alt="description" width="70"> Obby - Next Generation IRC Client
+[![Latest release](https://img.shields.io/github/v/release/obbyworld/obby)](https://github.com/obbyworld/obby/releases/latest)
+[![Google Play](https://img.shields.io/badge/Google_Play-Get_it-414141?logo=google-play)](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)
+[![Docker Hub](https://img.shields.io/docker/v/obbyworld/obby?logo=docker&label=docker)](https://hub.docker.com/r/obbyworld/obby)
+[![License](https://img.shields.io/github/license/obbyworld/obby)](LICENSE)
 
-### React + TypeScript + TailwindCSS
+**[Open in your browser](https://hello.obby.world)** · **[Download](https://github.com/obbyworld/obby/releases/latest)** · **[Google Play](https://play.google.com/store/apps/details?id=com.obsidianirc.dev)**
 
-![Obby Screenshot](screenshots/screenshot1.png)
+</div>
 
-This IRC client and its related software are designed to be:
+![Obby on the desktop: a community channel with channel icons, avatars, replies, reactions, a map, a shared photo, a highlighted mention and a typing indicator](screenshots/desktop-chat.webp)
 
-- Modern and innovative
-- Comfortable for people switching from other messaging software
-- Easy to implement
-- Easy to expand
+## Install
 
-### Features
+| Platform | Get it                                                                                                                                                                                          |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web      | Open [hello.obby.world](https://hello.obby.world) in any browser.                                                                                                                               |
+| Android  | Install it from [Google Play](https://play.google.com/store/apps/details?id=com.obsidianirc.dev).                                                                                               |
+| macOS    | Download the `.dmg` from [Releases](https://github.com/obbyworld/obby/releases/latest). It runs on Apple Silicon and Intel.                                                                     |
+| Windows  | Download the `.exe` installer from [Releases](https://github.com/obbyworld/obby/releases/latest).                                                                                               |
+| Linux    | Run `yay -S obby` on Arch or `nix run github:obbyworld/obby` on NixOS, or download the `.deb`, `.rpm` or AppImage from [Releases](https://github.com/obbyworld/obby/releases/latest).           |
+| iOS      | Install the `.ipa` from [Releases](https://github.com/obbyworld/obby/releases/latest) with [AltStore](https://altstore.io/) or [LiveContainer](https://github.com/LiveContainer/LiveContainer). |
 
-Obby is a modern IRC client with extensive [IRCv3](https://ircv3.net/) support, implementing cutting-edge features for an enhanced messaging experience:
+The desktop app can self-update. See [INSTALL.md](INSTALL.md) for more options.
 
-#### Core IRCv3 Capabilities
+When Obby opens, pick a network from **Discover** or add your own server, then choose a nick.
 
-- **Display Names** (`setname`) - Users can set custom display names beyond their nickname
-- **User Avatars** (`draft/metadata-2`) - Full support for user profile pictures and metadata
-- **Message Deletion** (`draft/message-redaction`) - Delete your own messages after sending
-- **Channel Renaming** (`draft/channel-rename`) - Dynamically rename channels
-- **Message History** (`draft/chathistory`) - Load and browse previous messages
-- **Reactions & Replies** (`draft/reply`, `draft/react`) - React to messages with emojis and create threaded conversations
-- **Typing Indicators** (`draft/typing`) - See when other users are typing
-- **Multiline Messages** (`draft/multiline`, `batch`) - Send properly formatted multi-line messages
-- **Rich Message Tags** (`message-tags`, `account-tag`) - Enhanced message metadata
-- **Server Time** (`server-time`) - Accurate timestamps for all messages
-- **Echo Messages** (`echo-message`) - See your own messages as the server sees them
-- **SASL Authentication** (`sasl`) - Secure authentication before connection completes
+## What you get
 
-#### Advanced Features
+Obby is an IRC client that supports [IRCv3](https://ircv3.net), the modern IRC standard, plus a few [Obby extensions](https://github.com/obbyworld/extensions). It works with any IRC server and turns on each feature that the server supports.
 
-- **Account Management** (`draft/account-registration`) - Register accounts directly from the client
-- **Away Notifications** (`away-notify`) - Real-time away status updates
-- **Account Tracking** (`account-notify`) - Track user account changes
-- **Extended Join** (`extended-join`) - Enhanced channel join information with account details
-- **Host Change Tracking** (`chghost`) - Monitor user host changes
-- **ZNC Playback** (`znc.in/playback`) - Support for ZNC bouncer history playback
+Obby's own server is [ObbyIRCd](https://github.com/obbyworld/ObbyIRCd). It supports every feature in the list below, so run it if you want the full Obby experience for your community.
 
-#### UnrealIRCd Extensions
+<p align="center">
+  <img src="screenshots/android-general.webp" width="240" alt="Android: a channel with replies, reactions and mentions">
+  <img src="screenshots/android-channels.webp" width="240" alt="Android: two networks, channel folders and unread DMs">
+  <img src="screenshots/android-notification.webp" width="240" alt="Android: a direct message notification over the chat">
+</p>
 
-- **JSON Server Logs** (`unrealircd.org/json-log`) - Professional, expandable server logs in JSON format containing comprehensive information for debugging and monitoring
-- **Link Security** (`unrealircd.org/link-security`) - Informational capability that monitors and reports the encrypted topology of the IRC network's server-to-server links, warning users when server interconnections lack proper SSL/TLS encryption or certificate validation
+- **Profiles:** avatars, display names and colors for people and channels, through [metadata](https://ircv3.net/specs/extensions/metadata).
+- **Conversations:** [replies](https://ircv3.net/specs/client-tags/reply), [reactions](https://ircv3.net/specs/client-tags/react), typing indicators and message deletion.
+- **Encrypted DMs:** [end-to-end encryption](https://github.com/obbyworld/extensions/blob/main/e2ee.md) between Obby users, and OTR with other clients.
+- **History and search:** [chat history](https://ircv3.net/specs/extensions/chathistory) from the server plus a copy on your device, with [read markers](https://ircv3.net/specs/extensions/read-marker) that follow you across devices. Search filters by channel, sender, mentions and links.
+- **Media:** previews for photos, videos, YouTube and [links](https://github.com/obbyworld/extensions/blob/main/link-preview.md). Obby loads media only from trusted hosts until you allow more, so a link someone posts can't reveal your IP.
+- **Push notifications:** DMs and mentions reach you with the app closed. The browser uses Web Push, and Android uses [UnifiedPush](https://unifiedpush.org) with Google's push service or your own distributor, such as ntfy. The server needs `draft/webpush`.
+- **Voice and video:** [voice and stream channels](https://github.com/obbyworld/extensions/blob/main/voice.md) with screen sharing.
+- **Bots:** [channel bots](https://github.com/obbyworld/extensions/blob/main/channel-bots.md) with slash commands and forms.
+- **Many networks:** several servers and accounts side by side, with channel folders.
+- **[19 languages](src/locales).**
 
-#### Obby Custom Extensions
+![Obby on the desktop: a YouTube preview, a shared video and a link preview next to an end-to-end encrypted direct message](screenshots/desktop-media-and-dm.webp)
 
-- **Link Previews** (`obsidianirc/link-preview-*`) - Custom message tags for rich link previews including:
-  - `obsidianirc/link-preview-title` - Title of the linked content
-  - `obsidianirc/link-preview-snippet` - Description or excerpt from the linked page
-  - `obsidianirc/link-preview-meta` - URL to preview image or thumbnail
-  - Automatically displays rich embeds for shared URLs with metadata
+## Host it for your community
 
-#### User Interface Features
+The web app ships as a Docker image. Point it at your server and share the link:
 
-- Multi-server support with easy server switching
-- Private messaging with dedicated chat windows
-- Channel topic display and management
-- User context menus for moderation and interaction
-- Emoji picker and GIF support
-- Image upload and preview
-- Customizable text formatting (bold, italic, underline, colors)
-- Tab completion for usernames and commands
-- Emoji autocomplete
-- Notification sounds
-- Mobile-responsive design
-- Dark theme optimized for readability
-
-### Installation
-
-For now, all you need to do to get this running is the following:
-
+```sh
+docker run -p 8080:80 \
+  -e VITE_DEFAULT_IRC_SERVER=wss://irc.example.org \
+  -e VITE_DEFAULT_IRC_SERVER_NAME="Example" \
+  -e VITE_DEFAULT_IRC_CHANNELS="#lobby" \
+  obbyworld/obby:latest
 ```
-cd ~
+
+Then open http://localhost:8080. See [BUILD.md](BUILD.md#building-for-a-specific-server) for more options, such as a single-network client or OAuth sign-in.
+
+## Build from source
+
+```sh
 git clone https://github.com/obbyworld/obby
-cd Obby
+cd obby
 npm install
-npm run build
-cp -R dist/* /var/www/html/
+npm run dev
 ```
 
-Replace `/var/www/html/` with the web directory you want to contain your webclient.
+Then open http://localhost:5173. See [BUILD.md](BUILD.md) for the desktop and mobile apps, and [CONTRIBUTING.md](CONTRIBUTING.md) to run a local IRC server for testing.
 
-### Contributing
+## License
 
-If you want to contribute to this project, please read the [CONTRIBUTING.md](CONTRIBUTING.md) file. It contains all the information you need to get started.
-
-### Live Demo
-
-You can demo the bleeding-edge version of Obby, all you need to do is connect to an IRC server which uses websockets!
-
-- [Live Demo](https://hello.obby.world/)
-- [CloudFlare Pages Demo](https://obsidianirc.pages.dev/)
+[GPL-3.0](LICENSE)

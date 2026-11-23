@@ -20,6 +20,7 @@ import {
   buildOauthBearerPayload,
   chunkSaslPayload,
 } from "../../lib/saslFrames";
+import { isSafeServiceUrl } from "../../lib/serviceUrl";
 import type {
   Message,
   Server,
@@ -28,6 +29,7 @@ import type {
 } from "../../types";
 import type { AppState } from "../index";
 import * as storage from "../localStorage";
+import { sendPaced } from "../pacedRequests";
 
 type SaslMech =
   | "PLAIN"
@@ -816,7 +818,7 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
           ? {
               ...server,
               authToken: token,
-              authTokenUrl: url,
+              authTokenUrl: isSafeServiceUrl(url) ? url : undefined,
               authTokenService: service,
             }
           : server,
@@ -869,7 +871,9 @@ export function registerAuthHandlers(store: StoreApi<AppState>): void {
       registeredServers.has(serverId) &&
       ircClient.hasCapability(serverId, "draft/persistence")
     )
-      ircClient.persistenceGet(serverId);
+      sendPaced(serverId, "PERSISTENCE GET", () =>
+        ircClient.persistenceGet(serverId),
+      );
   };
   ircClient.on("ready", ({ serverId }) => {
     registeredServers.add(serverId);

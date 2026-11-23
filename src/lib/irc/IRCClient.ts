@@ -14,7 +14,12 @@ import type {
   WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
-import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
+import {
+  chantypesOf,
+  formatTags,
+  isChannelTarget,
+  parseMessageTags,
+} from "../ircUtils";
 import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
@@ -665,6 +670,7 @@ export class IRCClient implements IRCClientContext {
   rateLimitedServers: Map<string, number> = new Map(); // Track rate-limited servers (serverId -> timestamp)
   private pingTimers: Map<string, NodeJS.Timeout> = new Map(); // Track ping timers per server
   pongTimeouts: Map<string, NodeJS.Timeout> = new Map(); // Track pong timeouts per server
+  joinsDuringReady: Map<string, Set<string>> = new Map();
   private serverConnectParams: Map<
     string,
     {
@@ -1048,21 +1054,7 @@ export class IRCClient implements IRCClientContext {
         const serverId = Array.from(this.servers.keys()).find(
           (id) => this.sockets.get(id) === socket,
         );
-        if (serverId) {
-          const data =
-            typeof event.data === "string"
-              ? event.data
-              : String(event.data ?? "");
-          for (const line of data.split(/\r?\n/)) {
-            if (line.length === 0) continue;
-            this.triggerEvent("rawLine", {
-              serverId,
-              direction: "rx",
-              line,
-            });
-          }
-          this.handleMessage(event.data, serverId);
-        }
+        if (serverId) this.receiveFromSocket(serverId, event.data);
       };
     });
 
@@ -1285,6 +1277,15 @@ export class IRCClient implements IRCClientContext {
   }
 
   sendRaw(serverId: string, command: string): void {
+    if (/[\r\n\0]/.test(command)) {
+      console.warn(`Dropped a line with CR, LF or NUL for ${serverId}`);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "info",
+        line: `** dropped TX (line break or NUL): ${JSON.stringify(command)}`,
+      });
+      return;
+    }
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(command);
@@ -1360,11 +1361,12 @@ export class IRCClient implements IRCClientContext {
       this.pingTimers.delete(serverId);
     }
 
-    const pongTimeout = this.pongTimeouts.get(serverId);
-    if (pongTimeout) {
-      clearTimeout(pongTimeout);
-      this.pongTimeouts.delete(serverId);
-    }
+    this.clearPongTimeout(serverId);
+  }
+
+  clearPongTimeout(serverId: string): void {
+    clearTimeout(this.pongTimeouts.get(serverId));
+    this.pongTimeouts.delete(serverId);
   }
 
   isRateLimitError(message: string): boolean {
@@ -1379,9 +1381,15 @@ export class IRCClient implements IRCClientContext {
     return rateLimitPatterns.some((pattern) => pattern.test(message));
   }
 
-  joinChannel(serverId: string, typedName: string, key?: string): Channel {
+  joinChannel(
+    serverId: string,
+    typedName: string,
+    key?: string,
+    { deferHistory = false }: { deferHistory?: boolean } = {},
+  ): Channel {
     const channelName = this.withChannelPrefix(serverId, typedName);
     const joinLine = key ? `JOIN ${channelName} ${key}` : `JOIN ${channelName}`;
+    this.joinsDuringReady.get(serverId)?.add(channelName.toLowerCase());
     const server = this.servers.get(serverId);
     if (server) {
       const existing = server.channels.find((c) => c.name === channelName);
@@ -1399,6 +1407,7 @@ export class IRCClient implements IRCClientContext {
       this.sendRaw(serverId, joinLine);
 
       const wantsChathistory = this.hasChathistory(serverId);
+      const historyDeferred = wantsChathistory && deferHistory;
 
       const channel: Channel = {
         id: generateDeterministicId(serverId, channelName),
@@ -1413,11 +1422,11 @@ export class IRCClient implements IRCClientContext {
         isLoadingHistory: wantsChathistory,
         hasMoreHistory: wantsChathistory,
         needsWhoRequest: true,
-        chathistoryRequested: wantsChathistory,
+        chathistoryRequested: wantsChathistory && !historyDeferred,
       };
       server.channels.push(channel);
 
-      if (!this.loadHistoryOrMembers(serverId, channelName))
+      if (!historyDeferred && !this.loadHistoryOrMembers(serverId, channelName))
         channel.needsWhoRequest = false;
 
       return channel;
@@ -1584,16 +1593,31 @@ export class IRCClient implements IRCClientContext {
     content: string,
   ): void {
     // Send a whisper with both the ratified and draft channel-context tags for backwards compat
-    this.sendRaw(
-      serverId,
-      `@+channel-context=${channelName};+draft/channel-context=${channelName} PRIVMSG ${targetUser} :${content}`,
-    );
+    const tags = formatTags({
+      "+channel-context": channelName,
+      "+draft/channel-context": channelName,
+    });
+    this.sendPrivmsgLines(serverId, targetUser, content, tags);
+  }
+
+  sendPrivmsgLines(
+    serverId: string,
+    target: string,
+    text: string,
+    tags = "",
+  ): void {
+    for (const line of text.split(/[\r\n]+/)) {
+      if (line) this.sendRaw(serverId, `${tags}PRIVMSG ${target} :${line}`);
+    }
   }
 
   setTopic(serverId: string, channelName: string, topic: string): void {
     // Send TOPIC command to set the channel topic
     // Format: TOPIC #channel :New topic text
-    this.sendRaw(serverId, `TOPIC ${channelName} :${topic}`);
+    this.sendRaw(
+      serverId,
+      `TOPIC ${channelName} :${topic.replace(/[\r\n]+/g, " ")}`,
+    );
   }
 
   getTopic(serverId: string, channelName: string): void {
@@ -2088,16 +2112,14 @@ export class IRCClient implements IRCClientContext {
   }
 
   private handleMessage(data: string, serverId: string): void {
-    const lines = data.split("\r\n");
-    for (let line of lines) {
+    // We end a line at any CR or LF so no parsed parameter carries one into a line we send.
+    const lines = data.split(/[\r\n]+/);
+    for (const line of lines) {
       let mtags: Record<string, string> | undefined;
       let source: string;
       const parv: string[] = [];
       let i = 0;
       let l: string[];
-      // We strip only line endings, since a multiline-concat part keeps its
-      // trailing space and trimming it would glue two words together.
-      line = line.replace(/^[\r\n]+|[\r\n]+$/g, "");
 
       // Skip empty lines
       if (!line) continue;
@@ -2200,6 +2222,18 @@ export class IRCClient implements IRCClientContext {
 
   // Lines from local history go through the same parser and handlers as
   // lines from the socket.
+  receiveFromSocket(serverId: string, received: unknown): void {
+    const data =
+      typeof received === "string" ? received : String(received ?? "");
+    for (const line of data.split(/\r?\n/)) {
+      if (line.length === 0) continue;
+      this.triggerEvent("rawLine", { serverId, direction: "rx", line });
+    }
+    // A server that paces our commands answers a PING late, so we take any line it sends as proof the link is alive.
+    this.clearPongTimeout(serverId);
+    this.handleMessage(data, serverId);
+  }
+
   replayLines(serverId: string, lines: string[]): void {
     this.handleMessage(lines.join("\r\n"), serverId);
   }

@@ -31,3 +31,14 @@ export function canShowImageUrl(
     filehost,
   );
 }
+
+// An inline data: image makes no request, so it reveals nothing about the reader.
+export function canLoadEmojiUrl(
+  url: string,
+  fileHosts: string[],
+  mediaLevel: MediaVisibilityLevel,
+): boolean {
+  return (
+    url.startsWith("data:image/") || canShowImageUrl(url, mediaLevel, fileHosts)
+  );
+}

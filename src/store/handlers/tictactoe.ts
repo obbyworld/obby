@@ -11,7 +11,6 @@ import {
   TTT_TAG,
   type TttMessage,
 } from "../../lib/games/tictactoe";
-import { unescapeTagValue } from "../../lib/games/tictactoeProtocol";
 import ircClient from "../../lib/ircClient";
 import { isHistoryEvent } from "../helpers";
 import type { AppState } from "../index";
@@ -58,9 +57,7 @@ export function registerTicTacToeHandlers(store: StoreApi<AppState>) {
     if (channelName !== me) return;
     if (!sender || sender === me) return;
 
-    const raw = mtags[TTT_TAG];
-    if (!raw) return;
-    const value = unescapeTagValue(raw);
+    const value = mtags[TTT_TAG];
     if (value?.[0] !== "{") return;
 
     let data: TttMessage | null = null;

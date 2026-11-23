@@ -38,6 +38,7 @@ export interface IRCClientContext {
   myHosts: Map<string, string>;
   currentUsers: Map<string, User | null>;
   pongTimeouts: Map<string, NodeJS.Timeout>;
+  joinsDuringReady: Map<string, Set<string>>;
   reconnectionTimeouts: Map<string, NodeJS.Timeout>;
   rateLimitedServers: Map<string, number>;
   capNegotiationComplete: Map<string, boolean>;
@@ -86,6 +87,7 @@ export interface IRCClientContext {
   // Private methods exposed for handlers
   isRateLimitError(message: string): boolean;
   startWebSocketPing(serverId: string): void;
+  clearPongTimeout(serverId: string): void;
   userOnConnect(serverId: string): void;
   onCapLs(serverId: string, caps: string, isFinal: boolean): void;
   onCapAck(serverId: string, caps: string): void;
