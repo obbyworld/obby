@@ -124,8 +124,9 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           components: rustfmt, clippy
       - name: Cache cargo
         uses: swatinem/rust-cache@v2.9.3
