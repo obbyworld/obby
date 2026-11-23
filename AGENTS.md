@@ -74,8 +74,10 @@ Desktop auto-update (macOS/Windows/Linux) is done with the **Tauri updater plugi
   `tauri.conf.json`; the **private** key + password are CI secrets
   (`TAURI_SIGNING_PRIVATE_KEY`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`) — never commit them.
 - CrabNebula release CI uses `crabnebula-dev/cloud-release` with `CN_API_KEY` as a **repository**
-  secret (environment secrets leak as plaintext in logs). Pin every third-party action to a full
-  commit SHA, as `publish.yaml` already does.
+  secret (environment secrets leak as plaintext in logs).
+- Workflows reference actions by tag, and `.github/workflows/actions.lock` pins each one to a
+  commit. Run `gh actions-lock` after adding a workflow or changing a `uses:` line; CI runs
+  `gh actions-lock --verify`.
 
 Restart-to-update flow lives in the frontend: `check()` → `downloadAndInstall()` → `relaunch()`
 (`@tauri-apps/plugin-updater` + `@tauri-apps/plugin-process`). Gate all of it behind `isTauriDesktop()`
