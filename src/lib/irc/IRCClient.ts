@@ -14,7 +14,12 @@ import type {
   WhoisSession,
 } from "../../types";
 import { parseIrcUrl } from "../ircUrlParser";
-import { chantypesOf, isChannelTarget, parseMessageTags } from "../ircUtils";
+import {
+  chantypesOf,
+  formatTags,
+  isChannelTarget,
+  parseMessageTags,
+} from "../ircUtils";
 import { createBatchId, splitLongMessage } from "../messageProtocol";
 import { createSocket, type ISocket } from "../socket";
 import { IRC_DISPATCH } from "./handlers";
@@ -1242,6 +1247,15 @@ export class IRCClient implements IRCClientContext {
   }
 
   sendRaw(serverId: string, command: string): void {
+    if (/[\r\n\0]/.test(command)) {
+      console.warn(`Dropped a line with CR, LF or NUL for ${serverId}`);
+      this.triggerEvent("rawLine", {
+        serverId,
+        direction: "info",
+        line: `** dropped TX (line break or NUL): ${JSON.stringify(command)}`,
+      });
+      return;
+    }
     const socket = this.sockets.get(serverId);
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(command);
@@ -1541,16 +1555,31 @@ export class IRCClient implements IRCClientContext {
     content: string,
   ): void {
     // Send a whisper with both the ratified and draft channel-context tags for backwards compat
-    this.sendRaw(
-      serverId,
-      `@+channel-context=${channelName};+draft/channel-context=${channelName} PRIVMSG ${targetUser} :${content}`,
-    );
+    const tags = formatTags({
+      "+channel-context": channelName,
+      "+draft/channel-context": channelName,
+    });
+    this.sendPrivmsgLines(serverId, targetUser, content, tags);
+  }
+
+  sendPrivmsgLines(
+    serverId: string,
+    target: string,
+    text: string,
+    tags = "",
+  ): void {
+    for (const line of text.split(/[\r\n]+/)) {
+      if (line) this.sendRaw(serverId, `${tags}PRIVMSG ${target} :${line}`);
+    }
   }
 
   setTopic(serverId: string, channelName: string, topic: string): void {
     // Send TOPIC command to set the channel topic
     // Format: TOPIC #channel :New topic text
-    this.sendRaw(serverId, `TOPIC ${channelName} :${topic}`);
+    this.sendRaw(
+      serverId,
+      `TOPIC ${channelName} :${topic.replace(/[\r\n]+/g, " ")}`,
+    );
   }
 
   getTopic(serverId: string, channelName: string): void {
@@ -2045,16 +2074,14 @@ export class IRCClient implements IRCClientContext {
   }
 
   private handleMessage(data: string, serverId: string): void {
-    const lines = data.split("\r\n");
-    for (let line of lines) {
+    // We end a line at any CR or LF so no parsed parameter carries one into a line we send.
+    const lines = data.split(/[\r\n]+/);
+    for (const line of lines) {
       let mtags: Record<string, string> | undefined;
       let source: string;
       const parv: string[] = [];
       let i = 0;
       let l: string[];
-      // We strip only line endings, since a multiline-concat part keeps its
-      // trailing space and trimming it would glue two words together.
-      line = line.replace(/^[\r\n]+|[\r\n]+$/g, "");
 
       // Skip empty lines
       if (!line) continue;

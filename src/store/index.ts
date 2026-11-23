@@ -2260,9 +2260,11 @@ const useStore = create<AppState>((set, get) => ({
       };
     });
 
-    ircClient.sendRaw(
+    ircClient.sendPrivmsgLines(
       msg.serverId,
-      `@label=${label} PRIVMSG ${wireTarget} :${msg.content}`,
+      wireTarget,
+      msg.content,
+      `@label=${label} `,
     );
     setTimeout(() => {
       get().failPendingMessage(msg.serverId, msg.channelId, label);

@@ -10,8 +10,8 @@ import {
   TTT_TAG,
   type TttMessage,
 } from "../../lib/games/tictactoe";
-import { escapeTagValue } from "../../lib/games/tictactoeProtocol";
 import ircClient from "../../lib/ircClient";
+import { formatTags } from "../../lib/ircUtils";
 import type { AppState } from "../index";
 
 type SetFn = (
@@ -70,9 +70,8 @@ function deleteGame(set: SetFn, serverId: string, opponent: string) {
 }
 
 function sendTtt(serverId: string, target: string, msg: TttMessage) {
-  const json = JSON.stringify(msg);
-  const escaped = escapeTagValue(json);
-  ircClient.sendRaw(serverId, `@${TTT_TAG}=${escaped} TAGMSG ${target}`);
+  const tags = formatTags({ [TTT_TAG]: JSON.stringify(msg) });
+  ircClient.sendRaw(serverId, `${tags}TAGMSG ${target}`);
 }
 
 function localNick(serverId: string): string | undefined {

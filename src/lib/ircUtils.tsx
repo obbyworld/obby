@@ -117,7 +117,7 @@ function parseStatus(
 // A trailing lone backslash is dropped; a backslash followed by any
 // other char is collapsed to that char (per spec, "drop the preceding
 // backslash").
-function unescapeTagValue(s: string): string {
+export function unescapeTagValue(s: string): string {
   let out = "";
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
@@ -149,6 +149,30 @@ function unescapeTagValue(s: string): string {
     }
   }
   return out;
+}
+
+const TAG_VALUE_ESCAPES: Record<string, string> = {
+  "\\": "\\\\",
+  ";": "\\:",
+  " ": "\\s",
+  "\r": "\\r",
+  "\n": "\\n",
+};
+
+export function escapeTagValue(s: string): string {
+  return s.replace(/[\\; \r\n]/g, (c) => TAG_VALUE_ESCAPES[c]);
+}
+
+// We escape every value since a server- or peer-supplied one could otherwise start a command of its own.
+export function formatTags(tags: Record<string, string>): string {
+  const pairs = Object.entries(tags).map(
+    ([key, value]) => `${key}=${escapeTagValue(value)}`,
+  );
+  return pairs.length > 0 ? `@${pairs.join(";")} ` : "";
+}
+
+export function replyTags(msgid: string | undefined): string {
+  return msgid ? formatTags({ "+reply": msgid, "+draft/reply": msgid }) : "";
 }
 
 export function parseMessageTags(tags: string): Record<string, string> {

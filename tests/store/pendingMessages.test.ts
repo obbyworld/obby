@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import ircClient from "../../src/lib/ircClient";
 import useStore from "../../src/store";
-import type { Message } from "../../src/types";
+import type { Message, Server } from "../../src/types";
 
 const message = (id: string, time: number, userId = "me"): Message => ({
   id,
@@ -95,5 +96,34 @@ describe("pending messages", () => {
     failPendingMessage("s1", "c1", "mine");
 
     expect(useStore.getState().messages["s1-c1"]?.[0].status).toBe("failed");
+  });
+
+  it("retries a failed multi-line message as one PRIVMSG per line", () => {
+    vi.useFakeTimers();
+    const sendRaw = vi.spyOn(ircClient, "sendRaw").mockImplementation(() => {});
+    useStore.setState({
+      servers: [
+        {
+          id: "s1",
+          channels: [{ id: "c1", name: "#lobby" }],
+          privateChats: [],
+        } as unknown as Server,
+      ],
+    });
+    useStore.getState().addMessage({
+      ...message("f1", 1000),
+      content: "one\ntwo",
+      status: "failed",
+    });
+
+    useStore.getState().resendFailedMessage("f1");
+
+    const label = useStore.getState().messages["s1-c1"]?.[0].pendingLabel;
+    expect(sendRaw.mock.calls).toEqual([
+      ["s1", `@label=${label} PRIVMSG #lobby :one`],
+      ["s1", `@label=${label} PRIVMSG #lobby :two`],
+    ]);
+    vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 });

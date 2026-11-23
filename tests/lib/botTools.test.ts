@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import {
   decodeBotToolsValue,
   encodeBotToolsValue,
-  escapeIrcTagValue,
 } from "../../src/lib/botTools";
+import { escapeTagValue } from "../../src/lib/ircUtils";
 
 // Tag values are base64 of compact JSON; wrap test inputs the same way a bot
 // would on the wire.
@@ -154,12 +154,12 @@ describe("encodeBotToolsValue", () => {
   });
 });
 
-describe("escapeIrcTagValue", () => {
+describe("escapeTagValue", () => {
   test("escapes the five required chars per IRCv3", () => {
-    expect(escapeIrcTagValue("a;b c\\d\re\nf")).toBe("a\\:b\\sc\\\\d\\re\\nf");
+    expect(escapeTagValue("a;b c\\d\re\nf")).toBe("a\\:b\\sc\\\\d\\re\\nf");
   });
 
   test("leaves ordinary text unchanged", () => {
-    expect(escapeIrcTagValue("hello-world")).toBe("hello-world");
+    expect(escapeTagValue("hello-world")).toBe("hello-world");
   });
 });

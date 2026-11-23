@@ -3,6 +3,7 @@
  */
 import { useCallback, useRef, useState } from "react";
 import ircClient from "../lib/ircClient";
+import { formatTags } from "../lib/ircUtils";
 import useStore from "../store";
 import {
   updateMessageByMsgid,
@@ -13,6 +14,21 @@ import type { Message, Server, User } from "../types";
 
 const messageKey = (message: Message) =>
   `${message.serverId}-${message.channelId}`;
+
+function sendReaction(
+  serverId: string,
+  target: string,
+  tag: "+draft/react" | "+draft/unreact",
+  emoji: string,
+  msgid: string,
+) {
+  const tags = formatTags({
+    [tag]: emoji,
+    "+reply": msgid,
+    "+draft/reply": msgid,
+  });
+  ircClient.sendRaw(serverId, `${tags}TAGMSG ${target}`);
+}
 
 interface ReactionModalState {
   isOpen: boolean;
@@ -120,26 +136,22 @@ export function useReactions({
           (r) => r.emoji === emoji && r.userId === currentUser?.username,
         );
 
-        if (existingReaction) {
-          // Send unreact message
-          const tagMsg = `@+draft/unreact=${emoji};+reply=${reactionModal.message.msgid};+draft/reply=${reactionModal.message.msgid} TAGMSG ${target}`;
-          ircClient.sendRaw(server.id, tagMsg);
-        } else {
-          // Send react message
-          const tagMsg = `@+draft/react=${emoji};+reply=${reactionModal.message.msgid};+draft/reply=${reactionModal.message.msgid} TAGMSG ${target}`;
-          ircClient.sendRaw(server.id, tagMsg);
-        }
-
         const message = reactionModal.message;
-        const { msgid } = message;
+        const msgid = reactionModal.message.msgid;
+        sendReaction(
+          server.id,
+          target,
+          existingReaction ? "+draft/unreact" : "+draft/react",
+          emoji,
+          msgid,
+        );
         const userId = currentUser?.username ?? "";
         const toggle = existingReaction ? withoutReaction : withReaction;
-        if (msgid)
-          set((state) =>
-            updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
-              toggle(m, emoji, userId),
-            ),
-          );
+        set((state) =>
+          updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
+            toggle(m, emoji, userId),
+          ),
+        );
       }
     },
     [
@@ -161,8 +173,7 @@ export function useReactions({
       const { server, target } = findServerAndTarget(message);
 
       if (server && target) {
-        const tagMsg = `@+draft/react=${emoji};+reply=${message.msgid};+draft/reply=${message.msgid} TAGMSG ${target}`;
-        ircClient.sendRaw(server.id, tagMsg);
+        sendReaction(server.id, target, "+draft/react", emoji, msgid);
 
         set((state) =>
           updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
@@ -185,8 +196,7 @@ export function useReactions({
       const { server, target } = findServerAndTarget(message);
 
       if (server && target) {
-        const tagMsg = `@+draft/unreact=${emoji};+reply=${message.msgid};+draft/reply=${message.msgid} TAGMSG ${target}`;
-        ircClient.sendRaw(server.id, tagMsg);
+        sendReaction(server.id, target, "+draft/unreact", emoji, msgid);
 
         set((state) =>
           updateMessageByMsgid(state, messageKey(message), msgid, (m) =>
