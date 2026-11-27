@@ -159,6 +159,38 @@ describe("IRCClient", () => {
       expect(onServerError).not.toHaveBeenCalled();
     });
 
+    test("keeps reading the new socket after a late error from the dropped one", async () => {
+      vi.useFakeTimers();
+      const dead = new MockWebSocket("ws://irc.example.com:443");
+      const fresh = new MockWebSocket("ws://irc.example.com:443");
+      MockWebSocketSpy.mockImplementationOnce(
+        returnsSocket(dead),
+      ).mockImplementationOnce(returnsSocket(fresh));
+      const connect = (serverId?: string) =>
+        client.connect(
+          "Test Server",
+          "irc.example.com",
+          443,
+          "testuser",
+          undefined,
+          undefined,
+          undefined,
+          serverId,
+        );
+      const first = connect();
+      dead.simulateOpen();
+      const server = await first;
+      dead.onclose?.(new CloseEvent("close"));
+
+      connect(server.id);
+      dead.onerror?.(new Event("error"));
+      fresh.simulateOpen();
+      fresh.simulateMessage(":irc.example.com CAP * LS :multi-prefix\r\n");
+
+      expect(fresh.sentMessages).toContain("CAP REQ :multi-prefix");
+      vi.useRealTimers();
+    });
+
     test.skip("should handle connection errors", async () => {
       vi.useFakeTimers();
 
